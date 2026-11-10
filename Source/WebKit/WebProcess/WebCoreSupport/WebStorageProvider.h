@@ -35,7 +35,7 @@ namespace WebKit {
 class WebStorageProvider final : public WebCore::StorageProvider {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebStorageProvider);
 public:
-    WebStorageProvider(const String& mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
+    WebStorageProvider(StringImpl* mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
         : m_mediaKeysStorageDirectory(mediaKeysStorageDirectory)
         , m_mediaKeysStorageSalt(mediaKeysStorageSalt)
     {
@@ -52,9 +52,9 @@ private:
         return *m_connection;
     }
 
-    String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin) final
+    RefPtr<StringImpl> ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin) final
     {
-        if (m_mediaKeysStorageDirectory.isEmpty())
+        if (isEmpty(m_mediaKeysStorageDirectory))
             return emptyString();
 
         auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, origin);
@@ -63,13 +63,13 @@ private:
         return originDirectory;
     }
 
-    void setMediaKeysStorageDirectory(const String&) final
+    void setMediaKeysStorageDirectory(StringImpl*) final
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
     const RefPtr<WebStorageConnection> m_connection;
-    String m_mediaKeysStorageDirectory;
+    RefPtr<StringImpl> m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 };
 

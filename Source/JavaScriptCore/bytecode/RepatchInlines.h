@@ -43,7 +43,7 @@ inline void* throwNotAFunctionErrorFromCallIC(JSGlobalObject* globalObject, JSCe
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto errorMessage = constructErrorMessage(globalObject, callee, "is not a function"_s);
+    auto errorMessage = constructErrorMessage(globalObject, callee, "is not a function"_si);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!errorMessage) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
@@ -65,7 +65,7 @@ inline void* throwNotAConstructorErrorFromCallIC(JSGlobalObject* globalObject, J
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto errorMessage = constructErrorMessage(globalObject, callee, "is not a constructor"_s);
+    auto errorMessage = constructErrorMessage(globalObject, callee, "is not a constructor"_si);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!errorMessage) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);

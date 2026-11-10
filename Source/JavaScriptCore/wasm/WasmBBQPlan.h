@@ -79,7 +79,7 @@ private:
         runCompletionTasks();
     }
 
-    void fail(String&& errorMessage, CompilationError);
+    void fail(RefPtr<StringImpl>&& errorMessage, CompilationError);
 
     const Ref<IPIntCallee> m_profiledCallee;
     const Ref<Module> m_module;

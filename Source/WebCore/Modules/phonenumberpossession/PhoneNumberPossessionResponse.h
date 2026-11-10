@@ -34,7 +34,7 @@ namespace WebCore {
 
 struct PhoneNumberPossessionResponse {
     Ref<ArrayBuffer> encryptedResult;
-    String carrierDomain;
+    RefPtr<StringImpl> carrierDomain;
     uint16_t carrierConfigurationID;
     RefPtr<ArrayBuffer> encryptedDecryptionKey;
     RefPtr<ArrayBuffer> carrierPubKey;

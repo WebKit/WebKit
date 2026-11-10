@@ -73,7 +73,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
 {
 }
 
-ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, Init&& eventSourceInit)
+ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, StringImpl* url, Init&& eventSourceInit)
 {
     URL fullURL = context.encodingParseURL(url);
     if (!fullURL.isValid())
@@ -114,14 +114,14 @@ void EventSource::connect()
 
     ResourceRequest request { URL { m_url } };
     request.setRequester(ResourceRequestRequester::EventSource);
-    request.setHTTPMethod("GET"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache"_s);
-    if (!m_lastEventId.isEmpty()) {
+    request.setHTTPMethod("GET"_si);
+    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream"_si);
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache"_si);
+    if (!isEmpty(m_lastEventId)) {
 #if PLATFORM(COCOA)
         // CFNetwork sends header values as Latin-1 bytes, so pass the UTF-8 bytes as Latin-1 characters.
         // Other network backends UTF-8 encode header values themselves.
-        request.setHTTPHeaderField(HTTPHeaderName::LastEventID, String(byteCast<Latin1Character>(m_lastEventId.utf8().span())));
+        request.setHTTPHeaderField(HTTPHeaderName::LastEventID, StringImpl::create(byteCast<Latin1Character>(utf8(m_lastEventId).span())).ptr());
 #else
         request.setHTTPHeaderField(HTTPHeaderName::LastEventID, m_lastEventId);
 #endif
@@ -216,7 +216,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     // The specification states we should always decode as UTF-8. If there is a provided charset and it is not UTF-8, then log a warning
     // message but keep going anyway.
     auto& charset = response.textEncodingName();
-    if (!charset.isEmpty() && !equalLettersIgnoringASCIICase(charset, "utf-8"_s)) {
+    if (!isEmpty(charset) && !equalLettersIgnoringASCIICase(charset, "utf-8"_s)) {
         auto message = makeString("EventSource's response has a charset (\""_s, charset, "\") that is not UTF-8. The response will be decoded as UTF-8."_s);
         // FIXME: Console message would be better with a source code location; where would we get that?
         protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTF::move(message));
@@ -271,8 +271,8 @@ void EventSource::didFinishLoading(ScriptExecutionContextIdentifier, std::option
     // If this is important, why isn't it important to clear other data members: m_decoder, m_lastEventId, m_loader?
     m_receiveBuffer.clear();
     m_data.clear();
-    m_eventName = { };
-    m_currentlyParsedEventId = { };
+    m_eventName = nullptr;
+    m_currentlyParsedEventId = nullptr;
 
     networkRequestEnded();
 }
@@ -398,7 +398,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     if (!lineLength) {
         if (!m_data.isEmpty())
             dispatchMessageEvent();
-        m_eventName = { };
+        m_eventName = nullptr;
         return;
     }
 
@@ -421,7 +421,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
         m_data.append(m_receiveBuffer.subspan(position, valueLength));
         m_data.append('\n');
     } else if (field == "event"_s)
-        m_eventName = m_receiveBuffer.subspan(position, valueLength);
+        m_eventName = AtomStringImpl::add(m_receiveBuffer.subspan(position, valueLength));
     else if (field == "id"_s) {
         StringView parsedEventId = m_receiveBuffer.subspan(position, valueLength);
         constexpr char16_t nullCharacter = '\0';
@@ -469,15 +469,15 @@ void EventSource::dispatchMessageEvent()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForBackForwardCache);
 
-    if (!m_currentlyParsedEventId.isNull())
+    if (m_currentlyParsedEventId)
         m_lastEventId = WTF::move(m_currentlyParsedEventId);
 
-    auto& name = m_eventName.isEmpty() ? eventNames().messageEvent : m_eventName;
+    auto& name = isEmpty(m_eventName) ? eventNames().messageEvent : m_eventName;
 
     ASSERT(!m_data.isEmpty());
 
     // Omit the trailing "\n" character.
-    String data(m_data.subspan(0, m_data.size() - 1));
+    RefPtr<StringImpl> data(StringImpl::create(m_data.subspan(0, m_data.size() - 1)));
     m_data = { };
 
     dispatchEvent(MessageEvent::create(name, WTF::move(data), m_eventStreamOrigin.copyRef(), m_lastEventId));

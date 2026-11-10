@@ -46,27 +46,27 @@
 
 namespace TestWebKitAPI {
 
-static HashMap<String, HTTPResponse> makeRequestMap(std::initializer_list<std::pair<String, HTTPResponse>> responses)
+static HashMap<RefPtr<StringImpl>, HTTPResponse> makeRequestMap(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> responses)
 {
-    HashMap<String, HTTPResponse> map;
+    HashMap<RefPtr<StringImpl>, HTTPResponse> map;
     for (auto& pair : responses)
         map.add(pair.first, pair.second);
     return map;
 }
 
-static RetainPtr<NSDictionary<NSString *, NSString *>> toNSDictionary(const HashMap<String, String>& map)
+static RetainPtr<NSDictionary<NSString *, NSString *>> toNSDictionary(const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& map)
 {
     RetainPtr result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
     for (auto& pair : map)
-        [result setObject:pair.value.createNSString() forKey:pair.key.createNSString()];
+        [result setObject:createNSString(pair.value) forKey:createNSString(pair.key)];
     return result;
 }
 
-static RetainPtr<NSArray<NSArray<NSString *> *>> toNSHeaderFields(const Vector<WTF::KeyValuePair<String, String>>& headerFields)
+static RetainPtr<NSArray<NSArray<NSString *> *>> toNSHeaderFields(const Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& headerFields)
 {
     RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:headerFields.size()]);
     for (auto& field : headerFields)
-        [result addObject:@[field.key.createNSString().get(), field.value.createNSString().get()]];
+        [result addObject:@[createNSString(field.key).get(), createNSString(field.value).get()]];
     return result;
 }
 
@@ -107,7 +107,7 @@ void HTTPServer::terminateAllConnections(CompletionHandler<void()>&& completionH
 }
 
 HTTPServer::HTTPServer(
-    std::initializer_list<std::pair<String, HTTPResponse>> responses,
+    std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> responses,
     Protocol protocol,
     CertificateVerifier&& verifier,
     SecIdentityRef identity,
@@ -130,7 +130,7 @@ HTTPServer::HTTPServer(
 {
     RetainPtr<NSMutableDictionary<NSString *, HTTPResponseDataBridge *>> routes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:responses.size()]);
     for (auto& pair : responses)
-        [routes setObject:toHTTPResponseDataBridge(pair.value) forKey:pair.key.createNSString()];
+        [routes setObject:toHTTPResponseDataBridge(pair.value) forKey:createNSString(pair.key)];
 
     auto verifierBlock = verifier ? makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t complete) mutable {
         verifier(metadata, trust, complete);
@@ -175,14 +175,14 @@ HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& con
     Util::run(&done);
 }
 
-void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
+void HTTPServer::addResponse(RefPtr<StringImpl>&& path, HTTPResponse&& response)
 {
-    [m_serverBridge addResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
+    [m_serverBridge addResponse:toHTTPResponseDataBridge(response).get() forPath:createNSString(path)];
 }
 
-void HTTPServer::setResponse(String&& path, HTTPResponse&& response)
+void HTTPServer::setResponse(RefPtr<StringImpl>&& path, HTTPResponse&& response)
 {
-    [m_serverBridge setResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
+    [m_serverBridge setResponse:toHTTPResponseDataBridge(response).get() forPath:createNSString(path)];
 }
 
 void HTTPServer::respondWithChallengeThenOK(Connection connection)
@@ -228,9 +228,9 @@ size_t HTTPServer::totalRequests() const
     return [m_serverBridge totalRequests];
 }
 
-String HTTPServer::lastRequestCookies() const
+RefPtr<StringImpl> HTTPServer::lastRequestCookies() const
 {
-    return [m_serverBridge lastRequestCookies];
+    return StringImpl::create([m_serverBridge lastRequestCookies]);
 }
 
 bool HTTPServer::sawAuthorizationHeader() const
@@ -270,7 +270,7 @@ static ASCIILiteral statusText(unsigned statusCode)
     return "Unknown Status Code"_s;
 }
 
-static Vector<uint8_t> toUTF8Vector(const String& string)
+static Vector<uint8_t> toUTF8Vector(StringView string)
 {
     Vector<uint8_t> result;
     std::ignore = string.tryGetUTF8([&](std::span<const char8_t> utf8) {
@@ -280,7 +280,7 @@ static Vector<uint8_t> toUTF8Vector(const String& string)
     return result;
 }
 
-String HTTPServer::parsePath(const Vector<char>& request)
+RefPtr<StringImpl> HTTPServer::parsePath(const Vector<char>& request)
 {
     if (!request.size())
         return { };
@@ -295,42 +295,42 @@ String HTTPServer::parsePath(const Vector<char>& request)
         pathPrefixLength = postPathPrefix.length();
     ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
     size_t pathLength = pathEnd - pathPrefixLength;
-    return String::fromUTF8(request.subspan(pathPrefixLength, pathLength));
+    return StringImpl::fromUTF8(request.subspan(pathPrefixLength, pathLength));
 }
 
-static String parseHeaderValue(const Vector<char>& characters, ASCIILiteral headerPrefix)
+static RefPtr<StringImpl> parseHeaderValue(const Vector<char>& characters, ASCIILiteral headerPrefix)
 {
     if (!characters.size())
         return { };
 
-    String request = String::fromLatin1(characters.span());
-    size_t valueStart = request.find(headerPrefix);
+    RefPtr<StringImpl> request = StringImpl::fromLatin1(characters.span());
+    size_t valueStart = find(request, headerPrefix);
     if (valueStart == notFound)
         return { };
     valueStart += headerPrefix.length();
 
-    size_t valueEnd = request.find("\r\n"_s, valueStart);
+    size_t valueEnd = find(request, "\r\n"_s, valueStart);
     if (valueEnd == notFound)
         return { };
 
-    return request.substring(valueStart, valueEnd - valueStart);
+    return substring(request, valueStart, valueEnd - valueStart);
 }
 
-String HTTPServer::parseCookies(const Vector<char>& characters)
+RefPtr<StringImpl> HTTPServer::parseCookies(const Vector<char>& characters)
 {
     return parseHeaderValue(characters, "Cookie: "_s);
 }
 
-String HTTPServer::parseAuthorization(const Vector<char>& characters)
+RefPtr<StringImpl> HTTPServer::parseAuthorization(const Vector<char>& characters)
 {
     return parseHeaderValue(characters, "Authorization: "_s);
 }
 
-String HTTPServer::parseBody(const Vector<char>& request)
+RefPtr<StringImpl> HTTPServer::parseBody(const Vector<char>& request)
 {
     auto headerEndBytes = "\r\n\r\n"_s;
     size_t headerEnd = find(request.span(), headerEndBytes.span()) + strlen(headerEndBytes);
-    return String::fromUTF8(request.subspan(headerEnd));
+    return StringImpl::fromUTF8(request.subspan(headerEnd));
 }
 
 uint16_t HTTPServer::port() const
@@ -360,9 +360,9 @@ const char* HTTPServer::scheme() const
     return scheme;
 }
 
-String HTTPServer::origin() const
+RefPtr<StringImpl> HTTPServer::origin() const
 {
-    return [NSString stringWithFormat:@"%s://127.0.0.1:%d", scheme(), port()];
+    return StringImpl::create([NSString stringWithFormat:@"%s://127.0.0.1:%d", scheme(), port()]);
 }
 
 NSURLRequest *HTTPServer::request(StringView path) const
@@ -384,7 +384,7 @@ WKWebViewConfiguration *HTTPServer::httpsProxyConfiguration() const
     return viewConfiguration.autorelease();
 }
 
-Vector<uint8_t> HTTPResponse::bodyFromString(const String& string)
+Vector<uint8_t> HTTPResponse::bodyFromString(StringView string)
 {
     return toUTF8Vector(string);
 }
@@ -419,7 +419,7 @@ Vector<uint8_t> HTTPServer::testCertificate()
      Email Address []:me@example.com
      */
     
-    String pemEncodedCertificate(""
+    RefPtr<StringImpl> pemEncodedCertificate(""
     "MIIFgDCCA2gCCQCKHiPRU5MQuDANBgkqhkiG9w0BAQsFADCBgTELMAkGA1UEBhMC"
     "VVMxEzARBgNVBAgMCk5ldyBNZXhpY28xETAPBgNVBAcMCFNhbnRhIEZlMQ0wCwYD"
     "VQQKDARTZWxmMQ8wDQYDVQQLDAZNeXNlbGYxCzAJBgNVBAMMAk1lMR0wGwYJKoZI"
@@ -457,7 +457,7 @@ Vector<uint8_t> HTTPServer::testCertificate()
 
 Vector<uint8_t> HTTPServer::testPrivateKey()
 {
-    String pemEncodedPrivateKey(""
+    RefPtr<StringImpl> pemEncodedPrivateKey(""
     "MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQDeuE3hI+DxVj8+"
     "0YM0pjdP0khKBvLxgYwnHS875hkVmbcbd+xNSzK8PIQfCqnlpsJlEH8HLU/BaQ2t"
     "/Gf9c/w/Tfgk+UTqKtWK4BhCupSHqTtlHwKk4zkYRxFmABQkYZDA2U6QTBoecwZz"

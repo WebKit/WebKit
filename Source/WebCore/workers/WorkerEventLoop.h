@@ -38,7 +38,7 @@ public:
 
     virtual ~WorkerEventLoop();
 
-    static const String taskMode();
+    static const RefPtr<StringImpl> taskMode();
     // FIXME: This should be removed once MicrotaskQueue is integrated with EventLoopTaskGroup.
     void clearMicrotaskQueue();
 

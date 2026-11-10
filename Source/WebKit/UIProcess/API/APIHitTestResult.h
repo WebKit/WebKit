@@ -45,18 +45,18 @@ class HitTestResult : public API::ObjectImpl<API::Object::Type::HitTestResult> {
 public:
     static Ref<HitTestResult> create(const WebKit::WebHitTestResultData&, WebKit::WebPageProxy*, RefPtr<JSHandle>&& = nullptr);
 
-    WTF::String absoluteImageURL() const { return m_data.absoluteImageURL; }
-    WTF::String absolutePDFURL() const { return m_data.absolutePDFURL; }
-    WTF::String absoluteLinkURL() const { return m_data.absoluteLinkURL; }
-    WTF::String absoluteMediaURL() const { return m_data.absoluteMediaURL; }
-    WTF::String absoluteModelURL() const { return m_data.absoluteModelURL; }
+    RefPtr<StringImpl> absoluteImageURL() const { return m_data.absoluteImageURL; }
+    RefPtr<StringImpl> absolutePDFURL() const { return m_data.absolutePDFURL; }
+    RefPtr<StringImpl> absoluteLinkURL() const { return m_data.absoluteLinkURL; }
+    RefPtr<StringImpl> absoluteMediaURL() const { return m_data.absoluteMediaURL; }
+    RefPtr<StringImpl> absoluteModelURL() const { return m_data.absoluteModelURL; }
 
-    WTF::String linkLabel() const { return m_data.linkLabel; }
-    WTF::String linkTitle() const { return m_data.linkTitle; }
-    WTF::String linkSuggestedFilename() const { return m_data.linkSuggestedFilename; }
-    WTF::String imageSuggestedFilename() const { return m_data.imageSuggestedFilename; }
-    WTF::String lookupText() const { return m_data.lookupText; }
-    WTF::String sourceImageMIMEType() const { return m_data.sourceImageMIMEType; }
+    RefPtr<StringImpl> linkLabel() const { return m_data.linkLabel; }
+    RefPtr<StringImpl> linkTitle() const { return m_data.linkTitle; }
+    RefPtr<StringImpl> linkSuggestedFilename() const { return m_data.linkSuggestedFilename; }
+    RefPtr<StringImpl> imageSuggestedFilename() const { return m_data.imageSuggestedFilename; }
+    RefPtr<StringImpl> lookupText() const { return m_data.lookupText; }
+    RefPtr<StringImpl> sourceImageMIMEType() const { return m_data.sourceImageMIMEType; }
 
     bool isContentEditable() const { return m_data.isContentEditable; }
 

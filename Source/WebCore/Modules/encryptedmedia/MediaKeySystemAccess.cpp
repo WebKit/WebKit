@@ -44,14 +44,14 @@
 
 namespace WebCore {
 
-Ref<MediaKeySystemAccess> MediaKeySystemAccess::create(Document& document, const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
+Ref<MediaKeySystemAccess> MediaKeySystemAccess::create(Document& document, StringImpl* keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
 {
     auto access = adoptRef(*new MediaKeySystemAccess(document, keySystem, WTF::move(configuration), WTF::move(implementation)));
     access->suspendIfNeeded();
     return access;
 }
 
-MediaKeySystemAccess::MediaKeySystemAccess(Document& document, const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
+MediaKeySystemAccess::MediaKeySystemAccess(Document& document, StringImpl* keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
     : ActiveDOMObject(document)
     , m_keySystem(keySystem)
     , m_configuration(new MediaKeySystemConfiguration(WTF::move(configuration)))

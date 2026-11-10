@@ -816,7 +816,7 @@ static int test()
     Options::setOptions("--useBaselineJIT=false");
 
     auto resetSettings = makeScopeExit([&] {
-        Options::setOptions(savedOptionsBuilder.toString().ascii().data());
+        Options::setOptions(ascii(savedOptionsBuilder.toString()).data());
         VMManager::setWasmDebuggerOnStop(originalWasmDebugger);
         VMManager::setWasmDebuggerOnResume(originalWasmDebuggerOnResume);
         VMManager::setMemoryDebuggerCallback(originalMemoryDebugger);

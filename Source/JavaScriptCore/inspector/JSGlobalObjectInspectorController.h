@@ -85,7 +85,7 @@ public:
     void connectFrontend(FrontendChannel&, bool isAutomaticInspection, bool immediatelyPause);
     void disconnectFrontend(FrontendChannel&);
 
-    void dispatchMessageFromFrontend(const String&);
+    void dispatchMessageFromFrontend(StringImpl*);
 
     void globalObjectDestroyed();
 

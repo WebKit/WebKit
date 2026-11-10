@@ -202,7 +202,7 @@ static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(std::span<
         }
 
         ASSERT(!imageURLSpan.empty());
-        imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(imageURLSpan, String()), result, ImageCandidate::SrcsetOrigin));
+        imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(imageURLSpan, nullString()), result, ImageCandidate::SrcsetOrigin));
         // 11. Return to the step labeled splitting loop.
     }
     return imageCandidates;
@@ -231,7 +231,7 @@ void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, Or
     }
 }
 
-String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const CSS::SerializationContext& context)
+RefPtr<StringImpl> replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const CSS::SerializationContext& context)
 {
     if (context.replacementURLStrings.isEmpty())
         return attribute.toString();
@@ -245,7 +245,7 @@ String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute
         auto candidateString = candidate.string.toString();
         auto resolvedURLString = element.resolveURLStringIfNeeded(candidateString);
         auto replacementURLString = context.replacementURLStrings.get(resolvedURLString);
-        if (!replacementURLString.isEmpty())
+        if (!isEmpty(replacementURLString))
             result.append(replacementURLString);
         else
             result.append(WTF::move(candidateString));
@@ -298,17 +298,17 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     return imageCandidates[winner];
 }
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, StringView srcsetAttribute, std::optional<float> sourceSize, NOESCAPE const Function<bool(const ImageCandidate&)>& shouldIgnoreCandidateCallback)
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, StringImpl* srcAttribute, StringView srcsetAttribute, std::optional<float> sourceSize, NOESCAPE const Function<bool(const ImageCandidate&)>& shouldIgnoreCandidateCallback)
 {
     if (srcsetAttribute.isNull()) {
-        if (srcAttribute.isNull())
+        if (!srcAttribute)
             return { };
         return ImageCandidate(StringViewWithUnderlyingString(srcAttribute, srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin);
     }
 
     Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(srcsetAttribute);
 
-    if (!srcAttribute.isEmpty())
+    if (!isEmpty(srcAttribute))
         imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(srcAttribute, srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
 
     if (shouldIgnoreCandidateCallback)

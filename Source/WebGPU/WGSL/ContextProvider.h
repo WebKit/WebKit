@@ -39,7 +39,7 @@ class ContextProvider {
     friend class ContextScope;
 
 protected:
-    using ContextMap = HashMap<String, ContextValue>;
+    using ContextMap = HashMap<RefPtr<StringImpl>, ContextValue>;
 
     class ContextScope {
     public:
@@ -53,16 +53,16 @@ protected:
 
     ContextProvider();
 
-    const ContextValue* introduceVariable(const String&, const ContextValue&);
-    const ContextValue* readVariable(const String&) const;
+    const ContextValue* introduceVariable(StringImpl*, const ContextValue&);
+    const ContextValue* readVariable(StringImpl*) const;
 
 private:
     class Context {
     public:
         Context(const Context *const parent);
 
-        const ContextValue* lookup(const String&) const;
-        const ContextValue* add(const String&, const ContextValue&);
+        const ContextValue* lookup(StringImpl*) const;
+        const ContextValue* add(StringImpl*, const ContextValue&);
 
     private:
         const Context* m_parent { nullptr };

@@ -201,7 +201,7 @@ void InbandGenericTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
     parser().parseCueData(WTF::move(cueData));
 }
 
-void InbandGenericTextTrack::parseWebVTTFileHeader(String&& header)
+void InbandGenericTextTrack::parseWebVTTFileHeader(RefPtr<StringImpl>&& header)
 {
     parser().parseFileHeader(WTF::move(header));
 }

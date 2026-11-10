@@ -137,8 +137,8 @@ static double normalizedAnimationValueForFillsForwards(double iterationCount, Gr
     return shouldReverseAnimationValue(direction, iterationCount) ? 1 : 0;
 }
 
-AcceleratedAnimation::AcceleratedAnimation(const String& name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation)
-    : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
+AcceleratedAnimation::AcceleratedAnimation(StringImpl* name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation)
+    : m_name(isSafeToSendToAnotherThread(name) ? RefPtr<StringImpl> { name } : isolatedCopy(name))
     , m_keyframes(keyframes)
     , m_timingFunction(animation.timingFunction()->clone())
     , m_defaultTimingFunctionForKeyframes(animation.defaultTimingFunctionForKeyframes() ? animation.defaultTimingFunctionForKeyframes()->clone() : RefPtr<TimingFunction> { })

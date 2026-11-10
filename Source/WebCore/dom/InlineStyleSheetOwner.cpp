@@ -126,15 +126,15 @@ void InlineStyleSheetOwner::clearSheet()
     sheet->clearOwnerNode();
 }
 
-inline bool isValidCSSContentType(const AtomString& type)
+inline bool isValidCSSContentType(AtomStringImpl* type)
 {
     // https://html.spec.whatwg.org/multipage/semantics.html#update-a-style-block
-    if (type.isEmpty())
+    if (isEmpty(type))
         return true;
     return equalLettersIgnoringASCIICase(type, "text/css"_s);
 }
 
-void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
+void InlineStyleSheetOwner::createSheet(Element& element, StringImpl* text)
 {
     ASSERT(element.isConnected());
     Ref document = element.document();
@@ -177,7 +177,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     m_loading = true;
 
-    Ref contents = StyleSheetContents::create(String(), cacheKey.second);
+    Ref contents = StyleSheetContents::create(nullString(), cacheKey.second);
 
     Ref sheet = CSSStyleSheet::createInline(contents.get(), element, m_startTextPosition);
     m_sheet = sheet.copyRef();

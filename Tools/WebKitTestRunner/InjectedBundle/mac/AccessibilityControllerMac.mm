@@ -261,13 +261,13 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     return nil;
 }
 
-static RefPtr<AccessibilityUIElement> findElementByIdRecursive(AccessibilityUIElement* element, const String& targetId)
+static RefPtr<AccessibilityUIElement> findElementByIdRecursive(AccessibilityUIElement* element, StringImpl* targetId)
 {
     if (!element || !element->isValid())
         return nullptr;
 
     if (RefPtr domId = element->domIdentifier()) {
-        if (toWTFString(domId.get()) == targetId)
+        if (equal(toWTFString(domId.get()), targetId))
             return element;
     }
 
@@ -286,7 +286,7 @@ void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, 
     NSNumber *numberValue = @([[NSString stringWithJSStringRef:value] integerValue]);
     NSData *encodedData = [NSKeyedArchiver archivedDataWithRootObject:numberValue requiringSecureCoding:YES error:nil];
     NSString *encodedString = [encodedData base64EncodedStringWithOptions:0];
-    WKAccessibilityTestingInjectPreference(page, toWK(domain).get(), toWK(key).get(), toWK(encodedString).get());
+    WKAccessibilityTestingInjectPreference(page, toWK(domain).get(), toWK(key).get(), toWK(StringImpl::create(encodedString).get()).get());
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef idAttribute)

@@ -43,7 +43,7 @@ namespace Style {
 struct FilterReference {
     URL url;
 
-    AtomString cachedFragment;
+    RefPtr<AtomStringImpl> cachedFragment;
     RefPtr<CachedSVGDocumentReference> cachedSVGDocumentReference;
 
     // `FilterReference` is never interpolated. This only exists to allow the generic blending code to compile.

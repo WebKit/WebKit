@@ -64,7 +64,7 @@ namespace Util {
 
 std::string toSTD(const char*);
 ALWAYS_INLINE std::string toSTD(ASCIILiteral literal) { return toSTD(literal.characters()); }
-ALWAYS_INLINE std::string toSTD(const String& string) { return string.utf8().toStdString(); }
+ALWAYS_INLINE std::string toSTD(StringImpl* string) { return utf8(string).toStdString(); }
 ALWAYS_INLINE std::string toSTD(const UTF8CString& string) { return string.toStdString(); }
 
 #if USE(FOUNDATION)
@@ -99,7 +99,7 @@ NSString *toNS(WKRetainPtr<WKStringRef>);
 
 WKRetainPtr<WKStringRef> toWK(const char* utf8String);
 WKRetainPtr<WKStringRef> toWK(const UTF8CString&);
-WKRetainPtr<WKStringRef> toWK(const String&);
+WKRetainPtr<WKStringRef> toWK(StringImpl*);
 
 #endif // WK_HAVE_C_SPI
 

@@ -63,11 +63,22 @@ public:
     StringView& operator=(const StringView&);
 #endif
 
-    StringView(const AtomString& string LIFETIME_BOUND);
-    StringView(const String& string LIFETIME_BOUND);
-    StringView(const ValueOrReference<String>& string LIFETIME_BOUND);
     StringView(const StringImpl& string LIFETIME_BOUND);
+    // A null pointer results in a null StringView.
     StringView(const StringImpl* string LIFETIME_BOUND);
+    StringView(const ValueOrReference<RefPtr<StringImpl>>& string LIFETIME_BOUND);
+    // Only for the default pointer traits, so that existing calls with e.g. PackedRefPtr arguments to
+    // functions overloaded on StringView and raw pointers don't become ambiguous.
+    template<typename X> requires std::is_convertible_v<X*, const StringImpl*>
+    StringView(const RefPtr<X>& string LIFETIME_BOUND)
+        : StringView(static_cast<const StringImpl*>(string.get()))
+    {
+    }
+    template<typename X> requires std::is_convertible_v<X*, const StringImpl*>
+    StringView(const Ref<X>& string LIFETIME_BOUND)
+        : StringView(static_cast<const StringImpl&>(string.get()))
+    {
+    }
     StringView(std::span<const Latin1Character> span LIFETIME_BOUND);
     StringView(std::span<const char16_t> span LIFETIME_BOUND);
     StringView(std::span<const char> span LIFETIME_BOUND); // FIXME: Consider dropping this overload. Callers should pass Latin1Character/char16_t instead.
@@ -111,10 +122,11 @@ public:
 
     bool containsOnlyASCII() const;
 
-    String toString() const;
-    String toStringWithoutCopying() const;
-    AtomString toAtomString() const;
-    AtomString toExistingAtomString() const;
+    // A null StringView results in null, except for toStringWithoutCopying(), which results in the empty string.
+    RefPtr<StringImpl> toString() const;
+    RefPtr<StringImpl> toStringWithoutCopying() const;
+    RefPtr<AtomStringImpl> toAtomString() const;
+    RefPtr<AtomStringImpl> toExistingAtomString() const;
 
 #if USE(CF)
     // These functions convert null strings to empty strings.
@@ -178,9 +190,9 @@ public:
     NODELETE WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
     NODELETE WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
-    WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
-    WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
-    WTF_EXPORT_PRIVATE AtomString convertToASCIILowercaseAtom() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> convertToASCIILowercase() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> convertToASCIIUppercase() const;
+    WTF_EXPORT_PRIVATE RefPtr<AtomStringImpl> convertToASCIILowercaseAtom() const;
 
     NODELETE WTF_EXPORT_PRIVATE std::optional<char32_t> convertToSingleCodePoint() const;
 
@@ -283,13 +295,11 @@ inline bool operator==(StringView a, ASCIILiteral b) { return equal(a, b); }
 
 struct StringViewWithUnderlyingString;
 
-// This returns a StringView of the normalized result, and a String that is either
+// This returns a StringView of the normalized result, and a string that is either
 // null, if the input was already normalized, or contains the normalized result
 // and needs to be kept around so the StringView remains valid. Typically the
 // easiest way to use it correctly is to put it into a local and use the StringView.
 WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
-
-WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
 
 inline StringView nullStringView() { return { }; }
 inline StringView emptyStringView() { return ""_span; }
@@ -308,37 +318,49 @@ NODELETE inline bool codePointCompareLessThan(StringView a, StringView b)
 
 namespace WTF {
 
+namespace Detail {
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> normalizedNFC(StringImpl*);
+}
+
+// Returns the argument itself if it is already normalized. A template so that it is an exact match for
+// smart pointer arguments, and not ambiguous with the StringView overload.
+template<StringImplPointerLike T> inline RefPtr<StringImpl> normalizedNFC(const T& string)
+{
+    auto* impl = toStringImplPointer(string);
+    return Detail::normalizedNFC(impl);
+}
+
 struct StringViewWithUnderlyingString {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(StringViewWithUnderlyingString);
     StringViewWithUnderlyingString() = default;
 
-    StringViewWithUnderlyingString(StringView passedView, String passedUnderlyingString)
+    StringViewWithUnderlyingString(StringView passedView, RefPtr<StringImpl> passedUnderlyingString)
         : underlyingString(WTF::move(passedUnderlyingString))
         , view(WTF::move(passedView))
     { }
 
-    String underlyingString;
+    RefPtr<StringImpl> underlyingString;
     StringView view;
 
-    String toString() const;
-    AtomString toAtomString() const;
+    RefPtr<StringImpl> toString() const;
+    RefPtr<AtomStringImpl> toAtomString() const;
 };
 
 inline StringView::StringView()
 {
 }
 
-inline String StringViewWithUnderlyingString::toString() const
+inline RefPtr<StringImpl> StringViewWithUnderlyingString::toString() const
 {
-    if (view.length() == underlyingString.length()) [[likely]]
+    if (view.length() == (underlyingString ? underlyingString->length() : 0)) [[likely]]
         return underlyingString;
     return view.toString();
 }
 
-inline AtomString StringViewWithUnderlyingString::toAtomString() const
+inline RefPtr<AtomStringImpl> StringViewWithUnderlyingString::toAtomString() const
 {
-    if (view.length() == underlyingString.length()) [[likely]]
-        return AtomString { underlyingString };
+    if (view.length() == (underlyingString ? underlyingString->length() : 0)) [[likely]]
+        return AtomStringImpl::add(underlyingString.get());
     return view.toAtomString();
 }
 
@@ -475,27 +497,8 @@ inline StringView::StringView(const StringImpl* string LIFETIME_BOUND)
         initialize(string->span16());
 }
 
-inline StringView::StringView(const String& string LIFETIME_BOUND)
-{
-    setUnderlyingString(string.impl());
-    if (!string.impl()) {
-        clear();
-        return;
-    }
-    if (string.is8Bit()) {
-        initialize(string.span8());
-        return;
-    }
-    initialize(string.span16());
-}
-
-inline StringView::StringView(const AtomString& atomString LIFETIME_BOUND)
-    : StringView(atomString.string())
-{
-}
-
-inline StringView::StringView(const ValueOrReference<String>& string LIFETIME_BOUND)
-    : StringView(string.get())
+inline StringView::StringView(const ValueOrReference<RefPtr<StringImpl>>& string LIFETIME_BOUND)
+    : StringView(string.get().get())
 {
 }
 
@@ -711,21 +714,28 @@ inline StringView::UpconvertedCharactersWithSize<N>::UpconvertedCharactersWithSi
     m_characters = m_upconvertedCharacters.span();
 }
 
-inline String StringView::toString() const
+inline RefPtr<StringImpl> StringView::toString() const
 {
-    if (is8Bit())
-        return span8();
-    return span16();
+    if (is8Bit()) {
+        auto characters = span8();
+        if (!characters.data())
+            return nullptr;
+        return StringImpl::create(characters);
+    }
+    auto characters = span16();
+    if (!characters.data())
+        return nullptr;
+    return StringImpl::create(characters);
 }
 
-inline AtomString StringView::toAtomString() const
+inline RefPtr<AtomStringImpl> StringView::toAtomString() const
 {
     if (is8Bit())
-        return span8();
-    return span16();
+        return AtomStringImpl::add(span8());
+    return AtomStringImpl::add(span16());
 }
 
-inline AtomString StringView::toExistingAtomString() const
+inline RefPtr<AtomStringImpl> StringView::toExistingAtomString() const
 {
     if (is8Bit())
         return AtomStringImpl::lookUp(span8());
@@ -746,7 +756,8 @@ inline double StringView::toDouble(bool& isValid) const
     return charactersToDouble(span16(), &isValid);
 }
 
-inline String StringView::toStringWithoutCopying() const
+// Unlike toString(), a null StringView results in the empty string.
+inline RefPtr<StringImpl> StringView::toStringWithoutCopying() const
 {
     if (is8Bit())
         return StringImpl::createWithoutCopying(span8());
@@ -1437,150 +1448,17 @@ NODELETE inline bool endsWithIgnoringASCIICase(StringView reference, StringView 
     return equalIgnoringASCIICaseWithLength(reference.span16().subspan(startOffset), suffix.span16(), suffix.length());
 }
 
-inline size_t String::find(StringView string) const
-{
-    return m_impl ? m_impl->find(string) : notFound;
-}
-inline size_t String::find(StringView string, unsigned start) const
-{
-    return m_impl ? m_impl->find(string, start) : notFound;
-}
+[[nodiscard]] WTF_EXPORT_PRIVATE RefPtr<StringImpl> makeStringByReplacingAll(StringView, char16_t target, char16_t replacement);
+[[nodiscard]] WTF_EXPORT_PRIVATE RefPtr<StringImpl> makeStringBySimplifyingNewLinesSlowCase(StringImpl*, unsigned firstCarriageReturnOffset);
 
-inline size_t String::findIgnoringASCIICase(StringView string) const
+[[nodiscard]] inline RefPtr<StringImpl> makeStringBySimplifyingNewLines(StringImpl* string)
 {
-    return m_impl ? m_impl->findIgnoringASCIICase(string) : notFound;
-}
-
-inline size_t String::findIgnoringASCIICase(StringView string, unsigned start) const
-{
-    return m_impl ? m_impl->findIgnoringASCIICase(string, start) : notFound;
-}
-
-inline size_t String::reverseFind(StringView string, unsigned start) const
-{
-    return m_impl ? m_impl->reverseFind(string, start) : notFound;
-}
-
-inline bool String::contains(StringView string) const
-{
-    return find(string) != notFound;
-}
-
-inline bool String::containsIgnoringASCIICase(StringView string) const
-{
-    return findIgnoringASCIICase(string) != notFound;
-}
-
-inline bool String::containsIgnoringASCIICase(StringView string, unsigned start) const
-{
-    return findIgnoringASCIICase(string, start) != notFound;
-}
-
-[[nodiscard]] inline String makeStringByReplacingAll(const String& string, StringView target, StringView replacement)
-{
-    if (RefPtr impl = string.impl())
-        return String { impl->replace(target, replacement) };
-    return string;
-}
-
-[[nodiscard]] inline String makeStringByReplacing(const String& string, unsigned start, unsigned length, StringView replacement)
-{
-    if (RefPtr impl = string.impl())
-        return String { impl->replace(start, length, replacement) };
-    return string;
-}
-
-[[nodiscard]] inline String makeStringByReplacingAll(const String& string, char16_t target, StringView replacement)
-{
-    if (RefPtr impl = string.impl())
-        return String { impl->replace(target, replacement) };
-    return string;
-}
-
-[[nodiscard]] WTF_EXPORT_PRIVATE String makeStringByReplacingAll(StringView, char16_t target, char16_t replacement);
-[[nodiscard]] WTF_EXPORT_PRIVATE String makeStringBySimplifyingNewLinesSlowCase(const String&, unsigned firstCarriageReturnOffset);
-
-[[nodiscard]] inline String makeStringBySimplifyingNewLines(const String& string)
-{
-    auto firstCarriageReturn = string.find('\r');
+    if (!string)
+        return nullptr;
+    auto firstCarriageReturn = string->find('\r');
     if (firstCarriageReturn == notFound)
         return string;
     return makeStringBySimplifyingNewLinesSlowCase(string, firstCarriageReturn);
-}
-
-inline bool String::startsWith(StringView string) const
-{
-    return m_impl ? m_impl->startsWith(string) : string.isEmpty();
-}
-
-inline bool String::startsWithIgnoringASCIICase(StringView string) const
-{
-    return m_impl ? m_impl->startsWithIgnoringASCIICase(string) : string.isEmpty();
-}
-
-inline bool String::endsWith(StringView string) const
-{
-    return m_impl ? m_impl->endsWith(string) : string.isEmpty();
-}
-
-inline bool String::endsWithIgnoringASCIICase(StringView string) const
-{
-    return m_impl ? m_impl->endsWithIgnoringASCIICase(string) : string.isEmpty();
-}
-
-inline bool String::hasInfixStartingAt(StringView prefix, unsigned start) const
-{
-    SUPPRESS_UNCOUNTED_ARG return m_impl && prefix && m_impl->hasInfixStartingAt(prefix, start);
-}
-
-inline bool String::hasInfixEndingAt(StringView suffix, unsigned end) const
-{
-    SUPPRESS_UNCOUNTED_ARG return m_impl && suffix && m_impl->hasInfixEndingAt(suffix, end);
-}
-
-inline size_t AtomString::find(StringView string, size_t start) const
-{
-    return m_string.find(string, start);
-}
-
-inline size_t AtomString::findIgnoringASCIICase(StringView string) const
-{
-    return m_string.findIgnoringASCIICase(string);
-}
-
-inline size_t AtomString::findIgnoringASCIICase(StringView string, size_t start) const
-{
-    return m_string.findIgnoringASCIICase(string, start);
-}
-
-inline bool AtomString::contains(StringView string) const
-{
-    return m_string.contains(string);
-}
-
-inline bool AtomString::containsIgnoringASCIICase(StringView string) const
-{
-    return m_string.containsIgnoringASCIICase(string);
-}
-
-inline bool AtomString::startsWith(StringView string) const
-{
-    return m_string.startsWith(string);
-}
-
-inline bool AtomString::startsWithIgnoringASCIICase(StringView string) const
-{
-    return m_string.startsWithIgnoringASCIICase(string);
-}
-
-inline bool AtomString::endsWith(StringView string) const
-{
-    return m_string.endsWith(string);
-}
-
-inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
-{
-    return m_string.endsWithIgnoringASCIICase(string);
 }
 
 template<typename Func>
@@ -1604,7 +1482,6 @@ template<> struct VectorTraits<StringViewWithUnderlyingString> : VectorTraitsBas
 
 using WTF::append;
 using WTF::equal;
-using WTF::makeStringByReplacing;
 using WTF::makeStringBySimplifyingNewLines;
 using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
@@ -1613,3 +1490,5 @@ using WTF::nullStringView;
 using WTF::emptyStringView;
 using WTF::codePointCompare;
 using WTF::codePointCompareLessThan;
+
+#include <wtf/text/StringFunctions.h>

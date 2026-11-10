@@ -215,9 +215,9 @@ public:
     bool isScrollSnapInProgress() const final;
     NODELETE bool scrollAnimatorEnabled() const final;
     NODELETE bool mockScrollbarsControllerEnabled() const final;
-    void logMockScrollbarsControllerMessage(const String&) const final;
+    void logMockScrollbarsControllerMessage(StringImpl*) const final;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
     void didStartScrollAnimation() final;
 
     IntSize visibleSize() const final;

@@ -64,7 +64,7 @@ bool AVStreamDataParserMIMETypeCache::isAvailable() const
 #endif
 }
 
-MediaPlayerEnums::SupportsType AVStreamDataParserMIMETypeCache::canDecodeType(const String& type)
+MediaPlayerEnums::SupportsType AVStreamDataParserMIMETypeCache::canDecodeType(StringImpl* _Nullable type)
 {
     if (isAvailable())
         return MIMETypeCache::canDecodeType(type);
@@ -76,7 +76,7 @@ MediaPlayerEnums::SupportsType AVStreamDataParserMIMETypeCache::canDecodeType(co
     return MediaPlayerEnums::SupportsType::IsNotSupported;
 }
 
-HashSet<String> AVStreamDataParserMIMETypeCache::supportedTypes()
+HashSet<RefPtr<StringImpl>> AVStreamDataParserMIMETypeCache::supportedTypes()
 {
     if (isAvailable())
         return MIMETypeCache::supportedTypes();
@@ -94,7 +94,7 @@ bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& t
     ASSERT(isAvailable());
 
     if ([PAL::getAVStreamDataParserClassSingleton() respondsToSelector:@selector(canParseExtendedMIMEType:)]) {
-        if ([PAL::getAVStreamDataParserClassSingleton() canParseExtendedMIMEType:type.raw().createNSString().get()])
+        if ([PAL::getAVStreamDataParserClassSingleton() canParseExtendedMIMEType:createNSString(type.raw()).get()])
             return true;
         return hasPlatformStrategies() && platformStrategies()->mediaStrategy()->canDecodeExtendedType(PlatformMediaDecodingType::MediaSource, type);
     }
@@ -110,14 +110,14 @@ bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& t
     if (supportedTypes.isEmpty())
         return false;
 
-    String replacementType = makeStringByReplacingAll(type.raw(), type.containerType(), *supportedTypes.begin());
+    RefPtr<StringImpl> replacementType = makeStringByReplacingAll(type.raw(), type.containerType(), *supportedTypes.begin());
     return assetCache.canDecodeType(replacementType) == MediaPlayerEnums::SupportsType::IsSupported;
 #endif
 
     return false;
 }
 
-void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<String>& cache)
+void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<RefPtr<StringImpl>>& cache)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     if (!isAvailable())
@@ -125,7 +125,7 @@ void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<String>& cache)
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString* type in [PAL::getAVStreamDataParserClassSingleton() audiovisualMIMETypes])
-        cache.add(type);
+        cache.add(StringImpl::create(type));
 #endif
 }
 

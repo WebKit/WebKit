@@ -79,7 +79,7 @@ struct WorkerAgentContext : public WebAgentContext {
 
 class InspectorAgentBase : public Inspector::InspectorAgentBase {
 protected:
-    InspectorAgentBase(const String& name, WebAgentContext& context)
+    InspectorAgentBase(StringImpl* name, WebAgentContext& context)
         : Inspector::InspectorAgentBase(name)
         , m_instrumentingAgents(context.instrumentingAgents)
         , m_environment(context.environment)

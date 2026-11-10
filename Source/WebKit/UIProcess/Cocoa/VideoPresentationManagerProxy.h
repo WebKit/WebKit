@@ -89,7 +89,7 @@ private:
 
     void setVideoDimensions(const WebCore::FloatSize&);
     void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
-    void routingContextUIDChanged(const String&);
+    void routingContextUIDChanged(StringImpl*);
     void setHasObjectViewBox(bool);
 
     // VideoPresentationModel
@@ -114,7 +114,7 @@ private:
     void failedToEnterPictureInPicture() final;
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
-    void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&) final;
+    void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, RefPtr<StringImpl>)>&&) final;
 
     void requestUpdateInlineRect() final;
     void requestVideoContentLayer() final;
@@ -135,7 +135,7 @@ private:
     void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    void requestShowCaptionDisplaySettingsPreview(const String&) final;
+    void requestShowCaptionDisplaySettingsPreview(StringImpl*) final;
     void requestHideCaptionDisplaySettingsPreview() final;
 #endif
 
@@ -191,7 +191,7 @@ public:
     void setMockVideoPresentationModeEnabled(bool enabled) { m_mockVideoPresentationModeEnabled = enabled; }
     WebCore::FloatRect lastSetupFullscreenRectForTesting() const { return m_lastSetupFullscreenRectForTesting; }
 
-    void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
+    void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, RefPtr<StringImpl>)>&&);
 
     bool isPlayingVideoInPictureInPicture() const;
 
@@ -262,7 +262,7 @@ private:
     void setDocumentVisibility(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
     void setIsChildOfElementFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
     void audioSessionCategoryChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
-    void routingContextUIDChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const String&);
+    void routingContextUIDChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, StringImpl*);
     void hasBeenInteractedWith(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
     void setVideoDimensions(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::FloatSize&);
     void setHasObjectViewBox(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
@@ -285,7 +285,7 @@ private:
     void setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier, const WebCore::IntRect&);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    void requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier, const String&);
+    void requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier, StringImpl*);
     void requestHideCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier);
 #endif
 

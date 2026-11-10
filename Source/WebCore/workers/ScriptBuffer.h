@@ -38,12 +38,12 @@ namespace WebCore {
 class ScriptBuffer {
 public:
     ScriptBuffer() = default;
-    WEBCORE_EXPORT explicit ScriptBuffer(const String&);
+    WEBCORE_EXPORT explicit ScriptBuffer(StringImpl*);
     WEBCORE_EXPORT explicit ScriptBuffer(RefPtr<const FragmentedSharedBuffer>&&);
 
     static ScriptBuffer empty();
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     const SharedBufferBuilder& bufferBuilder() const LIFETIME_BOUND { return m_buffer; }
     const FragmentedSharedBuffer* buffer() const { return m_buffer.buffer(); }
     RefPtr<const FragmentedSharedBuffer> bufferForSerialization() const { return m_buffer.buffer(); }
@@ -54,7 +54,7 @@ public:
     bool isEmpty() const { return m_buffer.isEmpty(); }
 
     NODELETE WEBCORE_EXPORT bool containsSingleFileMappedSegment() const;
-    void append(const String&);
+    void append(StringImpl*);
     void append(const FragmentedSharedBuffer&);
 
     bool operator==(const ScriptBuffer& other) const { return m_buffer == other.m_buffer; }

@@ -175,17 +175,17 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
             return fragment;
 
         if (dragData.containsURL(DragData::DoNotConvertFilenames)) {
-            String title;
-            String url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
-            if (!url.isEmpty()) {
+            RefPtr<StringImpl> title;
+            RefPtr<StringImpl> url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
+            if (!isEmpty(url)) {
                 Ref document = context.start.document();
                 Ref anchor = HTMLAnchorElement::create(document);
-                anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomString { url });
-                if (title.isEmpty()) {
+                anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomStringImpl::add(url).get());
+                if (isEmpty(title)) {
                     // Try the plain text first because the URL might be normalized or escaped.
                     if (dragData.containsPlainText())
                         title = dragData.asPlainText();
-                    if (title.isEmpty())
+                    if (isEmpty(title))
                         title = url;
                 }
                 anchor->appendChild(document->createTextNode(WTF::move(title)));
@@ -315,7 +315,7 @@ DragEventTargetData DragController::performDragOperation(DragData&& dragData, Lo
         return { DragEventHandled::No };
 
     auto urlString = dragData.asURL();
-    if (urlString.isEmpty())
+    if (isEmpty(urlString))
         return { DragEventHandled::No };
 
     client().willPerformDragDestinationAction(DragDestinationAction::Load, dragData);
@@ -578,7 +578,7 @@ static bool setSelectionToDragCaret(LocalFrame* frame, VisibleSelection& dragCar
 bool DragController::dispatchTextInputEventFor(LocalFrame* innerFrame, const DragData& dragData)
 {
     ASSERT(m_page->dragCaretController().hasCaret());
-    String text = m_page->dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText();
+    RefPtr<StringImpl> text = m_page->dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText();
     auto target = protect(innerFrame->editor())->findEventTargetFrom(m_page->dragCaretController().caretPosition());
     // FIXME: What guarantees target is not null?
     Ref event = TextEvent::createForDrop(protect(protect(innerFrame)->windowProxy()).ptr(), WTF::move(text));
@@ -679,8 +679,8 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             }
         }
     } else {
-        String text = dragData.asPlainText();
-        if (text.isEmpty() || !editor->shouldInsertText(text, *range, EditorInsertAction::Dropped))
+        RefPtr<StringImpl> text = dragData.asPlainText();
+        if (isEmpty(text) || !editor->shouldInsertText(text, *range, EditorInsertAction::Dropped))
             return false;
 
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
@@ -969,13 +969,13 @@ void DragController::prepareForDragStart(LocalFrame& source, OptionSet<DragSourc
     RefPtr cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
     auto imageURL = hitTestResult->absoluteImageURL();
     if (actionMask.contains(DragSourceAction::Image) && !imageURL.isEmpty() && cachedImage && cachedImage->canRender()) {
-        editor->writeImageToPasteboard(pasteboard, element, imageURL, { });
+        editor->writeImageToPasteboard(pasteboard, element, imageURL, nullptr);
         return;
     }
 
     auto linkURL = hitTestResult->absoluteLinkURL();
     if (actionMask.contains(DragSourceAction::Link) && !linkURL.isEmpty() && protect(protect(source.document())->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton()))
-        editor->copyURL(linkURL, hitTestResult->textContent().simplifyWhiteSpace(deprecatedIsSpaceOrNewline), pasteboard);
+        editor->copyURL(linkURL, simplifyWhiteSpace(hitTestResult->textContent(), deprecatedIsSpaceOrNewline), pasteboard);
 #else
     // FIXME: Make this work on Windows by implementing Editor::writeSelectionToPasteboard and Editor::writeImageToPasteboard.
     UNUSED_PARAM(source);
@@ -1146,7 +1146,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
     if (!imageURL.isEmpty() && cachedImage && cachedImage->canRender() && m_dragSourceAction.contains(DragSourceAction::Image)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
-        ASSERT(!cachedImage->filenameExtension().isEmpty());
+        ASSERT(!isEmpty(cachedImage->filenameExtension()));
 
 #if ENABLE(ATTACHMENT_ELEMENT)
         auto attachmentInfo = protect(src.editor())->promisedAttachmentInfo(element);
@@ -1184,7 +1184,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 #endif
         PasteboardWriterData pasteboardWriterData;
 
-        String textContentWithSimplifiedWhiteSpace = hitTestResult->textContent().simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+        RefPtr<StringImpl> textContentWithSimplifiedWhiteSpace = simplifyWhiteSpace(hitTestResult->textContent(), deprecatedIsSpaceOrNewline);
 
         if (hasData == HasNonDefaultPasteboardData::No) {
             // Simplify whitespace so the title put on the dataTransfer resembles what the user sees
@@ -1465,7 +1465,7 @@ void DragController::doSystemDrag(DragImage image, RefPtr<TextIndicator>&& textI
 
         if (RefPtr link = containingLinkElement(*element)) {
             auto titleAttribute = link->attributeWithoutSynchronization(HTMLNames::titleAttr);
-            item.title = titleAttribute.isEmpty() ? link->innerText() : titleAttribute.string();
+            item.title = isEmpty(titleAttribute) ? link->innerText() : titleAttribute;
             item.url = protect(frame.document())->encodingParseURL(link->getAttribute(HTMLNames::hrefAttr));
         }
 
@@ -1556,8 +1556,8 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
     for (auto& size : imageSizes) {
         ASSERT(!size.isEmpty());
         Ref image = HTMLImageElement::create(*document);
-        image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(size.width()));
-        image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(size.height()));
+        image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomStringImpl::number(size.width()));
+        image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomStringImpl::number(size.height()));
         image->setInlineStyleProperty(CSSPropertyID::MaxWidth, 100, CSSUnitType::Percentage);
         image->setInlineStyleProperty(CSSPropertyID::BackgroundColor, serializationForCSS(Color { Color::black.colorWithAlphaByte(13) }));
         image->setIsDroppedImagePlaceholder();
@@ -1597,7 +1597,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
         auto imageSize = imageSizes[i];
         double clientWidth = placeholder->clientWidth();
         double heightRespectingAspectRatio = (imageSize.height() * clientWidth) / imageSize.width();
-        placeholder->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(heightRespectingAspectRatio));
+        placeholder->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomStringImpl::number(heightRespectingAspectRatio));
     }
 
     document->updateLayout();
@@ -1795,7 +1795,7 @@ std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndi
 
 #if !PLATFORM(COCOA) && !(PLATFORM(WIN) && USE(CAIRO))
 
-std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL&, const String&, float)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL&, StringImpl*, float)
 {
     return { };
 }

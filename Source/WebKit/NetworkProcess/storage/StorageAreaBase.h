@@ -68,17 +68,17 @@ public:
     bool hasListeners() const { return !m_listeners.isEmpty(); }
     void notifyListenersAboutClear();
 
-    virtual HashMap<String, String> allItems() = 0;
-    virtual std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) = 0;
-    virtual std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) = 0;
-    virtual std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) = 0;
+    virtual HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> allItems() = 0;
+    virtual std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, RefPtr<StringImpl>&& key, RefPtr<StringImpl>&& value, StringImpl* urlString) = 0;
+    virtual std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* key, StringImpl* urlString) = 0;
+    virtual std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* urlString) = 0;
 
     virtual void ref() const = 0;
     virtual void deref() const = 0;
 
 protected:
     StorageAreaBase(unsigned quota, const WebCore::ClientOrigin&);
-    void dispatchEvents(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
+    void dispatchEvents(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString) const;
 
 private:
     unsigned m_quota;

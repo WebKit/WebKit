@@ -37,12 +37,12 @@ class AnimationPlaybackEvent final : public AnimationEventBase {
 public:
     using Init = AnimationPlaybackEventInit;
 
-    static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
+    static Ref<AnimationPlaybackEvent> create(AtomStringImpl* type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, animation, scheduledTime, timelineTime, currentTime));
     }
 
-    static Ref<AnimationPlaybackEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<AnimationPlaybackEvent> create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, WTF::move(initializer), isTrusted));
     }
@@ -53,8 +53,8 @@ public:
     std::optional<WebAnimationTime> currentTime() const { return m_currentTime; }
 
 private:
-    AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime);
-    AnimationPlaybackEvent(const AtomString&, Init&&, IsTrusted);
+    AnimationPlaybackEvent(AtomStringImpl*, WebAnimation*, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime);
+    AnimationPlaybackEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     std::optional<WebAnimationTime> m_timelineTime;
     std::optional<WebAnimationTime> m_currentTime;

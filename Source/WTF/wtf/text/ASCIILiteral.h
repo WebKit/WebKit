@@ -93,6 +93,13 @@ public:
     constexpr char operator[](size_t index) const { return m_charactersWithNullTerminator[index]; }
     constexpr char codeUnitAt(size_t index) const { return m_charactersWithNullTerminator[index]; }
 
+    // Same semantics and cost as String(ASCIILiteral) and AtomString(ASCIILiteral): a null literal
+    // converts to a null pointer. Defined in StringImpl.h and AtomStringImpl.h respectively.
+    // The atom conversion is explicit (usable in direct-initialization, e.g. in-place construction),
+    // so that literals passed to functions overloaded on both pointer types are not ambiguous.
+    operator RefPtr<StringImpl>() const;
+    explicit operator RefPtr<AtomStringImpl>() const;
+
 #ifdef __OBJC__
     // This function convert null strings to empty strings.
     WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSString() const;

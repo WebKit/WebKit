@@ -2000,12 +2000,12 @@ bool RenderLayerScrollableArea::mockScrollbarsControllerEnabled() const
     return m_layer.renderer().settings().mockScrollbarsControllerEnabled();
 }
 
-void RenderLayerScrollableArea::logMockScrollbarsControllerMessage(const String& message) const
+void RenderLayerScrollableArea::logMockScrollbarsControllerMessage(StringImpl* message) const
 {
     protect(m_layer.renderer().document())->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("RenderLayer: "_s, message));
 }
 
-String RenderLayerScrollableArea::debugDescription() const
+RefPtr<StringImpl> RenderLayerScrollableArea::debugDescription() const
 {
     return m_layer.debugDescription();
 }

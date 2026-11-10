@@ -44,9 +44,9 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
     
-const String FileMonitorTestData("This is a test"_s);
-const String FileMonitorRevisedData("This is some changed text for the test"_s);
-const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
+const RefPtr<StringImpl> FileMonitorTestData("This is a test"_si);
+const RefPtr<StringImpl> FileMonitorRevisedData("This is some changed text for the test"_si);
+const RefPtr<StringImpl> FileMonitorSecondRevisedData("This is some changed text for the test"_si);
 
 static bool observedFileModification = false;
 static bool observedFileDeletion = false;
@@ -72,7 +72,7 @@ public:
         auto handle = WTF::move(result.second);
         ASSERT_TRUE(!!handle);
 
-        auto rc = handle.write(byteCast<uint8_t>(FileMonitorTestData.utf8().span()));
+        auto rc = handle.write(byteCast<uint8_t>(utf8(FileMonitorTestData).span()));
         ASSERT_TRUE(!!rc);
     }
     
@@ -82,10 +82,10 @@ public:
         resetTestState();
     }
     
-    const String& tempFilePath() { return m_tempFilePath; }
+    const RefPtr<StringImpl>& tempFilePath() { return m_tempFilePath; }
     
 private:
-    String m_tempFilePath;
+    RefPtr<StringImpl> m_tempFilePath;
 };
     
 static void handleFileModification()
@@ -100,20 +100,20 @@ static void handleFileDeletion()
     didFinish = true;
 }
 
-static String createCommand(const String& path, const String& payload)
+static RefPtr<StringImpl> createCommand(StringImpl* path, StringImpl* payload)
 {
     return makeString("echo \""_s, payload, "\" > "_s, path);
 }
 
-static String readContentsOfFile(const String& path)
+static RefPtr<StringImpl> readContentsOfFile(StringImpl* path)
 {
     auto buffer = FileSystem::readEntireFile(path);
     if (!buffer)
         return emptyString();
 
-    String result = byteCast<Latin1Character>(buffer->span());
-    if (result.endsWith('\n'))
-        return result.left(result.length() - 1);
+    RefPtr<StringImpl> result = StringImpl::create(byteCast<Latin1Character>(buffer->span()));
+    if (endsWith(result, '\n'))
+        return left(result, length(result) - 1);
 
     return result;
 }
@@ -139,11 +139,11 @@ TEST_F(FileMonitorTest, DetectChange)
     });
 
     testQueue->dispatch([this] () mutable {
-        String fileContents = readContentsOfFile(tempFilePath());
+        RefPtr<StringImpl> fileContents = readContentsOfFile(tempFilePath());
         EXPECT_EQ(FileMonitorTestData, fileContents);
 
         auto command = createCommand(tempFilePath(), FileMonitorRevisedData);
-        auto rc = system(command.utf8().legacyCStringPointer());
+        auto rc = system(utf8(command).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -154,7 +154,7 @@ TEST_F(FileMonitorTest, DetectChange)
     EXPECT_TRUE(observedFileModification);
     EXPECT_FALSE(observedFileDeletion);
 
-    String revisedFileContents = readContentsOfFile(tempFilePath());
+    RefPtr<StringImpl> revisedFileContents = readContentsOfFile(tempFilePath());
     EXPECT_EQ(FileMonitorRevisedData, revisedFileContents);
 }
 
@@ -179,11 +179,11 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
     });
     
     testQueue->dispatch([this] () mutable {
-        String fileContents = readContentsOfFile(tempFilePath());
+        RefPtr<StringImpl> fileContents = readContentsOfFile(tempFilePath());
         EXPECT_EQ(FileMonitorTestData, fileContents);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);
-        auto rc = system(firstCommand.utf8().legacyCStringPointer());
+        auto rc = system(utf8(firstCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -194,14 +194,14 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
     EXPECT_TRUE(observedFileModification);
     EXPECT_FALSE(observedFileDeletion);
 
-    String revisedFileContents = readContentsOfFile(tempFilePath());
+    RefPtr<StringImpl> revisedFileContents = readContentsOfFile(tempFilePath());
     EXPECT_EQ(FileMonitorRevisedData, revisedFileContents);
 
     resetTestState();
 
     testQueue->dispatch([this] () mutable {
         auto secondCommand = createCommand(tempFilePath(), FileMonitorSecondRevisedData);
-        auto rc = system(secondCommand.utf8().legacyCStringPointer());
+        auto rc = system(utf8(secondCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -212,7 +212,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
     EXPECT_TRUE(observedFileModification);
     EXPECT_FALSE(observedFileDeletion);
 
-    String secondRevisedfileContents = readContentsOfFile(tempFilePath());
+    RefPtr<StringImpl> secondRevisedfileContents = readContentsOfFile(tempFilePath());
     EXPECT_EQ(FileMonitorSecondRevisedData, secondRevisedfileContents);
 }
 
@@ -237,7 +237,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
     });
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().legacyCStringPointer());
+        auto rc = system(utf8(makeString("rm -f "_s, tempFilePath())).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -270,11 +270,11 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
     });
 
     testQueue->dispatch([this] () mutable {
-        String fileContents = readContentsOfFile(tempFilePath());
+        RefPtr<StringImpl> fileContents = readContentsOfFile(tempFilePath());
         EXPECT_EQ(FileMonitorTestData, fileContents);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);
-        auto rc = system(firstCommand.utf8().legacyCStringPointer());
+        auto rc = system(utf8(firstCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -288,7 +288,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
     resetTestState();
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().legacyCStringPointer());
+        auto rc = system(utf8(makeString("rm -f "_s, tempFilePath())).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -321,7 +321,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
     });
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().legacyCStringPointer());
+        auto rc = system(utf8(makeString("rm -f "_s, tempFilePath())).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -340,11 +340,11 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
         auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::Truncate);
         ASSERT_FALSE(!handle);
 
-        auto rc = handle.write(byteCast<uint8_t>(FileMonitorTestData.utf8().span()));
+        auto rc = handle.write(byteCast<uint8_t>(utf8(FileMonitorTestData).span()));
         ASSERT_TRUE(!!rc);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);
-        rc = system(firstCommand.utf8().legacyCStringPointer());
+        rc = system(utf8(firstCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;

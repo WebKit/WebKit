@@ -38,35 +38,35 @@ namespace WTF {
 
 static Lock platformLanguageMutex;
 
-static String localeInfo(LCTYPE localeType, const String& fallback)
+static RefPtr<StringImpl> localeInfo(LCTYPE localeType, StringImpl* fallback)
 {
     LANGID langID = GetUserDefaultUILanguage();
     int localeChars = GetLocaleInfo(langID, localeType, nullptr, 0);
     if (!localeChars)
         return fallback;
     std::span<char16_t> localeNameBuf;
-    String localeName = String::createUninitialized(localeChars, localeNameBuf);
+    RefPtr<StringImpl> localeName = StringImpl::createUninitialized(localeChars, localeNameBuf);
     localeChars = GetLocaleInfo(langID, localeType, wcharFrom(localeNameBuf.data()), localeChars);
     if (!localeChars)
         return fallback;
-    if (localeName.isEmpty())
+    if (isEmpty(localeName))
         return fallback;
 
-    return localeName.left(localeName.length() - 1);
+    return left(localeName, length(localeName) - 1);
 }
 
-static String platformLanguage()
+static RefPtr<StringImpl> platformLanguage()
 {
     Locker locker { platformLanguageMutex };
 
-    static String computedDefaultLanguage;
-    if (!computedDefaultLanguage.isEmpty())
-        return computedDefaultLanguage.isolatedCopy();
+    static RefPtr<StringImpl> computedDefaultLanguage;
+    if (!isEmpty(computedDefaultLanguage))
+        return isolatedCopy(computedDefaultLanguage);
 
-    String languageName = localeInfo(LOCALE_SISO639LANGNAME, "en"_s);
-    String countryName = localeInfo(LOCALE_SISO3166CTRYNAME, String());
+    auto languageName = localeInfo(LOCALE_SISO639LANGNAME, "en"_si.get());
+    auto countryName = localeInfo(LOCALE_SISO3166CTRYNAME, nullptr);
 
-    if (countryName.isEmpty())
+    if (isEmpty(countryName))
         computedDefaultLanguage = languageName;
     else
         computedDefaultLanguage = makeString(languageName, '-', countryName);
@@ -74,7 +74,7 @@ static String platformLanguage()
     return computedDefaultLanguage;
 }
 
-Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
+Vector<RefPtr<StringImpl>> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
     return { platformLanguage() };
 }

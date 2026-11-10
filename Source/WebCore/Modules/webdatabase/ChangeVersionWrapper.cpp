@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-ChangeVersionWrapper::ChangeVersionWrapper(String&& oldVersion, String&& newVersion)
-    : m_oldVersion(WTF::move(oldVersion).isolatedCopy())
-    , m_newVersion(WTF::move(newVersion).isolatedCopy())
+ChangeVersionWrapper::ChangeVersionWrapper(RefPtr<StringImpl>&& oldVersion, RefPtr<StringImpl>&& newVersion)
+    : m_oldVersion(isolatedCopy(WTF::move(oldVersion)))
+    , m_newVersion(isolatedCopy(WTF::move(newVersion)))
 {
 }
 
@@ -45,15 +45,15 @@ bool ChangeVersionWrapper::performPreflight(SQLTransaction& transaction)
 {
     Database& database = transaction.database();
 
-    String actualVersion;
+    RefPtr<StringImpl> actualVersion;
     if (!database.getVersionFromDatabase(actualVersion)) {
         int sqliteError = database.sqliteDatabase().lastError();
         m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to read the current version"_s, sqliteError, database.sqliteDatabase().lastErrorMsg());
         return false;
     }
 
-    if (actualVersion != m_oldVersion) {
-        m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_s);
+    if (!equal(actualVersion, m_oldVersion)) {
+        m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_si);
         return false;
     }
 

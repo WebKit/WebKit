@@ -56,7 +56,7 @@ class WEBCORE_EXPORT AutomationInstrumentationClient : public AbstractRefCounted
 public:
     virtual ~AutomationInstrumentationClient() = default;
 
-    virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
+    virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, StringImpl*, const JSC::MessageType&, const WallTime&) = 0;
     virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
 };

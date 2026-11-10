@@ -45,85 +45,85 @@
 - (NSString *)acceptCharset
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::accept_charsetAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::accept_charsetAttr)).autorelease();
 }
 
 - (void)setAcceptCharset:(NSString *)newAcceptCharset
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accept_charsetAttr, newAcceptCharset);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accept_charsetAttr, AtomStringImpl::add((__bridge CFStringRef)newAcceptCharset).get());
 }
 
 - (NSString *)action
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::actionAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::actionAttr).string()).autorelease();
 }
 
 - (void)setAction:(NSString *)newAction
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::actionAttr, newAction);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::actionAttr, AtomStringImpl::add((__bridge CFStringRef)newAction).get());
 }
 
 - (NSString *)autocomplete
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->autocomplete().createNSString().autorelease();
+    return createNSString(IMPL->autocomplete()).autorelease();
 }
 
 - (void)setAutocomplete:(NSString *)newAutocomplete
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, newAutocomplete);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, AtomStringImpl::add((__bridge CFStringRef)newAutocomplete).get());
 }
 
 - (NSString *)enctype
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->enctype().createNSString().autorelease();
+    return createNSString(IMPL->enctype()).autorelease();
 }
 
 - (void)setEnctype:(NSString *)newEnctype
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::enctypeAttr, newEnctype);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::enctypeAttr, AtomStringImpl::add((__bridge CFStringRef)newEnctype).get());
 }
 
 - (NSString *)encoding
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->enctype().createNSString().autorelease();
+    return createNSString(IMPL->enctype()).autorelease();
 }
 
 - (void)setEncoding:(NSString *)newEncoding
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::enctypeAttr, newEncoding);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::enctypeAttr, AtomStringImpl::add((__bridge CFStringRef)newEncoding).get());
 }
 
 - (NSString *)method
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->method().createNSString().autorelease();
+    return createNSString(IMPL->method()).autorelease();
 }
 
 - (void)setMethod:(NSString *)newMethod
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::methodAttr, newMethod);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::methodAttr, AtomStringImpl::add((__bridge CFStringRef)newMethod).get());
 }
 
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getNameAttribute().createNSString().autorelease();
+    return createNSString(IMPL->getNameAttribute()).autorelease();
 }
 
 - (void)setName:(NSString *)newName
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::add((__bridge CFStringRef)newName).get());
 }
 
 - (BOOL)noValidate
@@ -141,13 +141,13 @@
 - (NSString *)target
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::targetAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::targetAttr)).autorelease();
 }
 
 - (void)setTarget:(NSString *)newTarget
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, newTarget);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, AtomStringImpl::add((__bridge CFStringRef)newTarget).get());
 }
 
 - (DOMHTMLCollection *)elements

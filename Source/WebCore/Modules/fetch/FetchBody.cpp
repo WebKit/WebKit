@@ -56,11 +56,11 @@ namespace WebCore {
 
 FetchBody::~FetchBody() = default;
 
-ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
+ExceptionOr<FetchBody> FetchBody::extract(Init&& value, RefPtr<StringImpl>& contentType)
 {
     return WTF::switchOn(WTF::move(value),
         [&](Ref<Blob>&& blob) -> ExceptionOr<FetchBody> {
-            if (!blob->type().isEmpty())
+            if (!isEmpty(blob->type()))
                 contentType = blob->type();
             return FetchBody(WTF::move(blob));
         },
@@ -81,13 +81,13 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
         },
         [&](Ref<ReadableStream>&& stream) -> ExceptionOr<FetchBody> {
             if (stream->isDisturbed())
-                return Exception { ExceptionCode::TypeError, "Input body is disturbed."_s };
+                return Exception { ExceptionCode::TypeError, "Input body is disturbed."_si };
             if (stream->isLocked())
-                return Exception { ExceptionCode::TypeError, "Input body is locked."_s };
+                return Exception { ExceptionCode::TypeError, "Input body is locked."_si };
 
             return FetchBody(WTF::move(stream));
         },
-        [&](String&& value) -> ExceptionOr<FetchBody> {
+        [&](RefPtr<StringImpl>&& value) -> ExceptionOr<FetchBody> {
             contentType = HTTPHeaderValues::textPlainContentType();
             return FetchBody(WTF::move(value));
         }
@@ -107,7 +107,7 @@ std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context
     auto url = formData->asBlobURL();
     if (!url.isNull()) {
         // FIXME: Properly set mime type and size of the blob.
-        Ref<Blob> blob = Blob::deserialize(&context, url, { }, { }, 0, { });
+        Ref<Blob> blob = Blob::deserialize(&context, url, nullptr, { }, 0, nullptr);
         return FetchBody { WTF::move(blob) };
     }
 
@@ -233,7 +233,7 @@ void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromis
     m_data = nullptr;
 }
 
-void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
+void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, StringImpl* text)
 {
     auto data = PAL::TextCodecUTF8::encodeUTF8(text);
     protect(consumer())->resolveWithData(WTF::move(promise), owner.contentType(), data.span());
@@ -260,7 +260,7 @@ void FetchBody::loadingFailed(const Exception& exception)
     protect(consumer())->loadingFailed(exception);
 }
 
-void FetchBody::loadingSucceeded(const String& contentType)
+void FetchBody::loadingSucceeded(StringImpl* contentType)
 {
     protect(consumer())->loadingSucceeded(contentType);
 }
@@ -357,7 +357,7 @@ void FetchBody::convertReadableStreamToArrayBuffer(FetchBodyOwner& owner, Comple
                 data.append(chunk);
             },
             [&](JSC::JSValue) {
-                completionHandler(Exception { ExceptionCode::TypeError, "Load failed"_s });
+                completionHandler(Exception { ExceptionCode::TypeError, "Load failed"_si });
             },
             [&](Exception&& error) {
                 completionHandler(WTF::move(error));

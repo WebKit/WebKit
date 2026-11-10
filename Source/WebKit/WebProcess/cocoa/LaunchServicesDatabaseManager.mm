@@ -44,8 +44,8 @@ LaunchServicesDatabaseManager& LaunchServicesDatabaseManager::singleton()
 
 void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 {
-    String messageName = xpcDictionaryGetString(message, XPCEndpoint::xpcMessageNameKey);
-    if (messageName == LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName) {
+    RefPtr<StringImpl> messageName = xpcDictionaryGetString(message, XPCEndpoint::xpcMessageNameKey);
+    if (equal(messageName, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName)) {
 #if HAVE(LSDATABASECONTEXT)
         OSObjectPtr<xpc_object_t> database = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey);
 

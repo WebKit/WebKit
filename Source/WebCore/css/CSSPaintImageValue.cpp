@@ -42,7 +42,7 @@ CSSPaintImageValue::CSSPaintImageValue(CSS::CustomIdent&& name, Ref<CSSVariableD
 
 CSSPaintImageValue::~CSSPaintImageValue() = default;
 
-String CSSPaintImageValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPaintImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
     // FIXME: This should include the arguments too.
 

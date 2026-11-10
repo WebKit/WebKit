@@ -152,7 +152,7 @@ private:
         return adoptRef(*new MediaPlayerPrivateMediaFoundation(player));
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MediaPlayerPrivateMediaFoundation::getSupportedTypes(types);
     }
@@ -177,9 +177,9 @@ bool MediaPlayerPrivateMediaFoundation::isAvailable()
     return isMediaFoundationAvailable;
 }
 
-static const HashSet<String>& mimeTypeCache()
+static const HashSet<RefPtr<StringImpl>>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String>> cachedTypes;
+    static NeverDestroyed<HashSet<RefPtr<StringImpl>>> cachedTypes;
 
     if (cachedTypes.get().size() > 0)
         return cachedTypes;
@@ -194,7 +194,7 @@ static const HashSet<String>& mimeTypeCache()
     if (SUCCEEDED(hr)) {
         CALPWSTR mimeTypeArray = propVarMimeTypeArray.calpwstr;
         for (unsigned i = 0; i < mimeTypeArray.cElems; i++)
-            cachedTypes.get().add(mimeTypeArray.pElems[i]);
+            cachedTypes.get().add(StringImpl::create(mimeTypeArray.pElems[i]));
     }
 
     PropVariantClear(&propVarMimeTypeArray);
@@ -202,7 +202,7 @@ static const HashSet<String>& mimeTypeCache()
     return cachedTypes;
 }
 
-void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     types = mimeTypeCache();
 }
@@ -218,7 +218,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaFoundation::supportsType(const 
     return MediaPlayer::SupportsType::IsNotSupported;
 }
 
-void MediaPlayerPrivateMediaFoundation::load(const String& url)
+void MediaPlayerPrivateMediaFoundation::load(StringImpl* url)
 {
     auto player = m_player.get();
     if (!player)
@@ -569,14 +569,14 @@ bool MediaPlayerPrivateMediaFoundation::endSession()
     return true;
 }
 
-bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url)
+bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(StringImpl* url)
 {
     COMPtr<IMFSourceResolver> sourceResolver;
     if (FAILED(MFCreateSourceResolver(&sourceResolver)))
         return false;
 
     COMPtr<IUnknown> cancelCookie;
-    Vector<wchar_t> urlSource = url.wideCharacters();
+    Vector<wchar_t> urlSource = wideCharacters(url);
 
     auto callback = adoptCOM(new AsyncCallback([this, weakThis = m_weakThis, sourceResolver](IMFAsyncResult* asyncResult) {
         MF_OBJECT_TYPE objectType;

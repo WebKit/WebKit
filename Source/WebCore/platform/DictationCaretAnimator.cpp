@@ -188,7 +188,7 @@ void DictationCaretAnimator::start()
     m_previousTailRect = computeTailRect();
 }
 
-String DictationCaretAnimator::debugDescription() const
+RefPtr<StringImpl> DictationCaretAnimator::debugDescription() const
 {
     TextStream textStream;
     textStream << "DictationCaretAnimator " << this << " glowStart " << m_glowStart << " glowEnd = " << m_localCaretRect.x();

@@ -159,7 +159,7 @@ NODELETE static bool isDutchIJDigraph(StringView text, unsigned offset)
     return (first == 'i' && second == 'j') || (first == 'I' && second == 'J');
 }
 
-static unsigned firstLetterLength(StringView text, const AtomString& locale)
+static unsigned firstLetterLength(StringView text, AtomStringImpl* locale)
 {
     if (text.isEmpty())
         return 0;
@@ -356,10 +356,10 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
     // The original string is going to be either a generated content string or a DOM node's
     // string. We want the original string before it got transformed in case first-letter has
     // no text-transform or a different text-transform applied to it.
-    String oldText = currentTextChild.originalText();
-    ASSERT(!oldText.isNull());
+    RefPtr<StringImpl> oldText = currentTextChild.originalText();
+    ASSERT(oldText);
 
-    if (!oldText.isEmpty()) {
+    if (!isEmpty(oldText)) {
         // FIXME: This should probably be using `fontDescription().usedLocale()`, as that is what is used for shaping.
         unsigned length = firstLetterLength(oldText, currentTextChild.style().fontDescription().computedLocale());
 
@@ -379,10 +379,10 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         // This text fragment might be empty.
         RenderPtr<RenderTextFragment> newRemainingText;
         if (textNode) {
-            newRemainingText = createRenderer<RenderTextFragment>(*textNode, oldText, length, oldText.length() - length);
+            newRemainingText = createRenderer<RenderTextFragment>(*textNode, oldText, length, WTF::length(oldText) - length);
             textNode->setRenderer(newRemainingText.get());
         } else {
-            newRemainingText = createRenderer<RenderTextFragment>(protect(m_builder.m_view.document()), oldText, length, oldText.length() - length);
+            newRemainingText = createRenderer<RenderTextFragment>(protect(m_builder.m_view.document()), oldText, length, WTF::length(oldText) - length);
             // Like the text node above, the quote moves over to the remaining text.
             if (quoteType)
                 newRemainingText->setQuoteTypeForRemainingText(*quoteType, oldText);

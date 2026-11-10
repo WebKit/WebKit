@@ -36,7 +36,7 @@ struct CustomIdent;
 
 // Parsed representation of the `<string>+` of <'grid-template-areas'>.
 struct GridNamedAreaMap {
-    using Map = HashMap<AtomString, GridArea>;
+    using Map = HashMap<RefPtr<AtomStringImpl>, GridArea>;
 
     Map map;
     size_t rowCount { 0 };
@@ -46,7 +46,7 @@ struct GridNamedAreaMap {
 };
 
 // A single `<string>` of <'grid-template-areas'>.
-using GridNamedAreaMapRow = Vector<AtomString, 8>;
+using GridNamedAreaMapRow = Vector<RefPtr<AtomStringImpl>, 8>;
 
 // Adds a row to a `GridNamedAreaMap`. Returns `true` on success, `false` on failure.
 bool addRow(GridNamedAreaMap&, const GridNamedAreaMapRow&);

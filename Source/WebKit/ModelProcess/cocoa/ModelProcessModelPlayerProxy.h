@@ -111,7 +111,7 @@ class ModelProcessModelPlayerProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerProxy);
 public:
-    static Ref<ModelProcessModelPlayerProxy> create(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&, std::optional<int>, std::optional<int>);
+    static Ref<ModelProcessModelPlayerProxy> create(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<RefPtr<StringImpl>>&, std::optional<int>, std::optional<int>);
     ~ModelProcessModelPlayerProxy();
 
     void ref() const final { WebCore::ModelPlayer::ref(); }
@@ -179,7 +179,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
-    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement) final;
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -203,11 +203,11 @@ public:
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
     void disableUnloadDelayForTesting() { m_unloadDelayDisabledForTesting = true; }
-    void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) final;
+    void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, RefPtr<StringImpl>>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&) final;
     static uint64_t objectCountForTesting() { return gObjectCountForTesting; }
 
 private:
-    ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&, std::optional<int>, std::optional<int>);
+    ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<RefPtr<StringImpl>>&, std::optional<int>, std::optional<int>);
 
     struct TrackedModel {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(TrackedModel);
@@ -228,7 +228,7 @@ private:
         simd_float4x4 childTransform { matrix_identity_float4x4 };
 
         std::optional<WebCore::NodeIdentifier> anchorNode;
-        String anchorPlacement;
+        RefPtr<StringImpl> anchorPlacement;
         RetainPtr<WKRKEntity> anchorPlacementEntity;
         simd_quatf anchorCorrection = simd_quaternion(0.0f, simd_make_float3(1, 0, 0));
 #endif
@@ -351,7 +351,7 @@ private:
     RetainPtr<WKStageModeInteractionDriver> m_stageModeInteractionDriver;
     WebCore::StageModeOperation m_stageModeOperation { WebCore::StageModeOperation::None };
 
-    std::optional<String> m_attributionTaskID;
+    std::optional<RefPtr<StringImpl>> m_attributionTaskID;
     std::optional<int> m_debugEntityMemoryLimit;
     std::optional<int> m_debugImmersiveEntityMemoryLimit;
     std::optional<WebCore::TransformationMatrix> m_entityTransformToRestore;

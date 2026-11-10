@@ -58,7 +58,7 @@ private:
     // To handler
     void changeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState);
     void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, std::span<const uint8_t>);
-    void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&);
+    void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, StringImpl*);
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, uint64_t amount);
 
     NODELETE std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&);

@@ -70,7 +70,7 @@ public:
     using FunctionIndexToData = UncheckedKeyHashMap<size_t, FunctionDebugInfo, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
     FunctionIndexToData functionIndexToData;
 
-    mutable std::optional<String> cachedDeclaredName;
+    mutable std::optional<RefPtr<StringImpl>> cachedDeclaredName;
 };
 
 } // namespace Wasm

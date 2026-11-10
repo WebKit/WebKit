@@ -79,12 +79,12 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
             if (entry) {
                 lazyInitialize(protectedThis->m_cacheEntry, WTF::move(entry));
 
-                String eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
-                if (!eTag.isEmpty())
+                RefPtr<StringImpl> eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
+                if (!isEmpty(eTag))
                     request.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
 
-                String lastModified = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
-                if (!lastModified.isEmpty())
+                RefPtr<StringImpl> lastModified = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
+                if (!isEmpty(lastModified))
                     request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
             protectedThis->loadFromNetwork(CheckedRef { *protectedThis->m_session }.get(), WTF::move(request));
@@ -188,8 +188,8 @@ ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceRespo
 void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer)
 {
     if (!m_decoder) {
-        if (!m_responseEncoding.isEmpty())
-            lazyInitialize(m_decoder, TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, m_responseEncoding));
+        if (!isEmpty(m_responseEncoding))
+            lazyInitialize(m_decoder, TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, m_responseEncoding.get()));
         else
             lazyInitialize(m_decoder, TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding()));
     }

@@ -69,7 +69,7 @@ class NewlineThenWhitespaceStringsTable {
 public:
     static constexpr unsigned maxSpaceCount = 32;
 
-    ALWAYS_INLINE static String getCachedWhitespace(unsigned spaceCount)
+    ALWAYS_INLINE static RefPtr<StringImpl> getCachedWhitespace(unsigned spaceCount)
     {
         ASSERT(spaceCount <= maxSpaceCount);
         auto& cache = whitespaceStringCache();
@@ -77,7 +77,7 @@ public:
     }
 
 private:
-    using WhitespaceStringCache = std::array<String, maxSpaceCount + 1>;
+    using WhitespaceStringCache = std::array<RefPtr<StringImpl>, maxSpaceCount + 1>;
 
     static WhitespaceStringCache& whitespaceStringCache()
     {
@@ -87,7 +87,7 @@ private:
             std::ranges::fill(std::span(chars).subspan<1u>(), ' ');
             // Pre-populate the cache with \n + (' ' * spaceCount) strings
             for (unsigned spaceCount = 0; spaceCount <= maxSpaceCount; ++spaceCount)
-                stringsCache[spaceCount] = String(std::span(chars).first(spaceCount + 1));
+                stringsCache[spaceCount] = StringImpl::create(std::span(chars).first(spaceCount + 1));
             return stringsCache;
         }() };
         return cache.get();
@@ -121,7 +121,7 @@ ALWAYS_INLINE static bool isCachedSubtreeValid(Node& cachedContainer)
 template<typename CharacterType>
 NODELETE static bool isCachedPrefixMatch(const CachedSetInnerHTML& cache, std::span<const CharacterType> source, const ElementName& elementName)
 {
-    if (cache.source.length() > source.size())
+    if (length(cache.source) > source.size())
         return false;
 
     if (cache.contextElementName != elementName)
@@ -161,13 +161,13 @@ static FragmentReuseResult tryAvoidParsingByCloningExistingSubtree(std::span<con
 
     // Only allow prefix reuse if cached string ends with '>' or whitespace to avoid splitting text/entities.
     // Example: "<br>&apos", then "<br>&apos;" would incorrectly split the entity into "&apos" and ";".
-    if (cache.source.length() < source.size() && !cache.source.isEmpty()) {
-        char16_t lastChar = cache.source[cache.source.length() - 1];
+    if (length(cache.source) < source.size() && !isEmpty(cache.source)) {
+        char16_t lastChar = codeUnitAt(cache.source, length(cache.source) - 1);
         if (lastChar != '>' && !isASCIIWhitespace(lastChar))
             return FragmentReuseResult::CannotReuse;
     }
 
-    auto unparsedSuffix = source.subspan(cache.source.length());
+    auto unparsedSuffix = source.subspan(length(cache.source));
     return cloneCachedPrefixAndParseSuffix(unparsedSuffix, destinationParent, contextElement, cachedContainer.get());
 }
 
@@ -373,15 +373,15 @@ private:
 
     struct ScanTextResult {
         std::span<const CharacterType> text;
-        String escapedText;
+        RefPtr<StringImpl> escapedText;
         bool isWhitespacePattern = false;
 
-        ALWAYS_INLINE String tryUseWhitespaceCache() const {
+        ALWAYS_INLINE RefPtr<StringImpl> tryUseWhitespaceCache() const {
             // subtract 1 to exclude the starting '\n' char from the space count
             if (isWhitespacePattern && text.size() - 1 <= NewlineThenWhitespaceStringsTable::maxSpaceCount)
                 return NewlineThenWhitespaceStringsTable::getCachedWhitespace(text.size() - 1);
 
-            return String(text);
+            return StringImpl::createOrNull(text);
         }
 
     };
@@ -655,7 +655,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
             if (!m_parsingBuffer.hasCharactersRemaining() || *m_parsingBuffer == '<') {
                 unsigned length = m_parsingBuffer.position() - start.data();
-                return { start.first(length), String(), true };
+                return { start.first(length), nullString(), true };
             }
             // SIMD scan does not rely on the current m_parsingBuffer's position. No need to reset position here.
         }
@@ -681,7 +681,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (!cursor.empty()) {
             if (cursor[0] == '\0') [[unlikely]] {
                 didFail(HTMLFastPathResult::FailedContainsNull);
-                return { std::span<const CharacterType>(), String() };
+                return { std::span<const CharacterType>(), nullString() };
             }
             if (cursor[0] == '&' || cursor[0] == '\r') {
                 m_parsingBuffer.setPosition(start);
@@ -692,15 +692,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         unsigned length = cursor.data() - start.data();
         if (length >= Text::defaultLengthLimit) [[unlikely]] {
             didFail(HTMLFastPathResult::FailedBigText);
-            return { std::span<const CharacterType>(), String() };
+            return { std::span<const CharacterType>(), nullString() };
         }
 
-        return { start.first(length), String() };
+        return { start.first(length), nullString() };
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a
     // separate buffer.
-    String scanEscapedText()
+    RefPtr<StringImpl> scanEscapedText()
     {
         m_ucharBuffer.shrink(0);
         while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != '<') {
@@ -715,13 +715,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     m_parsingBuffer.advance();
                 m_ucharBuffer.append('\n');
             } else if (*m_parsingBuffer == '\0') [[unlikely]]
-                return didFail(HTMLFastPathResult::FailedContainsNull, String());
+                return didFail(HTMLFastPathResult::FailedContainsNull, nullString());
             else
                 m_ucharBuffer.append(m_parsingBuffer.consume());
         }
         if (m_ucharBuffer.size() >= Text::defaultLengthLimit) [[unlikely]]
-            return didFail(HTMLFastPathResult::FailedBigText, String());
-        return m_ucharBuffer.isEmpty() ? String() : String(m_ucharBuffer.span());
+            return didFail(HTMLFastPathResult::FailedBigText, nullString());
+        if (m_ucharBuffer.isEmpty())
+            return nullptr;
+        return StringImpl::create(m_ucharBuffer.span());
     }
 
     // Scan a tagName and convert to lowercase if necessary.
@@ -787,7 +789,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return HTMLNameCache::makeAttributeQualifiedName(attributeName);
     }
 
-    AtomString scanAttributeValue()
+    RefPtr<AtomStringImpl> scanAttributeValue()
     {
         skipWhile<isASCIIWhitespace>(m_parsingBuffer);
         auto start = m_parsingBuffer.span();
@@ -847,7 +849,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Slow path for scanning an attribute value. Used for special cases such
     // as '&' and '\r'.
-    AtomString scanEscapedAttributeValue()
+    RefPtr<AtomStringImpl> scanEscapedAttributeValue()
     {
         skipWhile<isASCIIWhitespace>(m_parsingBuffer);
         m_ucharBuffer.shrink(0);
@@ -917,7 +919,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
             if (!result.text.empty())
                 parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, result.tryUseWhitespaceCache()));
-            else if (!result.escapedText.isEmpty())
+            else if (!isEmpty(result.escapedText))
                 parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, WTF::move(result.escapedText)));
 
             if (m_parsingBuffer.atEnd())
@@ -963,13 +965,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             }
             skipWhile<isASCIIWhitespace>(m_parsingBuffer);
-            AtomString attributeValue;
+            RefPtr<AtomStringImpl> attributeValue;
             if (skipExactly(m_parsingBuffer, '=')) {
                 attributeValue = scanAttributeValue();
                 skipWhile<isASCIIWhitespace>(m_parsingBuffer);
             } else
                 attributeValue = emptyAtom();
-            if (!insertInUniquedSortedVector(m_attributeNames, attributeName.localName().impl())) [[unlikely]] {
+            if (!insertInUniquedSortedVector(m_attributeNames, attributeName.localName().get())) [[unlikely]] {
                 hasDuplicateAttributes = true;
                 continue;
             }

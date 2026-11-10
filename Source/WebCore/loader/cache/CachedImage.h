@@ -95,8 +95,8 @@ public:
     void clearAnimationOverride();
     void resetAnimation();
 
-    String filenameExtension() const;
-    String accessibilityDescription() const;
+    RefPtr<StringImpl> filenameExtension() const;
+    RefPtr<StringImpl> accessibilityDescription() const;
 
 private:
     void clear();
@@ -140,7 +140,7 @@ private:
 
         // ImageObserver API
         URL sourceUrl() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->url() : URL(); }
-        String mimeType() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->mimeType() : emptyString(); }
+        RefPtr<StringImpl> mimeType() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->mimeType() : emptyString(); }
         unsigned numberOfClients() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->numberOfClients() : 0; }
         long long expectedContentLength() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->expectedContentLength() : 0; }
 

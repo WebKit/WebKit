@@ -131,13 +131,13 @@ inline JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSArr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!isTypedView(typedArray->type())) [[unlikely]] {
-        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_si);
         return nullptr;
     }
 
     IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
     if (isIntegerIndexedObjectOutOfBounds(typedArray, getter)) [[unlikely]] {
-        throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        throwTypeError(globalObject, scope, StringImpl::create(typedArrayBufferHasBeenDetachedErrorMessage).ptr());
         return nullptr;
     }
     return typedArray;
@@ -149,13 +149,13 @@ inline JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSVal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!typedArrayValue.isCell()) [[unlikely]] {
-        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_si);
         return nullptr;
     }
 
     JSCell* typedArrayCell = typedArrayValue.asCell();
     if (!isTypedView(typedArrayCell->type())) [[unlikely]] {
-        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_si);
         return nullptr;
     }
 

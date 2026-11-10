@@ -44,11 +44,11 @@ using TestCache = TextMeasurementCache<int, 0, 0, 0, testMaxTextLength, testInli
 static_assert(FontCascadeFonts::GlyphGeometryCache::inlineKeyCapacity() < FontCascadeFonts::GlyphGeometryCache::maxTextLength());
 static_assert(FontCascadeFonts::ShapedTextCache::inlineKeyCapacity() == FontCascadeFonts::ShapedTextCache::maxTextLength());
 
-String stringOfLength(unsigned length, char16_t fill = 'a')
+RefPtr<StringImpl> stringOfLength(unsigned length, char16_t fill = 'a')
 {
     Vector<char16_t> characters(length);
     characters.fill(fill);
-    return String(std::span<const char16_t> { characters });
+    return StringImpl::create(std::span<const char16_t> { characters });
 }
 
 }
@@ -69,7 +69,7 @@ TEST(TextMeasurementCacheTest, SingleCharacterIsCached)
 TEST(TextMeasurementCacheTest, ShortTextUsesInlineTable)
 {
     TestCache cache;
-    String text = stringOfLength(testInlineKeyCapacity);
+    RefPtr<StringImpl> text = stringOfLength(testInlineKeyCapacity);
 
     auto* entry = cache.add(text, 1);
     ASSERT_TRUE(entry);
@@ -85,8 +85,8 @@ TEST(TextMeasurementCacheTest, ShortTextUsesInlineTable)
 TEST(TextMeasurementCacheTest, LongTextUsesOutOfLineTable)
 {
     TestCache cache;
-    String text = stringOfLength(testInlineKeyCapacity + 1);
-    ASSERT_LE(text.length(), testMaxTextLength);
+    RefPtr<StringImpl> text = stringOfLength(testInlineKeyCapacity + 1);
+    ASSERT_LE(length(text), testMaxTextLength);
 
     auto* entry = cache.add(text, 1);
     ASSERT_TRUE(entry);
@@ -110,7 +110,7 @@ TEST(TextMeasurementCacheTest, TextOfMaxTextLengthIsAccepted)
 TEST(TextMeasurementCacheTest, TextLongerThanMaxTextLengthIsRejected)
 {
     TestCache cache;
-    String text = stringOfLength(testMaxTextLength + 1);
+    RefPtr<StringImpl> text = stringOfLength(testMaxTextLength + 1);
 
     auto* entry = cache.add(text, 1);
     EXPECT_FALSE(entry);
@@ -142,14 +142,14 @@ TEST(TextMeasurementCacheTest, PathologicalGrowthFullyFlushes)
 {
     TestCache cache;
     for (unsigned i = 0; i < testMaxSize - 1; ++i) {
-        String text = stringOfLength(testInlineKeyCapacity + 1, static_cast<char16_t>('a' + i));
+        RefPtr<StringImpl> text = stringOfLength(testInlineKeyCapacity + 1, static_cast<char16_t>('a' + i));
         auto* entry = cache.add(text, static_cast<int>(i));
         ASSERT_TRUE(entry);
     }
     EXPECT_FALSE(cache.isEmpty());
 
     // The MaxSize-th distinct entry crosses the ceiling: addSlowCase() rejects it and fully flushes the cache.
-    String overflowText = stringOfLength(testInlineKeyCapacity + 1, static_cast<char16_t>('a' + testMaxSize));
+    RefPtr<StringImpl> overflowText = stringOfLength(testInlineKeyCapacity + 1, static_cast<char16_t>('a' + testMaxSize));
     auto* entry = cache.add(overflowText, -1);
     EXPECT_FALSE(entry);
     EXPECT_TRUE(cache.isEmpty());

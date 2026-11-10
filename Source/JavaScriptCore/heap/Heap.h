@@ -631,7 +631,7 @@ public:
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
-    void appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(const JSString* owner, String&& string)
+    void appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(const JSString* owner, RefPtr<StringImpl>&& string)
     {
         m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.constructAndAppend(owner, WTF::move(string));
     }
@@ -911,7 +911,7 @@ private:
     // Use a SegmentedVector rather than a Vector because we don't want to have to copy in order to grow the buffer.
     // Since this list is walked once to deref all the strings
     // We don't need fast access.
-    SegmentedVector<std::pair<const JSString*, String>, 256, 10, SegmentedVectorGrowthPolicy::Doubling> m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope;
+    SegmentedVector<std::pair<const JSString*, RefPtr<StringImpl>>, 256, 10, SegmentedVectorGrowthPolicy::Doubling> m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope;
     UncheckedKeyHashSet<const JSString*> m_stringsFoundOnStack;
     
     RefPtr<GCActivityCallback> m_fullActivityCallback;

@@ -47,7 +47,7 @@ SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
 {
 }
 
-String SimpleRange::debugDescription() const
+RefPtr<StringImpl> SimpleRange::debugDescription() const
 {
     return makeString("{start: "_s, start.debugDescription(), ", end: "_s, end.debugDescription(), '}');
 }

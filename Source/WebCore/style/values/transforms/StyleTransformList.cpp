@@ -155,7 +155,7 @@ auto Blending<TransformList>::blend(const TransformList& from, const TransformLi
         // other than "transform" since we only pre-compute the prefix for that
         // property.
         if (context.compositeOperation == CompositeOperation::Accumulate
-            || std::holds_alternative<AtomString>(context.property)
+            || std::holds_alternative<RefPtr<AtomStringImpl>>(context.property)
             || std::get<CSSPropertyID>(context.property) != CSSPropertyID::Transform)
             return std::nullopt;
         return context.client.transformFunctionListPrefix();

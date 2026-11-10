@@ -55,7 +55,7 @@ void MediaSourceRegistry::registerURL(const ScriptExecutionContext& context, con
     ASSERT(isMainThread());
 
     auto& urlString = url.string();
-    m_urlsPerContext.add(context.identifier(), HashSet<String>()).iterator->value.add(urlString);
+    m_urlsPerContext.add(context.identifier(), HashSet<RefPtr<StringImpl>>()).iterator->value.add(urlString);
 
     Ref source = downcast<MediaSource>(registrable);
     source->addedToRegistry();
@@ -97,7 +97,7 @@ void MediaSourceRegistry::unregisterURLsForContext(const ScriptExecutionContext&
     }
 }
 
-URLRegistrable* MediaSourceRegistry::lookup(const String& url) const
+URLRegistrable* MediaSourceRegistry::lookup(StringImpl* url) const
 {
     ASSERT(isMainThread());
     if (auto it = m_mediaSources.find(url); it != m_mediaSources.end())

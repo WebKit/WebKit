@@ -92,7 +92,7 @@ ALWAYS_INLINE uint32_t jsMapHashImpl(JSGlobalObject* globalObject, VM& vm, JSVal
             RETURN_IF_EXCEPTION(scope, UINT_MAX);
         else
             EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
-        return wtfString->impl()->hash();
+        return wtfString->get()->hash();
     }
 
     if (value.isHeapBigInt())

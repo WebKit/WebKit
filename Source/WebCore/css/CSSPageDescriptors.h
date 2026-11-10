@@ -42,18 +42,18 @@ public:
 
     StyleDeclarationType styleDeclarationType() const final { return StyleDeclarationType::Page; }
 
-    String margin() const;
-    ExceptionOr<void> setMargin(const String&);
-    String marginTop() const;
-    ExceptionOr<void> setMarginTop(const String&);
-    String marginRight() const;
-    ExceptionOr<void> setMarginRight(const String&);
-    String marginBottom() const;
-    ExceptionOr<void> setMarginBottom(const String&);
-    String marginLeft() const;
-    ExceptionOr<void> setMarginLeft(const String&);
-    String size() const;
-    ExceptionOr<void> setSize(const String&);
+    RefPtr<StringImpl> margin() const;
+    ExceptionOr<void> setMargin(StringImpl*);
+    RefPtr<StringImpl> marginTop() const;
+    ExceptionOr<void> setMarginTop(StringImpl*);
+    RefPtr<StringImpl> marginRight() const;
+    ExceptionOr<void> setMarginRight(StringImpl*);
+    RefPtr<StringImpl> marginBottom() const;
+    ExceptionOr<void> setMarginBottom(StringImpl*);
+    RefPtr<StringImpl> marginLeft() const;
+    ExceptionOr<void> setMarginLeft(StringImpl*);
+    RefPtr<StringImpl> size() const;
+    ExceptionOr<void> setSize(StringImpl*);
 
 private:
     CSSPageDescriptors(MutableStyleProperties&, CSSPageRule&);

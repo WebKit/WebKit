@@ -79,7 +79,7 @@ static std::optional<CDMKeyIDs> extractKeyIDsKeyids(const SharedBuffer& buffer)
     if (!object)
         return std::nullopt;
 
-    auto kidsArray = object->getArray("kids"_s);
+    auto kidsArray = object->getArray("kids"_si);
     if (!kidsArray)
         return std::nullopt;
 
@@ -114,9 +114,9 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
         kidsArray->pushString(base64URLEncodeToString(buffer->span()));
-    object->setArray("kids"_s, WTF::move(kidsArray));
+    object->setArray("kids"_si, WTF::move(kidsArray));
 
-    return SharedBuffer::create(object->toJSONString().utf8().span());
+    return SharedBuffer::create(utf8(object->toJSONString()).span());
 }
 
 std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> InitDataRegistry::extractPsshBoxesFromCenc(const SharedBuffer& buffer)
@@ -324,14 +324,14 @@ InitDataRegistry& InitDataRegistry::singleton()
 
 InitDataRegistry::InitDataRegistry()
 {
-    registerInitDataType("keyids"_s, { sanitizeKeyids, extractKeyIDsKeyids });
-    registerInitDataType("cenc"_s, { sanitizeCenc, extractKeyIDsCenc });
-    registerInitDataType("webm"_s, { sanitizeWebM, extractKeyIDsWebM });
+    registerInitDataType("keyids"_si, { sanitizeKeyids, extractKeyIDsKeyids });
+    registerInitDataType("cenc"_si, { sanitizeCenc, extractKeyIDsCenc });
+    registerInitDataType("webm"_si, { sanitizeWebM, extractKeyIDsWebM });
 }
 
 InitDataRegistry::~InitDataRegistry() = default;
 
-RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const String& initDataType, const SharedBuffer& buffer)
+RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(StringImpl* initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
@@ -339,7 +339,7 @@ RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const String& initDataTy
     return iter->value.sanitizeInitData(buffer);
 }
 
-std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDs(const String& initDataType, const SharedBuffer& buffer)
+std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDs(StringImpl* initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
@@ -347,27 +347,27 @@ std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDs(const String& initDataT
     return iter->value.extractKeyIDs(buffer);
 }
 
-void InitDataRegistry::registerInitDataType(const String& initDataType, InitDataTypeCallbacks&& callbacks)
+void InitDataRegistry::registerInitDataType(StringImpl* initDataType, InitDataTypeCallbacks&& callbacks)
 {
     ASSERT(!m_types.contains(initDataType));
     m_types.set(initDataType, WTF::move(callbacks));
 }
 
-const String& InitDataRegistry::cencName()
+const RefPtr<StringImpl>& InitDataRegistry::cencName()
 {
-    static NeverDestroyed<const String> staticCencName(MAKE_STATIC_STRING_IMPL("cenc"));
+    static NeverDestroyed<const RefPtr<StringImpl>> staticCencName(MAKE_STATIC_STRING_IMPL("cenc"));
     return staticCencName;
 }
 
-const String& InitDataRegistry::keyidsName()
+const RefPtr<StringImpl>& InitDataRegistry::keyidsName()
 {
-    static NeverDestroyed<const String> staticKeyidsName(MAKE_STATIC_STRING_IMPL("keyids"));
+    static NeverDestroyed<const RefPtr<StringImpl>> staticKeyidsName(MAKE_STATIC_STRING_IMPL("keyids"));
     return staticKeyidsName;
 }
 
-const String& InitDataRegistry::webmName()
+const RefPtr<StringImpl>& InitDataRegistry::webmName()
 {
-    static NeverDestroyed<const String> staticWebmName(MAKE_STATIC_STRING_IMPL("webm"));
+    static NeverDestroyed<const RefPtr<StringImpl>> staticWebmName(MAKE_STATIC_STRING_IMPL("webm"));
     return staticWebmName;
 }
 

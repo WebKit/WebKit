@@ -48,7 +48,7 @@ void setHasExplicitBeginTime(CAAnimation *, bool);
 
 class PlatformCAAnimationCocoa final : public PlatformCAAnimation {
 public:
-    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(AnimationType, StringImpl* keyPath);
     WEBCORE_EXPORT static Ref<PlatformCAAnimation> create(PlatformAnimationRef);
 
     virtual ~PlatformCAAnimationCocoa();
@@ -59,7 +59,7 @@ public:
 
     NODELETE PlatformAnimationRef platformAnimation() const;
     
-    String keyPath() const override;
+    RefPtr<StringImpl> keyPath() const override;
     
     CFTimeInterval beginTime() const override;
     void setBeginTime(CFTimeInterval) override;
@@ -128,7 +128,7 @@ public:
     void copyAnimationsFrom(const PlatformCAAnimation&) final;
 
 private:
-    PlatformCAAnimationCocoa(AnimationType, const String& keyPath);
+    PlatformCAAnimationCocoa(AnimationType, StringImpl* keyPath);
     PlatformCAAnimationCocoa(PlatformAnimationRef);
 
     const RetainPtr<CAAnimation> m_animation;

@@ -41,7 +41,7 @@ struct URL {
 
     // The fragment identifier of `resolved`. `resolved` may be a bare "#id" same-document reference,
     // which is not a valid standalone URL, so this handles that case as well as absolute URLs.
-    AtomString fragment() const;
+    RefPtr<AtomStringImpl> fragment() const;
 
     bool operator==(const URL&) const = default;
 };

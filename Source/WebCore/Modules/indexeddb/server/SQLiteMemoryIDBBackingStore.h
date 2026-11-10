@@ -52,7 +52,7 @@ public:
     bool supportsSimultaneousReadWriteTransactions() final { return false; }
 
     // No database file path for in-memory databases
-    String fullDatabasePath() const final { return nullString(); }
+    RefPtr<StringImpl> fullDatabasePath() const final { return nullString(); }
 
     // No-op for in-memory databases - nothing to delete from disk
     void deleteBackingStore() final { }

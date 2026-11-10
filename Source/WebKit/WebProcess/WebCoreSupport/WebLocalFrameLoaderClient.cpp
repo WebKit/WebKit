@@ -574,7 +574,7 @@ void WebLocalFrameLoaderClient::dispatchWillClose()
     notImplemented();
 }
 
-void WebLocalFrameLoaderClient::dispatchDidExplicitOpen(const URL& url, const String& mimeType)
+void WebLocalFrameLoaderClient::dispatchDidExplicitOpen(const URL& url, StringImpl* mimeType)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
@@ -796,7 +796,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishDocumentLoad()
 #if ASSERT_ENABLED
     if (RefPtr document = m_localFrame->document()) {
         auto& url = document->url();
-        ASSERT_WITH_MESSAGE(document->agentClusterIdentifier() || protect(document->securityOrigin())->isOpaque() || !url.protocolIsInHTTPFamilyOrBlob(), "The UI process did not assign an agent cluster to %s", url.string().utf8());
+        ASSERT_WITH_MESSAGE(document->agentClusterIdentifier() || protect(document->securityOrigin())->isOpaque() || !url.protocolIsInHTTPFamilyOrBlob(), "The UI process did not assign an agent cluster to %s", utf8(url.string()));
     }
 #endif
 
@@ -904,7 +904,7 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
 
 #if !RELEASE_LOG_DISABLED
     StringBuilder builder;
-    auto addIfSet = [&milestones, &builder] (WebCore::LayoutMilestone milestone, const String& toAdd) {
+    auto addIfSet = [&milestones, &builder] (WebCore::LayoutMilestone milestone, StringImpl* toAdd) {
         if (milestones.contains(milestone)) {
             if (!builder.isEmpty())
                 builder.append(", "_s);
@@ -912,16 +912,16 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
         }
     };
 
-    addIfSet(WebCore::LayoutMilestone::DidFirstLayout, "DidFirstLayout"_s);
-    addIfSet(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, "DidFirstVisuallyNonEmptyLayout"_s);
-    addIfSet(WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold, "DidHitRelevantRepaintedObjectsAreaThreshold"_s);
-    addIfSet(WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering, "DidFirstLayoutAfterSuppressedIncrementalRendering"_s);
-    addIfSet(WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering, "DidFirstPaintAfterSuppressedIncrementalRendering"_s);
-    addIfSet(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold, "ReachedSessionRestorationRenderTreeSizeThreshold"_s);
-    addIfSet(WebCore::LayoutMilestone::DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
-    addIfSet(WebCore::LayoutMilestone::DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
+    addIfSet(WebCore::LayoutMilestone::DidFirstLayout, "DidFirstLayout"_si);
+    addIfSet(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, "DidFirstVisuallyNonEmptyLayout"_si);
+    addIfSet(WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold, "DidHitRelevantRepaintedObjectsAreaThreshold"_si);
+    addIfSet(WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering, "DidFirstLayoutAfterSuppressedIncrementalRendering"_si);
+    addIfSet(WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering, "DidFirstPaintAfterSuppressedIncrementalRendering"_si);
+    addIfSet(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold, "ReachedSessionRestorationRenderTreeSizeThreshold"_si);
+    addIfSet(WebCore::LayoutMilestone::DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_si);
+    addIfSet(WebCore::LayoutMilestone::DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_si);
 
-    WebLocalFrameLoaderClient_RELEASE_LOG_FORWARDABLE(Layout, WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, builder.toString().utf8());
+    WebLocalFrameLoaderClient_RELEASE_LOG_FORWARDABLE(Layout, WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, utf8(builder.toString()));
 #endif
 
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
@@ -969,7 +969,7 @@ void WebLocalFrameLoaderClient::dispatchDidLayout()
     }
 }
 
-LocalFrame* WebLocalFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction, NewFrameOpenerPolicy newFrameOpenerPolicy, const String& openedMainFrameName)
+LocalFrame* WebLocalFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction, NewFrameOpenerPolicy newFrameOpenerPolicy, StringImpl* openedMainFrameName)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
@@ -995,7 +995,7 @@ void WebLocalFrameLoaderClient::dispatchShow()
     webPage->show();
 }
 
-void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse& response, const ResourceRequest& request, const String& downloadAttribute, FramePolicyFunction&& function)
+void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse& response, const ResourceRequest& request, StringImpl* downloadAttribute, FramePolicyFunction&& function)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage) {
@@ -1036,7 +1036,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRe
     });
 }
 
-void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request, FormState*, const String& frameName, std::optional<WebCore::HitTestResult>&& hitTestResult, FramePolicyFunction&& function)
+void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request, FormState*, StringImpl* frameName, std::optional<WebCore::HitTestResult>&& hitTestResult, FramePolicyFunction&& function)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage) {
@@ -1100,7 +1100,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         { }, /* navigationID */
         { }, /* originalRequest */
         request,
-        request.url().isValid() ? String() : request.url().string(), /* invalidURLString */
+        request.url().isValid() ? nullptr : request.url().string(), /* invalidURLString */
         std::nullopt, /* requester */
         { }, /* pendingNavigateEventID */
     };
@@ -1139,7 +1139,7 @@ void WebLocalFrameLoaderClient::removeStorageAccessOnCommit(WebCore::DocumentLoa
 }
 
 void WebLocalFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
-    FormState* formState, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+    FormState* formState, StringImpl* clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
     WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags, policyDecisionMode, WTF::move(function));
 }
@@ -1208,7 +1208,7 @@ void WebLocalFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&& for
     webPage->injectedBundleFormClient().willSendSubmitEvent(webPage.get(), form.ptr(), m_frame.ptr(), sourceFrame.get(), formState->textFieldValues());
 }
 
-void WebLocalFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, URL&& requestURL, String&& method, CompletionHandler<void()>&& completionHandler)
+void WebLocalFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, URL&& requestURL, RefPtr<StringImpl>&& method, CompletionHandler<void()>&& completionHandler)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage) {
@@ -1232,7 +1232,7 @@ void WebLocalFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, URL
 
     if (!userData) {
         auto userInfo = form->userInfo();
-        if (!userInfo.isNull()) {
+        if (userInfo) {
             if (auto data = JSON::Value::parseJSON(userInfo))
                 userData = userDataFromJSONData(*data);
         }
@@ -1241,7 +1241,7 @@ void WebLocalFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, URL
     webPage->sendWithAsyncReply(Messages::WebPageProxy::WillSubmitForm { m_frame->info(), sourceFrame->info(), values, UserData { WebProcess::singleton().transformObjectsToHandles(userData.get()).get() }, requestURL, method }, WTF::move(completionHandler));
 }
 
-void WebLocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, const String& referer, LocalFrame& childFrame)
+void WebLocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, StringImpl* referer, LocalFrame& childFrame)
 {
     auto* childClient = dynamicDowncast<WebLocalFrameLoaderClient>(childFrame.loader().client());
     ASSERT(childClient);
@@ -1263,7 +1263,7 @@ void WebLocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, c
     childClient->dispatchDecidePolicyForBackForwardNavigationAction(WTF::move(frameLoadRequest), referer, loader->loadType());
 }
 
-void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&& frameLoadRequest, const String& referer, WebCore::FrameLoadType loadType)
+void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&& frameLoadRequest, StringImpl* referer, WebCore::FrameLoadType loadType)
 {
     Ref localFrame = m_localFrame.get();
     localFrame->loader().setWaitingForDelegatedBackForwardLoad();
@@ -1279,14 +1279,14 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationActi
         request,
         ResourceResponse { },
         nullptr, // formState
-        { }, // clientRedirectSourceForHistory
+        nullptr, // clientRedirectSourceForHistory
         std::nullopt, // navigationID
         std::nullopt, // hitTestResult
         false, // hasOpener
         NavigationUpgradeToHTTPSBehavior::BasedOnPolicy,
         localFrame->effectiveSandboxFlags(),
         PolicyDecisionMode::Asynchronous,
-        [weakLocalFrame = WeakPtr { localFrame.ptr() }, url = request.url(), referer, loadType](PolicyAction action) {
+        [weakLocalFrame = WeakPtr { localFrame.ptr() }, url = request.url(), referer = RefPtr { referer }, loadType](PolicyAction action) {
             RefPtr localFrame = weakLocalFrame.get();
             if (!localFrame)
                 return;
@@ -1347,7 +1347,7 @@ void WebLocalFrameLoaderClient::setMainFrameDocumentReady(bool)
     notImplemented();
 }
 
-void WebLocalFrameLoaderClient::startDownload(const ResourceRequest& request, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute)
+void WebLocalFrameLoaderClient::startDownload(const ResourceRequest& request, StringImpl* suggestedName, FromDownloadAttribute fromDownloadAttribute)
 {
     m_frame->startDownload(request, suggestedName, fromDownloadAttribute);
 }
@@ -1474,13 +1474,13 @@ void WebLocalFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     ASSERT(loader->unreachableURL().isEmpty());
 
     // Client redirect
-    if (!loader->clientRedirectSourceForHistory().isNull()) {
+    if (loader->clientRedirectSourceForHistory()) {
         webPage->send(Messages::WebPageProxy::DidPerformClientRedirect(
             loader->clientRedirectSourceForHistory(), loader->clientRedirectDestinationForHistory(), m_frame->frameID()));
     }
 
     // Server redirect
-    if (!loader->serverRedirectSourceForHistory().isNull()) {
+    if (loader->serverRedirectSourceForHistory()) {
         webPage->send(Messages::WebPageProxy::DidPerformServerRedirect(
             loader->serverRedirectSourceForHistory(), loader->serverRedirectDestinationForHistory(), m_frame->frameID()));
     }
@@ -1550,10 +1550,10 @@ bool WebLocalFrameLoaderClient::shouldFallBack(const ResourceError& error) const
     static NeverDestroyed<const ResourceError> cancelledError(WebKit::cancelledError(ResourceRequest()));
     static NeverDestroyed<const ResourceError> pluginWillHandleLoadError(WebKit::pluginWillHandleLoadError(ResourceResponse()));
 
-    if (error.errorCode() == cancelledError.get().errorCode() && error.domain() == cancelledError.get().domain())
+    if (error.errorCode() == cancelledError.get().errorCode() && equal(error.domain(), cancelledError.get().domain()))
         return false;
 
-    if (error.errorCode() == pluginWillHandleLoadError.get().errorCode() && error.domain() == pluginWillHandleLoadError.get().domain())
+    if (error.errorCode() == pluginWillHandleLoadError.get().errorCode() && equal(error.domain(), pluginWillHandleLoadError.get().domain()))
         return false;
 
     return true;
@@ -1565,13 +1565,13 @@ bool WebLocalFrameLoaderClient::canHandleRequest(const ResourceRequest&) const
     return true;
 }
 
-bool WebLocalFrameLoaderClient::canShowMIMEType(const String& /*MIMEType*/) const
+bool WebLocalFrameLoaderClient::canShowMIMEType(StringImpl* /*MIMEType*/) const
 {
     notImplemented();
     return true;
 }
 
-bool WebLocalFrameLoaderClient::canShowMIMETypeAsHTML(const String& /*MIMEType*/) const
+bool WebLocalFrameLoaderClient::canShowMIMETypeAsHTML(StringImpl* /*MIMEType*/) const
 {
     return true;
 }
@@ -1606,10 +1606,10 @@ void WebLocalFrameLoaderClient::loadStorageAccessQuirksIfNeeded()
     });
 }
 
-String WebLocalFrameLoaderClient::generatedMIMETypeForURLScheme(StringView /*URLScheme*/) const
+RefPtr<StringImpl> WebLocalFrameLoaderClient::generatedMIMETypeForURLScheme(StringView /*URLScheme*/) const
 {
     notImplemented();
-    return String();
+    return nullptr;
 }
 
 void WebLocalFrameLoaderClient::frameLoadCompleted()
@@ -1710,20 +1710,20 @@ bool WebLocalFrameLoaderClient::hasCustomUserAgent() const
     return false;
 }
 
-String WebLocalFrameLoaderClient::userAgent(const URL& url) const
+RefPtr<StringImpl> WebLocalFrameLoaderClient::userAgent(const URL& url) const
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
-        return String();
+        return nullptr;
 
     return webPage->userAgent(url);
 }
 
-String WebLocalFrameLoaderClient::overrideContentSecurityPolicy() const
+RefPtr<StringImpl> WebLocalFrameLoaderClient::overrideContentSecurityPolicy() const
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
-        return String();
+        return nullptr;
 
     return webPage->overrideContentSecurityPolicy();
 }
@@ -1852,7 +1852,7 @@ void WebLocalFrameLoaderClient::didCacheBackForwardItem(BackForwardItemIdentifie
         // UIProcess rejected the cache: roll back the WebProcess-side entry
         // we just inserted. Skip the eviction notification because the
         // UIProcess never registered an entry to remove.
-        RELEASE_LOG_ERROR(ProcessSwapping, "didCacheBackForwardItem: UIProcess rejected itemID %" PUBLIC_LOG_STRING ", evicting frameItemID %" PUBLIC_LOG_STRING, itemID.toString().utf8(), frameItemID.toString().utf8());
+        RELEASE_LOG_ERROR(ProcessSwapping, "didCacheBackForwardItem: UIProcess rejected itemID %" PUBLIC_LOG_STRING ", evicting frameItemID %" PUBLIC_LOG_STRING, utf8(itemID.toString()), utf8(frameItemID.toString()));
         BackForwardCache::singleton().remove(frameItemID, BackForwardCache::ShouldNotifyClient::No);
     });
 }
@@ -1885,7 +1885,7 @@ void WebLocalFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader
     m_frame->convertMainResourceLoadToDownload(documentLoader, request, response);
 }
 
-RefPtr<LocalFrame> WebLocalFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
+RefPtr<LocalFrame> WebLocalFrameLoaderClient::createFrame(AtomStringImpl* name, HTMLFrameOwnerElement& ownerElement)
 {
     RefPtr webPage = m_frame->page();
     ASSERT(webPage);
@@ -1901,7 +1901,7 @@ RefPtr<LocalFrame> WebLocalFrameLoaderClient::createFrame(const AtomString& name
     return coreSubframe;
 }
 
-RefPtr<Widget> WebLocalFrameLoaderClient::createPlugin(HTMLPlugInElement& pluginElement, const URL& url, const Vector<AtomString>&, const Vector<AtomString>&, const String& mimeType, bool loadManually)
+RefPtr<Widget> WebLocalFrameLoaderClient::createPlugin(HTMLPlugInElement& pluginElement, const URL& url, const Vector<RefPtr<AtomStringImpl>>&, const Vector<RefPtr<AtomStringImpl>>&, StringImpl* mimeType, bool loadManually)
 {
 #if ENABLE(PDF_PLUGIN)
     return PluginView::create(pluginElement, url, mimeType, loadManually && !m_frameCameFromBackForwardCache);
@@ -1923,22 +1923,22 @@ void WebLocalFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 #endif
 }
 
-static bool pluginSupportsExtension(const PluginData& pluginData, const String& extension)
+static bool pluginSupportsExtension(const PluginData& pluginData, StringImpl* extension)
 {
-    ASSERT(extension.convertToASCIILowercase() == extension);
+    ASSERT(equal(convertToASCIILowercase(extension), extension));
     for (auto& type : pluginData.webVisibleMimeTypes()) {
-        if (type.extensions.contains(extension))
+        if (type.extensions.containsIf([&](auto& item) { return equal(item, extension); }))
             return true;
     }
     return false;
 }
 
-ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, const String& mimeTypeIn)
+ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, StringImpl* mimeTypeIn)
 {
     // FIXME: This should eventually be merged with WebCore::FrameLoader::defaultObjectContentType.
 
-    String mimeType = mimeTypeIn;
-    if (mimeType.isEmpty()) {
+    RefPtr<StringImpl> mimeType = mimeTypeIn;
+    if (isEmpty(mimeType)) {
         auto path = url.path();
         auto dotPosition = path.reverseFind('.');
         if (dotPosition == notFound)
@@ -1947,7 +1947,7 @@ ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, c
 
         // Try to guess the MIME type from the extension.
         mimeType = MIMETypeRegistry::mimeTypeForExtension(extension);
-        if (mimeType.isEmpty()) {
+        if (isEmpty(mimeType)) {
             // Check if there's a plug-in around that can handle the extension.
             if (RefPtr webPage = m_frame->page()) {
                 if (pluginSupportsExtension(protect(protect(webPage->corePage())->pluginData()), extension))
@@ -1983,7 +1983,7 @@ ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, c
     return ObjectContentType::None;
 }
 
-AtomString WebLocalFrameLoaderClient::overrideMediaType() const
+RefPtr<AtomStringImpl> WebLocalFrameLoaderClient::overrideMediaType() const
 {
     if (RefPtr page = m_frame->page())
         return page->overriddenMediaType();
@@ -2119,7 +2119,7 @@ void WebLocalFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilter
 
 #endif
 
-void WebLocalFrameLoaderClient::prefetchDNS(const String& hostname)
+void WebLocalFrameLoaderClient::prefetchDNS(StringImpl* hostname)
 {
     WebProcess::singleton().prefetchDNS(hostname);
 }
@@ -2188,7 +2188,7 @@ void WebLocalFrameLoaderClient::notifyPageOfAppBoundBehavior()
 
 #if ENABLE(PDF_PLUGIN)
 
-bool WebLocalFrameLoaderClient::shouldUsePDFPlugin(const String& contentType, StringView path) const
+bool WebLocalFrameLoaderClient::shouldUsePDFPlugin(StringImpl* contentType, StringView path) const
 {
     RefPtr page = m_frame->page();
     return page && page->shouldUsePDFPlugin(contentType, path);
@@ -2209,7 +2209,7 @@ void WebLocalFrameLoaderClient::dispatchLoadEventToOwnerElementInAnotherProcess(
         page->send(Messages::WebPageProxy::DispatchLoadEventToFrameOwnerElement(m_frame->frameID()));
 }
 
-void WebLocalFrameLoaderClient::frameNameChanged(const String& frameName)
+void WebLocalFrameLoaderClient::frameNameChanged(StringImpl* frameName)
 {
     if (!siteIsolationEnabled())
         return;

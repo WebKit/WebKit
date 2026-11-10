@@ -53,7 +53,7 @@ RefPtr<WebGPU::XRBinding> Device::createXRBinding()
     return XRBinding::create(*this);
 }
 
-void XRBinding::setLabel(String&&)
+void XRBinding::setLabel(RefPtr<StringImpl>&&)
 {
 }
 

@@ -42,16 +42,16 @@ struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
             code,
             // FIXME: Handle the sourceMap.
             hints.map([&autoLayout](auto& hint) {
-                return KeyValuePair<String, WebGPUShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
+                return KeyValuePair<RefPtr<StringImpl>, WebGPUShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
             }),
         };
     }
 
     Ref<JSON::Object> toJSON() const;
 
-    String code;
+    RefPtr<StringImpl> code;
     JSC::Strong<JSC::JSObject> sourceMap;
-    Vector<KeyValuePair<String, GPUShaderModuleCompilationHint>> hints;
+    Vector<KeyValuePair<RefPtr<StringImpl>, GPUShaderModuleCompilationHint>> hints;
 };
 
 }

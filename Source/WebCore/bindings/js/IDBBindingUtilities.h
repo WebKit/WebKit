@@ -56,7 +56,7 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValueIsolatedCopy(JSC::JSGlobalObject
 
 Ref<IDBKey> scriptValueToIDBKey(JSC::JSGlobalObject&, JSC::JSValue);
 
-JSC::JSValue deserializeIDBValueToJSValue(JSC::JSGlobalObject&, const IDBValue&, Vector<std::pair<String, String>>&);
+JSC::JSValue deserializeIDBValueToJSValue(JSC::JSGlobalObject&, const IDBValue&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&);
 WEBCORE_EXPORT JSC::JSValue deserializeIDBValueToJSValue(JSC::JSGlobalObject&, const IDBValue&);
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, const IDBValue&);
 JSC::JSValue toJS(JSC::JSGlobalObject&, JSC::JSGlobalObject&, IDBKey*);

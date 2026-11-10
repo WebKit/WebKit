@@ -68,7 +68,7 @@ Ref<WebKit::WebUserContentControllerProxy> PageConfiguration::Data::createWebUse
 
 Ref<WebKit::WebPreferences> PageConfiguration::Data::createWebPreferences()
 {
-    return WebPreferences::create(WTF::String(), "WebKit"_s, "WebKitDebug"_s);
+    return WebPreferences::create(nullString(), "WebKit"_si, "WebKitDebug"_si);
 }
 
 Ref<WebKit::VisitedLinkStore> PageConfiguration::Data::createVisitedLinkStore()
@@ -131,12 +131,12 @@ void PageConfiguration::setOpenedSite(const WebCore::Site& site)
     m_data.openedSite = site;
 }
 
-const WTF::String& PageConfiguration::openedMainFrameName() const
+const RefPtr<StringImpl>& PageConfiguration::openedMainFrameName() const
 {
     return m_data.openedMainFrameName;
 }
 
-void PageConfiguration::setOpenedMainFrameName(const WTF::String& name)
+void PageConfiguration::setOpenedMainFrameName(StringImpl* name)
 {
     m_data.openedMainFrameName = name;
 }
@@ -231,7 +231,7 @@ void PageConfiguration::setWeakWebExtensionController(WebExtensionController* we
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 
 
-HashSet<WTF::String> PageConfiguration::maskedURLSchemes() const
+HashSet<RefPtr<StringImpl>> PageConfiguration::maskedURLSchemes() const
 {
     if (m_data.maskedURLSchemesWasSet)
         return m_data.maskedURLSchemes;
@@ -349,12 +349,12 @@ void PageConfiguration::setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&& poli
     m_data.defaultWebsitePolicies = WTF::move(policies);
 }
 
-RefPtr<WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(const WTF::String& scheme)
+RefPtr<WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(StringImpl* scheme)
 {
     return m_data.urlSchemeHandlers.get(scheme);
 }
 
-void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebURLSchemeHandler>&& handler, const WTF::String& scheme)
+void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebURLSchemeHandler>&& handler, StringImpl* scheme)
 {
     m_data.urlSchemeHandlers.set(scheme, WTF::move(handler));
 }

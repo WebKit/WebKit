@@ -53,16 +53,16 @@ namespace WebCore {
 
 namespace CookieUtil {
 
-bool isIPAddress(const String& hostname)
+bool isIPAddress(StringImpl* hostname)
 {
     return URL::hostIsIPAddress(hostname);
 }
 
-bool domainMatch(const String& cookieDomain, const String& host)
+bool domainMatch(StringImpl* cookieDomain, StringImpl* host)
 {
-    size_t index = host.find(cookieDomain);
+    size_t index = find(host, cookieDomain);
 
-    bool tailMatch = (index != notFound && index + cookieDomain.length() == host.length());
+    bool tailMatch = (index != notFound && index + length(cookieDomain) == length(host));
 
     // Check if host equals cookie domain.
     if (tailMatch && !index)
@@ -70,12 +70,12 @@ bool domainMatch(const String& cookieDomain, const String& host)
 
     // Check if host is a subdomain of the domain in the cookie.
     // Curl uses a '.' in front of domains to indicate it's valid on subdomains.
-    if (tailMatch && index > 0 && host[index] == '.')
+    if (tailMatch && index > 0 && codeUnitAt(host, index) == '.')
         return true;
 
     // Check the special case where host equals the cookie domain, except for a leading '.' in the cookie domain.
     // E.g. cookie domain is .apple.com and host is apple.com.
-    if (cookieDomain[0] == '.' && cookieDomain.find(host) == 1)
+    if (codeUnitAt(cookieDomain, 0) == '.' && find(cookieDomain, host) == 1)
         return true;
 
     return false;
@@ -90,32 +90,32 @@ static std::optional<double> parseExpiresMS(std::span<const Latin1Character> exp
     return std::optional<double> {tmp};
 }
 
-static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cookie& result)
+static void parseCookieAttributes(StringImpl* attribute, bool& hasMaxAge, Cookie& result)
 {
-    size_t assignmentPosition = attribute.find('=');
+    size_t assignmentPosition = find(attribute, '=');
 
-    String attributeName;
-    String attributeValue;
+    RefPtr<StringImpl> attributeName;
+    RefPtr<StringImpl> attributeValue;
 
     if (assignmentPosition != notFound) {
-        attributeName = attribute.left(assignmentPosition).trim(deprecatedIsSpaceOrNewline);
-        attributeValue = attribute.substring(assignmentPosition + 1).trim(deprecatedIsSpaceOrNewline);
+        attributeName = trim(left(attribute, assignmentPosition), deprecatedIsSpaceOrNewline);
+        attributeValue = trim(substring(attribute, assignmentPosition + 1), deprecatedIsSpaceOrNewline);
     } else
-        attributeName = attribute.trim(deprecatedIsSpaceOrNewline);
+        attributeName = trim(attribute, deprecatedIsSpaceOrNewline);
 
     if (equalLettersIgnoringASCIICase(attributeName, "httponly"_s))
         result.httpOnly = true;
     else if (equalLettersIgnoringASCIICase(attributeName, "secure"_s))
         result.secure = true;
     else if (equalLettersIgnoringASCIICase(attributeName, "domain"_s)) {
-        if (attributeValue.isEmpty())
+        if (isEmpty(attributeValue))
             return;
 
         // Enforce a dot character prefix to hostnames which are not ip addresses and not single value hostnames such as localhost
-        if (!isIPAddress(attributeValue) && !attributeValue.startsWith('.') && attributeValue.find('.') != notFound)
+        if (!isIPAddress(attributeValue) && !startsWith(attributeValue, '.') && find(attributeValue, '.') != notFound)
             attributeValue = makeString('.', attributeValue);
 
-        result.domain = attributeValue.convertToASCIILowercase();
+        result.domain = convertToASCIILowercase(attributeValue);
 
     } else if (equalLettersIgnoringASCIICase(attributeName, "max-age"_s)) {
         if (auto maxAgeSeconds = parseIntegerAllowingTrailingJunk<int64_t>(attributeValue)) {
@@ -131,7 +131,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
         }
     } else if (equalLettersIgnoringASCIICase(attributeName, "expires"_s) && !hasMaxAge) {
         // FIXME: This code passes a UTF-8 buffer to a function that expects to parse Latin1.
-        if (auto expiryTime = parseExpiresMS(byteCast<Latin1Character>(attributeValue.utf8().span()))) {
+        if (auto expiryTime = parseExpiresMS(byteCast<Latin1Character>(utf8(attributeValue).span()))) {
             result.expires = expiryTime.value();
             result.session = false;
         } else if (!hasMaxAge) {
@@ -139,45 +139,45 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.expires = std::nullopt;
         }
     } else if (equalLettersIgnoringASCIICase(attributeName, "path"_s)) {
-        if (!attributeValue.isEmpty() && attributeValue.startsWith('/'))
+        if (!isEmpty(attributeValue) && startsWith(attributeValue, '/'))
             result.path = attributeValue;
         else
             result.path = emptyString();
     }
 }
 
-std::optional<Cookie> parseCookieHeader(const String& cookieLine)
+std::optional<Cookie> parseCookieHeader(StringImpl* cookieLine)
 {
-    if (cookieLine.length() >= MAX_COOKIE_LINE)
+    if (length(cookieLine) >= MAX_COOKIE_LINE)
         return std::nullopt;
 
     // This Algorithm is based on the algorithm defined in RFC 6265 5.2 https://tools.ietf.org/html/rfc6265#section-5.2/
 
-    size_t separatorPosition = cookieLine.find(';');
+    size_t separatorPosition = find(cookieLine, ';');
 
-    String cookiePair = separatorPosition == notFound ? cookieLine : cookieLine.left(separatorPosition);
+    RefPtr<StringImpl> cookiePair = separatorPosition == notFound ? RefPtr<StringImpl> { cookieLine } : left(cookieLine, separatorPosition);
 
-    String cookieName;
-    String cookieValue;
-    size_t assignmentPosition = cookiePair.find('=');
+    RefPtr<StringImpl> cookieName;
+    RefPtr<StringImpl> cookieValue;
+    size_t assignmentPosition = find(cookiePair, '=');
 
     // RFC6265 says to ignore cookies pairs with empty names or no assignment character
     // but browsers seem to treat this type of cookie string as the cookie value
     if (assignmentPosition == notFound)
         cookieValue = cookiePair;
     else {
-        cookieName = cookiePair.left(assignmentPosition);
-        cookieValue = cookiePair.substring(assignmentPosition + 1);
+        cookieName = left(cookiePair, assignmentPosition);
+        cookieValue = substring(cookiePair, assignmentPosition + 1);
     }
 
     Cookie cookie;
-    cookie.name = cookieName.trim(deprecatedIsSpaceOrNewline);
-    cookie.value = cookieValue.trim(deprecatedIsSpaceOrNewline);
+    cookie.name = trim(cookieName, deprecatedIsSpaceOrNewline);
+    cookie.value = trim(cookieValue, deprecatedIsSpaceOrNewline);
 
     bool hasMaxAge = false;
     cookie.session = true;
 
-    for (auto attribute : cookieLine.splitAllowingEmptyEntries(';'))
+    for (auto attribute : splitAllowingEmptyEntries(cookieLine, ';'))
         parseCookieAttributes(attribute, hasMaxAge, cookie);
 
     return cookie;

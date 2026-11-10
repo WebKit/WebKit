@@ -32,7 +32,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBVersionChangeEvent);
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& name)
+IDBVersionChangeEvent::IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, AtomStringImpl* name)
     : Event(EventInterfaceType::IDBVersionChangeEvent, name, CanBubble::No, IsCancelable::No)
     , m_requestIdentifier(requestIdentifier)
     , m_oldVersion(oldVersion)
@@ -43,7 +43,7 @@ IDBVersionChangeEvent::IDBVersionChangeEvent(std::optional<IDBResourceIdentifier
         m_newVersion = std::nullopt;
 }
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const AtomString& name, const Init& init, IsTrusted isTrusted)
+IDBVersionChangeEvent::IDBVersionChangeEvent(AtomStringImpl* name, const Init& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::IDBVersionChangeEvent, name, init, isTrusted)
     , m_oldVersion(init.oldVersion)
     , m_newVersion(init.newVersion)

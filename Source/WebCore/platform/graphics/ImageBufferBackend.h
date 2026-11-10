@@ -164,7 +164,7 @@ public:
 
     virtual void prepareForDisplay() { }
 
-    WEBCORE_EXPORT virtual String debugDescription() const = 0;
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> debugDescription() const = 0;
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const ImageBufferParameters&);

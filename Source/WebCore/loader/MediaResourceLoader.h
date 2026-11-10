@@ -57,7 +57,7 @@ class MediaResourceLoader final
     , public ContextDestructionObserver {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaResourceLoader, WEBCORE_EXPORT);
 public:
-    static Ref<MediaResourceLoader> create(Document& document, Element& element, const String& crossOriginMode, FetchOptions::Destination destination) { return adoptRef(*new MediaResourceLoader(document, element, crossOriginMode, destination)); }
+    static Ref<MediaResourceLoader> create(Document& document, Element& element, StringImpl* crossOriginMode, FetchOptions::Destination destination) { return adoptRef(*new MediaResourceLoader(document, element, crossOriginMode, destination)); }
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
 
     // ContextDestructionObserver.
@@ -71,7 +71,7 @@ public:
     void removeResource(MediaResource&);
 
     NODELETE Document* document();
-    NODELETE const String& crossOriginMode() const;
+    NODELETE const RefPtr<StringImpl>& crossOriginMode() const;
 
     NODELETE WEBCORE_EXPORT static void recordResponsesForTesting();
     WEBCORE_EXPORT Vector<ResourceResponse> responsesForTesting() const;
@@ -81,13 +81,13 @@ public:
     void redirectReceived(const URL&);
 
 private:
-    WEBCORE_EXPORT MediaResourceLoader(Document&, Element&, const String& crossOriginMode, FetchOptions::Destination);
+    WEBCORE_EXPORT MediaResourceLoader(Document&, Element&, StringImpl* crossOriginMode, FetchOptions::Destination);
 
     void contextDestroyed() final;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document WTF_GUARDED_BY_CAPABILITY(mainThread);
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element WTF_GUARDED_BY_CAPABILITY(mainThread);
-    String m_crossOriginMode WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_crossOriginMode WTF_GUARDED_BY_CAPABILITY(mainThread);
     SingleThreadWeakHashSet<MediaResource> m_resources WTF_GUARDED_BY_CAPABILITY(mainThread);
     Vector<ResourceResponse> m_responsesForTesting WTF_GUARDED_BY_CAPABILITY(mainThread);
     FetchOptions::Destination m_destination WTF_GUARDED_BY_CAPABILITY(mainThread);
@@ -127,7 +127,7 @@ public:
 
 private:
 
-    void sendPartialPlaylistLine(String&);
+    void sendPartialPlaylistLine(RefPtr<StringImpl>&);
 
     MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
     void ensureShutdown();
@@ -137,7 +137,7 @@ private:
 
     bool m_shouldSuppressHLSSubtitles { false };
     size_t m_partialPlaylistByteCount { 0 };
-    String m_partialPlaylistLine;
+    RefPtr<StringImpl> m_partialPlaylistLine;
 };
 
 } // namespace WebCore

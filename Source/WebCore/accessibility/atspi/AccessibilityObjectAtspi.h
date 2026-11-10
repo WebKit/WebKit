@@ -78,15 +78,15 @@ public:
     int indexInParent() const;
     int indexInParentForChildrenChanged(AccessibilityAtspi::ChildrenChanged);
 
-    const String& path();
+    const RefPtr<StringImpl>& path();
     GVariant* reference();
     GVariant* hyperlinkReference();
     void serialize(GVariantBuilder*) const;
 
-    WEBCORE_EXPORT String id() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> id() const;
     WEBCORE_EXPORT UTF8CString name() const;
     WEBCORE_EXPORT UTF8CString description() const;
-    WEBCORE_EXPORT String locale() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> locale() const;
     WEBCORE_EXPORT Atspi::Role role() const;
     WEBCORE_EXPORT unsigned childCount() const;
     WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> children() const;
@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT OptionSet<Atspi::State> states() const;
     bool isDefunct() const;
     void stateChanged(const char*, bool);
-    WEBCORE_EXPORT HashMap<String, String> attributes() const;
+    WEBCORE_EXPORT HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> attributes() const;
     WEBCORE_EXPORT RelationMap relationMap() const;
 
     WEBCORE_EXPORT AccessibilityObjectAtspi* hitTest(const IntPoint&, Atspi::CoordinateType) const;
@@ -102,7 +102,7 @@ public:
     WEBCORE_EXPORT void scrollToMakeVisible(Atspi::ScrollType) const;
     WEBCORE_EXPORT void scrollToPoint(const IntPoint&, Atspi::CoordinateType) const;
 
-    WEBCORE_EXPORT String text() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> text() const;
     enum class TextGranularity {
         Character,
         WordStart,
@@ -116,15 +116,15 @@ public:
     WEBCORE_EXPORT IntPoint boundaryOffset(unsigned, TextGranularity) const;
     WEBCORE_EXPORT IntRect boundsForRange(unsigned, unsigned, Atspi::CoordinateType) const;
     struct TextAttributes {
-        HashMap<String, String> attributes;
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> attributes;
         int startOffset;
         int endOffset;
     };
     WEBCORE_EXPORT TextAttributes textAttributes(std::optional<unsigned> = std::nullopt, bool = false) const;
     WEBCORE_EXPORT IntPoint selectedRange() const;
     WEBCORE_EXPORT void setSelectedRange(unsigned, unsigned);
-    void textInserted(const String&, const VisiblePosition&);
-    void textDeleted(const String&, const VisiblePosition&);
+    void textInserted(StringImpl*, const VisiblePosition&);
+    void textDeleted(StringImpl*, const VisiblePosition&);
     void textAttributesChanged();
     void selectionChanged(const VisibleSelection&);
 
@@ -140,10 +140,10 @@ public:
 
     WEBCORE_EXPORT URL url() const;
 
-    WEBCORE_EXPORT String actionName() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> actionName() const;
     WEBCORE_EXPORT bool doAction() const;
 
-    WEBCORE_EXPORT String documentAttribute(const String&) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> documentAttribute(StringImpl*) const;
     void loadEvent(ASCIILiteral);
 
     WEBCORE_EXPORT AccessibilityObjectAtspi* activeDescendant() const;
@@ -184,8 +184,8 @@ private:
     void childRemoved(AccessibilityObjectAtspi&);
 
     std::optional<Atspi::Role> effectiveRole() const;
-    String effectiveRoleName() const;
-    String roleName() const;
+    RefPtr<StringImpl> effectiveRoleName() const;
+    RefPtr<StringImpl> roleName() const;
     const char* effectiveLocalizedRoleName() const;
     const char* localizedRoleName() const;
     void buildAttributes(GVariantBuilder*) const;
@@ -217,13 +217,13 @@ private:
     AccessibilityObjectAtspi* hyperlink(unsigned) const;
     std::optional<unsigned> hyperlinkIndex(unsigned) const;
 
-    String localizedActionName() const;
-    String actionKeyBinding() const;
+    RefPtr<StringImpl> localizedActionName() const;
+    RefPtr<StringImpl> actionKeyBinding() const;
 
-    HashMap<String, String> documentAttributes() const;
-    String documentLocale() const;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> documentAttributes() const;
+    RefPtr<StringImpl> documentLocale() const;
 
-    String imageDescription() const;
+    RefPtr<StringImpl> imageDescription() const;
 
     bool deselectSelectedChild(unsigned) const;
     bool isChildSelected(unsigned) const;
@@ -238,8 +238,8 @@ private:
     std::optional<unsigned> cellIndex(unsigned row, unsigned column) const;
     std::optional<unsigned> rowAtIndex(unsigned) const;
     std::optional<unsigned> columnAtIndex(unsigned) const;
-    String rowDescription(unsigned) const;
-    String columnDescription(unsigned) const;
+    RefPtr<StringImpl> rowDescription(unsigned) const;
+    RefPtr<StringImpl> columnDescription(unsigned) const;
 
     struct CollectionMatchRule {
         CollectionMatchRule(GVariant*);
@@ -256,7 +256,7 @@ private:
         } states;
 
         struct {
-            HashMap<String, Vector<String>> value;
+            HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> value;
             Atspi::CollectionMatchType type;
         } attributes;
 
@@ -266,7 +266,7 @@ private:
         } roles;
 
         struct {
-            Vector<String> value;
+            Vector<RefPtr<StringImpl>> value;
             Atspi::CollectionMatchType type;
         } interfaces;
     };
@@ -294,8 +294,8 @@ private:
     const RefPtr<AccessibilityRootAtspi> m_root;
     std::optional<RefPtr<AccessibilityObjectAtspi>> m_parent;
     bool m_isRegistered { false };
-    String m_path;
-    String m_hyperlinkPath;
+    RefPtr<StringImpl> m_path;
+    RefPtr<StringImpl> m_hyperlinkPath;
     int64_t m_lastSelectionChangedTime { -1 };
     mutable bool m_hasListMarkerAtStart;
     mutable int m_indexInParent { -1 };

@@ -36,7 +36,7 @@ class HTMLAnchorElement;
 enum class ReferrerPolicy : uint8_t;
 
 struct PrefetchRule {
-    Vector<String> tags;
+    Vector<RefPtr<StringImpl>> tags;
     std::optional<ReferrerPolicy> referrerPolicy;
     SpeculationRules::Eagerness eagerness;
 };

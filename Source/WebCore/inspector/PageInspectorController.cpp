@@ -424,7 +424,7 @@ void PageInspectorController::show()
         connectFrontend(*frontendChannel);
 }
 
-void PageInspectorController::evaluateForTestInFrontend(const String& script)
+void PageInspectorController::evaluateForTestInFrontend(StringImpl* script)
 {
     CheckedRef { ensureInspectorAgent() }->evaluateForTestInFrontend(script);
 }
@@ -517,7 +517,7 @@ Vector<size_t> PageInspectorController::overlayOwnerFlexLineStarts(const RenderO
     return domAgent->flexibleBoxRendererCachedItemsAtStartOfLine(renderer);
 }
 
-void PageInspectorController::dispatchMessageFromFrontend(const String& message)
+void PageInspectorController::dispatchMessageFromFrontend(StringImpl* message)
 {
     m_backendDispatcher->dispatch(message);
 }

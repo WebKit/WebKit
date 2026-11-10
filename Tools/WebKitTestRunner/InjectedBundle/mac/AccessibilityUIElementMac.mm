@@ -332,12 +332,12 @@ static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef co
     if (searchStrings) {
         NSMutableArray *searchStringsParameter = [NSMutableArray array];
         if (JSValueIsString(context, searchStrings))
-            [searchStringsParameter addObject:toWTFString(context, searchStrings).createNSString().get()];
+            [searchStringsParameter addObject:createNSString(toWTFString(context, searchStrings)).get()];
         else {
             JSObjectRef searchStringsArray = JSValueToObject(context, searchStrings, nullptr);
             unsigned searchStringsArrayLength = arrayLength(context, searchStringsArray);
             for (unsigned i = 0; i < searchStringsArrayLength; ++i)
-                [searchStringsParameter addObject:toWTFString(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr)).createNSString().get()];
+                [searchStringsParameter addObject:createNSString(toWTFString(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr))).get()];
         }
         [parameterizedAttribute setObject:searchStringsParameter forKey:@"AXSelectTextSearchStrings"];
     }
@@ -361,12 +361,12 @@ static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef co
     if (searchStrings) {
         NSMutableArray *searchStringsParameter = [NSMutableArray array];
         if (JSValueIsString(context, searchStrings))
-            [searchStringsParameter addObject:toWTFString(context, searchStrings).createNSString().get()];
+            [searchStringsParameter addObject:createNSString(toWTFString(context, searchStrings)).get()];
         else {
             JSObjectRef searchStringsArray = JSValueToObject(context, searchStrings, nullptr);
             unsigned searchStringsArrayLength = arrayLength(context, searchStringsArray);
             for (unsigned i = 0; i < searchStringsArrayLength; ++i)
-                [searchStringsParameter addObject:toWTFString(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr)).createNSString().get()];
+                [searchStringsParameter addObject:createNSString(toWTFString(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr))).get()];
         }
         [parameterizedAttribute setObject:searchStringsParameter forKey:@"AXSearchTextSearchStrings"];
     }
@@ -400,13 +400,13 @@ static NSDictionary *textOperationParameterizedAttribute(JSContextRef context, J
     }
 
     if (JSValueIsString(context, replacementStrings))
-        [attributeParameters setObject:toWTFString(context, replacementStrings).createNSString().get() forKey:@"AXTextOperationReplacementString"];
+        [attributeParameters setObject:createNSString(toWTFString(context, replacementStrings)).get() forKey:@"AXTextOperationReplacementString"];
     else {
         NSMutableArray *individualReplacementStringsParameter = [NSMutableArray array];
         JSObjectRef replacementStringsArray = JSValueToObject(context, replacementStrings, nullptr);
         unsigned replacementStringsArrayLength = arrayLength(context, replacementStringsArray);
         for (unsigned i = 0; i < replacementStringsArrayLength; ++i)
-            [individualReplacementStringsParameter addObject:toWTFString(context, JSObjectGetPropertyAtIndex(context, replacementStringsArray, i, nullptr)).createNSString().get()];
+            [individualReplacementStringsParameter addObject:createNSString(toWTFString(context, JSObjectGetPropertyAtIndex(context, replacementStringsArray, i, nullptr))).get()];
 
         [attributeParameters setObject:individualReplacementStringsParameter forKey:@"AXTextOperationIndividualReplacementStrings"];
     }

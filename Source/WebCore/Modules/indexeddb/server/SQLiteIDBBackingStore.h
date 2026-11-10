@@ -58,7 +58,7 @@ class SQLiteIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteIDBBackingStore, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteIDBBackingStore);
 public:
-    WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);
+    WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, StringImpl* databaseDirectory);
     WEBCORE_EXPORT ~SQLiteIDBBackingStore() override;
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) override;
@@ -69,10 +69,10 @@ public:
     IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) final;
     IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) final;
     IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) final;
-    IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const String& newName) final;
+    IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, StringImpl* newName) final;
     IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) final;
     IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier) final;
-    IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) final;
+    IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName) final;
     IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyData&, bool& keyExists) final;
     IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyRangeData&) final;
     IDBError overwriteRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IndexIDToIndexKeyMap&, const IDBValue&) final;
@@ -91,7 +91,7 @@ public:
 
     bool supportsSimultaneousReadWriteTransactions() override { return false; }
     bool isEphemeral() override { return false; }
-    String fullDatabasePath() const override;
+    RefPtr<StringImpl> fullDatabasePath() const override;
 
     bool hasTransaction(const IDBResourceIdentifier&) const final;
 
@@ -102,17 +102,17 @@ public:
 
     void unregisterCursor(SQLiteIDBCursor&);
 
-    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
+    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<RefPtr<StringImpl>>& blobURLs, Vector<RefPtr<StringImpl>>& blobFilePaths);
     IDBError getFileSystemHandleRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<FileSystemHandleRecord>& records);
-    std::expected<IDBValue, IDBError> buildIDBValueForRecord(int64_t objectStoreRecord, const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
+    std::expected<IDBValue, IDBError> buildIDBValueForRecord(int64_t objectStoreRecord, const ThreadSafeDataBuffer&, Vector<RefPtr<StringImpl>>&& blobURLs, Vector<RefPtr<StringImpl>>&& blobFilePaths);
 
-    WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(const String& directory);
-    const String& databaseDirectory() const LIFETIME_BOUND { return m_databaseDirectory; };
-    WEBCORE_EXPORT static String fullDatabasePathForDirectory(const String&);
-    WEBCORE_EXPORT static String encodeDatabaseName(const String& databaseName);
-    WEBCORE_EXPORT static String decodeDatabaseName(const String& encodedDatabaseName);
+    WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(StringImpl* directory);
+    const RefPtr<StringImpl>& databaseDirectory() const LIFETIME_BOUND { return m_databaseDirectory; };
+    WEBCORE_EXPORT static RefPtr<StringImpl> fullDatabasePathForDirectory(StringImpl*);
+    WEBCORE_EXPORT static RefPtr<StringImpl> encodeDatabaseName(StringImpl* databaseName);
+    WEBCORE_EXPORT static RefPtr<StringImpl> decodeDatabaseName(StringImpl* encodedDatabaseName);
 
-    WEBCORE_EXPORT static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
+    WEBCORE_EXPORT static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(StringImpl*);
     void handleLowMemoryWarning() final;
 
 protected:
@@ -247,7 +247,7 @@ private:
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
     HashMap<IDBResourceIdentifier, CheckedPtr<SQLiteIDBCursor>> m_cursors;
 
-    String m_databaseDirectory;
+    RefPtr<StringImpl> m_databaseDirectory;
 };
 
 } // namespace IDBServer

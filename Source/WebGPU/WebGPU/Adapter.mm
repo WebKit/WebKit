@@ -85,7 +85,7 @@ static uint32_t subgroupSize(id<MTLDevice> device)
 WebGPU::AdapterInfo Adapter::info()
 {
     WebGPU::AdapterInfo info {
-        .name = m_device.name,
+        .name = StringImpl::create(m_device.name),
         // A Metal device is never a fallback (software) adapter.
         .isFallbackAdapter = false,
     };
@@ -111,12 +111,12 @@ bool Adapter::hasFeature(WebGPU::FeatureName feature)
 
 void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<WebGPU::Device>&&)>&& callback)
 {
-    requestDeviceOrError(descriptor, [callback = WTF::move(callback)](std::expected<Ref<Device>, String>&& device) mutable {
+    requestDeviceOrError(descriptor, [callback = WTF::move(callback)](std::expected<Ref<Device>, RefPtr<StringImpl>>&& device) mutable {
         callback(device ? RefPtr<WebGPU::Device> { WTF::move(*device) } : nullptr);
     });
 }
 
-void Adapter::requestDeviceOrError(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&& callback)
+void Adapter::requestDeviceOrError(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<Device>, RefPtr<StringImpl>>&&)>&& callback)
 {
     if (m_deviceRequested) {
         callback(makeUnexpected("Adapter can only request one device"_s));
@@ -254,7 +254,7 @@ static void listenForUncapturedErrors(WebGPU::Metal::Device& device, const WGPUU
         // The device calls its uncaptured error callback once, so listen for the next error before
         // the callback can generate one.
         listenForUncapturedErrors(*device, callbackInfo);
-        auto message = error->message.utf8();
+        auto message = utf8(error->message);
         WGPUDevice handle = WebGPU::toAPI(*device);
         callbackInfo.callback(&handle, WebGPU::Metal::toAPI(error), WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
     }, CompletionHandlerCallThread::AnyThread });
@@ -296,9 +296,9 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
             callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI("Device does not support requested features"_s));
             return future.future();
         }
-        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Metal::Device>, RefPtr<StringImpl>>&& device) {
             if (!device) {
-                auto message = device.error().utf8();
+                auto message = utf8(device.error());
                 return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
             }
             if (uncapturedErrorCallbackInfo.callback)

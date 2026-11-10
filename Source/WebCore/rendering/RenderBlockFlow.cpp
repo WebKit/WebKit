@@ -2277,7 +2277,7 @@ static inline bool needsAppleMailPaginationQuirk(const RenderBlockFlow& renderer
         return false;
 
     RefPtr element = renderer.element();
-    if (element && element->idForStyleResolution() == "messageContentContainer"_s)
+    if (element && equal(element->idForStyleResolution(), "messageContentContainer"_s))
         return true;
 
     return false;
@@ -4703,7 +4703,7 @@ static inline bool isVisibleRenderText(const RenderObject& renderer)
     if (!renderText)
         return false;
 
-    return !renderText->linesBoundingBox().isEmpty() && !renderText->text().containsOnly<isASCIIWhitespace>();
+    return !renderText->linesBoundingBox().isEmpty() && !containsOnly<isASCIIWhitespace>(renderText->text());
 }
 
 NODELETE static inline bool resizeTextPermitted(const RenderObject& renderer)

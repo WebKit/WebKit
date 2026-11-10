@@ -264,18 +264,18 @@ static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
 static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArray, const Vector<WebCore::RawFile>& files, NSURL* temporaryDirectory, bool usePlaceholderFiles, CompletionHandler<void(RetainPtr<NSMutableArray>&&)>&& completionHandler)
 {
     struct FileWriteTask {
-        String fileName;
+        RefPtr<StringImpl> fileName;
         RetainPtr<NSData> fileData;
     };
     auto fileWriteTasks = files.map([](auto& file) {
-        return FileWriteTask { file.fileName.isolatedCopy(), protect(file.fileData)->createNSData() };
+        return FileWriteTask { isolatedCopy(file.fileName), protect(file.fileData)->createNSData() };
     });
 
     auto queue = WorkQueue::create("com.apple.WebKit.WKShareSheet.ShareableFileWriter"_s);
     queue->dispatch([shareDataArray = WTF::move(shareDataArray), fileWriteTasks = WTF::move(fileWriteTasks), temporaryDirectory = retainPtr(temporaryDirectory), usePlaceholderFiles, completionHandler = WTF::move(completionHandler)]() mutable {
         RetainPtr fileURLs = adoptNS([[NSMutableArray alloc] initWithCapacity:fileWriteTasks.size()]);
         for (auto& fileWriteTask : borrow(fileWriteTasks)) {
-            RetainPtr fileURL = [WKShareSheet writeFileToShareableURL:WebCore::ResourceResponseBase::sanitizeSuggestedFilename(fileWriteTask.fileName).createNSString().get() data:fileWriteTask.fileData.get() temporaryDirectory:temporaryDirectory.get()];
+            RetainPtr fileURL = [WKShareSheet writeFileToShareableURL:createNSString(WebCore::ResourceResponseBase::sanitizeSuggestedFilename(fileWriteTask.fileName)).get() data:fileWriteTask.fileData.get() temporaryDirectory:temporaryDirectory.get()];
             if (!fileURL)
                 continue;
 
@@ -312,14 +312,14 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 {
     auto shareDataArray = adoptNS([[NSMutableArray alloc] init]);
     
-    if (!data.shareData.text.isEmpty())
-        [shareDataArray addObject:data.shareData.text.createNSString().get()];
+    if (!isEmpty(data.shareData.text))
+        [shareDataArray addObject:createNSString(data.shareData.text).get()];
     
     if (data.url) {
         RetainPtr url = data.url.value().createNSURL();
         RetainPtr<NSString> title;
-        if (!data.shareData.title.isEmpty())
-            title = data.shareData.title.createNSString();
+        if (!isEmpty(data.shareData.title))
+            title = createNSString(data.shareData.title);
 
         if (data.originator == WebCore::ShareDataOriginator::Web) {
 #if PLATFORM(IOS_FAMILY)
@@ -337,8 +337,8 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
         }
     }
     
-    if (!data.shareData.title.isEmpty() && ![shareDataArray count])
-        [shareDataArray addObject:data.shareData.title.createNSString().get()];
+    if (!isEmpty(data.shareData.title) && ![shareDataArray count])
+        [shareDataArray addObject:createNSString(data.shareData.title).get()];
 
     _completionHandler = WTF::move(completionHandler);
 
@@ -522,7 +522,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 {
     RetainPtr quarantineProperties = @{
         bridge_cast(kLSQuarantineTypeKey): bridge_cast(kLSQuarantineTypeWebDownload),
-        bridge_cast(kLSQuarantineAgentBundleIdentifierKey): applicationBundleIdentifier().createNSString().get()
+        bridge_cast(kLSQuarantineAgentBundleIdentifierKey): createNSString(applicationBundleIdentifier()).get()
     };
 
     if (![fileURL setResourceValue:quarantineProperties.get() forKey:NSURLQuarantinePropertiesKey error:nil])
@@ -566,7 +566,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
 + (NSURL *)createRandomSharingDirectoryForFile:(NSURL *)temporaryDirectory
 {
-    RetainPtr randomDirectory = createVersion4UUIDString().createNSString();
+    RetainPtr randomDirectory = createNSString(createVersion4UUIDString());
     if (![randomDirectory length] || !temporaryDirectory)
         return nil;
     RetainPtr dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory.get() isDirectory:YES];

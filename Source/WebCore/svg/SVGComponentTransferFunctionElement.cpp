@@ -51,7 +51,7 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     };
 }
 
-void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:

@@ -45,7 +45,7 @@ namespace WebKit {
 struct PolicyDecisionConsoleMessage {
     JSC::MessageLevel messageLevel;
     JSC::MessageSource messageSource;
-    String message;
+    RefPtr<StringImpl> message;
 };
 
 struct PolicyDecision {

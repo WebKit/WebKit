@@ -137,7 +137,7 @@ private:
         const WebGPU::Extent3D& copySize);
 #endif
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::Queue> m_backing;

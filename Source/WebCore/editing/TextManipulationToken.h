@@ -30,15 +30,15 @@ enum class TextManipulationTokenIdentifierType { };
 using TextManipulationTokenIdentifier = ObjectIdentifier<TextManipulationTokenIdentifierType>;
 
 struct TextManipulationTokenInfo {
-    String tagName;
-    String roleAttribute;
+    RefPtr<StringImpl> tagName;
+    RefPtr<StringImpl> roleAttribute;
     URL documentURL;
     bool isVisible { false };
 };
 
 struct TextManipulationToken {
     TextManipulationTokenIdentifier identifier;
-    String content;
+    RefPtr<StringImpl> content;
     std::optional<TextManipulationTokenInfo> info;
     bool isExcluded { false };
 };

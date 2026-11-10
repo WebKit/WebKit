@@ -108,7 +108,7 @@ namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::MediaSampleAVFObjC> {
-    static String toString(const WebCore::MediaSampleAVFObjC& sample)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSampleAVFObjC& sample)
     {
         return sample.toJSONString();
     }

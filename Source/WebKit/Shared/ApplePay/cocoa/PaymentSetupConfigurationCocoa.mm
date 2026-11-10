@@ -51,17 +51,17 @@ static RetainPtr<PKPaymentSetupConfiguration> toPlatformConfiguration(const WebC
 #endif
 
     auto configuration = adoptNS([PAL::allocPKPaymentSetupConfigurationInstance() init]);
-    [configuration setMerchantIdentifier:coreConfiguration.merchantIdentifier.createNSString().get()];
+    [configuration setMerchantIdentifier:createNSString(coreConfiguration.merchantIdentifier).get()];
     [configuration setOriginatingURL:url.createNSURL().get()];
-    [configuration setReferrerIdentifier:coreConfiguration.referrerIdentifier.createNSString().get()];
+    [configuration setReferrerIdentifier:createNSString(coreConfiguration.referrerIdentifier).get()];
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    [configuration setSignature:coreConfiguration.signature.createNSString().get()];
+    [configuration setSignature:createNSString(coreConfiguration.signature).get()];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     if ([configuration respondsToSelector:@selector(setSignedFields:)]) {
         RetainPtr signedFields = adoptNS([[NSMutableArray alloc] initWithCapacity:coreConfiguration.signedFields.size()]);
         for (auto& signedField : borrow(coreConfiguration.signedFields))
-            [signedFields addObject:signedField.createNSString().get()];
+            [signedFields addObject:createNSString(signedField).get()];
         [configuration setSignedFields:signedFields.get()];
     }
 

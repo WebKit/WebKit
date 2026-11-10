@@ -44,7 +44,7 @@
 
 namespace WebKit {
 
-void WebExtensionAPIWebRequestEvent::enumerateListeners(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, const ResourceLoadInfo& resourceLoadInfo, NOESCAPE const Function<void(WebExtensionCallbackHandler&, const Vector<String>&)>& function)
+void WebExtensionAPIWebRequestEvent::enumerateListeners(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, const ResourceLoadInfo& resourceLoadInfo, NOESCAPE const Function<void(WebExtensionCallbackHandler&, const Vector<RefPtr<StringImpl>>&)>& function)
 {
     if (m_listeners.isEmpty())
         return;
@@ -80,7 +80,7 @@ void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameI
             return;
     }
 
-    auto extraInfo = makeVector<String>(extraInfoArray);
+    auto extraInfo = makeVector<RefPtr<StringImpl>>(extraInfoArray);
     extraInfo.removeAllMatching([&](auto& item) {
         return item != "requestBody"_s && item != "requestHeaders"_s && item != "responseHeaders"_s;
     });

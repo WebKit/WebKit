@@ -98,7 +98,7 @@ public:
     void willDestroyCachedResource(WebCore::CachedResource&) final;
 
     void mainFrameNavigated(WebCore::DocumentLoader&) final;
-    void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) final;
+    void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, StringImpl* sourceString) final;
 
     // FIXME: Forward interception to ProxyingNetworkAgent. https://bugs.webkit.org/show_bug.cgi?id=324383
     bool willIntercept(const WebCore::ResourceRequest&) final;

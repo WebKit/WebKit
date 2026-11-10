@@ -55,7 +55,7 @@
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->type().createNSString().autorelease();
+    return createNSString(IMPL->type()).autorelease();
 }
 
 - (id <DOMEventTarget>)target
@@ -157,7 +157,7 @@
 - (void)initEvent:(NSString *)eventTypeArg canBubbleArg:(BOOL)canBubbleArg cancelableArg:(BOOL)cancelableArg
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initEvent(eventTypeArg, canBubbleArg, cancelableArg);
+    IMPL->initEvent(AtomStringImpl::add((__bridge CFStringRef)eventTypeArg).get(), canBubbleArg, cancelableArg);
 }
 
 - (void)stopImmediatePropagation

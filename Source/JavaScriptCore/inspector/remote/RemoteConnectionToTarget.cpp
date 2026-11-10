@@ -73,7 +73,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     return true;
 }
 
-void RemoteConnectionToTarget::sendMessageToTarget(String&& message)
+void RemoteConnectionToTarget::sendMessageToTarget(RefPtr<StringImpl>&& message)
 {
     if (m_connectionState == ConnectionState::Closed)
         return;
@@ -120,7 +120,7 @@ std::optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
     return target ? std::optional<TargetID>(target->targetIdentifier()) : std::nullopt;
 }
 
-void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
+void RemoteConnectionToTarget::sendMessageToFrontend(StringImpl* message)
 {
     if (m_connectionState == ConnectionState::Closed)
         return;

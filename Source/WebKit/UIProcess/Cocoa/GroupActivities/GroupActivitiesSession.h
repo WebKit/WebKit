@@ -55,7 +55,7 @@ public:
     };
     State state() const;
 
-    String uuid() const;
+    RefPtr<StringImpl> uuid() const;
     URL fallbackURL() const;
 
     using StateChangeObserver = WTF::Observer<void(const GroupActivitiesSession&, State)>;

@@ -112,7 +112,7 @@ void SourceBufferList::replaceWith(Vector<Ref<SourceBuffer>>&& other)
         scheduleEvent(eventNames().removesourcebufferEvent);
 }
 
-void SourceBufferList::scheduleEvent(const AtomString& eventName)
+void SourceBufferList::scheduleEvent(AtomStringImpl* eventName)
 {
     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }

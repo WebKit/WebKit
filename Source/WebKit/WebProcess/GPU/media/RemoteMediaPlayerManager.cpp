@@ -69,7 +69,7 @@ public:
         return manager()->createRemoteMediaPlayer(player, m_remoteEngineIdentifier);
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return manager()->getSupportedTypes(m_remoteEngineIdentifier, types);
     }
@@ -81,23 +81,23 @@ public:
         return manager()->supportsTypeAndCodecs(m_remoteEngineIdentifier, parameters);
     }
 
-    HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
+    HashSet<SecurityOriginData> originsInMediaCache(StringImpl* path) const final
     {
         ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
         return { };
     }
 
-    void clearMediaCache(const String& path, WallTime modifiedSince) const final
+    void clearMediaCache(StringImpl* path, WallTime modifiedSince) const final
     {
         ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
     }
 
-    void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins) const final
+    void clearMediaCacheForOrigins(StringImpl* path, const HashSet<SecurityOriginData>& origins) const final
     {
         ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
     }
 
-    bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
+    bool supportsKeySystem(StringImpl* keySystem, StringImpl* mimeType) const final
     {
         return manager()->supportsKeySystem(m_remoteEngineIdentifier, keySystem, mimeType);
     }
@@ -222,7 +222,7 @@ std::optional<MediaPlayerIdentifier> RemoteMediaPlayerManager::findRemotePlayerI
     return std::nullopt;
 }
 
-void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String>& result)
+void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<RefPtr<StringImpl>>& result)
 {
     result = protect(typeCache(remoteEngineIdentifier))->supportedTypes();
 }
@@ -235,7 +235,7 @@ MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaP
     return protect(typeCache(remoteEngineIdentifier))->supportsTypeAndCodecs(parameters);
 }
 
-bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType)
+bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier, StringImpl* keySystem, StringImpl* mimeType)
 {
     return false;
 }

@@ -30,19 +30,19 @@
 
 namespace WTF {
 
-String logLevelString()
+RefPtr<StringImpl> logLevelString()
 {
-    String propertyValue;
+    RefPtr<StringImpl> propertyValue;
 
     if (const auto* propertyInfo = __system_property_find("debug." LOG_CHANNEL_WEBKIT_SUBSYSTEM ".log")) {
         // The value is only valid while the callback runs, so copy it there.
         __system_property_read_callback(propertyInfo, [](void* userData, const char*, const char* value, unsigned) {
-            *static_cast<String*>(userData) = String::fromLatin1(value);
+            *static_cast<RefPtr<StringImpl>*>(userData) = StringImpl::fromLatin1(value);
         }, &propertyValue);
     }
 
     // Disable all log channels if the property is unset or empty.
-    if (propertyValue.isEmpty())
+    if (isEmpty(propertyValue))
         return makeString("-all"_s);
 
     return propertyValue;

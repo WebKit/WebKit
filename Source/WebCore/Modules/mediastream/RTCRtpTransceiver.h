@@ -56,7 +56,7 @@ public:
     RTCRtpTransceiverDirection direction() const;
     std::optional<RTCRtpTransceiverDirection> currentDirection() const;
     ExceptionOr<void> setDirection(RTCRtpTransceiverDirection);
-    String mid() const;
+    RefPtr<StringImpl> mid() const;
 
     RTCRtpSender& sender() { return m_sender.get(); }
     RTCRtpReceiver& receiver() { return m_receiver.get(); }

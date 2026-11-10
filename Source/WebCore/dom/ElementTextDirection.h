@@ -28,7 +28,6 @@
 #include <optional>
 
 namespace WTF {
-class AtomString;
 };
 
 namespace WebCore {
@@ -45,7 +44,7 @@ enum class TextDirectionState : uint8_t {
     Undefined,
 };
 
-TextDirectionState parseTextDirectionState(const WTF::AtomString&);
+TextDirectionState parseTextDirectionState(AtomStringImpl*);
 TextDirectionState elementTextDirectionState(const Element&);
 
 bool elementHasValidTextDirectionState(const Element&);

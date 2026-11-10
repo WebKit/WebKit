@@ -72,7 +72,7 @@ public:
     void cookiesForURL(WTF::URL&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&, RefPtr<WTF::WorkQueue> replyQueue = nullptr);
     void setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
-    void deleteCookiesForHostnames(const Vector<WTF::String>&, CompletionHandler<void()>&&);
+    void deleteCookiesForHostnames(const Vector<RefPtr<StringImpl>>&, CompletionHandler<void()>&&);
     
     void deleteAllCookies(CompletionHandler<void()>&&);
     void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
@@ -92,7 +92,7 @@ public:
     void replaceCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
     void getAllCookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
 
-    void setCookiePersistentStorage(const WTF::String& storagePath, WebKit::SoupCookiePersistentStorageType);
+    void setCookiePersistentStorage(StringImpl* storagePath, WebKit::SoupCookiePersistentStorageType);
 #endif
 
 private:

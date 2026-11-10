@@ -83,12 +83,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (NSString *)label
 {
-    return protect(*_webExtensionAction)->label().createNSString().autorelease();
+    return createNSString(protect(*_webExtensionAction)->label()).autorelease();
 }
 
 - (NSString *)badgeText
 {
-    return protect(*_webExtensionAction)->badgeText().createNSString().autorelease();
+    return createNSString(protect(*_webExtensionAction)->badgeText()).autorelease();
 }
 
 - (BOOL)hasUnreadBadgeText
@@ -108,7 +108,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (void)setInspectionName:(NSString *)name
 {
-    protect(*_webExtensionAction)->setPopupWebViewInspectionName(name);
+    protect(*_webExtensionAction)->setPopupWebViewInspectionName(StringImpl::create(name).get());
 }
 
 - (BOOL)isEnabled

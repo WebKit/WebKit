@@ -58,30 +58,30 @@ protected:
     // FIXME: To implement.
     CSSRuleList* cssRules() const override { return nullptr; }
     unsigned length() const final;
-    String item(unsigned index) const final;
-    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
-    String getPropertyValue(const String& propertyName) final;
-    String getPropertyPriority(const String& propertyName) final;
-    String getPropertyShorthand(const String& propertyName) final;
-    bool isPropertyImplicit(const String& propertyName) final;
-    ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
-    ExceptionOr<String> removeProperty(const String& propertyName) final;
-    String cssText() const final;
-    ExceptionOr<void> setCssText(const String&) final;
+    RefPtr<StringImpl> item(unsigned index) const final;
+    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyValue(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyPriority(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyShorthand(StringImpl* propertyName) final;
+    bool isPropertyImplicit(StringImpl* propertyName) final;
+    ExceptionOr<void> setProperty(StringImpl* propertyName, StringImpl* value, StringImpl* priority) final;
+    ExceptionOr<RefPtr<StringImpl>> removeProperty(StringImpl* propertyName) final;
+    RefPtr<StringImpl> cssText() const final;
+    ExceptionOr<void> setCssText(StringImpl*) final;
 
     bool isExposed(CSSPropertyID) const;
     RefPtr<DeprecatedCSSOMValue> wrapForDeprecatedCSSOM(CSSValue*);
 
     // Maps an author-facing name to its stored id (`size` -> `page-size` within @page).
-    CSSPropertyID resolvePropertyName(const String&) const;
+    CSSPropertyID resolvePropertyName(StringImpl*) const;
 
     enum class MutationType : uint8_t { NoChanges, StyleAttributeChanged, PropertyChanged };
     [[nodiscard]] bool willMutate();
     void didMutate(MutationType);
 
     // CSSPropertyID versions of the CSSOM functions to support bindings.
-    String getPropertyValueInternal(CSSPropertyID) const;
-    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant);
+    RefPtr<StringImpl> getPropertyValueInternal(CSSPropertyID) const;
+    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, StringImpl* value, IsImportant);
 
     CSSParserContext cssParserContext() const;
     MutableStyleProperties& propertySet() const { return m_propertySet; }

@@ -109,7 +109,7 @@ unsigned DeprecatedGlobalSettings::audioSessionCategoryOverride()
     return static_cast<unsigned>(AudioSession::singleton().categoryOverride());
 }
 
-void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInterfaceName)
+void DeprecatedGlobalSettings::setNetworkInterfaceName(StringImpl* networkInterfaceName)
 {
     singleton().m_networkInterfaceName = networkInterfaceName;
 }

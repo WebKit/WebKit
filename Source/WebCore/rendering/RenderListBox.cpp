@@ -129,7 +129,7 @@ void RenderListBox::updateFromElement()
         CheckedRef style = this->style();
         std::optional<FontCascade> boldFont;
         for (auto& element : protect(selectElement())->listItems()) {
-            String text;
+            RefPtr<StringImpl> text;
             bool isGroupLabel = false;
             if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(element.get()))
                 text = optionElement->textIndentedToRespectGroupLabel();
@@ -137,7 +137,7 @@ void RenderListBox::updateFromElement()
                 text = optGroupElement->groupLabelText();
                 isGroupLabel = true;
             }
-            if (text.isEmpty())
+            if (isEmpty(text))
                 continue;
             if (isGroupLabel && !boldFont) {
                 FontCascade bolderFont = bolder(protect(document()), protect(style->fontCascade()));
@@ -483,7 +483,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if ((itemStyle->visibility() == Visibility::Hidden || itemStyle->isForceHidden()))
         return;
 
-    String itemText;
+    RefPtr<StringImpl> itemText;
     RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(*listItemElement);
     RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(*listItemElement);
     if (optionElement)
@@ -493,7 +493,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     CheckedRef style = this->style();
     itemText = applyTextTransform(style, itemText);
 
-    if (itemText.isNull())
+    if (!itemText)
         return;
 
     Color textColor = itemStyle->visitedDependentColorApplyingColorFilter();
@@ -1134,12 +1134,12 @@ bool RenderListBox::mockScrollbarsControllerEnabled() const
     return settings().mockScrollbarsControllerEnabled();
 }
 
-void RenderListBox::logMockScrollbarsControllerMessage(const String& message) const
+void RenderListBox::logMockScrollbarsControllerMessage(StringImpl* message) const
 {
     protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("RenderListBox: "_s, message));
 }
 
-String RenderListBox::debugDescription() const
+RefPtr<StringImpl> RenderListBox::debugDescription() const
 {
     return RenderObject::debugDescription();
 }

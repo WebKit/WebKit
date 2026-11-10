@@ -220,8 +220,10 @@ template<> struct HashTraits<ASCIILiteral> : SimpleClassHashTraits<ASCIILiteral>
     static bool isDeletedValue(const ASCIILiteral& value) { return value.isDeletedValue(); }
 };
 
-template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> : SimpleClassHashTraits<RefPtr<P, Q, R>> {
+template<typename P, typename Q, typename R> struct RefPtrHashTraits : SimpleClassHashTraits<RefPtr<P, Q, R>> {
     static P* emptyValue() { return nullptr; }
+    // Equivalent to the default "value == emptyValue()" check, which is unavailable for some string pointers.
+    static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const RefPtr<P, Q, R>& value) { return !value; }
 
     using PeekType = P*;
@@ -237,6 +239,29 @@ template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> 
         SimpleClassHashTraits<RefPtr<P, Q, R>>::constructDeletedValue(value);
     }
 };
+
+template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> : RefPtrHashTraits<P, Q, R> { };
+
+// get() and friends on maps with string values return an owning pointer
+// rather than a raw pointer, so that chained calls and stored results keep the string alive.
+#ifndef WTF_STRINGIMPL_HASHTRAITS_OWNING_PEEK
+#define WTF_STRINGIMPL_HASHTRAITS_OWNING_PEEK 1
+#endif
+
+#if WTF_STRINGIMPL_HASHTRAITS_OWNING_PEEK
+// The peek() functions are defined in StringImpl.h and AtomStringImpl.h, where the types are complete.
+template<> struct HashTraits<RefPtr<StringImpl>> : RefPtrHashTraits<StringImpl, RawPtrTraits<StringImpl>, DefaultRefDerefTraits<StringImpl>> {
+    using PeekType = RefPtr<StringImpl>;
+    static PeekType peek(const RefPtr<StringImpl>&);
+    static PeekType peek(StringImpl*);
+};
+
+template<> struct HashTraits<RefPtr<AtomStringImpl>> : RefPtrHashTraits<AtomStringImpl, RawPtrTraits<AtomStringImpl>, DefaultRefDerefTraits<AtomStringImpl>> {
+    using PeekType = RefPtr<AtomStringImpl>;
+    static PeekType peek(const RefPtr<AtomStringImpl>&);
+    static PeekType peek(AtomStringImpl*);
+};
+#endif
 
 template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
     static constexpr bool emptyValueIsZero = true;
@@ -284,13 +309,6 @@ template<typename P> struct HashTraits<CompactPtr<P>> : SimpleClassHashTraits<Co
     using PeekType = CompactPtr<P>;
     static PeekType peek(const TargetType& value) { return value; }
     static PeekType peek(P* value) { return value; }
-};
-
-template<> struct HashTraits<String> : SimpleClassHashTraits<String> {
-    static constexpr bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const String&);
-
-    static void customDeleteBucket(String&);
 };
 
 // This struct template is an implementation detail of the isHashTraitsEmptyValue function,
@@ -478,6 +496,10 @@ struct NullableHashTraits : public HashTraits<T> {
 template<typename T, size_t inlineCapacity>
 struct HashTraits<Vector<T, inlineCapacity>> : GenericHashTraits<Vector<T, inlineCapacity>> {
     static constexpr bool emptyValueIsZero = !inlineCapacity;
+    // Equivalent to the default "value == emptyValue()" check, without comparing elements (which would not compile
+    // for string pointers).
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const Vector<T, inlineCapacity>& value) { return value.isEmpty(); }
 
     static void constructDeletedValue(Vector<T, inlineCapacity>& slot) { new (NotNull, std::addressof(slot)) Vector<T, inlineCapacity>(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const Vector<T, inlineCapacity>& value) { return value.isHashTableDeletedValue(); }

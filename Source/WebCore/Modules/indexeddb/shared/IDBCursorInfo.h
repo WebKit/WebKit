@@ -70,7 +70,7 @@ public:
     WEBCORE_EXPORT IDBCursorInfo isolatedCopy() const;
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:

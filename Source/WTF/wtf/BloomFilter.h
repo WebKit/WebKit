@@ -59,10 +59,10 @@ public:
     
     void clear();
 
-    void add(const AtomString& string) { add(string.impl()->existingHash()); }
-    void add(const String& string) { add(string.impl()->hash()); }
-    bool mayContain(const AtomString& string) const { return mayContain(string.impl()->existingHash()); }
-    bool mayContain(const String& string) const { return mayContain(string.impl()->hash()); }
+    void add(AtomStringImpl* string) { add(string->existingHash()); }
+    void add(StringImpl* string) { add(string->hash()); }
+    bool mayContain(AtomStringImpl* string) const { return mayContain(string->existingHash()); }
+    bool mayContain(StringImpl* string) const { return mayContain(string->hash()); }
 
 private:
     static constexpr unsigned bitsPerPosition = 8 * sizeof(unsigned);
@@ -179,13 +179,13 @@ public:
     // Otherwise overflowed keys will stick around.
     void clear();
 
-    void add(const AtomString& string) { add(string.impl()->existingHash()); }
-    void add(const String& string) { add(string.impl()->hash()); }
-    void remove(const AtomString& string) { remove(string.impl()->existingHash()); }
-    void remove(const String& string) { remove(string.impl()->hash()); }
+    void add(AtomStringImpl* string) { add(string->existingHash()); }
+    void add(StringImpl* string) { add(string->hash()); }
+    void remove(AtomStringImpl* string) { remove(string->existingHash()); }
+    void remove(StringImpl* string) { remove(string->hash()); }
 
-    bool mayContain(const AtomString& string) const { return mayContain(string.impl()->existingHash()); }
-    bool mayContain(const String& string) const { return mayContain(string.impl()->hash()); }
+    bool mayContain(AtomStringImpl* string) const { return mayContain(string->existingHash()); }
+    bool mayContain(StringImpl* string) const { return mayContain(string->hash()); }
 
 #if ASSERT_ENABLED
     // Slow.

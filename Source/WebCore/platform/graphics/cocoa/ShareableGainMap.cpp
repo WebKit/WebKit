@@ -163,9 +163,9 @@ PlatformImagePtr ShareableGainMap::applyGainMapToBaseImage(PlatformImagePtr base
     }
 
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)
-    CVPixelBufferDumpToFile(baseImagePixelBuffer, "*/base-image.cvpb"_s);
-    CVPixelBufferDumpToFile(gainMapPixelBuffer, "*/gainmap-image.cvpb"_s);
-    CVPixelBufferDumpToFile(targetImagePixelBuffer, "*/output-image.cvpb"_s);
+    CVPixelBufferDumpToFile(baseImagePixelBuffer, "*/base-image.cvpb"_si);
+    CVPixelBufferDumpToFile(gainMapPixelBuffer, "*/gainmap-image.cvpb"_si);
+    CVPixelBufferDumpToFile(targetImagePixelBuffer, "*/output-image.cvpb"_si);
 #endif
 
     // MARK: - Get a CGImage from the target CVPixelBuffer.

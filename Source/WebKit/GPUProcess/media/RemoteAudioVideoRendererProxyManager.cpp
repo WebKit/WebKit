@@ -379,7 +379,7 @@ void RemoteAudioVideoRendererProxyManager::applicationWillResignActive(RemoteAud
         renderer->applicationWillResignActive();
 }
 
-void RemoteAudioVideoRendererProxyManager::setSpatialTrackingInfo(RemoteAudioVideoRendererIdentifier identifier, bool prefersSpatialAudioExperience, WebCore::MediaPlayerSoundStageSize soundStage, const String& sceneIdentifier, const String& defaultLabel, const String& label)
+void RemoteAudioVideoRendererProxyManager::setSpatialTrackingInfo(RemoteAudioVideoRendererIdentifier identifier, bool prefersSpatialAudioExperience, WebCore::MediaPlayerSoundStageSize soundStage, StringImpl* sceneIdentifier, StringImpl* defaultLabel, StringImpl* label)
 {
     if (RefPtr renderer = rendererFor(identifier))
         renderer->setSpatialTrackingInfo(prefersSpatialAudioExperience, soundStage, sceneIdentifier, defaultLabel, label);
@@ -509,7 +509,7 @@ void RemoteAudioVideoRendererProxyManager::setPreservesPitchAndCorrectionAlgorit
 }
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-void RemoteAudioVideoRendererProxyManager::setOutputDeviceId(RemoteAudioVideoRendererIdentifier identifier, const String& deviceId)
+void RemoteAudioVideoRendererProxyManager::setOutputDeviceId(RemoteAudioVideoRendererIdentifier identifier, StringImpl* deviceId)
 {
     if (RefPtr renderer = rendererFor(identifier))
         renderer->setOutputDeviceId(deviceId);

@@ -53,7 +53,7 @@ CSSRatioValue::CSSRatioValue(const CSS::Ratio& ratio)
 {
 }
 
-String CSSRatioValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSRatioValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_ratio);
 }

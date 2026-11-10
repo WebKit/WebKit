@@ -48,25 +48,25 @@ public:
     };
     struct CustomData {
         URL url;
-        String ignoreHosts;
+        RefPtr<StringImpl> ignoreHosts;
     };
 
     CurlProxySettings() = default;
     WEBCORE_EXPORT explicit CurlProxySettings(Mode mode) : m_mode(mode) { }
-    WEBCORE_EXPORT CurlProxySettings(URL&&, String&& ignoreHosts);
+    WEBCORE_EXPORT CurlProxySettings(URL&&, RefPtr<StringImpl>&& ignoreHosts);
 
     WEBCORE_EXPORT CurlProxySettings(const CurlProxySettings&) = default;
     WEBCORE_EXPORT CurlProxySettings& operator=(const CurlProxySettings&) = default;
 
-    bool isEmpty() const { return m_mode == Mode::Custom && m_urlSerializedWithPort.isEmpty() && m_ignoreHosts.isEmpty(); }
+    bool isEmpty() const { return m_mode == Mode::Custom && WTF::isEmpty(m_urlSerializedWithPort) && WTF::isEmpty(m_ignoreHosts); }
 
     Mode mode() const { return m_mode; }
-    const String& url() const LIFETIME_BOUND { return m_urlSerializedWithPort; }
-    const String& ignoreHosts() const LIFETIME_BOUND { return m_ignoreHosts; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_urlSerializedWithPort; }
+    const RefPtr<StringImpl>& ignoreHosts() const LIFETIME_BOUND { return m_ignoreHosts; }
 
-    WEBCORE_EXPORT void setUserPass(const String&, const String&);
-    const String user() const { return m_url.user(); }
-    const String password() const { return m_url.password(); }
+    WEBCORE_EXPORT void setUserPass(StringImpl*, StringImpl*);
+    const RefPtr<StringImpl> user() const { return m_url.user(); }
+    const RefPtr<StringImpl> password() const { return m_url.password(); }
 
     void setDefaultAuthMethod() { m_authMethod = kCURLAUTH_ANY; }
     void setAuthMethod(long);
@@ -80,13 +80,13 @@ private:
 
     Mode m_mode { Mode::Default };
     URL m_url;
-    String m_ignoreHosts;
+    RefPtr<StringImpl> m_ignoreHosts;
     long m_authMethod { static_cast<long>(kCURLAUTH_ANY) };
 
     // We can't simply use m_url.string() because we need to explicitly indicate the port number
     // to libcurl. URLParser omit the default port while parsing, but libcurl assume 1080 as a
     // default HTTP Proxy, not 80, if port number is not in the url.
-    String m_urlSerializedWithPort;
+    RefPtr<StringImpl> m_urlSerializedWithPort;
 
     void rebuildUrl();
 };

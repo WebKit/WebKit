@@ -87,7 +87,7 @@ static RetainPtr<NSString> getToken(const WebCore::SecurityOriginData& securityO
 {
     if ([requestingURL isFileURL])
         return [requestingURL path];
-    return securityOrigin.host().createNSString();
+    return createNSString(securityOrigin.host());
 }
 
 struct PermissionRequest {
@@ -179,15 +179,15 @@ struct PermissionRequest {
         RetainPtr<NSString> message;
 
     IGNORE_WARNINGS_BEGIN("format-nonliteral")
-        RetainPtr title = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("“%@” would like to use your current location.", "Prompt for a webpage to request location access. The parameter is the domain for the webpage.").createNSString().get(), _activeChallenge->token.get()]);
+        RetainPtr title = adoptNS([[NSString alloc] initWithFormat:createNSString(WEB_UI_STRING("“%@” would like to use your current location.", "Prompt for a webpage to request location access. The parameter is the domain for the webpage.")).get(), _activeChallenge->token.get()]);
         if (appHasPreciseLocationPermission())
-            message = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("This website will use your precise location because “%@” currently has access to your precise location.", "Message informing the user that the website will have precise location data").createNSString().get(), applicationName.get()]);
+            message = adoptNS([[NSString alloc] initWithFormat:createNSString(WEB_UI_STRING("This website will use your precise location because “%@” currently has access to your precise location.", "Message informing the user that the website will have precise location data")).get(), applicationName.get()]);
         else
-            message = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("This website will use your approximate location because “%@” currently has access to your approximate location.", "Message informing the user that the website will have approximate location data").createNSString().get(), applicationName.get()]);
+            message = adoptNS([[NSString alloc] initWithFormat:createNSString(WEB_UI_STRING("This website will use your approximate location because “%@” currently has access to your approximate location.", "Message informing the user that the website will have approximate location data")).get(), applicationName.get()]);
     IGNORE_WARNINGS_END
 
-        RetainPtr allowActionTitle = WEB_UI_STRING("Allow", "Action authorizing a webpage to access the user’s location.").createNSString();
-        RetainPtr denyActionTitle = WEB_UI_STRING_KEY("Don’t Allow", "Don’t Allow (website location dialog)", "Action denying a webpage access to the user’s location.").createNSString();
+        RetainPtr allowActionTitle = createNSString(WEB_UI_STRING("Allow", "Action authorizing a webpage to access the user’s location."));
+        RetainPtr denyActionTitle = createNSString(WEB_UI_STRING_KEY("Don’t Allow", "Don’t Allow (website location dialog)", "Action denying a webpage access to the user’s location."));
 
         RetainPtr alert = WebKit::createUIAlertController(title.get(), message.get());
         RetainPtr denyAction = [UIAlertAction actionWithTitle:denyActionTitle.get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKWebGeolocationPolicyDecider>(self)](UIAlertAction *) mutable {

@@ -105,8 +105,8 @@ public:
 
     void maybeRestoreDeletedIndex(Ref<MemoryIndex>&&);
 
-    void rename(const String& newName) { m_info.rename(newName); }
-    void renameIndex(MemoryIndex&, const String& newName);
+    void rename(StringImpl* newName) { m_info.rename(newName); }
+    void renameIndex(MemoryIndex&, StringImpl* newName);
 
     RefPtr<MemoryIndex> takeIndexByIdentifier(IDBIndexIdentifier);
 
@@ -135,7 +135,7 @@ private:
     std::unique_ptr<IDBKeyDataSet> m_orderedKeys;
 
     HashMap<IDBIndexIdentifier, Ref<MemoryIndex>> m_indexesByIdentifier;
-    HashMap<String, Ref<MemoryIndex>> m_indexesByName;
+    HashMap<RefPtr<StringImpl>, Ref<MemoryIndex>> m_indexesByName;
     HashMap<IDBResourceIdentifier, Ref<MemoryObjectStoreCursor>> m_cursors;
 };
 

@@ -85,7 +85,7 @@ public:
     bool hasSameStyle(AXCoreObject&) final;
     bool hasUnderline() const final;
 
-    void setAccessibleName(const AtomString&) final;
+    void setAccessibleName(AtomStringImpl*) final;
 
     int layoutCount() const final;
 
@@ -115,12 +115,12 @@ public:
     URL url() const final;
     CharacterRange selectedTextRange() const final;
     int insertionPointLineNumber() const final;
-    String stringValue() const override;
-    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
-    String selectedText() const final;
+    RefPtr<StringImpl> stringValue() const override;
+    RefPtr<StringImpl> textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
+    RefPtr<StringImpl> selectedText() const final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AXTextRuns textRuns() final;
-    String listMarkerText() const final;
+    RefPtr<StringImpl> listMarkerText() const final;
 #endif
 
     bool isWidget() const final;
@@ -134,7 +134,7 @@ public:
     void enterFullscreen() const;
     void toggleMute();
 
-    String interactiveVideoDuration() const;
+    RefPtr<StringImpl> interactiveVideoDuration() const;
     bool isPlaying() const;
     bool isAutoplayEnabled() const;
     bool isMuted() const;
@@ -142,7 +142,7 @@ public:
 #endif
 
     void setSelectedTextRange(CharacterRange&&) final;
-    bool setValue(const String&) override;
+    bool setValue(StringImpl*) override;
     bool press() override;
 
     void addChildren() override;
@@ -160,11 +160,11 @@ public:
     CharacterRange doAXRangeForLine(unsigned) const final;
     CharacterRange doAXRangeForIndex(unsigned) const final;
 
-    String doAXStringForRange(const CharacterRange&) const final;
+    RefPtr<StringImpl> doAXStringForRange(const CharacterRange&) const final;
     IntRect doAXBoundsForRange(const CharacterRange&) const final;
     IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const final;
 
-    String secureFieldValue() const final;
+    RefPtr<StringImpl> secureFieldValue() const final;
     void labelText(Vector<AccessibilityText>&) const override;
 protected:
     explicit AccessibilityRenderObject(AXID, RenderObject&, AXObjectCache&);
@@ -229,7 +229,7 @@ private:
 #if ENABLE(APPLE_PAY)
     NODELETE bool isApplePayButton() const;
     ApplePayButtonType applePayButtonType() const;
-    String applePayButtonDescription() const;
+    RefPtr<StringImpl> applePayButtonDescription() const;
 #endif
 
     bool canHavePlainText() const;

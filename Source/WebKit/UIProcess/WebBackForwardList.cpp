@@ -243,7 +243,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
 
     if (targetIndex < *m_currentIndex) {
         unsigned delta = m_entries.size() - targetIndex - 1;
-        String deltaValue = delta > 10 ? "over10"_s : String::number(delta);
+        RefPtr<StringImpl> deltaValue = delta > 10 ? "over10"_si : makeString(delta);
         page->logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey(), deltaValue, ShouldSample::No);
     }
 
@@ -1012,7 +1012,7 @@ void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackFor
     completionHandler(rawCounts());
 }
 
-RefPtr<FrameState> WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIdentifier itemID, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName)
+RefPtr<FrameState> WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIdentifier itemID, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, StringImpl* childFrameName)
 {
     RefPtr targetItem = itemForID(itemID);
     if (!targetItem)
@@ -1031,7 +1031,7 @@ RefPtr<FrameState> WebBackForwardList::findFrameStateInItem(WebCore::BackForward
     RefPtr childFrameItem = parentFrameItem->childItemForFrameID(childFrameID);
     if (!childFrameItem) {
         // The identifier is absent after session restore or cross-site child-frame recreation
-        if (childFrameName.isEmpty())
+        if (isEmpty(childFrameName))
             childFrameItem = parentFrameItem->childItemAtIndex(childFrameIndex);
         else
             childFrameItem = parentFrameItem->childItemForFrameName(childFrameName);
@@ -1045,18 +1045,18 @@ RefPtr<FrameState> WebBackForwardList::findFrameStateInItem(WebCore::BackForward
     return &childFrameItem->frameState();
 }
 
-String WebBackForwardList::loggingString() const
+RefPtr<StringImpl> WebBackForwardList::loggingString() const
 {
     StringBuilder builder;
 
-    String currentIndexString = m_currentIndex ? String::number(*m_currentIndex) : String::number(-1);
+    RefPtr<StringImpl> currentIndexString = m_currentIndex ? makeString(*m_currentIndex) : makeString(-1);
     builder.append("\nWebBackForwardList 0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " - "_s, m_entries.size(), " entries, currentIndex is "_s, currentIndexString, "\n"_s);
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
         Ref entry = m_entries[i];
-        String itemIdentifier = entry->identifier().loggingString();
+        RefPtr<StringImpl> itemIdentifier = entry->identifier().loggingString();
         auto entryString = entry->loggingString();
-        builder.append(String::number(i), " - ItemID:"_s, itemIdentifier, ", "_s, entryString);
+        builder.append(i, " - ItemID:"_s, itemIdentifier, ", "_s, entryString);
     }
 
     return builder.toString();
@@ -1143,9 +1143,9 @@ void WebBackForwardListWrapper::clear()
     m_impl->clear();
 }
 
-String WebBackForwardListWrapper::loggingString()
+RefPtr<StringImpl> WebBackForwardListWrapper::loggingString()
 {
-    return String::fromUTF8WithLatin1Fallback(std::string(m_impl->loggingString()));
+    return StringImpl::fromUTF8WithLatin1Fallback(std::string(m_impl->loggingString()));
 }
 
 #endif // ENABLE(BACK_FORWARD_LIST_SWIFT)

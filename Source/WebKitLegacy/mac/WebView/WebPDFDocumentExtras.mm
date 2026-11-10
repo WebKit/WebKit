@@ -39,7 +39,7 @@
 #import <Quartz/Quartz.h>
 #endif
 
-static bool isPrintScript(const String& script)
+static bool isPrintScript(StringImpl* script)
 {
     static constexpr ASCIILiteral searchExpression = "^.*.\\.print(.*)$"_s;
     static NeverDestroyed<const JSC::Yarr::RegularExpression> printRegex { StringView { searchExpression }, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase } };
@@ -107,7 +107,7 @@ bool pdfDocumentContainsPrintScript(CGPDFDocumentRef pdfDocument)
             continue;
 
         // A JavaScript action must have an action type of "JavaScript".
-        if (CGPDFDictionaryGetNameString(javaScriptAction, "S"_s) != "JavaScript"_s)
+        if (!equal(CGPDFDictionaryGetNameString(javaScriptAction, "S"_s), "JavaScript"_s))
             continue;
 
         const UInt8* bytes = nullptr;
@@ -134,7 +134,7 @@ bool pdfDocumentContainsPrintScript(CGPDFDocumentRef pdfDocument)
         if (!script)
             continue;
 
-        if (isPrintScript(script.get()))
+        if (isPrintScript(StringImpl::create(script.get()).get()))
             return true;
     }
 

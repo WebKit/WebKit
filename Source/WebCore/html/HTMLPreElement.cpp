@@ -52,7 +52,7 @@ bool HTMLPreElement::hasPresentationalHintsForAttribute(const QualifiedName& nam
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLPreElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLPreElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == wrapAttr) {
         style.setProperty(CSSPropertyID::WhiteSpaceCollapse, CSSValueID::Preserve);

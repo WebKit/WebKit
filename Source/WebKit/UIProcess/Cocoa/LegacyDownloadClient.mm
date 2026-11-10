@@ -125,10 +125,10 @@ void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& down
     }).get()];
 }
 
-void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const String& destination)
+void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, StringImpl* destination)
 {
     if (m_delegateMethods.downloadDidCreateDestination)
-        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didCreateDestination:destination.createNSString().get()];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didCreateDestination:createNSString(destination).get()];
 }
 
 void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
@@ -137,7 +137,7 @@ void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
         [m_delegate.get() _downloadProcessDidCrash:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()]];
 }
 
-void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response, const String& filename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
+void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response, StringImpl* filename, CompletionHandler<void(AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler)
 {
     didReceiveResponse(downloadProxy, response);
 
@@ -147,15 +147,15 @@ void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy&
     if (m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite) {
         BOOL allowOverwrite = NO;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr destination = [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] decideDestinationWithSuggestedFilename:filename.createNSString().get() allowOverwrite:&allowOverwrite];
+        RetainPtr destination = [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] decideDestinationWithSuggestedFilename:createNSString(filename).get() allowOverwrite:&allowOverwrite];
 ALLOW_DEPRECATED_DECLARATIONS_END
-        completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination.get());
+        completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, StringImpl::create(destination.get()));
     } else {
-        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] decideDestinationWithSuggestedFilename:filename.createNSString().get() completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTF::move(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] decideDestinationWithSuggestedFilename:createNSString(filename).get() completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTF::move(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
-            completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
+            completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, StringImpl::create(destination));
         }).get()];
     }
 }

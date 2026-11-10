@@ -118,12 +118,12 @@ Ref<CSSStyleSheet> CSSStyleSheet::createInline(Ref<StyleSheetContents>&& sheet, 
 ExceptionOr<Ref<CSSStyleSheet>> CSSStyleSheet::create(Document& document, Init&& init)
 {
     URL baseURL;
-    if (init.baseURL.isNull())
+    if (!init.baseURL)
         baseURL = document.baseURL();
     else {
         baseURL = document.encodingParseURL(init.baseURL);
         if (!baseURL.isValid())
-            return Exception { ExceptionCode::NotAllowedError, "Base URL is invalid"_s };
+            return Exception { ExceptionCode::NotAllowedError, "Base URL is invalid"_si };
     }
 
     CSSParserContext parserContext(document, baseURL);
@@ -170,7 +170,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& docum
             if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
                 setMediaQueries(WTF::move(queries));
         },
-        [this](String&& mediaString) {
+        [this](RefPtr<StringImpl>&& mediaString) {
             setMediaQueries(MQ::MediaQueryParser::parse(mediaString, strictCSSParserContext()));
         }
     );
@@ -241,7 +241,7 @@ void CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration()
 }
 
 // FIXME: counter-style: we might need something similar for counter-style (rdar://103018993).
-void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsClonedForMutation contentsClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName)
+void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsClonedForMutation contentsClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, StringImpl* modifiedKeyframesRuleName)
 {
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
@@ -384,14 +384,14 @@ bool CSSStyleSheet::canAccessRules() const
     return protect(document->securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
-ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
+ExceptionOr<unsigned> CSSStyleSheet::insertRule(StringImpl* ruleString, unsigned index)
 {
     LOG_WITH_STREAM(StyleSheets, stream << "CSSStyleSheet " << this << " insertRule() " << ruleString << " at " << index);
 
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
     if (!canAccessRules())
-        return Exception { ExceptionCode::SecurityError, "Not allowed to insert rule into cross-origin stylesheet"_s };
+        return Exception { ExceptionCode::SecurityError, "Not allowed to insert rule into cross-origin stylesheet"_si };
 
     if (index > length())
         return Exception { ExceptionCode::IndexSizeError };
@@ -401,7 +401,7 @@ ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsign
         return Exception { ExceptionCode::SyntaxError };
 
     if (m_wasConstructedByJS && rule->isImportRule())
-        return Exception { ExceptionCode::SyntaxError, "Cannot inserted an @import rule in a constructed CSSStyleSheet object"_s };
+        return Exception { ExceptionCode::SyntaxError, "Cannot inserted an @import rule in a constructed CSSStyleSheet object"_si };
 
     RuleMutationScope mutationScope(this, RuleInsertion, dynamicDowncast<StyleRuleKeyframes>(*rule));
 
@@ -426,7 +426,7 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
     if (!canAccessRules())
-        return Exception { ExceptionCode::SecurityError, "Not allowed to delete rule from cross-origin stylesheet"_s };
+        return Exception { ExceptionCode::SecurityError, "Not allowed to delete rule from cross-origin stylesheet"_si };
 
     if (index >= length())
         return Exception { ExceptionCode::IndexSizeError };
@@ -444,11 +444,11 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
     return { };
 }
 
-ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& style, std::optional<unsigned> index)
+ExceptionOr<int> CSSStyleSheet::addRule(StringImpl* selector, StringImpl* style, std::optional<unsigned> index)
 {
     LOG_WITH_STREAM(StyleSheets, stream << "CSSStyleSheet " << this << " addRule() selector " << selector << " style " << style << " at " << index);
 
-    auto text = makeString(selector, " { "_s, style, !style.isEmpty() ? " "_s : ""_s, '}');
+    auto text = makeString(selector, " { "_s, style, !isEmpty(style) ? " "_s : ""_s, '}');
     auto insertRuleResult = insertRule(text, index.value_or(length()));
     if (insertRuleResult.hasException())
         return insertRuleResult.releaseException();
@@ -460,7 +460,7 @@ ExceptionOr<Ref<CSSRuleList>> CSSStyleSheet::cssRulesForBindings()
 {
     auto cssRules = this->cssRules();
     if (!cssRules)
-        return Exception { ExceptionCode::SecurityError, "Not allowed to access cross-origin stylesheet"_s };
+        return Exception { ExceptionCode::SecurityError, "Not allowed to access cross-origin stylesheet"_si };
     return cssRules.releaseNonNull();
 }
 
@@ -480,7 +480,7 @@ RefPtr<CSSRuleList> CSSStyleSheet::cssRulesSkippingAccessCheck()
     return m_ruleListCSSOMWrapper.get();
 }
 
-String CSSStyleSheet::href() const
+RefPtr<StringImpl> CSSStyleSheet::href() const
 {
     return m_contents->originalURL();
 }
@@ -538,12 +538,12 @@ void CSSStyleSheet::clearChildRuleCSSOMWrappers()
     m_childRuleCSSOMWrappers.clear();
 }
 
-String CSSStyleSheet::debugDescription() const
+RefPtr<StringImpl> CSSStyleSheet::debugDescription() const
 {
     return makeString("CSSStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }
 
-String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
+RefPtr<StringImpl> CSSStyleSheet::cssText(const CSS::SerializationContext& context)
 {
     auto ruleList = cssRulesSkippingAccessCheck();
     if (!ruleList)
@@ -556,7 +556,7 @@ String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
             continue;
 
         auto ruleText = rule->cssText(context);
-        if (!result.isEmpty() && !ruleText.isEmpty())
+        if (!result.isEmpty() && !isEmpty(ruleText))
             result.append(' ');
 
         result.append(ruleText);
@@ -565,7 +565,7 @@ String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
 }
 
 // https://w3c.github.io/csswg-drafts/cssom-1/#dom-cssstylesheet-replace
-void CSSStyleSheet::replace(String&& text, Ref<DeferredPromise>&& promise)
+void CSSStyleSheet::replace(RefPtr<StringImpl>&& text, Ref<DeferredPromise>&& promise)
 {
     auto result = replaceSync(WTF::move(text));
     if (result.hasException())
@@ -574,12 +574,12 @@ void CSSStyleSheet::replace(String&& text, Ref<DeferredPromise>&& promise)
 }
 
 // https://w3c.github.io/csswg-drafts/cssom-1/#dom-cssstylesheet-replacesync
-ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
+ExceptionOr<void> CSSStyleSheet::replaceSync(RefPtr<StringImpl>&& text)
 {
     if (!m_wasConstructedByJS)
-        return Exception { ExceptionCode::NotAllowedError, "This CSSStyleSheet object was not constructed by JavaScript"_s };
+        return Exception { ExceptionCode::NotAllowedError, "This CSSStyleSheet object was not constructed by JavaScript"_si };
 
-    if (text.isNull())
+    if (!text)
         return { };
 
     // Try to use the cache in the case where contents is replaced before the stylesheet is attached to the document.

@@ -41,23 +41,23 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorPresenterCoordinator);
 
-Ref<AuthenticatorPresenterCoordinator> AuthenticatorPresenterCoordinator::create(const AuthenticatorManager& manager, const String& rpId, const AuthenticatorPresenterCoordinator::TransportSet& transports, WebCore::ClientDataType type, const String& username)
+Ref<AuthenticatorPresenterCoordinator> AuthenticatorPresenterCoordinator::create(const AuthenticatorManager& manager, StringImpl* rpId, const AuthenticatorPresenterCoordinator::TransportSet& transports, WebCore::ClientDataType type, StringImpl* username)
 {
     return adoptRef(*new AuthenticatorPresenterCoordinator(manager, rpId, transports, type, username));
 }
 
-AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
+AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, StringImpl* rpId, const TransportSet& transports, ClientDataType type, StringImpl* username)
     : m_manager(manager)
 {
 #if HAVE(ASC_AUTH_UI)
     lazyInitialize(m_context, adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]));
     if ([getASCAuthorizationPresentationContextClassSingleton() instancesRespondToSelector:@selector(setServiceName:)])
-        [m_context setServiceName:rpId.createNSString().get()];
+        [m_context setServiceName:createNSString(rpId).get()];
 
     switch (type) {
     case ClientDataType::Create: {
         auto options = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
-        [options setUserName:username.createNSString().get()];
+        [options setUserName:createNSString(username).get()];
 
         if (transports.contains(AuthenticatorTransport::Internal))
             [m_context addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initRegistrationChoiceWithOptions:options.get()]).get()];
@@ -107,7 +107,7 @@ AuthenticatorPresenterCoordinator::~AuthenticatorPresenterCoordinator()
     if (m_responseHandler)
         m_responseHandler(nullptr);
     if (m_pinHandler)
-        m_pinHandler(String());
+        m_pinHandler(nullString());
 }
 
 void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus status)
@@ -183,11 +183,11 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
 #endif // HAVE(ASC_AUTH_UI)
 }
 
-void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<void(const String&)>&& completionHandler)
+void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
 #if HAVE(ASC_AUTH_UI)
     if (m_pinHandler)
-        m_pinHandler(String());
+        m_pinHandler(nullString());
     m_pinHandler = WTF::move(completionHandler);
 
     if (m_presentedPIN)
@@ -197,11 +197,11 @@ void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<v
 #endif // HAVE(ASC_AUTH_UI)
 }
 
-void AuthenticatorPresenterCoordinator::requestNewPin(uint64_t minLength, CompletionHandler<void(const String&)>&& completionHandler)
+void AuthenticatorPresenterCoordinator::requestNewPin(uint64_t minLength, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
 #if HAVE(ASC_AUTH_UI)
     if (m_pinHandler)
-        m_pinHandler(String());
+        m_pinHandler(nullString());
     m_pinHandler = WTF::move(completionHandler);
 
     if (m_presentedPIN)
@@ -230,7 +230,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             if (response->userHandle())
                 userHandle = toNSData(response->userHandle()->span());
 
-            auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
+            auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:createNSString(response->name()).get() displayName:createNSString(response->displayName()).get() userHandle:userHandle.get()]);
             [loginChoices addObject:loginChoice.get()];
 
             m_credentials.add(response->name(), WTF::move(response));
@@ -247,7 +247,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             if (response->userHandle())
                 userHandle = toNSData(response->userHandle()->span());
 
-            auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
+            auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:createNSString(response->name()).get() displayName:createNSString(response->displayName()).get() userHandle:userHandle.get()]);
             [m_context addLoginChoice:loginChoice.get()];
 
             m_credentials.add(response->name(), WTF::move(response));
@@ -294,7 +294,7 @@ void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
     m_laContext = context;
 }
 
-void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(const String& credentialName, LAContext *context)
+void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(StringImpl* credentialName, LAContext *context)
 {
     RefPtr response = m_credentials.take(credentialName);
     if (!response)
@@ -306,7 +306,7 @@ void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(const String&
     m_responseHandler(response);
 }
 
-void AuthenticatorPresenterCoordinator::setPin(const String& pin)
+void AuthenticatorPresenterCoordinator::setPin(StringImpl* pin)
 {
     m_pinHandler(pin);
 }

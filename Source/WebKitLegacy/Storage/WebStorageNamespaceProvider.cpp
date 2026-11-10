@@ -41,13 +41,13 @@ NODELETE static HashSet<WeakRef<WebStorageNamespaceProvider>>& storageNamespaceP
     return storageNamespaceProviders;
 }
 
-Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const String& localStorageDatabasePath)
+Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(StringImpl* localStorageDatabasePath)
 {
     return adoptRef(*new WebStorageNamespaceProvider(localStorageDatabasePath));
 }
 
-WebStorageNamespaceProvider::WebStorageNamespaceProvider(const String& localStorageDatabasePath)
-    : m_localStorageDatabasePath(localStorageDatabasePath.isNull() ? emptyString() : localStorageDatabasePath)
+WebStorageNamespaceProvider::WebStorageNamespaceProvider(StringImpl* localStorageDatabasePath)
+    : m_localStorageDatabasePath(localStorageDatabasePath ? RefPtr { localStorageDatabasePath } : emptyString())
 {
     storageNamespaceProviders().add(*this);
 }

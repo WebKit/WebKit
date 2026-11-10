@@ -156,7 +156,7 @@ void ModelProcessConnection::destroyVisibilityPropagationContextForPage(WebPage&
 }
 #endif
 
-void ModelProcessConnection::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+void ModelProcessConnection::configureLoggingChannel(StringImpl* channelName, WTFLogChannelState state, WTFLogLevel level)
 {
     connection().send(Messages::ModelConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
 }

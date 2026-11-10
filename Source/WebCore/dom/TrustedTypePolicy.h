@@ -50,21 +50,21 @@ enum class IfMissing : bool { Throw, ReturnNull };
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
     WTF_MAKE_TZONE_ALLOCATED(TrustedTypePolicy);
 public:
-    NODELETE static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
+    NODELETE static Ref<TrustedTypePolicy> create(StringImpl*, const TrustedTypePolicyOptions&);
     ~TrustedTypePolicy();
 
-    ExceptionOr<Ref<TrustedHTML>> createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
-    ExceptionOr<Ref<TrustedScript>> createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
-    ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
-    ExceptionOr<String> getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&, IfMissing = IfMissing::Throw);
-    const String& name() const { return m_name; }
+    ExceptionOr<Ref<TrustedHTML>> createHTML(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
+    ExceptionOr<Ref<TrustedScript>> createScript(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
+    ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
+    ExceptionOr<RefPtr<StringImpl>> getPolicyValue(TrustedType trustedTypeName, StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&&, IfMissing = IfMissing::Throw);
+    const RefPtr<StringImpl>& name() const { return m_name; }
 
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
-    TrustedTypePolicy(const String&, const TrustedTypePolicyOptions&);
+    TrustedTypePolicy(StringImpl*, const TrustedTypePolicyOptions&);
 
-    const String m_name;
+    const RefPtr<StringImpl> m_name;
     const TrustedTypePolicyOptions m_options;
 };
 

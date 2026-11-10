@@ -227,10 +227,10 @@ size_t Navigation::redirectChainIndex(const WTF::URL& url)
 
 #if !LOG_DISABLED
 
-WTF::String Navigation::loggingString() const
+RefPtr<StringImpl> Navigation::loggingString() const
 {
     RefPtr targetItem = this->targetItem();
-    return makeString("Most recent URL: "_s, m_currentRequest.url().string(), " Back/forward list item URL: '"_s, targetItem ? targetItem->url() : WTF::String { }, "' (0x"_s, hex(reinterpret_cast<uintptr_t>(targetItem.get())), ')');
+    return makeString("Most recent URL: "_s, m_currentRequest.url().string(), " Back/forward list item URL: '"_s, targetItem ? targetItem->url() : nullptr, "' (0x"_s, hex(reinterpret_cast<uintptr_t>(targetItem.get())), ')');
 }
 
 #endif

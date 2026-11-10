@@ -71,7 +71,7 @@ public:
     void requestAdapter(const WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&&) final;
     RefPtr<WebGPU::PresentationContext> createPresentationContext(const WebGPU::PresentationContextDescriptor&) final;
 
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final { return m_isValid; }
     void retainDevice(Device&, id<MTLCommandBuffer>);
     void retainCommandBuffer(CommandBuffer&, id<MTLCommandBuffer>);

@@ -155,7 +155,7 @@ NODELETE WEBCORE_EXPORT void restrictMinimumScaleFactorToViewportSize(ViewportAt
 NODELETE WEBCORE_EXPORT void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
 NODELETE WEBCORE_EXPORT float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize);
 
-typedef Function<void(ViewportErrorCode, const String&)> ViewportErrorHandler;
+typedef Function<void(ViewportErrorCode, StringImpl*)> ViewportErrorHandler;
 void setViewportFeature(ViewportArguments&, Document&, StringView key, StringView value);
 WEBCORE_EXPORT void setViewportFeature(ViewportArguments&, StringView key, StringView value, bool metaViewportInteractiveWidgetEnabled, NOESCAPE const ViewportErrorHandler&);
 

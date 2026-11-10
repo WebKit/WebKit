@@ -39,7 +39,7 @@ enum class RTCRtpTransceiverDirection {
     Stopped
 };
 
-String convertEnumerationToString(RTCRtpTransceiverDirection); // in JSRTCRtpTransceiverDirection.h
+RefPtr<StringImpl> convertEnumerationToString(RTCRtpTransceiverDirection); // in JSRTCRtpTransceiverDirection.h
 
 } // namespace WebCore
 

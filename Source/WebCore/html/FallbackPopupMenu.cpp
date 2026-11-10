@@ -107,8 +107,8 @@ static void applyItemStyle(HTMLElement& item, const PopupMenuStyle& style)
             item.setInlineStyleProperty(CSSPropertyID::BackgroundColor, serializationForCSS(background));
     }
 
-    if (auto& language = style.language(); !language.isEmpty())
-        item.setAttributeWithoutSynchronization(HTMLNames::langAttr, AtomString { language });
+    if (auto& language = style.language(); !isEmpty(language))
+        item.setAttributeWithoutSynchronization(HTMLNames::langAttr, AtomStringImpl::add(language).get());
 
     if (CheckedRef font = style.font())
         applyFontCascade(item, font);
@@ -155,7 +155,7 @@ public:
         if (event.type() == eventNames().keydownEvent) {
             if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
                 auto& key = keyboardEvent->key();
-                if (key == "Enter"_s || key == "Escape"_s) {
+                if (equal(key, "Enter"_s) || equal(key, "Escape"_s)) {
                     menu->hide();
                     event.setDefaultHandled();
                 }
@@ -337,11 +337,11 @@ void FallbackPopupMenu::buildPopupTree(const IntRect& elementRect, LocalFrameVie
             item->addEventListener(eventNames().mouseupEvent, WTF::move(itemListener));
         }
 
-        if (auto accessibilityText = element->itemAccessibilityText(i); !accessibilityText.isEmpty())
-            item->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { accessibilityText });
+        if (auto accessibilityText = element->itemAccessibilityText(i); !isEmpty(accessibilityText))
+            item->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(accessibilityText).get());
 
-        if (auto toolTip = element->itemToolTip(i); !toolTip.isEmpty())
-            item->setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomString { toolTip });
+        if (auto toolTip = element->itemToolTip(i); !isEmpty(toolTip))
+            item->setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomStringImpl::add(toolTip).get());
 
         applyItemStyle(item, style);
 

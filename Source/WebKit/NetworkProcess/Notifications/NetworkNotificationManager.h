@@ -56,7 +56,7 @@ enum class MessageType : uint8_t;
 class NetworkNotificationManager : public NotificationManagerMessageHandler, public RefCounted<NetworkNotificationManager> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkNotificationManager);
 public:
-    static Ref<NetworkNotificationManager> create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
+    static Ref<NetworkNotificationManager> create(StringImpl* webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
     ~NetworkNotificationManager();
 
     void ref() const final { RefCounted::ref(); }
@@ -79,7 +79,7 @@ public:
     void getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<WebCore::SecurityOriginData>&&)>&&);
 
     void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&);
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(const URL& registrationURL, StringImpl* tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
 
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
@@ -88,7 +88,7 @@ public:
     void setServiceWorkerIsBeingInspected(const URL&, bool isInspected);
 
 private:
-    NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
+    NetworkNotificationManager(StringImpl* webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
 
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;

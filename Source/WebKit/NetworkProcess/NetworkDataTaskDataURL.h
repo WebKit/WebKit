@@ -56,8 +56,8 @@ private:
     void invalidateAndCancel() override;
     State state() const override;
 
-    void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
-    String suggestedFilename() const override;
+    void setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
+    RefPtr<StringImpl> suggestedFilename() const override;
 
     void didDecodeDataURL(std::optional<WebCore::DataURLDecoder::Result>&&);
     void downloadDecodedData(Vector<uint8_t>&&);

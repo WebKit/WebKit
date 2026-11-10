@@ -791,21 +791,21 @@ void SamplingProfiler::clearData()
     m_unprocessedStackTraces.clear();
 }
 
-String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
+RefPtr<StringImpl> SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 {
     if (!callee) {
         if (regExp)
             return regExp->toSourceString();
-        return String();
+        return nullptr;
     }
 
     DeferTermination deferScope(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSGlobalObject* globalObject = callee->realmMayBeNull();
     if (!globalObject)
-        return String();
+        return nullptr;
 
-    auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
+    auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> RefPtr<StringImpl> {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry, &vm);
         PropertyName propertyName(ident);
         bool hasProperty = callee->getPropertySlot(globalObject, propertyName, slot);
@@ -817,21 +817,21 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
                     return asString(nameValue)->tryGetValue();
             }
         }
-        return String();
+        return nullptr;
     };
 
-    String name = getPropertyIfPureOperation(vm.propertyNames->displayName);
-    if (!name.isEmpty())
+    RefPtr<StringImpl> name = getPropertyIfPureOperation(vm.propertyNames->displayName);
+    if (!isEmpty(name))
         return name;
 
     return getPropertyIfPureOperation(vm.propertyNames->name);
 }
 
-String SamplingProfiler::StackFrame::displayName(VM& vm)
+RefPtr<StringImpl> SamplingProfiler::StackFrame::displayName(VM& vm)
 {
     {
-        String name = nameFromCallee(vm);
-        if (!name.isEmpty())
+        RefPtr<StringImpl> name = nameFromCallee(vm);
+        if (!isEmpty(name))
             return name;
     }
 
@@ -841,26 +841,26 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         if (frameType == FrameType::C) {
             auto demangled = StackTraceSymbolResolver::demangle(const_cast<void*>(cCodePC));
             if (demangled)
-                return String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
+                return StringImpl::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
         }
 #endif
-        return "(unknown C PC)"_s;
+        return "(unknown C PC)"_si;
 
     case FrameType::Unknown:
-        return "(unknown)"_s;
+        return "(unknown)"_si;
 
     case FrameType::Host:
-        return "(host)"_s;
+        return "(host)"_si;
 
     case FrameType::RegExp:
-        return "(regexp)"_s;
+        return "(regexp)"_si;
 
     case FrameType::Wasm:
 #if ENABLE(WEBASSEMBLY)
         if (wasmIndexOrName)
             return makeString(wasmIndexOrName.value());
 #endif
-        return "(wasm)"_s;
+        return "(wasm)"_si;
 
     case FrameType::Executable:
         if (executable->isHostFunction())
@@ -869,15 +869,15 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         if (executable->isFunctionExecutable())
             return static_cast<FunctionExecutable*>(executable)->ecmaName().string();
         if (executable->isProgramExecutable() || executable->isEvalExecutable())
-            return "(program)"_s;
+            return "(program)"_si;
         if (executable->isModuleProgramExecutable())
-            return "(module)"_s;
+            return "(module)"_si;
 
         RELEASE_ASSERT_NOT_REACHED();
-        return String();
+        return nullptr;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 int SamplingProfiler::StackFrame::functionStartLine()
@@ -941,7 +941,7 @@ std::tuple<SourceProvider*, SourceID> SamplingProfiler::StackFrame::sourceProvid
     return { nullptr, internalSourceID };
 }
 
-String SamplingProfiler::StackFrame::url()
+RefPtr<StringImpl> SamplingProfiler::StackFrame::url()
 {
     switch (frameType) {
     case FrameType::Unknown:
@@ -954,13 +954,13 @@ String SamplingProfiler::StackFrame::url()
         if (executable->isHostFunction())
             return emptyString();
 
-        String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
-        if (url.isEmpty())
+        RefPtr<StringImpl> url = static_cast<ScriptExecutable*>(executable)->sourceURL();
+        if (isEmpty(url))
             return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURLDirective(); // Fall back to sourceURL directive.
         return url;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces()
@@ -976,7 +976,7 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces()
     return result;
 }
 
-static String descriptionForLocation(SamplingProfiler::StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode, BytecodeIndex wasmOffset)
+static RefPtr<StringImpl> descriptionForLocation(SamplingProfiler::StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode, BytecodeIndex wasmOffset)
 {
     if (wasmCompilationMode) {
         StringPrintStream description;
@@ -991,23 +991,23 @@ static String descriptionForLocation(SamplingProfiler::StackFrame::CodeLocation 
         return description.toString();
     }
 
-    String bytecodeIndex;
-    String codeBlockHash;
-    String jitType;
+    RefPtr<StringImpl> bytecodeIndex;
+    RefPtr<StringImpl> codeBlockHash;
+    RefPtr<StringImpl> jitType;
     if (location.hasBytecodeIndex())
         bytecodeIndex = toString(location.bytecodeIndex);
     else
-        bytecodeIndex = "<nil>"_s;
+        bytecodeIndex = "<nil>"_si;
 
     if (location.hasCodeBlockHash()) {
         StringPrintStream stream;
         location.codeBlockHash.dump(stream);
         codeBlockHash = stream.toString();
     } else
-        codeBlockHash = "<nil>"_s;
+        codeBlockHash = "<nil>"_si;
 
     if (location.isRegExp)
-        jitType = "RegExp"_s;
+        jitType = "RegExp"_si;
     else
         jitType = JITCode::typeName(location.jitType);
 
@@ -1031,7 +1031,7 @@ struct Tiers {
     static constexpr ASCIILiteral unknownExecutable { "Unknown Executable"_s };
 };
 
-static String tierName(SamplingProfiler::StackFrame& frame)
+static RefPtr<StringImpl> tierName(SamplingProfiler::StackFrame& frame)
 {
     switch (frame.frameType) {
     case SamplingProfiler::FrameType::Executable:
@@ -1100,66 +1100,66 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
             sources.add(sourceID, Ref { *provider });
 
         auto result = JSON::Object::create();
-        result->setDouble("sourceID"_s, sourceID);
-        result->setString("name"_s, stackFrame.displayName(m_vm));
-        result->setString("location"_s, descriptionForLocation(stackFrame.semanticLocation, stackFrame.wasmCompilationMode, stackFrame.wasmOffset));
-        result->setDouble("line"_s, stackFrame.semanticLocation.lineColumn.line);
-        result->setDouble("column"_s, stackFrame.semanticLocation.lineColumn.column);
-        result->setString("category"_s, tierName(stackFrame));
+        result->setDouble("sourceID"_si, sourceID);
+        result->setString("name"_si, stackFrame.displayName(m_vm));
+        result->setString("location"_si, descriptionForLocation(stackFrame.semanticLocation, stackFrame.wasmCompilationMode, stackFrame.wasmOffset));
+        result->setDouble("line"_si, stackFrame.semanticLocation.lineColumn.line);
+        result->setDouble("column"_si, stackFrame.semanticLocation.lineColumn.column);
+        result->setString("category"_si, tierName(stackFrame));
         uint32_t flags = 0;
         if (stackFrame.frameType == SamplingProfiler::FrameType::Executable && stackFrame.executable) {
             if (auto* executable = dynamicDowncast<FunctionExecutable>(stackFrame.executable); executable && executable->isBuiltinFunction())
                 flags = 1;
         }
-        result->setDouble("flags"_s, flags);
+        result->setDouble("flags"_si, flags);
 
         if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = stackFrame.machineLocation) {
             auto inliner = JSON::Object::create();
-            inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName().span()));
-            inliner->setString("location"_s, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
-            inliner->setDouble("line"_s, machineLocation->first.lineColumn.line);
-            inliner->setDouble("column"_s, machineLocation->first.lineColumn.column);
-            inliner->setString("category"_s, tierName(stackFrame));
-            result->setValue("inliner"_s, WTF::move(inliner));
+            inliner->setString("name"_si, StringImpl::fromUTF8(machineLocation->second->inferredName().span()));
+            inliner->setString("location"_si, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
+            inliner->setDouble("line"_si, machineLocation->first.lineColumn.line);
+            inliner->setDouble("column"_si, machineLocation->first.lineColumn.column);
+            inliner->setString("category"_si, tierName(stackFrame));
+            result->setValue("inliner"_si, WTF::move(inliner));
         }
         return result;
     };
 
     auto stackTraceAsJSON = [&](StackTrace& stackTrace) {
         auto result = JSON::Object::create();
-        result->setDouble("timestamp"_s, stackTrace.timestamp.secondsSinceEpoch().seconds());
+        result->setDouble("timestamp"_si, stackTrace.timestamp.secondsSinceEpoch().seconds());
         {
             auto frames = JSON::Array::create();
             for (StackFrame& stackFrame : stackTrace.frames)
                 frames->pushValue(stackFrameAsJSON(stackFrame));
-            result->setValue("frames"_s, WTF::move(frames));
+            result->setValue("frames"_si, WTF::move(frames));
         }
         return result;
     };
 
     auto sourceAsJSON = [&](SourceProvider& provider) {
         auto result = JSON::Object::create();
-        result->setDouble("sourceID"_s, provider.asID());
-        if (!provider.sourceURL().isEmpty())
-            result->setString("url"_s, provider.sourceURL());
-        if (!provider.sourceURLDirective().isEmpty())
-            result->setString("sourceURL"_s, provider.sourceURLDirective());
-        if (!provider.sourceMappingURLDirective().isEmpty())
-            result->setString("sourceMappingURL"_s, provider.sourceMappingURLDirective());
+        result->setDouble("sourceID"_si, provider.asID());
+        if (!isEmpty(provider.sourceURL()))
+            result->setString("url"_si, provider.sourceURL());
+        if (!isEmpty(provider.sourceURLDirective()))
+            result->setString("sourceURL"_si, provider.sourceURLDirective());
+        if (!isEmpty(provider.sourceMappingURLDirective()))
+            result->setString("sourceMappingURL"_si, provider.sourceMappingURLDirective());
         return result;
     };
 
     auto result = JSON::Object::create();
-    result->setDouble("interval"_s, m_timingInterval.seconds());
+    result->setDouble("interval"_si, m_timingInterval.seconds());
     auto traces = JSON::Array::create();
     for (StackTrace& stackTrace : m_stackTraces)
         traces->pushValue(stackTraceAsJSON(stackTrace));
-    result->setValue("traces"_s, WTF::move(traces));
+    result->setValue("traces"_si, WTF::move(traces));
 
     auto sourcesArray = JSON::Array::create();
     for (auto& [ sourceID, sourceProvider ] : sources)
         sourcesArray->pushValue(sourceAsJSON(sourceProvider.get()));
-    result->setValue("sources"_s, WTF::move(sourcesArray));
+    result->setValue("sources"_si, WTF::move(sourcesArray));
 
     clearData();
 
@@ -1216,19 +1216,19 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    UncheckedKeyHashMap<String, size_t> functionCounts;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, size_t> functionCounts;
     for (StackTrace& stackTrace : m_stackTraces) {
         if (!stackTrace.frames.size())
             continue;
 
         StackFrame& frame = stackTrace.frames.first();
-        String hash = ""_s;
+        RefPtr<StringImpl> hash = ""_si;
         if (frame.semanticLocation.hasCodeBlockHash()) {
             StringPrintStream stream;
             frame.semanticLocation.codeBlockHash.dump(stream);
             hash = stream.toString();
         } else
-            hash = "<nil>"_s;
+            hash = "<nil>"_si;
         SourceID sourceID = std::get<1>(frame.sourceProviderAndID());
         if (Options::samplingProfilerIgnoreExternalSourceID()) {
             if (sourceID != internalSourceID)
@@ -1239,8 +1239,8 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
         totalSamples++;
     }
 
-    auto takeMax = [&] () -> std::pair<String, size_t> {
-        String maxFrameDescription;
+    auto takeMax = [&] () -> std::pair<RefPtr<StringImpl>, size_t> {
+        RefPtr<StringImpl> maxFrameDescription;
         size_t maxFrameCount = 0;
         for (const auto& entry : functionCounts) {
             if (entry.value > maxFrameCount) {
@@ -1248,7 +1248,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
                 maxFrameDescription = entry.key;
             }
         }
-        if (!maxFrameDescription.isEmpty())
+        if (!isEmpty(maxFrameDescription))
             functionCounts.remove(maxFrameDescription);
         return std::make_pair(maxFrameDescription, maxFrameCount);
     };
@@ -1258,7 +1258,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
         out.println("Top functions as <numSamples  'functionName#hash:sourceID'>");
         for (size_t i = 0; i < Options::samplingProfilerTopFunctionsCount(); i++) {
             auto pair = takeMax();
-            if (pair.first.isEmpty())
+            if (isEmpty(pair.first))
                 break;
             out.printf("%6zu ", pair.second);
             out.println("   '", pair.first, "'");
@@ -1282,8 +1282,8 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    UncheckedKeyHashMap<String, size_t> bytecodeCounts;
-    UncheckedKeyHashMap<String, size_t> tierCounts;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, size_t> bytecodeCounts;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, size_t> tierCounts;
 
     auto forEachTier = [&] (auto func) {
         func(Tiers::llint);
@@ -1325,8 +1325,8 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         totalSamples++;
     }
 
-    auto takeMax = [&] () -> std::pair<String, size_t> {
-        String maxFrameDescription;
+    auto takeMax = [&] () -> std::pair<RefPtr<StringImpl>, size_t> {
+        RefPtr<StringImpl> maxFrameDescription;
         size_t maxFrameCount = 0;
         for (const auto& entry : bytecodeCounts) {
             if (entry.value > maxFrameCount) {
@@ -1334,7 +1334,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
                 maxFrameDescription = entry.key;
             }
         }
-        if (!maxFrameDescription.isEmpty())
+        if (!isEmpty(maxFrameDescription))
             bytecodeCounts.remove(maxFrameDescription);
         return std::make_pair(maxFrameDescription, maxFrameCount);
     };
@@ -1345,15 +1345,15 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         out.println("Tier breakdown:");
         out.println("-----------------------------------");
         unsigned maxTierNameLength = 0;
-        forEachTier([&] (String tier) {
-            maxTierNameLength = std::max(maxTierNameLength, tier.length());
+        forEachTier([&] (RefPtr<StringImpl> tier) {
+            maxTierNameLength = std::max(maxTierNameLength, length(tier));
         });
-        auto printTier = [&] (String tier) {
+        auto printTier = [&] (RefPtr<StringImpl> tier) {
             size_t count = tierCounts.get(tier);
-            if (!count && (tier == Tiers::unknownFrame || tier == Tiers::unknownExecutable))
+            if (!count && (equal(tier, Tiers::unknownFrame) || equal(tier, Tiers::unknownExecutable)))
                 return;
             out.print(tier, ": ");
-            for (unsigned i = 0; i < maxTierNameLength + 2 - tier.length(); ++i)
+            for (unsigned i = 0; i < maxTierNameLength + 2 - length(tier); ++i)
                 out.print(" ");
             out.printf("%6zu ", count);
             out.println(" (", (static_cast<double>(count) / static_cast<double>(totalSamples)) * 100, "%)");
@@ -1364,7 +1364,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         out.println("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>");
         for (size_t i = 0; i < Options::samplingProfilerTopBytecodesCount(); i++) {
             auto pair = takeMax();
-            if (pair.first.isEmpty())
+            if (isEmpty(pair.first))
                 break;
             out.printf("%6zu ", pair.second);
             out.println("   '", pair.first, "'");

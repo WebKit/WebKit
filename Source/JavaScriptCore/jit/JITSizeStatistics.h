@@ -42,11 +42,11 @@ class JITSizeStatistics {
     WTF_MAKE_TZONE_ALLOCATED(JITSizeStatistics);
 public:
     struct Marker {
-        String identifier;
+        RefPtr<StringImpl> identifier;
         CCallHelpers::Label start;
     };
 
-    Marker markStart(String identifier, CCallHelpers&);
+    Marker markStart(RefPtr<StringImpl> identifier, CCallHelpers&);
     void markEnd(Marker, CCallHelpers&, JITPlan&);
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
@@ -59,7 +59,7 @@ private:
         size_t totalBytes { 0 };
     };
 
-    UncheckedKeyHashMap<String, Entry> m_data;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, Entry> m_data;
 };
 
 } // namespace JSC

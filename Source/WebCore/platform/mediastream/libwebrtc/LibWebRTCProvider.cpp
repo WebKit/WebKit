@@ -276,7 +276,7 @@ void LibWebRTCProvider::disableNonLocalhostConnections()
     m_disableNonLocalhostConnections = true;
 }
 
-std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool)
+std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(RefPtr<StringImpl>&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool)
 {
     return nullptr;
 }
@@ -459,11 +459,11 @@ void LibWebRTCProvider::prepareCertificateGenerator(Function<void(webrtc::RTCCer
     });
 }
 
-static inline std::optional<webrtc::MediaType> typeFromKind(const String& kind)
+static inline std::optional<webrtc::MediaType> typeFromKind(StringImpl* kind)
 {
-    if (kind == "audio"_s)
+    if (equal(kind, "audio"_s))
         return webrtc::MediaType::AUDIO;
-    if (kind == "video"_s)
+    if (equal(kind, "video"_s))
         return webrtc::MediaType::VIDEO;
     return { };
 }
@@ -479,7 +479,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
             sdpFmtpLineBuilder.append(hasParameter ? ";"_s : ""_s, std::span(parameter.first), '=', std::span(parameter.second));
             hasParameter = true;
         }
-        String sdpFmtpLine;
+        RefPtr<StringImpl> sdpFmtpLine;
         if (sdpFmtpLineBuilder.length())
             sdpFmtpLine = sdpFmtpLineBuilder.toString();
         return RTCRtpCodec { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), codec.num_channels, WTF::move(sdpFmtpLine) };
@@ -493,7 +493,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
     return capabilities;
 }
 
-std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const String& kind)
+std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(StringImpl* kind)
 {
     auto mediaType = typeFromKind(kind);
     if (!mediaType)
@@ -531,7 +531,7 @@ void LibWebRTCProvider::initializeVideoDecodingCapabilities()
         m_videoDecodingCapabilities = toRTCRtpCapabilities(factory->GetRtpReceiverCapabilities(webrtc::MediaType::VIDEO));
 }
 
-std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const String& kind)
+std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(StringImpl* kind)
 {
     auto mediaType = typeFromKind(kind);
     if (!mediaType)

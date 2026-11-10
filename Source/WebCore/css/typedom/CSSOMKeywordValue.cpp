@@ -47,7 +47,7 @@ Ref<CSSOMKeywordValue> CSSOMKeywordValue::rectifyKeywordish(CSSOMKeywordish&& ke
 {
     // https://drafts.css-houdini.org/css-typed-om/#rectify-a-keywordish-value
     return WTF::switchOn(WTF::move(keywordish),
-        [](String&& string) {
+        [](RefPtr<StringImpl>&& string) {
             return adoptRef(*new CSSOMKeywordValue(string));
         },
         [](Ref<CSSOMKeywordValue>&& value) {
@@ -69,17 +69,17 @@ Ref<CSSOMKeywordValue> CSSOMKeywordValue::reifyValue(Document&, const CSSKeyword
     return rectifyKeywordish(nameLiteralForSerialization(keywordValue.valueID()));
 }
 
-ExceptionOr<Ref<CSSOMKeywordValue>> CSSOMKeywordValue::create(const String& value)
+ExceptionOr<Ref<CSSOMKeywordValue>> CSSOMKeywordValue::create(StringImpl* value)
 {
-    if (value.isEmpty())
+    if (isEmpty(value))
         return Exception { ExceptionCode::TypeError };
 
     return adoptRef(*new CSSOMKeywordValue(value));
 }
 
-ExceptionOr<void> CSSOMKeywordValue::setValue(const String& value)
+ExceptionOr<void> CSSOMKeywordValue::setValue(StringImpl* value)
 {
-    if (value.isEmpty())
+    if (isEmpty(value))
         return Exception { ExceptionCode::TypeError };
 
     m_value = value;
@@ -96,7 +96,7 @@ RefPtr<CSSValue> CSSOMKeywordValue::toCSSValue() const
 {
     auto keyword = cssValueKeywordID(m_value);
     if (keyword == CSSValueID::Invalid)
-        return CSSCustomIdentValue::create(CSS::CustomIdent { AtomString { m_value } });
+        return CSSCustomIdentValue::create(CSS::CustomIdent { AtomStringImpl::add(m_value) });
     return CSSKeywordValue::create(CSS::Keyword { keyword });
 }
 

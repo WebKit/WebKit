@@ -57,7 +57,7 @@ enum class MediaRecorderContainerType : uint8_t {
 class MediaRecorderPrivateWriter {
     WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateWriter);
 public:
-    WEBCORE_EXPORT static std::unique_ptr<MediaRecorderPrivateWriter> create(String type, MediaRecorderPrivateWriterListener&);
+    WEBCORE_EXPORT static std::unique_ptr<MediaRecorderPrivateWriter> create(RefPtr<StringImpl> type, MediaRecorderPrivateWriterListener&);
     WEBCORE_EXPORT static std::unique_ptr<MediaRecorderPrivateWriter> create(MediaRecorderContainerType, MediaRecorderPrivateWriterListener&);
 
     NODELETE WEBCORE_EXPORT MediaRecorderPrivateWriter();

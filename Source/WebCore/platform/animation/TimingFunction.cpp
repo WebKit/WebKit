@@ -169,22 +169,22 @@ double TimingFunction::transformProgress(double progress, double duration, Befor
     return 0;
 }
 
-String TimingFunction::cssText() const
+RefPtr<StringImpl> TimingFunction::cssText() const
 {
     if (auto* function = dynamicDowncast<LinearTimingFunction>(*this)) {
         if (function->points().isEmpty())
-            return "linear"_s;
+            return "linear"_si;
     }
 
     if (auto* function = dynamicDowncast<CubicBezierTimingFunction>(*this)) {
         if (function->x1() == 0.25 && function->y1() == 0.1 && function->x2() == 0.25 && function->y2() == 1.0)
-            return "ease"_s;
+            return "ease"_si;
         if (function->x1() == 0.42 && !function->y1() && function->x2() == 1.0 && function->y2() == 1.0)
-            return "ease-in"_s;
+            return "ease-in"_si;
         if (!function->x1() && !function->y1() && function->x2() == 0.58 && function->y2() == 1.0)
-            return "ease-out"_s;
+            return "ease-out"_si;
         if (function->x1() == 0.42 && !function->y1() && function->x2() == 0.58 && function->y2() == 1.0)
-            return "ease-in-out"_s;
+            return "ease-in-out"_si;
         return makeString("cubic-bezier("_s, FormattedCSSNumber::create(function->x1()), ", "_s, FormattedCSSNumber::create(function->y1()), ", "_s, FormattedCSSNumber::create(function->x2()), ", "_s, FormattedCSSNumber::create(function->y2()), ')');
     }
 

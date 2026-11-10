@@ -258,7 +258,7 @@ bool EntryPlan::failIfMixedExceptionHandlingProposals()
     return false;
 }
 
-void EntryPlan::failFunctionCompilation(FunctionCodeIndex functionIndex, String&& errorMessage, CompilationError error)
+void EntryPlan::failFunctionCompilation(FunctionCodeIndex functionIndex, RefPtr<StringImpl>&& errorMessage, CompilationError error)
 {
     failAtFunction(functionIndex, WTF::move(errorMessage), error);
     m_currentIndex = m_numberOfFunctions;

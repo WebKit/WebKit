@@ -33,9 +33,9 @@ class Document;
 
 class MainThreadStylePropertyMapReadOnly : public StylePropertyMapReadOnly {
 public:
-    ExceptionOr<CSSStyleValueOrUndefined> get(ScriptExecutionContext&, const AtomString&) const final;
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const final;
-    ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const final;
+    ExceptionOr<CSSStyleValueOrUndefined> get(ScriptExecutionContext&, AtomStringImpl*) const final;
+    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, AtomStringImpl*) const final;
+    ExceptionOr<bool> has(ScriptExecutionContext&, AtomStringImpl*) const final;
 
 protected:
     MainThreadStylePropertyMapReadOnly();
@@ -43,8 +43,8 @@ protected:
     NODELETE static Document* documentFromContext(ScriptExecutionContext&);
 
     virtual RefPtr<CSSValue> propertyValue(CSSPropertyID) const = 0;
-    virtual String shorthandPropertySerialization(CSSPropertyID) const = 0;
-    virtual RefPtr<CSSValue> customPropertyValue(const AtomString&) const = 0;
+    virtual RefPtr<StringImpl> shorthandPropertySerialization(CSSPropertyID) const = 0;
+    virtual RefPtr<CSSValue> customPropertyValue(AtomStringImpl*) const = 0;
 };
 
 } // namespace WebCore

@@ -62,15 +62,15 @@ namespace ImageControlsMac {
 
 #if ENABLE(SERVICE_CONTROLS)
 
-static const AtomString& imageControlsElementIdentifier()
+static const RefPtr<AtomStringImpl>& imageControlsElementIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-controls"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("image-controls"_s);
     return identifier;
 }
 
-static const AtomString& imageControlsButtonIdentifier()
+static const RefPtr<AtomStringImpl>& imageControlsButtonIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-controls-button"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("image-controls-button"_s);
     return identifier;
 }
 
@@ -115,9 +115,9 @@ void createImageControls(HTMLElement& element)
     controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
     shadowRoot->appendChild(controlLayer);
     
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet));
+    static MainThreadNeverDestroyed<const RefPtr<StringImpl>> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-    style->setTextContent(String { shadowStyle });
+    style->setTextContent(RefPtr<StringImpl> { shadowStyle.get() });
     shadowRoot->appendChild(WTF::move(style));
     
     Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, protect(element.document()));

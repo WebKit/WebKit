@@ -46,9 +46,9 @@ public:
 
     Ref<StyleRuleEnvironmentMap> copy() const;
 
-    bool isUsable() const { return !m_name.isEmpty() && m_format && !m_src.isNone(); }
+    bool isUsable() const { return !isEmpty(m_name) && m_format && !m_src.isNone(); }
 
-    const AtomString& name() const { return m_name; }
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_name; }
     std::optional<EnvironmentMapFormat> format() const { return m_format; }
     const CSS::URL& src() const LIFETIME_BOUND { return m_src; }
 
@@ -58,7 +58,7 @@ private:
     explicit StyleRuleEnvironmentMap(Ref<StyleProperties>&&);
     StyleRuleEnvironmentMap(const StyleRuleEnvironmentMap&) = default;
 
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
     std::optional<EnvironmentMapFormat> m_format;
     CSS::URL m_src;
     const Ref<StyleProperties> m_properties;
@@ -69,13 +69,13 @@ public:
     static Ref<CSSEnvironmentMapRule> create(StyleRuleEnvironmentMap&, CSSStyleSheet*);
     ~CSSEnvironmentMapRule();
 
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     NODELETE void reattach(StyleRuleBase&) final;
     StyleRuleType styleRuleType() const final { return StyleRuleType::EnvironmentMap; }
 
-    String name() const;
-    String format() const;
-    String src() const;
+    RefPtr<StringImpl> name() const;
+    RefPtr<StringImpl> format() const;
+    RefPtr<StringImpl> src() const;
 
 private:
     CSSEnvironmentMapRule(StyleRuleEnvironmentMap&, CSSStyleSheet* parent);

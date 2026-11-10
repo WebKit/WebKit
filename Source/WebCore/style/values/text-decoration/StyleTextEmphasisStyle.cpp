@@ -49,32 +49,32 @@ NODELETE static TextEmphasisStyle::Shape defaultTextEmphasisShape(WritingMode wr
     return { .fill = fill, .mark = defaultTextEmphasisMark(writingMode) };
 }
 
-static const AtomString& markStringFromShape(const TextEmphasisStyle::Shape& markShape)
+static const RefPtr<AtomStringImpl>& markStringFromShape(const TextEmphasisStyle::Shape& markShape)
 {
     switch (markShape.mark) {
     case TextEmphasisMark::Dot: {
-        static MainThreadNeverDestroyed<const AtomString> filledDotString(span(bullet));
-        static MainThreadNeverDestroyed<const AtomString> openDotString(span(whiteBullet));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> filledDotString(AtomStringImpl::add(span(bullet)));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> openDotString(AtomStringImpl::add(span(whiteBullet)));
         return markShape.fill == TextEmphasisFill::Filled ? filledDotString : openDotString;
     }
     case TextEmphasisMark::Circle: {
-        static MainThreadNeverDestroyed<const AtomString> filledCircleString(span(blackCircle));
-        static MainThreadNeverDestroyed<const AtomString> openCircleString(span(whiteCircle));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> filledCircleString(AtomStringImpl::add(span(blackCircle)));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> openCircleString(AtomStringImpl::add(span(whiteCircle)));
         return markShape.fill == TextEmphasisFill::Filled ? filledCircleString : openCircleString;
     }
     case TextEmphasisMark::DoubleCircle: {
-        static MainThreadNeverDestroyed<const AtomString> filledDoubleCircleString(span(fisheye));
-        static MainThreadNeverDestroyed<const AtomString> openDoubleCircleString(span(bullseye));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> filledDoubleCircleString(AtomStringImpl::add(span(fisheye)));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> openDoubleCircleString(AtomStringImpl::add(span(bullseye)));
         return markShape.fill == TextEmphasisFill::Filled ? filledDoubleCircleString : openDoubleCircleString;
     }
     case TextEmphasisMark::Triangle: {
-        static MainThreadNeverDestroyed<const AtomString> filledTriangleString(span(blackUpPointingTriangle));
-        static MainThreadNeverDestroyed<const AtomString> openTriangleString(span(whiteUpPointingTriangle));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> filledTriangleString(AtomStringImpl::add(span(blackUpPointingTriangle)));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> openTriangleString(AtomStringImpl::add(span(whiteUpPointingTriangle)));
         return markShape.fill == TextEmphasisFill::Filled ? filledTriangleString : openTriangleString;
     }
     case TextEmphasisMark::Sesame: {
-        static MainThreadNeverDestroyed<const AtomString> filledSesameString(span(sesameDot));
-        static MainThreadNeverDestroyed<const AtomString> openSesameString(span(whiteSesameDot));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> filledSesameString(AtomStringImpl::add(span(sesameDot)));
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> openSesameString(AtomStringImpl::add(span(whiteSesameDot)));
         return markShape.fill == TextEmphasisFill::Filled ? filledSesameString : openSesameString;
     }
     }
@@ -83,16 +83,16 @@ static const AtomString& markStringFromShape(const TextEmphasisStyle::Shape& mar
     return emptyAtom();
 }
 
-const AtomString& TextEmphasisStyle::markString() const
+const RefPtr<AtomStringImpl>& TextEmphasisStyle::markString() const
 {
     return WTF::switchOn(value,
-        [&](const CSS::Keyword::None&) -> const AtomString& {
+        [&](const CSS::Keyword::None&) -> const RefPtr<AtomStringImpl>& {
             return nullAtom();
         },
-        [&](const Shape& shape) -> const AtomString& {
+        [&](const Shape& shape) -> const RefPtr<AtomStringImpl>& {
             return markStringFromShape(shape);
         },
-        [&](const CustomMark& customMark) -> const AtomString& {
+        [&](const CustomMark& customMark) -> const RefPtr<AtomStringImpl>& {
             return customMark.value;
         }
     );
@@ -146,7 +146,7 @@ auto CSSValueConversion<TextEmphasisStyle>::operator()(BuilderState& state, cons
         return TextEmphasisStyle::Shape { .fill = *fill, .mark = *mark };
     }
 
-    return TextEmphasisStyle::CustomMark { AtomString { toStyleFromCSSValue<String>(state, value).value } };
+    return TextEmphasisStyle::CustomMark { AtomStringImpl::add(toStyleFromCSSValue<String>(state, value).value) };
 }
 
 } // namespace Style

@@ -58,7 +58,7 @@ InspectorOverlayLabel::InspectorOverlayLabel(Vector<Content>&& contents, FloatPo
 {
 }
 
-InspectorOverlayLabel::InspectorOverlayLabel(const String& text, FloatPoint location, Color backgroundColor, Arrow arrow)
+InspectorOverlayLabel::InspectorOverlayLabel(StringImpl* text, FloatPoint location, Color backgroundColor, Arrow arrow)
     : InspectorOverlayLabel({ { text, Color::black } }, location, backgroundColor, arrow)
 {
 }
@@ -66,7 +66,7 @@ InspectorOverlayLabel::InspectorOverlayLabel(const String& text, FloatPoint loca
 static FontCascade systemFont()
 {
     FontCascadeDescription fontDescription;
-    fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
+    fontDescription.setFamilies({ { "system-ui"_atom, FontFamilyKind::Generic } });
     fontDescription.setWeight(FontSelectionValue(500));
     fontDescription.setUsedSize(12);
 
@@ -226,7 +226,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 
     float currentLineWidth = 0;
     for (auto content : m_contents) {
-        auto lines = content.text.splitAllowingEmptyEntries('\n');
+        auto lines = splitAllowingEmptyEntries(content.text, '\n');
 
         ASSERT(content.decoration.type == Content::Decoration::Type::None || lines.size() <= 1);
 
@@ -244,9 +244,9 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
             // FIXME: This looks very inefficient.
             if (maximumLineWidth && currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth) {
                 text = makeString(text, ellipsis);
-                while (currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && text.length() > 1) {
+                while (currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && length(text) > 1) {
                     // Remove the second from last character (the character before the ellipsis) and remeasure.
-                    text = makeStringByRemoving(text, text.length() - 2, 1);
+                    text = makeStringByRemoving(text, length(text) - 2, 1);
                     TextRun truncatedTextRun(text);
                     textWidth = font.width(truncatedTextRun);
                     textRun = truncatedTextRun;
@@ -390,7 +390,7 @@ FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, A
 
     float currentLineWidth = 0;
     for (auto content : contents) {
-        auto lines = content.text.splitAllowingEmptyEntries('\n');
+        auto lines = splitAllowingEmptyEntries(content.text, '\n');
         for (size_t i = 0; i < lines.size(); ++i) {
             if (i) {
                 currentLineWidth = 0;
@@ -398,7 +398,7 @@ FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, A
             }
 
             auto text = lines[i];
-            if (text.isEmpty())
+            if (isEmpty(text))
                 continue;
 
             currentLineWidth += font.width(text);
@@ -423,7 +423,7 @@ FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, A
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-FloatSize InspectorOverlayLabel::expectedSize(const String& text, Arrow::Direction direction)
+FloatSize InspectorOverlayLabel::expectedSize(StringImpl* text, Arrow::Direction direction)
 {
     return InspectorOverlayLabel::expectedSize({ { text, Color::black } }, direction);
 }

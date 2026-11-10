@@ -59,7 +59,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     Borrow borrowedFormValues = protectedAPIFormInfo->formValues();
     RetainPtr valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:borrowedFormValues->size()]);
     for (const auto& pair : borrowedFormValues)
-        [valueMap setObject:pair.second.createNSString().get() forKey:pair.first.createNSString().get()];
+        [valueMap setObject:createNSString(pair.second).get() forKey:createNSString(pair.first).get()];
     return valueMap.autorelease();
 }
 

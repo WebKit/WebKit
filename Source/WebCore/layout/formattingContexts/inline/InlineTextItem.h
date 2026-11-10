@@ -57,7 +57,7 @@ public:
 
     const InlineTextBox& inlineTextBox() const { return downcast<InlineTextBox>(layoutBox()); }
 
-    String content() const { return inlineTextBox().content().substring(start(), length()); }
+    RefPtr<StringImpl> content() const { return substring(inlineTextBox().content(), start(), length()); }
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
 
     NODELETE InlineTextItem left(unsigned length) const;
@@ -98,7 +98,7 @@ inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBo
 
 inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox)
 {
-    ASSERT(!inlineTextBox.content().length());
+    ASSERT(!WTF::length(inlineTextBox.content()));
     return InlineTextItem { inlineTextBox };
 }
 

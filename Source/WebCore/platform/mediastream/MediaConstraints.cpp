@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-const String& StringConstraint::find(NOESCAPE const Function<bool(const String&)>& filter) const
+const RefPtr<StringImpl>& StringConstraint::find(NOESCAPE const Function<bool(StringImpl*)>& filter) const
 {
     for (auto& constraint : m_exact) {
         if (filter(constraint))
@@ -54,7 +54,7 @@ const String& StringConstraint::find(NOESCAPE const Function<bool(const String&)
     return emptyString();
 }
 
-double StringConstraint::fitnessDistance(const String& value) const
+double StringConstraint::fitnessDistance(StringImpl* value) const
 {
     // https://w3c.github.io/mediacapture-main/#dfn-applyconstraints
 
@@ -65,7 +65,7 @@ double StringConstraint::fitnessDistance(const String& value) const
     // 2. If the constraint is required ('min', 'max', or 'exact'), and the settings
     //    dictionary's value for the constraint does not satisfy the constraint, the
     //    fitness distance is positive infinity.
-    if (!m_exact.isEmpty() && m_exact.find(value) == notFound)
+    if (!m_exact.isEmpty() && m_exact.findIf([&](auto& item) { return equal(item, value); }) == notFound)
         return std::numeric_limits<double>::infinity();
 
     // 3. If no ideal value is specified, the fitness distance is 0.
@@ -75,10 +75,12 @@ double StringConstraint::fitnessDistance(const String& value) const
     // 5. For all string and enum non-required constraints (deviceId, groupId, facingMode,
     // echoCancellation), the fitness distance is the result of the formula
     //        (actual == ideal) ? 0 : 1
-    return m_ideal.find(value) != notFound ? 0 : 1;
+    return m_ideal.findIf([&](auto& item) {
+        return equal(item, value);
+    }) != notFound ? 0 : 1;
 }
 
-double StringConstraint::fitnessDistance(const Vector<String>& values) const
+double StringConstraint::fitnessDistance(const Vector<RefPtr<StringImpl>>& values) const
 {
     if (isEmpty())
         return 0;
@@ -95,13 +97,13 @@ void StringConstraint::merge(const StringConstraint& other)
     if (other.isEmpty())
         return;
 
-    Vector<String> values;
+    Vector<RefPtr<StringImpl>> values;
     if (other.getExact(values)) {
         if (m_exact.isEmpty())
             m_exact = values;
         else {
             for (auto& value : values) {
-                if (m_exact.find(value) == notFound)
+                if (m_exact.findIf([&](auto& item) { return equal(item, value); }) == notFound)
                     m_exact.append(value);
             }
         }
@@ -112,7 +114,7 @@ void StringConstraint::merge(const StringConstraint& other)
             m_ideal = values;
         else {
             for (auto& value : values) {
-                if (m_ideal.find(value) == notFound)
+                if (m_ideal.findIf([&](auto& item) { return equal(item, value); }) == notFound)
                     m_ideal.append(value);
             }
         }

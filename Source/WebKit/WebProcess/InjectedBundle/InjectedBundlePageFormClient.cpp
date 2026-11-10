@@ -128,7 +128,7 @@ bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page,
     return m_client.shouldPerformActionInTextField(toAPI(page), toAPI(nodeHandle.get()), toWKInputFieldActionType(actionType), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values)
+void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& values)
 {
     if (!m_client.willSendSubmitEvent)
         return;
@@ -143,7 +143,7 @@ void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormEl
     m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.ptr()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<API::Object>& userData)
+void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& values, RefPtr<API::Object>& userData)
 {
     if (!m_client.willSubmitForm)
         return;

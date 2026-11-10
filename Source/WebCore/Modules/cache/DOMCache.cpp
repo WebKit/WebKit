@@ -47,14 +47,14 @@
 namespace WebCore {
 using namespace WebCore::DOMCacheEngine;
 
-Ref<DOMCache> DOMCache::create(ScriptExecutionContext& context, String&& name, DOMCacheIdentifier identifier, Ref<CacheStorageConnection>&& connection)
+Ref<DOMCache> DOMCache::create(ScriptExecutionContext& context, RefPtr<StringImpl>&& name, DOMCacheIdentifier identifier, Ref<CacheStorageConnection>&& connection)
 {
     auto cache = adoptRef(*new DOMCache(context, WTF::move(name), identifier, WTF::move(connection)));
     cache->suspendIfNeeded();
     return cache;
 }
 
-DOMCache::DOMCache(ScriptExecutionContext& context, String&& name, DOMCacheIdentifier identifier, Ref<CacheStorageConnection>&& connection)
+DOMCache::DOMCache(ScriptExecutionContext& context, RefPtr<StringImpl>&& name, DOMCacheIdentifier identifier, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_name(WTF::move(name))
     , m_identifier(identifier)
@@ -180,7 +180,7 @@ static inline bool hasResponseVaryStarHeaderValue(const FetchResponse& response)
 {
     auto varyValue = response.headers().internalHeaders().get(WebCore::HTTPHeaderName::Vary);
     bool hasStar = false;
-    varyValue.split(',', [&](StringView view) {
+    split(varyValue, ',', [&](StringView view) {
         if (!hasStar && view.trim(isASCIIWhitespaceWithoutFF<char16_t>) == "*"_s)
             hasStar = true;
     });
@@ -249,7 +249,7 @@ private:
 
     const Ref<DOMCache> m_domCache;
     Vector<Record> m_records;
-    HashMap<String, Vector<size_t>> m_recordPositionsByURL;
+    HashMap<RefPtr<StringImpl>, Vector<size_t>> m_recordPositionsByURL;
     CompletionHandler<void(ExceptionOr<Vector<Record>>&&)> m_callback;
 };
 
@@ -258,10 +258,10 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
     RefPtr<FetchRequest> request;
     if (std::holds_alternative<Ref<FetchRequest>>(info)) {
         request = std::get<Ref<FetchRequest>>(info).ptr();
-        if (request->method() != "GET"_s && !ignoreMethod) {
+        if (!equal(request->method(), "GET"_s) && !ignoreMethod) {
             if (requestValidationFailed)
                 *requestValidationFailed = true;
-            return Exception { ExceptionCode::TypeError, "Request method is not GET"_s };
+            return Exception { ExceptionCode::TypeError, "Request method is not GET"_si };
         }
     } else {
         auto result = FetchRequest::create(*protect(scriptExecutionContext()), WTF::move(info), { });
@@ -273,7 +273,7 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
     if (!request->url().protocolIsInHTTPFamily()) {
         if (requestValidationFailed)
             *requestValidationFailed = true;
-        return Exception { ExceptionCode::TypeError, "Request url is not HTTP/HTTPS"_s };
+        return Exception { ExceptionCode::TypeError, "Request url is not HTTP/HTTPS"_si };
     }
 
     return request.releaseNonNull();
@@ -312,7 +312,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
 
     for (Ref request : requests) {
         if (request->signal().aborted()) {
-            taskHandler->error(Exception { ExceptionCode::AbortError, "Request signal is aborted"_s });
+            taskHandler->error(Exception { ExceptionCode::AbortError, "Request signal is aborted"_si });
             return;
         }
         FetchResponse::fetch(*scriptExecutionContext, request.get(), [this, protectedThis = Ref { *this }, request, taskHandler](auto&& result) mutable {
@@ -328,22 +328,22 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             Ref response = result.releaseReturnValue();
 
             if (!response->ok()) {
-                taskHandler->error(Exception { ExceptionCode::TypeError, "Response is not OK"_s });
+                taskHandler->error(Exception { ExceptionCode::TypeError, "Response is not OK"_si });
                 return;
             }
 
             if (hasResponseVaryStarHeaderValue(response)) {
-                taskHandler->error(Exception { ExceptionCode::TypeError, "Response has a '*' Vary header value"_s });
+                taskHandler->error(Exception { ExceptionCode::TypeError, "Response has a '*' Vary header value"_si });
                 return;
             }
 
             if (response->status() == 206) {
-                taskHandler->error(Exception { ExceptionCode::TypeError, "Response is a 206 partial"_s });
+                taskHandler->error(Exception { ExceptionCode::TypeError, "Response is a 206 partial"_si });
                 return;
             }
 
             if (taskHandler->hasMatchingRecord(request->resourceRequest())) {
-                taskHandler->error(Exception { ExceptionCode::InvalidStateError, "addAll cannot store several matching requests"_s });
+                taskHandler->error(Exception { ExceptionCode::InvalidStateError, "addAll cannot store several matching requests"_si });
                 return;
             }
             size_t recordPosition = taskHandler->addRecord(toConnectionRecord(request.get(), response, nullptr));
@@ -404,17 +404,17 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
 
     if (hasResponseVaryStarHeaderValue(response.get())) {
-        promise.reject(Exception { ExceptionCode::TypeError, "Response has a '*' Vary header value"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Response has a '*' Vary header value"_si });
         return;
     }
 
     if (response->status() == 206) {
-        promise.reject(Exception { ExceptionCode::TypeError, "Response is a 206 partial"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Response is a 206 partial"_si });
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        promise.reject(Exception { ExceptionCode::TypeError, "Response is disturbed or locked"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Response is disturbed or locked"_si });
         return;
     }
 
@@ -476,7 +476,7 @@ void DOMCache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromis
 static Ref<FetchRequest> createRequest(ScriptExecutionContext& context, const DOMCacheEngine::Record& record)
 {
     auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
-    return FetchRequest::create(context, std::nullopt, WTF::move(requestHeaders),  ResourceRequest { record.request }, FetchOptions { record.options }, String { record.referrer });
+    return FetchRequest::create(context, std::nullopt, WTF::move(requestHeaders),  ResourceRequest { record.request }, FetchOptions { record.options }, RefPtr<StringImpl> { record.referrer });
 }
 
 void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)

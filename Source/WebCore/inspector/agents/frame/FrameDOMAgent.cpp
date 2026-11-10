@@ -151,7 +151,7 @@ NODELETE static bool framePseudoElementType(PseudoElementType pseudoElementType,
     }
 }
 
-static String frameComputeContentSecurityPolicySHA256Hash(const Element& element)
+static RefPtr<StringImpl> frameComputeContentSecurityPolicySHA256Hash(const Element& element)
 {
     Ref document = element.document();
     PAL::TextEncoding documentEncoding = document->textEncoding();
@@ -166,7 +166,7 @@ static String frameComputeContentSecurityPolicySHA256Hash(const Element& element
 // MARK: - FrameDOMAgent
 
 FrameDOMAgent::FrameDOMAgent(FrameAgentContext& context, InspectorOverlay& overlay)
-    : InspectorAgentBase("DOM"_s, context)
+    : InspectorAgentBase("DOM"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(Ref { context.backendDispatcher }, this))
     , m_instrumentingAgents(context.instrumentingAgents)
@@ -303,7 +303,7 @@ RefPtr<Node> FrameDOMAgent::assertNode(Inspector::Protocol::ErrorString& errorSt
 {
     RefPtr node = nodeForId(nodeId);
     if (!node)
-        errorString = "Missing node for given nodeId"_s;
+        errorString = "Missing node for given nodeId"_si;
     return node;
 }
 
@@ -314,7 +314,7 @@ RefPtr<Element> FrameDOMAgent::assertElement(Inspector::Protocol::ErrorString& e
         return nullptr;
     RefPtr element = dynamicDowncast<Element>(*node);
     if (!element)
-        errorString = "Node for given nodeId is not an element"_s;
+        errorString = "Node for given nodeId is not an element"_si;
     return element;
 }
 
@@ -324,11 +324,11 @@ RefPtr<Node> FrameDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString&
     if (!node)
         return nullptr;
     if (node->isInUserAgentShadowTree() && !m_allowEditingUserAgentShadowTrees) {
-        errorString = "Node for given nodeId is in a shadow tree"_s;
+        errorString = "Node for given nodeId is in a shadow tree"_si;
         return nullptr;
     }
     if (node->isPseudoElement()) {
-        errorString = "Node for given nodeId is a pseudo-element"_s;
+        errorString = "Node for given nodeId is a pseudo-element"_si;
         return nullptr;
     }
     return node;
@@ -341,7 +341,7 @@ RefPtr<Element> FrameDOMAgent::assertEditableElement(Inspector::Protocol::ErrorS
         return nullptr;
     RefPtr element = dynamicDowncast<Element>(*node);
     if (!element)
-        errorString = "Node for given nodeId is not an element"_s;
+        errorString = "Node for given nodeId is not an element"_si;
     return element;
 }
 
@@ -350,9 +350,9 @@ RefPtr<Element> FrameDOMAgent::assertEditableElement(Inspector::Protocol::ErrorS
 Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node, int depth)
 {
     auto id = bind(*node);
-    String nodeName;
-    String localName;
-    String nodeValue;
+    RefPtr<StringImpl> nodeName;
+    RefPtr<StringImpl> localName;
+    RefPtr<StringImpl> nodeValue;
 
     switch (node->nodeType()) {
     case NodeType::ProcessingInstruction:
@@ -363,7 +363,7 @@ Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node
     case NodeType::Comment:
     case NodeType::CDATASection:
         nodeValue = node->nodeValue();
-        if (nodeValue.length() > frameMaxTextSize)
+        if (length(nodeValue) > frameMaxTextSize)
             nodeValue = makeString(StringView(nodeValue).left(frameMaxTextSize), frameHorizontalEllipsisUTF16);
         break;
     case NodeType::Attribute:
@@ -452,9 +452,9 @@ Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node
     return value;
 }
 
-Ref<JSON::ArrayOf<String>> FrameDOMAgent::buildArrayForElementAttributes(Element* element)
+Ref<JSON::ArrayOf<RefPtr<StringImpl>>> FrameDOMAgent::buildArrayForElementAttributes(Element* element)
 {
-    auto attributesValue = JSON::ArrayOf<String>::create();
+    auto attributesValue = JSON::ArrayOf<RefPtr<StringImpl>>::create();
     if (!element->hasAttributes())
         return attributesValue;
     for (auto& attribute : element->attributes()) {
@@ -536,12 +536,12 @@ Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushNodePathToFrontend(Inspector
     ASSERT(nodeToPush);
 
     if (!m_document) {
-        errorString = "Missing document"_s;
+        errorString = "Missing document"_si;
         return 0;
     }
 
     if (!m_nodeToId.contains(*m_document)) {
-        errorString = "Document must have been requested"_s;
+        errorString = "Document must have been requested"_si;
         return 0;
     }
 
@@ -667,7 +667,7 @@ Inspector::CommandResult<void> FrameDOMAgent::requestChildNodes(int nodeId, std:
     return { };
 }
 
-Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> FrameDOMAgent::getAttributes(int nodeId)
+Inspector::CommandResult<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> FrameDOMAgent::getAttributes(int nodeId)
 {
     Inspector::Protocol::ErrorString errorString;
     RefPtr element = assertElement(errorString, nodeId);
@@ -818,12 +818,12 @@ void FrameDOMAgent::destroyedNodesTimerFired()
         m_frontendDispatcher->willDestroyDOMNode(nodeId);
 }
 
-void FrameDOMAgent::willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue)
+void FrameDOMAgent::willModifyDOMAttr(Element&, AtomStringImpl* oldValue, AtomStringImpl* newValue)
 {
     m_suppressAttributeModifiedEvent = (oldValue == newValue);
 }
 
-void FrameDOMAgent::didModifyDOMAttr(Element& element, const AtomString& name, const AtomString& value)
+void FrameDOMAgent::didModifyDOMAttr(Element& element, AtomStringImpl* name, AtomStringImpl* value)
 {
     bool shouldSuppressEvent = m_suppressAttributeModifiedEvent;
     m_suppressAttributeModifiedEvent = false;
@@ -837,7 +837,7 @@ void FrameDOMAgent::didModifyDOMAttr(Element& element, const AtomString& name, c
     m_frontendDispatcher->attributeModified(id, name, value);
 }
 
-void FrameDOMAgent::didRemoveDOMAttr(Element& element, const AtomString& name)
+void FrameDOMAgent::didRemoveDOMAttr(Element& element, AtomStringImpl* name)
 {
     auto id = boundNodeId(&element);
     if (!id)
@@ -929,7 +929,7 @@ void FrameDOMAgent::frameDocumentUpdated(LocalFrame& frame)
     setDocument(document.get());
 }
 
-Inspector::CommandResult<std::optional<int>> FrameDOMAgent::querySelector(int nodeId, const String& selector)
+Inspector::CommandResult<std::optional<int>> FrameDOMAgent::querySelector(int nodeId, StringImpl* selector)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -955,7 +955,7 @@ Inspector::CommandResult<std::optional<int>> FrameDOMAgent::querySelector(int no
     return { resultNodeId };
 }
 
-Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::querySelectorAll(int nodeId, const String& selector)
+Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::querySelectorAll(int nodeId, StringImpl* selector)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -980,7 +980,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::querySelectorAl
     return nodeIds;
 }
 
-Inspector::CommandResult<String> FrameDOMAgent::getOuterHTML(int nodeId)
+Inspector::CommandResult<RefPtr<StringImpl>> FrameDOMAgent::getOuterHTML(int nodeId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -991,9 +991,9 @@ Inspector::CommandResult<String> FrameDOMAgent::getOuterHTML(int nodeId)
     return serializeFragment(*node, SerializedNodes::SubtreeIncludingNode);
 }
 
-Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> FrameDOMAgent::getSupportedEventNames()
+Inspector::CommandResult<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> FrameDOMAgent::getSupportedEventNames()
 {
-    auto list = JSON::ArrayOf<String>::create();
+    auto list = JSON::ArrayOf<RefPtr<StringImpl>>::create();
 
     for (auto& event : eventNames().allEventNames())
         list->addItem(event);
@@ -1001,7 +1001,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> FrameDOMAgent::getSupported
     return list;
 }
 
-Inspector::CommandResultOf<String, int> FrameDOMAgent::performSearch(const String& query, RefPtr<JSON::Array>&& nodeIds, std::optional<bool>&& caseSensitive)
+Inspector::CommandResultOf<RefPtr<StringImpl>, int> FrameDOMAgent::performSearch(StringImpl* query, RefPtr<JSON::Array>&& nodeIds, std::optional<bool>&& caseSensitive)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1032,7 +1032,7 @@ Inspector::CommandResultOf<String, int> FrameDOMAgent::performSearch(const Strin
     return { { searchId, resultsVector.size() } };
 }
 
-Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::getSearchResults(const String& searchId, int fromIndex, int toIndex)
+Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::getSearchResults(StringImpl* searchId, int fromIndex, int toIndex)
 {
     auto it = m_searchResults.find(searchId);
     if (it == m_searchResults.end())
@@ -1048,13 +1048,13 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::getSearchResult
     return nodeIds;
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::discardSearchResults(const String& searchId)
+Inspector::CommandResult<void> FrameDOMAgent::discardSearchResults(StringImpl* searchId)
 {
     m_searchResults.remove(searchId);
     return { };
 }
 
-RefPtr<Node> FrameDOMAgent::nodeForPath(const String& path)
+RefPtr<Node> FrameDOMAgent::nodeForPath(StringImpl* path)
 {
     // The path is of form "1,HTML,2,BODY,1,DIV"
     if (!m_document)
@@ -1095,7 +1095,7 @@ RefPtr<Node> FrameDOMAgent::nodeForPath(const String& path)
     return node;
 }
 
-Inspector::CommandResult<int> FrameDOMAgent::pushNodeByPathToFrontend(const String& path)
+Inspector::CommandResult<int> FrameDOMAgent::pushNodeByPathToFrontend(StringImpl* path)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1133,7 +1133,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListen
 
     struct EventListenerInfo {
         RefPtr<EventTarget> eventTarget;
-        const AtomString eventType;
+        const RefPtr<AtomStringImpl> eventType;
         const EventListenerVector eventListeners;
     };
 
@@ -1211,7 +1211,7 @@ Inspector::CommandResult<void> FrameDOMAgent::setEventListenerDisabled(int event
     return { };
 }
 
-bool FrameDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+bool FrameDOMAgent::isEventListenerDisabled(EventTarget& target, AtomStringImpl* eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
         if (inspectorEventListener.matches(target, eventType, listener, capture))
@@ -1238,14 +1238,14 @@ Vector<size_t> FrameDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(const 
     return m_flexibleBoxRendererCachedItemsAtStartOfLine.get(renderer);
 }
 
-Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventListener(const Ref<RegisteredEventListener>& registeredEventListener, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled)
+Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventListener(const Ref<RegisteredEventListener>& registeredEventListener, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& eventTarget, AtomStringImpl* eventType, bool disabled)
 {
     Ref<EventListener> eventListener = registeredEventListener->callback();
 
-    String handlerName;
+    RefPtr<StringImpl> handlerName;
     int lineNumber = 0;
     int columnNumber = 0;
-    String scriptID;
+    RefPtr<StringImpl> scriptID;
     if (RefPtr scriptListener = dynamicDowncast<JSEventListener>(eventListener); scriptListener && scriptListener->isolatedWorld()) {
         RefPtr<Document> document;
         if (RefPtr scriptExecutionContext = eventTarget.scriptExecutionContext())
@@ -1291,13 +1291,13 @@ Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventL
                 // "handleEvent", unless it is a plain object.
                 if (handlerFunction != handlerObject)
                     handlerName = JSC::JSObject::calculatedClassName(handlerObject);
-                if (handlerName.isEmpty() || handlerName == "Object"_s)
+                if (isEmpty(handlerName) || equal(handlerName, "Object"_s))
                     handlerName = handlerFunction->calculatedDisplayName(vm);
 
                 if (auto executable = handlerFunction->jsExecutable()) {
                     lineNumber = executable->firstLine() - 1;
                     columnNumber = executable->startColumn() - 1;
-                    scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());
+                    scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : makeString(executable->sourceID());
                 }
             }
         }
@@ -1313,7 +1313,7 @@ Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventL
         value->setNodeId(pushNodePathToFrontend(node.get()));
     else if (is<LocalDOMWindow>(eventTarget))
         value->setOnWindow(true);
-    if (!scriptID.isNull()) {
+    if (scriptID) {
         auto location = Inspector::Protocol::Debugger::Location::create()
             .setScriptId(scriptID)
             .setLineNumber(lineNumber)
@@ -1321,7 +1321,7 @@ Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventL
         location->setColumnNumber(columnNumber);
         value->setLocation(WTF::move(location));
     }
-    if (!handlerName.isEmpty())
+    if (!isEmpty(handlerName))
         value->setHandlerName(handlerName);
     if (registeredEventListener->isPassive())
         value->setPassive(true);
@@ -1332,7 +1332,7 @@ Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventL
     return value;
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::setAttributeValue(int nodeId, const String& name, const String& value)
+Inspector::CommandResult<void> FrameDOMAgent::setAttributeValue(int nodeId, StringImpl* name, StringImpl* value)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1340,13 +1340,13 @@ Inspector::CommandResult<void> FrameDOMAgent::setAttributeValue(int nodeId, cons
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!m_domEditor->setAttribute(*element, AtomString { name }, AtomString { value }, errorString))
+    if (!m_domEditor->setAttribute(*element, AtomStringImpl::add(name).get(), AtomStringImpl::add(value).get(), errorString))
         return makeUnexpected(errorString);
 
     return { };
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::setAttributesAsText(int nodeId, const String& text, const String& name)
+Inspector::CommandResult<void> FrameDOMAgent::setAttributesAsText(int nodeId, StringImpl* text, StringImpl* name)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1368,7 +1368,7 @@ Inspector::CommandResult<void> FrameDOMAgent::setAttributesAsText(int nodeId, co
         return makeUnexpected("Could not parse given text"_s);
 
     if (!childElement->hasAttributes() && !!name) {
-        if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
+        if (!m_domEditor->removeAttribute(*element, AtomStringImpl::add(name).get(), errorString))
             return makeUnexpected(errorString);
         return { };
     }
@@ -1376,20 +1376,20 @@ Inspector::CommandResult<void> FrameDOMAgent::setAttributesAsText(int nodeId, co
     bool foundOriginalAttribute = false;
     for (auto& attribute : childElement->attributes()) {
         auto attributeName = attribute.name().toAtomString();
-        foundOriginalAttribute = foundOriginalAttribute || attributeName == name;
+        foundOriginalAttribute = foundOriginalAttribute || equal(attributeName, name);
         if (!m_domEditor->setAttribute(*element, attributeName, attribute.value(), errorString))
             return makeUnexpected(errorString);
     }
 
-    if (!foundOriginalAttribute && name.find(deprecatedIsNotSpaceOrNewline) != notFound) {
-        if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
+    if (!foundOriginalAttribute && find(name, deprecatedIsNotSpaceOrNewline) != notFound) {
+        if (!m_domEditor->removeAttribute(*element, AtomStringImpl::add(name).get(), errorString))
             return makeUnexpected(errorString);
     }
 
     return { };
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::removeAttribute(int nodeId, const String& name)
+Inspector::CommandResult<void> FrameDOMAgent::removeAttribute(int nodeId, StringImpl* name)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1397,7 +1397,7 @@ Inspector::CommandResult<void> FrameDOMAgent::removeAttribute(int nodeId, const 
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
+    if (!m_domEditor->removeAttribute(*element, AtomStringImpl::add(name).get(), errorString))
         return makeUnexpected(errorString);
 
     return { };
@@ -1421,7 +1421,7 @@ Inspector::CommandResult<void> FrameDOMAgent::removeNode(int nodeId)
     return { };
 }
 
-Inspector::CommandResult<int> FrameDOMAgent::setNodeName(int nodeId, const String& tagName)
+Inspector::CommandResult<int> FrameDOMAgent::setNodeName(int nodeId, StringImpl* tagName)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1429,7 +1429,7 @@ Inspector::CommandResult<int> FrameDOMAgent::setNodeName(int nodeId, const Strin
     if (!oldNode)
         return makeUnexpected(errorString);
 
-    auto createElementResult = protect(oldNode->document())->createElementForBindings(AtomString { tagName });
+    auto createElementResult = protect(oldNode->document())->createElementForBindings(AtomStringImpl::add(tagName).get());
     if (createElementResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(createElementResult.releaseException()));
 
@@ -1456,7 +1456,7 @@ Inspector::CommandResult<int> FrameDOMAgent::setNodeName(int nodeId, const Strin
     return resultNodeId;
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::setOuterHTML(int nodeId, const String& outerHTML)
+Inspector::CommandResult<void> FrameDOMAgent::setOuterHTML(int nodeId, StringImpl* outerHTML)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1490,7 +1490,7 @@ Inspector::CommandResult<void> FrameDOMAgent::setOuterHTML(int nodeId, const Str
     return { };
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::insertAdjacentHTML(int nodeId, const String& position, const String& html)
+Inspector::CommandResult<void> FrameDOMAgent::insertAdjacentHTML(int nodeId, StringImpl* position, StringImpl* html)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1508,7 +1508,7 @@ Inspector::CommandResult<void> FrameDOMAgent::insertAdjacentHTML(int nodeId, con
     return { };
 }
 
-Inspector::CommandResult<void> FrameDOMAgent::setNodeValue(int nodeId, const String& value)
+Inspector::CommandResult<void> FrameDOMAgent::setNodeValue(int nodeId, StringImpl* value)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1600,7 +1600,7 @@ private:
 
 } // namespace
 
-RefPtr<Inspector::Protocol::Runtime::RemoteObject> FrameDOMAgent::resolveNodeInternal(Node* node, const String& objectGroup)
+RefPtr<Inspector::Protocol::Runtime::RemoteObject> FrameDOMAgent::resolveNodeInternal(Node* node, StringImpl* objectGroup)
 {
     if (!node)
         return nullptr;
@@ -1629,7 +1629,7 @@ RefPtr<Node> FrameDOMAgent::nodeForObjectId(const Inspector::Protocol::Runtime::
     return InspectorDOMAgent::scriptValueAsNode(injectedScript.findObjectById(objectId));
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::Runtime::RemoteObject>> FrameDOMAgent::resolveNode(int nodeId, const String& objectGroup)
+Inspector::CommandResult<Ref<Inspector::Protocol::Runtime::RemoteObject>> FrameDOMAgent::resolveNode(int nodeId, StringImpl* objectGroup)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -1644,7 +1644,7 @@ Inspector::CommandResult<Ref<Inspector::Protocol::Runtime::RemoteObject>> FrameD
     return object.releaseNonNull();
 }
 
-Inspector::CommandResult<int> FrameDOMAgent::requestNode(const String& objectId)
+Inspector::CommandResult<int> FrameDOMAgent::requestNode(StringImpl* objectId)
 {
     RefPtr node = nodeForObjectId(objectId);
     if (!node)
@@ -1658,7 +1658,7 @@ Inspector::CommandResult<int> FrameDOMAgent::requestNode(const String& objectId)
     return nodeId;
 }
 
-Inspector::CommandResult<int> FrameDOMAgent::requestFrameOwner(const String& frameId)
+Inspector::CommandResult<int> FrameDOMAgent::requestFrameOwner(StringImpl* frameId)
 {
     auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
     if (!parsedFrameId)
@@ -1738,33 +1738,33 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightQuad(Ref<JSON::Array>&& q
 
 #if PLATFORM(IOS_FAMILY)
 
-Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
+Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&& nodeId, StringImpl* objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
 {
     return innerHighlightNode(WTF::move(nodeId), objectId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
 }
 
 #else
 
-Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
+Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&& nodeId, StringImpl* objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
     return innerHighlightNode(WTF::move(nodeId), objectId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), WTF::move(showRulers));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
 
-Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
+Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNode(std::optional<int>&& nodeId, StringImpl* objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
     Inspector::Protocol::ErrorString errorString;
 
     RefPtr<Node> node;
     if (nodeId)
         node = assertNode(errorString, *nodeId);
-    else if (!objectId.isEmpty()) {
+    else if (!isEmpty(objectId)) {
         node = nodeForObjectId(objectId);
         if (!node)
-            errorString = "Missing node for given objectId"_s;
+            errorString = "Missing node for given objectId"_si;
     } else
-        errorString = "Either nodeId or objectId must be specified"_s;
+        errorString = "Either nodeId or objectId must be specified"_si;
 
     if (!node)
         return makeUnexpected(errorString);
@@ -2134,9 +2134,9 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> FrameDOMAgent::buildObjec
     bool ignoredByDefault = false;
     auto invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
-    String label;
+    RefPtr<StringImpl> label;
     bool liveRegionAtomic = false;
-    RefPtr<JSON::ArrayOf<String>> liveRegionRelevant;
+    RefPtr<JSON::ArrayOf<RefPtr<StringImpl>>> liveRegionRelevant;
     auto liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Off;
     RefPtr<Node> mouseEventNode;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> ownedNodeIds;
@@ -2144,7 +2144,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> FrameDOMAgent::buildObjec
     bool pressed = false;
     bool readonly = false;
     bool required = false;
-    String role;
+    RefPtr<StringImpl> role;
     bool selected = false;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> selectedChildNodeIds;
     bool isSwitch = false;
@@ -2253,12 +2253,12 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> FrameDOMAgent::buildObjec
             ignored = axObject->isIgnored();
             ignoredByDefault = axObject->isIgnoredByDefault();
 
-            String invalidValue = axObject->invalidStatusIncludingInferred();
-            if (invalidValue == "false"_s)
+            RefPtr<StringImpl> invalidValue = axObject->invalidStatusIncludingInferred();
+            if (equal(invalidValue, "false"_s))
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False;
-            else if (invalidValue == "grammar"_s)
+            else if (equal(invalidValue, "grammar"_s))
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::Grammar;
-            else if (invalidValue == "spelling"_s)
+            else if (equal(invalidValue, "spelling"_s))
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::Spelling;
             else
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::True;
@@ -2273,30 +2273,30 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> FrameDOMAgent::buildObjec
                 liveRegionAtomic = axObject->liveRegionAtomic();
 
                 auto ariaRelevantAttrValue = axObject->liveRegionRelevant();
-                if (!ariaRelevantAttrValue.isEmpty()) {
-                    String ariaRelevantAdditions = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Additions);
-                    String ariaRelevantRemovals = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Removals);
-                    String ariaRelevantText = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Text);
-                    liveRegionRelevant = JSON::ArrayOf<String>::create();
-                    SpaceSplitString values(AtomString { ariaRelevantAttrValue }, SpaceSplitString::ShouldFoldCase::Yes);
-                    if (values.contains("all"_s)) {
+                if (!isEmpty(ariaRelevantAttrValue)) {
+                    RefPtr<StringImpl> ariaRelevantAdditions = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Additions);
+                    RefPtr<StringImpl> ariaRelevantRemovals = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Removals);
+                    RefPtr<StringImpl> ariaRelevantText = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Text);
+                    liveRegionRelevant = JSON::ArrayOf<RefPtr<StringImpl>>::create();
+                    SpaceSplitString values(AtomStringImpl::add(ariaRelevantAttrValue).get(), SpaceSplitString::ShouldFoldCase::Yes);
+                    if (values.contains("all"_atom)) {
                         liveRegionRelevant->addItem(ariaRelevantAdditions);
                         liveRegionRelevant->addItem(ariaRelevantRemovals);
                         liveRegionRelevant->addItem(ariaRelevantText);
                     } else {
-                        if (values.contains(AtomString { ariaRelevantAdditions }))
+                        if (values.contains(AtomStringImpl::add(ariaRelevantAdditions).get()))
                             liveRegionRelevant->addItem(ariaRelevantAdditions);
-                        if (values.contains(AtomString { ariaRelevantRemovals }))
+                        if (values.contains(AtomStringImpl::add(ariaRelevantRemovals).get()))
                             liveRegionRelevant->addItem(ariaRelevantRemovals);
-                        if (values.contains(AtomString { ariaRelevantText }))
+                        if (values.contains(AtomStringImpl::add(ariaRelevantText).get()))
                             liveRegionRelevant->addItem(ariaRelevantText);
                     }
                 }
 
-                String ariaLive = axObject->liveRegionStatus();
-                if (ariaLive == "assertive"_s)
+                RefPtr<StringImpl> ariaLive = axObject->liveRegionStatus();
+                if (equal(ariaLive, "assertive"_s))
                     liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
-                else if (ariaLive == "polite"_s)
+                else if (equal(ariaLive, "polite"_s))
                     liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Polite;
             }
 

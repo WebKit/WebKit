@@ -93,7 +93,7 @@ static ASCIILiteral wgslExtensionToWebGPUFeatureName(Extension extension)
     }
 }
 
-Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration& configuration)
+Variant<SuccessfulCheck, FailedCheck> staticCheck(StringImpl* wgsl, const std::optional<SourceMap>&, const Configuration& configuration)
 {
     PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
@@ -117,7 +117,7 @@ Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std:
     // Validate that all enabled extensions are supported by the device
     for (auto extension : shaderModule->enabledExtensions()) {
         auto featureName = wgslExtensionToWebGPUFeatureName(extension);
-        if (!shaderModule->hasFeature(featureName))
+        if (!shaderModule->hasFeature(StringImpl::create(featureName).ptr()))
             return Variant<SuccessfulCheck, FailedCheck>(WTF::InPlaceType<FailedCheck>, Vector<Error> { Error { makeString("Extension '"_s, toString(extension), "' requires feature '"_s, featureName, "' which is not enabled on this device"_s), SourceSpan::empty() } }, Vector<Warning> { });
     }
 
@@ -134,7 +134,7 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderMod
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-inline Variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts)
+inline Variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, const HashMap<RefPtr<StringImpl>, PipelineLayout*>& pipelineLayouts)
 {
     CompilationScope compilationScope(shaderModule);
 
@@ -142,7 +142,7 @@ inline Variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, con
     auto result = [&]() -> Variant<PrepareResult, Error> {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        HashMap<String, Reflection::EntryPointInformation> entryPoints;
+        HashMap<RefPtr<StringImpl>, Reflection::EntryPointInformation> entryPoints;
 
         RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);
@@ -159,12 +159,12 @@ inline Variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, con
     return result;
 }
 
-Variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues, DeviceState&& deviceState)
+Variant<RefPtr<StringImpl>, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<RefPtr<StringImpl>, ConstantValue>& constantValues, DeviceState&& deviceState)
 {
     CompilationScope generationScope(shaderModule);
 
     PhaseTimes phaseTimes;
-    String result;
+    RefPtr<StringImpl> result;
     if (auto maybeError = shaderModule.validateOverrides(prepareResult, constantValues))
         return { *maybeError };
     {
@@ -175,25 +175,25 @@ Variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepa
     return { result };
 }
 
-Variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<String, PipelineLayout*>& pipelineLayouts)
+Variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<RefPtr<StringImpl>, PipelineLayout*>& pipelineLayouts)
 {
     return prepareImpl(ast, pipelineLayouts);
 }
 
-Variant<PrepareResult, Error> prepare(ShaderModule& ast, const String& entryPointName, PipelineLayout* pipelineLayout)
+Variant<PrepareResult, Error> prepare(ShaderModule& ast, StringImpl* entryPointName, PipelineLayout* pipelineLayout)
 {
-    HashMap<String, PipelineLayout*> pipelineLayouts;
+    HashMap<RefPtr<StringImpl>, PipelineLayout*> pipelineLayouts;
     pipelineLayouts.add(entryPointName, pipelineLayout);
     return prepareImpl(ast, pipelineLayouts);
 }
 
-std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Expression& expression, const HashMap<String, ConstantValue>& overrideValues)
+std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Expression& expression, const HashMap<RefPtr<StringImpl>, ConstantValue>& overrideValues)
 {
     std::optional<ConstantValue> result;
     if (auto constantValue = expression.constantValue())
         result = *constantValue;
 
-    auto call = [&](const String& function, auto&& callArguments) -> std::optional<ConstantValue> {
+    auto call = [&](StringImpl* function, auto&& callArguments) -> std::optional<ConstantValue> {
         unsigned argumentCount = callArguments.size();
         FixedVector<ConstantValue> arguments(argumentCount);
         for (unsigned i = 0; i < argumentCount; ++i) {
@@ -205,12 +205,12 @@ std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Exp
             arguments[i] = *value;
         }
 
-        if (function == "array"_s)
+        if (equal(function, "array"_s))
             return ConstantArray(WTF::move(arguments));
 
         if (!function) {
             if (auto* structType = std::get_if<Types::Struct>(expression.inferredType())) {
-                HashMap<String, ConstantValue> constantFields;
+                HashMap<RefPtr<StringImpl>, ConstantValue> constantFields;
                 for (unsigned i = 0; i < argumentCount; ++i) {
                     auto& argument = arguments[i];
                     auto& member = structType->structure.members()[i];
@@ -253,16 +253,16 @@ std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Exp
                     result = std::get<bool>(*lhsValue) || std::get<bool>(*rhsValue);
             }
         } else {
-            auto operation = toASCIILiteral(binary.operation());
-            result = call(operation, ReferenceWrapperVector<const AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() });
+            RefPtr<StringImpl> operation = toASCIILiteral(binary.operation());
+            result = call(operation.get(), ReferenceWrapperVector<const AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() });
         }
         break;
     }
 
     case AST::NodeKind::UnaryExpression: {
         auto& unary = uncheckedDowncast<AST::UnaryExpression>(expression);
-        auto operation = toASCIILiteral(unary.operation());
-        result = call(operation, ReferenceWrapperVector<const AST::Expression, 1> { unary.expression() });
+        RefPtr<StringImpl> operation = toASCIILiteral(unary.operation());
+        result = call(operation.get(), ReferenceWrapperVector<const AST::Expression, 1> { unary.expression() });
         break;
     }
 
@@ -300,7 +300,7 @@ std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Exp
         auto& access = uncheckedDowncast<AST::FieldAccessExpression>(expression);
         auto base = evaluate(module, access.base(), overrideValues);
         const auto& fieldName = access.originalFieldName().id();
-        auto length = fieldName.length();
+        auto length = WTF::length(fieldName);
 
         if (!base)
             break;
@@ -331,13 +331,13 @@ std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Exp
         };
 
         if (length == 1) {
-            result = constAccess(constantVector, fieldName[0]);
+            result = constAccess(constantVector, codeUnitAt(fieldName, 0));
             break;
         }
 
         ConstantVector resultVector(length);
         for (unsigned i = 0; i < length; ++i)
-            resultVector.elements[i] = constAccess(constantVector, fieldName[i]);
+            resultVector.elements[i] = constAccess(constantVector, codeUnitAt(fieldName, i));
         result = resultVector;
         break;
     }

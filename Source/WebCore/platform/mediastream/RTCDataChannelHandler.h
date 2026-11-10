@@ -37,7 +37,7 @@ struct RTCDataChannelInit {
     bool ordered;
     std::optional<unsigned short> maxPacketLifeTime;
     std::optional<unsigned short> maxRetransmits;
-    String protocol;
+    RefPtr<StringImpl> protocol;
     bool negotiated;
     std::optional<unsigned short> id;
     RTCPriorityType priority { RTCPriorityType::Low };
@@ -49,14 +49,14 @@ struct RTCDataChannelInit {
 inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() const &
 {
     auto copy = *this;
-    copy.protocol = protocol.isolatedCopy();
+    copy.protocol = WTF::isolatedCopy(protocol);
     return copy;
 }
 
 inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() &&
 {
     auto copy = WTF::move(*this);
-    copy.protocol = WTF::move(copy.protocol).isolatedCopy();
+    copy.protocol = WTF::isolatedCopy(WTF::move(copy.protocol));
     return copy;
 }
 

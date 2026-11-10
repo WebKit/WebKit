@@ -102,15 +102,15 @@ private:
         void willEnterFullscreen(WebPageProxy*) final;
         void didEnterFullscreen(WebPageProxy*) final;
         void didExitFullscreen(WebPageProxy*) final;
-        void runJavaScriptAlert(WebPageProxy&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void()>&& completionHandler) final;
-        void runJavaScriptConfirm(WebPageProxy&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
-        void runJavaScriptPrompt(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void(const WTF::String&)>&&) final;
-        void presentStorageAccessConfirmDialog(const WTF::String& requestingDomain, const WTF::String& currentDomain, CompletionHandler<void(bool)>&&);
+        void runJavaScriptAlert(WebPageProxy&, StringImpl*, WebFrameProxy*, FrameInfoData&&, Function<void()>&& completionHandler) final;
+        void runJavaScriptConfirm(WebPageProxy&, StringImpl*, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
+        void runJavaScriptPrompt(WebPageProxy&, StringImpl*, StringImpl*, WebFrameProxy*, FrameInfoData&&, Function<void(StringImpl*)>&&) final;
+        void presentStorageAccessConfirmDialog(StringImpl* requestingDomain, StringImpl* currentDomain, CompletionHandler<void(bool)>&&);
         void requestStorageAccessConfirm(WebPageProxy&, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&&) final;
         void decidePolicyForGeolocationPermissionRequest(WebPageProxy&, WebFrameProxy&, const FrameInfoData&, Function<void(bool)>&) final;
         bool canRunBeforeUnloadConfirmPanel() const final;
-        void runBeforeUnloadConfirmPanel(WebPageProxy&, WTF::String&&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
-        void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
+        void runBeforeUnloadConfirmPanel(WebPageProxy&, RefPtr<StringImpl>&&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
+        void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, StringImpl* databaseName, StringImpl* displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
         bool lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType) final;
         void unlockScreenOrientation(WebPageProxy&) final;
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
@@ -145,7 +145,7 @@ private:
         void drawFooter(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
 
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
-        void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
+        void saveDataToFileInDownloadsFolder(WebPageProxy*, StringImpl*, StringImpl*, const URL&, API::Data&) final;
         Ref<API::InspectorConfiguration> configurationForLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
         void didAttachLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
         void willCloseLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
@@ -185,16 +185,16 @@ private:
         void confirmPDFOpening(WebPageProxy&, const WTF::URL&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
-        void requestWebAuthenticationConditonalMediationRegistration(const WTF::String&, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&&) final;
+        void requestWebAuthenticationConditonalMediationRegistration(StringImpl*, Vector<RefPtr<StringImpl>>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&&) final;
 #endif
-        void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
+        void queryPermission(StringImpl*, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
 #if ENABLE(APPLE_PAY)
         void didCompleteApplePayPayment(WebPageProxy&) final;
 #endif
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
         void didDisableInspectorBrowserDomain(WebPageProxy&) final;
 
-        void addMessageToConsoleForTesting(WebPageProxy&, String&&) final;
+        void addMessageToConsoleForTesting(WebPageProxy&, RefPtr<StringImpl>&&) final;
 
 #if ENABLE(WEBXR)
         void requestPermissionOnXRSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&) final;
@@ -207,7 +207,7 @@ private:
 
         void updateAppBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;
 
-        void didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<String>&&) final;
+        void didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<RefPtr<StringImpl>>&&) final;
 
 #if ENABLE(GAMEPAD)
         void recentlyAccessedGamepadsForTesting(WebPageProxy&) final;

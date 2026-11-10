@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDMPrivateAVFObjC);
 
-auto LegacyCDMPrivateAVFObjC::parseKeySystem(const String& keySystem) -> std::optional<KeySystemParameters>
+auto LegacyCDMPrivateAVFObjC::parseKeySystem(StringImpl* keySystem) -> std::optional<KeySystemParameters>
 {
     static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$"_s, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase });
 
@@ -79,7 +79,7 @@ static bool queryDecoderAvailability()
     return status == noErr && totalInstanceCount;
 }
 
-bool LegacyCDMPrivateAVFObjC::supportsKeySystem(const String& keySystem)
+bool LegacyCDMPrivateAVFObjC::supportsKeySystem(StringImpl* keySystem)
 {
     if (!queryDecoderAvailability())
         return false;
@@ -94,12 +94,12 @@ bool LegacyCDMPrivateAVFObjC::supportsKeySystem(const String& keySystem)
     return true;
 }
 
-bool LegacyCDMPrivateAVFObjC::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+bool LegacyCDMPrivateAVFObjC::supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType)
 {
     if (!supportsKeySystem(keySystem))
         return false;
 
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return true;
 
 #if ENABLE(MEDIA_SOURCE)
@@ -118,11 +118,11 @@ bool LegacyCDMPrivateAVFObjC::supportsKeySystemAndMimeType(const String& keySyst
 #endif
 }
 
-bool LegacyCDMPrivateAVFObjC::supportsMIMEType(const String& mimeType) const
+bool LegacyCDMPrivateAVFObjC::supportsMIMEType(StringImpl* mimeType) const
 {
 #if ENABLE(MEDIA_SOURCE)
     // FIXME: Why is this checking case since the check in supportsKeySystemAndMimeType is ignoring case?
-    if (mimeType == "keyrelease"_s)
+    if (equal(mimeType, "keyrelease"_s))
         return true;
 
     MediaEngineSupportParameters parameters {
@@ -139,7 +139,7 @@ bool LegacyCDMPrivateAVFObjC::supportsMIMEType(const String& mimeType) const
 RefPtr<LegacyCDMSession> LegacyCDMPrivateAVFObjC::createSession(LegacyCDMSessionClient& client)
 {
     ASSERT(isMainThread());
-    String keySystem = m_cdm->keySystem(); // Local copy for StringView usage
+    RefPtr<StringImpl> keySystem = m_cdm->keySystem(); // Local copy for StringView usage
     auto parameters = parseKeySystem(m_cdm->keySystem());
     ASSERT(parameters);
     if (!parameters)

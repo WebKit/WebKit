@@ -51,6 +51,18 @@ public:
     // Returns null if the input data contains an invalid UTF-8 sequence.
     static RefPtr<AtomStringImpl> add(std::span<const char8_t>);
 
+    // Same semantics as the AtomString static functions of the same names.
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> number(int);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> number(unsigned);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> number(unsigned long);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> number(unsigned long long);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> number(float);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> number(double);
+
+    // Null input results in null, empty input in the empty atom, invalid UTF-8 in null.
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> fromUTF8(std::span<const char>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> fromUTF8(const char*);
+
 #if USE(CF)
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(CFStringRef);
 #endif
@@ -77,7 +89,7 @@ private:
     WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addSlowCase(AtomStringTable&, StringImpl&);
 
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUpSlowCase(StringImpl&);
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 inline RefPtr<AtomStringImpl> AtomStringImpl::lookUp(StringImpl* string)
 {
@@ -166,10 +178,63 @@ template<> struct ValueCheck<const AtomStringImpl*> {
 inline void printInternal(PrintStream& out, const AtomStringImpl* value) { printInternal(out, std::bit_cast<const StringImpl*>(value)); }
 inline void printInternal(PrintStream& out, AtomStringImpl* value) { printInternal(out, static_cast<const AtomStringImpl*>(value)); }
 
+#if WTF_STRINGIMPL_HASHTRAITS_OWNING_PEEK
+inline RefPtr<AtomStringImpl> HashTraits<RefPtr<AtomStringImpl>>::peek(const RefPtr<AtomStringImpl>& value) { return value; }
+inline RefPtr<AtomStringImpl> HashTraits<RefPtr<AtomStringImpl>>::peek(AtomStringImpl* value) { return value; }
+#endif
+
+// Hash for atoms: identity equality with the content-derived hash that atoms always have,
+// like AtomStringHash. This keeps iteration order deterministic and allows RobinHood tables.
+struct AtomStringImplHash {
+    static unsigned hash(const AtomStringImpl* key) { return key->existingHash(); }
+    static unsigned hash(const RefPtr<AtomStringImpl>& key) { return key->existingHash(); }
+    static unsigned hash(const Ref<AtomStringImpl>& key) { return key->existingHash(); }
+
+    static bool equal(const AtomStringImpl* a, const AtomStringImpl* b) { return a == b; }
+    static bool equal(const RefPtr<AtomStringImpl>& a, const RefPtr<AtomStringImpl>& b) { return a.get() == b.get(); }
+    static bool equal(const RefPtr<AtomStringImpl>& a, const AtomStringImpl* b) { return a.get() == b; }
+    static bool equal(const AtomStringImpl* a, const RefPtr<AtomStringImpl>& b) { return a == b.get(); }
+    static bool equal(const Ref<AtomStringImpl>& a, const Ref<AtomStringImpl>& b) { return a.ptrAllowingHashTableEmptyValue() == b.ptrAllowingHashTableEmptyValue(); }
+    static bool equal(const Ref<AtomStringImpl>& a, const AtomStringImpl* b) { return a.ptrAllowingHashTableEmptyValue() == b; }
+    static bool equal(const AtomStringImpl* a, const Ref<AtomStringImpl>& b) { return a == b.ptrAllowingHashTableEmptyValue(); }
+
+    // Equality is a pointer comparison, so comparing to the empty and deleted values is safe.
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool hasHashInValue = true;
+};
+
+template<typename> struct DefaultHash;
+template<> struct DefaultHash<RefPtr<AtomStringImpl>> : AtomStringImplHash { };
+template<> struct DefaultHash<Ref<AtomStringImpl>> : AtomStringImplHash { };
+
+inline namespace StringLiterals {
+
+// "foo"_atom is a RefPtr<AtomStringImpl>; same semantics and cost as AtomString("foo"_s).
+inline RefPtr<AtomStringImpl> operator""_atom(const char* characters, size_t)
+{
+    return static_cast<RefPtr<AtomStringImpl>>(ASCIILiteral::fromLiteralUnsafe(characters));
+}
+
+} // inline StringLiterals
+
 } // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WTF::AtomStringImpl) \
     static bool isType(const WTF::StringImpl& string) { return string.isAtom(); } \
 SPECIALIZE_TYPE_TRAITS_END()
+
+namespace WTF {
+
+// Same semantics as AtomString(ASCIILiteral): null literal results in null, empty literal in the empty atom.
+inline ASCIILiteral::operator RefPtr<AtomStringImpl>() const
+{
+    if (isNull())
+        return nullptr;
+    if (!length())
+        return uncheckedDowncast<AtomStringImpl>(StringImpl::empty());
+    return AtomStringImpl::add(*this);
+}
+
+} // namespace WTF
 
 using WTF::AtomStringImpl;

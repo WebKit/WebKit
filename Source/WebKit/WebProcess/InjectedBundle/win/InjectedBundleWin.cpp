@@ -33,7 +33,7 @@ namespace WebKit {
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData)
 {
-    HMODULE lib = ::LoadLibrary(m_path.wideCharacters().span().data());
+    HMODULE lib = ::LoadLibrary(wideCharacters(m_path).span().data());
     if (!lib)
         return false;
 
@@ -45,7 +45,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API:
     return true;
 }
 
-void InjectedBundle::setBundleParameter(WTF::String const&, std::span<const uint8_t>)
+void InjectedBundle::setBundleParameter(StringImpl*, std::span<const uint8_t>)
 {
 }
 

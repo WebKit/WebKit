@@ -87,12 +87,12 @@ GPUDevice* GPUQueue::device() const
     return m_device;
 }
 
-String GPUQueue::label() const
+RefPtr<StringImpl> GPUQueue::label() const
 {
     return m_label;
 }
 
-void GPUQueue::setLabel(String&& label)
+void GPUQueue::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));
@@ -1442,10 +1442,10 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
 {
     ExceptionCode outErrorCode;
     if (!isStateValid(source.source, source.origin, copySize, outErrorCode))
-        return Exception { outErrorCode, "GPUQueue.copyExternalImageToTexture: External image state is not valid"_s };
+        return Exception { outErrorCode, "GPUQueue.copyExternalImageToTexture: External image state is not valid"_si };
 
     if (!isOriginClean(source.source, context))
-        return Exception { ExceptionCode::SecurityError, "GPUQueue.copyExternalImageToTexture: Cross origin external images are not allowed in WebGPU"_s };
+        return Exception { ExceptionCode::SecurityError, "GPUQueue.copyExternalImageToTexture: Cross origin external images are not allowed in WebGPU"_si };
 
     auto backingCopySize = convertToBacking(copySize);
 
@@ -1532,11 +1532,11 @@ ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& s
 
     // Sepcs: If only some of the config members are supplied, generates an INVALID_VALUE error.
     if (hasAnySourceMember && !hasAllSourceMembers)
-        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: sx, sy, swidth and sheight must be all specified or all omitted"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: sx, sy, swidth and sheight must be all specified or all omitted"_si };
 
     // Specs: If any supplied numeric member of config is negative, generates an INVALID_VALUE error.
     if (source.sourceX.value_or(0) < 0 || source.sourceY.value_or(0) < 0 || source.sourceWidth.value_or(0) < 0 || source.sourceHeight.value_or(0) < 0)
-        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: config members must not be negative"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: config members must not be negative"_si };
 
     // Sepcs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
     // define the source rectangle of the element image snapshot to render, in CSS pixels.
@@ -1554,7 +1554,7 @@ ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& s
 
     auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
     if (normalizedSrcRect.isEmpty())
-        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: source rectangle is empty"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: source rectangle is empty"_si };
 
     auto dstSize = normalizedSrcRect.size();
 
@@ -1562,11 +1562,11 @@ ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& s
         dstSize = FloatSize(dimension(*destination.size, 0), dimension(*destination.size, 1));
 
     if (dstSize.isEmpty())
-        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: width or height <= 0"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: width or height <= 0"_si };
 
     RefPtr buffer = ImageBuffer::create(dstSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
-        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: failed to create an ImageBuffer"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: failed to create an ImageBuffer"_si };
 
     {
         auto& context = buffer->context();
@@ -1612,7 +1612,7 @@ ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageS
                 if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
                     return drawSnapshotToTexture(*snapshot, source, destination);
             }
-            return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: Failed to get a snapshot for a drawableElement"_s };
+            return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: Failed to get a snapshot for a drawableElement"_si };
         },
         [&](const Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
             return drawSnapshotToTexture(elementImage->snapshot(), source, destination);

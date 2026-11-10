@@ -135,8 +135,8 @@ public:
 
     virtual Ref<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
 
-    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
-    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
+    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, StringImpl* key, MonotonicTime startTime);
+    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, StringImpl* key);
 
     NODELETE TransactionID nextMainFrameLayerTreeTransactionID() const;
     NODELETE TransactionID lastCommittedMainFrameLayerTreeTransactionID() const;

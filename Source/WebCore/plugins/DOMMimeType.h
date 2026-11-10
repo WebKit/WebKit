@@ -34,9 +34,9 @@ public:
     NODELETE static Ref<DOMMimeType> create(Navigator&, const MimeClassInfo&, DOMPlugin&);
     ~DOMMimeType();
 
-    NODELETE AtomString type() const;
-    String suffixes() const;
-    NODELETE String description() const;
+    NODELETE const RefPtr<AtomStringImpl>& type() const LIFETIME_BOUND;
+    RefPtr<StringImpl> suffixes() const;
+    NODELETE RefPtr<StringImpl> description() const;
     NODELETE RefPtr<DOMPlugin> enabledPlugin() const;
 
     Navigator* navigator() { return m_navigator.get(); }

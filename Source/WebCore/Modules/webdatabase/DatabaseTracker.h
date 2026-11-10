@@ -61,9 +61,9 @@ class DatabaseTracker {
     WTF_MAKE_NONCOPYABLE(DatabaseTracker);
 public:
     // FIXME: This is a hack so we can easily delete databases from the UI process in WebKit2.
-    WEBCORE_EXPORT static std::unique_ptr<DatabaseTracker> trackerWithDatabasePath(const String& databasePath);
+    WEBCORE_EXPORT static std::unique_ptr<DatabaseTracker> trackerWithDatabasePath(StringImpl* databasePath);
 
-    NODELETE static void initializeTracker(const String& databasePath);
+    NODELETE static void initializeTracker(StringImpl* databasePath);
 
     NODELETE WEBCORE_EXPORT static DatabaseTracker& singleton();
     NODELETE WEBCORE_EXPORT static bool isInitialized();
@@ -74,11 +74,11 @@ public:
     // m_databaseGuard and m_openDatabaseMapGuard currently don't overlap.
     // notificationMutex() is currently independent of the other locks.
 
-    ExceptionOr<void> canEstablishDatabase(DatabaseContext&, const String& name, uint64_t estimatedSize);
-    ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, const String& name, uint64_t estimatedSize);
+    ExceptionOr<void> canEstablishDatabase(DatabaseContext&, StringImpl* name, uint64_t estimatedSize);
+    ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, StringImpl* name, uint64_t estimatedSize);
 
-    void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, uint64_t estimatedSize);
-    WEBCORE_EXPORT String fullPathForDatabase(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
+    void setDatabaseDetails(const SecurityOriginData&, StringImpl* name, StringImpl* displayName, uint64_t estimatedSize);
+    WEBCORE_EXPORT RefPtr<StringImpl> fullPathForDatabase(const SecurityOriginData&, StringImpl* name, bool createIfDoesNotExist);
 
     Vector<Ref<Database>> openDatabases();
     void addOpenDatabase(Database&);
@@ -89,9 +89,9 @@ public:
     WEBCORE_EXPORT void closeAllDatabases(CurrentQueryBehavior = CurrentQueryBehavior::RunToCompletion);
 
     WEBCORE_EXPORT Vector<SecurityOriginData> origins();
-    WEBCORE_EXPORT Vector<String> databaseNames(const SecurityOriginData&);
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> databaseNames(const SecurityOriginData&);
 
-    DatabaseDetails detailsForNameAndOrigin(const String&, const SecurityOriginData&);
+    DatabaseDetails detailsForNameAndOrigin(StringImpl*, const SecurityOriginData&);
 
     WEBCORE_EXPORT uint64_t usage(const SecurityOriginData&);
     WEBCORE_EXPORT uint64_t quota(const SecurityOriginData&);
@@ -101,11 +101,11 @@ public:
     WEBCORE_EXPORT void deleteAllDatabasesImmediately();
     WEBCORE_EXPORT void deleteDatabasesModifiedSince(WallTime);
     WEBCORE_EXPORT bool deleteOrigin(const SecurityOriginData&);
-    WEBCORE_EXPORT bool deleteDatabase(const SecurityOriginData&, const String& name);
+    WEBCORE_EXPORT bool deleteDatabase(const SecurityOriginData&, StringImpl* name);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void removeDeletedOpenedDatabases();
-    WEBCORE_EXPORT static bool deleteDatabaseFileIfEmpty(const String&);
+    WEBCORE_EXPORT static bool deleteDatabaseFileIfEmpty(StringImpl*);
 
     // MobileSafari will grab this mutex on the main thread before dispatching the task to 
     // clean up zero byte database files.  Any operations to open new database will have to
@@ -119,21 +119,21 @@ public:
     NODELETE void setClient(DatabaseManagerClient*);
 
     // From a secondary thread, must be thread safe with its data
-    void scheduleNotifyDatabaseChanged(const SecurityOriginData&, const String& name);
+    void scheduleNotifyDatabaseChanged(const SecurityOriginData&, StringImpl* name);
 
     void doneCreatingDatabase(Database&);
 
 private:
-    explicit DatabaseTracker(const String& databasePath);
+    explicit DatabaseTracker(StringImpl* databasePath);
 
     ExceptionOr<void> hasAdequateQuotaForOrigin(const SecurityOriginData&, uint64_t estimatedSize) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     bool hasEntryForOriginNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
-    String fullPathForDatabaseNoLock(const SecurityOriginData&, const String& name, bool createIfDoesNotExist) WTF_REQUIRES_LOCK(m_databaseGuard);
-    Vector<String> databaseNamesNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard) WTF_REQUIRES_LOCK(m_databaseGuard);
+    RefPtr<StringImpl> fullPathForDatabaseNoLock(const SecurityOriginData&, StringImpl* name, bool createIfDoesNotExist) WTF_REQUIRES_LOCK(m_databaseGuard);
+    Vector<RefPtr<StringImpl>> databaseNamesNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard) WTF_REQUIRES_LOCK(m_databaseGuard);
     uint64_t quotaNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
-    String trackerDatabasePath() const WTF_REQUIRES_LOCK(m_databaseGuard);
+    RefPtr<StringImpl> trackerDatabasePath() const WTF_REQUIRES_LOCK(m_databaseGuard);
 
     enum TrackerCreationAction {
         DontCreateIfDoesNotExist,
@@ -141,11 +141,11 @@ private:
     };
     void openTrackerDatabase(TrackerCreationAction) WTF_REQUIRES_LOCK(m_databaseGuard);
 
-    String originPath(const SecurityOriginData&) const;
+    RefPtr<StringImpl> originPath(const SecurityOriginData&) const;
 
-    bool hasEntryForDatabase(const SecurityOriginData&, const String& databaseIdentifier) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool hasEntryForDatabase(const SecurityOriginData&, StringImpl* databaseIdentifier) WTF_REQUIRES_LOCK(m_databaseGuard);
 
-    bool addDatabase(const SecurityOriginData&, const String& name, const String& path) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool addDatabase(const SecurityOriginData&, StringImpl* name, StringImpl* path) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     enum class DeletionMode {
         Immediate,
@@ -160,12 +160,12 @@ private:
     };
 
     bool deleteOrigin(const SecurityOriginData&, DeletionMode);
-    bool deleteDatabaseFile(const SecurityOriginData&, const String& name, DeletionMode);
+    bool deleteDatabaseFile(const SecurityOriginData&, StringImpl* name, DeletionMode);
 
     void deleteOriginLockFor(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     using DatabaseSet = ThreadSafeWeakHashSet<Database>;
-    using DatabaseNameMap = HashMap<String, DatabaseSet>;
+    using DatabaseNameMap = HashMap<RefPtr<StringImpl>, DatabaseSet>;
     using DatabaseOriginMap = HashMap<SecurityOriginData, DatabaseNameMap>;
 
     Lock m_openDatabaseMapGuard;
@@ -175,24 +175,24 @@ private:
     Lock m_databaseGuard;
     const UniqueRef<SQLiteDatabase> m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
-    using OriginLockMap = HashMap<String, Ref<OriginLock>>;
+    using OriginLockMap = HashMap<RefPtr<StringImpl>, Ref<OriginLock>>;
     OriginLockMap m_originLockMap WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
-    String m_databaseDirectoryPath;
+    RefPtr<StringImpl> m_databaseDirectoryPath;
 
     WeakPtr<DatabaseManagerClient> m_client;
 
-    HashMap<SecurityOriginData, HashCountedSet<String>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
-    HashMap<SecurityOriginData, MemoryCompactRobinHoodHashSet<String>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashMap<SecurityOriginData, HashCountedSet<RefPtr<StringImpl>>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashMap<SecurityOriginData, MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     HashSet<SecurityOriginData> m_originsBeingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
-    bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    void recordCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    void doneCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    bool creatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    bool canDeleteDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    void recordDeletingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    void doneDeletingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
-    bool isDeletingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void recordCreatingDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void doneCreatingDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool creatingDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool canDeleteDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void recordDeletingDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void doneDeletingDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool isDeletingDatabase(const SecurityOriginData&, StringImpl* name) WTF_REQUIRES_LOCK(m_databaseGuard);
     bool canDeleteOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
     bool isDeletingOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
     void recordDeletingOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);

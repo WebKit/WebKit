@@ -61,11 +61,11 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
         } else if (!g_strcmp0(methodName, "GetRowDescription")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", index >= 0 ? UTF8CStringView { atspiObject->rowDescription(index).utf8() } : ""_s));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", index >= 0 ? UTF8CStringView { utf8(atspiObject->rowDescription(index)) } : ""_s));
         } else if (!g_strcmp0(methodName, "GetColumnDescription")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", index >= 0 ? UTF8CStringView { atspiObject->columnDescription(index).utf8() } : ""_s));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", index >= 0 ? UTF8CStringView { utf8(atspiObject->columnDescription(index)) } : ""_s));
         } else if (!g_strcmp0(methodName, "GetRowExtentAt")) {
             int row, column;
             g_variant_get(parameters, "(ii)", &row, &column);
@@ -254,7 +254,7 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::columnHeader(unsigned column
     return nullptr;
 }
 
-String AccessibilityObjectAtspi::rowDescription(unsigned row) const
+RefPtr<StringImpl> AccessibilityObjectAtspi::rowDescription(unsigned row) const
 {
     if (!m_coreObject)
         return { };
@@ -271,7 +271,7 @@ String AccessibilityObjectAtspi::rowDescription(unsigned row) const
         if (range.first <= row && row < range.first + range.second) {
             wrapper->updateBackingStore();
             auto text = wrapper->text();
-            if (text.isEmpty())
+            if (isEmpty(text))
                 continue;
 
             if (!isFirst)
@@ -284,7 +284,7 @@ String AccessibilityObjectAtspi::rowDescription(unsigned row) const
     return builder.toString();
 }
 
-String AccessibilityObjectAtspi::columnDescription(unsigned column) const
+RefPtr<StringImpl> AccessibilityObjectAtspi::columnDescription(unsigned column) const
 {
     if (!m_coreObject)
         return { };
@@ -301,7 +301,7 @@ String AccessibilityObjectAtspi::columnDescription(unsigned column) const
         if (range.first <= column && column < range.first + range.second) {
             wrapper->updateBackingStore();
             auto text = wrapper->text();
-            if (text.isEmpty())
+            if (isEmpty(text))
                 continue;
 
             if (!isFirst)

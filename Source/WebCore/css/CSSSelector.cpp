@@ -98,7 +98,7 @@ struct SelectorSpecificity {
         return { a, b, c };
     }
 
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
         StringBuilder builder;
         auto tuple = specificityTuple();
@@ -358,7 +358,7 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElementName(St
 
     auto type = findPseudoElementName(name);
     if (!type) {
-        ASSERT_WITH_MESSAGE(!isUASheetBehavior(context.mode), "Unknown pseudo-element %s in user-agent stylesheet", name.toString().utf8());
+        ASSERT_WITH_MESSAGE(!isUASheetBehavior(context.mode), "Unknown pseudo-element %s in user-agent stylesheet", utf8(name.toString()));
         if (name.startsWithIgnoringASCIICase("-webkit-"_s))
             return PseudoElement::WebKitUnknown;
         return type;
@@ -473,9 +473,9 @@ static void outputNthChildAnPlusB(const CSSSelector& selector, StringBuilder& bu
     }
 }
 
-String CSSSelector::selectorText(StringView separator, StringView rightSide) const
+RefPtr<StringImpl> CSSSelector::selectorText(StringView separator, StringView rightSide) const
 {
-    auto serializeIdentifierOrStar = [](const AtomString& identifier, StringBuilder& builder) {
+    auto serializeIdentifierOrStar = [](AtomStringImpl* identifier, StringBuilder& builder) {
         if (identifier == starAtom())
             builder.append('*');
         else
@@ -485,7 +485,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
     StringBuilder builder;
 
     if (match() == Match::Tag && !m_tagIsForNamespaceRule) {
-        if (auto& prefix = tagQName().prefix(); !prefix.isNull()) {
+        if (auto& prefix = tagQName().prefix(); prefix) {
             serializeIdentifierOrStar(prefix, builder);
             builder.append('|');
         }
@@ -643,7 +643,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
         } else if (selector->isAttributeSelector()) {
             builder.append('[');
-            if (auto& prefix = selector->attribute().prefix(); !prefix.isEmpty()) {
+            if (auto& prefix = selector->attribute().prefix(); !isEmpty(prefix)) {
                 serializeIdentifierOrStar(prefix, builder);
                 builder.append('|');
             }
@@ -709,14 +709,14 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 
     builder.append(separator, rightSide);
 
-    auto separatorTextForNestingRelative = [&] () -> String {
+    auto separatorTextForNestingRelative = [&] () -> RefPtr<StringImpl> {
         switch (selector->relation()) {
         case Relation::Child:
-            return "> "_s;
+            return "> "_si;
         case Relation::DirectAdjacent:
-            return "+ "_s;
+            return "+ "_si;
         case Relation::IndirectAdjacent:
-            return "~ "_s;
+            return "~ "_si;
         default:
             return { };
         }
@@ -746,7 +746,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             break;
         }
         return previousSelector->selectorText(separator, builder);
-    } else if (auto separatorText = separatorTextForNestingRelative(); !separatorText.isNull()) {
+    } else if (auto separatorText = separatorTextForNestingRelative(); separatorText) {
         // We have a separator but no preceding selector which can happen with implicit relative nesting selector
         return makeString(separatorText, builder.toString());
     }
@@ -761,7 +761,7 @@ void CSSSelector::setAttribute(const QualifiedName& value, AttributeMatchType ma
     m_attributeMatchType = std::to_underlying(matchType);
 }
 
-void CSSSelector::setArgument(const AtomString& value)
+void CSSSelector::setArgument(AtomStringImpl* value)
 {
     createRareData();
     m_data.rareData->argument = value;
@@ -773,7 +773,7 @@ void CSSSelector::setIntegerList(FixedVector<int> integerList)
     m_data.rareData->argumentList = WTF::move(integerList);
 }
 
-void CSSSelector::setStringList(FixedVector<AtomString> stringList)
+void CSSSelector::setStringList(FixedVector<RefPtr<AtomStringImpl>> stringList)
 {
     createRareData();
     m_data.rareData->argumentList = WTF::move(stringList);
@@ -816,7 +816,7 @@ int CSSSelector::nthB() const
     return m_data.rareData->b;
 }
 
-CSSSelector::RareData::RareData(AtomString&& value)
+CSSSelector::RareData::RareData(RefPtr<AtomStringImpl>&& value)
     : matchingValue(value)
     , serializingValue(WTF::move(value))
     , attribute(anyQName())
@@ -843,7 +843,7 @@ auto CSSSelector::RareData::deepCopy() const -> Ref<RareData>
 
 CSSSelector::RareData::~RareData() = default;
 
-auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
+auto CSSSelector::RareData::create(RefPtr<AtomStringImpl> value) -> Ref<RareData>
 {
     return adoptRef(*new RareData(WTF::move(value)));
 }

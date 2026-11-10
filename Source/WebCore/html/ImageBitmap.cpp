@@ -320,7 +320,7 @@ static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSi
     //    than or equal to 0, then return a promise rejected with "InvalidStateError"
     //    DOMException and abort these steps.
     if ((options.resizeWidth && options.resizeWidth.value() <= 0) || (options.resizeHeight && options.resizeHeight.value() <= 0))
-        return Exception { ExceptionCode::InvalidStateError, "Invalid resize dimensions"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Invalid resize dimensions"_si };
 
     // 3. If sx, sy, sw and sh are specified, let sourceRectangle be a rectangle whose
     //    corners are the four points (sx, sy), (sx+sw, sy),(sx+sw, sy+sh), (sx,sy+sh).
@@ -598,7 +598,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // Check the usability of the image argument. If this throws an exception or returns bad,
     // then return a promise rejected with an "InvalidStateError" DOMException.
     if (!isUsable(imageElement.get())) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an image that is not usable"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an image that is not usable"_si });
         return;
     }
 
@@ -610,7 +610,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // Check the usability of the image argument. If this throws an exception or returns bad,
     // then return a promise rejected with an "InvalidStateError" DOMException.
     if (!isUsable(imageElement.get())) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an image that is not usable"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an image that is not usable"_si });
         return;
     }
 
@@ -623,7 +623,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // an "InvalidStateError" DOMException and abort these steps.
 
     if (!cachedImage) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap that is not completely available"_si });
         return;
     }
 
@@ -638,7 +638,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         imageSize = { naturalDimensions.width.value_or(0), naturalDimensions.height.value_or(0) };
     }
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_si });
         return;
     }
 
@@ -662,7 +662,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // width and height for the image.
 
     if (!rect && (!imageSize.width() || !imageSize.height())) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions"_si });
         return;
     }
 
@@ -680,7 +680,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     RefPtr sourceImage = cachedImage->image();
     if (!sourceImage) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_si });
         return;
     }
 
@@ -748,18 +748,18 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // Check the usability of the image argument. If this throws an exception or returns bad,
     // then return a promise rejected with an "InvalidStateError" DOMException.
     if (!isUsable(videoFrame.get())) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached video frame"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached video frame"_si });
         return;
     }
 
     auto internalFrame = videoFrame->internalFrame();
     if (!internalFrame) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an empty video frame"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an empty video frame"_si });
         return;
     }
 
     if (!videoFrame->codedWidth() || !videoFrame->codedHeight()) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a video frame that has zero width or height"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a video frame that has zero width or height"_si });
         return;
     }
 
@@ -793,7 +793,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // Check the usability of the image argument. If this throws an exception or returns bad,
     // then return a promise rejected with an "InvalidStateError" DOMException.
     if (!isUsable(canvas)) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height"_si });
         return;
     }
 
@@ -810,7 +810,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     RefPtr imageForRender = canvas.copyNativeImage();
     if (!imageForRender) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_si });
         return;
     }
 
@@ -855,14 +855,14 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //    or returns bad, then return p rejected with an "InvalidStateError"
     //    DOMException.
     if (!isUsable(video.get())) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_si });
         return;
     }
 
     // 6.1. If image's networkState attribute is NETWORK_EMPTY, then return p
     //      rejected with an "InvalidStateError" DOMException.
     if (video->networkState() == HTMLMediaElement::NETWORK_EMPTY) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_si });
         return;
     }
 
@@ -923,7 +923,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&& completionHandler)
 {
-    completionHandler(Exception { ExceptionCode::InvalidStateError, "Not implemented"_s });
+    completionHandler(Exception { ExceptionCode::InvalidStateError, "Not implemented"_si });
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<ImageBitmap>&& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
@@ -931,7 +931,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // Check the usability of the image argument. If this throws an exception or returns bad,
     // then return a promise rejected with an "InvalidStateError" DOMException.
     if (!isUsable(existingImageBitmap.get()) || !existingImageBitmap->buffer()) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_si });
         return;
     }
 
@@ -982,13 +982,13 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
 class ImageBitmapImageObserver final : public ImageObserver {
 public:
-    static Ref<ImageBitmapImageObserver> create(String mimeType, long long expectedContentLength, const URL& sourceUrl)
+    static Ref<ImageBitmapImageObserver> create(RefPtr<StringImpl> mimeType, long long expectedContentLength, const URL& sourceUrl)
     {
         return adoptRef(*new ImageBitmapImageObserver(mimeType, expectedContentLength, sourceUrl));
     }
 
     NODELETE URL sourceUrl() const override { return m_sourceUrl; }
-    NODELETE String mimeType() const override { return m_mimeType; }
+    NODELETE RefPtr<StringImpl> mimeType() const override { return m_mimeType; }
     NODELETE long long expectedContentLength() const override { return m_expectedContentLength; }
 
     NODELETE void decodedSizeChanged(const Image&, long long) override { }
@@ -1001,13 +1001,13 @@ public:
     NODELETE void scheduleRenderingUpdate(const Image&) override { }
 
 private:
-    ImageBitmapImageObserver(String mimeType, long long expectedContentLength, const URL& sourceUrl)
+    ImageBitmapImageObserver(RefPtr<StringImpl> mimeType, long long expectedContentLength, const URL& sourceUrl)
         : m_mimeType(mimeType)
         , m_expectedContentLength(expectedContentLength)
         , m_sourceUrl(sourceUrl)
     { }
 
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
     long long m_expectedContentLength;
     URL m_sourceUrl;
 };
@@ -1022,7 +1022,7 @@ public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, Ref<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {
         if (scriptExecutionContext.activeDOMObjectsAreStopped()) {
-            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap in a document without browsing context"_s });
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap in a document without browsing context"_si });
             return;
         }
         Ref pendingImageBitmap = adoptRef(*new PendingImageBitmap(scriptExecutionContext, WTF::move(blob), WTF::move(options), WTF::move(rect), WTF::move(completionHandler)));
@@ -1033,7 +1033,7 @@ public:
     ~PendingImageBitmap()
     {
         if (m_completionHandler)
-            m_completionHandler(Exception { ExceptionCode::InvalidStateError, "PendingImageBitmap is being destroyed"_s });
+            m_completionHandler(Exception { ExceptionCode::InvalidStateError, "PendingImageBitmap is being destroyed"_si });
     }
 
 private:
@@ -1082,7 +1082,7 @@ private:
         RefPtr pendingActivity = std::exchange(m_pendingActivity, nullptr);
 
         if (!m_arrayBufferToProcess) {
-            m_completionHandler(Exception { ExceptionCode::InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s });
+            m_completionHandler(Exception { ExceptionCode::InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_si });
             return;
         }
 
@@ -1100,10 +1100,10 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingImageBitmap);
 
-void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContext, Ref<ArrayBuffer>&& arrayBuffer, String mimeType, long long expectedContentLength, const URL& sourceURL, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContext, Ref<ArrayBuffer>&& arrayBuffer, RefPtr<StringImpl> mimeType, long long expectedContentLength, const URL& sourceURL, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     if (!arrayBuffer->byteLength()) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an ImageBitmap from an empty buffer"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an ImageBitmap from an empty buffer"_si });
         return;
     }
 
@@ -1112,7 +1112,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     auto image = BitmapImage::create(observer.ptr());
     auto result = image->setData(sharedBuffer.copyRef(), true);
     if (result != EncodedDataStatus::Complete || !image->hasSomethingToDraw()) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot decode the data in the argument to createImageBitmap"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot decode the data in the argument to createImageBitmap"_si });
         return;
     }
 
@@ -1138,7 +1138,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
         bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
         bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace(), 1, drawsHDRContent);
         if (!bitmapData) {
-            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_si });
             return;
         }
         FloatRect destRect(FloatPoint(), outputSize);
@@ -1170,7 +1170,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 6.2. If IsDetachedBuffer(buffer) is true, then return p rejected with an
     //      "InvalidStateError" DOMException.
     if (imageData->data().isDetached()) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "ImageData's viewed buffer has been detached"_s });
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "ImageData's viewed buffer has been detached"_si });
         return;
     }
 

@@ -73,7 +73,7 @@ void WasmDebuggerDispatcher::resetServer()
     debugServer.reset();
 }
 
-void WasmDebuggerDispatcher::dispatchMessage(const String& message)
+void WasmDebuggerDispatcher::dispatchMessage(StringImpl* message)
 {
     // This method runs on WorkQueue thread (NOT main thread).
     // Safe to call even when main thread is blocked.

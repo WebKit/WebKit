@@ -37,7 +37,7 @@ public:
 
     const CSS::Clip& clip() const LIFETIME_BOUND { return m_clip; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSClipValue&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

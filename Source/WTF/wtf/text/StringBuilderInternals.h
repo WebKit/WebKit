@@ -44,14 +44,14 @@ template<typename AllocationCharacterType, typename CurrentCharacterType> void S
     StringImpl::copyCharacters(newBufferCharacters, currentCharactersToCopy);
 
     m_buffer = WTF::move(buffer);
-    m_string = { };
+    m_string = nullptr;
 }
 
 template<typename CharacterType> void StringBuilder::reallocateBuffer(unsigned requiredCapacity)
 {
     // If the buffer has only one ref (by this StringBuilder), reallocate it.
     if (m_buffer) {
-        m_string = { }; // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
+        m_string = nullptr; // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
         if (m_buffer->hasOneRef()) {
             CharacterType* bufferCharacters;
             auto buffer = StringImpl::tryReallocate(m_buffer.releaseNonNull(), requiredCapacity, bufferCharacters);
@@ -74,7 +74,7 @@ template<typename CharacterType> void StringBuilder::reallocateBuffer(unsigned r
 template<typename CharacterType> std::span<CharacterType> StringBuilder::extendBufferForAppending(unsigned requiredLength)
 {
     if (m_buffer && requiredLength <= m_buffer->length()) {
-        m_string = { };
+        m_string = nullptr;
         return spanConstCast<CharacterType>(m_buffer->span<CharacterType>().subspan(std::exchange(m_length, requiredLength)));
     }
     return extendBufferForAppendingSlowCase<CharacterType>(requiredLength);

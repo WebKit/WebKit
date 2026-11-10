@@ -45,10 +45,10 @@ public:
     static Ref<HTMLOutputElement> create(Document&);
     ~HTMLOutputElement();
 
-    String value() const;
-    void setValue(String&&);
-    String defaultValue() const;
-    void setDefaultValue(String&&);
+    RefPtr<StringImpl> value() const;
+    void setValue(RefPtr<StringImpl>&&);
+    RefPtr<StringImpl> defaultValue() const;
+    void setDefaultValue(RefPtr<StringImpl>&&);
     DOMTokenList& htmlFor();
     
 private:
@@ -56,15 +56,15 @@ private:
 
     bool canContainRangeEndPoint() const final { return false; }
     bool computeWillValidate() const final { return false; }
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     NODELETE bool isEnumeratable() const final { return true; }
     bool isLabelable() const final { return true; }
     bool supportsFocus() const final;
     void reset() final;
 
-    String m_defaultValueOverride;
+    RefPtr<StringImpl> m_defaultValueOverride;
     const std::unique_ptr<DOMTokenList> m_forTokens;
 };
 

@@ -226,7 +226,7 @@ public:
     HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>>& activeOverflowScrollProxyNodes() LIFETIME_BOUND { return m_activeOverflowScrollProxyNodes; }
     HashSet<Ref<ScrollingTreePositionedNode>>& activePositionedNodes() LIFETIME_BOUND { return m_activePositionedNodes; }
 
-    WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { });
+    WEBCORE_EXPORT RefPtr<StringImpl> scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { });
 
     WEBCORE_EXPORT float rubberbandHyperbolicCoefficientForTesting();
 

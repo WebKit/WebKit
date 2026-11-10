@@ -36,14 +36,14 @@
 namespace WebCore {
 
 struct AudioParamDescriptor {
-    String name;
+    RefPtr<StringImpl> name;
     float defaultValue { 0 };
     float minValue { -3.4028235e38 };
     float maxValue { 3.4028235e38 };
     AutomationRate automationRate { AutomationRate::ARate };
 
-    AudioParamDescriptor isolatedCopy() const & { return { name.isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
-    AudioParamDescriptor isolatedCopy() && { return { WTF::move(name).isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
+    AudioParamDescriptor isolatedCopy() const & { return { WTF::isolatedCopy(name), defaultValue, minValue, maxValue, automationRate }; }
+    AudioParamDescriptor isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(name)), defaultValue, minValue, maxValue, automationRate }; }
 };
 
 } // namespace WebCore

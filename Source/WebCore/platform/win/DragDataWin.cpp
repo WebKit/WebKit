@@ -75,7 +75,7 @@ const DragDataMap& DragData::dragDataMap()
 
     FORMATETC dataFormat;
     while (itr->Next(1, &dataFormat, 0) == S_OK) {
-        Vector<String> dataStrings;
+        Vector<RefPtr<StringImpl>> dataStrings;
         getClipboardData(m_platformDragData, &dataFormat, dataStrings);
         if (!dataStrings.isEmpty())
             m_dragDataMap.set(dataFormat.cfFormat, dataStrings); 
@@ -83,7 +83,7 @@ const DragDataMap& DragData::dragDataMap()
     return m_dragDataMap;
 }
 
-void DragData::getDragFileDescriptorData(int& size, String& pathname)
+void DragData::getDragFileDescriptorData(int& size, RefPtr<StringImpl>& pathname)
 {
     size = 0;
     if (m_platformDragData)
@@ -96,7 +96,7 @@ void DragData::getDragFileContentData(int size, void* dataBlob)
         getFileContentData(m_platformDragData, size, dataBlob);
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+RefPtr<StringImpl> DragData::asURL(FilenameConversionPolicy filenamePolicy, RefPtr<StringImpl>* title) const
 {
     return (m_platformDragData) ? getURL(m_platformDragData, filenamePolicy, title) : getURL(&m_dragDataMap, filenamePolicy, title);
 }
@@ -128,9 +128,9 @@ unsigned DragData::numberOfFiles() const
     return numFiles;
 }
 
-Vector<String> DragData::asFilenames() const
+Vector<RefPtr<StringImpl>> DragData::asFilenames() const
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
 
     if (m_platformDragData) {
         WCHAR filename[MAX_PATH];
@@ -170,7 +170,7 @@ bool DragData::containsPlainText() const
     return m_dragDataMap.contains(plainTextWFormat()->cfFormat) || m_dragDataMap.contains(plainTextFormat()->cfFormat);
 }
 
-String DragData::asPlainText() const
+RefPtr<StringImpl> DragData::asPlainText() const
 {
     return (m_platformDragData) ? getPlainText(m_platformDragData) : getPlainText(&m_dragDataMap);
 }

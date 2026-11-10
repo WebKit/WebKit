@@ -33,7 +33,7 @@
 namespace WebKit::WebGPU {
 
 struct ObjectDescriptorBase {
-    String label;
+    RefPtr<StringImpl> label;
 };
 
 } // namespace WebKit::WebGPU

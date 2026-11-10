@@ -85,7 +85,7 @@ private:
 
     struct FindElementFromSelectorsResult {
         RefPtr<Element> element;
-        String lastSelectorIncludingPseudo;
+        RefPtr<StringImpl> lastSelectorIncludingPseudo;
     };
     FindElementFromSelectorsResult findElementFromSelectors(const TargetedElementSelectors&);
     static FindElementFromSelectorsResult findElementFromSelectors(Document&, const TargetedElementSelectors&);
@@ -96,7 +96,7 @@ private:
     void selectorBasedVisibilityAdjustmentTimerFired();
 
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(FloatPoint location, bool shouldIgnorePointerEventsNone);
-    std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const String& searchText);
+    std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(StringImpl* searchText);
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const TargetedElementSelectors&);
 
     enum class IncludeNearbyElements : bool { No, Yes };

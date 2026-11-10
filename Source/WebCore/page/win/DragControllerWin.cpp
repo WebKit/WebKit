@@ -79,7 +79,7 @@ void DragController::cleanupAfterSystemDrag()
 {
 }
 
-void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
+void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, StringImpl* label)
 {
     Pasteboard& pasteboard = dataTransfer.pasteboard();
 
@@ -123,7 +123,7 @@ static FontCascade dragLabelFont(int size, bool bold)
     return result;
 }
 
-std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL& url, const String& inLabel, float)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element&, URL& url, StringImpl* inLabel, float)
 {
     static const FontCascade labelFont = dragLabelFont(DragLinkLabelFontsize, true);
     static const FontCascade urlFont = dragLabelFont(DragLinkURLFontSize, false);
@@ -132,9 +132,9 @@ std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndi
     bool clipURLString = false;
     bool clipLabelString = false;
 
-    String urlString = url.string();
-    String label = inLabel;
-    if (label.isEmpty()) {
+    RefPtr<StringImpl> urlString = url.string();
+    RefPtr<StringImpl> label = inLabel;
+    if (isEmpty(label)) {
         drawURLString = false;
         label = urlString;
     }

@@ -162,7 +162,7 @@ public:
     ShapeImageThreshold shapeImageThreshold;
 
     DataRef<CustomPropertyData> customProperties;
-    HashSet<AtomString> customPaintWatchedProperties;
+    HashSet<RefPtr<AtomStringImpl>> customPaintWatchedProperties;
 
     Rotate rotate;
     Scale scale;
@@ -204,7 +204,7 @@ public:
     NameScope triggerScope;
     TimelineTriggers timelineTriggers;
 
-    AtomString pseudoElementNameArgument;
+    RefPtr<AtomStringImpl> pseudoElementNameArgument;
 
     AnchorNames anchorNames;
     NameScope anchorScope;

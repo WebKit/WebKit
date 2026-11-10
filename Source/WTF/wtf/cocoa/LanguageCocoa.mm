@@ -41,31 +41,33 @@
 
 namespace WTF {
 
-size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch)
+size_t indexOfBestMatchingLanguageInList(StringImpl* language, const Vector<RefPtr<StringImpl>>& languageList, bool& exactMatch)
 {
-    auto matchedLanguages = retainPtr([NSLocale matchedLanguagesFromAvailableLanguages:createNSArray(languageList).get() forPreferredLanguages:@[ language.createNSString().get() ]]);
+    auto matchedLanguages = retainPtr([NSLocale matchedLanguagesFromAvailableLanguages:createNSArray(languageList).get() forPreferredLanguages:@[ createNSString(language).get() ]]);
     if (![matchedLanguages count]) {
         exactMatch = false;
         return notFound;
     }
 
-    String firstMatchedLanguage = [matchedLanguages firstObject];
+    RefPtr<StringImpl> firstMatchedLanguage = StringImpl::create([matchedLanguages firstObject]);
 
-    exactMatch = language == firstMatchedLanguage;
+    exactMatch = equal(language, firstMatchedLanguage);
 
-    auto index = languageList.find(firstMatchedLanguage);
+    auto index = languageList.findIf([&](auto& item) {
+        return equal(item, firstMatchedLanguage);
+    });
     ASSERT(index < languageList.size());
     return index;
 }
 
-LocaleComponents parseLocale(const String& localeIdentifier)
+LocaleComponents parseLocale(StringImpl* localeIdentifier)
 {
-    auto locale = retainPtr([NSLocale localeWithLocaleIdentifier:localeIdentifier.createNSString().get()]);
+    auto locale = retainPtr([NSLocale localeWithLocaleIdentifier:createNSString(localeIdentifier).get()]);
 
     return {
-        locale.get().languageCode,
-        locale.get().scriptCode,
-        locale.get().countryCode
+        StringImpl::create(locale.get().languageCode),
+        StringImpl::create(locale.get().scriptCode),
+        StringImpl::create(locale.get().countryCode)
     };
 }
 
@@ -89,7 +91,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
-void overrideUserPreferredLanguages(const Vector<String>& override)
+void overrideUserPreferredLanguages(const Vector<RefPtr<StringImpl>>& override)
 {
     LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
     NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];

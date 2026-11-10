@@ -38,7 +38,7 @@ ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
     : m_networkSession(session)
     , m_networkProcess(networkProcess) { }
 
-void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)
+void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, StringImpl* message)
 {
     if (!featureEnabled())
         return;

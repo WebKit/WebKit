@@ -43,14 +43,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerGlobalScope);
 
 #define SCOPE_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [sharedWorkerIdentifier=%" PRIu64 "] SharedWorkerGlobalScope::" fmt, this, this->thread()->identifier().toUInt64(), ##__VA_ARGS__)
 
-Ref<SharedWorkerGlobalScope> SharedWorkerGlobalScope::create(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
+Ref<SharedWorkerGlobalScope> SharedWorkerGlobalScope::create(StringImpl* name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
 {
     auto scope = adoptRef(*new SharedWorkerGlobalScope(name, params, WTF::move(origin), thread, WTF::move(topOrigin), connectionProxy, socketProvider, WTF::move(workerClient)));
     scope->addToContextsMap();
     return scope;
 }
 
-SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
+SharedWorkerGlobalScope::SharedWorkerGlobalScope(StringImpl* name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
     : WorkerGlobalScope(WorkerThreadType::SharedWorker, params, WTF::move(origin), thread, WTF::move(topOrigin), connectionProxy, socketProvider, WTF::move(workerClient))
     , m_name(name)
 {
@@ -76,7 +76,7 @@ void SharedWorkerGlobalScope::postConnectEvent(TransferredMessagePort&& transfer
     auto ports = MessagePort::entanglePorts(*this, { WTF::move(transferredPort) });
     ASSERT(ports.size() == 1);
     Ref port = ports[0];
-    auto event = MessageEvent::create(emptyString(), sourceOriginData.securityOrigin(), { }, port, WTF::move(ports));
+    auto event = MessageEvent::create(emptyString(), sourceOriginData.securityOrigin(), nullptr, port, WTF::move(ports));
     event->initEvent(eventNames().connectEvent, false, false);
 
     dispatchEvent(WTF::move(event));

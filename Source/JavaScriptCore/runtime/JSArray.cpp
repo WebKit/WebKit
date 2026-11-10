@@ -226,7 +226,7 @@ bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
             double valueAsNumber = descriptor.value().toNumber(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
             if (valueAsNumber != static_cast<double>(newLength)) {
-                throwRangeError(globalObject, scope, "Invalid array length"_s);
+                throwRangeError(globalObject, scope, "Invalid array length"_si);
                 return false;
             }
         }
@@ -324,7 +324,7 @@ bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prope
         double valueAsNumber = value.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (valueAsNumber != static_cast<double>(newLength)) [[unlikely]] {
-            throwException(globalObject, scope, createRangeError(globalObject, "Invalid array length"_s));
+            throwException(globalObject, scope, createRangeError(globalObject, "Invalid array length"_si));
             return false;
         }
         RELEASE_AND_RETURN(scope, thisObject->setLength(globalObject, newLength, slot.isStrictMode()));
@@ -1199,7 +1199,7 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
     checkedNewLength += values.size();
 
     if (checkedNewLength.hasOverflowed()) {
-        throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr()));
         return false;
     }
     unsigned newLength = checkedNewLength;
@@ -1267,7 +1267,7 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
     checkedNewLength += otherLength;
 
     if (checkedNewLength.hasOverflowed()) {
-        throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr()));
         return false;
     }
     unsigned newLength = checkedNewLength;

@@ -79,8 +79,8 @@
 static NSString *serviceWorkerRegistrationFilename = @"ServiceWorkerRegistrations-8.sqlite3";
 static bool serviceWorkerGlobalObjectIsAvailable;
 
-static String serviceWorkerExpectedMessage;
-static String retrievedString;
+static RefPtr<StringImpl> serviceWorkerExpectedMessage;
+static RefPtr<StringImpl> retrievedString;
 
 @interface SWMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -1193,10 +1193,10 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     done = false;
     [messageHandler resetExpectedMessage:@"PASS: Registration was successful and service worker was activated"];
 
-    String thirdPartyIframeURL = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW.html"_s).URL).string();
-    String injectFrameScript = makeString("let frame = document.createElement('iframe'); frame.src = '"_s, thirdPartyIframeURL, "'; document.body.append(frame);"_s);
+    RefPtr<StringImpl> thirdPartyIframeURL = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW.html"_s).URL).string();
+    RefPtr<StringImpl> injectFrameScript = makeString("let frame = document.createElement('iframe'); frame.src = '"_s, thirdPartyIframeURL, "'; document.body.append(frame);"_s);
     bool addedIframe = false;
-    [webView evaluateJavaScript:injectFrameScript.createNSString().get() completionHandler: [&] (id, NSError *error) {
+    [webView evaluateJavaScript:createNSString(injectFrameScript).get() completionHandler: [&] (id, NSError *error) {
         EXPECT_TRUE(!error);
         addedIframe = true;
     }];
@@ -1227,10 +1227,10 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     done = false;
     [messageHandler resetExpectedMessage:@"PASS: Registration already has an active worker"];
 
-    String thirdPartyIframeURL2 = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW2.html"_s).URL).string();
-    String injectFrameScript2 = makeString("let frame = document.createElement('iframe'); frame.src = '"_s, thirdPartyIframeURL2, "'; document.body.append(frame);"_s);
+    RefPtr<StringImpl> thirdPartyIframeURL2 = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW2.html"_s).URL).string();
+    RefPtr<StringImpl> injectFrameScript2 = makeString("let frame = document.createElement('iframe'); frame.src = '"_s, thirdPartyIframeURL2, "'; document.body.append(frame);"_s);
     addedIframe = false;
-    [webView evaluateJavaScript:injectFrameScript2.createNSString().get() completionHandler: [&] (id, NSError *error) {
+    [webView evaluateJavaScript:createNSString(injectFrameScript2).get() completionHandler: [&] (id, NSError *error) {
         EXPECT_TRUE(!error);
         addedIframe = true;
     }];
@@ -1374,7 +1374,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    serviceWorkerExpectedMessage = "Service Worker activated"_s;
+    serviceWorkerExpectedMessage = "Service Worker activated"_si;
     [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
@@ -1391,7 +1391,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    serviceWorkerExpectedMessage = "Intercepted by worker"_s;
+    serviceWorkerExpectedMessage = "Intercepted by worker"_si;
     [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
@@ -1426,7 +1426,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    serviceWorkerExpectedMessage = "Service Worker activated"_s;
+    serviceWorkerExpectedMessage = "Service Worker activated"_si;
     [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
@@ -1444,7 +1444,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    serviceWorkerExpectedMessage = "Intercepted by worker"_s;
+    serviceWorkerExpectedMessage = "Intercepted by worker"_si;
     [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
@@ -1478,7 +1478,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Register a service worker and activate it.
-    serviceWorkerExpectedMessage = "Service Worker activated"_s;
+    serviceWorkerExpectedMessage = "Service Worker activated"_si;
     [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
@@ -1496,7 +1496,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Verify service worker is intercepting load.
-    serviceWorkerExpectedMessage = "Intercepted by worker"_s;
+    serviceWorkerExpectedMessage = "Intercepted by worker"_si;
     [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
@@ -2001,7 +2001,7 @@ getResult();
 @implementation DirectoryPageMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    retrievedString = [message body];
+    retrievedString = StringImpl::create([message body]);
     done = true;
 }
 @end
@@ -2040,7 +2040,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"_s));
+    EXPECT_TRUE(contains(retrievedString, "/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"_s));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -2091,9 +2091,9 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    RetainPtr tempDirectoryInUse = FileSystem::realPath(tempDirectory).createNSString();
-    String expectedString = [NSString stringWithFormat:@"\"path\": \"%@\"", tempDirectoryInUse.get()];
-    EXPECT_TRUE(retrievedString.contains(expectedString));
+    RetainPtr tempDirectoryInUse = createNSString(FileSystem::realPath(StringImpl::create(tempDirectory).get()));
+    RefPtr<StringImpl> expectedString = StringImpl::create([NSString stringWithFormat:@"\"path\": \"%@\"", tempDirectoryInUse.get()]);
+    EXPECT_TRUE(contains(retrievedString, expectedString));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -2134,7 +2134,7 @@ TEST(ServiceWorkers, NonDefaultSessionID)
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptBytesForSessionIDTest } },
     });
 
-    serviceWorkerExpectedMessage = "PASS: activation successful"_s;
+    serviceWorkerExpectedMessage = "PASS: activation successful"_si;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request()];
@@ -2467,11 +2467,11 @@ TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
     }];
     TestWebKitAPI::Util::run(&done);
 
-    auto runJSCheck = [&](const String& jsToEvalInWorker) {
+    auto runJSCheck = [&](StringImpl* jsToEvalInWorker) {
         bool finishedRunningScript = false;
         done = false;
         auto js = makeString("sharedWorker.port.postMessage('"_s, jsToEvalInWorker,"');"_s);
-        [webView evaluateJavaScript:js.createNSString().get() completionHandler:[&] (id result, NSError *error) {
+        [webView evaluateJavaScript:createNSString(js).get() completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(error);
             finishedRunningScript = true;
         }];
@@ -2480,23 +2480,23 @@ TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
     };
 
     [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: true"];
-    runJSCheck("!!self.URL"_s);
+    runJSCheck("!!self.URL"_si);
 
     // Check individual settings that are meant to be disabled in lockdown mode.
     [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: false"];
-    runJSCheck("!!self.WebGL2RenderingContext"_s);
-    runJSCheck("!!self.FileSystemHandle"_s); // File System Access.
+    runJSCheck("!!self.WebGL2RenderingContext"_si);
+    runJSCheck("!!self.FileSystemHandle"_si); // File System Access.
 #if ENABLE(NOTIFICATIONS)
-    runJSCheck("!!self.Notification"_s); // Notification API.
+    runJSCheck("!!self.Notification"_si); // Notification API.
 #endif
-    runJSCheck("!!self.Cache"_s); // Cache API.
-    runJSCheck("!!self.CacheStorage"_s); // Cache API.
-    runJSCheck("!!self.FileReader"_s); // FileReader API.
-    runJSCheck("!!self.FileSystemFileHandle"_s); // File System Access API.
-    runJSCheck("!!self.PushManager"_s); // Push API.
-    runJSCheck("!!self.PushSubscription"_s); // Push API.
-    runJSCheck("!!self.PushSubscriptionOptions"_s); // Push API.
-    runJSCheck("!!self.LockManager"_s); // WebLockManager API.
+    runJSCheck("!!self.Cache"_si); // Cache API.
+    runJSCheck("!!self.CacheStorage"_si); // Cache API.
+    runJSCheck("!!self.FileReader"_si); // FileReader API.
+    runJSCheck("!!self.FileSystemFileHandle"_si); // File System Access API.
+    runJSCheck("!!self.PushManager"_si); // Push API.
+    runJSCheck("!!self.PushSubscription"_si); // Push API.
+    runJSCheck("!!self.PushSubscriptionOptions"_si); // Push API.
+    runJSCheck("!!self.LockManager"_si); // WebLockManager API.
 }
 
 TEST(ServiceWorkers, SharedWorkerReusesProcessAfterCOOPProcessSwap)
@@ -2685,7 +2685,7 @@ TEST(ServiceWorkers, SuspendAndTerminateWorker)
     auto *processPool = configuration.get().processPool;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    serviceWorkerExpectedMessage = "Message from worker: ServiceWorker received: Hello from the web page"_s;
+    serviceWorkerExpectedMessage = "Message from worker: ServiceWorker received: Hello from the web page"_si;
     [webView loadRequest:server.request()];
     // Wait until ServiceWorker is launched.
     TestWebKitAPI::Util::run(&done);
@@ -2729,7 +2729,7 @@ TEST(ServiceWorkers, SuspendAndTerminateWorker)
     EXPECT_TRUE(serviceWorkersAllTerminated);
 
     // Let's verify the WKWebView did not crash and has the same PID as before.
-    serviceWorkerExpectedMessage = "OK"_s;
+    serviceWorkerExpectedMessage = "OK"_si;
     [webView evaluateJavaScript:@"log('OK')" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -3159,7 +3159,7 @@ TEST(ServiceWorkers, ContentRuleList)
                     connection.send(HTTPResponse({ { "Content-Type"_s, "application/javascript"_s } }, contentRuleListWorkerScript).serialize(), [=] {
                         connection.receiveHTTPRequest([=](Vector<char>&& lastRequest) {
                             EXPECT_TRUE(contains(lastRequest.span(), "allowedsubresource"_span));
-                            connection.send(HTTPResponse("successful fetch"_s).serialize());
+                            connection.send(HTTPResponse("successful fetch"_si).serialize());
                         });
                     });
                 });
@@ -3167,7 +3167,7 @@ TEST(ServiceWorkers, ContentRuleList)
         });
     });
 
-    serviceWorkerExpectedMessage = @"Message from worker: PASS - blocked first request, allowed second";
+    serviceWorkerExpectedMessage = StringImpl::create(@"Message from worker: PASS - blocked first request, allowed second");
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
@@ -3638,7 +3638,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
 
 @interface ServiceWorkerSchemeHandler : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
-    HashMap<String, RetainPtr<NSData>> _dataMappings;
+    HashMap<RefPtr<StringImpl>, RetainPtr<NSData>> _dataMappings;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
 - (void)addMappingFromURLString:(NSString *)urlString toData:(UTF8CStringView)data;
@@ -3655,7 +3655,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
 
 - (void)addMappingFromURLString:(NSString *)urlString toData:(UTF8CStringView)data
 {
-    _dataMappings.set(urlString, toNSData(byteCast<uint8_t>(data.span())));
+    _dataMappings.set(StringImpl::create(urlString), toNSData(byteCast<uint8_t>(data.span())));
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
@@ -3667,14 +3667,14 @@ static bool didStartURLSchemeTaskForImportedScript = false;
 
     NSURL *finalURL = task.request.URL;
 
-    if (URL(finalURL).string().endsWith("importedScript.js"_s))
+    if (endsWith(URL(finalURL).string(), "importedScript.js"_s))
         didStartURLSchemeTaskForImportedScript = true;
 
-    if (URL(finalURL).string().endsWith(".xml"_s))
+    if (endsWith(URL(finalURL).string(), ".xml"_s))
         didStartURLSchemeTaskForXMLFile = true;
 
     NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
-    if (URL(finalURL).string().endsWith(".js"_s))
+    if (endsWith(URL(finalURL).string(), ".js"_s))
         [headerDictionary setObject:@"text/javascript" forKey:@"Content-Type"];
     else
         [headerDictionary setObject:@"text/html" forKey:@"Content-Type"];
@@ -3682,7 +3682,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
     RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:finalURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerDictionary]);
     [task didReceiveResponse:response.get()];
 
-    if (RetainPtr data = _dataMappings.get([finalURL absoluteString]))
+    if (RetainPtr data = _dataMappings.get(StringImpl::create([finalURL absoluteString]).get()))
         [task didReceiveData:data.get()];
     else if (_bytes)
         [task didReceiveData:toNSData(byteCast<uint8_t>(unsafeSpan(_bytes))).get()];
@@ -3812,11 +3812,11 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
 
     bool madeHTTPGetRequest = false;
     bool madeHTTPOptionsRequest = false;
-    String filenameRequestedOverHTTP;
+    RefPtr<StringImpl> filenameRequestedOverHTTP;
     HTTPServer server([&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection](Vector<char>&& bytes) mutable {
-            String requestString = String::fromLatin1(bytes.span());
-            if (requestString.startsWithIgnoringASCIICase("OPTIONS"_s)) {
+            RefPtr<StringImpl> requestString = StringImpl::fromLatin1(bytes.span());
+            if (startsWithIgnoringASCIICase(requestString, "OPTIONS"_s)) {
                 madeHTTPOptionsRequest = true;
                 connection.send(
                     "HTTP/1.1 204 No Content\r\n"
@@ -3824,8 +3824,8 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
                 );
                 return;
             }
-            if (requestString.startsWithIgnoringASCIICase("GET"_s)) {
-                auto requestParts = requestString.split(' ');
+            if (startsWithIgnoringASCIICase(requestString, "GET"_s)) {
+                auto requestParts = split(requestString, ' ');
                 if (requestParts.size() > 2)
                     filenameRequestedOverHTTP = requestParts[1];
                 madeHTTPGetRequest = true;
@@ -3837,7 +3837,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
     auto testJS = makeString("fetch('http://127.0.0.1:"_s, server.port(), "/bar.xml', { headers: { 'Custom-Header': 'CustomHeaderValue' } });"_s);
 
     RetainPtr schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
-    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:testJS.utf8()];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:utf8(testJS)];
 
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
     [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
@@ -4375,7 +4375,7 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
 #endif
 
     done = false;
-    serviceWorkerExpectedMessage = "focused"_s;
+    serviceWorkerExpectedMessage = "focused"_si;
     [webView1 evaluateJavaScript:@"focusClient()" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
 #if PLATFORM(MAC)
@@ -4388,18 +4388,18 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
 
     // FIXME: We should be able to run these tests in iOS once pages are actually visible.
     done = false;
-    serviceWorkerExpectedMessage = "PASS"_s;
+    serviceWorkerExpectedMessage = "PASS"_si;
     [webView1 evaluateJavaScript:@"checkFocusValue(true, 'webView1')" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-    serviceWorkerExpectedMessage = "PASS"_s;
+    serviceWorkerExpectedMessage = "PASS"_si;
     [webView2 evaluateJavaScript:@"checkFocusValue(false, 'webView2')" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
 #endif
 
     done = false;
-    serviceWorkerExpectedMessage = "focused"_s;
+    serviceWorkerExpectedMessage = "focused"_si;
     [webView2 evaluateJavaScript:@"focusClient()" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
 #if PLATFORM(MAC)
@@ -4411,7 +4411,7 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
 
     // FIXME: We should be able to run these tests in iOS once pages are actually visible.
     done = false;
-    serviceWorkerExpectedMessage = "PASS"_s;
+    serviceWorkerExpectedMessage = "PASS"_si;
     [webView2 evaluateJavaScript:@"checkFocusValue(true, 'webView2')" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
 #endif
@@ -4453,7 +4453,7 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
 
     done = false;
-    serviceWorkerExpectedMessage = "not focused"_s;
+    serviceWorkerExpectedMessage = "not focused"_si;
     [webView evaluateJavaScript:@"focusClient()" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
 }
@@ -4537,7 +4537,7 @@ TEST(ServiceWorker, openWindowWithoutDelegate)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
 
     done = false;
-    serviceWorkerExpectedMessage = "opened without client"_s;
+    serviceWorkerExpectedMessage = "opened without client"_si;
     [webView evaluateJavaScript:@"openWindowClient()" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
 }
@@ -5135,18 +5135,18 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     done = false;
-    serviceWorkerExpectedMessage = "Message from worker: V1"_s;
+    serviceWorkerExpectedMessage = "Message from worker: V1"_si;
     RetainPtr webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow: YES]);
     [webView1 loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);
 
-    Vector<WTF::KeyValuePair<String, String>> sourceHeaders;
+    Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> sourceHeaders;
     sourceHeaders.append({ "Cache-Control"_s, "no-cache"_s });
     sourceHeaders.append({ "Content-Type"_s, "application/javascript"_s });
-    server.setResponse("/sw.js"_s, TestWebKitAPI::HTTPResponse { WTF::move(sourceHeaders), serviceWorkerStorageTimingScriptBytesV2 });
+    server.setResponse("/sw.js"_si, TestWebKitAPI::HTTPResponse { WTF::move(sourceHeaders), StringImpl::create(serviceWorkerStorageTimingScriptBytesV2).ptr() });
 
     done = false;
-    serviceWorkerExpectedMessage = "Message from worker: V1"_s;
+    serviceWorkerExpectedMessage = "Message from worker: V1"_si;
     RetainPtr webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);
@@ -5162,7 +5162,7 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     [[webView1 configuration].websiteDataStore _terminateNetworkProcess];
 
     done = false;
-    serviceWorkerExpectedMessage = "Message from worker: V2"_s;
+    serviceWorkerExpectedMessage = "Message from worker: V2"_si;
     RetainPtr webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView3 loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);

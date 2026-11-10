@@ -43,7 +43,7 @@ bool CSSParamValue::equals(const CSSParamValue& other) const
     return m_parameter == other.m_parameter;
 }
 
-String CSSParamValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSParamValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_parameter);
 }

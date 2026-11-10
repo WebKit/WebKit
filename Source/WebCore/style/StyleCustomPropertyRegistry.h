@@ -41,8 +41,8 @@ class CustomPropertyRegistry {
 public:
     CustomPropertyRegistry(Scope&);
 
-    NODELETE const CSSRegisteredCustomProperty* get(const AtomString&) const;
-    NODELETE bool isInherited(const AtomString&) const;
+    NODELETE const CSSRegisteredCustomProperty* get(AtomStringImpl*) const;
+    NODELETE bool isInherited(AtomStringImpl*) const;
 
     bool registerFromAPI(CSSRegisteredCustomProperty&&);
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);
@@ -54,16 +54,16 @@ public:
 
     enum class ViewportUnitDependency : bool { No, Yes };
     enum class ParseInitialValueError : uint8_t { NotComputationallyIndependent, DidNotParse };
-    static std::expected<std::pair<RefPtr<const CustomProperty>, ViewportUnitDependency>, ParseInitialValueError> parseInitialValue(const Document&, const AtomString& propertyName, const CSSCustomPropertySyntax&, CSSParserTokenRange);
+    static std::expected<std::pair<RefPtr<const CustomProperty>, ViewportUnitDependency>, ParseInitialValueError> parseInitialValue(const Document&, AtomStringImpl* propertyName, const CSSCustomPropertySyntax&, CSSParserTokenRange);
 
 private:
-    void invalidate(const AtomString&);
-    void notifyAnimationsOfCustomPropertyRegistration(const AtomString&);
+    void invalidate(AtomStringImpl*);
+    void notifyAnimationsOfCustomPropertyRegistration(AtomStringImpl*);
 
     Scope& m_scope;
 
-    UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
-    UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
+    UncheckedKeyHashMap<RefPtr<AtomStringImpl>, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
+    UncheckedKeyHashMap<RefPtr<AtomStringImpl>, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
 
     mutable std::unique_ptr<Style::ComputedStyle> m_initialValuePrototypeStyle;
     mutable bool m_hasInvalidPrototypeStyle { false };

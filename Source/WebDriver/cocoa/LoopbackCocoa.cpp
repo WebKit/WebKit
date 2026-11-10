@@ -35,7 +35,7 @@
 
 namespace WebDriver {
 
-bool isLoopbackURL(const String& string)
+bool isLoopbackURL(StringImpl* string)
 {
     URL url { string };
     if (!url.isValid())
@@ -60,12 +60,12 @@ bool isLoopbackURL(const String& string)
     return false;
 }
 
-bool validateListeningHost(const String& host)
+bool validateListeningHost(StringImpl* host)
 {
-    if (host.isEmpty() || host == "local"_s)
+    if (isEmpty(host) || equal(host, "local"_s))
         return true;
 
-    SAFE_FPRINTF(stderr, "minidriver only listens on this machine, so --host=%s isn't supported.\n", host.utf8());
+    SAFE_FPRINTF(stderr, "minidriver only listens on this machine, so --host=%s isn't supported.\n", utf8(host));
     return false;
 }
 

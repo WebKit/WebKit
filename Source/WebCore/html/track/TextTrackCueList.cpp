@@ -75,10 +75,10 @@ TextTrackCue* TextTrackCueList::item(unsigned index) const
     return m_vector[index].ptr();
 }
 
-TextTrackCue* TextTrackCueList::getCueById(const String& id) const
+TextTrackCue* TextTrackCueList::getCueById(StringImpl* id) const
 {
     for (auto& cue : m_vector) {
-        if (cue->id() == id)
+        if (equal(cue->id(), id))
             return cue.ptr();
     }
     return nullptr;

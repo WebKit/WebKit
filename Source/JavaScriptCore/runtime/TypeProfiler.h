@@ -106,7 +106,7 @@ class TypeProfiler {
 public:
     TypeProfiler();
     void logTypesForTypeLocation(TypeLocation*, VM&);
-    JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, SourceID, VM&);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, SourceID, VM&);
     void insertNewLocation(TypeLocation*);
     TypeLocationCache* typeLocationCache() LIFETIME_BOUND { return &m_typeLocationCache; }
     TypeLocation* findLocation(unsigned divot, SourceID, TypeProfilerSearchDescriptor, VM&);

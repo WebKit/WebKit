@@ -136,7 +136,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(JSGlobalObject* globalO
         vm.setAllowRedeclaringSymbols(didAllowRedeclaringSymbols);
     });
 
-    JSValue result = JSC::evaluateWithScopeExtension(globalObject, makeSource(program, callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted), scopeExtension, exception);
+    JSValue result = JSC::evaluateWithScopeExtension(globalObject, makeSource(program->get(), callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted), scopeExtension, exception);
 
     if (exception)
         throwException(globalObject, scope, exception);
@@ -197,43 +197,43 @@ JSValue JSInjectedScriptHost::subtype(JSGlobalObject* globalObject, CallFrame* c
 
     if (auto* object = dynamicDowncast<JSObject>(value)) {
         if (object->isErrorInstance())
-            return jsNontrivialString(vm, "error"_s);
+            return jsNontrivialString(vm, "error"_si);
 
         // Consider class constructor functions class objects.
         JSFunction* function = dynamicDowncast<JSFunction>(value);
         if (function && function->isClassConstructorFunction())
-            return jsNontrivialString(vm, "class"_s);
+            return jsNontrivialString(vm, "class"_si);
 
         if (object->inherits<JSArray>())
-            return jsNontrivialString(vm, "array"_s);
+            return jsNontrivialString(vm, "array"_si);
         if (object->inherits<DirectArguments>() || object->inherits<ScopedArguments>())
-            return jsNontrivialString(vm, "array"_s);
+            return jsNontrivialString(vm, "array"_si);
 
         if (object->inherits<DateInstance>())
-            return jsNontrivialString(vm, "date"_s);
+            return jsNontrivialString(vm, "date"_si);
         if (object->inherits<RegExpObject>())
-            return jsNontrivialString(vm, "regexp"_s);
+            return jsNontrivialString(vm, "regexp"_si);
         if (object->inherits<ProxyObject>())
-            return jsNontrivialString(vm, "proxy"_s);
+            return jsNontrivialString(vm, "proxy"_si);
         if (object->inherits<JSWeakObjectRef>())
-            return jsNontrivialString(vm, "weakref"_s);
+            return jsNontrivialString(vm, "weakref"_si);
 
         if (object->inherits<JSMap>())
-            return jsNontrivialString(vm, "map"_s);
+            return jsNontrivialString(vm, "map"_si);
         if (object->inherits<JSSet>())
-            return jsNontrivialString(vm, "set"_s);
+            return jsNontrivialString(vm, "set"_si);
         if (object->inherits<JSWeakMap>())
-            return jsNontrivialString(vm, "weakmap"_s);
+            return jsNontrivialString(vm, "weakmap"_si);
         if (object->inherits<JSWeakSet>())
-            return jsNontrivialString(vm, "weakset"_s);
+            return jsNontrivialString(vm, "weakset"_si);
 
         if (object->inherits<JSStringIterator>())
-            return jsNontrivialString(vm, "iterator"_s);
+            return jsNontrivialString(vm, "iterator"_si);
 
         if (object->inherits<JSArrayIterator>()
             || object->inherits<JSMapIterator>()
             || object->inherits<JSSetIterator>())
-            return jsNontrivialString(vm, "iterator"_s);
+            return jsNontrivialString(vm, "iterator"_si);
 
         if (object->inherits<JSInt8Array>()
             || object->inherits<JSInt16Array>()
@@ -247,7 +247,7 @@ JSValue JSInjectedScriptHost::subtype(JSGlobalObject* globalObject, CallFrame* c
             || object->inherits<JSFloat64Array>()
             || object->inherits<JSBigInt64Array>()
             || object->inherits<JSBigUint64Array>())
-            return jsNontrivialString(vm, "array"_s);
+            return jsNontrivialString(vm, "array"_si);
     }
 
     return impl().subtype(globalObject, value);
@@ -286,7 +286,7 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
     if (columnNumber)
         columnNumber -= 1;
 
-    String scriptID = String::number(sourceCode->provider()->asID());
+    RefPtr<StringImpl> scriptID = makeString(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(globalObject);
     location->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, WTF::move(scriptID)));
     location->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(lineNumber));
@@ -295,18 +295,18 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
     JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, Identifier::fromString(vm, "location"_s), location);
 
-    String name = function->name(vm);
-    if (!name.isEmpty())
+    RefPtr<StringImpl> name = function->name(vm);
+    if (!isEmpty(name))
         result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, WTF::move(name)));
 
-    String displayName = function->displayName(vm);
-    if (!displayName.isEmpty())
+    RefPtr<StringImpl> displayName = function->displayName(vm);
+    if (!isEmpty(displayName))
         result->putDirect(vm, Identifier::fromString(vm, "displayName"_s), jsString(vm, WTF::move(displayName)));
 
     return result;
 }
 
-static JSObject* constructInternalProperty(JSGlobalObject* globalObject, const String& name, JSValue value)
+static JSObject* constructInternalProperty(JSGlobalObject* globalObject, StringImpl* name, JSValue value)
 {
     VM& vm = globalObject->vm();
     JSObject* result = constructEmptyObject(globalObject);
@@ -339,7 +339,7 @@ JSValue JSInjectedScriptHost::getOwnPrivatePropertySymbols(JSGlobalObject* globa
             continue;
 
         // Authored private properties are indistinguishable from internal private properties except for their use of the `#` prefix.
-        if (!propertyName.string().startsWith('#'))
+        if (!startsWith(propertyName.string(), '#'))
             continue;
 
         result->putDirectIndex(globalObject, index++, Symbol::create(vm, *static_cast<SymbolImpl*>(propertyName.impl())));
@@ -538,19 +538,19 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         switch (promise->status()) {
         case JSPromise::Status::Pending:
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_s, jsNontrivialString(vm, "pending"_s)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_si, jsNontrivialString(vm, "pending"_si)));
             return array;
         case JSPromise::Status::Fulfilled:
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_s, jsNontrivialString(vm, "fulfilled"_s)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_si, jsNontrivialString(vm, "fulfilled"_si)));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "result"_s, promise->result()));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "result"_si, promise->result()));
             return array;
         case JSPromise::Status::Rejected:
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_s, jsNontrivialString(vm, "rejected"_s)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_si, jsNontrivialString(vm, "rejected"_si)));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "result"_s, promise->result()));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "result"_si, promise->result()));
             return array;
         }
         // FIXME: <https://webkit.org/b/141664> Web Inspector: ES6: Improved Support for Promises - Promise Reactions
@@ -561,13 +561,13 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         unsigned index = 0;
         JSArray* array = constructEmptyArray(globalObject, nullptr);
         RETURN_IF_EXCEPTION(scope, JSValue());
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "targetFunction"_s, boundFunction->targetFunction()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "targetFunction"_si, boundFunction->targetFunction()));
         RETURN_IF_EXCEPTION(scope, JSValue());
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundThis"_s, boundFunction->boundThis()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundThis"_si, boundFunction->boundThis()));
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (boundFunction->boundArgsLength()) {
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundArgs"_s, boundFunction->boundArgsCopy(globalObject)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundArgs"_si, boundFunction->boundArgsCopy(globalObject)));
             return array;
         }
         return array;
@@ -579,7 +579,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             RETURN_IF_EXCEPTION(scope, JSValue());
             JSValue thisObject = jsScope->get(globalObject, vm.propertyNames->builtinNames().thisPrivateName());
             RETURN_IF_EXCEPTION(scope, JSValue());
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundThis"_s, thisObject));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundThis"_si, thisObject));
             RETURN_IF_EXCEPTION(scope, JSValue());
             return array;
         }
@@ -589,10 +589,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         unsigned index = 0;
         JSArray* array = constructEmptyArray(globalObject, nullptr, 2);
         RETURN_IF_EXCEPTION(scope, JSValue());
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "target"_s, proxy->target()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "target"_si, proxy->target()));
         RETURN_IF_EXCEPTION(scope, JSValue());
         scope.release();
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "handler"_s, proxy->handler()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "handler"_si, proxy->handler()));
         return array;
     }
 
@@ -601,7 +601,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         JSArray* array = constructEmptyArray(globalObject, nullptr, 1);
         RETURN_IF_EXCEPTION(scope, JSValue());
         auto* target = weakRef->deref(vm);
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "target"_s, target ? target : jsUndefined()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "target"_si, target ? target : jsUndefined()));
         RETURN_IF_EXCEPTION(scope, JSValue());
         return array;
     }
@@ -611,7 +611,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         JSArray* array = constructEmptyArray(globalObject, nullptr, 2);
         RETURN_IF_EXCEPTION(scope, JSValue());
 
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "cleanupCallback"_s, finalizationRegistry->callback()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "cleanupCallback"_si, finalizationRegistry->callback()));
         RETURN_IF_EXCEPTION(scope, JSValue());
 
         Vector<JSFinalizationRegistry::LiveRegistration> liveRegistrations;
@@ -637,7 +637,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             RETURN_IF_EXCEPTION(scope, JSValue());
         }
 
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "live"_s, liveArray));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "live"_si, liveArray));
         RETURN_IF_EXCEPTION(scope, JSValue());
 
         unsigned deadIndex = 0;
@@ -653,7 +653,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             RETURN_IF_EXCEPTION(scope, JSValue());
         }
 
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "dead"_s, deadArray));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "dead"_si, deadArray));
         RETURN_IF_EXCEPTION(scope, JSValue());
 
         return array;
@@ -663,13 +663,13 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         auto toString = [&] (IterationKind kind) {
             switch (kind) {
             case IterationKind::Keys:
-                return jsNontrivialString(vm, "keys"_s);
+                return jsNontrivialString(vm, "keys"_si);
             case IterationKind::Values:
-                return jsNontrivialString(vm, "values"_s);
+                return jsNontrivialString(vm, "values"_si);
             case IterationKind::Entries:
-                return jsNontrivialString(vm, "entries"_s);
+                return jsNontrivialString(vm, "entries"_si);
             }
-            return jsNontrivialString(vm, ""_s);
+            return jsNontrivialString(vm, ""_si);
         };
         
         if (auto* arrayIterator = dynamicDowncast<JSArrayIterator>(iteratorObject)) {
@@ -679,10 +679,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             unsigned index = 0;
             JSArray* array = constructEmptyArray(globalObject, nullptr, 2);
             RETURN_IF_EXCEPTION(scope, JSValue());
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "array"_s, iteratedValue));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "array"_si, iteratedValue));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "kind"_s, toString(kind)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "kind"_si, toString(kind)));
             return array;
         }
 
@@ -693,10 +693,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             unsigned index = 0;
             JSArray* array = constructEmptyArray(globalObject, nullptr, 2);
             RETURN_IF_EXCEPTION(scope, JSValue());
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "map"_s, iteratedValue));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "map"_si, iteratedValue));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "kind"_s, toString(kind)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "kind"_si, toString(kind)));
             return array;
         }
 
@@ -707,10 +707,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             unsigned index = 0;
             JSArray* array = constructEmptyArray(globalObject, nullptr, 2);
             RETURN_IF_EXCEPTION(scope, JSValue());
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "set"_s, iteratedValue));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "set"_si, iteratedValue));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "kind"_s, toString(kind)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "kind"_si, toString(kind)));
             return array;
         }
     }
@@ -720,7 +720,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         JSArray* array = constructEmptyArray(globalObject, nullptr, 1);
         RETURN_IF_EXCEPTION(scope, JSValue());
         scope.release();
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "string"_s, stringIterator->iteratedString()));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "string"_si, stringIterator->iteratedString()));
         return array;
     }
 
@@ -1106,7 +1106,7 @@ public:
     void analyzeNode(JSCell*) final { }
     void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) final { }
     void setWrappedObjectForCell(JSCell*, void*) final { }
-    void setLabelForCell(JSCell*, const String&) final { }
+    void setLabelForCell(JSCell*, StringImpl*) final { }
 
 #ifndef NDEBUG
     void dump(PrintStream& out) const

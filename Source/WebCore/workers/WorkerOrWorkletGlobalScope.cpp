@@ -102,12 +102,12 @@ JSC::VM* WorkerOrWorkletGlobalScope::vmIfExists() const
     return &script()->vm();
 }
 
-void WorkerOrWorkletGlobalScope::disableEval(const String& errorMessage)
+void WorkerOrWorkletGlobalScope::disableEval(StringImpl* errorMessage)
 {
     protect(m_script)->disableEval(errorMessage);
 }
 
-void WorkerOrWorkletGlobalScope::disableWebAssembly(const String& errorMessage)
+void WorkerOrWorkletGlobalScope::disableWebAssembly(StringImpl* errorMessage)
 {
     protect(m_script)->disableWebAssembly(errorMessage);
 }
@@ -153,7 +153,7 @@ void WorkerOrWorkletGlobalScope::postTask(Task&& task)
         thread->runLoop().postTask(WTF::move(task));
 }
 
-void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode)
+void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, StringImpl* mode)
 {
     RefPtr thread = workerOrWorkletThread();
     ASSERT(thread);
@@ -178,7 +178,7 @@ RefPtr<WorkerOrWorkletThread> WorkerOrWorkletGlobalScope::workerOrWorkletThread(
 
 void WorkerOrWorkletGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
 {
-    protect(contentSecurityPolicy())->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
+    protect(contentSecurityPolicy())->didReceiveHeaders(contentSecurityPolicyResponseHeaders, nullptr);
 }
 
 } // namespace WebCore

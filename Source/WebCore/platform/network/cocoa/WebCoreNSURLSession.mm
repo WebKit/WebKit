@@ -160,7 +160,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @dynamic networkProtocolName;
 - (nullable NSString *)networkProtocolName
 {
-    return _metrics.protocol.createNSString().autorelease();
+    return createNSString(_metrics.protocol).autorelease();
 }
 
 @dynamic reusedConnection;
@@ -971,7 +971,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, !resource || resource == self.resource || !self.resource);
 
     // FIXME: remove if <rdar://problem/20001985> is ever resolved.
-    return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
+    return isEmpty(response.httpHeaderField(HTTPHeaderName::ContentRange));
 }
 
 - (void)resource:(PlatformMediaResource*)resource receivedData:(RetainPtr<NSData>&&)data

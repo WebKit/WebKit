@@ -44,23 +44,23 @@ class StorageAreaImpl;
 
 class StorageAreaSync : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<StorageAreaSync, WTF::DestructionThread::Main> {
 public:
-    static Ref<StorageAreaSync> create(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, const String& databaseIdentifier);
+    static Ref<StorageAreaSync> create(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, StringImpl* databaseIdentifier);
     ~StorageAreaSync();
 
     void scheduleFinalSync();
     void blockUntilImportComplete();
 
-    void scheduleItemForSync(const String& key, const String& value);
+    void scheduleItemForSync(StringImpl* key, StringImpl* value);
     void scheduleClear();
     void scheduleCloseDatabase();
 
     void scheduleSync();
 
 private:
-    StorageAreaSync(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, const String& databaseIdentifier);
+    StorageAreaSync(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, StringImpl* databaseIdentifier);
 
     WebCore::Timer m_syncTimer;
-    HashMap<String, String> m_changedItems;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_changedItems;
     bool m_itemsCleared;
 
     bool m_finalSyncScheduled;
@@ -86,12 +86,12 @@ private:
 
     void syncTimerFired();
     void openDatabase(OpenDatabaseParamType openingStrategy);
-    void sync(bool clearItems, const HashMap<String, String>& items);
+    void sync(bool clearItems, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& items);
 
-    const String m_databaseIdentifier;
+    const RefPtr<StringImpl> m_databaseIdentifier;
 
     Lock m_syncLock;
-    HashMap<String, String> m_itemsPendingSync WTF_GUARDED_BY_LOCK(m_syncLock);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_itemsPendingSync WTF_GUARDED_BY_LOCK(m_syncLock);
     bool m_clearItemsWhileSyncing WTF_GUARDED_BY_LOCK(m_syncLock);
     bool m_syncScheduled WTF_GUARDED_BY_LOCK(m_syncLock);
     bool m_syncInProgress WTF_GUARDED_BY_LOCK(m_syncLock);

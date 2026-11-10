@@ -202,9 +202,9 @@ private:
     {
         ASSERT(documentLoader);
         if (!documentLoader->unreachableURL().isEmpty())
-            return documentLoader->unreachableURL().string().utf8();
+            return utf8(documentLoader->unreachableURL().string());
 
-        return documentLoader->url().string().utf8();
+        return utf8(documentLoader->url().string());
     }
 
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
@@ -243,7 +243,7 @@ private:
         if (!webKitFrame && !frame.isMainFrame())
             return;
 
-        const auto uri = frame.coreLocalFrame()->document()->url().string().utf8();
+        const auto uri = utf8(frame.coreLocalFrame()->document()->url().string());
 
         if (webKitFrame)
             webkitFrameSetURI(webKitFrame, uri);
@@ -297,7 +297,7 @@ private:
     WebKitWebPage* m_webPage;
 };
 
-static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSource source, MessageLevel level, StringImpl* message, unsigned lineNumber, StringImpl* sourceID)
 {
     WebKitConsoleMessage consoleMessage(source, level, message, lineNumber, sourceID);
     g_signal_emit(webPage, signals[CONSOLE_MESSAGE_SENT], 0, &consoleMessage);
@@ -330,7 +330,7 @@ private:
     {
         // Post on the console as well to be consistent with the inspector.
         if (response.httpStatusCode() >= httpStatus400BadRequest) {
-            String errorMessage = makeString("Failed to load resource: the server responded with a status of "_s, response.httpStatusCode(), " ("_s, response.httpStatusText(), ')');
+            RefPtr<StringImpl> errorMessage = makeString("Failed to load resource: the server responded with a status of "_s, response.httpStatusCode(), " ("_s, response.httpStatusText(), ')');
             webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
         }
     }
@@ -340,7 +340,7 @@ private:
         // Post on the console as well to be consistent with the inspector.
         if (!error.isCancellation()) {
             auto errorDescription = error.localizedDescription();
-            auto errorMessage = makeString("Failed to load resource"_s, errorDescription.isEmpty() ? ""_s : ": "_s, errorDescription);
+            auto errorMessage = makeString("Failed to load resource"_s, isEmpty(errorDescription) ? ""_s : ": "_s, errorDescription);
             webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, error.failingURL().string());
         }
     }
@@ -356,7 +356,7 @@ public:
     }
 
 private:
-    void willAddMessageToConsole(WebPage*, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned /*columnNumber*/, const String& sourceID) override
+    void willAddMessageToConsole(WebPage*, MessageSource source, MessageLevel level, StringImpl* message, unsigned lineNumber, unsigned /*columnNumber*/, StringImpl* sourceID) override
     {
         webkitWebPageDidSendConsoleMessage(m_webPage, source, level, message, lineNumber, sourceID);
     }
@@ -384,7 +384,7 @@ private:
         g_signal_emit(m_webPage, signals[CONTEXT_MENU], 0, contextMenu.get(), webHitTestResult.get(), &returnValue);
         if (GVariant* variant = webkit_context_menu_get_user_data(contextMenu.get())) {
             GUniquePtr<gchar> dataString(g_variant_print(variant, TRUE));
-            userData = API::String::create(String::fromUTF8(dataString.get()));
+            userData = API::String::create(StringImpl::fromUTF8(dataString.get()));
         }
 
         if (!returnValue)
@@ -405,7 +405,7 @@ public:
     {
     }
 
-    void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<API::Object>&) override
+    void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& values, RefPtr<API::Object>&) override
     {
         if (!formElement)
             return;
@@ -422,7 +422,7 @@ public:
 #endif
     }
 
-    void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) override
+    void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& values) override
     {
         if (!formElement)
             return;
@@ -462,7 +462,7 @@ public:
 
 private:
 #if !ENABLE(2022_GLIB_API)
-    void fireFormSubmissionEvent(WebKitFormSubmissionStep step, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values)
+    void fireFormSubmissionEvent(WebKitFormSubmissionStep step, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& values)
     {
         WebKitFrame* webkitTargetFrame = webkitFrameGetOrCreate(frame);
         WebKitFrame* webkitSourceFrame = webkitFrameGetOrCreate(sourceFrame);
@@ -470,8 +470,8 @@ private:
         GRefPtr<GPtrArray> textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         GRefPtr<GPtrArray> textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         for (auto& pair : values) {
-            g_ptr_array_add(textFieldNames.get(), gStrdup(pair.first.utf8()));
-            g_ptr_array_add(textFieldValues.get(), gStrdup(pair.second.utf8()));
+            g_ptr_array_add(textFieldNames.get(), gStrdup(utf8(pair.first)));
+            g_ptr_array_add(textFieldValues.get(), gStrdup(utf8(pair.second)));
         }
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN

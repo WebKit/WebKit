@@ -49,7 +49,7 @@ namespace XPath {
 
 struct Parser::Token {
     int type;
-    using TokenValue = Variant<String, Step::Axis, NumericOp::Opcode, EqTestOp::Opcode>;
+    using TokenValue = Variant<RefPtr<StringImpl>, Step::Axis, NumericOp::Opcode, EqTestOp::Opcode>;
     TokenValue value;
 
     Token() = delete;
@@ -61,7 +61,7 @@ struct Parser::Token {
         : type(type), value(WTF::move(value))
     { }
 
-    String& string() { return std::get<String>(value); }
+    RefPtr<StringImpl>& string() { return std::get<RefPtr<StringImpl>>(value); }
     Step::Axis axis() const { return std::get<Step::Axis>(value); }
     NumericOp::Opcode numericOpcode() const { return std::get<NumericOp::Opcode>(value); }
     EqTestOp::Opcode equalityTestOpcode() const { return std::get<EqTestOp::Opcode>(value); }
@@ -84,7 +84,7 @@ static XMLCat charCat(char16_t character)
     return NotPartOfName;
 }
 
-static MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> createAxisNamesMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, Step::Axis> createAxisNamesMap()
 {
     struct AxisName {
         ASCIILiteral name;
@@ -105,13 +105,13 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> createAxisNam
         { "preceding-sibling"_s, Step::PrecedingSiblingAxis },
         { "self"_s, Step::SelfAxis }
     });
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, Step::Axis> map;
     for (auto& axisName : axisNameList)
         map.add(axisName.name, axisName.axis);
     return map;
 }
 
-static bool parseAxisName(const String& name, Step::Axis& type)
+static bool parseAxisName(StringImpl* name, Step::Axis& type)
 {
     static NeverDestroyed axisNames = createAxisNamesMap();
     auto it = axisNames.get().find(name);
@@ -142,7 +142,7 @@ bool Parser::isBinaryOperatorContext() const
 // See https://www.w3.org/TR/1999/REC-xpath-19991116/#NT-ExprWhitespace .
 void Parser::skipWS()
 {
-    while (m_nextPos < m_data.length() && isASCIIWhitespaceWithoutFF(m_data[m_nextPos]))
+    while (m_nextPos < length(m_data) && isASCIIWhitespaceWithoutFF(codeUnitAt(m_data, m_nextPos)))
         ++m_nextPos;
 }
 
@@ -167,9 +167,9 @@ Parser::Token Parser::makeTokenAndAdvance(int code, EqTestOp::Opcode val, int ad
 // Returns next char if it's there and interesting, 0 otherwise.
 char Parser::peekAheadHelper()
 {
-    if (m_nextPos + 1 >= m_data.length())
+    if (m_nextPos + 1 >= length(m_data))
         return 0;
-    char16_t next = m_data[m_nextPos + 1];
+    char16_t next = codeUnitAt(m_data, m_nextPos + 1);
     if (next >= 0xff)
         return 0;
     return next;
@@ -177,9 +177,9 @@ char Parser::peekAheadHelper()
 
 char Parser::peekCurHelper()
 {
-    if (m_nextPos >= m_data.length())
+    if (m_nextPos >= length(m_data))
         return 0;
-    char16_t next = m_data[m_nextPos];
+    char16_t next = codeUnitAt(m_data, m_nextPos);
     if (next >= 0xff)
         return 0;
     return next;
@@ -187,13 +187,13 @@ char Parser::peekCurHelper()
 
 Parser::Token Parser::lexString()
 {
-    char16_t delimiter = m_data[m_nextPos];
+    char16_t delimiter = codeUnitAt(m_data, m_nextPos);
     int startPos = m_nextPos + 1;
 
-    for (m_nextPos = startPos; m_nextPos < m_data.length(); ++m_nextPos) {
-        if (m_data[m_nextPos] == delimiter) {
-            String value = m_data.substring(startPos, m_nextPos - startPos);
-            if (value.isNull())
+    for (m_nextPos = startPos; m_nextPos < length(m_data); ++m_nextPos) {
+        if (codeUnitAt(m_data, m_nextPos) == delimiter) {
+            RefPtr<StringImpl> value = substring(m_data, startPos, m_nextPos - startPos);
+            if (!value)
                 value = emptyString();
             ++m_nextPos; // Consume the char.
             return Token(LITERAL, value);
@@ -210,8 +210,8 @@ Parser::Token Parser::lexNumber()
     bool seenDot = false;
 
     // Go until end or a non-digits character.
-    for (; m_nextPos < m_data.length(); ++m_nextPos) {
-        char16_t aChar = m_data[m_nextPos];
+    for (; m_nextPos < length(m_data); ++m_nextPos) {
+        char16_t aChar = codeUnitAt(m_data, m_nextPos);
         if (aChar >= 0xff) break;
 
         if (!isASCIIDigit(aChar)) {
@@ -222,30 +222,30 @@ Parser::Token Parser::lexNumber()
         }
     }
 
-    return Token(NUMBER, m_data.substring(startPos, m_nextPos - startPos));
+    return Token(NUMBER, substring(m_data, startPos, m_nextPos - startPos));
 }
 
-bool Parser::lexNCName(String& name)
+bool Parser::lexNCName(RefPtr<StringImpl>& name)
 {
     int startPos = m_nextPos;
-    if (m_nextPos >= m_data.length())
+    if (m_nextPos >= length(m_data))
         return false;
 
-    if (charCat(m_data[m_nextPos]) != NameStart)
+    if (charCat(codeUnitAt(m_data, m_nextPos)) != NameStart)
         return false;
 
     // Keep going until we get a character that's not good for names.
-    for (; m_nextPos < m_data.length(); ++m_nextPos)
-        if (charCat(m_data[m_nextPos]) == NotPartOfName)
+    for (; m_nextPos < length(m_data); ++m_nextPos)
+        if (charCat(codeUnitAt(m_data, m_nextPos)) == NotPartOfName)
             break;
 
-    name = m_data.substring(startPos, m_nextPos - startPos);
+    name = substring(m_data, startPos, m_nextPos - startPos);
     return true;
 }
 
-bool Parser::lexQName(String& name)
+bool Parser::lexQName(RefPtr<StringImpl>& name)
 {
-    String n1;
+    RefPtr<StringImpl> n1;
     if (!lexNCName(n1))
         return false;
 
@@ -258,7 +258,7 @@ bool Parser::lexQName(String& name)
         return true;
     }
 
-    String n2;
+    RefPtr<StringImpl> n2;
     if (!lexNCName(n2))
         return false;
 
@@ -270,7 +270,7 @@ inline Parser::Token Parser::nextTokenInternal()
 {
     skipWS();
 
-    if (m_nextPos >= m_data.length())
+    if (m_nextPos >= length(m_data))
         return Token(0);
 
     char code = peekCurHelper();
@@ -321,27 +321,27 @@ inline Parser::Token Parser::nextTokenInternal()
         return Token(NAMETEST, "*"_s);
     case '$': { // $ QName
         m_nextPos++;
-        String name;
+        RefPtr<StringImpl> name;
         if (!lexQName(name))
             return Token(XPATH_ERROR);
         return Token(VARIABLEREFERENCE, name);
     }
     }
 
-    String name;
+    RefPtr<StringImpl> name;
     if (!lexNCName(name))
         return Token(XPATH_ERROR);
 
     skipWS();
     // If we're in an operator context, check for any operator names
     if (isBinaryOperatorContext()) {
-        if (name == "and"_s) // ### hash?
+        if (equal(name, "and"_s)) // ### hash?
             return Token(AND);
-        if (name == "or"_s)
+        if (equal(name, "or"_s))
             return Token(OR);
-        if (name == "mod"_s)
+        if (equal(name, "mod"_s))
             return Token(MULOP, NumericOp::Opcode::Mod);
-        if (name == "div"_s)
+        if (equal(name, "div"_s))
             return Token(MULOP, NumericOp::Opcode::Div);
     }
 
@@ -368,7 +368,7 @@ inline Parser::Token Parser::nextTokenInternal()
         }
         
         // Make a full qname.
-        String n2;
+        RefPtr<StringImpl> n2;
         if (!lexNCName(n2))
             return Token(XPATH_ERROR);
         
@@ -382,13 +382,13 @@ inline Parser::Token Parser::nextTokenInternal()
 
         // Either node type oor function name.
 
-        if (name == "processing-instruction"_s)
+        if (equal(name, "processing-instruction"_s))
             return Token(PI);
-        if (name == "node"_s)
+        if (equal(name, "node"_s))
             return Token(NODE);
-        if (name == "text"_s)
+        if (equal(name, "text"_s))
             return Token(TEXT_);
-        if (name == "comment"_s)
+        if (equal(name, "comment"_s))
             return Token(COMMENT);
 
         return Token(FUNCTIONNAME, name);
@@ -405,7 +405,7 @@ inline Parser::Token Parser::nextToken()
     return token;
 }
 
-Parser::Parser(const String& statement, RefPtr<XPathNSResolver>&& resolver)
+Parser::Parser(StringImpl* statement, RefPtr<XPathNSResolver>&& resolver)
     : m_data(statement)
     , m_resolver(WTF::move(resolver))
 {
@@ -432,33 +432,33 @@ int Parser::lex(YYSTYPE& yylval)
     case VARIABLEREFERENCE:
     case NUMBER:
     case NAMETEST:
-        yylval.string = token.string().releaseImpl().leakRef();
+        yylval.string = WTF::move(token.string()).leakRef();
         break;
     }
 
     return token.type;
 }
 
-bool Parser::expandQualifiedName(const String& qualifiedName, AtomString& localName, AtomString& namespaceURI)
+bool Parser::expandQualifiedName(StringImpl* qualifiedName, RefPtr<AtomStringImpl>& localName, RefPtr<AtomStringImpl>& namespaceURI)
 {
-    size_t colon = qualifiedName.find(':');
+    size_t colon = find(qualifiedName, ':');
     if (colon != notFound) {
         if (!m_resolver) {
             m_sawNamespaceError = true;
             return false;
         }
         namespaceURI = m_resolver->lookupNamespaceURI(StringView(qualifiedName).left(colon).toAtomString());
-        if (namespaceURI.isNull()) {
+        if (!namespaceURI) {
             m_sawNamespaceError = true;
             return false;
         }
         localName = StringView(qualifiedName).substring(colon + 1).toAtomString();
     } else
-        localName = AtomString { qualifiedName };
+        localName = AtomStringImpl::add(qualifiedName);
     return true;
 }
 
-ExceptionOr<std::unique_ptr<Expression>> Parser::parseStatement(const String& statement, RefPtr<XPathNSResolver>&& resolver)
+ExceptionOr<std::unique_ptr<Expression>> Parser::parseStatement(StringImpl* statement, RefPtr<XPathNSResolver>&& resolver)
 {
     Parser parser { statement, WTF::move(resolver) };
 

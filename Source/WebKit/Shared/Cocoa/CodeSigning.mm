@@ -35,17 +35,17 @@
 
 namespace WebKit {
 
-static String codeSigningIdentifier(SecTaskRef task)
+static RefPtr<StringImpl> codeSigningIdentifier(SecTaskRef task)
 {
-    return adoptCF(SecTaskCopySigningIdentifier(task, nullptr)).get();
+    return StringImpl::create(adoptCF(SecTaskCopySigningIdentifier(task, nullptr)).get());
 }
 
-String codeSigningIdentifierForCurrentProcess()
+RefPtr<StringImpl> codeSigningIdentifierForCurrentProcess()
 {
     return codeSigningIdentifier(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get());
 }
 
-String codeSigningIdentifier(xpc_connection_t connection)
+RefPtr<StringImpl> codeSigningIdentifier(xpc_connection_t connection)
 {
     auto pair = codeSigningIdentifierAndPlatformBinaryStatus(connection);
     return pair.first;
@@ -57,7 +57,7 @@ bool currentProcessIsPlatformBinary()
     return SecTaskGetCodeSignStatus(task.get()) & CS_PLATFORM_BINARY;
 }
 
-static std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(audit_token_t auditToken)
+static std::pair<RefPtr<StringImpl>, bool> codeSigningIdentifierAndPlatformBinaryStatus(audit_token_t auditToken)
 {
     auto task = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, auditToken));
     bool isPlatformBinary = SecTaskGetCodeSignStatus(task.get()) & CS_PLATFORM_BINARY;
@@ -65,7 +65,7 @@ static std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(audi
     return std::make_pair(signingIdentifier, isPlatformBinary);
 }
 
-std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connection_t connection)
+std::pair<RefPtr<StringImpl>, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connection_t connection)
 {
     audit_token_t auditToken;
     xpc_connection_get_audit_token(connection, &auditToken);
@@ -73,7 +73,7 @@ std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connect
     return codeSigningIdentifierAndPlatformBinaryStatus(auditToken);
 }
 
-String codeSigningIdentifier(audit_token_t token)
+RefPtr<StringImpl> codeSigningIdentifier(audit_token_t token)
 {
     auto pair = codeSigningIdentifierAndPlatformBinaryStatus(token);
     return pair.first;

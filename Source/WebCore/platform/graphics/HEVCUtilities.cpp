@@ -81,7 +81,7 @@ std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
     return parameters;
 }
 
-String createAVCCodecParametersString(const AVCParameters& parameters)
+RefPtr<StringImpl> createAVCCodecParametersString(const AVCParameters& parameters)
 {
     // The format of the 'avc1' codec string is specified in ISO/IEC 14496-15:2014, Annex E.2.
     return makeString("avc1."_s
@@ -210,7 +210,7 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     return parameters;
 }
 
-String createHEVCCodecParametersString(const HEVCParameters& parameters)
+RefPtr<StringImpl> createHEVCCodecParametersString(const HEVCParameters& parameters)
 {
     // For the second parameter, from ISO/IEC 14496-15:2014, Annex E.3.
     // * the 32 bits of the general_profile_compatibility_flags, but in reverse bit order, i.e. with
@@ -449,7 +449,7 @@ std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBu
     return parameters;
 }
 
-String createDoViCodecParametersString(const DoViParameters& parameters)
+RefPtr<StringImpl> createDoViCodecParametersString(const DoViParameters& parameters)
 {
     // The format of the DoVi codec string is specified in "Dolby Vision Profiles and Levels Version 1.3.2"
     StringBuilder builder;

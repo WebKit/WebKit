@@ -43,7 +43,7 @@ unsigned DragData::numberOfFiles() const
     return !m_disallowFileAccess ? m_platformDragData->filenames().size() : 0;
 }
 
-Vector<String> DragData::asFilenames() const
+Vector<RefPtr<StringImpl>> DragData::asFilenames() const
 {
     if (m_disallowFileAccess)
         return { };
@@ -55,7 +55,7 @@ bool DragData::containsPlainText() const
     return m_platformDragData->hasText();
 }
 
-String DragData::asPlainText() const
+RefPtr<StringImpl> DragData::asPlainText() const
 {
     return m_platformDragData->text();
 }
@@ -72,13 +72,13 @@ bool DragData::containsCompatibleContent(DraggingPurpose) const
 
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-    return !asURL(filenamePolicy).isEmpty();
+    return !isEmpty(asURL(filenamePolicy));
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+RefPtr<StringImpl> DragData::asURL(FilenameConversionPolicy filenamePolicy, RefPtr<StringImpl>* title) const
 {
     if (!m_platformDragData->hasURL())
-        return String();
+        return nullptr;
     if (filenamePolicy != ConvertFilenames) {
         if (m_platformDragData->url().protocolIsFile())
             return { };

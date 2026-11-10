@@ -52,7 +52,7 @@ public:
 
     // MediaPlayer Engine Support
     WEBCORE_EXPORT static void registerMediaEngine(MediaEngineRegistrar);
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     virtual ~MockMediaPlayerMediaSource();
@@ -78,7 +78,7 @@ public:
 
 private:
     // MediaPlayerPrivate Overrides
-    void load(const String& url) override;
+    void load(StringImpl* url) override;
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override { }

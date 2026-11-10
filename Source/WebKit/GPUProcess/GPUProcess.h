@@ -124,9 +124,9 @@ public:
 
     GPUConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
-    NODELETE const String& mediaCacheDirectory(PAL::SessionID) const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& mediaCacheDirectory(PAL::SessionID) const LIFETIME_BOUND;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    NODELETE const String& mediaKeysStorageDirectory(PAL::SessionID) const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& mediaKeysStorageDirectory(PAL::SessionID) const LIFETIME_BOUND;
 #endif
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
@@ -152,7 +152,7 @@ public:
     void didApplyCaptureEnvironment(WebCore::ProcessIdentifier, WebCore::PageIdentifier);
     bool setCaptureAttributionString(const WebCore::SecurityOriginData&);
 #if ENABLE(APP_PRIVACY_REPORT) && !PLATFORM(MACCATALYST)
-    bool setCaptureTCCIdentity(const String& fallbackBundleIdentifier);
+    bool setCaptureTCCIdentity(StringImpl* fallbackBundleIdentifier);
 #endif
 #endif
 
@@ -166,10 +166,10 @@ public:
 
     void tryExitIfUnusedAndUnderMemoryPressure();
 
-    const String& applicationVisibleName() const LIFETIME_BOUND { return m_applicationVisibleName; }
+    const RefPtr<StringImpl>& applicationVisibleName() const LIFETIME_BOUND { return m_applicationVisibleName; }
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
-    void runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&&);
+    void runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<RefPtr<StringImpl>>>&&)>&&);
 #if PLATFORM(COCOA)
     void printProcessDrawingCountsForTesting(CompletionHandler<void(uint64_t drawnInPrintProcess, uint64_t drawnAfterPrintProcessFailed)>&&);
 #endif
@@ -214,8 +214,8 @@ public:
     void requestSharedSimulationConnection(CoreIPCAuditToken&&, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
 #endif
 #if HAVE(TASK_IDENTITY_TOKEN)
-    void createMemoryAttributionIDForTask(WebCore::ProcessIdentity, CompletionHandler<void(const std::optional<String>&)>&&);
-    void unregisterMemoryAttributionID(const String&, CompletionHandler<void()>&&);
+    void createMemoryAttributionIDForTask(WebCore::ProcessIdentity, CompletionHandler<void(const std::optional<RefPtr<StringImpl>>&)>&&);
+    void unregisterMemoryAttributionID(StringImpl*, CompletionHandler<void()>&&);
 #endif
 #endif
 
@@ -269,23 +269,23 @@ private:
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
 
     NODELETE bool updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference);
-    void userPreferredLanguagesChanged(Vector<String>&&);
+    void userPreferredLanguagesChanged(Vector<RefPtr<StringImpl>>&&);
 
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
     void enableMicrophoneMuteStatusAPI();
     void setOrientationForMediaCapture(WebCore::IntDegrees);
-    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void rotationAngleForCaptureDeviceChanged(StringImpl*, WebCore::VideoFrameRotation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
 #if PLATFORM(COCOA)
-    void startCapturePreview(std::optional<WebCore::CaptureDevice>&& videoDevice, std::optional<WebCore::CaptureDevice>&& audioDevice, WebCore::PageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, Vector<SandboxExtension::Handle>&&, String&& applicationBundleIdentifier, WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::HostingContext)>&&);
+    void startCapturePreview(std::optional<WebCore::CaptureDevice>&& videoDevice, std::optional<WebCore::CaptureDevice>&& audioDevice, WebCore::PageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, Vector<SandboxExtension::Handle>&&, RefPtr<StringImpl>&& applicationBundleIdentifier, WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::HostingContext)>&&);
     void stopCapturePreview(WebCore::PageIdentifier, CompletionHandler<void()>&&);
 #endif
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
-    void removeMockMediaDevice(const String&);
-    void setMockMediaDeviceIsEphemeral(const String&, bool);
+    void removeMockMediaDevice(StringImpl*);
+    void setMockMediaDeviceIsEphemeral(StringImpl*, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay);
@@ -321,7 +321,7 @@ private:
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
+    void dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key) final;
 #endif
 
 #if PLATFORM(MAC)
@@ -379,9 +379,9 @@ private:
     HashMap<WebCore::ImageBufferTransferIdentifier, TransferredImageBuffer> m_transferredImageBuffers WTF_GUARDED_BY_LOCK(m_globalResourceLocker);
 
     struct GPUSession {
-        String mediaCacheDirectory;
+        RefPtr<StringImpl> mediaCacheDirectory;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-        String mediaKeysStorageDirectory;
+        RefPtr<StringImpl> mediaKeysStorageDirectory;
 #endif
     };
     HashMap<PAL::SessionID, GPUSession> m_sessions;
@@ -395,9 +395,9 @@ private:
     std::optional<NowPlayingOwner> m_activeNowPlayingOwner;
     std::optional<WebCore::QualifiedMediaSessionIdentifier> m_nowPlayingFallbackSession;
     std::optional<WebCore::QualifiedMediaSessionIdentifier> m_remoteCommandTarget;
-    String m_applicationVisibleName;
+    RefPtr<StringImpl> m_applicationVisibleName;
 #if PLATFORM(MAC)
-    String m_uiProcessName;
+    RefPtr<StringImpl> m_uiProcessName;
 #endif
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable RefPtr<RemoteAudioSessionProxyManager> m_audioSessionManager;

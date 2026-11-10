@@ -44,7 +44,7 @@ WebAlternativeTextClient::~WebAlternativeTextClient()
 }
 
 #if USE(AUTOCORRECTION_PANEL)
-void WebAlternativeTextClient::showCorrectionAlternative(WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void WebAlternativeTextClient::showCorrectionAlternative(WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacementString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings)
 {
     m_correctionPanel.show(protect(m_webView), type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
@@ -54,7 +54,7 @@ void WebAlternativeTextClient::dismissAlternative(WebCore::ReasonForDismissingAl
     m_correctionPanel.dismiss(reason);
 }
 
-String WebAlternativeTextClient::dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText reason)
+RefPtr<StringImpl> WebAlternativeTextClient::dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText reason)
 {
     return m_correctionPanel.dismiss(reason);
 }
@@ -74,7 +74,7 @@ NODELETE static inline NSCorrectionResponse toCorrectionResponse(WebCore::Autoco
     return NSCorrectionResponseAccepted;
 }
 
-void WebAlternativeTextClient::recordAutocorrectionResponse(WebCore::AutocorrectionResponse response, const String& replacedString, const String& replacementString)
+void WebAlternativeTextClient::recordAutocorrectionResponse(WebCore::AutocorrectionResponse response, StringImpl* replacedString, StringImpl* replacementString)
 {
     CorrectionPanel::recordAutocorrectionResponse([protect(m_webView) spellCheckerDocumentTag], toCorrectionResponse(response), replacedString, replacementString);
 }
@@ -90,7 +90,7 @@ void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRe
     [protect(m_webView) _showDictationAlternativeUI:boundingBoxOfDictatedText forDictationContext:dictationContext];
 }
 
-Vector<String> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
+Vector<RefPtr<StringImpl>> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
     return [protect(m_webView) _dictationAlternatives:dictationContext];
 }

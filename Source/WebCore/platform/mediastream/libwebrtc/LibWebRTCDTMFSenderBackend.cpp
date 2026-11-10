@@ -36,9 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDTMFSenderBackend);
 
-static inline String toWTFString(const std::string& value)
+static inline RefPtr<StringImpl> toWTFString(const std::string& value)
 {
-    return String::fromUTF8(value);
+    return StringImpl::fromUTF8(value);
 }
 
 LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend(Ref<webrtc::DtmfSenderInterface>&& sender)
@@ -63,7 +63,7 @@ void LibWebRTCDTMFSenderBackend::playTone(const char tone, size_t duration, size
     ASSERT_UNUSED(ok, ok);
 }
 
-String LibWebRTCDTMFSenderBackend::tones() const
+RefPtr<StringImpl> LibWebRTCDTMFSenderBackend::tones() const
 {
     return toWTFString(m_sender->tones());
 }

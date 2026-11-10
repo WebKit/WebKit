@@ -37,17 +37,17 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::General, IsSanitized isSanitized = IsSanitized::No)
+    ResourceError(StringImpl* domain, int errorCode, const URL& failingURL, StringImpl* localizedDescription, Type type = Type::General, IsSanitized isSanitized = IsSanitized::No)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
     {
     }
 
     struct IPCData {
         Type type;
-        String domain;
+        RefPtr<StringImpl> domain;
         int errorCode;
         URL failingURL;
-        String localizedDescription;
+        RefPtr<StringImpl> localizedDescription;
         IsSanitized isSanitized;
     };
     WEBCORE_EXPORT static ResourceError fromIPCData(std::optional<IPCData>&&);

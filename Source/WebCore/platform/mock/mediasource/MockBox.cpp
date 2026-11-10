@@ -47,7 +47,7 @@ MockBox::MockBox(ArrayBuffer* data)
     ASSERT(m_length >= 8);
 }
 
-String MockBox::peekType(ArrayBuffer* data)
+RefPtr<StringImpl> MockBox::peekType(ArrayBuffer* data)
 {
     StringBuilder builder;
     auto array = JSC::Int8Array::create(data, 0, 4);
@@ -79,9 +79,9 @@ MockTrackBox::MockTrackBox(ArrayBuffer* data)
     m_kind = static_cast<TrackKind>(view->get<uint8_t>(16, true));
 }
 
-const String& MockTrackBox::type()
+const RefPtr<StringImpl>& MockTrackBox::type()
 {
-    static NeverDestroyed<String> trak(MAKE_STATIC_STRING_IMPL("trak"));
+    static NeverDestroyed<RefPtr<StringImpl>> trak(MAKE_STATIC_STRING_IMPL("trak"));
     return trak;
 }
 
@@ -99,7 +99,7 @@ MockInitializationBox::MockInitializationBox(ArrayBuffer* data)
 
     while (offset < m_length) {
         auto subBuffer = data->slice(offset);
-        if (MockBox::peekType(subBuffer.get()) != MockTrackBox::type())
+        if (!equal(MockBox::peekType(subBuffer.get()), MockTrackBox::type()))
             break;
 
         MockTrackBox trackBox(subBuffer.get());
@@ -108,9 +108,9 @@ MockInitializationBox::MockInitializationBox(ArrayBuffer* data)
     }
 }
 
-const String& MockInitializationBox::type()
+const RefPtr<StringImpl>& MockInitializationBox::type()
 {
-    static NeverDestroyed<String> init(MAKE_STATIC_STRING_IMPL("init"));
+    static NeverDestroyed<RefPtr<StringImpl>> init(MAKE_STATIC_STRING_IMPL("init"));
     return init;
 }
 
@@ -136,9 +136,9 @@ MockSampleBox::MockSampleBox(ArrayBuffer* data)
     m_generation = view->get<uint8_t>(29, true);
 }
 
-const String& MockSampleBox::type()
+const RefPtr<StringImpl>& MockSampleBox::type()
 {
-    static NeverDestroyed<String> smpl(MAKE_STATIC_STRING_IMPL("smpl"));
+    static NeverDestroyed<RefPtr<StringImpl>> smpl(MAKE_STATIC_STRING_IMPL("smpl"));
     return smpl;
 }
 

@@ -86,7 +86,7 @@ using UnresolvedFontSize = Variant<CSSValueID, CSS::LengthPercentage<CSS::Nonneg
 using UnresolvedFontLineHeight = Variant<CSSValueID, CSS::Number<CSS::Nonnegative>, CSS::LengthPercentage<CSS::Nonnegative>>;
 
 // [ <family-name> | <generic-family> ]#
-using UnresolvedFontFamilyName = Variant<CSSValueID, AtomString>;
+using UnresolvedFontFamilyName = Variant<CSSValueID, RefPtr<AtomStringImpl>>;
 using UnresolvedFontFamily = Vector<UnresolvedFontFamilyName>;
 
 struct UnresolvedFont {
@@ -115,7 +115,7 @@ RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&, CSS::PropertyParserStat
 RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&, CSS::PropertyParserState&);
 // Sub-production of 'font-family': <generic-family>
 // https://drafts.csswg.org/css-fonts-4/#generic-family-name-syntax
-NODELETE const AtomString& genericFontFamily(CSSValueID);
+NODELETE const RefPtr<AtomStringImpl>& genericFontFamily(CSSValueID);
 NODELETE WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 // MARK: 'font-size-adjust'
@@ -138,7 +138,7 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, CSS::PropertyParse
 Vector<FontTechnology> consumeFontTech(CSSParserTokenRange&, CSS::PropertyParserState&, bool singleValue = false);
 // Sub-production of 'src': <font-format>
 // https://drafts.csswg.org/css-fonts-4/#font-format-values
-String consumeFontFormat(CSSParserTokenRange&, CSS::PropertyParserState&, bool rejectStringValues = false);
+RefPtr<StringImpl> consumeFontFormat(CSSParserTokenRange&, CSS::PropertyParserState&, bool rejectStringValues = false);
 
 // MARK: @font-face 'size-adjust'
 // https://drafts.csswg.org/css-fonts-5/#descdef-font-face-size-adjust
@@ -190,7 +190,7 @@ RefPtr<CSSValue> parseFontFaceFontWeight(StringView, ScriptExecutionContext&);
 
 // MARK: @font-feature-values 'prelude family name list'
 // https://drafts.csswg.org/css-fonts-4/#font-feature-values-syntax
-Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange&, const CSSParserContext&);
+Vector<RefPtr<AtomStringImpl>> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange&, const CSSParserContext&);
 
 // Template and inline implementations are at the bottom of the file for readability.
 

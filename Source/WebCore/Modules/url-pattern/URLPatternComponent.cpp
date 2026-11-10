@@ -59,7 +59,7 @@ URLPatternComponent& URLPatternComponent::operator=(URLPatternComponent&& other)
     return *this;
 }
 
-URLPatternComponent::URLPatternComponent(String&& patternString, std::optional<CompiledPattern>&& compiled, Vector<String>&& groupNameList, bool hasRegexpGroupsFromPartsList)
+URLPatternComponent::URLPatternComponent(RefPtr<StringImpl>&& patternString, std::optional<CompiledPattern>&& compiled, Vector<RefPtr<StringImpl>>&& groupNameList, bool hasRegexpGroupsFromPartsList)
     : m_patternString(WTF::move(patternString))
     , m_compiledPattern(WTF::move(compiled))
     , m_groupNameList(WTF::move(groupNameList))
@@ -67,7 +67,7 @@ URLPatternComponent::URLPatternComponent(String&& patternString, std::optional<C
 {
 }
 
-URLPatternComponent::URLPatternComponent(String&& patternString, std::optional<URLPatternPartListMatcher>&& partListMatcher, Vector<String>&& groupNameList, bool hasRegexpGroupsFromPartsList)
+URLPatternComponent::URLPatternComponent(RefPtr<StringImpl>&& patternString, std::optional<URLPatternPartListMatcher>&& partListMatcher, Vector<RefPtr<StringImpl>>&& groupNameList, bool hasRegexpGroupsFromPartsList)
     : m_patternString(WTF::move(patternString))
     , m_partListMatcher(WTF::move(partListMatcher))
     , m_groupNameList(WTF::move(groupNameList))
@@ -97,12 +97,12 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(StringView input, 
     auto allocator = makeUniqueRef<WTF::BumpPointerAllocator>();
     auto bytecode = JSC::Yarr::byteCompile(yarrPattern, allocator.ptr(), errorCode, nullptr);
     if (JSC::Yarr::hasError(errorCode) || !bytecode)
-        return Exception { ExceptionCode::TypeError, "Unable to compile RegExp bytecode from provided URLPattern string."_s };
+        return Exception { ExceptionCode::TypeError, "Unable to compile RegExp bytecode from provided URLPattern string."_si };
 
     // The output offset vector must hold at least (numSubpatterns + 1) * 2 capture offsets.
     ASSERT(bytecode->m_offsetsSize >= (yarrPattern.m_numSubpatterns + 1) * 2);
 
-    String patternString = generatePatternString(partList, options);
+    RefPtr<StringImpl> patternString = generatePatternString(partList, options);
     bool hasRegexGroups = partList.containsIf([](auto& part) {
         return part.type == PartType::Regexp;
     });
@@ -123,15 +123,15 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compileWithoutRegExp(Strin
         return part.type == PartType::Regexp;
     });
     if (hasRegexGroups)
-        return Exception { ExceptionCode::TypeError, "URLPattern contains a regular expression group, which is not supported without a regular-expression engine."_s };
+        return Exception { ExceptionCode::TypeError, "URLPattern contains a regular expression group, which is not supported without a regular-expression engine."_si };
 
-    Vector<String> nameList;
+    Vector<RefPtr<StringImpl>> nameList;
     for (auto& part : partList) {
         if (part.type != PartType::FixedText)
             nameList.append(part.name);
     }
 
-    String patternString = generatePatternString(partList, options);
+    RefPtr<StringImpl> patternString = generatePatternString(partList, options);
 
     URLPatternPartListMatcher partListMatcher { WTF::move(partList), options };
 
@@ -177,7 +177,7 @@ std::optional<Vector<unsigned>> URLPatternComponent::componentExec(StringView co
 }
 
 // https://urlpattern.spec.whatwg.org/#create-a-component-match-result
-URLPatternComponentResult URLPatternComponent::createComponentMatchResult(String&& input, const Vector<unsigned>& offsets) const
+URLPatternComponentResult URLPatternComponent::createComponentMatchResult(RefPtr<StringImpl>&& input, const Vector<unsigned>& offsets) const
 {
     URLPatternComponentResult::GroupsRecord groups;
 
@@ -188,14 +188,14 @@ URLPatternComponentResult URLPatternComponent::createComponentMatchResult(String
         unsigned start = offsets[offsetIndex++];
         unsigned end = offsets[offsetIndex++];
 
-        Variant<std::monostate, String> value;
+        Variant<std::monostate, RefPtr<StringImpl>> value;
         if (start != std::numeric_limits<unsigned>::max() && end != std::numeric_limits<unsigned>::max())
             value = StringView(input).substring(start, end - start).toString();
 
         groups.append(URLPatternComponentResult::NameMatchPair { m_groupNameList[index], WTF::move(value) });
     }
 
-    return URLPatternComponentResult { !input.isEmpty() ? WTF::move(input) : emptyString(), WTF::move(groups) };
+    return URLPatternComponentResult { !isEmpty(input) ? WTF::move(input) : emptyString(), WTF::move(groups) };
 }
 
 }

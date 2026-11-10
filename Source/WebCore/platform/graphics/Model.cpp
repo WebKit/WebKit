@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-Ref<Model> Model::create(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
+Ref<Model> Model::create(Ref<SharedBuffer>&& data, RefPtr<StringImpl>&& mimeType, URL url, bool isConverted)
 {
     return adoptRef(*new Model(WTF::move(data), WTF::move(mimeType), WTF::move(url), isConverted));
 }
 
-Model::Model(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
+Model::Model(Ref<SharedBuffer>&& data, RefPtr<StringImpl>&& mimeType, URL url, bool isConverted)
     : m_data(WTF::move(data))
     , m_mimeType(WTF::move(mimeType))
     , m_url(WTF::move(url))
@@ -46,14 +46,14 @@ Model::Model(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConver
 
 Model::~Model() = default;
 
-String Model::filename() const
+RefPtr<StringImpl> Model::filename() const
 {
-    String filename = m_url.lastPathComponent().toString();
+    RefPtr<StringImpl> filename = m_url.lastPathComponent().toString();
     if (m_isConverted) {
         static constexpr auto usdzExtension = "usdz"_s;
-        size_t dotPosition = filename.reverseFind('.');
+        size_t dotPosition = reverseFind(filename, '.');
         if (dotPosition != notFound)
-            return makeString(filename.left(dotPosition + 1), usdzExtension);
+            return makeString(left(filename, dotPosition + 1), usdzExtension);
         return makeString(filename, '.', usdzExtension);
     }
     return filename;

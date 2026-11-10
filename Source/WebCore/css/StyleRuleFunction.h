@@ -36,24 +36,24 @@ class MutableStyleProperties;
 class StyleRuleFunction final : public StyleRuleGroup {
 public:
     struct Parameter {
-        AtomString name;
+        RefPtr<AtomStringImpl> name;
         CSSCustomPropertySyntax type;
         RefPtr<CSSVariableData> defaultValue;
     };
 
-    NODELETE static Ref<StyleRuleFunction> create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
+    NODELETE static Ref<StyleRuleFunction> create(AtomStringImpl* name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
 
     Ref<StyleRuleFunction> copy() const { return adoptRef(*new StyleRuleFunction(*this)); }
 
-    AtomString name() const { return m_name; }
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_name; }
     const Vector<Parameter>& parameters() const LIFETIME_BOUND { return m_parameters; }
     const CSSCustomPropertySyntax& returnType() const LIFETIME_BOUND { return m_returnType; }
 
 private:
-    StyleRuleFunction(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
+    StyleRuleFunction(AtomStringImpl* name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleFunction(const StyleRuleFunction&);
 
-    const AtomString m_name;
+    const RefPtr<AtomStringImpl> m_name;
     const Vector<Parameter> m_parameters;
     const CSSCustomPropertySyntax m_returnType;
 };

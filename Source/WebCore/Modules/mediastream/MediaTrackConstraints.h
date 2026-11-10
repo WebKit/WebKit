@@ -41,8 +41,8 @@ struct ConstrainBooleanParameters {
 };
 
 struct ConstrainDOMStringParameters {
-    std::optional<Variant<String, Vector<String>>> exact;
-    std::optional<Variant<String, Vector<String>>> ideal;
+    std::optional<Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>> exact;
+    std::optional<Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>> ideal;
 };
 
 struct ConstrainDoubleRange : DoubleRange {
@@ -56,7 +56,7 @@ struct ConstrainLongRange : LongRange {
 };
 
 using ConstrainBoolean = Variant<bool, ConstrainBooleanParameters>;
-using ConstrainDOMString = Variant<String, Vector<String>, ConstrainDOMStringParameters>;
+using ConstrainDOMString = Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>, ConstrainDOMStringParameters>;
 using ConstrainDouble = Variant<double, ConstrainDoubleRange>;
 using ConstrainLong = Variant<int, ConstrainLongRange>;
 

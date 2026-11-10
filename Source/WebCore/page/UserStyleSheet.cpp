@@ -55,13 +55,13 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void crashDueToApplicationCreatingUse
 }
 #endif
 
-NODELETE static HashCountedSet<String>& styleStrings()
+NODELETE static HashCountedSet<RefPtr<StringImpl>>& styleStrings()
 {
-    static NeverDestroyed<HashCountedSet<String>> set;
+    static NeverDestroyed<HashCountedSet<RefPtr<StringImpl>>> set;
     return set;
 }
 
-static String internedStyleString(const String& string)
+static RefPtr<StringImpl> internedStyleString(StringImpl* string)
 {
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning))
@@ -72,14 +72,14 @@ static String internedStyleString(const String& string)
         crashDueToApplicationCreatingUserStyleSheetFromBackgroundThread();
 #endif
 
-    if (string.isEmpty())
+    if (isEmpty(string))
         return emptyString();
 
     auto result = styleStrings().add(string);
     return result.iterator->key;
 }
 
-static void removeStyleString(const String& string)
+static void removeStyleString(StringImpl* string)
 {
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning))
@@ -89,7 +89,7 @@ static void removeStyleString(const String& string)
     styleStrings().remove(string);
 }
 
-UserStyleSheet::UserStyleSheet(const String& source, const URL& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame, UserStyleLevel level, std::optional<PageIdentifier> pageID)
+UserStyleSheet::UserStyleSheet(StringImpl* source, const URL& url, Vector<RefPtr<StringImpl>>&& allowlist, Vector<RefPtr<StringImpl>>&& blocklist, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame, UserStyleLevel level, std::optional<PageIdentifier> pageID)
     : m_source(internedStyleString(source))
     , m_url(url.isEmpty() ? generateUserStyleUniqueURL() : url)
     , m_allowlist(WTF::move(allowlist))

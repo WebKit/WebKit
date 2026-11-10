@@ -83,10 +83,10 @@ void AudioTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
         return;
 
     auto codec = player->codecForStreamId(streamId);
-    if (codec.isEmpty())
+    if (isEmpty(codec))
         return;
 
-    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting codec to %s", codec.ascii().data());
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting codec to %s", ascii(codec).data());
     auto configuration = this->configuration();
     configuration.codec = WTF::move(codec);
     setConfiguration(WTF::move(configuration));
@@ -130,7 +130,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 
     auto mimeCodec = GMallocString::unsafeAdoptFromUTF8(gst_codec_utils_caps_get_mime_codec(caps.get()));
     if (mimeCodec)
-        configuration.codec = mimeCodec.span();
+        configuration.codec = StringImpl::create(mimeCodec.span());
 
     if (areEncryptedCaps(caps.get())) {
         const auto* structure = gst_caps_get_structure(caps.get(), 0);
@@ -177,7 +177,7 @@ TrackID AudioTrackPrivateGStreamer::id() const
     return m_data->m_trackID.value_or(m_data->m_id);
 }
 
-std::optional<String> AudioTrackPrivateGStreamer::trackUID() const
+std::optional<RefPtr<StringImpl>> AudioTrackPrivateGStreamer::trackUID() const
 {
     auto player = m_data->m_player.get();
     if (!player || !player->isMediaStreamPlayer())
@@ -186,12 +186,12 @@ std::optional<String> AudioTrackPrivateGStreamer::trackUID() const
     return m_data->m_gstStreamId;
 }
 
-String AudioTrackPrivateGStreamer::label() const
+RefPtr<StringImpl> AudioTrackPrivateGStreamer::label() const
 {
     return m_data->m_label;
 }
 
-String AudioTrackPrivateGStreamer::language() const
+RefPtr<StringImpl> AudioTrackPrivateGStreamer::language() const
 {
     return m_data->m_language;
 }

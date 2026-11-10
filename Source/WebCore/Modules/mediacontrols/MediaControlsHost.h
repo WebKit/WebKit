@@ -76,11 +76,11 @@ public:
     WEBCORE_EXPORT void deref() const;
 #endif
 
-    static const AtomString& automaticKeyword();
-    static const AtomString& forcedOnlyKeyword();
+    static const RefPtr<AtomStringImpl>& automaticKeyword();
+    static const RefPtr<AtomStringImpl>& forcedOnlyKeyword();
 
-    String layoutTraitsClassName() const;
-    const AtomString& mediaControlsContainerClassName() const;
+    RefPtr<StringImpl> layoutTraitsClassName() const;
+    const RefPtr<AtomStringImpl>& mediaControlsContainerClassName() const;
 
     double brightness() const { return 1; }
     void setBrightness(double) { }
@@ -89,12 +89,12 @@ public:
     Vector<Ref<AudioTrack>> sortedTrackListForMenu(AudioTrackList&);
 
     using TextOrAudioTrack = Variant<Ref<TextTrack>, Ref<AudioTrack>>;
-    String displayNameForTrack(const std::optional<TextOrAudioTrack>&);
+    RefPtr<StringImpl> displayNameForTrack(const std::optional<TextOrAudioTrack>&);
 
     static TextTrack& captionMenuOffItem();
     static TextTrack& captionMenuAutomaticItem();
     static TextTrack& captionMenuOnItem();
-    AtomString captionDisplayMode() const;
+    RefPtr<AtomStringImpl> captionDisplayMode() const;
     void setSelectedTextTrack(TextTrack*);
     Element* textTrackContainer();
     void updateTextTrackContainer();
@@ -111,7 +111,7 @@ public:
     bool needsChromeMediaControlsPseudoElement() const;
     NODELETE bool isMediaControlsMacInlineSizeSpecsEnabled() const;
     NODELETE bool spatialVideoRenderingEnabled() const;
-    String spatialVideoProjectionKind() const;
+    RefPtr<StringImpl> spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
     NODELETE bool isAVExperienceControllerFullscreenEnabled() const;
@@ -124,8 +124,8 @@ public:
     void exitedFullscreen();
     void requiresTextTrackRepresentationChanged();
 
-    String externalDeviceDisplayName() const;
-    String externalDeviceRouteName() const;
+    RefPtr<StringImpl> externalDeviceDisplayName() const;
+    RefPtr<StringImpl> externalDeviceRouteName() const;
 
     enum class DeviceType { None, Airplay, Tvout };
     DeviceType externalDeviceType() const;
@@ -133,15 +133,15 @@ public:
     NODELETE bool controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);
 
-    static String generateUUID();
+    static RefPtr<StringImpl> generateUUID();
 
-    Vector<String, 2> shadowRootStyleSheets() const;
-    static String base64StringForIconNameAndType(const String& iconName, const String& iconType);
+    Vector<RefPtr<StringImpl>, 2> shadowRootStyleSheets() const;
+    static RefPtr<StringImpl> base64StringForIconNameAndType(StringImpl* iconName, StringImpl* iconType);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    Vector<MediaControlsContextMenuItem> mediaControlsContextMenuItemsForBindings(String&& optionsJSONString);
+    Vector<MediaControlsContextMenuItem> mediaControlsContextMenuItemsForBindings(RefPtr<StringImpl>&& optionsJSONString);
     Ref<DOMRect> mediaControlsContextMenuAnchorRectForBindings(HTMLElement&);
-    bool showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString, Ref<VoidCallback>&&);
+    bool showMediaControlsContextMenu(HTMLElement&, RefPtr<StringImpl>&& optionsJSONString, Ref<VoidCallback>&&);
     void showCaptionDisplaySettingsPreview();
     void hideCaptionDisplaySettingsPreview();
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -198,7 +198,7 @@ private:
     >;
     using MenuDataMap = HashMap<MenuItemIdentifier, MenuData>;
 
-    std::pair<Vector<MenuItem>, MenuDataMap> mediaControlsContextMenuItems(String&& optionsJSONString);
+    std::pair<Vector<MenuItem>, MenuDataMap> mediaControlsContextMenuItems(RefPtr<StringImpl>&& optionsJSONString);
 #endif
 
     WeakRef<HTMLMediaElement> m_mediaElement;

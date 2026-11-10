@@ -703,7 +703,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgPaintServerResourceFrom
     // and that client is what drops the cache when the referenced element changes, so it has to
     // resolve fresh every time.
     auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, protect(document()));
-    if (resourceID.isEmpty())
+    if (isEmpty(resourceID))
         cache = nullptr;
 
     if (RefPtr referencedElement = ReferencedSVGResources::referencedPaintServerElement(treeScopeForSVGReferences(), *paintURL)) {
@@ -714,7 +714,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgPaintServerResourceFrom
         }
     }
 
-    if (!resourceID.isEmpty()) {
+    if (!isEmpty(resourceID)) {
         if (RefPtr element = dynamicDowncast<SVGElement>(this->element()))
             treeScopeForSVGReferences().addPendingSVGResource(resourceID, *element);
     }

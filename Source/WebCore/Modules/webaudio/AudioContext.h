@@ -89,8 +89,8 @@ public:
     void resumeRendering(DOMPromiseDeferred<void>&&);
 
     // https://webaudio.github.io/web-audio-api/#dom-audiocontext-sinkid
-    Variant<String, Ref<AudioSinkInfo>> sinkId() const { return m_sinkId; }
-    void setSinkId(Variant<String, AudioSinkOptions>&&, DOMPromiseDeferred<void>&&);
+    Variant<RefPtr<StringImpl>, Ref<AudioSinkInfo>> sinkId() const { return m_sinkId; }
+    void setSinkId(Variant<RefPtr<StringImpl>, AudioSinkOptions>&&, DOMPromiseDeferred<void>&&);
 
     void sourceNodeWillBeginPlayback(AudioNode&) final;
     void lazyInitialize() final;
@@ -112,7 +112,7 @@ public:
     void defaultDestinationWillBecomeConnected();
 
 #if PLATFORM(IOS_FAMILY)
-    const String& sceneIdentifier() const LIFETIME_BOUND final;
+    const RefPtr<StringImpl>& sceneIdentifier() const LIFETIME_BOUND final;
 #endif
 
 private:
@@ -129,13 +129,13 @@ private:
 
     // https://webaudio.github.io/web-audio-api/#dom-audiocontext-setsinkid
     struct ResolvedSinkId {
-        Variant<String, Ref<AudioSinkInfo>> sinkId;
-        String persistentDeviceId;
+        Variant<RefPtr<StringImpl>, Ref<AudioSinkInfo>> sinkId;
+        RefPtr<StringImpl> persistentDeviceId;
         bool isSilent { false };
     };
     enum SinkChangeIdentifierType { };
     using SinkChangeIdentifier = ObjectIdentifier<SinkChangeIdentifierType>;
-    ExceptionOr<ResolvedSinkId> validateSinkId(const Variant<String, AudioSinkOptions>&);
+    ExceptionOr<ResolvedSinkId> validateSinkId(const Variant<RefPtr<StringImpl>, AudioSinkOptions>&);
     enum class ResumeAfterSinkChange : bool { No, Yes };
     void performSinkChange(SinkChangeIdentifier, ResolvedSinkId&&);
     void applySinkChange(SinkChangeIdentifier, ResolvedSinkId&&, ResumeAfterSinkChange);
@@ -207,7 +207,7 @@ private:
     bool m_canOverrideBackgroundPlaybackRestriction { true };
 
     // https://webaudio.github.io/web-audio-api/#dom-audiocontext-sink-id-slot
-    Variant<String, Ref<AudioSinkInfo>> m_sinkId { emptyString() };
+    Variant<RefPtr<StringImpl>, Ref<AudioSinkInfo>> m_sinkId { emptyString() };
     // https://webaudio.github.io/web-audio-api/#dom-audiocontext-sink-id-at-construction-slot
     std::optional<ResolvedSinkId> m_sinkIdAtConstruction;
     HashMap<SinkChangeIdentifier, std::unique_ptr<DOMPromiseDeferred<void>>> m_pendingSinkChangePromises;

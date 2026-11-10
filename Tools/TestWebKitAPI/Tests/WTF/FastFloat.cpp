@@ -34,9 +34,9 @@
 
 namespace TestWebKitAPI {
 
-static void expectSameAsParseJSONDouble(const String& text)
+static void expectSameAsParseJSONDouble(StringImpl* text)
 {
-    auto characters = text.span8();
+    auto characters = span8(text);
     size_t cursor = 0;
     uint64_t mantissa = 0;
     auto integerStart = cursor;
@@ -62,7 +62,7 @@ static void expectSameAsParseJSONDouble(const String& text)
     EXPECT_EQ(parsedLength, characters.size());
 
     double actual = WTF::parseJSONDoubleFromDigits(mantissa, exponent, digitCount);
-    EXPECT_EQ(std::bit_cast<uint64_t>(actual), std::bit_cast<uint64_t>(*expected)) << text.ascii().data();
+    EXPECT_EQ(std::bit_cast<uint64_t>(actual), std::bit_cast<uint64_t>(*expected)) << ascii(text).data();
 }
 
 TEST(WTF_FastFloat, ParseJSONDoubleFromDigits)
@@ -75,7 +75,7 @@ TEST(WTF_FastFloat, ParseJSONDoubleFromDigits)
         "0.9999999999999999"_s, "3.0000000000000004"_s, "1.0000000000000002"_s, "7.2057594037927933e16"_s,
         "9999999999999999999"_s, "0.0000000123456789"_s, "8.98846567431158e307"_s, "123456789012345678e-330"_s,
     })
-        expectSameAsParseJSONDouble(text);
+        expectSameAsParseJSONDouble(StringImpl::create(text).ptr());
 
     // 19 digits of the exact midpoint between two adjacent doubles, where rounding is hardest to decide.
     for (auto text : {
@@ -87,7 +87,7 @@ TEST(WTF_FastFloat, ParseJSONDoubleFromDigits)
         "1.654000795844023490e-142"_s, "3.825875475747334921e270"_s, "1.945596032543111161e236"_s, "1.386073252777012579e-287"_s,
         "7.410984687618698162e-324"_s, "1.797693134862315608e308"_s, "2.225073858507201630e-308"_s, "1.000000000000000111e0"_s,
     })
-        expectSameAsParseJSONDouble(text);
+        expectSameAsParseJSONDouble(StringImpl::create(text).ptr());
 
     uint64_t state = 0x123456789abcdefULL;
     auto next = [&] {
@@ -99,9 +99,9 @@ TEST(WTF_FastFloat, ParseJSONDoubleFromDigits)
         StringBuilder builder;
         for (unsigned j = 0; j < digitCount; ++j)
             builder.append(static_cast<Latin1Character>('0' + (j ? next() % 10 : 1 + next() % 9)));
-        String digits = builder.toString();
+        RefPtr<StringImpl> digits = builder.toString();
         unsigned dot = next() % (digitCount + 1);
-        String number = dot && dot < digitCount ? makeString(digits.left(dot), '.', digits.substring(dot)) : digits;
+        RefPtr<StringImpl> number = dot && dot < digitCount ? makeString(left(digits, dot), '.', substring(digits, dot)) : digits;
         int exponent = static_cast<int>(next() % 700) - 350;
         expectSameAsParseJSONDouble(makeString(number, 'e', exponent));
         expectSameAsParseJSONDouble(number);

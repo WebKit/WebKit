@@ -37,18 +37,18 @@ namespace WebCore {
 
 struct ApplePayInstallmentConfiguration {
     ApplePaySetupFeatureType featureType { ApplePaySetupFeatureType::AppleCard };
-    String merchandisingImageData; // This property remains here because it is web-exposed, but has no effect and is no longer serialized.
-    String openToBuyThresholdAmount;
-    String bindingTotalAmount;
-    String currencyCode;
+    RefPtr<StringImpl> merchandisingImageData; // This property remains here because it is web-exposed, but has no effect and is no longer serialized.
+    RefPtr<StringImpl> openToBuyThresholdAmount;
+    RefPtr<StringImpl> bindingTotalAmount;
+    RefPtr<StringImpl> currencyCode;
     bool isInStorePurchase { false };
-    String merchantIdentifier;
-    String referrerIdentifier;
+    RefPtr<StringImpl> merchantIdentifier;
+    RefPtr<StringImpl> referrerIdentifier;
     Vector<ApplePayInstallmentItem> items;
-    String applicationMetadata;
+    RefPtr<StringImpl> applicationMetadata;
     ApplePayInstallmentRetailChannel retailChannel { ApplePayInstallmentRetailChannel::Unknown };
 
-    WEBCORE_EXPORT static std::optional<ApplePayInstallmentConfiguration> fromInstallmentConfiguration(ApplePaySetupFeatureType, String&& openToBuyThresholdAmount, String&& bindingTotalAmount, String&& currencyCode, bool isInStorePurchase, String&& merchantIdentifier, String&& referrerIdentifier, Vector<ApplePayInstallmentItem>&&, String&& applicationMetadata, ApplePayInstallmentRetailChannel);
+    WEBCORE_EXPORT static std::optional<ApplePayInstallmentConfiguration> fromInstallmentConfiguration(ApplePaySetupFeatureType, RefPtr<StringImpl>&& openToBuyThresholdAmount, RefPtr<StringImpl>&& bindingTotalAmount, RefPtr<StringImpl>&& currencyCode, bool isInStorePurchase, RefPtr<StringImpl>&& merchantIdentifier, RefPtr<StringImpl>&& referrerIdentifier, Vector<ApplePayInstallmentItem>&&, RefPtr<StringImpl>&& applicationMetadata, ApplePayInstallmentRetailChannel);
 };
 
 } // namespace WebCore

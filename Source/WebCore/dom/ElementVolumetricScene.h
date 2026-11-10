@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT static RefPtr<ModelPlayer> playerForElement(const Element&);
 
-    WEBCORE_EXPORT static String presentationModeForTesting(const Element&);
+    WEBCORE_EXPORT static RefPtr<StringImpl> presentationModeForTesting(const Element&);
 
 private:
     static std::optional<ModelPresentationMode> presentationMode(const Element&);

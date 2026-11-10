@@ -55,7 +55,7 @@ RetainPtr<NSString> indicatesError(const std::expected<SuccessType, WebExtension
 {
     if (result.has_value())
         return nil;
-    return result.error().createNSString();
+    return createNSString(result.error());
 }
 
 class WebExtensionAPISidebarAction : public WebExtensionAPIObject, public JSWebExtensionWrappable {

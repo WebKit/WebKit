@@ -142,6 +142,8 @@ class Setting
     @type = options["refinedType"] || options["type"]
     @status = options["status"]
     @defaultValues = defaultValueFor(name, options, "WebCore")
+    # "{ }" is ambiguous when assigned to a RefPtr<StringImpl>, so spell the null string as nullptr.
+    @defaultValues = @defaultValues.transform_values { |value| value == "{ }" ? "nullptr" : value } if @type == "String"
     @excludeFromInternalSettings = options["webcoreExcludeFromInternalSettings"] || false
     @disableInLockdownMode = options["disableInLockdownMode"] || false
     @condition = options["condition"]
@@ -186,11 +188,46 @@ class Setting
     end
   end
 
+  # The C++ type of the stored value. Preferences spell strings as "String".
+  def storageType
+    if @type == "String"
+      "RefPtr<StringImpl>"
+    else
+      @type
+    end
+  end
+
   def parameterType
     if valueType?
       @type
+    elsif @type == "String"
+      "StringImpl*"
     else
       "const #{@type}&"
+    end
+  end
+
+  def getterReturnType
+    if valueType?
+      @type
+    else
+      "const #{storageType}&"
+    end
+  end
+
+  def equalityExpression(a, b)
+    if @type == "String"
+      "equal(#{a}, #{b})"
+    else
+      "#{a} == #{b}"
+    end
+  end
+
+  def inequalityExpression(a, b)
+    if @type == "String"
+      "!equal(#{a}, #{b})"
+    else
+      "#{a} != #{b}"
     end
   end
 

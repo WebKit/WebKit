@@ -44,10 +44,10 @@ using namespace WebCore;
 TEST(CachedMatchFinder, CountMatchesFindsMatches)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto result = finder.countMatches(std::nullopt, "brown"_si, { });
 
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(result.value(), 2u);
@@ -56,10 +56,10 @@ TEST(CachedMatchFinder, CountMatchesFindsMatches)
 TEST(CachedMatchFinder, CountMatchesReturnsZeroWhenNoMatches)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the lazy dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the lazy dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.countMatches(std::nullopt, "purple"_s, { });
+    auto result = finder.countMatches(std::nullopt, "purple"_si, { });
 
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(result.value(), 0u);
@@ -68,10 +68,10 @@ TEST(CachedMatchFinder, CountMatchesReturnsZeroWhenNoMatches)
 TEST(CachedMatchFinder, CountMatchesWithEmptyTargetReturnsZero)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.countMatches(std::nullopt, ""_s, { });
+    auto result = finder.countMatches(std::nullopt, ""_si, { });
 
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(result.value(), 0u);
@@ -80,10 +80,10 @@ TEST(CachedMatchFinder, CountMatchesWithEmptyTargetReturnsZero)
 TEST(CachedMatchFinder, CountMatchesRespectsLimit)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>brown brown brown brown</p>"_s);
+    testPage.loadHTML("<p>brown brown brown brown</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.countMatches(std::nullopt, "brown"_s, { }, 2u);
+    auto result = finder.countMatches(std::nullopt, "brown"_si, { }, 2u);
 
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(result.value(), 2u);
@@ -92,10 +92,10 @@ TEST(CachedMatchFinder, CountMatchesRespectsLimit)
 TEST(CachedMatchFinder, FindMatchesReturnsAllMatchingRanges)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.findMatches(std::nullopt, "brown"_s, { });
+    auto result = finder.findMatches(std::nullopt, "brown"_si, { });
 
     ASSERT_TRUE(result.has_value());
     ASSERT_EQ(result.value().size(), 2u);
@@ -106,10 +106,10 @@ TEST(CachedMatchFinder, FindMatchesReturnsAllMatchingRanges)
 TEST(CachedMatchFinder, FindMatchesReturnsEmptyVectorWhenNoMatches)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the lazy dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the lazy dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.findMatches(std::nullopt, "purple"_s, { });
+    auto result = finder.findMatches(std::nullopt, "purple"_si, { });
 
     ASSERT_TRUE(result.has_value());
     EXPECT_TRUE(result.value().isEmpty());
@@ -118,10 +118,10 @@ TEST(CachedMatchFinder, FindMatchesReturnsEmptyVectorWhenNoMatches)
 TEST(CachedMatchFinder, FindMatchesRespectsLimit)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>brown brown brown brown</p>"_s);
+    testPage.loadHTML("<p>brown brown brown brown</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.findMatches(std::nullopt, "brown"_s, { }, 1u);
+    auto result = finder.findMatches(std::nullopt, "brown"_si, { }, 1u);
 
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(result.value().size(), 1u);
@@ -130,10 +130,10 @@ TEST(CachedMatchFinder, FindMatchesRespectsLimit)
 TEST(CachedMatchFinder, FindMatchFromReturnsFirstMatchWhenStartingWithoutReferenceRange)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.findMatchFrom(std::nullopt, "brown"_s, { });
+    auto result = finder.findMatchFrom(std::nullopt, "brown"_si, { });
 
     ASSERT_TRUE(result.has_value());
     ASSERT_TRUE(result.value().has_value());
@@ -143,10 +143,10 @@ TEST(CachedMatchFinder, FindMatchFromReturnsFirstMatchWhenStartingWithoutReferen
 TEST(CachedMatchFinder, FindMatchFromReturnsNulloptWhenNoMatches)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the lazy dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the lazy dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.findMatchFrom(std::nullopt, "purple"_s, { });
+    auto result = finder.findMatchFrom(std::nullopt, "purple"_si, { });
 
     ASSERT_TRUE(result.has_value());
     EXPECT_FALSE(result.value().has_value());
@@ -155,20 +155,20 @@ TEST(CachedMatchFinder, FindMatchFromReturnsNulloptWhenNoMatches)
 TEST(CachedMatchFinder, FindMatchFromAdvancesPastReferenceRangeToNextMatch)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto firstMatch = finder.findMatchFrom(std::nullopt, "brown"_s, { });
+    auto firstMatch = finder.findMatchFrom(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(firstMatch.has_value());
     ASSERT_TRUE(firstMatch.value().has_value());
 
-    auto secondMatch = finder.findMatchFrom(*firstMatch.value(), "brown"_s, { });
+    auto secondMatch = finder.findMatchFrom(*firstMatch.value(), "brown"_si, { });
     ASSERT_TRUE(secondMatch.has_value());
     ASSERT_TRUE(secondMatch.value().has_value());
     EXPECT_NE(*firstMatch.value(), *secondMatch.value());
     EXPECT_EQ(plainText(*secondMatch.value()), "brown"_s);
 
-    auto thirdMatch = finder.findMatchFrom(*secondMatch.value(), "brown"_s, { });
+    auto thirdMatch = finder.findMatchFrom(*secondMatch.value(), "brown"_si, { });
     ASSERT_TRUE(thirdMatch.has_value());
     EXPECT_FALSE(thirdMatch.value().has_value());
 }
@@ -176,19 +176,19 @@ TEST(CachedMatchFinder, FindMatchFromAdvancesPastReferenceRangeToNextMatch)
 TEST(CachedMatchFinder, FindMatchFromWithBackwardsOptionFindsPrecedingMatch)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto lastMatch = finder.findMatchFrom(std::nullopt, "brown"_s, FindOption::Backwards);
+    auto lastMatch = finder.findMatchFrom(std::nullopt, "brown"_si, FindOption::Backwards);
     ASSERT_TRUE(lastMatch.has_value());
     ASSERT_TRUE(lastMatch.value().has_value());
 
-    auto precedingMatch = finder.findMatchFrom(*lastMatch.value(), "brown"_s, FindOption::Backwards);
+    auto precedingMatch = finder.findMatchFrom(*lastMatch.value(), "brown"_si, FindOption::Backwards);
     ASSERT_TRUE(precedingMatch.has_value());
     ASSERT_TRUE(precedingMatch.value().has_value());
     EXPECT_NE(*lastMatch.value(), *precedingMatch.value());
 
-    auto noMoreMatches = finder.findMatchFrom(*precedingMatch.value(), "brown"_s, FindOption::Backwards);
+    auto noMoreMatches = finder.findMatchFrom(*precedingMatch.value(), "brown"_si, FindOption::Backwards);
     ASSERT_TRUE(noMoreMatches.has_value());
     EXPECT_FALSE(noMoreMatches.value().has_value());
 }
@@ -196,14 +196,14 @@ TEST(CachedMatchFinder, FindMatchFromWithBackwardsOptionFindsPrecedingMatch)
 TEST(CachedMatchFinder, FindMatchFromWithoutWrapAroundStopsAtEndOfDocument)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>brown fox, then more brown text.</p>"_s);
+    testPage.loadHTML("<p>brown fox, then more brown text.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto allMatches = finder.findMatches(std::nullopt, "brown"_s, { });
+    auto allMatches = finder.findMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(allMatches.has_value());
     ASSERT_EQ(allMatches.value().size(), 2u);
 
-    auto result = finder.findMatchFrom(allMatches.value().last(), "brown"_s, { });
+    auto result = finder.findMatchFrom(allMatches.value().last(), "brown"_si, { });
     ASSERT_TRUE(result.has_value());
     EXPECT_FALSE(result.value().has_value());
 }
@@ -211,14 +211,14 @@ TEST(CachedMatchFinder, FindMatchFromWithoutWrapAroundStopsAtEndOfDocument)
 TEST(CachedMatchFinder, FindMatchFromWithWrapAroundWrapsToBeginningOfDocument)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>brown fox, then more brown text.</p>"_s);
+    testPage.loadHTML("<p>brown fox, then more brown text.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto allMatches = finder.findMatches(std::nullopt, "brown"_s, { });
+    auto allMatches = finder.findMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(allMatches.has_value());
     ASSERT_EQ(allMatches.value().size(), 2u);
 
-    auto result = finder.findMatchFrom(allMatches.value().last(), "brown"_s, FindOption::WrapAround);
+    auto result = finder.findMatchFrom(allMatches.value().last(), "brown"_si, FindOption::WrapAround);
     ASSERT_TRUE(result.has_value());
     ASSERT_TRUE(result.value().has_value());
     EXPECT_EQ(*result.value(), allMatches.value().first());
@@ -227,15 +227,15 @@ TEST(CachedMatchFinder, FindMatchFromWithWrapAroundWrapsToBeginningOfDocument)
 TEST(CachedMatchFinder, CaseInsensitiveOptionMatchesRegardlessOfCase)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>Brown paper, brown bag.</p>"_s);
+    testPage.loadHTML("<p>Brown paper, brown bag.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
 
-    auto caseSensitiveResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto caseSensitiveResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(caseSensitiveResult.has_value());
     EXPECT_EQ(caseSensitiveResult.value(), 1u);
 
-    auto caseInsensitiveResult = finder.countMatches(std::nullopt, "brown"_s, FindOption::CaseInsensitive);
+    auto caseInsensitiveResult = finder.countMatches(std::nullopt, "brown"_si, FindOption::CaseInsensitive);
     ASSERT_TRUE(caseInsensitiveResult.has_value());
     EXPECT_EQ(caseInsensitiveResult.value(), 2u);
 }
@@ -243,15 +243,15 @@ TEST(CachedMatchFinder, CaseInsensitiveOptionMatchesRegardlessOfCase)
 TEST(CachedMatchFinder, AtWordStartsOptionExcludesMidWordMatches)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>unbrown brown</p>"_s);
+    testPage.loadHTML("<p>unbrown brown</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
 
-    auto withoutWordStarts = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto withoutWordStarts = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(withoutWordStarts.has_value());
     EXPECT_EQ(withoutWordStarts.value(), 2u);
 
-    auto withWordStarts = finder.countMatches(std::nullopt, "brown"_s, FindOption::AtWordStarts);
+    auto withWordStarts = finder.countMatches(std::nullopt, "brown"_si, FindOption::AtWordStarts);
     ASSERT_TRUE(withWordStarts.has_value());
     EXPECT_EQ(withWordStarts.value(), 1u);
 }
@@ -259,19 +259,19 @@ TEST(CachedMatchFinder, AtWordStartsOptionExcludesMidWordMatches)
 TEST(CachedMatchFinder, TextBufferCacheIsInvalidatedByDOMMutation)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p id=\"content\">The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p id=\"content\">The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto initialResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto initialResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(initialResult.has_value());
     EXPECT_EQ(initialResult.value(), 2u);
 
-    RefPtr content = testPage.getElementById("content"_s);
+    RefPtr content = testPage.getElementById("content"_si);
     ASSERT_TRUE(content);
-    auto setInnerHTMLResult = content->setInnerHTML(String { "brown brown brown"_s });
+    auto setInnerHTMLResult = content->setInnerHTML("brown brown brown"_si);
     EXPECT_FALSE(setInnerHTMLResult.hasException());
 
-    auto updatedResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto updatedResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(updatedResult.has_value());
     EXPECT_EQ(updatedResult.value(), 3u);
 }
@@ -279,19 +279,19 @@ TEST(CachedMatchFinder, TextBufferCacheIsInvalidatedByDOMMutation)
 TEST(CachedMatchFinder, TextBufferCacheIsInvalidatedByStyleChangeWithoutDOMMutation)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p id=\"content\" style=\"display: none;\">brown fox</p>"_s);
+    testPage.loadHTML("<p id=\"content\" style=\"display: none;\">brown fox</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
-    auto hiddenResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto hiddenResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(hiddenResult.has_value());
     EXPECT_EQ(hiddenResult.value(), 0u);
 
-    RefPtr content = dynamicDowncast<StyledElement>(testPage.getElementById("content"_s));
+    RefPtr content = dynamicDowncast<StyledElement>(testPage.getElementById("content"_si));
     ASSERT_TRUE(content);
     content->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Block);
     protect(testPage.document())->updateLayoutIgnorePendingStylesheets();
 
-    auto visibleResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto visibleResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(visibleResult.has_value());
     EXPECT_EQ(visibleResult.value(), 1u);
 }
@@ -299,20 +299,20 @@ TEST(CachedMatchFinder, TextBufferCacheIsInvalidatedByStyleChangeWithoutDOMMutat
 TEST(CachedMatchFinder, FlatTreeAndLightTreeBufferCachesRemainIndependentAcrossRepeatedSwitches)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<div id=\"host\"><template shadowrootmode=\"open\"><p>brown fox</p></template></div>"_s);
+    testPage.loadHTML("<div id=\"host\"><template shadowrootmode=\"open\"><p>brown fox</p></template></div>"_si);
 
-    RefPtr host = testPage.getElementById("host"_s);
+    RefPtr host = testPage.getElementById("host"_si);
     ASSERT_TRUE(host);
     ASSERT_TRUE(host->shadowRoot());
 
     CachedMatchFinder finder(testPage.document());
 
     for (unsigned index = 0; index < 3; ++index) {
-        auto flatTreeResult = finder.countMatches(std::nullopt, "brown"_s, { });
+        auto flatTreeResult = finder.countMatches(std::nullopt, "brown"_si, { });
         ASSERT_TRUE(flatTreeResult.has_value());
         EXPECT_EQ(flatTreeResult.value(), 1u);
 
-        auto lightTreeResult = finder.countMatches(std::nullopt, "brown"_s, FindOption::DoNotTraverseFlatTree);
+        auto lightTreeResult = finder.countMatches(std::nullopt, "brown"_si, FindOption::DoNotTraverseFlatTree);
         ASSERT_TRUE(lightTreeResult.has_value());
         EXPECT_EQ(lightTreeResult.value(), 0u);
     }
@@ -321,19 +321,19 @@ TEST(CachedMatchFinder, FlatTreeAndLightTreeBufferCachesRemainIndependentAcrossR
 TEST(CachedMatchFinder, SearchResultCacheDistinguishesDifferentTargets)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
 
-    auto brownResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto brownResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(brownResult.has_value());
     EXPECT_EQ(brownResult.value(), 2u);
 
-    auto foxResult = finder.countMatches(std::nullopt, "fox"_s, { });
+    auto foxResult = finder.countMatches(std::nullopt, "fox"_si, { });
     ASSERT_TRUE(foxResult.has_value());
     EXPECT_EQ(foxResult.value(), 1u);
 
-    auto brownResultAgain = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto brownResultAgain = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(brownResultAgain.has_value());
     EXPECT_EQ(brownResultAgain.value(), 2u);
 }
@@ -341,19 +341,19 @@ TEST(CachedMatchFinder, SearchResultCacheDistinguishesDifferentTargets)
 TEST(CachedMatchFinder, SearchResultCacheDistinguishesDifferentOptions)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>Brown paper, brown bag.</p>"_s);
+    testPage.loadHTML("<p>Brown paper, brown bag.</p>"_si);
 
     CachedMatchFinder finder(testPage.document());
 
-    auto caseSensitiveResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto caseSensitiveResult = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(caseSensitiveResult.has_value());
     EXPECT_EQ(caseSensitiveResult.value(), 1u);
 
-    auto caseInsensitiveResult = finder.countMatches(std::nullopt, "brown"_s, FindOption::CaseInsensitive);
+    auto caseInsensitiveResult = finder.countMatches(std::nullopt, "brown"_si, FindOption::CaseInsensitive);
     ASSERT_TRUE(caseInsensitiveResult.has_value());
     EXPECT_EQ(caseInsensitiveResult.value(), 2u);
 
-    auto caseSensitiveResultAgain = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto caseSensitiveResultAgain = finder.countMatches(std::nullopt, "brown"_si, { });
     ASSERT_TRUE(caseSensitiveResultAgain.has_value());
     EXPECT_EQ(caseSensitiveResultAgain.value(), 1u);
 }
@@ -361,9 +361,9 @@ TEST(CachedMatchFinder, SearchResultCacheDistinguishesDifferentOptions)
 TEST(CachedMatchFinder, FindMatchFromWithinShadowTreeUsesShadowIncludingAncestorTraversal)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<div id=\"host\"><template shadowrootmode=\"open\"><p>brown fox, brown dog</p></template></div>"_s);
+    testPage.loadHTML("<div id=\"host\"><template shadowrootmode=\"open\"><p>brown fox, brown dog</p></template></div>"_si);
 
-    RefPtr host = testPage.getElementById("host"_s);
+    RefPtr host = testPage.getElementById("host"_si);
     ASSERT_TRUE(host);
     RefPtr shadowRoot = host->shadowRoot();
     ASSERT_TRUE(shadowRoot);
@@ -374,7 +374,7 @@ TEST(CachedMatchFinder, FindMatchFromWithinShadowTreeUsesShadowIncludingAncestor
     SimpleRange referenceRange { contentsRange.start, contentsRange.start };
 
     CachedMatchFinder finder(testPage.document());
-    auto result = finder.findMatchFrom(referenceRange, "brown"_s, FindOption::DoNotTraverseFlatTree);
+    auto result = finder.findMatchFrom(referenceRange, "brown"_si, FindOption::DoNotTraverseFlatTree);
 
     ASSERT_TRUE(result.has_value());
     ASSERT_TRUE(result.value().has_value());
@@ -384,22 +384,22 @@ TEST(CachedMatchFinder, FindMatchFromWithinShadowTreeUsesShadowIncludingAncestor
 TEST(CachedMatchFinder, OversizedDocumentReturnsCacheUnusableError)
 {
     auto testPage = TestPageHarness::create();
-    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_s);
+    testPage.loadHTML("<p>The quick brown fox jumped over the brown dog.</p>"_si);
 
     CachedMatchFinder::setMaximumRunCountForTesting(0u);
 
     CachedMatchFinder finder(testPage.document());
-    auto countResult = finder.countMatches(std::nullopt, "brown"_s, { });
+    auto countResult = finder.countMatches(std::nullopt, "brown"_si, { });
     EXPECT_FALSE(countResult.has_value());
     if (!countResult.has_value())
         EXPECT_EQ(countResult.error(), CachedMatchFinder::CacheUnusable::Oversized);
 
-    auto matchesResult = finder.findMatches(std::nullopt, "brown"_s, { });
+    auto matchesResult = finder.findMatches(std::nullopt, "brown"_si, { });
     EXPECT_FALSE(matchesResult.has_value());
     if (!matchesResult.has_value())
         EXPECT_EQ(matchesResult.error(), CachedMatchFinder::CacheUnusable::Oversized);
 
-    auto matchFromResult = finder.findMatchFrom(std::nullopt, "brown"_s, { });
+    auto matchFromResult = finder.findMatchFrom(std::nullopt, "brown"_si, { });
     EXPECT_FALSE(matchFromResult.has_value());
     if (!matchFromResult.has_value())
         EXPECT_EQ(matchFromResult.error(), CachedMatchFinder::CacheUnusable::Oversized);

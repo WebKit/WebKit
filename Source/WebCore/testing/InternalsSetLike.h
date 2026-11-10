@@ -37,18 +37,18 @@ public:
     static Ref<InternalsSetLike> create() { return adoptRef(*new InternalsSetLike); }
 
     void clearFromSetLike() { m_items.clear(); }
-    bool addToSetLike(const String&);
-    bool removeFromSetLike(const String& item) { return m_items.removeFirst(item); }
+    bool addToSetLike(StringImpl*);
+    bool removeFromSetLike(StringImpl* item) { return m_items.removeFirstMatching([&](auto& value) { return equal(value, item); }); }
     void initializeSetLike(DOMSetAdapter&);
 
-    const Vector<String>& items() const LIFETIME_BOUND { return m_items; }
+    const Vector<RefPtr<StringImpl>>& items() const LIFETIME_BOUND { return m_items; }
 
 private:
     InternalsSetLike();
-    Vector<String> m_items;
+    Vector<RefPtr<StringImpl>> m_items;
 };
 
-inline bool InternalsSetLike::addToSetLike(const String& value)
+inline bool InternalsSetLike::addToSetLike(StringImpl* value)
 {
     bool hasValue = removeFromSetLike(value);
     m_items.append(value);

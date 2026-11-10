@@ -42,11 +42,11 @@ DEFINE_LOG_CHANNEL(MemoryPressure);
 DEFINE_LOG_CHANNEL(SuspendableWorkQueue);
 DEFINE_LOG_CHANNEL(NativePromise);
 
-void logPreformatted([[maybe_unused]] WTFLogChannel& channel, [[maybe_unused]] const String& message)
+void logPreformatted([[maybe_unused]] WTFLogChannel& channel, [[maybe_unused]] StringImpl* message)
 {
 #if !LOG_DISABLED
     if (channel.state != WTFLogChannelState::Off)
-        SAFE_WTFLOG(&channel, "%s", message.utf8());
+        SAFE_WTFLOG(&channel, "%s", utf8(message));
 #endif
 }
 
@@ -69,12 +69,12 @@ static int releaseLogPriority(ReleaseLogType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void releaseLogPreformatted(WTFLogChannel& channel, ReleaseLogType type, const String& file, unsigned line, const String& function, const String& message)
+void releaseLogPreformatted(WTFLogChannel& channel, ReleaseLogType type, StringImpl* file, unsigned line, StringImpl* function, StringImpl* message)
 {
     UNUSED_PARAM(line);
-    auto fileUTF8 = file.utf8();
-    auto functionUTF8 = function.utf8();
-    auto messageUTF8 = message.utf8();
+    auto fileUTF8 = utf8(file);
+    auto functionUTF8 = utf8(function);
+    auto messageUTF8 = utf8(message);
     WTF_RELEASE_LOG_SEND(channel, releaseLogPriority(type), safePrintfType(fileUTF8), line, safePrintfType(functionUTF8), "%s", messageUTF8);
 }
 

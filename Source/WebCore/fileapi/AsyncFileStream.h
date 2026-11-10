@@ -48,8 +48,8 @@ public:
     explicit AsyncFileStream(FileStreamClient&);
     ~AsyncFileStream();
 
-    void getSize(const String& path, std::optional<WallTime> expectedModificationTime);
-    void openForRead(const String& path, long long offset, long long length);
+    void getSize(StringImpl* path, std::optional<WallTime> expectedModificationTime);
+    void openForRead(StringImpl* path, long long offset, long long length);
     void close();
     void read(const Box<Vector<uint8_t>>& outputBuffer, Function<void(int bytesRead)>&&);
 

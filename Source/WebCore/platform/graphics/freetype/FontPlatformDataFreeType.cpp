@@ -184,17 +184,17 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 }
 
 #if !LOG_DISABLED
-String FontPlatformData::description() const
+RefPtr<StringImpl> FontPlatformData::description() const
 {
-    return String();
+    return nullptr;
 }
 #endif
 
-String FontPlatformData::familyName() const
+RefPtr<StringImpl> FontPlatformData::familyName() const
 {
     FcChar8* family = nullptr;
     FcPatternGetString(m_pattern.get(), FC_FAMILY, 0, &family);
-    return byteCast<char8_t>(unsafeSpan(byteCast<char>(family)));
+    return StringImpl::fromUTF8(byteCast<char8_t>(unsafeSpan(byteCast<char>(family))));
 }
 
 Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(ShouldLocalizeAxisNames shouldLocalizeAxisNames) const
@@ -207,7 +207,7 @@ Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(Shou
 
     return WTF::map(defaultVariationValues(ftFace, shouldLocalizeAxisNames), [](auto&& entry) {
         auto& [tag, values] = entry;
-        return FontPlatformData::FontVariationAxis { values.axisName, String::fromLatin1(tag), values.defaultValue, values.minimumValue, values.maximumValue };
+        return FontPlatformData::FontVariationAxis { values.axisName, StringImpl::fromLatin1(tag), values.defaultValue, values.minimumValue, values.maximumValue };
     });
 #else
     UNUSED_PARAM(shouldLocalizeAxisNames);

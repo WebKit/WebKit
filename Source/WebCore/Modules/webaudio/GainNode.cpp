@@ -55,7 +55,7 @@ ExceptionOr<Ref<GainNode>> GainNode::create(BaseAudioContext& context, const Gai
 GainNode::GainNode(BaseAudioContext& context)
     : AudioNode(context, NodeTypeGain)
     , m_sampleAccurateGainValues(AudioUtilities::renderQuantumSize) // FIXME: can probably share temp buffer in context
-    , m_gain(AudioParam::create(context, "gain"_s, 1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_gain(AudioParam::create(context, "gain"_si, 1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
 {
     addInput();
     addOutput(1);

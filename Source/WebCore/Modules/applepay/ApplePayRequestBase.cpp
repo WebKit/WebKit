@@ -47,7 +47,7 @@ NODELETE static bool requiresSupportedNetworks(unsigned version, const ApplePayR
 #endif
 }
 
-static Vector<String> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
+static Vector<RefPtr<StringImpl>> convertAndValidate(Document& document, unsigned version, const Vector<RefPtr<StringImpl>>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
 {
     return WTF::compactMap(supportedNetworks, [document = protect(document), paymentCoordinator = protect(paymentCoordinator), version](const auto& supportedNetwork) {
         auto validatedNetwork = paymentCoordinator->validatedPaymentNetwork(document, version, supportedNetwork);
@@ -73,7 +73,7 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
 
     auto supportedNetworks = convertAndValidate(document, version, request.supportedNetworks, paymentCoordinator);
     if (requiresSupportedNetworks(version, request) && supportedNetworks.isEmpty())
-        return Exception { ExceptionCode::TypeError, "At least one supported network must be provided."_s };
+        return Exception { ExceptionCode::TypeError, "At least one supported network must be provided."_si };
     result.setSupportedNetworks(WTF::move(supportedNetworks));
 
     if (request.requiredBillingContactFields) {

@@ -71,8 +71,8 @@ public:
     int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     void clearWatch(int watchID);
 
-    WEBCORE_EXPORT void setIsAllowed(bool, const String& authorizationToken);
-    const String& authorizationToken() const LIFETIME_BOUND { return m_authorizationToken; }
+    WEBCORE_EXPORT void setIsAllowed(bool, StringImpl* authorizationToken);
+    const RefPtr<StringImpl>& authorizationToken() const LIFETIME_BOUND { return m_authorizationToken; }
     WEBCORE_EXPORT void resetIsAllowed();
     bool isAllowed() const { return m_allowGeolocation == AllowGeolocation::Yes; }
 
@@ -162,7 +162,7 @@ private:
     Watchers m_watchers;
     GeoNotifierSet m_pendingForPermissionNotifiers;
     RefPtr<GeolocationPosition> m_lastPosition;
-    String m_authorizationToken;
+    RefPtr<StringImpl> m_authorizationToken;
     RefPtr<GeolocationPositionError> m_errorWaitingForResume;
     Timer m_resumeTimer;
     GeoNotifierSet m_requestsAwaitingCachedPosition;

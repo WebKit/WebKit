@@ -40,26 +40,26 @@ template<>
 struct SVGPropertyTraits<SVGUnitTypes::SVGUnitType> {
     static unsigned highestEnumValue() { return SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX; }
 
-    static String toString(SVGUnitTypes::SVGUnitType type)
+    static RefPtr<StringImpl> toString(SVGUnitTypes::SVGUnitType type)
     {
         switch (type) {
         case SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN:
             return emptyString();
         case SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE:
-            return "userSpaceOnUse"_s;
+            return "userSpaceOnUse"_si;
         case SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
-            return "objectBoundingBox"_s;
+            return "objectBoundingBox"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGUnitTypes::SVGUnitType fromString(SVGElement&, const String& value)
+    static SVGUnitTypes::SVGUnitType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "userSpaceOnUse"_s)
+        if (equal(value, "userSpaceOnUse"_s))
             return SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE;
-        if (value == "objectBoundingBox"_s)
+        if (equal(value, "objectBoundingBox"_s))
             return SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
         return SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN;
     }

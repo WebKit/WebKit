@@ -49,7 +49,7 @@ public:
     virtual ~JPEGXLImageDecoder();
 
     // ScalableImageDecoder
-    String filenameExtension() const override { return "jxl"_s; }
+    RefPtr<StringImpl> filenameExtension() const override { return "jxl"_si; }
     size_t decodeIfNeededAndGetFrameCount() const override;
     RepetitionCount repetitionCount() const override;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;

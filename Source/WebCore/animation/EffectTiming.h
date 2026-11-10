@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-using OptionalDoubleOrString = std::optional<Variant<double, String>>;
-using DoubleOrCSSNumericValueOrString = Variant<double, Ref<CSSNumericValue>, String>;
+using OptionalDoubleOrString = std::optional<Variant<double, RefPtr<StringImpl>>>;
+using DoubleOrCSSNumericValueOrString = Variant<double, Ref<CSSNumericValue>, RefPtr<StringImpl>>;
 
 struct EffectTiming {
     double delay { 0 };
@@ -44,7 +44,7 @@ struct EffectTiming {
     double iterations { 1 };
     DoubleOrCSSNumericValueOrString duration { autoAtom() };
     PlaybackDirection direction { PlaybackDirection::Normal };
-    String easing { "linear"_s };
+    RefPtr<StringImpl> easing { "linear"_si };
 
     OptionalDoubleOrString durationAsDoubleOrString() const;
 };

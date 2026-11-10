@@ -28,11 +28,11 @@
 
 namespace WebCore {
 
-void ServerTiming::setParameter(const String& name, const String& value)
+void ServerTiming::setParameter(StringImpl* name, StringImpl* value)
 {
     if (equalLettersIgnoringASCIICase(name, "dur"_s)) {
         if (!durationSet) {
-            duration = value.toDouble();
+            duration = toDouble(value);
             durationSet = true;
         }
         return;
@@ -48,12 +48,12 @@ void ServerTiming::setParameter(const String& name, const String& value)
 
 ServerTiming ServerTiming::isolatedCopy() const &
 {
-    return ServerTiming { name.isolatedCopy(), duration, description.isolatedCopy(), durationSet, descriptionSet };
+    return ServerTiming { WTF::isolatedCopy(name), duration, WTF::isolatedCopy(description), durationSet, descriptionSet };
 }
 
 ServerTiming ServerTiming::isolatedCopy() &&
 {
-    return ServerTiming { WTF::move(name).isolatedCopy(), duration, WTF::move(description).isolatedCopy(), durationSet, descriptionSet };
+    return ServerTiming { WTF::isolatedCopy(WTF::move(name)), duration, WTF::isolatedCopy(WTF::move(description)), durationSet, descriptionSet };
 }
 
 } // namespace WebCore

@@ -481,10 +481,10 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char8_t> characters)
 {
     if (charactersAreAllASCII(characters))
         return add(byteCast<Latin1Character>(characters));
-    auto string = String::fromUTF8(characters);
-    if (string.isNull())
+    RefPtr string = StringImpl::create(characters);
+    if (!string)
         return nullptr;
-    return add(string.releaseImpl());
+    return add(WTF::move(string));
 }
 
 RefPtr<AtomStringImpl> AtomStringImpl::lookUp(std::span<const Latin1Character> characters)

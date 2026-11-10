@@ -46,7 +46,7 @@ public:
         return adoptRef(*new RadioInputType(element));
     }
 
-    static void forEachButtonInDetachedGroup(ContainerNode& rootName, const String& groupName, NOESCAPE const Function<bool(HTMLInputElement&)>&);
+    static void forEachButtonInDetachedGroup(ContainerNode& rootName, StringImpl* groupName, NOESCAPE const Function<bool(HTMLInputElement&)>&);
 
     bool valueMissing(StringView) const final;
 
@@ -56,8 +56,8 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
-    String valueMissingText() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
+    RefPtr<StringImpl> valueMissingText() const final;
     void handleClickEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void handleKeyupEvent(KeyboardEvent&) final;

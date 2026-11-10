@@ -31,18 +31,18 @@ namespace WebCore {
 class PopupMenu;
 
 struct RecentSearch {
-    String string;
+    RefPtr<StringImpl> string;
     WallTime time;
 
-    RecentSearch isolatedCopy() const { return { string.isolatedCopy(), time.isolatedCopy() }; }
+    RecentSearch isolatedCopy() const { return { WTF::isolatedCopy(string), time.isolatedCopy() }; }
 };
 
 class SearchPopupMenu : public RefCounted<SearchPopupMenu> {
 public:
     virtual ~SearchPopupMenu() = default;
     virtual PopupMenu* popupMenu() = 0;
-    virtual void saveRecentSearches(const AtomString& name, const Vector<RecentSearch>&) = 0;
-    virtual void loadRecentSearches(const AtomString& name, Vector<RecentSearch>&) = 0;
+    virtual void saveRecentSearches(AtomStringImpl* name, const Vector<RecentSearch>&) = 0;
+    virtual void loadRecentSearches(AtomStringImpl* name, Vector<RecentSearch>&) = 0;
     virtual bool enabled() = 0;
 };
 

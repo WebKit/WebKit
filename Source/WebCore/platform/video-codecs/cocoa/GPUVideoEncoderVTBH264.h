@@ -35,7 +35,7 @@ namespace WebCore {
 class GPUVideoEncoderVTBH264 final : public GPUVideoEncoderVTB {
     WTF_MAKE_TZONE_ALLOCATED(GPUVideoEncoderVTBH264);
 public:
-    static Ref<GPUVideoEncoderVTBH264> create(CreationInfo&& info, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&& encoderCallback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
+    static Ref<GPUVideoEncoderVTBH264> create(CreationInfo&& info, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters, GPUVideoEncoderCallback&& encoderCallback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
     {
         return adoptRef(*new GPUVideoEncoderVTBH264(WTF::move(info), parameters, WTF::move(encoderCallback), WTF::move(descriptionCallback), WTF::move(errorCallback)));
     }
@@ -43,7 +43,7 @@ public:
     ~GPUVideoEncoderVTBH264() = default;
 
 private:
-    GPUVideoEncoderVTBH264(CreationInfo&&, const Vector<std::pair<String, String>>&, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+    GPUVideoEncoderVTBH264(CreationInfo&&, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
     bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&, const PlatformVideoColorSpace&) final;
     void configureAdditionalProperties() final;

@@ -77,12 +77,12 @@ public:
     virtual void commitTransaction(const IDBResourceIdentifier&, uint64_t handledRequestResultsCount) = 0;
     virtual void didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&) = 0;
     virtual void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) = 0;
-    virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) = 0;
-    virtual void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, const String& newName) = 0;
+    virtual void deleteObjectStore(const IDBRequestData&, StringImpl* objectStoreName) = 0;
+    virtual void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl* newName) = 0;
     virtual void clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier) = 0;
     virtual void createIndex(const IDBRequestData&, const IDBIndexInfo&) = 0;
-    virtual void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String& indexName) = 0;
-    virtual void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) = 0;
+    virtual void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl* indexName) = 0;
+    virtual void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName) = 0;
     virtual void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
     virtual void getRecord(const IDBRequestData&, const IDBGetRecordData&) = 0;
     virtual void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) = 0;

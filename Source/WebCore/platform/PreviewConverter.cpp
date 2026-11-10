@@ -40,22 +40,22 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PreviewConverter);
 
 PreviewConverter::~PreviewConverter() = default;
 
-bool PreviewConverter::supportsMIMEType(const String& mimeType)
+bool PreviewConverter::supportsMIMEType(StringImpl* mimeType)
 {
-    if (mimeType.isNull())
+    if (!mimeType)
         return false;
 
     if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s) || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
         return false;
 
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes = platformSupportedMIMETypes();
+    static NeverDestroyed<HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>> supportedMIMETypes = platformSupportedMIMETypes();
     return supportedMIMETypes->contains(mimeType);
 }
 
 ResourceResponse PreviewConverter::previewResponse() const
 {
     auto response = platformPreviewResponse();
-    ASSERT(response.mimeType().length());
+    ASSERT(length(response.mimeType()));
     response.setIsQuickLook(true);
     return response;
 }
@@ -143,18 +143,18 @@ void PreviewConverter::removeClient(PreviewConverterClient& client)
     ASSERT(!hasClient(client));
 }
 
-static String& sharedPasswordForTesting()
+static RefPtr<StringImpl>& sharedPasswordForTesting()
 {
-    static NeverDestroyed<String> passwordForTesting;
+    static NeverDestroyed<RefPtr<StringImpl>> passwordForTesting;
     return passwordForTesting.get();
 }
 
-const String& PreviewConverter::passwordForTesting()
+const RefPtr<StringImpl>& PreviewConverter::passwordForTesting()
 {
     return sharedPasswordForTesting();
 }
 
-void PreviewConverter::setPasswordForTesting(const String& password)
+void PreviewConverter::setPasswordForTesting(StringImpl* password)
 {
     sharedPasswordForTesting() = password;
 }
@@ -286,7 +286,7 @@ void PreviewConverter::delegateDidFailWithError(const ResourceError& error)
         return;
     }
 
-    provider->providePasswordForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto& password) mutable {
+    provider->providePasswordForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto* password) mutable {
         if (m_state != State::Updating)
             return;
 

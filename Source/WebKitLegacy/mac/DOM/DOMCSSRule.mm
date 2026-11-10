@@ -62,13 +62,13 @@
 - (NSString *)cssText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->cssText().createNSString().autorelease();
+    return createNSString(IMPL->cssText()).autorelease();
 }
 
 - (void)setCssText:(NSString *)newCssText
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setCssText(newCssText));
+    raiseOnDOMError(IMPL->setCssText(StringImpl::create(newCssText).get()));
 }
 
 - (DOMCSSStyleSheet *)parentStyleSheet

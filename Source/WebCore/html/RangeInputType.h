@@ -51,7 +51,7 @@ public:
 private:
     explicit RangeInputType(HTMLInputElement&);
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     bool supportsRequired() const final;
@@ -61,12 +61,12 @@ private:
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     void createShadowSubtree() final;
     Decimal parseToNumber(StringView, const Decimal&) const final;
-    String serialize(const Decimal&) const final;
+    RefPtr<StringImpl> serialize(const Decimal&) const final;
     bool accessKeyAction(bool sendMouseEvents) final;
     void attributeChanged(const QualifiedName&) final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
-    ValueOrReference<String> fallbackValue() const final;
-    ValueOrReference<String> sanitizeValue(const String& proposedValue LIFETIME_BOUND) const final;
+    void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    ValueOrReference<RefPtr<StringImpl>> fallbackValue() const final;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const final;
     bool shouldRespectListAttribute() final;
     HTMLElement* sliderThumbElement() const final;
     HTMLElement* sliderTrackElement() const final;

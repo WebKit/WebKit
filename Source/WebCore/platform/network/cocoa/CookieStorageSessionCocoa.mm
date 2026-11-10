@@ -233,7 +233,7 @@ NSHTTPCookie *CookieStorageSession::setCookiePartition(NSHTTPCookie *cookie, NSS
 }
 #endif
 
-RetainPtr<NSArray> CookieStorageSession::cookiesForURL(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition) const
+RetainPtr<NSArray> CookieStorageSession::cookiesForURL(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition) const
 {
     return httpCookiesForURL(cookieStorage().get(), firstParty.createNSURL().get(), sameSiteInfo, url.createNSURL().get(), thirdPartyCookieBlockingDecision, nsStringNilIfNull(partition).get());
 }
@@ -253,7 +253,7 @@ Vector<Cookie> CookieStorageSession::nsCookiesToCookieVector(NSArray *nsCookies,
     return cookies;
 }
 
-std::pair<String, bool> CookieStorageSession::cookiesForSession(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, CookiesFor cookiesFor, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition) const
+std::pair<RefPtr<StringImpl>, bool> CookieStorageSession::cookiesForSession(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, CookiesFor cookiesFor, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
@@ -261,7 +261,7 @@ std::pair<String, bool> CookieStorageSession::cookiesForSession(const URL& first
 
     auto cookies = cookiesForURL(firstParty, sameSiteInfo, url, thirdPartyCookieBlockingDecision, partition);
     if (![cookies count])
-        return { String(), false }; // Return a null string; StringBuilder below would create an empty one.
+        return { nullString(), false }; // Return a null string; StringBuilder below would create an empty one.
 
     StringBuilder cookiesBuilder;
     bool didAccessSecureCookies = false;
@@ -276,8 +276,8 @@ std::pair<String, bool> CookieStorageSession::cookiesForSession(const URL& first
             if (includeSecureCookies == IncludeSecureCookies::No)
                 continue;
         }
-        String cookieName { cookie.name };
-        String cookieValue { cookie.value };
+        RefPtr<StringImpl> cookieName { StringImpl::create(cookie.name) };
+        RefPtr<StringImpl> cookieValue { StringImpl::create(cookie.value) };
         if (cookiesFor == CookiesFor::DOMAccess) {
             cookieName = CookieUtil::cookieStringForScript(cookieName);
             cookieValue = CookieUtil::cookieStringForScript(cookieValue);
@@ -287,10 +287,10 @@ std::pair<String, bool> CookieStorageSession::cookiesForSession(const URL& first
     return { cookiesBuilder.toString(), didAccessSecureCookies };
 
     END_BLOCK_OBJC_EXCEPTIONS
-    return { String(), false };
+    return { nullString(), false };
 }
 
-std::optional<Vector<Cookie>> CookieStorageSession::cookiesForSessionAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, CookiesFor cookiesFor, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition, const String& cookieName) const
+std::optional<Vector<Cookie>> CookieStorageSession::cookiesForSessionAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, CookiesFor cookiesFor, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition, StringImpl* cookieName) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
@@ -301,7 +301,7 @@ std::optional<Vector<Cookie>> CookieStorageSession::cookiesForSessionAsVector(co
         return Vector<Cookie> { };
 
     Vector<Cookie> cookiesVector;
-    RetainPtr name = cookieName.createNSString();
+    RetainPtr name = createNSString(cookieName);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *cookie in cookies.get()) {
         if (![[cookie name] length])
@@ -310,7 +310,7 @@ std::optional<Vector<Cookie>> CookieStorageSession::cookiesForSessionAsVector(co
             continue;
         if ([cookie isSecure] && includeSecureCookies == IncludeSecureCookies::No)
             continue;
-        if (!cookieName.isNull() && ![[cookie name] isEqualToString:name.get()])
+        if (cookieName && ![[cookie name] isEqualToString:name.get()])
             continue;
 
         cookiesVector.append(Cookie(cookie));
@@ -321,17 +321,17 @@ std::optional<Vector<Cookie>> CookieStorageSession::cookiesForSessionAsVector(co
     return std::nullopt;
 }
 
-std::pair<String, bool> CookieStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition) const
+std::pair<RefPtr<StringImpl>, bool> CookieStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition) const
 {
     return cookiesForSession(firstParty, sameSiteInfo, url, CookiesFor::DOMAccess, includeSecureCookies, thirdPartyCookieBlockingDecision, partition);
 }
 
-std::pair<String, bool> CookieStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition) const
+std::pair<RefPtr<StringImpl>, bool> CookieStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition) const
 {
     return cookiesForSession(firstParty, sameSiteInfo, url, CookiesFor::HTTPHeader, includeSecureCookies, thirdPartyCookieBlockingDecision, partition);
 }
 
-std::pair<String, bool> CookieStorageSession::cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy& headerFieldProxy, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition) const
+std::pair<RefPtr<StringImpl>, bool> CookieStorageSession::cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy& headerFieldProxy, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition) const
 {
     return cookiesForSession(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, CookiesFor::HTTPHeader, headerFieldProxy.includeSecureCookies, thirdPartyCookieBlockingDecision, partition);
 }
@@ -366,26 +366,26 @@ static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCo
     return cookie;
 }
 
-static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookieURL, std::optional<Seconds> cappedLifetime, const String& partition)
+static RetainPtr<NSHTTPCookie> parseDOMCookie(RefPtr<StringImpl> cookieString, NSURL* cookieURL, std::optional<Seconds> cappedLifetime, StringImpl* partition)
 {
     // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
     // which would be sent as "Cookie: =".
-    if (cookieString.isEmpty())
+    if (isEmpty(cookieString))
         return nil;
 
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
-    cookieString = cookieString.contains('=') ? cookieString : makeString(cookieString, '=');
+    cookieString = contains(cookieString, '=') ? cookieString : makeString(cookieString, '=');
 
     // FIXME: <rdar://185837942> Remove this once CFNetwork's cookie-date parser accepts a date that
     // writes the month before the day of the month. RFC 6265 section 5.1.1 accepts either ordering.
     if (auto dayFirst = CookieUtil::cookieStringWithDayFirstExpires(cookieString))
         cookieString = WTF::move(*dayFirst);
 
-    return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
+    return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:createNSString(cookieString).get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
 }
 
-void CookieStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& cookieString, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, const String& partition) const
+void CookieStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, StringImpl* cookieString, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, StringImpl* partition) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
@@ -402,7 +402,7 @@ void CookieStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSi
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool CookieStorageSession::setCookieFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const Cookie& cookie, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, const String& partition) const
+bool CookieStorageSession::setCookieFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const Cookie& cookie, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, StringImpl* partition) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
@@ -428,7 +428,7 @@ void CookieStorageSession::setCookie(const Cookie& cookie)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool CookieStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partition, Vector<Cookie>& rawCookies) const
+bool CookieStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, StringImpl* partition, Vector<Cookie>& rawCookies) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -442,7 +442,7 @@ bool CookieStorageSession::getRawCookies(const URL& firstParty, const SameSiteIn
     return true;
 }
 
-void CookieStorageSession::deleteCookie(const URL& firstParty, const URL& url, const String& cookieName, const String& partition, CompletionHandler<void()>&& completionHandler) const
+void CookieStorageSession::deleteCookie(const URL& firstParty, const URL& url, StringImpl* cookieName, StringImpl* partition, CompletionHandler<void()>&& completionHandler) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
@@ -453,7 +453,7 @@ void CookieStorageSession::deleteCookie(const URL& firstParty, const URL& url, c
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = this->cookieStorage();
     RetainPtr<NSArray> cookies = httpCookiesForURL(cookieStorage.get(), firstParty.createNSURL().get(), std::nullopt, url.createNSURL().get(), ThirdPartyCookieBlockingDecision::None, nsStringNilIfNull(partition).get());
 
-    RetainPtr cookieNameString = cookieName.createNSString();
+    RetainPtr cookieNameString = createNSString(cookieName);
 
     NSUInteger count = [cookies count];
     for (NSUInteger i = 0; i < count; ++i) {

@@ -39,16 +39,16 @@
 
 namespace WebKit {
 
-using ApplicationBundleIdentifiersOrAuditToken = Variant<std::pair<String, String>, Vector<uint8_t>>;
+using ApplicationBundleIdentifiersOrAuditToken = Variant<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>, Vector<uint8_t>>;
 
 class PrivateClickMeasurementManager : public PCM::ManagerInterface, public CanMakeWeakPtr<PrivateClickMeasurementManager> {
     WTF_MAKE_TZONE_ALLOCATED(PrivateClickMeasurementManager);
 public:
-    static Ref<PrivateClickMeasurementManager> create(UniqueRef<PCM::Client>&&, const String& storageDirectory, const ApplicationBundleIdentifiersOrAuditToken&);
+    static Ref<PrivateClickMeasurementManager> create(UniqueRef<PCM::Client>&&, StringImpl* storageDirectory, const ApplicationBundleIdentifiersOrAuditToken&);
 
     ~PrivateClickMeasurementManager();
 
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     void storeUnattributed(PrivateClickMeasurement&&, CompletionHandler<void()>&&) final;
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
@@ -60,14 +60,14 @@ public:
     void setPrivateRelayEnforcementIsEnabled(bool) final;
     void firePendingAttributionRequests();
 
-    void toStringForTesting(CompletionHandler<void(String)>&&) const final;
+    void toStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&&) const final;
     void setOverrideTimerForTesting(bool value) final { m_isRunningTest = value; }
     void setTokenPublicKeyURLForTesting(URL&&) final;
     void setTokenSignatureURLForTesting(URL&&) final;
     void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL) final;
     void markAllUnattributedAsExpiredForTesting() final;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
-    void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
+    void setPCMFraudPreventionValuesForTesting(RefPtr<StringImpl>&& unlinkableToken, RefPtr<StringImpl>&& secretToken, RefPtr<StringImpl>&& signature, RefPtr<StringImpl>&& keyID) final;
     void startTimerImmediatelyForTesting() final;
     void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&);
     void destroyStoreForTesting(CompletionHandler<void()>&&) final;
@@ -75,16 +75,16 @@ public:
     void fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&);
 
 private:
-    PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory, const ApplicationBundleIdentifiersOrAuditToken&);
+    PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, StringImpl* storageDirectory, const ApplicationBundleIdentifiersOrAuditToken&);
 
     PCM::Store& store();
     const PCM::Store& store() const;
     void initializeStore() const;
     void startTimer(Seconds);
-    void getTokenPublicKey(PrivateClickMeasurement&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
-    void getTokenPublicKey(AttributionTriggerData&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(AttributionTriggerData&&, const String& publicKeyBase64URL)>&&);
+    void getTokenPublicKey(PrivateClickMeasurement&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, StringImpl* publicKeyBase64URL)>&&);
+    void getTokenPublicKey(AttributionTriggerData&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(AttributionTriggerData&&, StringImpl* publicKeyBase64URL)>&&);
     void configureForTokenSigning(PrivateClickMeasurement::PcmDataCarried&, URL& tokenSignatureURL, std::optional<URL> givenTokenSignatureURL);
-    std::optional<String> getSignatureBase64URLFromTokenSignatureResponse(const String& errorDescription, const RefPtr<JSON::Object>&);
+    std::optional<RefPtr<StringImpl>> getSignatureBase64URLFromTokenSignatureResponse(StringImpl* errorDescription, const RefPtr<JSON::Object>&);
     void getSignedUnlinkableTokenForSource(PrivateClickMeasurement&&);
     void getSignedUnlinkableTokenForDestination(SourceSite&&, AttributionDestinationSite&&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
     void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
@@ -104,7 +104,7 @@ private:
     std::optional<URL> m_tokenSignatureURLForTesting;
     std::optional<ApplicationBundleIdentifier> m_privateClickMeasurementAppBundleIDForTesting;
     mutable RefPtr<PCM::Store> m_store;
-    String m_storageDirectory;
+    RefPtr<StringImpl> m_storageDirectory;
     const ApplicationBundleIdentifiersOrAuditToken m_applicationBundleIdentifier;
     const UniqueRef<PCM::Client> m_client;
 
@@ -116,14 +116,14 @@ private:
     std::optional<AttributionReportTestConfig> m_attributionReportTestConfig;
 
     struct TestingFraudPreventionValues {
-        String unlinkableTokenForSource;
-        String secretTokenForSource;
-        String signatureForSource;
-        String keyIDForSource;
-        String unlinkableTokenForDestination;
-        String secretTokenForDestination;
-        String signatureForDestination;
-        String keyIDForDestination;
+        RefPtr<StringImpl> unlinkableTokenForSource;
+        RefPtr<StringImpl> secretTokenForSource;
+        RefPtr<StringImpl> signatureForSource;
+        RefPtr<StringImpl> keyIDForSource;
+        RefPtr<StringImpl> unlinkableTokenForDestination;
+        RefPtr<StringImpl> secretTokenForDestination;
+        RefPtr<StringImpl> signatureForDestination;
+        RefPtr<StringImpl> keyIDForDestination;
     };
 
     std::optional<TestingFraudPreventionValues> m_fraudPreventionValuesForTesting;

@@ -56,7 +56,7 @@ public:
 
     NODELETE static bool isWhitespace(CSSParserTokenType);
 
-    Vector<String>&& escapedStringsForAdoption() { return WTF::move(m_stringPool); }
+    Vector<RefPtr<StringImpl>>&& escapedStringsForAdoption() { return WTF::move(m_stringPool); }
 
 private:
     CSSTokenizer(StringView string LIFETIME_BOUND, CSSParserObserverWrapper*, bool* constructionSuccess);
@@ -121,8 +121,8 @@ private:
     CSSParserToken stringStart(char16_t);
     CSSParserToken endOfFile(char16_t);
 
-    StringView registerString(String&&);
-    StringView registerString(const String&);
+    StringView registerString(RefPtr<StringImpl>&&);
+    StringView registerString(StringImpl*);
 
     using CodePoint = CSSParserToken (CSSTokenizer::*)(char16_t);
     static const std::array<CodePoint, 128> codePoints;
@@ -130,7 +130,7 @@ private:
     Vector<CSSParserTokenType, 8> m_blockStack;
     Vector<CSSParserToken, 32> m_tokens;
     // We only allocate strings when escapes are used.
-    Vector<String> m_stringPool;
+    Vector<RefPtr<StringImpl>> m_stringPool;
     CSSTokenizerInputStream m_input;
 };
 

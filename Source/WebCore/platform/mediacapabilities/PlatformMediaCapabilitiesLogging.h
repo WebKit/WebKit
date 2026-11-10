@@ -53,67 +53,67 @@ struct LogArgument;
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesVideoConfiguration> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesVideoConfiguration&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesVideoConfiguration&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesAudioConfiguration> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesAudioConfiguration&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesAudioConfiguration&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaConfiguration> {
-    static String toString(const WebCore::PlatformMediaConfiguration&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaConfiguration&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaDecodingConfiguration> {
-    static String toString(const WebCore::PlatformMediaDecodingConfiguration&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaDecodingConfiguration&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaEncodingConfiguration> {
-    static String toString(const WebCore::PlatformMediaEncodingConfiguration&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaEncodingConfiguration&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesInfo> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesInfo&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesInfo&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesDecodingInfo> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesDecodingInfo&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesDecodingInfo&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesEncodingInfo> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesEncodingInfo&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesEncodingInfo&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesColorGamut> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesColorGamut&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesColorGamut&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesHdrMetadataType> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesHdrMetadataType&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesHdrMetadataType&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaCapabilitiesTransferFunction> {
-    static String toString(const WebCore::PlatformMediaCapabilitiesTransferFunction&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaCapabilitiesTransferFunction&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaDecodingType> {
-    static String toString(const WebCore::PlatformMediaDecodingType&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaDecodingType&);
 };
 
 template<>
 struct LogArgument<WebCore::PlatformMediaEncodingType> {
-    static String toString(const WebCore::PlatformMediaEncodingType&);
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaEncodingType&);
 };
 
 }

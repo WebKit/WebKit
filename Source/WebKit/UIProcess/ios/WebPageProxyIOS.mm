@@ -121,12 +121,12 @@ void WebPageProxy::platformInitialize()
 {
 }
 
-String WebPageProxy::userAgentForURL(const URL&)
+RefPtr<StringImpl> WebPageProxy::userAgentForURL(const URL&)
 {
     return userAgent();
 }
 
-String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
+RefPtr<StringImpl> WebPageProxy::standardUserAgent(StringImpl* applicationNameForUserAgent)
 {
     return standardUserAgentWithApplicationName(applicationNameForUserAgent);
 }
@@ -137,7 +137,7 @@ void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandl
     completionHandler(false);
 }
 
-void WebPageProxy::speak(const String&)
+void WebPageProxy::speak(StringImpl*)
 {
     notImplemented();
 }
@@ -147,7 +147,7 @@ void WebPageProxy::stopSpeaking()
     notImplemented();
 }
 
-void WebPageProxy::searchTheWeb(const String&)
+void WebPageProxy::searchTheWeb(StringImpl*)
 {
     notImplemented();
 }
@@ -162,19 +162,19 @@ void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const F
     notImplemented();
 }
 
-String WebPageProxy::stringSelectionForPasteboard()
-{
-    notImplemented();
-    return String();
-}
-
-RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String&)
+RefPtr<StringImpl> WebPageProxy::stringSelectionForPasteboard()
 {
     notImplemented();
     return nullptr;
 }
 
-bool WebPageProxy::readSelectionFromPasteboard(const String&)
+RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(StringImpl*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool WebPageProxy::readSelectionFromPasteboard(StringImpl*)
 {
     notImplemented();
     return false;
@@ -188,7 +188,7 @@ void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const
     sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestFocusedElementInformation(), Messages::WebPage::RequestFocusedElementInformation::Reply { WTF::move(callback) });
 }
 
-void WebPageProxy::updateStringForFind(const String& string)
+void WebPageProxy::updateStringForFind(StringImpl* string)
 {
     if (!hasRunningProcess())
         return;
@@ -239,7 +239,7 @@ void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSi
         protect(m_legacyMainFrameProcess)->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, layoutSizeScaleFactorFromClient, minimumEffectiveDeviceWidth), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::setSceneIdentifier(String&& sceneIdentifier)
+void WebPageProxy::setSceneIdentifier(RefPtr<StringImpl>&& sceneIdentifier)
 {
     if (hasRunningProcess())
         protect(m_legacyMainFrameProcess)->send(Messages::WebPage::SetSceneIdentifier(WTF::move(sceneIdentifier)), webPageIDInMainFrameProcess());
@@ -316,7 +316,7 @@ void WebPageProxy::didInsertFinalDictationResult()
     sendToFocusedOrMainFrameProcess(Messages::WebPage::DidInsertFinalDictationResult());
 }
 
-void WebPageProxy::replaceDictatedText(const String& oldText, const String& newText)
+void WebPageProxy::replaceDictatedText(StringImpl* oldText, StringImpl* newText)
 {
     RefPtr frame = focusedOrMainFrame();
     if (!frame)
@@ -324,12 +324,12 @@ void WebPageProxy::replaceDictatedText(const String& oldText, const String& newT
     sendToProcessContainingFrame(frame->frameID(), Messages::WebPage::ReplaceDictatedText(oldText, newText));
 }
 
-void WebPageProxy::replaceSelectedText(const String& oldText, const String& newText)
+void WebPageProxy::replaceSelectedText(StringImpl* oldText, StringImpl* newText)
 {
     sendToFocusedOrMainFrameProcess(Messages::WebPage::ReplaceSelectedText(oldText, newText));
 }
 
-void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& callback)
+void WebPageProxy::requestAutocorrectionData(StringImpl* textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& callback)
 {
     if (!hasRunningProcess()) {
         callback({ });
@@ -338,13 +338,13 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
     sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), Messages::WebPage::RequestAutocorrectionData::Reply { WTF::move(callback) });
 }
 
-void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(String&&)>&& callback)
+void WebPageProxy::applyAutocorrection(StringImpl* correction, StringImpl* originalText, bool isCandidate, CompletionHandler<void(RefPtr<StringImpl>&&)>&& callback)
 {
     auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
     sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::ApplyAutocorrection(correction, originalText, isCandidate), WTF::move(callback));
 }
 
-bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate)
+bool WebPageProxy::applyAutocorrection(StringImpl* correction, StringImpl* originalText, bool isCandidate)
 {
     auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
     auto sendSync = sendSyncToProcessContainingFrame(targetFrameID, Messages::WebPage::SyncApplyAutocorrection(correction, originalText, isCandidate), Seconds::infinity());
@@ -463,10 +463,10 @@ void WebPageProxy::clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore:
         protect(legacyMainFrameProcess())->send(Messages::WebPage::ClearSelectionAfterTappingSelectionHighlightIfNeeded(location), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& callbackFunction)
+void WebPageProxy::getSelectionContext(CompletionHandler<void(StringImpl*, StringImpl*, StringImpl*)>&& callbackFunction)
 {
     if (!hasRunningProcess())
-        return callbackFunction({ }, { }, { });
+        return callbackFunction(nullptr, nullptr, nullptr);
     sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetSelectionContext(), Messages::WebPage::GetSelectionContext::Reply { WTF::move(callbackFunction) });
 }
 
@@ -507,9 +507,9 @@ void WebPageProxy::stopInteraction()
     internals().interactionFrameID = { };
 }
 
-bool WebPageProxy::isValidPerformActionOnElementAuthorizationToken(const String& authorizationToken) const
+bool WebPageProxy::isValidPerformActionOnElementAuthorizationToken(StringImpl* authorizationToken) const
 {
-    return !authorizationToken.isNull() && m_performActionOnElementAuthTokens.contains(authorizationToken);
+    return !!authorizationToken && m_performActionOnElementAuthTokens.contains(authorizationToken);
 }
 
 void WebPageProxy::performActionOnElement(uint32_t action)
@@ -532,7 +532,7 @@ void WebPageProxy::performActionOnElements(uint32_t action, Vector<WebCore::Elem
     sendToProcessContainingFrame(internals().interactionFrameID.asOptional(), Messages::WebPage::PerformActionOnElements(action, elements));
 }
 
-void WebPageProxy::saveImageToLibrary(IPC::Connection& connection, SharedMemory::Handle&& imageHandle, const String& authorizationToken)
+void WebPageProxy::saveImageToLibrary(IPC::Connection& connection, SharedMemory::Handle&& imageHandle, StringImpl* authorizationToken)
 {
     MESSAGE_CHECK_BASE(isValidPerformActionOnElementAuthorizationToken(authorizationToken), connection);
 
@@ -639,7 +639,7 @@ void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGr
     sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(granularity, offset), Messages::WebPage::GetRectsForGranularityWithSelectionOffset::Reply { WTF::move(callback) });
 }
 
-void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
+void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, StringImpl* text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
 {
     if (!hasRunningProcess())
         return callback({ });
@@ -697,7 +697,7 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
         pageClient->accessibilityWebProcessTokenReceived(data, protect(protect(legacyMainFrameProcess())->connection())->remoteProcessID());
 }
 
-void WebPageProxy::relayAccessibilityNotification(String&& notificationName, std::span<const uint8_t> data)
+void WebPageProxy::relayAccessibilityNotification(RefPtr<StringImpl>&& notificationName, std::span<const uint8_t> data)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->relayAccessibilityNotification(WTF::move(notificationName), toNSData(data));
@@ -715,7 +715,7 @@ void WebPageProxy::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementDa
         pageClient->relayLiveRegionNotification(notificationData);
 }
 
-void WebPageProxy::didDisplayCaptions(Vector<String>&& captions)
+void WebPageProxy::didDisplayCaptions(Vector<RefPtr<StringImpl>>&& captions)
 {
     if (!canLoad_MediaAccessibility_MACaptionAppearanceDidDisplayCaptions())
         return;
@@ -726,8 +726,8 @@ void WebPageProxy::didDisplayCaptions(Vector<String>&& captions)
     if (captions.size() > maximumCaptionCount)
         captions.shrink(maximumCaptionCount);
 
-    RetainPtr strings = createNSArray(captions, [](const String& caption) {
-        return caption.left(maximumCaptionLength).createNSString();
+    RetainPtr strings = createNSArray(captions, [](StringImpl* caption) {
+        return createNSString(left(caption, maximumCaptionLength));
     });
 
     // MediaAccessibility forwards this to UIAccessibility, which posts the notification VoiceOver uses
@@ -754,7 +754,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRe
     protect(legacyMainFrameProcess())->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::executeSavedCommandBySelector(IPC::Connection&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::executeSavedCommandBySelector(IPC::Connection&, StringImpl*, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
     completionHandler(false);
@@ -949,7 +949,7 @@ void WebPageProxy::didReleaseAllTouchPoints()
     m_pendingInputModeChange = std::nullopt;
 }
 
-void WebPageProxy::autofillLoginCredentials(std::optional<WebCore::FrameIdentifier> frameID, const String& username, const String& password)
+void WebPageProxy::autofillLoginCredentials(std::optional<WebCore::FrameIdentifier> frameID, StringImpl* username, StringImpl* password)
 {
 #if HAVE(WEB_AUTHN_AS_MODERN)
     protect(m_webAuthnCredentialsMessenger)->recordAutofill(username, URL { currentURL() });
@@ -1006,7 +1006,7 @@ void WebPageProxy::focusNextFocusedElement(std::optional<WebCore::FrameIdentifie
     } });
 }
 
-void WebPageProxy::setFocusedElementValue(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::ElementContext& context, const String& value)
+void WebPageProxy::setFocusedElementValue(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::ElementContext& context, StringImpl* value)
 {
     sendToProcessContainingFrame(frameID, Messages::WebPage::SetFocusedElementValue(context, value));
 }
@@ -1034,7 +1034,7 @@ void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
     m_frozenRemoteLayerTreeHost = nullptr;
 }
 
-void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
+void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, StringImpl* contextUID)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->showPlaybackTargetPicker(hasVideo, elementRect, policy, contextUID);
@@ -1106,7 +1106,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
     return replyID;
 }
 
-void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
+void WebPageProxy::contentSizeCategoryDidChange(StringImpl* contentSizeCategory)
 {
     m_contentSizeCategory = contentSizeCategory;
     if (RefPtr provisionalPage = m_provisionalPage)
@@ -1340,11 +1340,11 @@ void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::Fram
 
 #if USE(QUICK_LOOK)
 
-void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
+void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(StringImpl* fileName, StringImpl* uti)
 {
     // Ensure that fileName isn't really a path name
     static_assert(notFound + 1 == 0, "The following line assumes WTF::notFound equals -1");
-    m_navigationClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
+    m_navigationClient->didStartLoadForQuickLookDocumentInMainFrame(substring(fileName, reverseFind(fileName, '/') + 1), uti);
 }
 
 void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(ShareableResource::Handle&& handle)
@@ -1356,16 +1356,16 @@ void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(ShareableResourc
     m_navigationClient->didFinishLoadForQuickLookDocumentInMainFrame(*buffer);
 }
 
-void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrame(StringImpl* fileName, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     requestPasswordForQuickLookDocumentInMainFrameShared(fileName, WTF::move(completionHandler));
 }
 
-void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(StringImpl* fileName, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
-        return completionHandler({ });
+        return completionHandler(nullptr);
     pageClient->requestPasswordForQuickLookDocument(fileName, WTF::move(completionHandler));
 }
 
@@ -1386,7 +1386,7 @@ UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewContr
     return page->uiClient().presentingViewController();
 }
 
-const String& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
     return page->websiteDataStore().configuration().dataConnectionServiceType();
 }
@@ -1395,7 +1395,7 @@ const String& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionService
 
 #if ENABLE(APPLE_PAY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
 
-void WebPageProxy::Internals::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
+void WebPageProxy::Internals::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(StringImpl*, StringImpl*)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
     completionHandler(nullString(), nullString());
@@ -1490,16 +1490,16 @@ bool WebPageProxy::useDesktopClassBrowsing(const API::WebsitePolicies& policies,
     }
 }
 
-String WebPageProxy::predictedUserAgentForRequest(const WebCore::ResourceRequest& request) const
+RefPtr<StringImpl> WebPageProxy::predictedUserAgentForRequest(const WebCore::ResourceRequest& request) const
 {
-    if (!customUserAgent().isEmpty())
+    if (!isEmpty(customUserAgent()))
         return customUserAgent();
 
     Ref policies = m_configuration->defaultWebsitePolicies();
-    if (!policies->customUserAgent().isEmpty())
+    if (!isEmpty(policies->customUserAgent()))
         return policies->customUserAgent();
 
-    if (policies->applicationNameForDesktopUserAgent().isEmpty())
+    if (isEmpty(policies->applicationNameForDesktopUserAgent()))
         return userAgent();
 
     if (!useDesktopClassBrowsing(policies, request))
@@ -1520,7 +1520,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     auto applyIPhoneUserAgent = [&] {
         policies.setCustomUserAgent(makeStringByReplacingAll(standardUserAgentWithApplicationName(m_applicationNameForUserAgent), "iPad"_s, "iPhone"_s));
-        policies.setCustomNavigatorPlatform("iPhone"_s);
+        policies.setCustomNavigatorPlatform("iPhone"_si);
     };
 
     auto applyCapabilityPoliciesForContentMode = [&](WebContentMode contentMode) {
@@ -1558,11 +1558,11 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         return WebContentMode::Mobile;
     }
 
-    if (policies.customUserAgent().isEmpty() && customUserAgent().isEmpty()) {
+    if (isEmpty(policies.customUserAgent()) && isEmpty(customUserAgent())) {
         auto applicationName = policies.applicationNameForDesktopUserAgent();
-        if (applicationName.isEmpty())
+        if (isEmpty(applicationName))
             applicationName = applicationNameForDesktopUserAgent();
-        std::optional<String> customUserAgentForQuirk;
+        std::optional<RefPtr<StringImpl>> customUserAgentForQuirk;
         if (needsSiteSpecificQuirks)
             customUserAgentForQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent, m_userAgent);
 
@@ -1572,9 +1572,9 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
             policies.setCustomUserAgent(standardUserAgentWithApplicationName(applicationName, emptyString(), UserAgentType::Desktop));
     }
 
-    if (policies.customNavigatorPlatform().isEmpty()) {
+    if (isEmpty(policies.customNavigatorPlatform())) {
         // FIXME: Grab this from WebCore instead of hard-coding it here.
-        policies.setCustomNavigatorPlatform("MacIntel"_s);
+        policies.setCustomNavigatorPlatform("MacIntel"_si);
     }
 
     if (desktopClassBrowsingSupported()) {
@@ -1703,7 +1703,7 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteA
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
     case DOMPasteAccessCategory::Fonts:
-        return grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral, WTF::move(completionHandler), frameID);
+        return grantAccessToCurrentPasteboardData(StringImpl::create(UIPasteboardNameGeneral).get(), WTF::move(completionHandler), frameID);
     }
 }
 
@@ -1842,7 +1842,7 @@ void WebPageProxy::setInitialPDFDisplayMode(PDFPluginDisplayMode mode)
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setPromisedDataForImage(IPC::Connection&, const String&, SharedMemory::Handle&&, const String&, const String&, const String&, const String&, const String&, SharedMemory::Handle&&, const String&)
+void WebPageProxy::setPromisedDataForImage(IPC::Connection&, StringImpl*, SharedMemory::Handle&&, StringImpl*, StringImpl*, StringImpl*, StringImpl*, StringImpl*, SharedMemory::Handle&&, StringImpl*)
 {
     notImplemented();
 }

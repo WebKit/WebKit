@@ -235,12 +235,12 @@ void HTMLAnchorElement::setActive(bool down, Style::InvalidationScope invalidati
     HTMLElement::setActive(down, invalidationScope);
 }
 
-void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLAnchorElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (name == hrefAttr)
-        setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
+        setIsLink(!!newValue && !shouldProhibitLinks(this));
     else if (name == relAttr) {
         m_linkRelations = relationsForRelAttribute(newValue);
         if (m_relList)
@@ -268,7 +268,7 @@ bool HTMLAnchorElement::canStartSelection() const
 
 bool HTMLAnchorElement::draggable() const
 {
-    const AtomString& value = attributeWithoutSynchronization(draggableAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(draggableAttr);
     if (equalLettersIgnoringASCIICase(value, "true"_s))
         return true;
     if (equalLettersIgnoringASCIICase(value, "false"_s))
@@ -294,7 +294,7 @@ DOMTokenList& HTMLAnchorElement::relList()
     return *m_relList;
 }
 
-const AtomString& HTMLAnchorElement::name() const
+const RefPtr<AtomStringImpl>& HTMLAnchorElement::name() const
 {
     return getNameAttribute();
 }
@@ -304,12 +304,12 @@ int HTMLAnchorElement::defaultTabIndex() const
     return 0;
 }
 
-AtomString HTMLAnchorElement::target() const
+RefPtr<AtomStringImpl> HTMLAnchorElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }
 
-String HTMLAnchorElement::origin() const
+RefPtr<StringImpl> HTMLAnchorElement::origin() const
 {
     auto url = href();
     if (!url.isValid())
@@ -324,12 +324,12 @@ void HTMLAnchorElement::setProtocol(StringView value)
     URLDecomposition::setProtocol(value);
 }
 
-String HTMLAnchorElement::text()
+RefPtr<StringImpl> HTMLAnchorElement::text()
 {
     return textContent();
 }
 
-void HTMLAnchorElement::setText(String&& text)
+void HTMLAnchorElement::setText(RefPtr<StringImpl>&& text)
 {
     setTextContent(WTF::move(text));
 }
@@ -345,9 +345,9 @@ bool HTMLAnchorElement::isSystemPreviewLink()
     if (!document().settings().systemPreviewEnabled())
         return false;
 
-    static MainThreadNeverDestroyed<const AtomString> systemPreviewRelValue("ar"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> systemPreviewRelValue("ar"_s);
 
-    if (!protect(relList())->contains(systemPreviewRelValue))
+    if (!protect(relList())->contains(systemPreviewRelValue.get()))
         return false;
 
     if (RefPtr child = firstElementChild()) {
@@ -368,11 +368,11 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 
 std::optional<URL> HTMLAnchorElement::attributionDestinationURLForPCM() const
 {
-    URL destinationURL { attributeWithoutSynchronization(attributiondestinationAttr) };
+    URL destinationURL { attributeWithoutSynchronization(attributiondestinationAttr).get() };
     if (destinationURL.isValid() && destinationURL.protocolIsInHTTPFamily())
         return destinationURL;
 
-    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_si);
     return std::nullopt;
 }
 
@@ -384,19 +384,19 @@ std::optional<RegistrableDomain> HTMLAnchorElement::mainDocumentRegistrableDomai
             return RegistrableDomain(mainFrameURL);
     }
 
-    document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+    document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_si);
     return std::nullopt;
 }
 
 std::optional<PCM::EphemeralNonce> HTMLAnchorElement::attributionSourceNonceForPCM() const
 {
     auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
-    if (attributionSourceNonceAttr.isEmpty())
+    if (isEmpty(attributionSourceNonceAttr))
         return std::nullopt;
 
     auto ephemeralNonce = PCM::EphemeralNonce { attributionSourceNonceAttr };
     if (!ephemeralNonce.isValid()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_si);
         return std::nullopt;
     }
 
@@ -431,7 +431,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
 #if PLATFORM(COCOA)
     auto bundleID = applicationBundleIdentifier();
 #else
-    String bundleID;
+    RefPtr<StringImpl> bundleID;
 #endif
 
     auto privateClickMeasurement = PrivateClickMeasurement {
@@ -468,14 +468,14 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     auto attributionSourceIDAttr = attributeWithoutSynchronization(attributionsourceidAttr);
     auto attributionDestinationAttr = attributeWithoutSynchronization(attributiondestinationAttr);
 
-    if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || attributionSourceIDAttr.isEmpty() || attributionDestinationAttr.isEmpty()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
+    if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || isEmpty(attributionSourceIDAttr) || isEmpty(attributionDestinationAttr)) {
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_si);
         return std::nullopt;
     }
 
     auto attributionSourceID = parseHTMLNonNegativeInteger(attributionSourceIDAttr);
     if (!attributionSourceID) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_si);
         return std::nullopt;
     }
     
@@ -484,28 +484,28 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
         return std::nullopt;
     }
 
-    URL destinationURL { attributionDestinationAttr };
+    URL destinationURL { attributionDestinationAttr.get() };
     if (!destinationURL.isValid() || !destinationURL.protocolIsInHTTPFamily()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_si);
         return std::nullopt;
     }
 
     auto& mainURL = page->mainFrameURL();
     if (mainURL.isEmpty()) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_si);
         return std::nullopt;
     }
 
     RegistrableDomain mainDocumentRegistrableDomain = RegistrableDomain { mainURL };
     if (mainDocumentRegistrableDomain.matches(destinationURL)) {
-        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_si);
         return std::nullopt;
     }
 
 #if PLATFORM(COCOA)
     auto bundleID = applicationBundleIdentifier();
 #else
-    String bundleID;
+    RefPtr<StringImpl> bundleID;
 #endif
 
     PrivateClickMeasurement privateClickMeasurement {
@@ -536,7 +536,7 @@ void HTMLAnchorElement::handleClick(Event& event)
         return;
 
     StringBuilder url;
-    url.append(StringView(attributeWithoutSynchronization(hrefAttr).string()).trim(isASCIIWhitespace));
+    url.append(StringView(attributeWithoutSynchronization(hrefAttr)).trim(isASCIIWhitespace));
     appendServerMapMousePosition(url, event);
     URL completedURL = document->encodingParseURL(url.toString());
 
@@ -549,7 +549,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    AtomString downloadAttribute = parseDownloadAttribute(*this, completedURL, downloadAttr);
+    RefPtr<AtomStringImpl> downloadAttribute = parseDownloadAttribute(*this, completedURL, downloadAttr);
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
@@ -589,10 +589,10 @@ void HTMLAnchorElement::handleClick(Event& event)
 }
 
 // Falls back to using <base> element's target if the anchor does not have one.
-AtomString HTMLAnchorElement::effectiveTarget() const
+RefPtr<AtomStringImpl> HTMLAnchorElement::effectiveTarget() const
 {
     auto effectiveTarget = target();
-    if (effectiveTarget.isEmpty())
+    if (isEmpty(effectiveTarget))
         effectiveTarget = document().baseTarget();
     return makeTargetBlankIfHasDanglingMarkup(effectiveTarget);
 }
@@ -677,7 +677,7 @@ void HTMLAnchorElement::setRootEditableElementForSelectionOnMouseDown(Element* e
     m_hasRootEditableElementForSelectionOnMouseDown = true;
 }
 
-String HTMLAnchorElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> HTMLAnchorElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }
@@ -704,11 +704,11 @@ void HTMLAnchorElement::postConnectionSteps()
 
 void HTMLAnchorElement::setFullURL(const URL& fullURL)
 {
-    setAttributeWithoutSynchronization(hrefAttr, AtomString { fullURL.string() });
+    setAttributeWithoutSynchronization(hrefAttr, AtomStringImpl::add(fullURL.string()).get());
     checkForSpeculationRules();
 }
 
-void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy)
+void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagerness, Vector<RefPtr<StringImpl>>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy)
 {
     // Map SpeculationRules::Eagerness to the anchor's PrefetchEagerness.
     // Only Immediate triggers immediate prefetch; all others fall back to conservative behavior.
@@ -719,17 +719,17 @@ void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagern
         protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy, true);
 }
 
-String HTMLAnchorElement::prefetchEagernessForTesting() const
+RefPtr<StringImpl> HTMLAnchorElement::prefetchEagernessForTesting() const
 {
     switch (m_prefetchEagerness) {
     case PrefetchEagerness::None:
-        return "none"_s;
+        return "none"_si;
     case PrefetchEagerness::Conservative:
-        return "conservative"_s;
+        return "conservative"_si;
     case PrefetchEagerness::Immediate:
-        return "immediate"_s;
+        return "immediate"_si;
     }
-    return "none"_s;
+    return "none"_si;
 }
 
 void HTMLAnchorElement::checkForSpeculationRules()

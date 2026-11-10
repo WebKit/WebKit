@@ -39,23 +39,23 @@ class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappab
 public:
     enum class Kind { Audioinput, Audiooutput, Videoinput };
 
-    NODELETE static Ref<MediaDeviceInfo> create(const String&, const String&, const String&, Kind);
+    NODELETE static Ref<MediaDeviceInfo> create(StringImpl*, StringImpl*, StringImpl*, Kind);
     virtual ~MediaDeviceInfo() = default;
 
-    const String& label() const LIFETIME_BOUND { return m_label; }
-    const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
-    const String& groupId() const LIFETIME_BOUND { return m_groupId; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND { return m_label; }
+    const RefPtr<StringImpl>& deviceId() const LIFETIME_BOUND { return m_deviceId; }
+    const RefPtr<StringImpl>& groupId() const LIFETIME_BOUND { return m_groupId; }
     Kind kind() const { return m_kind; }
 
     virtual bool isInputDeviceInfo() const { return false; }
 
 protected:
-    MediaDeviceInfo(const String&, const String&, const String&, Kind);
+    MediaDeviceInfo(StringImpl*, StringImpl*, StringImpl*, Kind);
 
 private:
-    const String m_label;
-    const String m_deviceId;
-    const String m_groupId;
+    const RefPtr<StringImpl> m_label;
+    const RefPtr<StringImpl> m_deviceId;
+    const RefPtr<StringImpl> m_groupId;
     const Kind m_kind;
 };
 

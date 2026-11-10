@@ -54,8 +54,8 @@ public:
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() LIFETIME_BOUND final { return m_gamepadVector; }
-    void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
-    void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
+    void playEffect(unsigned, StringImpl*, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(unsigned, StringImpl*, CompletionHandler<void()>&&) final;
 
     void deviceConnected(ManetteDevice*);
     void deviceDisconnected(ManetteDevice*);

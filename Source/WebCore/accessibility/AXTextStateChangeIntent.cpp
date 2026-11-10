@@ -30,98 +30,98 @@
 
 namespace WebCore {
 
-String debugDescription(AXTextStateChangeType type)
+RefPtr<StringImpl> debugDescription(AXTextStateChangeType type)
 {
     switch (type) {
     case AXTextStateChangeType::Unknown:
-        return "Unknown"_s;
+        return "Unknown"_si;
     case AXTextStateChangeType::Edit:
-        return "Edit"_s;
+        return "Edit"_si;
     case AXTextStateChangeType::SelectionMove:
-        return "SelectionMove"_s;
+        return "SelectionMove"_si;
     case AXTextStateChangeType::SelectionExtend:
-        return "SelectionExtend"_s;
+        return "SelectionExtend"_si;
     case AXTextStateChangeType::SelectionBoundary:
-        return "SelectionBoundary"_s;
+        return "SelectionBoundary"_si;
     }
-    return "Unknown"_s;
+    return "Unknown"_si;
 }
 
-String debugDescription(AXTextEditType type)
+RefPtr<StringImpl> debugDescription(AXTextEditType type)
 {
     switch (type) {
     case AXTextEditType::Unknown:
-        return "Unknown"_s;
+        return "Unknown"_si;
     case AXTextEditType::Delete:
-        return "Delete"_s;
+        return "Delete"_si;
     case AXTextEditType::Insert:
-        return "Insert"_s;
+        return "Insert"_si;
     case AXTextEditType::Typing:
-        return "Typing"_s;
+        return "Typing"_si;
     case AXTextEditType::Dictation:
-        return "Dictation"_s;
+        return "Dictation"_si;
     case AXTextEditType::Cut:
-        return "Cut"_s;
+        return "Cut"_si;
     case AXTextEditType::Paste:
-        return "Paste"_s;
+        return "Paste"_si;
     case AXTextEditType::Replace:
-        return "Replace"_s;
+        return "Replace"_si;
     case AXTextEditType::AttributesChange:
-        return "AttributesChange"_s;
+        return "AttributesChange"_si;
     }
-    return "Unknown"_s;
+    return "Unknown"_si;
 }
 
-String debugDescription(AXTextSelectionDirection direction)
+RefPtr<StringImpl> debugDescription(AXTextSelectionDirection direction)
 {
     switch (direction) {
     case AXTextSelectionDirection::Unknown:
-        return "Unknown"_s;
+        return "Unknown"_si;
     case AXTextSelectionDirection::Beginning:
-        return "Beginning"_s;
+        return "Beginning"_si;
     case AXTextSelectionDirection::End:
-        return "End"_s;
+        return "End"_si;
     case AXTextSelectionDirection::Previous:
-        return "Previous"_s;
+        return "Previous"_si;
     case AXTextSelectionDirection::Next:
-        return "Next"_s;
+        return "Next"_si;
     case AXTextSelectionDirection::Discontiguous:
-        return "Discontiguous"_s;
+        return "Discontiguous"_si;
     }
-    return "Unknown"_s;
+    return "Unknown"_si;
 }
 
-String debugDescription(AXTextSelectionGranularity granularity)
+RefPtr<StringImpl> debugDescription(AXTextSelectionGranularity granularity)
 {
     switch (granularity) {
     case AXTextSelectionGranularity::Unknown:
-        return "Unknown"_s;
+        return "Unknown"_si;
     case AXTextSelectionGranularity::Character:
-        return "Character"_s;
+        return "Character"_si;
     case AXTextSelectionGranularity::Word:
-        return "Word"_s;
+        return "Word"_si;
     case AXTextSelectionGranularity::Line:
-        return "Line"_s;
+        return "Line"_si;
     case AXTextSelectionGranularity::Sentence:
-        return "Sentence"_s;
+        return "Sentence"_si;
     case AXTextSelectionGranularity::Paragraph:
-        return "Paragraph"_s;
+        return "Paragraph"_si;
     case AXTextSelectionGranularity::Page:
-        return "Page"_s;
+        return "Page"_si;
     case AXTextSelectionGranularity::Document:
-        return "Document"_s;
+        return "Document"_si;
     case AXTextSelectionGranularity::All:
-        return "All"_s;
+        return "All"_si;
     }
-    return "Unknown"_s;
+    return "Unknown"_si;
 }
 
-String AXTextSelection::debugDescription() const
+RefPtr<StringImpl> AXTextSelection::debugDescription() const
 {
     return makeString("AXTextSelection {direction: "_s, WebCore::debugDescription(direction), ", granularity: "_s, WebCore::debugDescription(granularity), ", focusChange: "_s, focusChange ? "true"_s : "false"_s, '}');
 }
 
-String AXTextStateChangeIntent::debugDescription() const
+RefPtr<StringImpl> AXTextStateChangeIntent::debugDescription() const
 {
     if (type == AXTextStateChangeType::Edit)
         return makeString("AXTextStateChangeIntent {type: "_s, WebCore::debugDescription(type), ", editType: "_s, WebCore::debugDescription(editType), '}');

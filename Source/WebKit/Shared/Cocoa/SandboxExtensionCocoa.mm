@@ -151,14 +151,14 @@ RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
     return adoptRef(new SandboxExtension(handle));
 }
 
-String stringByResolvingSymlinksInPath(StringView path)
+RefPtr<StringImpl> stringByResolvingSymlinksInPath(StringView path)
 {
     char resolvedPath[PATH_MAX] = { 0 };
     posixRealpath(path.utf8(), resolvedPath);
-    return String::fromUTF8(resolvedPath);
+    return StringImpl::fromUTF8(resolvedPath);
 }
 
-String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path)
+RefPtr<StringImpl> resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path)
 {
     NSError *error = nil;
     auto nsPath = path.createNSStringWithoutCopying();
@@ -171,11 +171,11 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path)
     return resolvePathForSandboxExtension(path);
 }
 
-String resolvePathForSandboxExtension(StringView path)
+RefPtr<StringImpl> resolvePathForSandboxExtension(StringView path)
 {
-    String resolvedPath = stringByResolvingSymlinksInPath(path);
-    if (resolvedPath.isNull()) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a valid file system representation for the string '%s' of length %u", resolvedPath.utf8(), resolvedPath.length());
+    RefPtr<StringImpl> resolvedPath = stringByResolvingSymlinksInPath(path);
+    if (!resolvedPath) {
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a valid file system representation for the string '%s' of length %u", utf8(resolvedPath), length(resolvedPath));
         return { };
     }
 
@@ -211,14 +211,14 @@ template<typename Collection, typename Function> static Vector<SandboxExtension:
     });
 }
 
-auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths) -> Vector<Handle>
+auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<RefPtr<StringImpl>>& paths) -> Vector<Handle>
 {
-    return createHandlesForResources(paths, [&logLabel] (const String& path) {
+    return createHandlesForResources(paths, [&logLabel] (StringImpl* path) {
         auto handle = createHandle(path, Type::ReadOnly);
         if (!handle) {
             // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
             // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
-            SAFE_WTFLOGALWAYS("%s: could not create a sandbox extension for '%s'\n", logLabel, path.utf8());
+            SAFE_WTFLOGALWAYS("%s: could not create a sandbox extension for '%s'\n", logLabel, utf8(path));
             ASSERT_NOT_REACHED();
         }
         return handle;
@@ -227,13 +227,13 @@ auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, cons
 
 auto SandboxExtension::createHandleForReadWriteDirectory(StringView path) -> std::optional<Handle>
 {
-    String resolvedPath = resolveAndCreateReadWriteDirectoryForSandboxExtension(path);
-    if (resolvedPath.isNull())
+    RefPtr<StringImpl> resolvedPath = resolveAndCreateReadWriteDirectoryForSandboxExtension(path);
+    if (!resolvedPath)
         return std::nullopt;
     return createHandleWithoutResolvingPath(resolvedPath, Type::ReadWrite);
 }
 
-auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type) -> std::optional<std::pair<Handle, String>>
+auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type) -> std::optional<std::pair<Handle, RefPtr<StringImpl>>>
 {
     Handle handle;
     ASSERT(!handle.m_sandboxExtension);
@@ -251,14 +251,14 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     // Append the file name.
     path.append(prefix.utf8().span());
 
-    auto pathString = String::fromUTF8(borrow(path)->span());
-    if (pathString.isNull())
+    auto pathString = StringImpl::fromUTF8(borrow(path)->span());
+    if (!pathString)
         return std::nullopt;
     
     handle.m_sandboxExtension = SandboxExtensionImpl::create(FileSystem::fileSystemRepresentation(pathString), type);
 
     if (!handle.m_sandboxExtension) {
-        SAFE_WTFLOGALWAYS("Could not create a sandbox extension for temporary file '%s'", pathString.utf8());
+        SAFE_WTFLOGALWAYS("Could not create a sandbox extension for temporary file '%s'", utf8(pathString));
         return std::nullopt;
     }
     return { { WTF::move(handle), WTF::move(pathString) } };

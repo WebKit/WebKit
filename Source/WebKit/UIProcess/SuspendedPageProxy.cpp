@@ -485,7 +485,7 @@ void SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 
 #if !LOG_DISABLED
 
-String SuspendedPageProxy::loggingString() const
+RefPtr<StringImpl> SuspendedPageProxy::loggingString() const
 {
     return makeString("(0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID "_s, m_webPageID.toUInt64(), ", m_suspensionState "_s, static_cast<unsigned>(m_suspensionState), ')');
 }

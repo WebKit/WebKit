@@ -68,7 +68,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         url = request.url();
 
         if (CheckedPtr storageSession = m_session->networkStorageSession()) {
-            if (m_user.isEmpty() && m_password.isEmpty())
+            if (isEmpty(m_user) && isEmpty(m_password))
                 m_initialCredential = storageSession->credentialStorage().get(m_partition, url);
             else
                 storageSession->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistence::None), url);
@@ -266,7 +266,7 @@ bool NetworkDataTaskCurl::shouldStartHTTPRedirection()
     if (statusCode == 300 || statusCode == 304 || statusCode == 305 || statusCode == 306)
         return false;
 
-    if (m_response.httpHeaderField(HTTPHeaderName::Location).isEmpty())
+    if (isEmpty(m_response.httpHeaderField(HTTPHeaderName::Location)))
         return false;
 
     return true;
@@ -360,7 +360,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get"_s)) {
         // Change request method to GET if change was made during a previous redirection or if current redirection says so.
         if (!request.url().protocolIsInHTTPFamily() || shouldRedirectAsGET(request, isCrossOrigin)) {
-            request.setHTTPMethod("GET"_s);
+            request.setHTTPMethod("GET"_si);
             request.setHTTPBody(nullptr);
             request.clearHTTPContentType();
         }
@@ -381,7 +381,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     } else if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
-        if (m_user.isEmpty() && m_password.isEmpty()) {
+        if (isEmpty(m_user) && isEmpty(m_password)) {
             if (CheckedPtr storageSession = m_session->networkStorageSession()) {
                 auto credential = storageSession->credentialStorage().get(m_partition, request.url());
                 if (!credential.isEmpty()) {
@@ -419,11 +419,11 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
 
 void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challenge)
 {
-    if (!m_user.isNull() && !m_password.isNull()) {
+    if (m_user && m_password) {
         auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistence::ForSession : WebCore::CredentialPersistence::None;
         restartWithCredential(challenge.protectionSpace(), Credential(m_user, m_password, persistence));
-        m_user = String();
-        m_password = String();
+        m_user = nullptr;
+        m_password = nullptr;
         return;
     }
 
@@ -543,7 +543,7 @@ void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
     if (CheckedPtr storageSession = m_session->networkStorageSession()) {
         auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
         auto cookieHeaderField = storageSession->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No, WebCore::IsKnownCrossSiteTracker::No).first;
-        if (!cookieHeaderField.isEmpty())
+        if (!isEmpty(cookieHeaderField))
             request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
     }
 }
@@ -554,8 +554,8 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
 
     if (auto* storageSession = m_session->networkStorageSession()) {
         for (auto header : response.headers) {
-            if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
-                String setCookieString = header.right(header.length() - setCookieHeader.length());
+            if (startsWithIgnoringASCIICase(header, setCookieHeader)) {
+                RefPtr<StringImpl> setCookieString = right(header, length(header) - setCookieHeader.length());
                 storageSession->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
             }
         }
@@ -605,19 +605,19 @@ void NetworkDataTaskCurl::setTimingAllowFailedFlag()
     m_failsTAOCheck = true;
 }
 
-void NetworkDataTaskCurl::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void NetworkDataTaskCurl::setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     NetworkDataTask::setPendingDownloadLocation(filename, WTF::move(sandboxExtensionHandle), allowOverwrite);
     m_allowOverwriteDownload = allowOverwrite;
 }
 
-String NetworkDataTaskCurl::suggestedFilename() const
+RefPtr<StringImpl> NetworkDataTaskCurl::suggestedFilename() const
 {
-    if (!m_suggestedFilename.isEmpty())
+    if (!isEmpty(m_suggestedFilename))
         return m_suggestedFilename;
 
-    String suggestedFilename = m_response.suggestedFilename();
-    if (!suggestedFilename.isEmpty())
+    RefPtr<StringImpl> suggestedFilename = m_response.suggestedFilename();
+    if (!isEmpty(suggestedFilename))
         return suggestedFilename;
 
     return PAL::decodeURLEscapeSequences(m_response.url().lastPathComponent());

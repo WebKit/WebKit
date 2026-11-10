@@ -462,7 +462,7 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     return state.takeStyle();
 }
 
-bool Resolver::isAnimationNameValid(const AtomString& name) const
+bool Resolver::isAnimationNameValid(AtomStringImpl* name) const
 {
     return m_keyframesRuleMap.find(name) != m_keyframesRuleMap.end()
         || userAgentKeyframes().find(name) != userAgentKeyframes().end();
@@ -478,9 +478,9 @@ static std::pair<SingleAnimationRangeName, Percentage<>> deprecatedStyleRuleKeyf
     return { offsetRangeName, offsetPercentage };
 }
 
-RefPtr<StyleRuleKeyframes> Resolver::keyframesRuleForName(const AtomString& animationName) const
+RefPtr<StyleRuleKeyframes> Resolver::keyframesRuleForName(AtomStringImpl* animationName) const
 {
-    if (animationName.isEmpty())
+    if (isEmpty(animationName))
         return nullptr;
 
     m_keyframesRuleMap.checkConsistency();
@@ -490,7 +490,7 @@ RefPtr<StyleRuleKeyframes> Resolver::keyframesRuleForName(const AtomString& anim
     return userAgentKeyframes().get(animationName);
 }
 
-Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName, const TimingFunction* defaultTimingFunction) const
+Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(AtomStringImpl* animationName, const TimingFunction* defaultTimingFunction) const
 {
     RefPtr keyframesRule = keyframesRuleForName(animationName);
     if (!keyframesRule)
@@ -860,17 +860,17 @@ void Resolver::setGlobalStateAfterApplyingProperties(const BuilderState& builder
         document().setHasStyleWithViewportUnits();
 }
 
-bool Resolver::hasSelectorForAttribute(const Element& element, const AtomString& attributeName) const
+bool Resolver::hasSelectorForAttribute(const Element& element, AtomStringImpl* attributeName) const
 {
-    ASSERT(!attributeName.isEmpty());
+    ASSERT(!isEmpty(attributeName));
     if (element.isHTMLElement() && element.document().isHTMLDocument())
         return m_ruleSets.features().attributeLowercaseLocalNamesInRules.contains(attributeName);
     return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
 }
 
-bool Resolver::hasSelectorForId(const AtomString& idValue) const
+bool Resolver::hasSelectorForId(AtomStringImpl* idValue) const
 {
-    ASSERT(!idValue.isEmpty());
+    ASSERT(!isEmpty(idValue));
     return m_ruleSets.features().idsInRules.contains(idValue);
 }
 
@@ -885,7 +885,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMedia
 }
 
 
-static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element, const AtomString& name)
+static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element, AtomStringImpl* name)
 {
     MutableCSSSelectorList selectorList;
 
@@ -898,19 +898,19 @@ static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element
     groupSelector->setMatch(CSSSelector::Match::PseudoElement);
     groupSelector->setPseudoElement(element);
 
-    AtomString selectorName;
+    RefPtr<AtomStringImpl> selectorName;
     switch (element) {
     case CSSSelector::PseudoElement::ViewTransitionGroup:
-        selectorName = "view-transition-group"_s;
+        selectorName = "view-transition-group"_atom;
         break;
     case CSSSelector::PseudoElement::ViewTransitionImagePair:
-        selectorName = "view-transition-image-pair"_s;
+        selectorName = "view-transition-image-pair"_atom;
         break;
     case CSSSelector::PseudoElement::ViewTransitionNew:
-        selectorName = "view-transition-new"_s;
+        selectorName = "view-transition-new"_atom;
         break;
     case CSSSelector::PseudoElement::ViewTransitionOld:
-        selectorName = "view-transition-old"_s;
+        selectorName = "view-transition-old"_atom;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -930,7 +930,7 @@ RefPtr<StyleRuleViewTransition> Resolver::viewTransitionRule() const
     return m_ruleSets.viewTransitionRule();
 }
 
-void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, const AtomString& name, Ref<MutableStyleProperties> properties)
+void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, AtomStringImpl* name, Ref<MutableStyleProperties> properties)
 {
     if (!m_document)
         return;

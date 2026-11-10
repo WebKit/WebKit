@@ -58,7 +58,7 @@ public:
 
     bool isSecureContext() const final { return false; }
     bool isJSExecutionForbidden() const final { return false; }
-    String agentClusterID() const final { return nullString(); }
+    RefPtr<StringImpl> agentClusterID() const final { return nullString(); }
     EventLoopTaskGroup& eventLoop() final
     {
         ASSERT_NOT_REACHED();
@@ -66,19 +66,19 @@ public:
     }
     const URL& url() const LIFETIME_BOUND final { return m_url; }
     const URL& cookieURL() const final { return url(); }
-    URL parseURL(const String&) const final { return { }; }
-    String userAgent(const URL&) const final { return emptyString(); }
+    URL parseURL(StringImpl*) const final { return { }; }
+    RefPtr<StringImpl> userAgent(const URL&) const final { return emptyString(); }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
 
-    void disableEval(const String&) final { }
-    void disableWebAssembly(const String&) final { }
+    void disableEval(StringImpl*) final { }
+    void disableWebAssembly(StringImpl*) final { }
     void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement) final { }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { return nullptr; }
     SocketProvider* socketProvider() final { return nullptr; }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final { }
-    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final { }
+    void addConsoleMessage(MessageSource, MessageLevel, StringImpl*, unsigned long) final { }
 
     SecurityOrigin& topOrigin() const final { return m_origin.get(); }
 
@@ -109,8 +109,8 @@ private:
         m_eventLoop->addAssociatedContext(*this);
     }
 
-    void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long = 0) final { }
-    void logExceptionToConsole(const String&, const String&, int, int, RefPtr<Inspector::ScriptCallStack>&&) final { }
+    void addMessage(MessageSource, MessageLevel, StringImpl*, StringImpl*, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long = 0) final { }
+    void logExceptionToConsole(StringImpl*, StringImpl*, int, int, RefPtr<Inspector::ScriptCallStack>&&) final { }
 
     NODELETE const SettingsValues& settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }
     const NetworkLoadPolicy& networkLoadPolicy() const final { return NetworkLoadPolicy::unrestricted(); }

@@ -52,7 +52,7 @@ class Signature;
 
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callHostFunctionAsConstructor);
 
-JS_EXPORT_PRIVATE String getCalculatedDisplayName(VM&, JSObject*);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> getCalculatedDisplayName(VM&, JSObject*);
 
 class JSFunction : public JSCallee {
     friend class JIT;
@@ -81,7 +81,7 @@ public:
 
     NODELETE static Structure* selectStructureForNewFuncExp(JSGlobalObject*, FunctionExecutable*);
 
-    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction, ImplementationVisibility, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor, const DOMJIT::Signature* = nullptr);
+    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, unsigned length, StringImpl* name, NativeFunction, ImplementationVisibility, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor, const DOMJIT::Signature* = nullptr);
     
     static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
     static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
@@ -89,12 +89,12 @@ public:
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
     static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
 
-    JS_EXPORT_PRIVATE String name(VM&);
-    JS_EXPORT_PRIVATE String displayName(VM&);
-    JS_EXPORT_PRIVATE const String calculatedDisplayName(VM&);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> name(VM&);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> displayName(VM&);
+    JS_EXPORT_PRIVATE const RefPtr<StringImpl> calculatedDisplayName(VM&);
     JS_EXPORT_PRIVATE JSString* toString(JSGlobalObject*);
 
-    String nameWithoutGC(VM&);
+    RefPtr<StringImpl> nameWithoutGC(VM&);
 
     JSString* asStringConcurrently() const;
 
@@ -220,7 +220,7 @@ private:
     bool hasReifiedName() const;
     void reifyLength(VM&);
     PropertyStatus reifyName(VM&, JSGlobalObject*);
-    PropertyStatus reifyName(VM&, JSGlobalObject*, String name);
+    PropertyStatus reifyName(VM&, JSGlobalObject*, RefPtr<StringImpl> name);
 
     static bool isLazy(PropertyStatus property) { return property == PropertyStatus::Lazy || property == PropertyStatus::Reified; }
     static bool isReified(PropertyStatus property) { return property == PropertyStatus::Reified; }

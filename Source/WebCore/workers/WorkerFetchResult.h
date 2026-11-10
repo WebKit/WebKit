@@ -39,10 +39,10 @@ struct WorkerFetchResult {
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    String referrerPolicy;
+    RefPtr<StringImpl> referrerPolicy;
     ResourceError error;
 
-    WorkerFetchResult isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), error.isolatedCopy() }; }
+    WorkerFetchResult isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), WTF::isolatedCopy(referrerPolicy), error.isolatedCopy() }; }
 };
 
 inline WorkerFetchResult workerFetchError(const ResourceError& error)

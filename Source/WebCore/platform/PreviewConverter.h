@@ -63,7 +63,7 @@ public:
         return adoptRef(*new PreviewConverter(response, provider));
     }
 
-    WEBCORE_EXPORT static bool supportsMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool supportsMIMEType(StringImpl* mimeType);
 
     ~PreviewConverter();
 
@@ -73,8 +73,8 @@ public:
 
     ResourceRequest safeRequest(const ResourceRequest&) const;
     ResourceResponse previewResponse() const;
-    WEBCORE_EXPORT String previewFileName() const;
-    WEBCORE_EXPORT String previewUTI() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> previewFileName() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> previewUTI() const;
     const ResourceError& previewError() const;
     const FragmentedSharedBuffer& previewData() const;
 
@@ -86,11 +86,11 @@ public:
     void addClient(PreviewConverterClient&);
     void removeClient(PreviewConverterClient&);
 
-    WEBCORE_EXPORT static const String& passwordForTesting();
-    WEBCORE_EXPORT static void setPasswordForTesting(const String&);
+    WEBCORE_EXPORT static const RefPtr<StringImpl>& passwordForTesting();
+    WEBCORE_EXPORT static void setPasswordForTesting(StringImpl*);
 
 private:
-    static HashSet<String, ASCIICaseInsensitiveHash> platformSupportedMIMETypes();
+    static HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> platformSupportedMIMETypes();
 
     PreviewConverter(const ResourceResponse&, PreviewConverterProvider&);
 
@@ -107,7 +107,7 @@ private:
     void platformAppend(const SharedBufferDataView&);
     void platformFailedAppending();
     void platformFinishedAppending();
-    void platformUnlockWithPassword(const String&);
+    void platformUnlockWithPassword(StringImpl*);
 
     // PreviewPlatformDelegate
     void delegateDidReceiveData(const FragmentedSharedBuffer&) final;

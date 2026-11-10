@@ -55,12 +55,12 @@ struct SessionSet;
 class WebSocketTask : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebSocketTask>, public WebCore::CurlStream::Client {
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
 public:
-    static Ref<WebSocketTask> create(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
+    static Ref<WebSocketTask> create(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, StringImpl* protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
-    void close(int32_t code, const String& reason);
+    void close(int32_t code, StringImpl* reason);
 
     void cancel();
     void resume();
@@ -73,7 +73,7 @@ public:
     const WebCore::SecurityOriginData& topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
 
 private:
-    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
+    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, StringImpl* protocol, const WebCore::ClientOrigin&);
 
     enum class State : uint8_t {
         Connecting,
@@ -88,20 +88,20 @@ private:
     void didReceiveData(WebCore::CurlStreamID, const WebCore::SharedBuffer&) final;
     void didFail(WebCore::CurlStreamID, CURLcode, WebCore::CertificateInfo&&) final;
 
-    void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&, String&&);
+    void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&, RefPtr<StringImpl>&&);
 
     bool appendReceivedBuffer(const WebCore::SharedBuffer&);
     void skipReceivedBuffer(size_t len);
 
-    std::expected<bool, String> validateOpeningHandshake();
-    std::optional<String> receiveFrames(NOESCAPE const Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>&);
-    std::optional<String> validateFrame(const WebCore::WebSocketFrame&);
+    std::expected<bool, RefPtr<StringImpl>> validateOpeningHandshake();
+    std::optional<RefPtr<StringImpl>> receiveFrames(NOESCAPE const Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>&);
+    std::optional<RefPtr<StringImpl>> validateFrame(const WebCore::WebSocketFrame&);
 
     bool sendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
-    void sendClosingHandshakeIfNeeded(int32_t, const String& reason);
+    void sendClosingHandshakeIfNeeded(int32_t, StringImpl* reason);
 
-    void didFail(String&& reason);
-    void didClose(int32_t code, const String& reason);
+    void didFail(RefPtr<StringImpl>&& reason);
+    void didClose(int32_t code, StringImpl* reason);
 
     bool isStreamInvalidated() { return m_streamID == WebCore::invalidCurlStreamID; }
     void destructStream();
@@ -109,7 +109,7 @@ private:
     WeakPtr<NetworkSocketChannel> m_channel;
     WebPageProxyIdentifier m_webProxyPageID;
     WebCore::ResourceRequest m_request;
-    String m_protocol;
+    RefPtr<StringImpl> m_protocol;
     WebCore::SecurityOriginData m_topOrigin;
 
     WebCore::CurlStreamScheduler& m_scheduler;
@@ -131,7 +131,7 @@ private:
 
     bool m_receivedClosingHandshake { false };
     int32_t m_closeEventCode { WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeNotSpecified };
-    String m_closeEventReason;
+    RefPtr<StringImpl> m_closeEventReason;
 
     bool m_didSendClosingHandshake { false };
     bool m_receivedDidFail { false };

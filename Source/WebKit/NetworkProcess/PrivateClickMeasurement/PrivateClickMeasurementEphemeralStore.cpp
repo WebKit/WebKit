@@ -58,16 +58,16 @@ void EphemeralStore::attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&
     if (m_clickMeasurement->sourceSite() != sourceSite || m_clickMeasurement->destinationSite() != destinationSite)
         return completionHandler(std::nullopt, WTF::move(debugInfo));
 
-    if (!applicationBundleIdentifier.isEmpty() && m_clickMeasurement->sourceApplicationBundleID() != applicationBundleIdentifier)
+    if (!isEmpty(applicationBundleIdentifier) && !equal(m_clickMeasurement->sourceApplicationBundleID(), applicationBundleIdentifier))
         return completionHandler(std::nullopt, WTF::move(debugInfo));
 
     completionHandler(m_clickMeasurement->attributeAndGetEarliestTimeToSend(WTF::move(attributionTriggerData), isLayoutTest), WTF::move(debugInfo));
 }
 
-void EphemeralStore::privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
+void EphemeralStore::privateClickMeasurementToStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler) const
 {
     if (!m_clickMeasurement)
-        return completionHandler("\nNo ephemeral Private Click Measurement data.\n"_s);
+        return completionHandler("\nNo ephemeral Private Click Measurement data.\n"_si);
 
     StringBuilder builder;
     builder.append("\nEphemeral Private Click Measurement:\n"_s);

@@ -89,7 +89,7 @@ struct ResolutionContext {
     bool isSVGUseTreeRoot { false };
 };
 
-using KeyframesRuleMap = HashMap<AtomString, Ref<StyleRuleKeyframes>>;
+using KeyframesRuleMap = HashMap<RefPtr<AtomStringImpl>, Ref<StyleRuleKeyframes>>;
 
 class Resolver : public ThreadSafeRefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
     WTF_MAKE_TZONE_ALLOCATED(Resolver);
@@ -127,9 +127,9 @@ public:
     void addCurrentSVGFontFaceRules();
 
     std::unique_ptr<Style::ComputedStyle> styleForKeyframe(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&) const;
-    NODELETE bool isAnimationNameValid(const AtomString&) const;
+    NODELETE bool isAnimationNameValid(AtomStringImpl*) const;
 
-    void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);
+    void setViewTransitionStyles(CSSSelector::PseudoElement, AtomStringImpl*, Ref<MutableStyleProperties>);
 
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
     enum CSSRuleFilter {
@@ -142,8 +142,8 @@ public:
     Vector<Ref<const StyleRule>> styleRulesForElement(const Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
     Vector<Ref<const StyleRule>> pseudoStyleRulesForElement(const Element*, const std::optional<Style::PseudoElementRequest>&, unsigned rulesToInclude = AllButEmptyCSSRules);
 
-    bool hasSelectorForId(const AtomString&) const;
-    bool hasSelectorForAttribute(const Element&, const AtomString&) const;
+    bool hasSelectorForId(AtomStringImpl*) const;
+    bool hasSelectorForAttribute(const Element&, AtomStringImpl*) const;
 
     NODELETE bool hasViewportDependentMediaQueries() const;
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
@@ -151,8 +151,8 @@ public:
     NODELETE static KeyframesRuleMap& userAgentKeyframes();
     static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
-    RefPtr<StyleRuleKeyframes> keyframesRuleForName(const AtomString&) const;
-    Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&, const TimingFunction*) const;
+    RefPtr<StyleRuleKeyframes> keyframesRuleForName(AtomStringImpl*) const;
+    Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(AtomStringImpl*, const TimingFunction*) const;
 
     NODELETE const CustomFunctionRegistry* customFunctionRegistry() const;
     CustomFunctionRegistry& ensureCustomFunctionRegistry();

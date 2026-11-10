@@ -44,7 +44,7 @@ public:
         return adoptRef(*new CSSMeshGradientValue(WTF::move(gradient)));
     }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSMeshGradientValue&) const;
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 

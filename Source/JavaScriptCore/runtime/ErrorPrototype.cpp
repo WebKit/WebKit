@@ -50,7 +50,7 @@ ErrorPrototypeBase::ErrorPrototypeBase(VM& vm, Structure* structure)
 {
 }
 
-void ErrorPrototypeBase::finishCreation(VM& vm, const String& name)
+void ErrorPrototypeBase::finishCreation(VM& vm, StringImpl* name)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
@@ -85,9 +85,9 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 4. If name is undefined, then let name be "Error"; else let name be ToString(name).
-    String nameString;
+    RefPtr<StringImpl> nameString;
     if (name.isUndefined())
-        nameString = "Error"_s;
+        nameString = "Error"_si;
     else {
         nameString = name.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -100,20 +100,20 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
     // (sic)
     // 6. If msg is undefined, then let msg be the empty String; else let msg be ToString(msg).
     // 7. If msg is undefined, then let msg be the empty String; else let msg be ToString(msg).
-    String messageString;
+    RefPtr<StringImpl> messageString;
     if (message.isUndefined())
-        messageString = String();
+        messageString = nullptr;
     else {
         messageString = message.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     // 8. If name is the empty String, return msg.
-    if (!nameString.length())
+    if (!length(nameString))
         return JSValue::encode(message.isString() ? message : jsString(vm, WTF::move(messageString)));
 
     // 9. If msg is the empty String, return name.
-    if (!messageString.length())
+    if (!length(messageString))
         return JSValue::encode(name.isString() ? name : jsString(vm, WTF::move(nameString)));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.

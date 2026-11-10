@@ -69,10 +69,10 @@ void SVGFitToViewBox::reset()
     resetPreserveAspectRatio();
 }
 
-bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString& value)
+bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     if (name == SVGNames::viewBoxAttr) {
-        if (!value.isNull()) {
+        if (value) {
             if (auto result = parseViewBox(value, ParsingContext::Attribute)) {
                 setViewBox(WTF::move(*result));
                 return true;
@@ -115,12 +115,16 @@ template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parse
         return makeString("Invalid viewBox=\""_s, stringToParse, "\": "_s, problem);
     };
     auto reportWarning = [&](ASCIILiteral problem) {
-        if (context == ParsingContext::Attribute)
-            protect(protect(m_viewBox->contextElement()->document())->svgExtensions())->reportWarning(message(problem));
+        if (context == ParsingContext::Attribute) {
+            auto warning = message(problem);
+            protect(protect(m_viewBox->contextElement()->document())->svgExtensions())->reportWarning(warning);
+        }
     };
     auto reportError = [&](ASCIILiteral problem) {
-        if (context == ParsingContext::Attribute)
-            protect(protect(m_viewBox->contextElement()->document())->svgExtensions())->reportError(message(problem));
+        if (context == ParsingContext::Attribute) {
+            auto error = message(problem);
+            protect(protect(m_viewBox->contextElement()->document())->svgExtensions())->reportError(error);
+        }
     };
 
     skipOptionalSVGSpaces(buffer);

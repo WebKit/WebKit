@@ -57,8 +57,8 @@ public:
     WEBCORE_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() LIFETIME_BOUND final { return m_gamepadVector; }
-    void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
-    void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
+    void playEffect(unsigned, StringImpl*, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(unsigned, StringImpl*, CompletionHandler<void()>&&) final;
 
     WEBCORE_EXPORT void stopMonitoringInput();
     WEBCORE_EXPORT void startMonitoringInput();

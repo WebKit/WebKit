@@ -78,7 +78,7 @@ Credential::Credential(const Credential& original, CredentialPersistence persist
 }
 
 Credential::Credential(NSURLCredential *credential)
-    : CredentialBase(credential.user, credential.password, toCredentialPersistence(credential.persistence))
+    : CredentialBase(StringImpl::create(credential.user).get(), StringImpl::create(credential.password).get(), toCredentialPersistence(credential.persistence))
     , m_nsCredential(credential)
 {
 }
@@ -91,7 +91,7 @@ NSURLCredential *Credential::nsCredential() const
     if (CredentialBase::isEmpty())
         return nil;
 
-    m_nsCredential = adoptNS([[NSURLCredential alloc] initWithUser:user().createNSString().get() password:password().createNSString().get() persistence:toNSURLCredentialPersistence(persistence())]);
+    m_nsCredential = adoptNS([[NSURLCredential alloc] initWithUser:createNSString(user()).get() password:createNSString(password()).get() persistence:toNSURLCredentialPersistence(persistence())]);
 
     return m_nsCredential.get();
 }

@@ -328,7 +328,7 @@ AffineTransform SVGPreserveAspectRatioValue::getCTM(float logicalX, float logica
     return transform;
 }
 
-String SVGPreserveAspectRatioValue::valueAsString() const
+RefPtr<StringImpl> SVGPreserveAspectRatioValue::valueAsString() const
 {
     auto alignType = [&]() {
         switch (m_align) {

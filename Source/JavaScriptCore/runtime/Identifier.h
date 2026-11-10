@@ -89,17 +89,18 @@ class Identifier {
 public:
     Identifier() = default;
     enum class EmptyIdentifierFlag { EmptyIdentifier };
-    Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtom()); }
+    Identifier(EmptyIdentifierFlag) : m_string(static_cast<AtomStringImpl*>(StringImpl::empty())) { ASSERT(m_string->isAtom()); }
 
-    const AtomString& string() const LIFETIME_BOUND { return m_string; }
+    // The string held by an Identifier is either an atom (AtomStringImpl) or a symbol (SymbolImpl, see isSymbol()).
+    const RefPtr<UniquedStringImpl>& string() const LIFETIME_BOUND { return m_string; }
 
-    UniquedStringImpl* impl() const { return m_string.impl(); }
-    RefPtr<AtomStringImpl> releaseImpl() { return m_string.releaseImpl(); }
+    UniquedStringImpl* impl() const { return m_string.get(); }
+    RefPtr<UniquedStringImpl> releaseImpl() { return WTF::move(m_string); }
 
-    int length() const { return m_string.length(); }
+    int length() const { return WTF::length(m_string); }
 
-    ASCIICString ascii() const { return m_string.string().ascii(); }
-    UTF8CString utf8() const { return m_string.string().utf8(); }
+    ASCIICString ascii() const { return WTF::ascii(m_string); }
+    UTF8CString utf8() const { return WTF::utf8(m_string); }
 
     // There's 2 functions to construct Identifier from string, (1) fromString and (2) fromUid.
     // They have different meanings in keeping or discarding symbol-ness of strings.
@@ -115,10 +116,9 @@ public:
     static Identifier fromString(VM&, ASCIILiteral);
     static Identifier fromString(VM&, std::span<const Latin1Character>);
     static Identifier fromString(VM&, std::span<const char16_t>);
-    static Identifier fromString(VM&, const String&);
+    static Identifier fromString(VM&, StringImpl*);
     static Identifier fromString(VM&, AtomStringImpl*);
     static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
-    static Identifier fromString(VM&, const AtomString&);
     static Identifier fromString(VM&, SymbolImpl*);
 
     NODELETE static Identifier fromUid(VM&, UniquedStringImpl* uid);
@@ -138,8 +138,8 @@ public:
         return from(vm, static_cast<double>(y));
     }
 
-    bool isNull() const { return m_string.isNull(); }
-    bool isEmpty() const { return m_string.isEmpty(); }
+    bool isNull() const { return !m_string; }
+    bool isEmpty() const { return WTF::isEmpty(m_string); }
     bool isSymbol() const { return !isNull() && impl()->isSymbol(); }
     bool isPrivateName() const { return isSymbol() && static_cast<const SymbolImpl*>(impl())->isPrivate(); }
 
@@ -152,15 +152,13 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    AtomString m_string;
+    RefPtr<UniquedStringImpl> m_string;
 
     inline Identifier(VM&, std::span<const Latin1Character>); // Defined in IdentifierInlines.h
     inline Identifier(VM&, std::span<const char16_t>); // Defined in IdentifierInlines.h
     ALWAYS_INLINE Identifier(VM&, ASCIILiteral); // Defined in IdentifierInlines.h
     inline Identifier(VM&, AtomStringImpl*); // Defined in IdentifierInlines.h
-    inline Identifier(VM&, const AtomString&); // Defined in IdentifierInlines.h
-    inline Identifier(VM&, const String&);
-    inline Identifier(VM&, StringImpl*);
+    inline Identifier(VM&, StringImpl*); // Defined in IdentifierInlines.h
 
     Identifier(VM&, Ref<AtomStringImpl>&& impl)
         : m_string(WTF::move(impl))
@@ -170,7 +168,7 @@ private:
         : m_string(&uid)
     { }
 
-    static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
+    static bool equal(const Identifier& a, const Identifier& b) { return a.m_string == b.m_string; }
 
     template <typename T> inline static Ref<AtomStringImpl> add(VM&, std::span<const T>); // Defined in IdentifierInlines.h
     static Ref<AtomStringImpl> add8(VM&, std::span<const char16_t>);

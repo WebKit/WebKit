@@ -41,7 +41,7 @@
 namespace WebCore {
 
 struct AtomStringWithCode {
-    AtomString string;
+    RefPtr<AtomStringImpl> string;
     uint64_t code { 0 };
 };
 
@@ -128,8 +128,8 @@ public:
     void insertHTMLBodyElement(AtomHTMLToken&&);
     void insertHTMLFormElement(AtomHTMLToken&&, bool isParsingTemplateContents);
     void insertScriptElement(AtomHTMLToken&&);
-    void insertTextNode(const String&);
-    void insertForeignElement(AtomHTMLToken&&, const AtomString& namespaceURI);
+    void insertTextNode(StringImpl*);
+    void insertForeignElement(AtomHTMLToken&&, AtomStringImpl* namespaceURI);
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&&);
     void insertHTMLHtmlStartTagInBody(AtomHTMLToken&&);
@@ -152,7 +152,7 @@ public:
 
     void generateImpliedEndTags();
     void generateImpliedEndTagsWithExclusion(ElementName);
-    void generateImpliedEndTagsWithExclusion(const AtomString& tagName);
+    void generateImpliedEndTagsWithExclusion(AtomStringImpl* tagName);
 
     bool inQuirksMode() { return m_inQuirksMode; }
 
@@ -204,7 +204,7 @@ private:
     typedef Vector<HTMLConstructionSiteTask, 1> TaskQueue;
 
     void setCompatibilityMode(DocumentCompatibilityMode);
-    void setCompatibilityModeFromDoctype(const AtomString& name, const String& publicId, const String& systemId);
+    void setCompatibilityModeFromDoctype(AtomStringImpl* name, StringImpl* publicId, StringImpl* systemId);
 
     void attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& child, bool selfClosing = false);
 
@@ -212,7 +212,7 @@ private:
 
     std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&);
     Ref<HTMLElement> createHTMLElement(AtomHTMLToken&);
-    Ref<Element> createElement(AtomHTMLToken&, const AtomString& namespaceURI);
+    Ref<Element> createElement(AtomHTMLToken&, AtomStringImpl* namespaceURI);
 
     void mergeAttributesFromTokenIntoElement(AtomHTMLToken&&, Element&);
     void dispatchDocumentElementAvailableIfNeeded();

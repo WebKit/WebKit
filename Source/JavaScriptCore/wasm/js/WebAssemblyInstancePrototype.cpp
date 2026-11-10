@@ -45,7 +45,7 @@ static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalOb
     JSWebAssemblyInstance* result = dynamicDowncast<JSWebAssemblyInstance>(v);
     if (!result) {
         throwException(globalObject, throwScope, 
-            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Instance"_s));
+            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Instance"_si));
         return nullptr;
     }
     return result;

@@ -35,6 +35,6 @@ typedef struct _WebKitFliteSrc WebKitFliteSrc;
 GType webkit_flite_src_get_type();
 
 Vector<Ref<WebCore::PlatformSpeechSynthesisVoice>>& ensureFliteVoicesInitialized();
-void webKitFliteSrcSetUtterance(WebKitFliteSrc*, const WebCore::PlatformSpeechSynthesisVoice*, const String&);
+void webKitFliteSrcSetUtterance(WebKitFliteSrc*, const WebCore::PlatformSpeechSynthesisVoice*, StringImpl*);
 
 #endif // USE(FLITE) && USE(GSTREAMER)

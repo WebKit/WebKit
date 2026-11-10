@@ -197,17 +197,17 @@ public:
 
     Logger& logger();
 
-    NODELETE const String& mediaCacheDirectory() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& mediaCacheDirectory() const LIFETIME_BOUND;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    NODELETE const String& mediaKeysStorageDirectory() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& mediaKeysStorageDirectory() const LIFETIME_BOUND;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
     void setOrientationForMediaCapture(WebCore::IntDegrees);
     void reapplyCaptureEnvironment(WebCore::PageIdentifier);
-    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
-    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
-    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
+    void rotationAngleForCaptureDeviceChanged(StringImpl*, WebCore::VideoFrameRotation);
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, StringImpl*);
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, StringImpl*);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&);
     NODELETE bool setCaptureAttributionString();
@@ -271,7 +271,7 @@ public:
     void setPresentingApplicationAuditToken(WebCore::PageIdentifier, std::optional<CoreIPCAuditToken>&&);
 #endif
 #if PLATFORM(COCOA)
-    const String& applicationBundleIdentifier() const LIFETIME_BOUND { return m_applicationBundleIdentifier; }
+    const RefPtr<StringImpl>& applicationBundleIdentifier() const LIFETIME_BOUND { return m_applicationBundleIdentifier; }
 #endif
 
 #if ENABLE(VIDEO)
@@ -279,14 +279,14 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    String mediaPlaybackEnvironment(WebCore::PageIdentifier);
-    void setMediaPlaybackEnvironment(WebCore::PageIdentifier, const String&);
-    String displayCaptureEnvironment(WebCore::PageIdentifier);
-    void setDisplayCaptureEnvironment(WebCore::PageIdentifier, const String&);
+    RefPtr<StringImpl> mediaPlaybackEnvironment(WebCore::PageIdentifier);
+    void setMediaPlaybackEnvironment(WebCore::PageIdentifier, StringImpl*);
+    RefPtr<StringImpl> displayCaptureEnvironment(WebCore::PageIdentifier);
+    void setDisplayCaptureEnvironment(WebCore::PageIdentifier, StringImpl*);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+    void takeInvalidMessageStringForTesting(CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 #endif
 
     NODELETE bool isAlwaysOnLoggingAllowed() const;
@@ -358,7 +358,7 @@ private:
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void releaseTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier);
     void setMediaOverridesForTesting(MediaOverridesForTesting);
-    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+    void configureLoggingChannel(StringImpl*, WTFLogChannelState, WTFLogLevel);
 
 #if USE(GRAPHICS_LAYER_WC)
     void createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
@@ -427,7 +427,7 @@ private:
     HashMap<WebCore::PageIdentifier, CoreIPCAuditToken> m_presentingApplicationAuditTokens;
 #endif
 #if PLATFORM(COCOA)
-    const String m_applicationBundleIdentifier;
+    const RefPtr<StringImpl> m_applicationBundleIdentifier;
 #endif
 
     RemoteRenderingBackendMap m_remoteRenderingBackendMap;
@@ -473,8 +473,8 @@ private:
     const bool m_isLockdownModeEnabled { false };
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    HashMap<WebCore::PageIdentifier, String> m_mediaPlaybackEnvironments;
-    HashMap<WebCore::PageIdentifier, String> m_displayCaptureEnvironments;
+    HashMap<WebCore::PageIdentifier, RefPtr<StringImpl>> m_mediaPlaybackEnvironments;
+    HashMap<WebCore::PageIdentifier, RefPtr<StringImpl>> m_displayCaptureEnvironments;
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)

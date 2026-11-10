@@ -40,8 +40,8 @@ public:
     NODELETE static Ref<CSSLayerStatementRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
     virtual ~CSSLayerStatementRule();
 
-    String cssText() const final;
-    Vector<String> nameList() const;
+    RefPtr<StringImpl> cssText() const final;
+    Vector<RefPtr<StringImpl>> nameList() const;
 
 private:
     CSSLayerStatementRule(StyleRuleLayer&, CSSStyleSheet*);

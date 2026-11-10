@@ -179,8 +179,8 @@ public:
     void showConsole();
     void showResources();
     void showMainResourceForFrame(WebCore::FrameIdentifier);
-    void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
+    void openURLExternally(StringImpl* url);
+    void revealFileExternally(StringImpl* path);
     void requestDisableSiteIsolation();
 
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
@@ -212,8 +212,8 @@ public:
     void systemAppearanceDidChange();
 
     // Provided by platform WebInspectorUIProxy implementations.
-    static String inspectorPageURL();
-    static String inspectorTestPageURL();
+    static RefPtr<StringImpl> inspectorPageURL();
+    static RefPtr<StringImpl> inspectorTestPageURL();
     static bool isMainOrTestInspectorPage(const URL&);
     static DebuggableInfoData infoForLocalDebuggable();
 
@@ -224,7 +224,7 @@ public:
     static const unsigned initialWindowHeight;
 
     // Testing methods.
-    void evaluateInFrontendForTesting(const String&);
+    void evaluateInFrontendForTesting(StringImpl*);
 
 private:
     const Ref<WebInspectorBackendProxy> m_backend;
@@ -240,7 +240,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Inspector::FrontendChannel
-    void sendMessageToFrontend(const String& message) override;
+    void sendMessageToFrontend(StringImpl* message) override;
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     RefPtr<WebPageProxy> platformCreateFrontendPage();
@@ -256,8 +256,8 @@ private:
     bool platformIsFront();
     NODELETE void platformAttachAvailabilityChanged(bool);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
-    void platformOpenURLExternally(const String&);
-    void platformInspectedURLChanged(const String&);
+    void platformOpenURLExternally(StringImpl*);
+    void platformInspectedURLChanged(StringImpl*);
     void platformShowCertificate(const WebCore::CertificateInfo&);
     void platformAttach();
     void platformDetach();
@@ -265,9 +265,9 @@ private:
     void platformSetAttachedWindowWidth(unsigned);
     NODELETE void platformSetSheetRect(const WebCore::FloatRect&);
     void platformStartWindowDrag();
-    void platformRevealFileExternally(const String&);
+    void platformRevealFileExternally(StringImpl*);
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
+    void platformLoad(StringImpl* path, CompletionHandler<void(StringImpl*)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
@@ -283,7 +283,7 @@ private:
     void setFrontendConnection(IPC::Connection::Handle&&);
 
     void openLocalInspectorFrontend();
-    void sendMessageToBackend(const String&);
+    void sendMessageToBackend(StringImpl*);
     void frontendLoaded();
     void didClose();
     void bringToFront();
@@ -291,7 +291,7 @@ private:
     void attachAvailabilityChanged(bool);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void effectiveAppearanceDidChange(WebCore::InspectorFrontendClient::Appearance);
-    void inspectedURLChanged(const String&);
+    void inspectedURLChanged(StringImpl*);
     void showCertificate(const WebCore::CertificateInfo&);
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
@@ -305,7 +305,7 @@ private:
 #endif
 
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void load(const String& path, CompletionHandler<void(const String&)>&&);
+    void load(StringImpl* path, CompletionHandler<void(StringImpl*)>&&);
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
 
     bool canAttach() const { return m_canAttach; }
@@ -361,9 +361,9 @@ private:
     RetainPtr<WKWebInspectorUIProxyObjCAdapter> m_objCAdapter;
     // The container is owned by the view hierarchy, and it retains the inspected view.
     WeakObjCPtr<WKInspectorAttachmentContainerView> m_attachmentContainerView;
-    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    HashMap<RefPtr<StringImpl>, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     RunLoop::Timer m_closeFrontendAfterInactivityTimer;
-    String m_urlString;
+    RefPtr<StringImpl> m_urlString;
     WebCore::FloatRect m_sheetRect;
     WebCore::InspectorFrontendClient::Appearance m_frontendAppearance { WebCore::InspectorFrontendClient::Appearance::System };
     bool m_isObservingContentLayoutRect { false };
@@ -372,7 +372,7 @@ private:
     GWeakPtr<GtkWidget> m_inspectorView;
     GWeakPtr<GtkWidget> m_inspectorWindow;
     GtkWidget* m_headerBar { nullptr };
-    String m_inspectedURLString;
+    RefPtr<StringImpl> m_inspectedURLString;
 #elif PLATFORM(WPE)
     RefPtr<WKWPE::View> m_inspectorView;
     GRefPtr<WPEToplevel> m_inspectorWindow;

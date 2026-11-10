@@ -288,7 +288,7 @@ TEST_F(WebCoreNSURLSessionTest, RangeResponseDeliversLastByteAtChunkBoundary)
 
     RefPtr resource = rangeLoader->lastResource;
     URL url { "https://example.com/test-range.mp4"_str };
-    ResourceResponse response(URL { url }, "video/mp4"_s, totalLength, String { });
+    ResourceResponse response(URL { url }, "video/mp4"_si, totalLength, nullptr);
     response.setHTTPStatusCode(200);
 
     // Deliver the 200 response so the range response gets synthesized. This

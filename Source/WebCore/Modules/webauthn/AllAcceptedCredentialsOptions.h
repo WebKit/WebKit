@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct AllAcceptedCredentialsOptions {
-    String rpId;
-    String userId;
-    Vector<String> allAcceptedCredentialIds;
+    RefPtr<StringImpl> rpId;
+    RefPtr<StringImpl> userId;
+    Vector<RefPtr<StringImpl>> allAcceptedCredentialIds;
 };
 
 } // namespace WebCore

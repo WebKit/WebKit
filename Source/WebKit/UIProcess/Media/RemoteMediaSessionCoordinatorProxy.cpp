@@ -128,7 +128,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinatePause(MediaSessionCommandComp
     });
 }
 
-void RemoteMediaSessionCoordinatorProxy::coordinateSetTrack(const String& track, MediaSessionCommandCompletionHandler&& completionHandler)
+void RemoteMediaSessionCoordinatorProxy::coordinateSetTrack(StringImpl* track, MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
@@ -157,7 +157,7 @@ void RemoteMediaSessionCoordinatorProxy::readyStateChanged(MediaSessionReadyStat
     m_privateCoordinator->readyStateChanged(state);
 }
 
-void RemoteMediaSessionCoordinatorProxy::trackIdentifierChanged(const String& identifier)
+void RemoteMediaSessionCoordinatorProxy::trackIdentifierChanged(StringImpl* identifier)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_privateCoordinator->trackIdentifierChanged(identifier);
@@ -178,7 +178,7 @@ void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(boo
     protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PauseSession { }, WTF::move(callback), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-void RemoteMediaSessionCoordinatorProxy::setSessionTrack(const String& trackId, CompletionHandler<void(bool)>&& callback)
+void RemoteMediaSessionCoordinatorProxy::setSessionTrack(StringImpl* trackId, CompletionHandler<void(bool)>&& callback)
 {
     protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, WTF::move(callback), m_webPageProxy->webPageIDInMainFrameProcess());
 }

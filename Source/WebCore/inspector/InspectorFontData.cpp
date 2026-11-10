@@ -56,13 +56,20 @@
 namespace WebCore {
 
 struct InspectorFontMetadata {
-    String displayName;
-    String url;
+    RefPtr<StringImpl> displayName;
+    RefPtr<StringImpl> url;
     bool synthesizedBold { false };
     bool synthesizedOblique { false };
     Vector<FontPlatformData::FontVariationAxis> variationAxes;
 
-    friend bool operator==(const InspectorFontMetadata&, const InspectorFontMetadata&) = default;
+    friend bool operator==(const InspectorFontMetadata& a, const InspectorFontMetadata& b)
+    {
+        return contentEquals(a.displayName, b.displayName)
+            && contentEquals(a.url, b.url)
+            && a.synthesizedBold == b.synthesizedBold
+            && a.synthesizedOblique == b.synthesizedOblique
+            && a.variationAxes == b.variationAxes;
+    }
 };
 
 using CharacterSet = HashSet<char32_t, DefaultHash<char32_t>, WTF::UnsignedWithZeroKeyHashTraits<char32_t>>;
@@ -115,7 +122,7 @@ static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const InspectorFon
         .setDisplayName(metadata.displayName)
         .release();
 
-    if (!metadata.url.isEmpty())
+    if (!isEmpty(metadata.url))
         result->setUrl(metadata.url);
 
     auto variationAxes = JSON::ArrayOf<Inspector::Protocol::CSS::FontVariationAxis>::create();
@@ -127,7 +134,7 @@ static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const InspectorFon
             .setDefaultValue(variationAxis.defaultValue())
             .release();
 
-        if (!variationAxis.name().isEmpty() && variationAxis.name() != variationAxis.tag())
+        if (!isEmpty(variationAxis.name()) && !equal(variationAxis.name(), variationAxis.tag()))
             axis->setName(variationAxis.name());
 
         variationAxes->addItem(WTF::move(axis));
@@ -381,7 +388,7 @@ private:
     void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode) final { }
     void drawDisplayList(const DisplayList::DisplayList&, ControlFactory&) final { }
 
-    void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString&, const FloatPoint&, unsigned = 0, std::optional<unsigned> = std::nullopt) final { }
+    void drawEmphasisMarks(const FontCascade&, const TextRun&, AtomStringImpl*, const FloatPoint&, unsigned = 0, std::optional<unsigned> = std::nullopt) final { }
     void drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction = FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady) final
     {
         auto currentPoint = point;

@@ -351,8 +351,8 @@ public:
     void updatePlayStateForAllAnimationsIncludingSubframes();
 #endif
 
-    AtomString mediaType() const;
-    WEBCORE_EXPORT void setMediaType(const AtomString&);
+    RefPtr<AtomStringImpl> mediaType() const;
+    WEBCORE_EXPORT void setMediaType(AtomStringImpl*);
     void adjustMediaTypeForPrinting(bool printing);
 
     void setCannotBlitToWindow();
@@ -474,7 +474,7 @@ public:
 
     WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptions> = { });
 
-    inline void incrementVisuallyNonEmptyCharacterCount(const String&); // Defined in LocalFrameViewInlines.h
+    inline void incrementVisuallyNonEmptyCharacterCount(StringImpl*); // Defined in LocalFrameViewInlines.h
     inline void incrementVisuallyNonEmptyPixelCount(const IntSize&); // Defined in LocalFrameViewInlines.h
     bool isVisuallyNonEmpty() const { return m_contentQualifiesAsVisuallyNonEmpty; }
 
@@ -601,7 +601,7 @@ public:
     bool isTrackingRepaints() const { return m_isTrackingRepaints; }
     WEBCORE_EXPORT void resetTrackedRepaints();
     const Vector<FloatRect>& trackedRepaintRects() const LIFETIME_BOUND { return m_trackedRepaintRects; }
-    String trackedRepaintRectsAsText() const;
+    RefPtr<StringImpl> trackedRepaintRectsAsText() const;
 
     NODELETE WEBCORE_EXPORT void startTrackingLayoutUpdates();
     NODELETE WEBCORE_EXPORT unsigned layoutUpdateCount();
@@ -744,7 +744,7 @@ public:
 
     bool inUpdateEmbeddedObjects() const { return m_inUpdateEmbeddedObjects; }
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     void willBeDestroyed() final;
 
@@ -833,7 +833,7 @@ private:
     NODELETE bool isVerticalDocument() const final;
     NODELETE bool isFlippedDocument() const final;
 
-    NODELETE void incrementVisuallyNonEmptyCharacterCountSlowCase(const String&);
+    NODELETE void incrementVisuallyNonEmptyCharacterCountSlowCase(StringImpl*);
 
     void reset();
     void init();
@@ -917,7 +917,7 @@ private:
 
     bool usesCompositedScrolling() const final;
     NODELETE bool mockScrollbarsControllerEnabled() const final;
-    void logMockScrollbarsControllerMessage(const String&) const final;
+    void logMockScrollbarsControllerMessage(StringImpl*) const final;
 
     bool canShowNonOverlayScrollbars() const final;
 
@@ -1032,7 +1032,7 @@ private:
     RefPtr<ContainerNode> m_scheduledMaintainScrollPositionAnchor;
     std::optional<SimpleRange> m_pendingTextFragmentIndicatorRange;
     bool m_haveCreatedTextIndicator { false };
-    String m_pendingTextFragmentIndicatorText;
+    RefPtr<StringImpl> m_pendingTextFragmentIndicatorText;
     bool m_skipScrollResetOfScrollToTextFragmentRange { false };
 
     // Renderer to hold our custom scroll corner.
@@ -1055,8 +1055,8 @@ private:
     Color m_baseBackgroundColor { Color::white };
     IntSize m_lastViewportSize;
 
-    AtomString m_mediaType;
-    AtomString m_mediaTypeWhenNotPrinting;
+    RefPtr<AtomStringImpl> m_mediaType;
+    RefPtr<AtomStringImpl> m_mediaTypeWhenNotPrinting;
 
     Vector<FloatRect> m_trackedRepaintRects;
     

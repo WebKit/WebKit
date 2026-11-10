@@ -352,7 +352,7 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& t
     for (auto& tokenAttribute : token.attributes()) {
         auto& attributeName = tokenAttribute.name();
         if (attributeName == nonceAttr) [[unlikely]] {
-            if (element.hasAttributeWithoutSynchronization(nonceAttr) || !element.nonce().isEmpty())
+            if (element.hasAttributeWithoutSynchronization(nonceAttr) || !WTF::isEmpty(element.nonce()))
                 continue;
             // Make sure the nonce attribute remains hidden.
             element.setAttribute(attributeName, tokenAttribute.value());
@@ -392,7 +392,7 @@ void HTMLConstructionSite::setCompatibilityMode(DocumentCompatibilityMode mode)
     protect(m_document)->setCompatibilityMode(mode);
 }
 
-void HTMLConstructionSite::setCompatibilityModeFromDoctype(const AtomString& name, const String& publicId, const String& systemId)
+void HTMLConstructionSite::setCompatibilityModeFromDoctype(AtomStringImpl* name, StringImpl* publicId, StringImpl* systemId)
 {
     // There are three possible compatibility modes:
     // Quirks - quirks mode emulates WinIE and NS4. CSS parsing is also relaxed in this mode, e.g., unit types can
@@ -401,7 +401,7 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const AtomString& nam
     // No Quirks - no quirks apply. Web pages will obey the specifications to the letter.
 
     bool isNameHTML = name == HTMLNames::htmlTag->localName();
-    if ((isNameHTML && publicId.isEmpty() && systemId.isEmpty()) || document().isSrcdocDocument()) [[likely]] {
+    if ((isNameHTML && WTF::isEmpty(publicId) && WTF::isEmpty(systemId)) || document().isSrcdocDocument()) [[likely]] {
         setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
         return;
     }
@@ -467,8 +467,8 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const AtomString& nam
         || equalLettersIgnoringASCIICase(publicId, "-/w3c/dtd html 4.0 transitional/en"_s)
         || equalLettersIgnoringASCIICase(publicId, "html"_s)
         || equalLettersIgnoringASCIICase(systemId, "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"_s)
-        || (systemId.isEmpty() && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 frameset//"_s))
-        || (systemId.isEmpty() && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 transitional//"_s))) {
+        || (WTF::isEmpty(systemId) && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 frameset//"_s))
+        || (WTF::isEmpty(systemId) && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 transitional//"_s))) {
         setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
         return;
     }
@@ -476,8 +476,8 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const AtomString& nam
     // Check for Limited Quirks Mode.
     if (startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd xhtml 1.0 frameset//"_s)
         || startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd xhtml 1.0 transitional//"_s)
-        || (!systemId.isEmpty() && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 frameset//"_s))
-        || (!systemId.isEmpty() && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 transitional//"_s))) {
+        || (!WTF::isEmpty(systemId) && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 frameset//"_s))
+        || (!WTF::isEmpty(systemId) && startsWithLettersIgnoringASCIICase(publicId, "-//w3c//dtd html 4.01 transitional//"_s))) {
         setCompatibilityMode(DocumentCompatibilityMode::LimitedQuirksMode);
         return;
     }
@@ -497,8 +497,8 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Type::DOCTYPE);
 
-    String publicId = token.publicIdentifier();
-    String systemId = token.systemIdentifier();
+    RefPtr<StringImpl> publicId = token.publicIdentifier();
+    RefPtr<StringImpl> systemId = token.systemIdentifier();
 
     Ref document = m_document.get();
     attachLater(protect(m_attachmentRoot), DocumentType::create(document, token.name(), publicId, systemId));
@@ -600,7 +600,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
         auto clonable = ShadowRootClonable::No;
         auto serializable = ShadowRootSerializable::No;
         auto slotAssignment = SlotAssignmentMode::Named;
-        String referenceTarget;
+        RefPtr<StringImpl> referenceTarget;
         auto registryKind = Element::CustomElementRegistryKind::Window;
         for (auto& attribute : token.attributes()) {
             if (attribute.name() == HTMLNames::shadowrootmodeAttr)
@@ -614,7 +614,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             else if (attribute.name() == HTMLNames::shadowrootslotassignmentAttr)
                 slotAssignment = parseSlotAssignmentMode(attribute.value());
             else if (document().settings().shadowRootReferenceTargetEnabled() && attribute.name() == HTMLNames::shadowrootreferencetargetAttr)
-                referenceTarget = AtomString(attribute.value());
+                referenceTarget = RefPtr<AtomStringImpl>(attribute.value());
             else if (attribute.name() == HTMLNames::shadowrootcustomelementregistryAttr)
                 registryKind = Element::CustomElementRegistryKind::Null;
         }
@@ -689,7 +689,7 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
     m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
 }
 
-void HTMLConstructionSite::insertForeignElement(AtomHTMLToken&& token, const AtomString& namespaceURI)
+void HTMLConstructionSite::insertForeignElement(AtomHTMLToken&& token, AtomStringImpl* namespaceURI)
 {
     ASSERT(token.type() == HTMLToken::Type::StartTag);
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
@@ -701,9 +701,9 @@ void HTMLConstructionSite::insertForeignElement(AtomHTMLToken&& token, const Ato
         m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
 }
 
-static NEVER_INLINE unsigned findBreakIndexSlow(const String& string, unsigned currentPosition, unsigned proposedBreakIndex)
+static NEVER_INLINE unsigned findBreakIndexSlow(StringImpl* string, unsigned currentPosition, unsigned proposedBreakIndex)
 {
-    unsigned stringLength = string.length();
+    unsigned stringLength = length(string);
     // Check that we are not on an unbreakable boundary.
     // Some text break iterator implementations work best if the passed buffer is as small as possible,
     // see <https://bugs.webkit.org/show_bug.cgi?id=29092>.
@@ -719,18 +719,18 @@ static NEVER_INLINE unsigned findBreakIndexSlow(const String& string, unsigned c
     return currentPosition + breakIndexInSubstring;
 }
 
-static ALWAYS_INLINE unsigned findBreakIndex(const String& string, unsigned currentPosition, unsigned proposedBreakIndex)
+static ALWAYS_INLINE unsigned findBreakIndex(StringImpl* string, unsigned currentPosition, unsigned proposedBreakIndex)
 {
     ASSERT(currentPosition < proposedBreakIndex);
-    ASSERT(proposedBreakIndex <= string.length());
+    ASSERT(proposedBreakIndex <= length(string));
 
-    if (proposedBreakIndex == string.length() || string.is8Bit()) [[likely]]
+    if (proposedBreakIndex == length(string) || is8Bit(string)) [[likely]]
         return proposedBreakIndex;
 
     return findBreakIndexSlow(string, currentPosition, proposedBreakIndex);
 }
 
-void HTMLConstructionSite::insertTextNode(const String& characters)
+void HTMLConstructionSite::insertTextNode(StringImpl* characters)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
     task.parent = currentNode();
@@ -759,7 +759,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     }
     if (RefPtr previousTextChild = dynamicDowncast<Text>(previousChild.get()); previousTextChild && previousTextChild->length() < lengthLimit) {
         // FIXME: We're only supposed to append to this text node if it was the last text node inserted by the parser.
-        unsigned proposedBreakIndex = std::min(characters.length(), lengthLimit - previousTextChild->length());
+        unsigned proposedBreakIndex = std::min(length(characters), lengthLimit - previousTextChild->length());
         if (unsigned breakIndex = findBreakIndex(characters, 0, proposedBreakIndex)) {
             if (previousTextChild != m_currentTextNode) {
                 if (!m_textNodeBuffer)
@@ -773,19 +773,19 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
         }
     }
 
-    while (currentPosition < characters.length()) {
-        unsigned proposedBreakIndex = std::min(currentPosition + lengthLimit, characters.length());
+    while (currentPosition < length(characters)) {
+        unsigned proposedBreakIndex = std::min(currentPosition + lengthLimit, length(characters));
         unsigned breakIndex = findBreakIndex(characters, currentPosition, proposedBreakIndex);
         // If we couldn't find a break index (due to unbreakable characters), then we just don't split.
         if (breakIndex == currentPosition) [[unlikely]]
-            breakIndex = characters.length();
+            breakIndex = length(characters);
 
         unsigned substringLength = breakIndex - currentPosition;
-        auto substring = characters.substring(currentPosition, substringLength);
+        auto substring = WTF::substring(characters, currentPosition, substringLength);
         auto textNode = Text::create(protect(task.parent->document()), WTF::move(substring));
 
         currentPosition += textNode->length();
-        ASSERT(currentPosition <= characters.length());
+        ASSERT(currentPosition <= length(characters));
         task.child = WTF::move(textNode);
 
         executeTask(task);
@@ -820,7 +820,7 @@ void HTMLConstructionSite::takeAllChildrenAndReparent(HTMLStackItem& newParent, 
     m_taskQueue.append(WTF::move(task));
 }
 
-static inline QualifiedName qualifiedNameForTag(AtomHTMLToken& token, const AtomString& namespaceURI)
+static inline QualifiedName qualifiedNameForTag(AtomHTMLToken& token, AtomStringImpl* namespaceURI)
 {
     auto nodeNamespace = findNamespace(namespaceURI);
     auto elementName = elementNameForTag(nodeNamespace, token.tagName());
@@ -837,7 +837,7 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
     return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName };
 }
 
-Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
+Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, AtomStringImpl* namespaceURI)
 {
     SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
     setAttributes(element, token, m_parserContentPolicy);
@@ -994,7 +994,7 @@ void HTMLConstructionSite::generateImpliedEndTagsWithExclusion(ElementName eleme
         m_openElements.pop();
 }
 
-void HTMLConstructionSite::generateImpliedEndTagsWithExclusion(const AtomString& tagName)
+void HTMLConstructionSite::generateImpliedEndTagsWithExclusion(AtomStringImpl* tagName)
 {
     while (hasImpliedEndTag(currentStackItem()) && !currentStackItem().matchesHTMLTag(tagName))
         m_openElements.pop();

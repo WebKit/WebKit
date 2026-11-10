@@ -36,7 +36,7 @@ class RenderElement;
 
 class AXImageMapHelpers {
 public:
-    static void accessibilityText(const HTMLAreaElement&, String&&, Vector<AccessibilityText>&);
+    static void accessibilityText(const HTMLAreaElement&, RefPtr<StringImpl>&&, Vector<AccessibilityText>&);
     static RenderElement* rendererFromAreaElement(const HTMLAreaElement&);
 };
 

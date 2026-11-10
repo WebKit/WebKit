@@ -46,7 +46,7 @@ class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawRes
 public:
     explicit NavigatorBeacon(Navigator&);
     ~NavigatorBeacon();
-    static ExceptionOr<bool> sendBeacon(Navigator&, Document&, const String& url, std::optional<FetchBody::Init>&&);
+    static ExceptionOr<bool> sendBeacon(Navigator&, Document&, StringImpl* url, std::optional<FetchBody::Init>&&);
 
     size_t inflightBeaconsCount() const { return m_inflightBeacons.size(); }
 
@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT void deref() const final;
 
 private:
-    ExceptionOr<bool> sendBeacon(Document&, const String& url, std::optional<FetchBody::Init>&&);
+    ExceptionOr<bool> sendBeacon(Document&, StringImpl* url, std::optional<FetchBody::Init>&&);
 
     static ASCIILiteral supplementName() { return "NavigatorBeacon"_s; }
     bool isNavigatorBeacon() const final { return true; }

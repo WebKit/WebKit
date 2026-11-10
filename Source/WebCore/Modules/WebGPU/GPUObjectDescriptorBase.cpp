@@ -33,8 +33,8 @@ namespace WebCore {
 Ref<JSON::Object> GPUObjectDescriptorBase::toJSON() const
 {
     Ref json = JSON::Object::create();
-    if (!label.isNull())
-        json->setString("label"_s, label);
+    if (label)
+        json->setString("label"_si, label);
     return json;
 }
 

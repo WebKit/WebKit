@@ -28,7 +28,7 @@ namespace WebCore {
 class HashChangeEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(HashChangeEvent);
 public:
-    static Ref<HashChangeEvent> create(const String& oldURL, const String& newURL)
+    static Ref<HashChangeEvent> create(StringImpl* oldURL, StringImpl* newURL)
     {
         return adoptRef(*new HashChangeEvent(oldURL, newURL));
     }
@@ -39,17 +39,17 @@ public:
     }
 
     struct Init : EventInit {
-        String oldURL;
-        String newURL;
+        RefPtr<StringImpl> oldURL;
+        RefPtr<StringImpl> newURL;
     };
 
-    static Ref<HashChangeEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<HashChangeEvent> create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new HashChangeEvent(type, initializer, isTrusted));
     }
 
-    const String& oldURL() const LIFETIME_BOUND { return m_oldURL; }
-    const String& newURL() const LIFETIME_BOUND { return m_newURL; }
+    const RefPtr<StringImpl>& oldURL() const LIFETIME_BOUND { return m_oldURL; }
+    const RefPtr<StringImpl>& newURL() const LIFETIME_BOUND { return m_newURL; }
 
 private:
     HashChangeEvent()
@@ -57,22 +57,22 @@ private:
     {
     }
 
-    HashChangeEvent(const String& oldURL, const String& newURL)
+    HashChangeEvent(StringImpl* oldURL, StringImpl* newURL)
         : Event(EventInterfaceType::HashChangeEvent, eventNames().hashchangeEvent, CanBubble::No, IsCancelable::No)
         , m_oldURL(oldURL)
         , m_newURL(newURL)
     {
     }
 
-    HashChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+    HashChangeEvent(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
         : Event(EventInterfaceType::HashChangeEvent, type, initializer, isTrusted)
         , m_oldURL(initializer.oldURL)
         , m_newURL(initializer.newURL)
     {
     }
 
-    String m_oldURL;
-    String m_newURL;
+    RefPtr<StringImpl> m_oldURL;
+    RefPtr<StringImpl> m_newURL;
 };
 
 } // namespace WebCore

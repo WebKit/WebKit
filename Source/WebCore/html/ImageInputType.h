@@ -49,7 +49,7 @@ public:
 private:
     explicit ImageInputType(HTMLInputElement&);
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     bool isFormDataAppendable() const final;
     bool appendFormData(DOMFormData&) const final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
@@ -61,7 +61,7 @@ private:
     bool shouldRespectHeightAndWidthAttributes() final;
     unsigned height() const final;
     unsigned width() const final;
-    String resultForDialogSubmit() const final;
+    RefPtr<StringImpl> resultForDialogSubmit() const final;
     bool dirAutoUsesValue() const final;
 
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::submitIfPossible().

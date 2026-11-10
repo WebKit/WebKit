@@ -56,7 +56,7 @@ class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit);
 public:
     static Ref<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit> create(
-        AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, const String& deviceID, GPUConnectionToWebProcess& connection, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback) {
+        AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, StringImpl* deviceID, GPUConnectionToWebProcess& connection, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback) {
         return adoptRef(*new RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(identifier, deviceID, connection, WTF::move(callback)));
     }
 
@@ -71,7 +71,7 @@ public:
     void endAudioSessionInterruption(WebCore::AudioSession::MayResume);
 
 private:
-    RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&, GPUConnectionToWebProcess&, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&&);
+    RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, StringImpl*, GPUConnectionToWebProcess&, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&&);
 
     // CoreAudioSpeakerSamplesProducer
     const WebCore::CAAudioStreamDescription& format() final { return *m_description; }
@@ -127,7 +127,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deref() const
     m_gpuConnectionToWebProcess.get()->deref();
 }
 
-void RemoteAudioMediaStreamTrackRendererInternalUnitManager::createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, const String& deviceID,  CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback)
+void RemoteAudioMediaStreamTrackRendererInternalUnitManager::createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, StringImpl* deviceID,  CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback)
 {
     ASSERT(!m_units.contains(identifier));
     if (auto connection = m_gpuConnectionToWebProcess.get())
@@ -166,12 +166,12 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::notifyLastToCapture
         unit->updateShouldRegisterAsSpeakerSamplesProducer();
 }
 
-void RemoteAudioMediaStreamTrackRendererInternalUnitManager::setLastDeviceUsed(const String& deviceID)
+void RemoteAudioMediaStreamTrackRendererInternalUnitManager::setLastDeviceUsed(StringImpl* deviceID)
 {
 #if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
     RefPtr connection = m_gpuConnectionToWebProcess.get();
     Ref audioSession = connection->audioSessionProxy();
-    audioSession->setPreferredSpeakerID(deviceID != WebCore::AudioMediaStreamTrackRenderer::defaultDeviceID() ? deviceID : emptyString());
+    audioSession->setPreferredSpeakerID(!equal(deviceID, WebCore::AudioMediaStreamTrackRenderer::defaultDeviceID()) ? deviceID : emptyString().get());
 #endif
 }
 
@@ -197,11 +197,11 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::endAudioSessionInte
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit);
 
-RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, const String& deviceID, GPUConnectionToWebProcess& connection, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback)
+RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, StringImpl* deviceID, GPUConnectionToWebProcess& connection, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback)
     : m_identifier(identifier)
     , m_connection(connection)
     , m_localUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::create(deviceID, *this))
-    , m_canUseCaptureUnit(deviceID == WebCore::AudioMediaStreamTrackRenderer::defaultDeviceID())
+    , m_canUseCaptureUnit(equal(deviceID, WebCore::AudioMediaStreamTrackRenderer::defaultDeviceID()))
 {
     ASSERT(isMainRunLoop());
     m_localUnit->retrieveFormatDescription([weakThis = ThreadSafeWeakPtr { *this }, callback = WTF::move(callback)](auto&& description) mutable {

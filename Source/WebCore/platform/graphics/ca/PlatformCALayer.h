@@ -153,8 +153,8 @@ public:
     PlatformCALayerClient* owner() const { return m_owner; }
     virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
 
-    virtual void animationStarted(const String& key, MonotonicTime beginTime) = 0;
-    virtual void animationEnded(const String& key) = 0;
+    virtual void animationStarted(StringImpl* key, MonotonicTime beginTime) = 0;
+    virtual void animationEnded(StringImpl* key) = 0;
 
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) = 0;
@@ -183,9 +183,9 @@ public:
     // Any sublayers previously in the current layer are removed.
     virtual void adoptSublayers(PlatformCALayer& source) = 0;
 
-    virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) = 0;
-    virtual void removeAnimationForKey(const String& key) = 0;
-    virtual RefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
+    virtual void addAnimationForKey(StringImpl* key, PlatformCAAnimation&) = 0;
+    virtual void removeAnimationForKey(StringImpl* key) = 0;
+    virtual RefPtr<PlatformCAAnimation> animationForKey(StringImpl* key) = 0;
 
 #if ENABLE(THREADED_ANIMATIONS)
     virtual void clearAcceleratedEffectsAndBaseValues();
@@ -278,7 +278,7 @@ public:
 
     virtual void setBlendMode(BlendMode) = 0;
 
-    virtual void setName(const String&) = 0;
+    virtual void setName(StringImpl*) = 0;
 
     virtual void setSpeed(float) = 0;
 

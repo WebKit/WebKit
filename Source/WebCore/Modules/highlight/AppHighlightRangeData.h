@@ -41,12 +41,12 @@ class AppHighlightRangeData {
 public:
     WEBCORE_EXPORT static std::optional<AppHighlightRangeData> create(const SharedBuffer&);
     struct NodePathComponent {
-        String identifier;
-        String nodeName;
-        String textData;
+        RefPtr<StringImpl> identifier;
+        RefPtr<StringImpl> nodeName;
+        RefPtr<StringImpl> textData;
         uint32_t pathIndex { 0 };
 
-        NodePathComponent(String&& elementIdentifier, String&& name, String&& data, uint32_t index)
+        NodePathComponent(RefPtr<StringImpl>&& elementIdentifier, RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& data, uint32_t index)
             : identifier(WTF::move(elementIdentifier))
             , nodeName(WTF::move(name))
             , textData(WTF::move(data))
@@ -54,7 +54,7 @@ public:
         {
         }
 
-        NodePathComponent(const String& elementIdentifier, const String& name, const String& data, uint32_t index)
+        NodePathComponent(StringImpl* elementIdentifier, StringImpl* name, StringImpl* data, uint32_t index)
             : identifier(elementIdentifier)
             , nodeName(name)
             , textData(data)
@@ -62,14 +62,20 @@ public:
         {
         }
 
-        friend bool operator==(const NodePathComponent&, const NodePathComponent&) = default;
+        friend bool operator==(const NodePathComponent& a, const NodePathComponent& b)
+        {
+            return contentEquals(a.identifier, b.identifier)
+                && contentEquals(a.nodeName, b.nodeName)
+                && contentEquals(a.textData, b.textData)
+                && a.pathIndex == b.pathIndex;
+        }
     };
 
     using NodePath = Vector<NodePathComponent>;
 
     AppHighlightRangeData(const AppHighlightRangeData&) = default;
     AppHighlightRangeData() = default;
-    AppHighlightRangeData(String&& identifier, String&& text, NodePath&& startContainer, uint64_t startOffset, NodePath&& endContainer, uint64_t endOffset)
+    AppHighlightRangeData(RefPtr<StringImpl>&& identifier, RefPtr<StringImpl>&& text, NodePath&& startContainer, uint64_t startOffset, NodePath&& endContainer, uint64_t endOffset)
         : m_identifier(WTF::move(identifier))
         , m_text(WTF::move(text))
         , m_startContainer(WTF::move(startContainer))
@@ -79,7 +85,7 @@ public:
     {
     }
 
-    AppHighlightRangeData(const String& identifier, const String& text, const NodePath& startContainer, uint64_t startOffset, const NodePath& endContainer, uint64_t endOffset)
+    AppHighlightRangeData(StringImpl* identifier, StringImpl* text, const NodePath& startContainer, uint64_t startOffset, const NodePath& endContainer, uint64_t endOffset)
         : m_identifier(identifier)
         , m_text(text)
         , m_startContainer(startContainer)
@@ -91,8 +97,8 @@ public:
 
     AppHighlightRangeData& operator=(const AppHighlightRangeData&) = default;
 
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
-    const String& text() const LIFETIME_BOUND { return m_text; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
     const NodePath& startContainer() const LIFETIME_BOUND { return m_startContainer; }
     uint32_t startOffset() const { return m_startOffset; }
     const NodePath& endContainer() const LIFETIME_BOUND { return m_endContainer; }
@@ -101,8 +107,8 @@ public:
     Ref<SharedBuffer> toSharedBuffer() const;
 
 private:
-    String m_identifier;
-    String m_text;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_text;
     NodePath m_startContainer;
     uint32_t m_startOffset { 0 };
     NodePath m_endContainer;

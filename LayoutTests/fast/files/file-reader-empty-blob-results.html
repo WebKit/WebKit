@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Characterizes FileReader / FileReaderSync results (null vs. empty string) for empty and small blobs. "
+    + "FileReaderLoader builds the binary-string result from the raw data span.");
+
+window.jsTestIsAsync = true;
+
+function describe(value)
+{
+    if (value === null)
+        return "null";
+    if (value instanceof ArrayBuffer)
+        return "ArrayBuffer(" + value.byteLength + ")";
+    return typeof value + " " + JSON.stringify(value);
+}
+
+function read(blob, method)
+{
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        const events = [];
+        reader.onload = () => events.push("load");
+        reader.onerror = () => events.push("error");
+        reader.onloadend = () => {
+            events.push("loadend");
+            resolve(`${method} -> ${describe(reader.result)} [${events.join(", ")}]`);
+        };
+        reader[method](blob);
+    });
+}
+
+const blobs = [
+    ["empty Blob", () => new Blob([])],
+    ["Blob of empty string", () => new Blob([""])],
+    ["Blob of empty Uint8Array", () => new Blob([new Uint8Array(0)])],
+    ["empty File", () => new File([], "empty.txt", { type: "text/plain" })],
+    ["empty slice", () => new Blob(["abc"]).slice(1, 1)],
+    ["two-byte Blob", () => new Blob([new Uint8Array([0x41, 0xe9])])],
+];
+
+(async () => {
+    for (const [name, makeBlob] of blobs) {
+        for (const method of ["readAsBinaryString", "readAsText", "readAsDataURL", "readAsArrayBuffer"])
+            debug(`${name}: ${await read(makeBlob(), method)}`);
+    }
+
+    const reader = new FileReader();
+    debug("FileReader.result before reading: " + describe(reader.result));
+
+    debug("");
+    debug("FileReaderSync in a worker:");
+    const worker = new Worker("resources/file-reader-sync-empty-blobs-worker.js");
+    const results = await new Promise((resolve) => {
+        worker.onmessage = (event) => resolve(event.data);
+        worker.postMessage("start");
+    });
+    for (const line of results)
+        debug(line);
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

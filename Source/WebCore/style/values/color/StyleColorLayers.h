@@ -60,7 +60,7 @@ WebCore::Color resolveColor(const ColorLayers&, const ResolvedColors&);
 bool containsCurrentColor(const ColorLayers&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorLayers&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorLayers&);
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const ColorLayers&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ColorLayers&);
 

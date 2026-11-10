@@ -46,7 +46,7 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
     if (options.curve) {
         curve = Float32Array::tryCreate(options.curve->span());
         if (!curve)
-            return Exception { ExceptionCode::InvalidStateError, "Invalid curve parameter"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Invalid curve parameter"_si };
     }
 
     auto node = adoptRef(*new WaveShaperNode(context));
@@ -79,7 +79,7 @@ ExceptionOr<void> WaveShaperNode::setCurveForBindings(RefPtr<Float32Array>&& cur
     ASSERT(isMainThread()); 
     DEBUG_LOG(LOGIDENTIFIER);
     if (curve && curve->length() < 2)
-        return Exception { ExceptionCode::InvalidStateError, "Length of curve array cannot be less than 2"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Length of curve array cannot be less than 2"_si };
 
     // The specification states that we should maintain an internal copy of the curve so that
     // subsequent modifications of the contents of the array have no effect.

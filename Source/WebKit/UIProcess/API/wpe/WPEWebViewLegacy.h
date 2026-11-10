@@ -66,7 +66,7 @@ private:
     ViewLegacy(struct wpe_view_backend*, const API::PageConfiguration&);
 
     struct wpe_view_backend* backend() const override { return m_backend; }
-    void synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) override;
+    void synthesizeCompositionKeyPress(StringImpl*, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) override;
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&) override;
 
     void setViewState(OptionSet<WebCore::ActivityState>);

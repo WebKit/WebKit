@@ -204,7 +204,7 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
         return;
 
     Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
-    websiteDataStore->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
+    websiteDataStore->setCookiePersistentStorage(StringImpl::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
 }
 
 /**
@@ -343,7 +343,7 @@ void webkit_cookie_manager_get_cookies(WebKitCookieManager* manager, const gchar
     g_return_if_fail(uri);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->cookieStore().cookiesForURL(URL { String::fromUTF8(uri) }, [task = WTF::move(task)](const Vector<WebCore::Cookie>& cookies) {
+    manager->priv->cookieStore().cookiesForURL(URL { StringImpl::fromUTF8(uri) }, [task = WTF::move(task)](const Vector<WebCore::Cookie>& cookies) {
         GList* cookiesList = nullptr;
         for (auto& cookie : cookies)
             cookiesList = g_list_prepend(cookiesList, cookie.toSoupCookie());
@@ -502,7 +502,7 @@ void webkit_cookie_manager_delete_cookies_for_domain(WebKitCookieManager* manage
     g_return_if_fail(domain);
 
     WebsiteDataRecord record;
-    record.addCookieHostName(String::fromUTF8(domain));
+    record.addCookieHostName(StringImpl::fromUTF8(domain));
     auto* data = webkitWebsiteDataCreate(WTF::move(record));
     GList dataList = { data, nullptr, nullptr };
     webkit_website_data_manager_remove(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, &dataList, nullptr, nullptr, nullptr);

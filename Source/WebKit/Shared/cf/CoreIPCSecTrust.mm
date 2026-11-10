@@ -81,7 +81,7 @@ CoreIPCSecTrust::PolicyOptionValueShape CoreIPCSecTrust::detectPolicyOptionShape
     return PolicyOptionValueShape::Invalid;
 }
 
-static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData::PolicyOption& policyVector)
+static RefPtr<StringImpl> updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData::PolicyOption& policyVector)
 {
     policyVector.reserveCapacity(policyOption.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -95,11 +95,11 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
 
         switch (shape) {
         case CoreIPCSecTrust::PolicyOptionValueShape::Invalid:
-            return makeString("policy shape for key "_s, (String)optionKey, "is invalid"_s);
+            return makeString("policy shape for key "_s, StringImpl::create(optionKey), "is invalid"_s);
         case CoreIPCSecTrust::PolicyOptionValueShape::Bool: {
             RetainPtr value = dynamic_objc_cast<NSNumber>(optionValue);
             if (!value)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::Bool unexpected type for key "_s, (String)optionKey);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::Bool unexpected type for key "_s, StringImpl::create(optionKey));
             CoreIPCSecTrustData::PolicyVariant v = static_cast<bool>([value boolValue]);
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
@@ -107,7 +107,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::String: {
             RetainPtr value = dynamic_objc_cast<NSString>(optionValue);
             if (!value)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::String unexpected type for key "_s, (String)optionKey);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::String unexpected type for key "_s, StringImpl::create(optionKey));
             CoreIPCSecTrustData::PolicyVariant v = CoreIPCString(value.get());
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
@@ -115,11 +115,11 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers: {
             RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
             if (!value)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSArray)"_s);
             if (![value count])
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers array length 0 for key "_s, (String)optionKey);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers array length 0 for key "_s, StringImpl::create(optionKey));
             if (!arrayElementsTheSameType(value.get(), NSNumber.class))
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSNumber)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSNumber)"_s);
             Vector<CoreIPCNumber> vector;
             vector.reserveCapacity([value count]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -134,11 +134,11 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings: {
             RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
             if (!value)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSArray)"_s);
             if (![value count])
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings array length 0 for key "_s, (String)optionKey);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings array length 0 for key "_s, StringImpl::create(optionKey));
             if (!arrayElementsTheSameType(value.get(), NSString.class))
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, (String)optionKey, " (expecting NSString)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSString)"_s);
             Vector<CoreIPCString> vector;
             vector.reserveCapacity([value count]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -153,11 +153,11 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData: {
             RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
             if (!value)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key %@ "_s, (String)optionKey, " (expecting NSArray)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key %@ "_s, StringImpl::create(optionKey), " (expecting NSArray)"_s);
             if (![value count])
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData array length 0 for key "_s, (String)optionKey);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData array length 0 for key "_s, StringImpl::create(optionKey));
             if (!arrayElementsTheSameType(value.get(), NSData.class))
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key "_s, (String)optionKey, " (expecting NSData)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSData)"_s);
             Vector<CoreIPCData> vector;
             vector.reserveCapacity([value count]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -172,11 +172,11 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber: {
             RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
             if (!value)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSArray)"_s);
             if (![value count])
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber array length 0 for key "_s, (String)optionKey);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber array length 0 for key "_s, StringImpl::create(optionKey));
             if (!arrayElementsTheSameType(value.get(), NSArray.class))
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSArray)"_s);
 
             CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers outerVector;
             outerVector.reserveCapacity([value count]);
@@ -184,7 +184,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSArray *secondLevelArray in value.get()) {
                 if (![secondLevelArray isKindOfClass:NSArray.class])
-                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array unexpected type for key "_s, (String)optionKey);
+                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array unexpected type for key "_s, StringImpl::create(optionKey));
 
                 Vector<Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate>> innerVector;
                 innerVector.reserveCapacity(secondLevelArray.count);
@@ -198,7 +198,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                         Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCDate(d.get());
                         innerVector.append(WTF::move(v));
                     } else
-                        return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array contents unexpected type for key "_s, (String)optionKey);
+                        return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array contents unexpected type for key "_s, StringImpl::create(optionKey));
                 }
                 outerVector.append(WTF::move(innerVector));
             }
@@ -209,13 +209,13 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers: {
             RetainPtr d = dynamic_objc_cast<NSDictionary>(optionValue);
             if (!d)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSDictionary)"_s);
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected type for key "_s, StringImpl::create(optionKey), " (expecting NSDictionary)"_s);
             CoreIPCSecTrustData::PolicyDictionaryValueIsNumberOrArrayOfNumbers vector;
             vector.reserveCapacity([d count]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString* key in d.get()) {
                 if (![key isKindOfClass:NSString.class])
-                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected dictionary key type for key "_s, (String)optionKey, " (expecting NSString)"_s);
+                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected dictionary key type for key "_s, StringImpl::create(optionKey), " (expecting NSString)"_s);
                 CoreIPCString s { key };
                 id value = [d objectForKey:key];
                 if (RetainPtr number = dynamic_objc_cast<NSNumber>(value)) {
@@ -225,7 +225,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 // Security's KeySize option holds an array of SecKeySubtype values for kSecAttrKeyTypeMLDSA.
                 RetainPtr array = dynamic_objc_cast<NSArray>(value);
                 if (!array || !arrayElementsTheSameType(array, NSNumber.class))
-                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected dictionary value type for key "_s, (String)optionKey, " (expecting NSNumber or NSArray of NSNumber)"_s);
+                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected dictionary value type for key "_s, StringImpl::create(optionKey), " (expecting NSNumber or NSArray of NSNumber)"_s);
                 CoreIPCSecTrustData::PolicyArrayOfNumbers numbers;
                 numbers.reserveCapacity([array count]);
                 // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -238,20 +238,20 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             break;
         }
         default:
-            return makeString("unknown shape for key "_s, (String)optionKey);
+            return makeString("unknown shape for key "_s, StringImpl::create(optionKey));
         }
     }
     return { }; // no error
 }
 
 #define RETURN_IF_OPTIONAL_ERROR \
-    if (!optionalDataError.isNull()) { \
-        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust optionalArrayOfDataHelper error: %s", optionalDataError.utf8()); \
+    if (optionalDataError) { \
+        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust optionalArrayOfDataHelper error: %s", utf8(optionalDataError)); \
         ASSERT_NOT_REACHED(); \
         return; \
     }
 
-static String optionalArrayOfDataHelper(std::optional<Vector<CoreIPCData>>& toSet, RetainPtr<NSDictionary> dict, NSString* topLevelKey)
+static RefPtr<StringImpl> optionalArrayOfDataHelper(std::optional<Vector<CoreIPCData>>& toSet, RetainPtr<NSDictionary> dict, NSString* topLevelKey)
 {
     if (![dict isKindOfClass:NSDictionary.class])
         return makeString("optionalArrayOfDataHelper was called with wrong argument"_s);
@@ -574,9 +574,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     innerVector.append(WTF::move(p));
                 } else if ([value isKindOfClass:NSDictionary.class]) {
                     CoreIPCSecTrustData::PolicyOption policyVector;
-                    String error = updatePolicyVector((NSDictionary *)value, policyVector);
-                    if (!error.isNull()) {
-                        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust updatePolicyVector error %s", error.utf8());
+                    RefPtr<StringImpl> error = updatePolicyVector((NSDictionary *)value, policyVector);
+                    if (error) {
+                        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust updatePolicyVector error %s", utf8(error));
                         ASSERT_NOT_REACHED();
                         return;
                     }
@@ -595,7 +595,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         secTrustData.policies = WTF::move(outerVector);
     }
 
-    String optionalDataError;
+    RefPtr<StringImpl> optionalDataError;
     optionalDataError = optionalArrayOfDataHelper(secTrustData.responses, dict, @"responses");
     RETURN_IF_OPTIONAL_ERROR;
 

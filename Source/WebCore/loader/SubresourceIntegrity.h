@@ -34,14 +34,14 @@ namespace WebCore {
 
 class CachedResource;
 
-bool matchIntegrityMetadataSlow(const CachedResource&, const String& integrityMetadata);
+bool matchIntegrityMetadataSlow(const CachedResource&, StringImpl* integrityMetadata);
 void reportHashesIfNeeded(const CachedResource&);
-String integrityMismatchDescription(const CachedResource&, const String& integrityMetadata);
-std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata);
+RefPtr<StringImpl> integrityMismatchDescription(const CachedResource&, StringImpl* integrityMetadata);
+std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(StringImpl* integrityMetadata);
 
-inline bool matchIntegrityMetadata(const CachedResource& resource, const String& integrityMetadata)
+inline bool matchIntegrityMetadata(const CachedResource& resource, StringImpl* integrityMetadata)
 {
-    if (integrityMetadata.isEmpty() && !resource.isHashReportingNeeded()) [[likely]]
+    if (isEmpty(integrityMetadata) && !resource.isHashReportingNeeded()) [[likely]]
         return true;
     bool result = matchIntegrityMetadataSlow(resource, integrityMetadata);
     if (result)

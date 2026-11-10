@@ -35,7 +35,7 @@ public:
     static constexpr int64_t invalidLength = std::numeric_limits<int64_t>::min();
     static constexpr int64_t unknownLength = std::numeric_limits<int64_t>::max();
 
-    WEBCORE_EXPORT explicit ParsedContentRange(const String&);
+    WEBCORE_EXPORT explicit ParsedContentRange(StringImpl*);
     NODELETE WEBCORE_EXPORT ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength);
     ParsedContentRange() = default;
 
@@ -49,7 +49,7 @@ public:
         return ParsedContentRange();
     }
 
-    WEBCORE_EXPORT String headerValue() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> headerValue() const;
 
 private:
     int64_t m_firstBytePosition { 0 };

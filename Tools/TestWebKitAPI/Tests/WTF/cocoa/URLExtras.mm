@@ -182,7 +182,7 @@ TEST(URLExtras, URLExtras_Spoof)
         "xn--jfa"_s, // U+0138
     };
     for (auto& host : punycodedSpoofHosts) {
-        auto url = makeString("http://"_s, host, '/').utf8();
+        auto url = utf8(makeString("http://"_s, host, '/'));
         EXPECT_WK_STREQ(url, userVisibleString(literalURL(url)));
     }
 }
@@ -376,15 +376,15 @@ TEST(URLExtras, URLExtras_ParsingError)
     EXPECT_NULL([url2.createNSURL() absoluteString]);
 
     std::array<char16_t, 2> utf16 { 0xC2, 0xB6 };
-    WTF::URL url3 { String(utf16) };
-    EXPECT_FALSE(url3.string().is8Bit());
+    WTF::URL url3 { StringImpl::create(utf16) };
+    EXPECT_FALSE(is8Bit(url3.string()));
     EXPECT_FALSE(url3.isValid());
     EXPECT_NULL([url3.createNSURL() absoluteString]);
     
     std::array<Latin1Character, 2> latin1 { 0xC2, 0xB6 };
-    WTF::URL url4 { String(latin1) };
+    WTF::URL url4 { StringImpl::create(latin1) };
     EXPECT_FALSE(url4.isValid());
-    EXPECT_TRUE(url4.string().is8Bit());
+    EXPECT_TRUE(is8Bit(url4.string()));
     EXPECT_NULL([url4.createNSURL() absoluteString]);
 
     std::array<char, 100> buffer = { };
@@ -411,7 +411,7 @@ TEST(URLExtras, CreateNSArray)
 
 TEST(URLExtras, URLByRemovingUserInfo)
 {
-    URL url("https://apple.com%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40@foo.github.io/upload/test.zip"_s);
+    URL url("https://apple.com%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40@foo.github.io/upload/test.zip"_si);
     RetainPtr cfUrl = WTF::URLByRemovingUserInfo(url.createNSURL().get());
     URL url2(cfUrl.get());
     EXPECT_EQ("https://foo.github.io/upload/test.zip"_s, url2.string());

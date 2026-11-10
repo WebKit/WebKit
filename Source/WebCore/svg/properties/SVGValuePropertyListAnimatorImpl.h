@@ -47,7 +47,7 @@ private:
 
     void start(SVGElement& targetElement) final
     {
-        String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
+        RefPtr<StringImpl> baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
         if (!m_list->parse(baseValue))
             m_list->clearItems();
     }

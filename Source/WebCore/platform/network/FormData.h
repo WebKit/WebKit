@@ -54,7 +54,7 @@ struct FormDataElement {
         : data(WTF::move(data)) { }
     explicit FormDataElement(Vector<uint8_t>&& array)
         : data(WTF::move(array)) { }
-    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
+    FormDataElement(StringImpl* filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
     explicit FormDataElement(const URL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
@@ -67,7 +67,7 @@ struct FormDataElement {
     FormDataElement isolatedCopy() const;
 
     struct EncodedFileData {
-        String filename;
+        RefPtr<StringImpl> filename;
         int64_t fileStart { 0 };
         int64_t fileLength { 0 };
         std::optional<WallTime> expectedFileModificationTime;
@@ -76,10 +76,16 @@ struct FormDataElement {
 
         EncodedFileData isolatedCopy() const
         {
-            return { filename.isolatedCopy(), fileStart, fileLength, expectedFileModificationTime };
+            return { WTF::isolatedCopy(filename), fileStart, fileLength, expectedFileModificationTime };
         }
         
-        friend bool operator==(const EncodedFileData&, const EncodedFileData&) = default;
+        friend bool operator==(const EncodedFileData& a, const EncodedFileData& b)
+        {
+            return contentEquals(a.filename, b.filename)
+                && a.fileStart == b.fileStart
+                && a.fileLength == b.fileLength
+                && a.expectedFileModificationTime == b.expectedFileModificationTime;
+        }
     };
 
     struct EncodedBlobData {
@@ -112,10 +118,10 @@ public:
     FormData& data() { return m_data.get(); }
 private:
     friend class FormData;
-    FormDataForUpload(FormData&, Vector<String>&&);
+    FormDataForUpload(FormData&, Vector<RefPtr<StringImpl>>&&);
     
     const Ref<FormData> m_data;
-    Vector<String> m_temporaryZipFiles;
+    Vector<RefPtr<StringImpl>> m_temporaryZipFiles;
 };
 
 class FormData final : public RefCounted<FormData> {
@@ -144,12 +150,12 @@ public:
     WEBCORE_EXPORT Ref<FormData> isolatedCopy() const;
 
     WEBCORE_EXPORT void appendData(std::span<const uint8_t> data);
-    void appendFile(const String& filePath);
-    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
+    void appendFile(StringImpl* filePath);
+    WEBCORE_EXPORT void appendFileRange(StringImpl* filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
 
     WEBCORE_EXPORT Vector<uint8_t> flatten() const; // omits files
-    String flattenToString() const; // omits files
+    RefPtr<StringImpl> flattenToString() const; // omits files
 
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
@@ -178,7 +184,7 @@ public:
 
     unsigned imageOrMediaFilesCount() const;
 
-    static EncodingType parseEncodingType(const String& type)
+    static EncodingType parseEncodingType(StringImpl* type)
     {
         if (equalLettersIgnoringASCIICase(type, "text/plain"_s))
             return EncodingType::TextPlain;
@@ -197,7 +203,7 @@ private:
     FormData(const FormData&);
 
     void appendMultiPartFileValue(const File&, Vector<uint8_t>& header, PAL::TextEncoding&);
-    void appendMultiPartStringValue(const String&, Vector<uint8_t>& header, PAL::TextEncoding&);
+    void appendMultiPartStringValue(StringImpl*, Vector<uint8_t>& header, PAL::TextEncoding&);
     void appendMultiPartKeyValuePairItems(const DOMFormData&);
     void appendNonMultiPartKeyValuePairItems(const DOMFormData&, EncodingType);
 

@@ -42,9 +42,9 @@ WebDataListSuggestionPicker::WebDataListSuggestionPicker(WebPage& page, WebCore:
 
 WebDataListSuggestionPicker::~WebDataListSuggestionPicker() = default;
 
-void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
+void WebDataListSuggestionPicker::handleKeydownWithIdentifier(StringImpl* key)
 {
-    if (key == "U+001B"_s) {
+    if (equal(key, "U+001B"_s)) {
         close();
         return;
     }
@@ -56,7 +56,7 @@ void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::HandleKeydownInDataList(key), page->identifier());
 }
 
-void WebDataListSuggestionPicker::didSelectOption(const String& selectedOption)
+void WebDataListSuggestionPicker::didSelectOption(StringImpl* selectedOption)
 {
     if (CheckedPtr client = m_client)
         client->didSelectDataListOption(selectedOption);

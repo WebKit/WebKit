@@ -43,12 +43,12 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
 {
     chosePlainText = false;
 
-    Vector<String> types = pasteboard.typesForLegacyUnsafeBindings();
+    Vector<RefPtr<StringImpl>> types = pasteboard.typesForLegacyUnsafeBindings();
     if (types.isEmpty())
         return nullptr;
 
     if (types.contains("text/html"_s) && frame.document()) {
-        String markup = pasteboard.readString("text/html"_s);
+        RefPtr<StringImpl> markup = pasteboard.readString("text/html"_si);
         return createFragmentFromMarkup(*frame.document(), markup, emptyString(), { });
     }
 
@@ -57,7 +57,7 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
 
     if (types.contains("text/plain;charset=utf-8"_s)) {
         chosePlainText = true;
-        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"_s));
+        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"_si));
     }
 
     return nullptr;
@@ -71,7 +71,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboard.write(pasteboardContent);
 }
 
-void Editor::writeImageToPasteboard(Pasteboard&, Element&, const URL&, const String&)
+void Editor::writeImageToPasteboard(Pasteboard&, Element&, const URL&, StringImpl*)
 {
     notImplemented();
 }

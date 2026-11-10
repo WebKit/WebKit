@@ -401,9 +401,9 @@ static NSTimeInterval currentMachTimeInSeconds()
     data.handle = actionIdentifier;
 
     if (_handTrackingEnabled)
-        data.profiles = Vector<String> { "generic-button"_s };
+        data.profiles = Vector<RefPtr<StringImpl>> { "generic-button"_s };
     else
-        data.profiles = Vector<String> { "generic-button-invisible"_s, "generic-button"_s };
+        data.profiles = Vector<RefPtr<StringImpl>> { "generic-button-invisible"_s, "generic-button"_s };
 
     data.targetRayMode = PlatformXR::XRTargetRayMode::TransientPointer;
 
@@ -482,7 +482,7 @@ static const size_t xrJointCount = static_cast<size_t>(PlatformXR::HandJoint::Co
     data.handedness = isLeftHand ? PlatformXR::XRHandedness::Left : PlatformXR::XRHandedness::Right;
     data.handle = (int)data.handedness;
 
-    data.profiles = Vector<String> { "generic-hand"_s };
+    data.profiles = Vector<RefPtr<StringImpl>> { "generic-hand"_s };
 
     simd_quatf rotation = simd_quaternion(std::numbers::pi_v<float> / 2, simd_make_float3(0.0, !isLeftHand ? 1.0 : -1.0, 0.0));
     simd_float4x4 rotationTransform = simd_matrix4x4(rotation);
@@ -563,7 +563,7 @@ static const size_t xrJointCount = static_cast<size_t>(PlatformXR::HandJoint::Co
     // FIXME: rdar://135359974
     data.handle = (int)PlatformXR::XRHandedness::Right + (isLeftHand ? 1 : 2);
 
-    data.profiles = Vector<String> { "generic-trigger-squeeze-thumbstick"_s };
+    data.profiles = Vector<RefPtr<StringImpl>> { "generic-trigger-squeeze-thumbstick"_s };
 
     simd_quatf rotation = simd_quaternion(0.0, simd_make_float3(0.0, !isLeftHand ? 1.0 : -1.0, 0.0));
     simd_float4x4 rotationTransform = simd_matrix4x4(rotation);

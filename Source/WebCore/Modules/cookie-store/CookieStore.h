@@ -55,16 +55,16 @@ public:
     static Ref<CookieStore> create(ScriptExecutionContext*);
     ~CookieStore();
 
-    void get(String&& name, Ref<DeferredPromise>&&);
+    void get(RefPtr<StringImpl>&& name, Ref<DeferredPromise>&&);
     void get(CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
-    void getAll(String&& name, Ref<DeferredPromise>&&);
+    void getAll(RefPtr<StringImpl>&& name, Ref<DeferredPromise>&&);
     void getAll(CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
-    void set(String&& name, String&& value, Ref<DeferredPromise>&&);
+    void set(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& value, Ref<DeferredPromise>&&);
     void set(CookieInit&&, Ref<DeferredPromise>&&);
 
-    void remove(String&& name, Ref<DeferredPromise>&&);
+    void remove(RefPtr<StringImpl>&& name, Ref<DeferredPromise>&&);
     void remove(CookieStoreDeleteOptions&&, Ref<DeferredPromise>&&);
 
 private:
@@ -74,8 +74,8 @@ private:
     void getShared(GetType, CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
     // CookieChangeListener
-    void cookiesAdded(const String& host, const Vector<Cookie>&) final;
-    void cookiesDeleted(const String& host, const Vector<Cookie>&) final;
+    void cookiesAdded(StringImpl* host, const Vector<Cookie>&) final;
+    void cookiesDeleted(StringImpl* host, const Vector<Cookie>&) final;
 
     // ActiveDOMObject
     void stop() final;
@@ -95,7 +95,7 @@ private:
 
     bool m_hasChangeEventListener { false };
     WeakPtr<CookieJar> m_cookieJar;
-    String m_host;
+    RefPtr<StringImpl> m_host;
     uint64_t m_nextPromiseIdentifier { 0 };
     HashMap<uint64_t, Ref<DeferredPromise>> m_promises;
 };

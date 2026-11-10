@@ -113,9 +113,9 @@ private:
         uint64_t offset = 0,
         std::optional<uint64_t> = std::nullopt);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     void writeTimestamp(WebGPUIdentifier, uint32_t queryIndex);
 
@@ -128,7 +128,7 @@ private:
 
     void finish(const WebGPU::CommandBufferDescriptor&, WebGPUIdentifier);
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::CommandEncoder> m_backing;

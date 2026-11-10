@@ -37,7 +37,7 @@ public:
 
     const CSS::MaskBorderSource& source() const LIFETIME_BOUND { return m_source; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSMaskBorderSourceValue&) const;
 
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;

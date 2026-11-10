@@ -46,7 +46,7 @@ struct GridTrackList;
 struct GridTrackSize;
 struct GridTrackSizes;
 struct PropertyParserState;
-using GridNamedAreaMapRow = Vector<AtomString, 8>;
+using GridNamedAreaMapRow = Vector<RefPtr<AtomStringImpl>, 8>;
 }
 
 namespace CSSPropertyParserHelpers {

@@ -125,7 +125,7 @@ void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoR
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void PlaybackSessionModelContext::setSpatialTrackingLabel(const String& label)
+void PlaybackSessionModelContext::setSpatialTrackingLabel(StringImpl* label)
 {
     if (RefPtr manager = m_manager.get())
         manager->setSpatialTrackingLabel(m_contextId, label);
@@ -457,7 +457,7 @@ void PlaybackSessionModelContext::legibleMediaSelectionIndexChanged(uint64_t sel
         client->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName, const String& localizedRouteName)
+void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, StringImpl* localizedDeviceName, StringImpl* localizedRouteName)
 {
     m_externalPlaybackEnabled = enabled;
     m_externalPlaybackTargetType = type;
@@ -805,7 +805,7 @@ void PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged(IPC::Connect
     ensureModel(connection, identifier)->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName, String localizedRouteName)
+void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType targetType, RefPtr<StringImpl> localizedDeviceName, RefPtr<StringImpl> localizedRouteName)
 {
     ensureModel(connection, identifier)->externalPlaybackChanged(enabled, targetType, localizedDeviceName, localizedRouteName);
 }
@@ -903,7 +903,7 @@ void PlaybackSessionManagerProxy::immersiveVideoMetadataChanged(IPC::Connection&
     ensureModel(connection, identifier)->immersiveVideoMetadataChanged(metadata);
 }
 
-void PlaybackSessionManagerProxy::handleControlledElementIDResponse(IPC::Connection& connection, HTMLMediaElementIdentifier mediaElementIdentifier, String identifier) const
+void PlaybackSessionManagerProxy::handleControlledElementIDResponse(IPC::Connection& connection, HTMLMediaElementIdentifier mediaElementIdentifier, RefPtr<StringImpl> identifier) const
 {
     auto contextId = contextIdForConnection(connection, mediaElementIdentifier);
 #if PLATFORM(MAC)
@@ -1146,7 +1146,7 @@ void PlaybackSessionManagerProxy::swapVideoReceiverEndpoints(PlaybackSessionCont
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, StringImpl* label)
 {
     sendToWebProcess(contextId, Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId.object(), label));
 }

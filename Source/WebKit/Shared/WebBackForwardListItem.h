@@ -65,9 +65,9 @@ public:
     Ref<FrameState> copyMainFrameState() const;
     Ref<FrameState> copyMainFrameStateWithChildren() const;
 
-    NODELETE const String& originalURL() const LIFETIME_BOUND;
-    NODELETE const String& url() const LIFETIME_BOUND;
-    NODELETE const String& title() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& originalURL() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& url() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& title() const LIFETIME_BOUND;
     NODELETE bool wasCreatedByJSWithoutUserInteraction() const;
 
     const URL& resourceDirectoryURL() const LIFETIME_BOUND { return m_resourceDirectoryURL; }
@@ -100,7 +100,7 @@ public:
 
     NODELETE void setWasRestoredFromSession();
 
-    String loggingString();
+    RefPtr<StringImpl> loggingString();
 
     void setEnhancedSecurity(EnhancedSecurity state) { m_enhancedSecurity = state; }
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }

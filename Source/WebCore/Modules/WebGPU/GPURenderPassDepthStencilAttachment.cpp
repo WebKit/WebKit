@@ -37,18 +37,18 @@ Ref<JSON::Object> GPURenderPassDepthStencilAttachment::toJSON() const
     Ref json = JSON::Object::create();
     // `GPURenderPassDepthAttachmentView` is not JSON serializable.
     if (depthClearValue)
-        json->setDouble("depthClearValue"_s, *depthClearValue);
+        json->setDouble("depthClearValue"_si, *depthClearValue);
     if (depthLoadOp)
-        json->setString("depthLoadOp"_s, convertEnumerationToString(*depthLoadOp));
+        json->setString("depthLoadOp"_si, convertEnumerationToString(*depthLoadOp));
     if (depthStoreOp)
-        json->setString("depthStoreOp"_s, convertEnumerationToString(*depthStoreOp));
-    json->setBoolean("depthReadOnly"_s, depthReadOnly);
-    json->setDouble("stencilClearValue"_s, stencilClearValue);
+        json->setString("depthStoreOp"_si, convertEnumerationToString(*depthStoreOp));
+    json->setBoolean("depthReadOnly"_si, depthReadOnly);
+    json->setDouble("stencilClearValue"_si, stencilClearValue);
     if (stencilLoadOp)
-        json->setString("stencilLoadOp"_s, convertEnumerationToString(*stencilLoadOp));
+        json->setString("stencilLoadOp"_si, convertEnumerationToString(*stencilLoadOp));
     if (stencilStoreOp)
-        json->setString("stencilStoreOp"_s, convertEnumerationToString(*stencilStoreOp));
-    json->setBoolean("stencilReadOnly"_s, stencilReadOnly);
+        json->setString("stencilStoreOp"_si, convertEnumerationToString(*stencilStoreOp));
+    json->setBoolean("stencilReadOnly"_si, stencilReadOnly);
     return json;
 }
 

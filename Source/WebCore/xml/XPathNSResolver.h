@@ -34,7 +34,7 @@ namespace WebCore {
 class WEBCORE_EXPORT XPathNSResolver : public RefCounted<XPathNSResolver> {
 public:
     virtual ~XPathNSResolver();
-    virtual AtomString lookupNamespaceURI(const AtomString& prefix) = 0;
+    virtual RefPtr<AtomStringImpl> lookupNamespaceURI(AtomStringImpl* prefix) = 0;
 
 protected:
     XPathNSResolver() = default;

@@ -105,7 +105,7 @@ static UnixFileDescriptor createSharedMemory()
     ASCIICString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
         auto name = makeString("/WK2SharedMemory."_s, cryptographicallyRandomNumber<unsigned>());
-        tempName = name.ascii();
+        tempName = ascii(name);
 
         do {
             fileDescriptor = shm_open(tempName.data(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);

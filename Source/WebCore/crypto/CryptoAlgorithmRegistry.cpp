@@ -42,22 +42,22 @@ CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
     platformRegisterAlgorithms();
 }
 
-std::optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const String& name)
+std::optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(StringImpl* name)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return std::nullopt;
 
     Locker locker { m_lock };
 
     // FIXME: How is it helpful to call isolatedCopy on the argument to find?
-    auto identifier = m_identifiers.find(name.isolatedCopy());
+    auto identifier = m_identifiers.find(isolatedCopy(name));
     if (identifier == m_identifiers.end())
         return std::nullopt;
 
     return identifier->value;
 }
 
-String CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
+RefPtr<StringImpl> CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
 {
     Locker locker { m_lock };
 
@@ -65,7 +65,7 @@ String CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
     if (contructor == m_constructors.end())
         return { };
 
-    return contructor->value.first.isolatedCopy();
+    return isolatedCopy(contructor->value.first);
 }
 
 RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
@@ -79,15 +79,16 @@ RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifie
     return contructor->value.second();
 }
 
-void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
+void CryptoAlgorithmRegistry::registerAlgorithm(ASCIILiteral nameLiteral, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
     Locker locker { m_lock };
 
+    RefPtr<StringImpl> name = nameLiteral;
     ASSERT(!m_identifiers.contains(name));
     ASSERT(!m_constructors.contains(std::to_underlying(identifier)));
 
     m_identifiers.add(name, identifier);
-    m_constructors.add(std::to_underlying(identifier), std::make_pair(name, constructor));
+    m_constructors.add(std::to_underlying(identifier), std::make_pair(WTF::move(name), constructor));
 }
 
 

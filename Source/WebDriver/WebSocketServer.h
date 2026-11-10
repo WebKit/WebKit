@@ -55,8 +55,8 @@ class WebDriverService;
 
 struct Command {
     // Defined as js-uint, but in practice opaque for the remote end.
-    String id;
-    String method;
+    RefPtr<StringImpl> id;
+    RefPtr<StringImpl> method;
     RefPtr<JSON::Object> parameters;
 
     static std::optional<Command> fromData(const char* data, size_t dataLength);
@@ -65,18 +65,18 @@ struct Command {
 // https://w3c.github.io/webdriver-bidi/#websocket-listener
 // A WebSocket listener is a network endpoint that is able to accept incoming WebSocket connections.
 struct WebSocketListener : public RefCounted<WebSocketListener> {
-    static RefPtr<WebSocketListener> create(const String& host, unsigned port, bool secure, const std::vector<String>& resources = { })
+    static RefPtr<WebSocketListener> create(StringImpl* host, unsigned port, bool secure, const std::vector<RefPtr<StringImpl>>& resources = { })
     {
         return adoptRef(*new WebSocketListener(host, port, secure, resources));
     }
 
-    String host;
+    RefPtr<StringImpl> host;
     unsigned port { 0 };
     bool isSecure { false };
-    std::vector<String> resources { };
+    std::vector<RefPtr<StringImpl>> resources { };
 
 private:
-    WebSocketListener(const String& host, unsigned port, bool isSecure, const std::vector<String>& resources)
+    WebSocketListener(StringImpl* host, unsigned port, bool isSecure, const std::vector<RefPtr<StringImpl>>& resources)
         : host(host)
         , port(port)
         , isSecure(isSecure)
@@ -103,12 +103,12 @@ public:
         // WebSocket text frames are UTF-8 by RFC 6455.
         const UTF8CString payload;
 
-        static Message fail(CommandResult::ErrorCode, std::optional<Connection>, std::optional<String> errorMessage = std::nullopt, std::optional<int> commandId = std::nullopt);
-        static Message reply(const String& type, unsigned id, Ref<JSON::Value>&& result);
+        static Message fail(CommandResult::ErrorCode, std::optional<Connection>, std::optional<RefPtr<StringImpl>> errorMessage = std::nullopt, std::optional<int> commandId = std::nullopt);
+        static Message reply(StringImpl* type, unsigned id, Ref<JSON::Value>&& result);
     };
 
     // Same semantics as HTTPRequestHandler::validateRequestHeaders()
-    virtual std::expected<void, String> validateHandshakeHeaders(const String& hostHeader, const String& originHeader) const = 0;
+    virtual std::expected<void, RefPtr<StringImpl>> validateHandshakeHeaders(StringImpl* hostHeader, StringImpl* originHeader) const = 0;
     virtual bool acceptHandshake(HTTPRequestHandler::Request&&) = 0;
     virtual void handleMessage(Message&&, Function<void(Message&&)>&& replyHandler) = 0;
     virtual void clientDisconnected(const Connection&) = 0;
@@ -123,7 +123,7 @@ public:
     }
     virtual ~WebSocketServer() = default;
 
-    std::optional<String> listen(const String& host, unsigned port);
+    std::optional<RefPtr<StringImpl>> listen(StringImpl* host, unsigned port);
     void disconnect();
 
     WebSocketMessageHandler& messageHandler() { return m_messageHandler; }
@@ -134,31 +134,31 @@ public:
     bool isStaticConnection(const WebSocketMessageHandler::Connection&);
     void removeStaticConnection(const WebSocketMessageHandler::Connection&);
 
-    void addConnection(WebSocketMessageHandler::Connection&&, const String& sessionId);
-    String sessionID(const WebSocketMessageHandler::Connection&) const;
-    std::optional<WebSocketMessageHandler::Connection> connection(const String& sessionId);
+    void addConnection(WebSocketMessageHandler::Connection&&, StringImpl* sessionId);
+    RefPtr<StringImpl> sessionID(const WebSocketMessageHandler::Connection&) const;
+    std::optional<WebSocketMessageHandler::Connection> connection(StringImpl* sessionId);
     void removeConnection(const WebSocketMessageHandler::Connection&);
 
-    RefPtr<WebSocketListener> startListening(const String& sessionId);
-    String getResourceName(const String& sessionId);
-    String getWebSocketURL(const RefPtr<WebSocketListener>, const String& sessionId);
-    String getSessionID(const String& resource);
-    void sendMessage(const String& sessionId, const String& message);
-    void sendErrorResponse(const String& sessionId, std::optional<unsigned> commandId, CommandResult::ErrorCode, const String& errorMessage, std::optional<String> stacktrace = std::nullopt);
+    RefPtr<WebSocketListener> startListening(StringImpl* sessionId);
+    RefPtr<StringImpl> getResourceName(StringImpl* sessionId);
+    RefPtr<StringImpl> getWebSocketURL(const RefPtr<WebSocketListener>, StringImpl* sessionId);
+    RefPtr<StringImpl> getSessionID(StringImpl* resource);
+    void sendMessage(StringImpl* sessionId, StringImpl* message);
+    void sendErrorResponse(StringImpl* sessionId, std::optional<unsigned> commandId, CommandResult::ErrorCode, StringImpl* errorMessage, std::optional<RefPtr<StringImpl>> stacktrace = std::nullopt);
 
     // Non-spec method
-    void removeResourceForSession(const String& sessionId);
-    void disconnectSession(const String& sessionId);
+    void removeResourceForSession(StringImpl* sessionId);
+    void disconnectSession(StringImpl* sessionId);
 
 private:
     explicit WebSocketServer(WebSocketMessageHandler&);
 
-    void sendMessage(WebSocketMessageHandler::Connection, const String& message);
-    void sendErrorResponse(WebSocketMessageHandler::Connection, std::optional<unsigned> commandId, CommandResult::ErrorCode, const String& errorMessage, std::optional<String> stacktrace = std::nullopt);
+    void sendMessage(WebSocketMessageHandler::Connection, StringImpl* message);
+    void sendErrorResponse(WebSocketMessageHandler::Connection, std::optional<unsigned> commandId, CommandResult::ErrorCode, StringImpl* errorMessage, std::optional<RefPtr<StringImpl>> stacktrace = std::nullopt);
 
 #if PLATFORM(COCOA)
     void startConnection(WebSocketMessageHandler::Connection&&);
-    void didOpenConnection(const WebSocketMessageHandler::Connection&, const String& resourcePath);
+    void didOpenConnection(const WebSocketMessageHandler::Connection&, StringImpl* resourcePath);
     void receiveMessage(const WebSocketMessageHandler::Connection&);
     void didReceiveMessage(const WebSocketMessageHandler::Connection&, dispatch_data_t, nw_ws_opcode_t);
     void didCloseConnection(const WebSocketMessageHandler::Connection&);
@@ -166,7 +166,7 @@ private:
 
     WebSocketMessageHandler& m_messageHandler;
     RefPtr<WebSocketListener> m_listener;
-    HashMap<WebSocketMessageHandler::Connection, String> m_connectionToSession;
+    HashMap<WebSocketMessageHandler::Connection, RefPtr<StringImpl>> m_connectionToSession;
 
 #if USE(SOUP)
     GRefPtr<SoupServer> m_soupServer;

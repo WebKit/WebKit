@@ -166,7 +166,7 @@ void PlaybackSessionModelMediaElement::updateAll()
     updateForEventName(eventNameAll());
 }
 
-void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString& eventName)
+void PlaybackSessionModelMediaElement::updateForEventName(AtomStringImpl* eventName)
 {
     if (m_clients.isEmpty())
         return;
@@ -224,8 +224,8 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         || eventName == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
         bool enabled = externalPlaybackEnabled();
         ExternalPlaybackTargetType targetType = externalPlaybackTargetType();
-        String localizedDeviceName = externalPlaybackLocalizedDeviceName();
-        String localizedRouteName = externalPlaybackLocalizedRouteName();
+        RefPtr<StringImpl> localizedDeviceName = externalPlaybackLocalizedDeviceName();
+        RefPtr<StringImpl> localizedRouteName = externalPlaybackLocalizedRouteName();
 
         bool wirelessVideoPlaybackDisabled = this->wirelessVideoPlaybackDisabled();
 
@@ -500,14 +500,14 @@ void PlaybackSessionModelMediaElement::setPlayingOnSecondScreen(bool value)
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String PlaybackSessionModelMediaElement::spatialTrackingLabel() const
+RefPtr<StringImpl> PlaybackSessionModelMediaElement::spatialTrackingLabel() const
 {
     if (RefPtr mediaElement = m_mediaElement)
         return mediaElement->spatialTrackingLabel();
     return emptyString();
 }
 
-void PlaybackSessionModelMediaElement::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void PlaybackSessionModelMediaElement::setSpatialTrackingLabel(StringImpl* spatialTrackingLabel)
 {
     if (RefPtr mediaElement = m_mediaElement)
         mediaElement->setSpatialTrackingLabel(spatialTrackingLabel);
@@ -613,10 +613,10 @@ double PlaybackSessionModelMediaElement::playbackStartedTime() const
     return mediaElement->playbackStartedTime();
 }
 
-const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
+const Vector<RefPtr<AtomStringImpl>>& PlaybackSessionModelMediaElement::observedEventNames()
 {
     // FIXME(157452): Remove the right-hand constructor notation once NeverDestroyed supports initializer_lists.
-    static NeverDestroyed<Vector<AtomString>> names = Vector<AtomString>({
+    static NeverDestroyed<Vector<RefPtr<AtomStringImpl>>> names = Vector<RefPtr<AtomStringImpl>>({
         eventNames().canplayEvent,
         eventNames().durationchangeEvent,
         eventNames().pauseEvent,
@@ -632,9 +632,9 @@ const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
     return names.get();
 }
 
-const AtomString&  PlaybackSessionModelMediaElement::eventNameAll()
+const RefPtr<AtomStringImpl>&  PlaybackSessionModelMediaElement::eventNameAll()
 {
-    static MainThreadNeverDestroyed<const AtomString> eventNameAll("allEvents"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> eventNameAll("allEvents"_s);
     return eventNameAll;
 }
 
@@ -786,7 +786,7 @@ uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
     }
 #endif
 
-    AtomString displayMode = host->captionDisplayMode();
+    RefPtr<AtomStringImpl> displayMode = host->captionDisplayMode();
 
     std::optional<uint64_t> selectedIndex;
     std::optional<uint64_t> offIndex;
@@ -838,14 +838,14 @@ PlaybackSessionModel::ExternalPlaybackTargetType PlaybackSessionModelMediaElemen
     }
 }
 
-String PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() const
+RefPtr<StringImpl> PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() const
 {
     if (RefPtr mediaElement = m_mediaElement; mediaElement && mediaElement->mediaControlsHost())
         return mediaElement->mediaControlsHost()->externalDeviceDisplayName();
     return emptyString();
 }
 
-String PlaybackSessionModelMediaElement::externalPlaybackLocalizedRouteName() const
+RefPtr<StringImpl> PlaybackSessionModelMediaElement::externalPlaybackLocalizedRouteName() const
 {
     if (RefPtr mediaElement = m_mediaElement; mediaElement && mediaElement->mediaControlsHost())
         return mediaElement->mediaControlsHost()->externalDeviceRouteName();

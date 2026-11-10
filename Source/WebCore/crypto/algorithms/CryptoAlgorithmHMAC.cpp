@@ -111,19 +111,19 @@ void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, cons
         result = CryptoKeyHMAC::importRaw(hmacParameters.length.value_or(0), hmacParameters.hashIdentifier, WTF::move(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Jwk: {
-        auto checkAlgCallback = [](CryptoAlgorithmIdentifier hash, const String& alg) -> bool {
+        auto checkAlgCallback = [](CryptoAlgorithmIdentifier hash, StringImpl* alg) -> bool {
             switch (hash) {
             case CryptoAlgorithmIdentifier::SHA_1:
-                return alg.isNull() || alg == ALG1;
+                return !alg || equal(alg, ALG1);
             case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
                 RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
                 return false;
             case CryptoAlgorithmIdentifier::SHA_256:
-                return alg.isNull() || alg == ALG256;
+                return !alg || equal(alg, ALG256);
             case CryptoAlgorithmIdentifier::SHA_384:
-                return alg.isNull() || alg == ALG384;
+                return !alg || equal(alg, ALG384);
             case CryptoAlgorithmIdentifier::SHA_512:
-                return alg.isNull() || alg == ALG512;
+                return !alg || equal(alg, ALG512);
             default:
                 return false;
             }
@@ -163,19 +163,19 @@ void CryptoAlgorithmHMAC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key
         JsonWebKey jwk = hmacKey.exportJwk();
         switch (hmacKey.hashAlgorithmIdentifier()) {
         case CryptoAlgorithmIdentifier::SHA_1:
-            jwk.alg = String(ALG1);
+            jwk.alg = StringImpl::create(ALG1);
             break;
         case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
-            jwk.alg = String(ALG256);
+            jwk.alg = StringImpl::create(ALG256);
             break;
         case CryptoAlgorithmIdentifier::SHA_384:
-            jwk.alg = String(ALG384);
+            jwk.alg = StringImpl::create(ALG384);
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
-            jwk.alg = String(ALG512);
+            jwk.alg = StringImpl::create(ALG512);
             break;
         default:
             ASSERT_NOT_REACHED();

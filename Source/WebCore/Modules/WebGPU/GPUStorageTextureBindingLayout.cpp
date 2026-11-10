@@ -36,9 +36,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUStorageTextureBindingLayout::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("access"_s, convertEnumerationToString(access));
-    json->setString("format"_s, convertEnumerationToString(format));
-    json->setString("viewDimension"_s, convertEnumerationToString(viewDimension));
+    json->setString("access"_si, convertEnumerationToString(access));
+    json->setString("format"_si, convertEnumerationToString(format));
+    json->setString("viewDimension"_si, convertEnumerationToString(viewDimension));
     return json;
 }
 

@@ -36,7 +36,7 @@ namespace WebCore {
 Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelectors& selectors)
 {
     Ref rootObject = JSON::Object::create();
-    rootObject->setInteger("version"_s, 1);
+    rootObject->setInteger("version"_si, 1);
 
     Ref selectorsArray = JSON::Array::create();
     for (auto selectorSet : selectors) {
@@ -45,15 +45,15 @@ Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelecto
             selectorSetArray->pushString(selector);
         selectorsArray->pushArray(WTF::move(selectorSetArray));
     }
-    rootObject->setArray("selectors"_s, WTF::move(selectorsArray));
+    rootObject->setArray("selectors"_si, WTF::move(selectorsArray));
 
     auto jsonString = rootObject->toJSONString();
-    return SharedBuffer::create(jsonString.utf8().span());
+    return SharedBuffer::create(utf8(jsonString).span());
 }
 
 std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std::span<const uint8_t> data)
 {
-    auto jsonString = String::fromUTF8(data);
+    auto jsonString = StringImpl::fromUTF8(data);
     RefPtr parsedValue = JSON::Value::parseJSON(jsonString);
     if (!parsedValue)
         return { };
@@ -62,11 +62,11 @@ std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std:
     if (!rootObject)
         return { };
 
-    auto version = rootObject->getInteger("version"_s);
+    auto version = rootObject->getInteger("version"_si);
     if (!version || *version > 1)
         return { };
 
-    RefPtr selectorsArray = rootObject->getArray("selectors"_s);
+    RefPtr selectorsArray = rootObject->getArray("selectors"_si);
     if (!selectorsArray)
         return { };
 
@@ -76,10 +76,10 @@ std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std:
         if (!selectorSetArray)
             return { };
 
-        HashSet<String> selectorSet;
+        HashSet<RefPtr<StringImpl>> selectorSet;
         for (size_t j = 0; j < selectorSetArray->length(); ++j) {
             auto selectorString = selectorSetArray->get(j)->asString();
-            if (selectorString.isNull())
+            if (!selectorString)
                 return { };
             selectorSet.add(selectorString);
         }

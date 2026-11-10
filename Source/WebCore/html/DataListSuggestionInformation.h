@@ -39,8 +39,8 @@ enum class DataListSuggestionActivationType : uint8_t {
 };
 
 struct DataListSuggestion {
-    String value;
-    String label;
+    RefPtr<StringImpl> value;
+    RefPtr<StringImpl> label;
 };
 
 struct DataListSuggestionInformation {

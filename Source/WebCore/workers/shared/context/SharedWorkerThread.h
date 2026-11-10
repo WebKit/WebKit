@@ -46,7 +46,7 @@ private:
     bool isSharedWorkerThread() const final { return true; }
 
     SharedWorkerIdentifier m_identifier;
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace WebCore

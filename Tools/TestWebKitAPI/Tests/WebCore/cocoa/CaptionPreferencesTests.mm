@@ -338,7 +338,7 @@ TEST_F(CaptionPreferenceTests, FontFace)
 {
     MediaAccessibilityShim shim;
 
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyFontDescriptorForStyle, adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR(".AppleSystemUIFontMonospaced-Romulan"), 10)));
@@ -358,7 +358,7 @@ TEST_F(CaptionPreferenceTests, FontSize)
 
     MediaAccessibilityShim shim;
 
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetRelativeCharacterSize, 2.f);
@@ -373,7 +373,7 @@ TEST_F(CaptionPreferenceTests, Colors)
 {
     MediaAccessibilityShim shim;
 
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyForegroundColor, cachedCGColor(Color::red));
@@ -397,7 +397,7 @@ TEST_F(CaptionPreferenceTests, BorderRadius)
 {
     MediaAccessibilityShim shim;
 
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetWindowRoundedCornerRadius, 8.f);
@@ -408,7 +408,7 @@ TEST_F(CaptionPreferenceTests, TextEdge)
 {
     MediaAccessibilityShim shim;
 
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     EXPECT_EQ(preferences->captionsTextEdgeCSS(), ""_s);
@@ -452,7 +452,7 @@ TEST_F(CaptionPreferenceTests, PreviewStyles)
     };
     SoftLinkShim<void, CFStringRef, void (^)(void)> MACaptionAppearanceExecuteBlockForProfileIDShim { &softLinkMediaAccessibilityMACaptionAppearanceExecuteBlockForProfileID, shimmedMACaptionAppearanceExecuteBlockForProfileID, canLoad_MediaAccessibility_MACaptionAppearanceExecuteBlockForProfileID };
 
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     EXPECT_EQ(preferences->captionsTextColorCSS(), "color:#ffffff;"_s);
@@ -463,7 +463,7 @@ TEST_F(CaptionPreferenceTests, PreviewStyles)
     EXPECT_EQ(preferences->captionsFontSizeCSS(), "font-size: 5cqmin;"_s);
     EXPECT_EQ(preferences->captionsTextEdgeCSS(), ""_s);
 
-    preferences->setCaptionPreviewProfileID("Profile 2"_s);
+    preferences->setCaptionPreviewProfileID("Profile 2"_si);
 
     EXPECT_EQ(preferences->captionsTextColorCSS(), "color:rgba(255, 0, 255, 0.75);"_s);
     EXPECT_EQ(preferences->captionsBackgroundCSS(), "background-color:rgba(255, 255, 0, 0.5);"_s);
@@ -605,7 +605,7 @@ TEST_F(CaptionPreferenceTests, ProfileIDSavingAndRestoration)
 
     MediaAccessibilityShim shim;
 
-    CaptionUserPreferencesMediaAF::setActiveProfileID("Profile 1"_s);
+    CaptionUserPreferencesMediaAF::setActiveProfileID("Profile 1"_si);
     EXPECT_WK_STREQ("Profile 1", CaptionUserPreferencesMediaAF::platformActiveProfileID());
 
     WKCaptionStyleMenuController *controller = ensureController();
@@ -614,7 +614,7 @@ TEST_F(CaptionPreferenceTests, ProfileIDSavingAndRestoration)
     [controller notifyMenuWillOpen];
 #endif
 
-    CaptionUserPreferencesMediaAF::setActiveProfileID("Profile 2"_s);
+    CaptionUserPreferencesMediaAF::setActiveProfileID("Profile 2"_si);
     EXPECT_WK_STREQ("Profile 2", CaptionUserPreferencesMediaAF::platformActiveProfileID());
 
 #if PLATFORM(IOS_FAMILY)
@@ -741,11 +741,11 @@ TEST_F(CaptionPreferenceTests, NullProfileNameShouldYieldEmptyStyleSheet)
         return;
 
     MediaAccessibilityShim shim;
-    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_si);
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyActiveProfileID, CFSTR(""));
-    EXPECT_TRUE(preferences->captionsStyleSheetOverride().isEmpty());
+    EXPECT_TRUE(isEmpty(preferences->captionsStyleSheetOverride()));
 }
 
 }

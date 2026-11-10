@@ -109,12 +109,12 @@ InjectedScriptBase::InjectedScriptBase(const InjectedScriptBase&) = default;
 
 InjectedScriptBase& InjectedScriptBase::operator=(const InjectedScriptBase&) = default;
 
-InjectedScriptBase::InjectedScriptBase(const String& name)
+InjectedScriptBase::InjectedScriptBase(StringImpl* name)
     : m_name(name)
 {
 }
 
-InjectedScriptBase::InjectedScriptBase(const String& name, JSC::JSGlobalObject* globalObject, JSC::JSObject* injectedScriptObject, InspectorEnvironment* environment)
+InjectedScriptBase::InjectedScriptBase(StringImpl* name, JSC::JSGlobalObject* globalObject, JSC::JSObject* injectedScriptObject, InspectorEnvironment* environment)
     : m_name(name)
     , m_globalObject(globalObject)
     , m_injectedScriptObject(globalObject->vm(), injectedScriptObject)
@@ -187,7 +187,7 @@ void InjectedScriptBase::makeAsyncCall(ScriptFunctionCall& function, AsyncCallCa
     {
         JSC::JSLockHolder locker(vm);
 
-        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTF::move(callback)] (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) {
+        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, nullString(), [&, callback = WTF::move(callback)] (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) {
             if (!callFrame)
                 checkAsyncCallResult(JSON::Value::create(makeString("Exception while making a call."_s)), callback);
             else if (auto resultJSONValue = toInspectorValue(globalObject, callFrame->argument(0)))
@@ -212,7 +212,7 @@ void InjectedScriptBase::makeAsyncCall(ScriptFunctionCall& function, AsyncCallCa
 void InjectedScriptBase::checkCallResult(Protocol::ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     if (!result) {
-        errorString = "Internal error: result value is empty"_s;
+        errorString = "Internal error: result value is empty"_si;
         return;
     }
 
@@ -223,25 +223,25 @@ void InjectedScriptBase::checkCallResult(Protocol::ErrorString& errorString, Ref
 
     auto resultTuple = result->asObject();
     if (!resultTuple) {
-        errorString = "Internal error: result is not an Object"_s;
+        errorString = "Internal error: result is not an Object"_si;
         return;
     }
 
-    auto typelessResultObject = resultTuple->getObject("result"_s);
+    auto typelessResultObject = resultTuple->getObject("result"_si);
     if (!typelessResultObject) {
         // FIXME: Why do we bother checking for null here, but not checking that the type is Protocol::Runtime::RemoteObject? Surely the two possible errors go hand in hand.
-        errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
+        errorString = "Internal error: result is not a pair of value and wasThrown flag"_si;
         return;
     }
 
-    wasThrown = resultTuple->getBoolean("wasThrown"_s);
+    wasThrown = resultTuple->getBoolean("wasThrown"_si);
     if (!wasThrown) {
-        errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
+        errorString = "Internal error: result is not a pair of value and wasThrown flag"_si;
         return;
     }
 
     resultObject = Protocol::BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(typelessResultObject.releaseNonNull());
-    savedResultIndex = resultTuple->getInteger("savedResultIndex"_s);
+    savedResultIndex = resultTuple->getInteger("savedResultIndex"_si);
 }
 
 void InjectedScriptBase::checkAsyncCallResult(RefPtr<JSON::Value> result, const AsyncCallCallback& callback)

@@ -53,13 +53,13 @@ public:
 
     Inspector::InspectorTargetType type() const final { return Inspector::InspectorTargetType::Frame; }
 
-    String identifier() const final;
+    RefPtr<StringImpl> identifier() const final;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;
-    void sendMessageToTargetBackend(const String&) override;
+    void sendMessageToTargetBackend(StringImpl*) override;
 
-    static String toTargetID(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    static RefPtr<StringImpl> toTargetID(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
 
 private:
     void connectToCurrentFrame();

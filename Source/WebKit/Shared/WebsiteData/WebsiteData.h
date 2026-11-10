@@ -65,9 +65,9 @@ struct WebsiteData {
     WebsiteData isolatedCopy() &&;
 
     Vector<Entry> entries;
-    HashSet<String> hostNamesWithCookies;
+    HashSet<RefPtr<StringImpl>> hostNamesWithCookies;
 
-    HashSet<String> hostNamesWithHSTSCache;
+    HashSet<RefPtr<StringImpl>> hostNamesWithHSTSCache;
     HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
     NODELETE static WebsiteDataProcessType ownerProcess(WebsiteDataType);
     NODELETE static OptionSet<WebsiteDataType> filter(OptionSet<WebsiteDataType>, WebsiteDataProcessType);

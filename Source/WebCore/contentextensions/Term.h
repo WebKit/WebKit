@@ -103,7 +103,7 @@ public:
     bool isEmptyValue() const;
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 #endif
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -216,25 +216,25 @@ inline void add(Hasher& hasher, const Term& term)
 }
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-inline String quantifierToString(AtomQuantifier quantifier)
+inline ASCIILiteral quantifierToString(AtomQuantifier quantifier)
 {
     switch (quantifier) {
     case AtomQuantifier::One:
-        return "";
+        return ""_s;
     case AtomQuantifier::ZeroOrOne:
-        return "?";
+        return "?"_s;
     case AtomQuantifier::ZeroOrMore:
-        return "*";
+        return "*"_s;
     case AtomQuantifier::OneOrMore:
-        return "+";
+        return "+"_s;
     }
 }
     
-inline String Term::toString() const
+inline RefPtr<StringImpl> Term::toString() const
 {
     switch (m_termType) {
     case TermType::Empty:
-        return "(Empty)";
+        return "(Empty)"_si;
     case TermType::CharacterSet: {
         StringBuilder builder;
         builder.append('[');

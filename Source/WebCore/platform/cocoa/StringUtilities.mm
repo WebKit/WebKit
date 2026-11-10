@@ -31,18 +31,18 @@
 
 namespace WebCore {
 
-static String wildcardRegexPatternString(const String& string)
+static RefPtr<StringImpl> wildcardRegexPatternString(StringImpl* string)
 {
-    String metaCharacters = ".|+?()[]{}^$"_s;
+    RefPtr<StringImpl> metaCharacters = ".|+?()[]{}^$"_si;
     char16_t escapeCharacter = '\\';
     char16_t wildcardCharacter = '*';
 
     StringBuilder stringBuilder;
 
     stringBuilder.append('^');
-    for (unsigned i = 0; i < string.length(); i++) {
-        auto character = string[i];
-        if (metaCharacters.contains(character) || character == escapeCharacter)
+    for (unsigned i = 0; i < length(string); i++) {
+        auto character = codeUnitAt(string, i);
+        if (contains(metaCharacters, character) || character == escapeCharacter)
             stringBuilder.append(escapeCharacter);
         else if (character == wildcardCharacter)
             stringBuilder.append('.');
@@ -54,7 +54,7 @@ static String wildcardRegexPatternString(const String& string)
     return stringBuilder.toString();
 }
 
-bool stringMatchesWildcardString(const String& string, const String& wildcardString)
+bool stringMatchesWildcardString(StringImpl* string, StringImpl* wildcardString)
 {
     return JSC::Yarr::RegularExpression(wildcardRegexPatternString(wildcardString), { JSC::Yarr::Flags::IgnoreCase }).match(string) != -1;
 }

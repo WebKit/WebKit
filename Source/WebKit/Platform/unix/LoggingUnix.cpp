@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-String logLevelString()
+RefPtr<StringImpl> logLevelString()
 {
     return WTF::logLevelString();
 }

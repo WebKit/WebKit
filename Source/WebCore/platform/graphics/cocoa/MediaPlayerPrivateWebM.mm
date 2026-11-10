@@ -121,7 +121,7 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer& player)
             protectedThis->didParseInitializationData(WTF::move(segment));
     });
 
-    m_parser->setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
+    m_parser->setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, StringImpl* mediaType) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->didProvideMediaDataForTrackId(WTF::move(sample), trackId, mediaType);
     });
@@ -161,15 +161,15 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM() WTF_IGNORES_THREAD_SAFETY_ANAL
     cancelLoad();
 }
 
-static HashSet<String>& mimeTypeCache()
+static HashSet<RefPtr<StringImpl>>& mimeTypeCache()
 {
-    static NeverDestroyed cache = HashSet<String>();
+    static NeverDestroyed cache = HashSet<RefPtr<StringImpl>>();
     if (cache->isEmpty())
         cache->addAll(SourceBufferParserWebM::supportedMIMETypes());
     return cache;
 }
 
-void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     types = mimeTypeCache();
 }
@@ -213,7 +213,7 @@ void MediaPlayerPrivateWebM::doPreload()
         return;
 
     auto mimeType = player->contentMIMEType();
-    if (mimeType.isEmpty() || !mimeTypeCache().contains(mimeType)) {
+    if (isEmpty(mimeType) || !mimeTypeCache().contains(mimeType)) {
         ERROR_LOG(LOGIDENTIFIER, "mime type = ", mimeType, " not supported");
         setNetworkState(MediaPlayer::NetworkState::FormatError);
         return;
@@ -1177,9 +1177,9 @@ void MediaPlayerPrivateWebM::setTextTrackRepresentation(TextTrackRepresentation*
     m_renderer->setTextTrackRepresentation(representation);
 }
 
-String MediaPlayerPrivateWebM::engineDescription() const
+RefPtr<StringImpl> MediaPlayerPrivateWebM::engineDescription() const
 {
-    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("Cocoa WebM Engine"));
+    static NeverDestroyed<RefPtr<StringImpl>> description(MAKE_STATIC_STRING_IMPL("Cocoa WebM Engine"));
     return description;
 }
 
@@ -1600,7 +1600,7 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
     });
 }
 
-void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType)
+void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, StringImpl* mediaType)
 {
     assertIsCurrent(runningQueue());
     UNUSED_PARAM(mediaType);
@@ -1786,7 +1786,7 @@ private:
         return MediaPlayerPrivateWebM::create(player);
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MediaPlayerPrivateWebM::getSupportedTypes(types);
     }
@@ -1860,31 +1860,31 @@ void MediaPlayerPrivateWebM::setShouldMaintainAspectRatio(bool shouldMaintainAsp
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String MediaPlayerPrivateWebM::defaultSpatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayerPrivateWebM::defaultSpatialTrackingLabel() const
 {
     assertIsMainThread();
     return m_defaultSpatialTrackingLabel;
 }
 
-void MediaPlayerPrivateWebM::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+void MediaPlayerPrivateWebM::setDefaultSpatialTrackingLabel(StringImpl* defaultSpatialTrackingLabel)
 {
     assertIsMainThread();
-    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+    if (equal(m_defaultSpatialTrackingLabel, defaultSpatialTrackingLabel))
         return;
     m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
     updateSpatialTrackingLabel();
 }
 
-String MediaPlayerPrivateWebM::spatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayerPrivateWebM::spatialTrackingLabel() const
 {
     assertIsMainThread();
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateWebM::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void MediaPlayerPrivateWebM::setSpatialTrackingLabel(StringImpl* spatialTrackingLabel)
 {
     assertIsMainThread();
-    if (m_spatialTrackingLabel == spatialTrackingLabel)
+    if (equal(m_spatialTrackingLabel, spatialTrackingLabel))
         return;
     m_spatialTrackingLabel = spatialTrackingLabel;
     updateSpatialTrackingLabel();
@@ -1895,9 +1895,10 @@ void MediaPlayerPrivateWebM::updateSpatialTrackingLabel()
     assertIsMainThread();
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
     RefPtr player = m_player.get();
-    m_renderer->setSpatialTrackingInfo(player && player->prefersSpatialAudioExperience(), player ? player->soundStageSize() : MediaPlayer::SoundStageSize::Auto, player ? player->sceneIdentifier() : emptyString(), m_defaultSpatialTrackingLabel, m_spatialTrackingLabel);
+    RefPtr sceneIdentifier = player ? player->sceneIdentifier() : emptyString();
+    m_renderer->setSpatialTrackingInfo(player && player->prefersSpatialAudioExperience(), player ? player->soundStageSize() : MediaPlayer::SoundStageSize::Auto, sceneIdentifier.get(), protect(m_defaultSpatialTrackingLabel).get(), protect(m_spatialTrackingLabel).get());
 #else
-    m_renderer->setSpatialTrackingInfo(false, MediaPlayer::SoundStageSize::Auto, { }, m_defaultSpatialTrackingLabel, m_spatialTrackingLabel);
+    m_renderer->setSpatialTrackingInfo(false, MediaPlayer::SoundStageSize::Auto, nullptr, protect(m_defaultSpatialTrackingLabel).get(), protect(m_spatialTrackingLabel).get());
 #endif
 }
 #endif

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-static String readFileIntoString(const char8_t* fileName)
+static RefPtr<StringImpl> readFileIntoString(const char8_t* fileName)
 {
     auto* path = byteCast<char>(fileName);
     FILE* file = fopen(path, "r");
@@ -41,7 +41,7 @@ static String readFileIntoString(const char8_t* fileName)
     RELEASE_ASSERT(fseek(file, 0, SEEK_SET) != -1);
 
     std::span<Latin1Character> buffer;
-    String string = String::createUninitialized(bufferCapacity, buffer);
+    RefPtr<StringImpl> string = StringImpl::createUninitialized(bufferCapacity, buffer);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     size_t readSize = fread(buffer.data(), 1, buffer.size(), file);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -54,8 +54,8 @@ FuzzerPredictions::FuzzerPredictions(const char8_t* filename)
 {
     RELEASE_ASSERT_WITH_MESSAGE(filename, "prediction file must be specified using --fuzzerPredictionsFile=");
 
-    String predictions = readFileIntoString(filename);
-    const Vector<String>& lines = predictions.split('\n');
+    RefPtr<StringImpl> predictions = readFileIntoString(filename);
+    const Vector<RefPtr<StringImpl>>& lines = split(predictions, '\n');
     for (const auto& line : lines) {
         // Predictions are stored in a text file, one prediction per line in the colon delimited format:
         // <lookup key>:<prediction in hex without leading 0x>
@@ -76,18 +76,18 @@ FuzzerPredictions::FuzzerPredictions(const char8_t* filename)
 
         // FIXME: The current implementation only supports one prediction per lookup key.
 
-        const Vector<String>& lineParts = line.split(':');
+        const Vector<RefPtr<StringImpl>>& lineParts = split(line, ':');
         RELEASE_ASSERT_WITH_MESSAGE(lineParts.size() == 2, "Expected line with two parts delimited by a colon. Found line with %zu parts.", lineParts.size());
-        const String& lookupKey = lineParts[0];
-        const String& predictionString = lineParts[1];
+        const RefPtr<StringImpl>& lookupKey = lineParts[0];
+        const RefPtr<StringImpl>& predictionString = lineParts[1];
         auto prediction = parseInteger<uint64_t>(predictionString, 0x10);
-        RELEASE_ASSERT_WITH_MESSAGE(prediction, "Could not parse prediction from '%s'", predictionString.utf8());
+        RELEASE_ASSERT_WITH_MESSAGE(prediction, "Could not parse prediction from '%s'", utf8(predictionString));
         RELEASE_ASSERT(speculationChecked(*prediction, SpecFullTop));
         m_predictions.set(lookupKey, *prediction);
     }
 }
 
-std::optional<SpeculatedType> FuzzerPredictions::predictionFor(const String& key)
+std::optional<SpeculatedType> FuzzerPredictions::predictionFor(StringImpl* key)
 {
     auto it = m_predictions.find(key);
     if (it == m_predictions.end())

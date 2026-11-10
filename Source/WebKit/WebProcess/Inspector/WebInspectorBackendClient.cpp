@@ -61,7 +61,7 @@ public:
     }
     virtual ~RepaintIndicatorLayerClient() = default;
 private:
-    void notifyAnimationEnded(const GraphicsLayer* layer, const String&) override
+    void notifyAnimationEnded(const GraphicsLayer* layer, StringImpl*) override
     {
         RefPtr frame = m_frame.get();
         m_inspectorBackendClient.animationEndedForLayer(frame.get(), layer);
@@ -362,7 +362,7 @@ void WebInspectorBackendClient::showPaintRect(LocalFrame& frame, const FloatRect
 
     Ref paintLayer = GraphicsLayer::create(protect(page->drawingArea())->graphicsLayerFactory(), *bucket.layerClient);
 
-    paintLayer->setName(MAKE_STATIC_STRING_IMPL("paint rect"));
+    paintLayer->setName("paint rect"_si);
     paintLayer->setAnchorPoint(FloatPoint3D());
     paintLayer->setPosition(rect.location());
     paintLayer->setSize(rect.size());
@@ -376,7 +376,7 @@ void WebInspectorBackendClient::showPaintRect(LocalFrame& frame, const FloatRect
     Ref opacityAnimation = GraphicsLayerAnimation::create();
     opacityAnimation->setDuration(0.25);
 
-    paintLayer->addAnimation(fadeKeyframes, opacityAnimation.ptr(), "opacity"_s, 0);
+    paintLayer->addAnimation(fadeKeyframes, opacityAnimation.ptr(), "opacity"_si, 0);
 
     Ref rawLayer = paintLayer.get();
     bucket.layers.add(WTF::move(paintLayer));

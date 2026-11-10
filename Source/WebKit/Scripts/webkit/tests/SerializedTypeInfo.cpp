@@ -47,6 +47,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
+#include "StringMembers.h"
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
@@ -79,6 +80,7 @@
 #include <wtf/CreateUsingClass.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Seconds.h>
+#include <wtf/text/AtomString.h>
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
 #endif
@@ -350,6 +352,34 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "value"_s
+            },
+        } },
+        { "AtomString"_s, {
+            {
+                "String"_s,
+                "string()"_s
+            },
+        } },
+        { "WebKit::StringMembers"_s, {
+            {
+                "String"_s,
+                "string"_s
+            },
+            {
+                "AtomString"_s,
+                "atom"_s
+            },
+            {
+                "std::optional<String>"_s,
+                "optionalString"_s
+            },
+            {
+                "Vector<AtomString>"_s,
+                "atoms"_s
+            },
+            {
+                "HashMap<String, Vector<String>>"_s,
+                "map"_s
             },
         } },
         { "WebKit::LayerProperties"_s, {

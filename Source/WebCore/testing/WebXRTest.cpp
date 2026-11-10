@@ -47,7 +47,7 @@ WebXRTest::WebXRTest(WeakPtr<WebXRSystem, WeakPtrImplWithEventTargetData>&& syst
 
 WebXRTest::~WebXRTest() = default;
 
-static PlatformXR::Device::FeatureList parseFeatures(const Vector<String>& featureList)
+static PlatformXR::Device::FeatureList parseFeatures(const Vector<RefPtr<StringImpl>>& featureList)
 {
     PlatformXR::Device::FeatureList features;
     for (auto& feature : featureList) {

@@ -32,8 +32,8 @@ namespace WebCore {
 struct ReportDictionary {
     using Body = Variant<Report::COEPInheritenceViolationReportBody, Report::CORPViolationReportBody, Report::CSPViolationReportBody, Report::DeprecationReportBody, Report::IntegrityViolationReportBody, Report::TestReportBody>;
 
-    String type;
-    String url;
+    RefPtr<StringImpl> type;
+    RefPtr<StringImpl> url;
     std::optional<Body> body;
 };
 

@@ -39,15 +39,15 @@
 
 namespace WebKit {
 
-static std::optional<String> invalidIconPathMessage(WebExtensionContext& context, const String& path)
+static std::optional<RefPtr<StringImpl>> invalidIconPathMessage(WebExtensionContext& context, StringImpl* path)
 {
-    if (path.startsWith("data:"_s)) {
+    if (startsWith(path, "data:"_s)) {
         if (protect(context.extension())->iconForPath(path))
             return std::nullopt;
         return "the data URL is not a valid image"_s;
     }
 
-    if (path.startsWith("symbol:"_s)) {
+    if (startsWith(path, "symbol:"_s)) {
         if (protect(context.extension())->iconForPath(path))
             return std::nullopt;
         return makeString("\""_s, path, "\" is not a known symbol"_s);
@@ -59,11 +59,11 @@ static std::optional<String> invalidIconPathMessage(WebExtensionContext& context
     return makeString("\""_s, path, "\" was not found in the extension"_s);
 }
 
-static void collectIconPaths(const JSON::Object& object, Vector<String>& paths)
+static void collectIconPaths(const JSON::Object& object, Vector<RefPtr<StringImpl>>& paths)
 {
     for (auto key : object.keys()) {
         auto path = object.getString(key);
-        if (!path.isEmpty())
+        if (!isEmpty(path))
             paths.append(path);
     }
 }
@@ -73,7 +73,7 @@ static std::expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithId
     if (windowIdentifier) {
         RefPtr window = context.getWindow(windowIdentifier.value());
         if (!window)
-            return toWebExtensionError(apiName, nullString(), @"window not found");
+            return toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get());
 
         return context.getAction(window.get());
     }
@@ -81,7 +81,7 @@ static std::expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithId
     if (tabIdentifier) {
         RefPtr tab = context.getTab(tabIdentifier.value());
         if (!tab)
-            return toWebExtensionError(apiName, nullString(), @"tab not found");
+            return toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get());
 
         return context.getAction(tab.get());
     }
@@ -94,7 +94,7 @@ static std::expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActi
     if (windowIdentifier) {
         RefPtr window = context.getWindow(windowIdentifier.value());
         if (!window)
-            return toWebExtensionError(apiName, nullString(), @"window not found");
+            return toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get());
 
         return context.getOrCreateAction(window.get());
     }
@@ -102,7 +102,7 @@ static std::expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActi
     if (tabIdentifier) {
         RefPtr tab = context.getTab(tabIdentifier.value());
         if (!tab)
-            return toWebExtensionError(apiName, nullString(), @"tab not found");
+            return toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get());
 
         return context.getOrCreateAction(tab.get());
     }
@@ -116,7 +116,7 @@ bool WebExtensionContext::isActionMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && (extension->hasAction() || extension->hasBrowserAction() || extension->hasPageAction());
 }
 
-void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getTitle()";
 
@@ -129,7 +129,7 @@ void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentif
     completionHandler(Ref { action.value() }->label(WebExtensionAction::FallbackWhenEmpty::No));
 }
 
-void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, StringImpl* title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setTitle()";
 
@@ -144,7 +144,7 @@ void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentif
     completionHandler({ });
 }
 
-void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconsJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, StringImpl* iconsJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setIcon()";
 
@@ -156,7 +156,7 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
 
     RefPtr parsedIcons = JSON::Value::parseJSON(iconsJSON) ?: JSON::Value::null();
 
-    Vector<String> iconPaths;
+    Vector<RefPtr<StringImpl>> iconPaths;
     if (RefPtr object = parsedIcons->asObject())
         collectIconPaths(*object, iconPaths);
     else if (RefPtr array = parsedIcons->asArray()) {
@@ -168,7 +168,7 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
 
     for (auto& iconPath : iconPaths) {
         if (auto message = invalidIconPathMessage(*this, iconPath)) {
-            completionHandler(toWebExtensionError(apiName, @"path", message.value()));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), StringImpl::create(@"path").get(), message.value()));
             return;
         }
     }
@@ -191,7 +191,7 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
     completionHandler({ });
 }
 
-void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getPopup()";
 
@@ -202,15 +202,15 @@ void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentif
     }
 
     auto popupPath = Ref { action.value() }->popupPath();
-    if (popupPath.isEmpty()) {
-        completionHandler(String { });
+    if (isEmpty(popupPath)) {
+        completionHandler(nullString());
         return;
     }
 
     completionHandler(URL { baseURL(), popupPath }.string());
 }
 
-void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, StringImpl* popupPath, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setPopup()";
 
@@ -220,13 +220,13 @@ void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    if (!popupPath.isEmpty() && !isURLForThisExtension(URL { baseURL(), popupPath })) {
-        completionHandler(toWebExtensionError(apiName, @"popup", @"it must be a resource within the extension"));
+    if (!isEmpty(popupPath) && !isURLForThisExtension(URL { baseURL(), popupPath })) {
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), StringImpl::create(@"popup").get(), StringImpl::create(@"it must be a resource within the extension").get()));
         return;
     }
 
-    if (!popupPath.isEmpty() && !hasResource(popupPath)) {
-        completionHandler(toWebExtensionError(apiName, @"popup", makeString("\""_s, popupPath, "\" was not found in the extension"_s)));
+    if (!isEmpty(popupPath) && !hasResource(popupPath)) {
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), StringImpl::create(@"popup").get(), makeString("\""_s, popupPath, "\" was not found in the extension"_s)));
         return;
     }
 
@@ -240,12 +240,12 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
     static NSString * const apiName = @"action.openPopup()";
 
     if (!protect(defaultAction())->canProgrammaticallyPresentPopup()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
     if (extensionController()->isShowingActionPopup()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"another popup is already open"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"another popup is already open").get()));
         return;
     }
 
@@ -255,13 +255,13 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
     if (windowIdentifier) {
         window = getWindow(windowIdentifier.value());
         if (!window) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
             return;
         }
 
         tab = window->activeTab();
         if (!tab) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"active tab not found in window"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"active tab not found in window").get()));
             return;
         }
     }
@@ -269,7 +269,7 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
     if (tabIdentifier) {
         tab = getTab(tabIdentifier.value());
         if (!tab) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
             return;
         }
     }
@@ -277,13 +277,13 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
     if (!tab) {
         window = frontmostWindow();
         if (!window) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"no windows open"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"no windows open").get()));
             return;
         }
 
         tab = window->activeTab();
         if (!tab) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"active tab not found in window"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"active tab not found in window").get()));
             return;
         }
     }
@@ -294,7 +294,7 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
     completionHandler({ });
 }
 
-void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getBadgeText()";
 
@@ -307,7 +307,7 @@ void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIde
     completionHandler(Ref { action.value() }->badgeText());
 }
 
-void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, StringImpl* text, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setBadgeText()";
 

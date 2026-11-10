@@ -42,13 +42,13 @@ class SecurityOrigin;
 class ResourceTiming {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceTiming, Loader);
 public:
-    NODELETE static ResourceTiming fromMemoryCache(const URL&, const String& initiator, const ResourceLoadTiming&, const ResourceResponse&, const NetworkLoadMetrics&, const SecurityOrigin&);
-    static ResourceTiming fromLoad(CachedResource&, const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
-    NODELETE static ResourceTiming fromSynchronousLoad(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
+    NODELETE static ResourceTiming fromMemoryCache(const URL&, StringImpl* initiator, const ResourceLoadTiming&, const ResourceResponse&, const NetworkLoadMetrics&, const SecurityOrigin&);
+    static ResourceTiming fromLoad(CachedResource&, const URL&, StringImpl* initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
+    NODELETE static ResourceTiming fromSynchronousLoad(const URL&, StringImpl* initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const String& initiatorType() const LIFETIME_BOUND { return m_initiatorType; }
-    String deliveryType() const;
+    const RefPtr<StringImpl>& initiatorType() const LIFETIME_BOUND { return m_initiatorType; }
+    RefPtr<StringImpl> deliveryType() const;
     const ResourceLoadTiming& resourceLoadTiming() const LIFETIME_BOUND { return m_resourceLoadTiming; }
     const NetworkLoadMetrics& networkLoadMetrics() const LIFETIME_BOUND { return m_networkLoadMetrics; }
     NetworkLoadMetrics& networkLoadMetrics() LIFETIME_BOUND { return m_networkLoadMetrics; }
@@ -59,16 +59,16 @@ public:
     ResourceTiming isolatedCopy() &&;
 
     void updateExposure(const SecurityOrigin&);
-    void overrideInitiatorType(const String& type) { m_initiatorType = type; }
+    void overrideInitiatorType(StringImpl* type) { m_initiatorType = type; }
     bool isLoadedFromServiceWorker() const { return m_isLoadedFromServiceWorker; }
 
-    WEBCORE_EXPORT ResourceTiming(URL&&, String&& initiatorType, ResourceLoadTiming&&, NetworkLoadMetrics&&, Vector<ServerTiming>&&, bool isLoadedFromServiceWorker, bool isSameOriginRequest);
+    WEBCORE_EXPORT ResourceTiming(URL&&, RefPtr<StringImpl>&& initiatorType, ResourceLoadTiming&&, NetworkLoadMetrics&&, Vector<ServerTiming>&&, bool isLoadedFromServiceWorker, bool isSameOriginRequest);
 
 private:
-    ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
+    ResourceTiming(const URL&, StringImpl* initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
 
     URL m_url;
-    String m_initiatorType;
+    RefPtr<StringImpl> m_initiatorType;
     ResourceLoadTiming m_resourceLoadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;
     Vector<ServerTiming> m_serverTiming;

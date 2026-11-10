@@ -49,21 +49,21 @@ DragSource::DragSource(GtkWidget* webView)
 
         switch (info) {
         case DragTargetType::Text:
-            gtk_selection_data_set_text(data, drag.m_selectionData->text().utf8().legacyCStringPointer(), -1);
+            gtk_selection_data_set_text(data, utf8(drag.m_selectionData->text()).legacyCStringPointer(), -1);
             break;
         case DragTargetType::Markup: {
-            auto markup = drag.m_selectionData->markup().utf8();
+            auto markup = utf8(drag.m_selectionData->markup());
             gtk_selection_data_set(data, gdk_atom_intern_static_string("text/html"), 8, reinterpret_cast<const guchar*>(markup.data()), markup.length());
             break;
         }
         case DragTargetType::URIList: {
-            auto uriList = drag.m_selectionData->uriList().utf8();
+            auto uriList = utf8(drag.m_selectionData->uriList());
             gtk_selection_data_set(data, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
             break;
         }
         case DragTargetType::NetscapeURL: {
             auto urlString = drag.m_selectionData->url().string();
-            auto url = makeString(urlString, '\n', drag.m_selectionData->hasText() ? drag.m_selectionData->text() : urlString).utf8();
+            auto url = utf8(makeString(urlString, '\n', drag.m_selectionData->hasText() ? drag.m_selectionData->text() : urlString));
             gtk_selection_data_set(data, gdk_atom_intern_static_string("_NETSCAPE_URL"), 8, reinterpret_cast<const guchar*>(url.data()), url.length());
             break;
         }

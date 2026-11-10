@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct RTCRtpHeaderExtensionParameters {
-    String uri;
+    RefPtr<StringImpl> uri;
     unsigned short id;
     bool encrypted { false };
 };

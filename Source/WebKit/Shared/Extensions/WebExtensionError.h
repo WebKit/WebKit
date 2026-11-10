@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-using WebExtensionError = String;
+using WebExtensionError = RefPtr<StringImpl>;
 
 } // namespace WTF
 

@@ -92,7 +92,7 @@ public:
     void rendererWillBeDestroyed(const Element&);
     void willNotProceedWithClick();
 
-    void didAddMouseMoveRelatedEventListener(const AtomString& eventType, const Node&);
+    void didAddMouseMoveRelatedEventListener(AtomStringImpl* eventType, const Node&);
     void willNotProceedWithFixedObservationTimeWindow();
 
     void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = targetElement; }

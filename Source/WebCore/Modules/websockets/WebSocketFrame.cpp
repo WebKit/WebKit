@@ -48,7 +48,7 @@ bool WebSocketFrame::needsExtendedLengthField(size_t payloadLength)
     return payloadLength > maxPayloadLengthWithoutExtendedLengthField;
 }
 
-WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(std::span<uint8_t> data, WebSocketFrame& frame, const uint8_t*& frameEnd, String& errorString)
+WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(std::span<uint8_t> data, WebSocketFrame& frame, const uint8_t*& frameEnd, RefPtr<StringImpl>& errorString)
 {
     if (data.size() < 2)
         return FrameIncomplete;
@@ -84,11 +84,11 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(std::span<uint8_t> d
         skip(data, extendedPayloadLengthSize);
 
         if (extendedPayloadLengthSize == 2 && payloadLength64 <= maxPayloadLengthWithoutExtendedLengthField) {
-            errorString = "The minimal number of bytes MUST be used to encode the length"_s;
+            errorString = "The minimal number of bytes MUST be used to encode the length"_si;
             return FrameError;
         }
         if (extendedPayloadLengthSize == 8 && payloadLength64 <= 0xFFFF) {
-            errorString = "The minimal number of bytes MUST be used to encode the length"_s;
+            errorString = "The minimal number of bytes MUST be used to encode the length"_si;
             return FrameError;
         }
     }

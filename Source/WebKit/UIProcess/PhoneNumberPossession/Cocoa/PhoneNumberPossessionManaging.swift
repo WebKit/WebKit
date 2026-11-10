@@ -44,7 +44,7 @@ protocol PhoneNumberPossessionManaging: AnyObject, Sendable {
 
     func requestPhoneNumberPossession(
         request: WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: WTF.String,
+        origin: WTF.StringImpl?,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor
     ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse
 }
@@ -59,7 +59,7 @@ final class UnavailablePhoneNumberPossessionManager: PhoneNumberPossessionManagi
 
     func requestPhoneNumberPossession(
         request: WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: WTF.String,
+        origin: WTF.StringImpl?,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor
     ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
         throw CxxUnexpected(error: .Unavailable)

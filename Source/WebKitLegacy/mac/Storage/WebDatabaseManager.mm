@@ -80,7 +80,7 @@ static NSString *databasesDirectoryPath();
     WebCore::DatabaseManager& dbManager = WebCore::DatabaseManager::singleton();
 
     // Set the database root path in WebCore
-    dbManager.initialize(databasesDirectoryPath());
+    dbManager.initialize(StringImpl::create(protect(databasesDirectoryPath()).get()).get());
 
     // Set the DatabaseManagerClient
     dbManager.setClient(&WebKit::WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
@@ -107,12 +107,12 @@ static NSString *databasesDirectoryPath();
     if (!origin)
         return nil;
 
-    auto details = WebCore::DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, protect(*[origin _core]));
-    if (details.name().isNull())
+    auto details = WebCore::DatabaseManager::singleton().detailsForNameAndOrigin(StringImpl::create(databaseIdentifier).get(), protect(*[origin _core]));
+    if (!details.name())
         return nil;
 
     return @{
-        WebDatabaseDisplayNameKey: details.displayName().isEmpty() ? databaseIdentifier : details.displayName().createNSString().get(),
+        WebDatabaseDisplayNameKey: isEmpty(details.displayName()) ? databaseIdentifier : createNSString(details.displayName()).get(),
         WebDatabaseExpectedSizeKey: @(details.expectedUsage()),
         WebDatabaseUsageKey: @(details.currentUsage()),
     };
@@ -135,7 +135,7 @@ static NSString *databasesDirectoryPath();
 
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && WebCore::DatabaseTracker::singleton().deleteDatabase([origin _core]->data(), databaseIdentifier);
+    return origin && WebCore::DatabaseTracker::singleton().deleteDatabase([origin _core]->data(), StringImpl::create(databaseIdentifier).get());
 }
 
 // For DumpRenderTree support only
@@ -193,7 +193,7 @@ static bool isFileHidden(NSString *file)
             if (![fileManager fileExistsAtPath:dbFilePath isDirectory:&isDirectory] || isDirectory)
                 continue;
             
-            if (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty(dbFilePath))
+            if (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty(StringImpl::create(dbFilePath).get()))
                 ++deletedDatabaseFileCount;
         }
         

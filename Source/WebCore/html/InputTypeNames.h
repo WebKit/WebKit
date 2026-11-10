@@ -26,28 +26,28 @@ namespace WebCore {
 
 namespace InputTypeNames {
 
-NODELETE const AtomString& button();
-const AtomString& checkbox();
-const AtomString& color();
-const AtomString& date();
-const AtomString& datetimelocal();
-NODELETE const AtomString& email();
-const AtomString& file();
-const AtomString& hidden();
-const AtomString& image();
-const AtomString& month();
-const AtomString& number();
-const AtomString& password();
-const AtomString& radio();
-const AtomString& range();
-NODELETE const AtomString& reset();
-NODELETE const AtomString& search();
-NODELETE const AtomString& submit();
-NODELETE const AtomString& telephone();
-NODELETE const AtomString& text();
-const AtomString& time();
-NODELETE const AtomString& url();
-const AtomString& week();
+NODELETE const RefPtr<AtomStringImpl>& button();
+const RefPtr<AtomStringImpl>& checkbox();
+const RefPtr<AtomStringImpl>& color();
+const RefPtr<AtomStringImpl>& date();
+const RefPtr<AtomStringImpl>& datetimelocal();
+NODELETE const RefPtr<AtomStringImpl>& email();
+const RefPtr<AtomStringImpl>& file();
+const RefPtr<AtomStringImpl>& hidden();
+const RefPtr<AtomStringImpl>& image();
+const RefPtr<AtomStringImpl>& month();
+const RefPtr<AtomStringImpl>& number();
+const RefPtr<AtomStringImpl>& password();
+const RefPtr<AtomStringImpl>& radio();
+const RefPtr<AtomStringImpl>& range();
+NODELETE const RefPtr<AtomStringImpl>& reset();
+NODELETE const RefPtr<AtomStringImpl>& search();
+NODELETE const RefPtr<AtomStringImpl>& submit();
+NODELETE const RefPtr<AtomStringImpl>& telephone();
+NODELETE const RefPtr<AtomStringImpl>& text();
+const RefPtr<AtomStringImpl>& time();
+NODELETE const RefPtr<AtomStringImpl>& url();
+const RefPtr<AtomStringImpl>& week();
 
 }
 

@@ -32,7 +32,7 @@ namespace PAL {
 
 #if !PLATFORM(COCOA)
 
-AtomString fileSizeDescription(uint64_t size)
+RefPtr<AtomStringImpl> fileSizeDescription(uint64_t size)
 {
     // FIXME: These strings should be localized, but that would require bringing LocalizedStrings into PAL.
     // See <https://bugs.webkit.org/show_bug.cgi?id=179019> for more details.

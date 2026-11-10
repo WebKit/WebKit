@@ -390,7 +390,7 @@ void ComputePassEncoder::endPass()
     parentEncoder->lock(false);
 }
 
-void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
+void ComputePassEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
@@ -398,7 +398,7 @@ void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
     if (!prepareTheEncoderState())
         return;
 
-    [m_computeCommandEncoder insertDebugSignpost:markerLabel.createNSString().get()];
+    [m_computeCommandEncoder insertDebugSignpost:createNSString(markerLabel).get()];
 }
 
 bool ComputePassEncoder::validatePopDebugGroup() const
@@ -445,7 +445,7 @@ void ComputePassEncoder::popDebugGroup()
     [m_computeCommandEncoder popDebugGroup];
 }
 
-void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
+void ComputePassEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
@@ -454,7 +454,7 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
         return;
 
     ++m_debugGroupStackSize;
-    [m_computeCommandEncoder pushDebugGroup:groupLabel.createNSString().get()];
+    [m_computeCommandEncoder pushDebugGroup:createNSString(groupLabel).get()];
 }
 
 static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource, CommandEncoder& parentEncoder)
@@ -569,9 +569,9 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
     m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();
 }
 
-void ComputePassEncoder::setLabel(String&& label)
+void ComputePassEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_computeCommandEncoder.label = label.createNSString().get();
+    m_computeCommandEncoder.label = createNSString(label).get();
 }
 
 bool ComputePassEncoder::isValid() const

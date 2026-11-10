@@ -75,10 +75,10 @@ void WebGeolocationManager::deref() const
     m_process->deref();
 }
 
-void WebGeolocationManager::registerWebPage(WebPage& page, const String& authorizationToken, bool needsHighAccuracy)
+void WebGeolocationManager::registerWebPage(WebPage& page, StringImpl* authorizationToken, bool needsHighAccuracy)
 {
     auto registrableDomain = registrableDomainForPage(page);
-    if (registrableDomain.string().isEmpty())
+    if (isEmpty(registrableDomain.string()))
         return;
 
     auto& pageSets = m_pageSets.add(registrableDomain, PageSets()).iterator->value;
@@ -103,7 +103,7 @@ void WebGeolocationManager::registerWebPage(WebPage& page, const String& authori
 void WebGeolocationManager::unregisterWebPage(WebPage& page)
 {
     auto registrableDomain = m_pageToRegistrableDomain.take(page);
-    if (registrableDomain.string().isEmpty())
+    if (isEmpty(registrableDomain.string()))
         return;
 
     auto it = m_pageSets.find(registrableDomain);
@@ -131,7 +131,7 @@ void WebGeolocationManager::unregisterWebPage(WebPage& page)
 void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage& page, bool enabled)
 {
     auto registrableDomain = m_pageToRegistrableDomain.get(page);
-    if (registrableDomain.string().isEmpty())
+    if (isEmpty(registrableDomain.string()))
         return;
 
     auto it = m_pageSets.find(registrableDomain);
@@ -167,7 +167,7 @@ void WebGeolocationManager::didChangePosition(const WebCore::RegistrableDomain& 
 #endif // ENABLE(GEOLOCATION)
 }
 
-void WebGeolocationManager::didFailToDeterminePosition(const WebCore::RegistrableDomain& registrableDomain, const String& errorMessage)
+void WebGeolocationManager::didFailToDeterminePosition(const WebCore::RegistrableDomain& registrableDomain, StringImpl* errorMessage)
 {
 #if ENABLE(GEOLOCATION)
     if (auto it = m_pageSets.find(registrableDomain); it != m_pageSets.end()) {

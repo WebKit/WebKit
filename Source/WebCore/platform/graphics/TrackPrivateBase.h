@@ -59,11 +59,11 @@ public:
     void removeClient(uint32_t); // Can be called multiple times with the same id.
 
     virtual TrackID id() const { return 0; }
-    virtual String label() const { return emptyString(); }
-    virtual String language() const { return emptyString(); }
+    virtual RefPtr<StringImpl> label() const { return emptyString(); }
+    virtual RefPtr<StringImpl> language() const { return emptyString(); }
 
     virtual int trackIndex() const { return 0; }
-    virtual std::optional<String> trackUID() const;
+    virtual std::optional<RefPtr<StringImpl>> trackUID() const;
     virtual std::optional<bool> defaultEnabled() const;
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }

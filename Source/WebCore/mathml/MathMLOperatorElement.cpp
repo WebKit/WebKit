@@ -128,11 +128,11 @@ Property MathMLOperatorElement::computeDictionaryProperty()
     // We first determine the form attribute and use the default spacing and properties.
     const auto& value = attributeWithoutSynchronization(MathMLNames::formAttr);
     bool explicitForm = true;
-    if (value == "prefix"_s)
+    if (equal(value, "prefix"_s))
         dictionaryProperty.form = Form::Prefix;
-    else if (value == "infix"_s)
+    else if (equal(value, "infix"_s))
         dictionaryProperty.form = Form::Infix;
-    else if (value == "postfix"_s)
+    else if (equal(value, "postfix"_s))
         dictionaryProperty.form = Form::Postfix;
     else {
         // FIXME: We should use more advanced heuristics indicated in the specification to determine the operator form (https://bugs.webkit.org/show_bug.cgi?id=124829).
@@ -278,7 +278,7 @@ void MathMLOperatorElement::setOperatorFormDirty()
     }
 }
 
-void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLOperatorElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     bool affectsLayout = false;
     switch (name.nodeName()) {

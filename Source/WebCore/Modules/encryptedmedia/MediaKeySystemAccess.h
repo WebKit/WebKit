@@ -48,17 +48,17 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static Ref<MediaKeySystemAccess> create(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
+    static Ref<MediaKeySystemAccess> create(Document&, StringImpl* keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
     ~MediaKeySystemAccess();
 
-    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND { return m_keySystem; }
     const MediaKeySystemConfiguration& getConfiguration() const LIFETIME_BOUND { return *m_configuration; }
     void createMediaKeys(Document&, Ref<DeferredPromise>&&);
 
 private:
-    MediaKeySystemAccess(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
+    MediaKeySystemAccess(Document&, StringImpl* keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
 
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
     const std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
     const Ref<CDM> m_implementation;
 };

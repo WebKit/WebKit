@@ -210,7 +210,7 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader&)
     pluginView->m_stream = nullptr;
 }
 
-RefPtr<PluginView> PluginView::create(HTMLPlugInElement& element, const URL& mainResourceURL, const String& contentType, bool shouldUseManualLoader)
+RefPtr<PluginView> PluginView::create(HTMLPlugInElement& element, const URL& mainResourceURL, StringImpl* contentType, bool shouldUseManualLoader)
 {
     RefPtr coreFrame = element.document().frame();
     if (!coreFrame)
@@ -242,7 +242,7 @@ static Ref<PDFPluginBase> createPlugin(HTMLPlugInElement& element)
     return nullPluginBase.releaseNonNull();
 }
 
-PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, const String&, bool shouldUseManualLoader, WebPage& page, FrameIdentifier frameID)
+PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, StringImpl*, bool shouldUseManualLoader, WebPage& page, FrameIdentifier frameID)
     : m_pluginElement(element)
     , m_plugin(createPlugin(element))
     , m_webPage(page)
@@ -623,7 +623,7 @@ void PluginView::setParent(ScrollView* scrollView)
         initializePlugin();
 }
 
-unsigned PluginView::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+unsigned PluginView::countFindMatches(StringImpl* target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
     if (!m_isInitialized)
         return 0;
@@ -631,7 +631,7 @@ unsigned PluginView::countFindMatches(const String& target, WebCore::FindOptions
     return m_plugin->countFindMatches(target, options, maxMatchCount);
 }
 
-bool PluginView::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+bool PluginView::findString(StringImpl* target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
     if (!m_isInitialized)
         return false;
@@ -663,7 +663,7 @@ RefPtr<TextIndicator> PluginView::textIndicatorForCurrentSelection(OptionSet<Web
     return m_plugin->textIndicatorForCurrentSelection(options, transition);
 }
 
-Vector<WebFoundTextRange::PDFData> PluginView::findTextMatches(const String& target, WebCore::FindOptions options)
+Vector<WebFoundTextRange::PDFData> PluginView::findTextMatches(StringImpl* target, WebCore::FindOptions options)
 {
     if (!m_isInitialized)
         return { };
@@ -695,7 +695,7 @@ void PluginView::scrollToRevealTextMatch(const WebFoundTextRange::PDFData& match
     return m_plugin->scrollToRevealTextMatch(match);
 }
 
-String PluginView::fullDocumentString() const
+RefPtr<StringImpl> PluginView::fullDocumentString() const
 {
     if (!m_isInitialized)
         return { };
@@ -711,15 +711,15 @@ PDFPluginTextExtractionContent PluginView::textExtractionContent() const
     return m_plugin->textExtractionContent();
 }
 
-String PluginView::selectionString() const
+RefPtr<StringImpl> PluginView::selectionString() const
 {
     if (!m_isInitialized)
-        return String();
+        return nullptr;
 
     return m_plugin->selectionString();
 }
 
-std::pair<String, String> PluginView::stringsBeforeAndAfterSelection(int characterCount) const
+std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> PluginView::stringsBeforeAndAfterSelection(int characterCount) const
 {
     if (!m_isInitialized)
         return { };
@@ -778,7 +778,7 @@ void PluginView::handleEvent(Event& event)
     LOG_WITH_STREAM(Plugins, stream << "PluginView::handleEvent() for event: " << event << ", was handled: " << didHandleEvent);
 }
 
-bool PluginView::handleEditingCommand(const String& commandName, const String& argument)
+bool PluginView::handleEditingCommand(StringImpl* commandName, StringImpl* argument)
 {
     if (!m_isInitialized)
         return false;
@@ -786,7 +786,7 @@ bool PluginView::handleEditingCommand(const String& commandName, const String& a
     return m_plugin->handleEditingCommand(commandName, argument);
 }
 
-bool PluginView::isEditingCommandEnabled(const String& commandName)
+bool PluginView::isEditingCommandEnabled(StringImpl* commandName)
 {
     if (!m_isInitialized)
         return false;
@@ -1071,8 +1071,8 @@ FetchOptions::Destination PluginView::fetchDestination() const
 void PluginView::loadMainResource()
 {
     auto referrer = SecurityPolicy::generateReferrerHeader(frame()->document()->referrerPolicy(), m_mainResourceURL, protect(frame()->loader())->outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
-    if (referrer.isEmpty())
-        referrer = { };
+    if (isEmpty(referrer))
+        referrer = nullptr;
 
     ASSERT(!m_pendingResourceRequest);
     m_pendingResourceRequest = WTF::makeUnique<ResourceRequest>(URL { m_mainResourceURL }, referrer);
@@ -1158,17 +1158,17 @@ void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
     return m_plugin->didSameDocumentNavigationForFrame(frame);
 }
 
-bool PluginView::sendEditingCommandToPDFForTesting(const String& commandName, const String& argument)
+bool PluginView::sendEditingCommandToPDFForTesting(StringImpl* commandName, StringImpl* argument)
 {
     return m_plugin->handleEditingCommand(commandName, argument);
 }
 
-void PluginView::setPDFDisplayModeForTesting(const String& mode)
+void PluginView::setPDFDisplayModeForTesting(StringImpl* mode)
 {
     m_plugin->setPDFDisplayModeForTesting(mode);
 }
 
-void PluginView::unlockPDFDocumentForTesting(const String& password)
+void PluginView::unlockPDFDocumentForTesting(StringImpl* password)
 {
     m_plugin->attemptToUnlockPDF(password);
 }
@@ -1178,12 +1178,12 @@ Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
     return m_plugin->annotationRectsForTesting();
 }
 
-void PluginView::setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value)
+void PluginView::setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, StringImpl* value)
 {
     return m_plugin->setTextAnnotationValueForTesting(pageIndex, annotationIndex, value);
 }
 
-Vector<String> PluginView::pdfContextMenuItemTitlesForTesting(const WebCore::IntPoint& pointInRootView) const
+Vector<RefPtr<StringImpl>> PluginView::pdfContextMenuItemTitlesForTesting(const WebCore::IntPoint& pointInRootView) const
 {
     return m_plugin->contextMenuItemTitlesForTesting(pointInRootView);
 }
@@ -1209,7 +1209,7 @@ void PluginView::setPDFDisplayMode(PDFPluginDisplayMode mode)
 }
 
 #if ENABLE(PDF_HUD)
-void PluginView::openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
+void PluginView::openWithPreview(CompletionHandler<void(StringImpl*, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
     m_plugin->openWithPreview(WTF::move(completionHandler));
 }
@@ -1297,7 +1297,7 @@ void PluginView::updateDocumentForPluginSizingBehavior()
         return;
     // The styles in PluginDocumentParser are constructed to respond to this class.
     if (RefPtr documentElement = m_pluginElement->document().documentElement())
-        documentElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "plugin-fits-content"_s);
+        documentElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "plugin-fits-content"_atom);
 }
 
 bool PluginView::pluginHandlesPageScaleFactor() const

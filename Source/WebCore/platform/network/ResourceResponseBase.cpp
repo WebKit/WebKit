@@ -54,13 +54,13 @@ bool isScriptAllowedByNosniff(const ResourceResponse& response)
 {
     if (!response.isNosniff())
         return true;
-    String mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
+    RefPtr<StringImpl> mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
     return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
 }
 
 ResourceResponseBase::ResourceResponseBase() = default;
 
-ResourceResponseBase::ResourceResponseBase(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
+ResourceResponseBase::ResourceResponseBase(URL&& url, RefPtr<StringImpl>&& mimeType, long long expectedLength, RefPtr<StringImpl>&& textEncodingName)
     : m_url(WTF::move(url))
     , m_mimeType(WTF::move(mimeType))
     , m_expectedContentLength(expectedLength)
@@ -68,16 +68,16 @@ ResourceResponseBase::ResourceResponseBase(URL&& url, String&& mimeType, long lo
     , m_certificateInfo(CertificateInfo()) // Empty but valid for synthetic responses.
     , m_isNull(false)
 {
-    ASSERT(m_mimeType == extractMIMETypeFromMediaType(m_mimeType));
+    ASSERT(equal(m_mimeType, extractMIMETypeFromMediaType(m_mimeType)));
 }
 
 ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&& data)
     : m_url(data ? WTF::move(data->url) : URL { })
-    , m_mimeType(data ? WTF::move(data->mimeType) : AtomString { })
+    , m_mimeType(data ? WTF::move(data->mimeType) : nullAtom())
     , m_expectedContentLength(data ? data->expectedContentLength : 0)
-    , m_textEncodingName(data ? WTF::move(data->textEncodingName) : String { })
-    , m_httpStatusText(data ? WTF::move(data->httpStatusText) : String { })
-    , m_httpVersion(data ? WTF::move(data->httpVersion) : String { })
+    , m_textEncodingName(data ? WTF::move(data->textEncodingName) : nullptr)
+    , m_httpStatusText(data ? WTF::move(data->httpStatusText) : nullptr)
+    , m_httpVersion(data ? WTF::move(data->httpVersion) : nullptr)
     , m_httpHeaderFields(data ? WTF::move(data->httpHeaderFields) : HTTPHeaderMap { })
     , m_networkLoadMetrics(data && data->networkLoadMetrics ? Box<NetworkLoadMetrics>::create(WTF::move(*data->networkLoadMetrics)) : Box<NetworkLoadMetrics> { })
     , m_certificateInfo(data ? WTF::move(data->certificateInfo) : std::nullopt)
@@ -85,7 +85,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_isNull(!data)
     , m_usedLegacyTLS(data ? data->usedLegacyTLS : UsedLegacyTLS::No)
     , m_wasPrivateRelayed(data ? data->wasPrivateRelayed : WasPrivateRelayed::No)
-    , m_proxyName(data ? WTF::move(data->proxyName) : String { })
+    , m_proxyName(data ? WTF::move(data->proxyName) : nullptr)
     , m_isRedirected(data ? data->isRedirected : false)
     , m_isRangeRequested(data ? data->isRangeRequested : false)
     , m_isFromPrevalentDomain(data ? data->isFromPrevalentDomain : false)
@@ -94,19 +94,19 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_type(data ? data->type : Type::Default)
     , m_ipAddressSpace(data ? data->ipAddressSpace : IPAddressSpace::Unknown)
 {
-    ASSERT(m_mimeType == extractMIMETypeFromMediaType(m_mimeType));
+    ASSERT(equal(m_mimeType, extractMIMETypeFromMediaType(m_mimeType)));
 }
 
 ResourceResponseData ResourceResponseData::isolatedCopy() const
 {
     ResourceResponseData result;
     result.url = url.isolatedCopy();
-    result.mimeType = mimeType.isolatedCopy();
+    result.mimeType = WTF::isolatedCopy(mimeType);
     result.expectedContentLength = expectedContentLength;
-    result.textEncodingName = textEncodingName.isolatedCopy();
+    result.textEncodingName = WTF::isolatedCopy(textEncodingName);
     result.httpStatusCode = httpStatusCode;
-    result.httpStatusText = httpStatusText.isolatedCopy();
-    result.httpVersion = httpVersion.isolatedCopy();
+    result.httpStatusText = WTF::isolatedCopy(httpStatusText);
+    result.httpVersion = WTF::isolatedCopy(httpVersion);
     result.httpHeaderFields = httpHeaderFields.isolatedCopy();
     if (networkLoadMetrics)
         result.networkLoadMetrics = networkLoadMetrics->isolatedCopy();
@@ -116,7 +116,7 @@ ResourceResponseData ResourceResponseData::isolatedCopy() const
     result.isRedirected = isRedirected;
     result.usedLegacyTLS = usedLegacyTLS;
     result.wasPrivateRelayed = wasPrivateRelayed;
-    result.proxyName = proxyName.isolatedCopy();
+    result.proxyName = WTF::isolatedCopy(proxyName);
     result.isRangeRequested = isRangeRequested;
     if (certificateInfo)
         result.certificateInfo = certificateInfo->isolatedCopy();
@@ -129,12 +129,12 @@ ResourceResponseData ResourceResponseBase::crossThreadData() const
 {
     CrossThreadData data;
     data.url = url().isolatedCopy();
-    data.mimeType = mimeType().isolatedCopy();
+    data.mimeType = isolatedCopy(mimeType());
     data.expectedContentLength = expectedContentLength();
-    data.textEncodingName = textEncodingName().isolatedCopy();
+    data.textEncodingName = isolatedCopy(textEncodingName());
     data.httpStatusCode = httpStatusCode();
-    data.httpStatusText = httpStatusText().isolatedCopy();
-    data.httpVersion = httpVersion().isolatedCopy();
+    data.httpStatusText = isolatedCopy(httpStatusText());
+    data.httpVersion = isolatedCopy(httpVersion());
 
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     if (m_networkLoadMetrics)
@@ -145,7 +145,7 @@ ResourceResponseData ResourceResponseBase::crossThreadData() const
     data.isRedirected = m_isRedirected;
     data.usedLegacyTLS = m_usedLegacyTLS;
     data.wasPrivateRelayed = m_wasPrivateRelayed;
-    data.proxyName = m_proxyName.isolatedCopy();
+    data.proxyName = isolatedCopy(m_proxyName);
     data.isRangeRequested = m_isRangeRequested;
     if (m_certificateInfo)
         data.certificateInfo = m_certificateInfo->isolatedCopy();
@@ -192,27 +192,27 @@ ResourceResponse ResourceResponseBase::syntheticRedirectResponse(const URL& from
     ResourceResponse redirectResponse;
     redirectResponse.setURL(URL { fromURL });
     redirectResponse.setHTTPStatusCode(302);
-    redirectResponse.setHTTPVersion("HTTP/1.1"_s);
+    redirectResponse.setHTTPVersion("HTTP/1.1"_si);
     redirectResponse.setHTTPHeaderField(HTTPHeaderName::Location, toURL.string());
-    redirectResponse.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-store"_s);
+    redirectResponse.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-store"_si);
 
     return redirectResponse;
 }
 
 ResourceResponse ResourceResponseBase::dataURLResponse(const URL& url, const DataURLDecoder::Result& result)
 {
-    ResourceResponse dataResponse { URL { url }, String { result.mimeType }, static_cast<long long>(result.data.size()), String { result.charset } };
+    ResourceResponse dataResponse { URL { url }, RefPtr<StringImpl> { result.mimeType }, static_cast<long long>(result.data.size()), RefPtr<StringImpl> { result.charset } };
     dataResponse.setHTTPStatusCode(200);
-    dataResponse.setHTTPStatusText("OK"_s);
+    dataResponse.setHTTPStatusText("OK"_si);
     dataResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, result.contentType);
     dataResponse.setSource(ResourceResponse::Source::Network);
 
     return dataResponse;
 }
 
-ResourceResponse ResourceResponseBase::responseForMIMEType(URL&& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
+ResourceResponse ResourceResponseBase::responseForMIMEType(URL&& url, StringImpl* mimeType, long long expectedLength, StringImpl* textEncodingName)
 {
-    String encoding = textEncodingName.isEmpty() ? extractCharsetFromMediaType(mimeType).toString() : textEncodingName;
+    RefPtr<StringImpl> encoding = isEmpty(textEncodingName) ? extractCharsetFromMediaType(mimeType).toString() : RefPtr<StringImpl> { textEncodingName };
     return ResourceResponse { WTF::move(url), extractMIMETypeFromMediaType(mimeType), expectedLength, WTF::move(encoding) };
 }
 
@@ -286,20 +286,20 @@ void ResourceResponseBase::setURL(URL&& url)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const String& ResourceResponseBase::mimeType() const
+const RefPtr<StringImpl>& ResourceResponseBase::mimeType() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_mimeType; 
 }
 
-void ResourceResponseBase::setMimeType(String&& mimeType)
+void ResourceResponseBase::setMimeType(RefPtr<StringImpl>&& mimeType)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
     // FIXME: MIME type is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_mimeType.
-    ASSERT(mimeType == extractMIMETypeFromMediaType(mimeType));
+    ASSERT(equal(mimeType, extractMIMETypeFromMediaType(mimeType)));
     m_mimeType = WTF::move(mimeType);
 
     // FIXME: Should invalidate or update platform response if present.
@@ -323,14 +323,14 @@ void ResourceResponseBase::setExpectedContentLength(long long expectedContentLen
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const String& ResourceResponseBase::textEncodingName() const
+const RefPtr<StringImpl>& ResourceResponseBase::textEncodingName() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_textEncodingName;
 }
 
-void ResourceResponseBase::setTextEncodingName(String&& encodingName)
+void ResourceResponseBase::setTextEncodingName(RefPtr<StringImpl>&& encodingName)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
@@ -354,19 +354,19 @@ void ResourceResponseBase::includeCertificateInfo(std::span<const std::byte> aud
     m_certificateInfo = downcast<ResourceResponse>(*this).platformCertificateInfo(auditToken);
 }
 
-String ResourceResponseBase::suggestedFilename() const
+RefPtr<StringImpl> ResourceResponseBase::suggestedFilename() const
 {
     return downcast<ResourceResponse>(*this).platformSuggestedFilename();
 }
 
-String ResourceResponseBase::sanitizeSuggestedFilename(const String& suggestedFilename)
+RefPtr<StringImpl> ResourceResponseBase::sanitizeSuggestedFilename(StringImpl* suggestedFilename)
 {
-    if (suggestedFilename.isEmpty())
+    if (isEmpty(suggestedFilename))
         return suggestedFilename;
 
-    ResourceResponse response { { { }, "http://example.com/"_s }, { }, -1, { } };
+    ResourceResponse response { { { }, "http://example.com/"_si }, { }, -1, { } };
     response.setHTTPStatusCode(200);
-    String escapedSuggestedFilename = makeStringByReplacingAll(suggestedFilename, '\\', "\\\\"_s);
+    RefPtr<StringImpl> escapedSuggestedFilename = makeStringByReplacingAll(suggestedFilename, '\\', "\\\\"_s);
     escapedSuggestedFilename = makeStringByReplacingAll(escapedSuggestedFilename, '"', "\\\""_s);
     response.setHTTPHeaderField(HTTPHeaderName::ContentDisposition, makeString("attachment; filename=\""_s, escapedSuggestedFilename, '"'));
     return response.suggestedFilename();
@@ -404,14 +404,14 @@ bool ResourceResponseBase::isRedirection() const
     return isHttpRedirectStatus(m_httpStatusCode);
 }
 
-const String& ResourceResponseBase::httpStatusText() const
+const RefPtr<StringImpl>& ResourceResponseBase::httpStatusText() const
 {
     lazyInit(AllFields);
 
     return m_httpStatusText; 
 }
 
-void ResourceResponseBase::setHTTPStatusText(String&& statusText)
+void ResourceResponseBase::setHTTPStatusText(RefPtr<StringImpl>&& statusText)
 {
     lazyInit(AllFields);
 
@@ -420,14 +420,14 @@ void ResourceResponseBase::setHTTPStatusText(String&& statusText)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const String& ResourceResponseBase::httpVersion() const
+const RefPtr<StringImpl>& ResourceResponseBase::httpVersion() const
 {
     lazyInit(AllFields);
     
     return m_httpVersion;
 }
 
-void ResourceResponseBase::setHTTPVersion(String&& versionText)
+void ResourceResponseBase::setHTTPVersion(RefPtr<StringImpl>&& versionText)
 {
     lazyInit(AllFields);
     
@@ -560,16 +560,16 @@ bool ResourceResponseBase::isHTTP09() const
 {
     lazyInit(AllFields);
 
-    return m_httpVersion.startsWith("HTTP/0.9"_s);
+    return startsWith(m_httpVersion, "HTTP/0.9"_s);
 }
 
-String ResourceResponseBase::httpHeaderField(StringView name) const
+RefPtr<StringImpl> ResourceResponseBase::httpHeaderField(StringView name) const
 {
     lazyInit(CommonFieldsOnly);
 
     // If we already have the header, just return it instead of consuming memory by grabing all headers.
-    String value = m_httpHeaderFields.get(name);
-    if (!value.isEmpty())        
+    RefPtr<StringImpl> value = m_httpHeaderFields.get(name);
+    if (!isEmpty(value))        
         return value;
 
     lazyInit(AllFields);
@@ -577,13 +577,13 @@ String ResourceResponseBase::httpHeaderField(StringView name) const
     return m_httpHeaderFields.get(name); 
 }
 
-String ResourceResponseBase::httpHeaderField(HTTPHeaderName name) const
+RefPtr<StringImpl> ResourceResponseBase::httpHeaderField(HTTPHeaderName name) const
 {
     lazyInit(CommonFieldsOnly);
 
     // If we already have the header, just return it instead of consuming memory by grabing all headers.
-    String value = m_httpHeaderFields.get(name);
-    if (!value.isEmpty())
+    RefPtr<StringImpl> value = m_httpHeaderFields.get(name);
+    if (!isEmpty(value))
         return value;
 
     lazyInit(AllFields);
@@ -624,7 +624,7 @@ void ResourceResponseBase::updateHeaderParsedState(HTTPHeaderName name)
     }
 }
 
-void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::setHTTPHeaderField(StringImpl* name, StringImpl* value)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -633,7 +633,7 @@ void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& 
         setUncommonHTTPHeaderField(name, value);
 }
 
-void ResourceResponseBase::setUncommonHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::setUncommonHTTPHeaderField(StringImpl* name, StringImpl* value)
 {
     lazyInit(AllFields);
 
@@ -649,7 +649,7 @@ void ResourceResponseBase::setHTTPHeaderFields(HTTPHeaderMap&& headerFields)
     m_httpHeaderFields = WTF::move(headerFields);
 }
 
-void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
+void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, StringImpl* value)
 {
     lazyInit(AllFields);
 
@@ -660,14 +660,14 @@ void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String&
     // FIXME: Should invalidate or update platform response if present.
 }
 
-void ResourceResponseBase::addHTTPHeaderField(HTTPHeaderName name, const String& value)
+void ResourceResponseBase::addHTTPHeaderField(HTTPHeaderName name, StringImpl* value)
 {
     lazyInit(AllFields);
     updateHeaderParsedState(name);
     m_httpHeaderFields.add(name, value);
 }
 
-void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::addHTTPHeaderField(StringImpl* name, StringImpl* value)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -676,7 +676,7 @@ void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& 
         addUncommonHTTPHeaderField(name, value);
 }
 
-void ResourceResponseBase::addUncommonHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::addUncommonHTTPHeaderField(StringImpl* name, StringImpl* value)
 {
     lazyInit(AllFields);
     m_httpHeaderFields.addUncommonHeader(name, value);
@@ -745,7 +745,7 @@ bool ResourceResponseBase::hasCacheValidatorFields() const
 {
     lazyInit(CommonFieldsOnly);
 
-    return !m_httpHeaderFields.get(HTTPHeaderName::LastModified).isEmpty() || !m_httpHeaderFields.get(HTTPHeaderName::ETag).isEmpty();
+    return !isEmpty(m_httpHeaderFields.get(HTTPHeaderName::LastModified)) || !isEmpty(m_httpHeaderFields.get(HTTPHeaderName::ETag));
 }
 
 std::optional<Seconds> ResourceResponseBase::cacheControlMaxAge() const
@@ -764,8 +764,8 @@ std::optional<Seconds> ResourceResponseBase::cacheControlStaleWhileRevalidate() 
 
 static std::optional<WallTime> parseDateValueInHeader(const HTTPHeaderMap& headers, HTTPHeaderName headerName)
 {
-    String headerValue = headers.get(headerName);
-    if (headerValue.isEmpty())
+    RefPtr<StringImpl> headerValue = headers.get(headerName);
+    if (isEmpty(headerValue))
         return std::nullopt;
     // This handles all date formats required by RFC2616:
     // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
@@ -790,9 +790,9 @@ std::optional<Seconds> ResourceResponseBase::age() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedAgeHeader) {
-        String headerValue = m_httpHeaderFields.get(HTTPHeaderName::Age);
+        RefPtr<StringImpl> headerValue = m_httpHeaderFields.get(HTTPHeaderName::Age);
         bool ok;
-        double ageDouble = headerValue.toDouble(&ok);
+        double ageDouble = toDouble(headerValue, &ok);
         if (ok)
             m_age = Seconds { ageDouble };
         m_haveParsedAgeHeader = true;
@@ -831,8 +831,8 @@ std::optional<WallTime> ResourceResponseBase::lastModified() const
 
 static ParsedContentRange parseContentRangeInHeader(const HTTPHeaderMap& headers)
 {
-    String contentRangeValue = headers.get(HTTPHeaderName::ContentRange);
-    if (contentRangeValue.isEmpty())
+    RefPtr<StringImpl> contentRangeValue = headers.get(HTTPHeaderName::ContentRange);
+    if (isEmpty(contentRangeValue))
         return ParsedContentRange();
 
     return ParsedContentRange(contentRangeValue);
@@ -855,15 +855,15 @@ bool ResourceResponseBase::isAttachment() const
     lazyInit(AllFields);
 
     auto value = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
-    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>), "attachment"_s);
+    return equalLettersIgnoringASCIICase(StringView(value).left(find(value, ';')).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>), "attachment"_s);
 }
 
 bool ResourceResponseBase::isAttachmentWithFilename() const
 {
     lazyInit(AllFields);
 
-    String contentDisposition = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
-    if (contentDisposition.isNull())
+    RefPtr<StringImpl> contentDisposition = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
+    if (!contentDisposition)
         return false;
 
     StringView contentDispositionView { contentDisposition };
@@ -891,17 +891,17 @@ bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const Resourc
         return false;  
     if (a.url() != b.url())
         return false;
-    if (a.mimeType() != b.mimeType())
+    if (!equal(a.mimeType(), b.mimeType()))
         return false;
     if (a.expectedContentLength() != b.expectedContentLength())
         return false;
-    if (a.textEncodingName() != b.textEncodingName())
+    if (!equal(a.textEncodingName(), b.textEncodingName()))
         return false;
-    if (a.suggestedFilename() != b.suggestedFilename())
+    if (!equal(a.suggestedFilename(), b.suggestedFilename()))
         return false;
     if (a.httpStatusCode() != b.httpStatusCode())
         return false;
-    if (a.httpStatusText() != b.httpStatusText())
+    if (!equal(a.httpStatusText(), b.httpStatusText()))
         return false;
     if (a.httpHeaderFields() != b.httpHeaderFields())
         return false;
@@ -911,7 +911,7 @@ bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const Resourc
 bool ResourceResponseBase::containsInvalidHTTPHeaders() const
 {
     for (auto& header : httpHeaderFields()) {
-        if (!isValidHTTPHeaderValue(header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>)))
+        if (!isValidHTTPHeaderValue(trim(header.value, isASCIIWhitespaceWithoutFF<char16_t>)))
             return true;
     }
     return false;
@@ -925,12 +925,12 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
     
     return { ResourceResponseData {
         URL { m_url },
-        String { m_mimeType },
+        RefPtr<StringImpl> { m_mimeType },
         m_expectedContentLength,
-        String { m_textEncodingName },
+        RefPtr<StringImpl> { m_textEncodingName },
         m_httpStatusCode,
-        String { m_httpStatusText },
-        String { m_httpVersion },
+        RefPtr<StringImpl> { m_httpStatusText },
+        RefPtr<StringImpl> { m_httpVersion },
         HTTPHeaderMap { m_httpHeaderFields },
         m_networkLoadMetrics ? std::optional(*m_networkLoadMetrics) : std::nullopt,
         m_source,
@@ -939,7 +939,7 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
         m_isRedirected,
         m_usedLegacyTLS,
         m_wasPrivateRelayed,
-        String { m_proxyName },
+        RefPtr<StringImpl> { m_proxyName },
         m_isRangeRequested,
         std::optional<CertificateInfo> { m_certificateInfo },
         m_ipAddressSpace,
@@ -980,7 +980,7 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
     if (!url)
         return std::nullopt;
 
-    std::optional<String> mimeType;
+    std::optional<RefPtr<StringImpl>> mimeType;
     decoder >> mimeType;
     if (!mimeType)
         return std::nullopt;
@@ -990,17 +990,17 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
     if (!expectedContentLength)
         return std::nullopt;
 
-    std::optional<String> textEncodingName;
+    std::optional<RefPtr<StringImpl>> textEncodingName;
     decoder >> textEncodingName;
     if (!textEncodingName)
         return std::nullopt;
 
-    std::optional<String> httpStatusText;
+    std::optional<RefPtr<StringImpl>> httpStatusText;
     decoder >> httpStatusText;
     if (!httpStatusText)
         return std::nullopt;
 
-    std::optional<String> httpVersion;
+    std::optional<RefPtr<StringImpl>> httpVersion;
     decoder >> httpVersion;
     if (!httpVersion)
         return std::nullopt;
@@ -1050,7 +1050,7 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
     if (!wasPrivateRelayed)
         return std::nullopt;
 
-    std::optional<String> proxyName;
+    std::optional<RefPtr<StringImpl>> proxyName;
     decoder >> proxyName;
     if (!proxyName)
         return std::nullopt;

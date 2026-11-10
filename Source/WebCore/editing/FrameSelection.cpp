@@ -2908,7 +2908,7 @@ void FrameSelection::updateAppearanceAfterUpdatingRendering()
 
 #if ENABLE(TREE_DEBUGGING)
 
-String FrameSelection::debugDescription() const
+RefPtr<StringImpl> FrameSelection::debugDescription() const
 {
     return m_selection.debugDescription();
 }

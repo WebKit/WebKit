@@ -104,8 +104,8 @@ enum class AutofillFieldName : uint8_t {
     DeviceNAL,
 };
 
-WEBCORE_EXPORT AutofillFieldName toAutofillFieldName(const AtomString&);
-WEBCORE_EXPORT String nonAutofillCredentialTypeString(NonAutofillCredentialType);
+WEBCORE_EXPORT AutofillFieldName toAutofillFieldName(AtomStringImpl*);
+WEBCORE_EXPORT RefPtr<StringImpl> nonAutofillCredentialTypeString(NonAutofillCredentialType);
 
 class HTMLFormControlElement;
 
@@ -113,7 +113,7 @@ class AutofillData {
 public:
     static AutofillData createFromHTMLFormControlElement(const HTMLFormControlElement&);
 
-    AutofillData(const AtomString& fieldName, const String& idlExposedValue, NonAutofillCredentialType nonAutofillCredentialType)
+    AutofillData(AtomStringImpl* fieldName, StringImpl* idlExposedValue, NonAutofillCredentialType nonAutofillCredentialType)
         : fieldName(fieldName)
         , idlExposedValue(idlExposedValue)
         , nonAutofillCredentialType(nonAutofillCredentialType)
@@ -122,8 +122,8 @@ public:
 
     // We could add support for hint tokens and scope tokens if those ever became useful to anyone.
 
-    AtomString fieldName;
-    String idlExposedValue;
+    RefPtr<AtomStringImpl> fieldName;
+    RefPtr<StringImpl> idlExposedValue;
     NonAutofillCredentialType nonAutofillCredentialType;
 };
 

@@ -58,8 +58,8 @@ public:
     void disconnectAllFrontends();
     bool hasLocalFrontend() const;
 
-    void dispatchMessageFromFrontend(const String& message);
-    void sendMessageToInspectorFrontend(const String& targetID, const String& message);
+    void dispatchMessageFromFrontend(StringImpl* message);
+    void sendMessageToInspectorFrontend(StringImpl* targetID, StringImpl* message);
 
 private:
     explicit LegacyWebPageInspectorController(WebCore::Page&);
@@ -67,11 +67,11 @@ private:
     Inspector::InspectorTargetAgent* targetAgent() const { return m_targetAgent; }
 
     void addTarget(std::unique_ptr<Inspector::InspectorTarget>&&);
-    void removeTarget(const String& targetID);
+    void removeTarget(StringImpl* targetID);
 
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Inspector::AgentRegistry m_agents;
     CheckedPtr<Inspector::InspectorTargetAgent> m_targetAgent;
-    HashMap<String, std::unique_ptr<Inspector::InspectorTarget>> m_targets;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<Inspector::InspectorTarget>> m_targets;
 };

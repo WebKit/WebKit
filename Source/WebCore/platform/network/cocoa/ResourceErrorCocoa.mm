@@ -99,8 +99,8 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
 {
     RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
 
-    if (!resourceError.localizedDescription().isEmpty())
-        [userInfo setValue:resourceError.localizedDescription().createNSString().get() forKey:NSLocalizedDescriptionKey];
+    if (!isEmpty(resourceError.localizedDescription()))
+        [userInfo setValue:createNSString(resourceError.localizedDescription()).get() forKey:NSLocalizedDescriptionKey];
 
     if (!resourceError.failingURL().isEmpty()) {
         if (RetainPtr cocoaURL = resourceError.failingURL().createNSURL())
@@ -110,7 +110,7 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
     if (underlyingError)
         [userInfo setValue:underlyingError forKey:NSUnderlyingErrorKey];
 
-    return adoptNS([[NSError alloc] initWithDomain:resourceError.domain().createNSString().get() code:resourceError.errorCode() userInfo:userInfo.get()]);
+    return adoptNS([[NSError alloc] initWithDomain:createNSString(resourceError.domain()).get() code:resourceError.errorCode() userInfo:userInfo.get()]);
 }
 
 ResourceError::ResourceError(NSError *nsError)
@@ -150,15 +150,15 @@ ResourceError::ResourceError(CFErrorRef cfError)
 {
 }
 
-const String& ResourceError::getNSURLErrorDomain() const
+const RefPtr<StringImpl>& ResourceError::getNSURLErrorDomain() const
 {
-    static const NeverDestroyed<String> errorDomain(NSURLErrorDomain);
+    static const NeverDestroyed<RefPtr<StringImpl>> errorDomain(StringImpl::create(NSURLErrorDomain));
     return errorDomain.get();
 }
 
-const String& ResourceError::getCFErrorDomainCFNetwork() const
+const RefPtr<StringImpl>& ResourceError::getCFErrorDomainCFNetwork() const
 {
-    static const NeverDestroyed<String> errorDomain(kCFErrorDomainCFNetwork);
+    static const NeverDestroyed<RefPtr<StringImpl>> errorDomain(StringImpl::create(kCFErrorDomainCFNetwork));
     return errorDomain.get();
 }
 
@@ -167,7 +167,7 @@ ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
     lazyInit();
 
     bool isRecoverableError { false };
-    RetainPtr nsDomain = m_domain.createNSString();
+    RetainPtr nsDomain = createNSString(m_domain);
     if ([nsDomain isEqualToString:NSURLErrorDomain]) {
         switch (m_errorCode) {
         case NSURLErrorTimedOut:
@@ -192,7 +192,7 @@ ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
         case NSURLErrorClientCertificateRequired:
             isRecoverableError = true;
         }
-    } else if (m_domain == errorDomainWebKitNetwork)
+    } else if (equal(m_domain, errorDomainWebKitNetwork))
         isRecoverableError = m_errorCode == errorCodeHTTPSUpgradeRedirectLoop;
 
     if (isRecoverableError && m_failingURL.protocolIs("https"_s))
@@ -222,18 +222,18 @@ void ResourceError::platformLazyInit()
     if (m_dataIsUpToDate)
         return;
 
-    m_domain = [m_platformError domain];
+    m_domain = StringImpl::create([m_platformError domain]);
     m_errorCode = [m_platformError code];
 
     RetainPtr userInfo = [m_platformError userInfo];
     if (RetainPtr failingURLString = dynamic_objc_cast<NSString>([userInfo valueForKey:@"NSErrorFailingURLStringKey"]))
-        m_failingURL = URL { failingURLString.get() };
+        m_failingURL = URL { StringImpl::create(failingURLString.get()) };
     else if (RetainPtr failingURL = dynamic_objc_cast<NSURL>([userInfo valueForKey:NSURLErrorFailingURLErrorKey]))
         m_failingURL = URL { failingURL.get() };
     // Workaround for <rdar://problem/6554067>
     m_localizedDescription = m_failingURL.string();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    m_localizedDescription = [m_platformError _web_localizedDescription];
+    m_localizedDescription = StringImpl::create([m_platformError _web_localizedDescription]);
     END_BLOCK_OBJC_EXCEPTIONS
 
     m_dataIsUpToDate = true;
@@ -310,7 +310,7 @@ bool ResourceError::blockedKnownTracker() const
     return false;
 }
 
-String ResourceError::blockedTrackerHostName() const
+RefPtr<StringImpl> ResourceError::blockedTrackerHostName() const
 {
     ASSERT(blockedKnownTracker());
 
@@ -318,7 +318,7 @@ String ResourceError::blockedTrackerHostName() const
     if (OSObjectPtr failingPath = dynamicOSObjectCast<nw_path_t>(error.get().userInfo[@"_NSURLErrorNWPathKey"])) {
         auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath.get()));
         if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))
-            return String::fromUTF8(hostName);
+            return StringImpl::fromUTF8(hostName);
         return { };
     }
     // This loop can be removed when the CFNetwork loader is no longer in use
@@ -327,7 +327,7 @@ String ResourceError::blockedTrackerHostName() const
         if (OSObjectPtr failingPath = dynamicOSObjectCast<nw_path_t>(underlyingError.userInfo[@"_NSURLErrorNWPathKey"])) {
             auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath.get()));
             if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))
-                return String::fromUTF8(hostName);
+                return StringImpl::fromUTF8(hostName);
         }
     }
     return { };

@@ -196,7 +196,7 @@ public:
     NODELETE WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
-    String name() const;
+    RefPtr<StringImpl> name() const;
 
     inline Page& page() const; // Defined in RenderLayerInlines.h
     RenderLayerModelObject& renderer() const { return m_renderer; }
@@ -1007,7 +1007,7 @@ public:
     enum class EventRegionInvalidationReason { Paint, SettingDidChange, Style, NonCompositedFrame };
     bool invalidateEventRegion(EventRegionInvalidationReason);
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
     bool setIsOpportunisticStackingContext(bool);
 

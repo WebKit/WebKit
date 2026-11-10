@@ -74,7 +74,7 @@ private:
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t>);
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<WebCore::SerializedPlatformDataCue>&&, const String&);
+    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<WebCore::SerializedPlatformDataCue>&&, StringImpl*);
     virtual void updateDataCue(const MediaTime& start, const MediaTime& end, WebCore::SerializedPlatformDataCue&);
     virtual void removeDataCue(const MediaTime& start, const MediaTime& end, WebCore::SerializedPlatformDataCue&);
 #endif
@@ -83,14 +83,14 @@ private:
     virtual void updateGenericCue(WebCore::InbandGenericCue&);
     virtual void removeGenericCue(WebCore::InbandGenericCue&);
 
-    virtual void parseWebVTTFileHeader(String&&);
+    virtual void parseWebVTTFileHeader(RefPtr<StringImpl>&&);
     virtual void parseWebVTTCueData(std::span<const uint8_t>);
     virtual void parseWebVTTCueData(WebCore::ISOWebVTTCue&&);
 
     // TrackPrivateBaseClient
     void idChanged(WebCore::TrackID) final;
-    void labelChanged(const String&) final;
-    void languageChanged(const String&) final;
+    void labelChanged(StringImpl*) final;
+    void languageChanged(StringImpl*) final;
     void willRemove() final;
 
     TextTrackPrivateRemoteConfiguration& configuration();

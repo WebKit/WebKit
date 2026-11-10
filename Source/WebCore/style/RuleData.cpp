@@ -71,7 +71,7 @@ NODELETE static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CS
 
     if (selector.match() == CSSSelector::Match::Tag) {
         const QualifiedName& tagQualifiedName = selector.tagQName();
-        const AtomString& selectorNamespace = tagQualifiedName.namespaceURI();
+        const RefPtr<AtomStringImpl>& selectorNamespace = tagQualifiedName.namespaceURI();
         if (selectorNamespace == starAtom() || selectorNamespace == xhtmlNamespaceURI) {
             if (tagQualifiedName == anyQName())
                 return MatchBasedOnRuleHash::Universal;

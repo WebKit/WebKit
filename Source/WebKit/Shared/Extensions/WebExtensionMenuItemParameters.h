@@ -36,22 +36,22 @@ namespace WebKit {
 static constexpr size_t webExtensionActionMenuItemTopLevelLimit = 6;
 
 struct WebExtensionMenuItemParameters {
-    String identifier;
-    std::optional<String> parentIdentifier;
+    RefPtr<StringImpl> identifier;
+    std::optional<RefPtr<StringImpl>> parentIdentifier;
 
     std::optional<WebExtensionMenuItemType> type;
 
-    String title;
-    String command;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> command;
 
-    String iconsJSON;
+    RefPtr<StringImpl> iconsJSON;
 
     std::optional<bool> checked;
     std::optional<bool> enabled;
     std::optional<bool> visible;
 
-    std::optional<Vector<String>> documentURLPatterns;
-    std::optional<Vector<String>> targetURLPatterns;
+    std::optional<Vector<RefPtr<StringImpl>>> documentURLPatterns;
+    std::optional<Vector<RefPtr<StringImpl>>> targetURLPatterns;
 
     std::optional<OptionSet<WebExtensionMenuItemContextType>> contexts;
 };

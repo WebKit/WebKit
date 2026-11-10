@@ -84,7 +84,7 @@ bool NullImageBufferBackend::canMapBackingStore() const
     return false;
 }
 
-String NullImageBufferBackend::debugDescription() const
+RefPtr<StringImpl> NullImageBufferBackend::debugDescription() const
 {
     TextStream stream;
     stream << "NullImageBufferBackend " << this;

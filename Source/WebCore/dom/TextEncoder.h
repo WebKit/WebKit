@@ -42,8 +42,8 @@ public:
 
     static Ref<TextEncoder> create() { return adoptRef(*new TextEncoder); }
     ASCIILiteral encoding() const { return "utf-8"_s; }
-    RefPtr<Uint8Array> encode(String&&) const;
-    NODELETE EncodeIntoResult encodeInto(String&&, Ref<Uint8Array>&& destination);
+    RefPtr<Uint8Array> encode(RefPtr<StringImpl>&&) const;
+    NODELETE EncodeIntoResult encodeInto(RefPtr<StringImpl>&&, Ref<Uint8Array>&& destination);
 private:
     TextEncoder() = default;
 };

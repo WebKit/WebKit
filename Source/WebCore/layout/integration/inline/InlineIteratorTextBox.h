@@ -111,7 +111,7 @@ inline TextBoxSelectableRange TextBox::selectableRange() const
     auto& textContent = box.text();
     auto extraTrailingLength = [&] -> unsigned {
         if (textContent.hasHyphen())
-            return protect(box.style())->hyphenString().length();
+            return WTF::length(protect(box.style())->hyphenString());
         return 0;
     };
     return {

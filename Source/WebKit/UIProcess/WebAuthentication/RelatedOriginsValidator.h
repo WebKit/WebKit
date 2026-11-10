@@ -40,13 +40,13 @@ namespace RelatedOriginsValidation {
 
 struct Result {
     bool isRelated { false };
-    Vector<String> origins;
+    Vector<RefPtr<StringImpl>> origins;
 };
 
-void validate(WebPageProxy&, const WebCore::SecurityOriginData& callerOrigin, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&&);
+void validate(WebPageProxy&, const WebCore::SecurityOriginData& callerOrigin, StringImpl* relyingPartyIdentifier, CompletionHandler<void(Result&&)>&&);
 
 // Fetches the well-known list once and checks every origin against it. Result.isRelated is true only if all of them are listed.
-void validate(WebPageProxy&, Vector<WebCore::SecurityOriginData>&& originsToCheck, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&&);
+void validate(WebPageProxy&, Vector<WebCore::SecurityOriginData>&& originsToCheck, StringImpl* relyingPartyIdentifier, CompletionHandler<void(Result&&)>&&);
 
 } // namespace RelatedOriginsValidation
 

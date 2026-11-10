@@ -40,13 +40,13 @@ public:
         RefPtr<HTMLElement> submitter;
     };
 
-    NODELETE static Ref<SubmitEvent> create(const AtomString& type, Init&&);
+    NODELETE static Ref<SubmitEvent> create(AtomStringImpl* type, Init&&);
     NODELETE static Ref<SubmitEvent> create(RefPtr<HTMLElement>&& submitter);
 
     HTMLElement* submitter() const { return m_submitter.get(); }
 
 private:
-    SubmitEvent(const AtomString& type, Init&&);
+    SubmitEvent(AtomStringImpl* type, Init&&);
     explicit SubmitEvent(RefPtr<HTMLElement>&& submitter);
 
     const RefPtr<HTMLElement> m_submitter;

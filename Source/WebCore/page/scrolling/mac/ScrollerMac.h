@@ -75,7 +75,7 @@ public:
 
     void updateValues();
     
-    String scrollbarState() const;
+    RefPtr<StringImpl> scrollbarState() const;
     
     void mouseEnteredScrollbar();
     void mouseExitedScrollbar();    

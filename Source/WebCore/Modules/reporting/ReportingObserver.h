@@ -47,7 +47,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     struct Options {
-        std::optional<Vector<AtomString>> types;
+        std::optional<Vector<RefPtr<AtomStringImpl>>> types;
         bool buffered { false };
     };
 
@@ -72,7 +72,7 @@ private:
     const Ref<ReportingObserverCallback> m_callback;
     // Instead of storing an Options struct we store the fields separately to save the space overhead of an optional<Vector<AtomString>>
     // which is logically equivalent to an empty vector by the spec.
-    const Vector<AtomString> m_types;
+    const Vector<RefPtr<AtomStringImpl>> m_types;
     bool m_buffered;
     Vector<Ref<Report>> m_queuedReports;
 };

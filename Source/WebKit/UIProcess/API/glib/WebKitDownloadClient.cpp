@@ -78,14 +78,14 @@ private:
         webkitDownloadNotifyProgress(m_download.get(), length);
     }
 
-    void decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const ResourceResponse& resourceResponse, const String& filename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler) override
+    void decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const ResourceResponse& resourceResponse, StringImpl* filename, CompletionHandler<void(AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler) override
     {
         ASSERT(m_download);
         didReceiveResponse(downloadProxy, resourceResponse);
-        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), WTF::move(completionHandler));
+        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), utf8(filename), WTF::move(completionHandler));
     }
 
-    void didCreateDestination(DownloadProxy& downloadProxy, const String& path) override
+    void didCreateDestination(DownloadProxy& downloadProxy, StringImpl* path) override
     {
         ASSERT(m_download);
         webkitDownloadDestinationCreated(m_download.get(), path);

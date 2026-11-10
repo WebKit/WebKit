@@ -52,7 +52,7 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(WebCore::SecurityOrigin* o
                                                         object:webSecurityOrigin.get()];
 }
 
-void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdentifier)
+void WebStorageTrackerClient::dispatchDidModifyOrigin(StringImpl* originIdentifier)
 {
     auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
 

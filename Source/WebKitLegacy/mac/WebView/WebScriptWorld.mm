@@ -69,7 +69,7 @@ NODELETE static WorldMap& allWorlds()
 
 - (id)init
 {
-    return [self initWithWorld:WebCore::ScriptController::createWorld("WebScriptWorld"_s, WebCore::ScriptController::WorldType::User)];
+    return [self initWithWorld:WebCore::ScriptController::createWorld("WebScriptWorld"_si, WebCore::ScriptController::WorldType::User)];
 }
 
 - (void)unregisterWorld

@@ -1,0 +1,52 @@
+Characterizes FileReader / FileReaderSync results (null vs. empty string) for empty and small blobs. FileReaderLoader builds the binary-string result from the raw data span.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+empty Blob: readAsBinaryString -> string "" [load, loadend]
+empty Blob: readAsText -> string "" [load, loadend]
+empty Blob: readAsDataURL -> string "data:application/octet-stream;base64," [load, loadend]
+empty Blob: readAsArrayBuffer -> ArrayBuffer(0) [load, loadend]
+Blob of empty string: readAsBinaryString -> string "" [load, loadend]
+Blob of empty string: readAsText -> string "" [load, loadend]
+Blob of empty string: readAsDataURL -> string "data:application/octet-stream;base64," [load, loadend]
+Blob of empty string: readAsArrayBuffer -> ArrayBuffer(0) [load, loadend]
+Blob of empty Uint8Array: readAsBinaryString -> string "" [load, loadend]
+Blob of empty Uint8Array: readAsText -> string "" [load, loadend]
+Blob of empty Uint8Array: readAsDataURL -> string "data:application/octet-stream;base64," [load, loadend]
+Blob of empty Uint8Array: readAsArrayBuffer -> ArrayBuffer(0) [load, loadend]
+empty File: readAsBinaryString -> string "" [load, loadend]
+empty File: readAsText -> string "" [load, loadend]
+empty File: readAsDataURL -> string "data:text/plain;base64," [load, loadend]
+empty File: readAsArrayBuffer -> ArrayBuffer(0) [load, loadend]
+empty slice: readAsBinaryString -> string "" [load, loadend]
+empty slice: readAsText -> string "" [load, loadend]
+empty slice: readAsDataURL -> string "data:application/octet-stream;base64," [load, loadend]
+empty slice: readAsArrayBuffer -> ArrayBuffer(0) [load, loadend]
+two-byte Blob: readAsBinaryString -> string "Aé" [load, loadend]
+two-byte Blob: readAsText -> string "A�" [load, loadend]
+two-byte Blob: readAsDataURL -> string "data:application/octet-stream;base64,Qek=" [load, loadend]
+two-byte Blob: readAsArrayBuffer -> ArrayBuffer(2) [load, loadend]
+FileReader.result before reading: null
+
+FileReaderSync in a worker:
+empty Blob: readAsBinaryString -> string ""
+empty Blob: readAsText -> string ""
+empty Blob: readAsDataURL -> string "data:application/octet-stream;base64,"
+empty Blob: readAsArrayBuffer -> ArrayBuffer(0)
+Blob of empty string: readAsBinaryString -> string ""
+Blob of empty string: readAsText -> string ""
+Blob of empty string: readAsDataURL -> string "data:application/octet-stream;base64,"
+Blob of empty string: readAsArrayBuffer -> ArrayBuffer(0)
+Blob of empty Uint8Array: readAsBinaryString -> string ""
+Blob of empty Uint8Array: readAsText -> string ""
+Blob of empty Uint8Array: readAsDataURL -> string "data:application/octet-stream;base64,"
+Blob of empty Uint8Array: readAsArrayBuffer -> ArrayBuffer(0)
+two-byte Blob: readAsBinaryString -> string "Aé"
+two-byte Blob: readAsText -> string "A�"
+two-byte Blob: readAsDataURL -> string "data:application/octet-stream;base64,Qek="
+two-byte Blob: readAsArrayBuffer -> ArrayBuffer(2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

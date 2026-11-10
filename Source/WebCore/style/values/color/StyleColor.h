@@ -171,7 +171,7 @@ public:
     // as const references, pretending the UniqueRefs don't exist.
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
-    WTF::String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
 private:
     template<typename T>
@@ -185,7 +185,7 @@ WebCore::Color resolveColor(const Color&, const ResolvedColors&);
 bool containsCurrentColor(const Color&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const Color&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
 
 template<> struct Serialize<Color> {
     void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const Color&);

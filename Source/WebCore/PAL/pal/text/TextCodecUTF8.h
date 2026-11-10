@@ -43,7 +43,7 @@ public:
 
 private:
     void stripByteOrderMark() final { m_shouldStripByteOrderMark = true; }
-    String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
+    RefPtr<StringImpl> decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     bool handlePartialSequence(std::span<Latin1Character>& destination, std::span<const uint8_t>& source, bool flush);

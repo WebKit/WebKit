@@ -36,7 +36,7 @@ public:
 
     const CSS::EasingFunction& easingFunction() const LIFETIME_BOUND { return m_easingFunction; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSEasingFunctionValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

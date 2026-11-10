@@ -43,23 +43,23 @@ public:
     {
     }
 
-    WEBCORE_EXPORT UserStyleSheet(const String&, const URL&, Vector<String>&& = { }, Vector<String>&& = { }, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never, UserStyleLevel = UserStyleLevel::User, std::optional<PageIdentifier> = std::nullopt);
+    WEBCORE_EXPORT UserStyleSheet(StringImpl*, const URL&, Vector<RefPtr<StringImpl>>&& = { }, Vector<RefPtr<StringImpl>>&& = { }, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never, UserStyleLevel = UserStyleLevel::User, std::optional<PageIdentifier> = std::nullopt);
     WEBCORE_EXPORT ~UserStyleSheet();
 
-    const String& source() const LIFETIME_BOUND { return m_source; }
+    const RefPtr<StringImpl>& source() const LIFETIME_BOUND { return m_source; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const Vector<String>& allowlist() const LIFETIME_BOUND { return m_allowlist; }
-    const Vector<String>& blocklist() const LIFETIME_BOUND { return m_blocklist; }
+    const Vector<RefPtr<StringImpl>>& allowlist() const LIFETIME_BOUND { return m_allowlist; }
+    const Vector<RefPtr<StringImpl>>& blocklist() const LIFETIME_BOUND { return m_blocklist; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
     UserContentMatchParentFrame matchParentFrame() const { return m_matchParentFrame; }
     UserStyleLevel level() const { return m_level; }
     std::optional<PageIdentifier> pageID() const { return m_pageID; }
 
 private:
-    String m_source;
+    RefPtr<StringImpl> m_source;
     URL m_url;
-    Vector<String> m_allowlist;
-    Vector<String> m_blocklist;
+    Vector<RefPtr<StringImpl>> m_allowlist;
+    Vector<RefPtr<StringImpl>> m_blocklist;
     UserContentInjectedFrames m_injectedFrames { UserContentInjectedFrames::InjectInAllFrames };
     UserContentMatchParentFrame m_matchParentFrame { UserContentMatchParentFrame::Never };
     UserStyleLevel m_level { UserStyleLevel::User };

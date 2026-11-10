@@ -171,7 +171,7 @@ std::unique_ptr<WebCore::GPUVideoDecoder> LibWebRTCCodecsProxy::createLocalDecod
     return GPUVideoDecoder::create(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging, rotation, isMirrored)).get(), Ref { workQueue() }, WTF::move(colorSpaceOverride));
 }
 
-static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
+static bool validateCodecString(WebCore::VideoCodecType codecType, StringImpl* codecString)
 {
     // FIXME: Further tighten checks.
     switch (codecType) {
@@ -185,26 +185,26 @@ static bool validateCodecString(WebCore::VideoCodecType codecType, const String&
         return parameters && validateHEVCParameters(*parameters, false, false);
     }
     case WebCore::VideoCodecType::VP9:
-        ASSERT(codecString.startsWith("vp09.0"_s));
+        ASSERT(startsWith(codecString, "vp09.0"_s));
         return true;
     case WebCore::VideoCodecType::AV1:
-        ASSERT(codecString.startsWith("av01."_s));
-        if (!codecString.startsWith("av01."_s) || codecString.length() < 7)
+        ASSERT(startsWith(codecString, "av01."_s));
+        if (!startsWith(codecString, "av01."_s) || length(codecString) < 7)
             return false;
-        auto profile = codecString[5];
-        return (profile == '0' || profile == '1' || profile == '2') && codecString[6] == '.';
+        auto profile = codeUnitAt(codecString, 5);
+        return (profile == '0' || profile == '1' || profile == '2') && codeUnitAt(codecString, 6) == '.';
     }
     ASSERT_NOT_REACHED();
     return true;
 }
 
-void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, StringImpl* codecString, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
 
     MESSAGE_CHECK_COMPLETION(!m_decoders.contains(identifier), callback(false));
 
-    if (!codecString.isNull() && !validateCodecString(codecType, codecString)) {
+    if (codecString && !validateCodecString(codecType, codecString)) {
         callback(false);
         return;
     }
@@ -302,7 +302,7 @@ void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, NOES
     task(iterator->value);
 }
 
-static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, const String& codecString, bool useLowLatency, VideoEncoderScalabilityMode scalabilityMode)
+static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, StringImpl* codecString, bool useLowLatency, VideoEncoderScalabilityMode scalabilityMode)
 {
     // FIXME: Further tighten checks.
     switch (codecType) {
@@ -313,7 +313,7 @@ static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, cons
         if (scalabilityMode == VideoEncoderScalabilityMode::L1T2 && !useLowLatency)
             return false;
 
-        if (!codecString.isNull()) {
+        if (codecString) {
             auto parameters = parseAVCCodecParameters(codecString);
             // Limit to High Profile, level 5.2.
             return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
@@ -324,7 +324,7 @@ static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, cons
         if (scalabilityMode != VideoEncoderScalabilityMode::L1T1)
             return false;
 
-        if (!codecString.isNull()) {
+        if (codecString) {
             auto parameters = parseHEVCCodecParameters(codecString);
             return parameters && validateHEVCParameters(*parameters, false, false);
         }
@@ -338,7 +338,7 @@ static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, cons
     return true;
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType codecType, StringImpl* codecString, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
 

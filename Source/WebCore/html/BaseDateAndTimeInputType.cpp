@@ -126,7 +126,7 @@ void BaseDateAndTimeInputType::DateTimeFormatValidator::visitField(DateTimeForma
     }
 }
 
-bool BaseDateAndTimeInputType::DateTimeFormatValidator::validateFormat(const String& format, const BaseDateAndTimeInputType& inputType)
+bool BaseDateAndTimeInputType::DateTimeFormatValidator::validateFormat(StringImpl* format, const BaseDateAndTimeInputType& inputType)
 {
     if (!DateTimeFormat::parse(format, *this))
         return false;
@@ -158,10 +158,10 @@ WallTime BaseDateAndTimeInputType::accessibilityValueAsDate() const
         // m_dateTimeEditElement if exists. That value may have been indirectly
         // set as placeholder values for the field elements.
         Ref dateTimeEditElement = *m_dateTimeEditElement;
-        String value = dateTimeEditElement->value();
-        if (value.isEmpty())
+        RefPtr<StringImpl> value = dateTimeEditElement->value();
+        if (isEmpty(value))
             value = dateTimeEditElement->placeholderValue();
-        if (value.isEmpty())
+        if (isEmpty(value))
             return { };
 
         auto decimal = parseToNumber(value, Decimal::nan());
@@ -202,7 +202,7 @@ bool BaseDateAndTimeInputType::typeMismatch() const
 bool BaseDateAndTimeInputType::hasBadInput() const
 {
     ASSERT(element());
-    return protect(element())->value()->isEmpty() && m_dateTimeEditElement && protect(m_dateTimeEditElement)->editableFieldsHaveValues();
+    return isEmpty(protect(element())->value().get()) && m_dateTimeEditElement && protect(m_dateTimeEditElement)->editableFieldsHaveValues();
 }
 
 Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
@@ -222,7 +222,7 @@ Decimal BaseDateAndTimeInputType::parseToNumber(StringView source, const Decimal
     return Decimal::fromDouble(msec);
 }
 
-String BaseDateAndTimeInputType::serialize(const Decimal& value) const
+RefPtr<StringImpl> BaseDateAndTimeInputType::serialize(const Decimal& value) const
 {
     if (!value.isFinite())
         return { };
@@ -232,7 +232,7 @@ String BaseDateAndTimeInputType::serialize(const Decimal& value) const
     return serializeWithComponents(*date);
 }
 
-String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& date) const
+RefPtr<StringImpl> BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& date) const
 {
     ASSERT(element());
     Decimal step;
@@ -243,33 +243,36 @@ String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& d
     return date.toString(SecondFormat::Millisecond);
 }
 
-String BaseDateAndTimeInputType::serializeWithMilliseconds(double value) const
+RefPtr<StringImpl> BaseDateAndTimeInputType::serializeWithMilliseconds(double value) const
 {
     return serialize(Decimal::fromDouble(value));
 }
 
-String BaseDateAndTimeInputType::localizeValue(const String& proposedValue) const
+RefPtr<StringImpl> BaseDateAndTimeInputType::localizeValue(StringImpl* proposedValue) const
 {
     auto date = parseToDateComponents(proposedValue);
     if (!date)
         return proposedValue;
 
     ASSERT(element());
-    String localized = protect(protect(element())->locale())->formatDateTime(*date);
-    return localized.isEmpty() ? proposedValue : localized;
+    RefPtr<StringImpl> localized = protect(protect(element())->locale())->formatDateTime(*date);
+    if (isEmpty(localized))
+        return proposedValue;
+    return localized;
 }
 
-String BaseDateAndTimeInputType::visibleValue() const
+RefPtr<StringImpl> BaseDateAndTimeInputType::visibleValue() const
 {
     ASSERT(element());
-    return localizeValue(protect(element())->value());
+    RefPtr<StringImpl> value = protect(element())->value();
+    return localizeValue(value);
 }
 
-ValueOrReference<String> BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> BaseDateAndTimeInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
     if (typeMismatchFor(proposedValue))
         return emptyString();
-    return proposedValue;
+    return RefPtr { proposedValue };
 }
 
 bool BaseDateAndTimeInputType::valueMissing(StringView value) const
@@ -311,7 +314,7 @@ bool BaseDateAndTimeInputType::shouldHaveMillisecondField(const DateComponents& 
         || !stepRange.step().remainder(msecPerSecond).isZero();
 }
 
-void BaseDateAndTimeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void BaseDateAndTimeInputType::setValue(StringImpl* value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     InputType::setValue(value, valueChanged, eventBehavior, selection);
     if (valueChanged)
@@ -416,9 +419,9 @@ void BaseDateAndTimeInputType::updateInnerTextValue()
         if (!firstChildElement)
             return;
         auto displayValue = visibleValue();
-        if (displayValue.isEmpty()) {
+        if (isEmpty(displayValue)) {
             // Need to put something to keep text baseline.
-            displayValue = " "_s;
+            displayValue = " "_si;
         }
         firstChildElement->setInnerText(WTF::move(displayValue));
         return;
@@ -571,8 +574,8 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
 {
     Ref input = *element();
 
-    String value = sanitizeValue(protect(m_dateTimeEditElement)->value());
-    bool valueChanged = !equalIgnoringNullity(value, input->value());
+    RefPtr<StringImpl> value = sanitizeValue(protect(m_dateTimeEditElement)->value());
+    bool valueChanged = !equalIgnoringNullity(value, input->value().get());
 
     InputType::setValue(value, valueChanged, DispatchNoEvent, DoNotSet);
 
@@ -631,7 +634,7 @@ bool BaseDateAndTimeInputType::isEditControlOwnerReadOnly() const
     return protect(element())->isReadOnly();
 }
 
-AtomString BaseDateAndTimeInputType::localeIdentifier() const
+RefPtr<AtomStringImpl> BaseDateAndTimeInputType::localeIdentifier() const
 {
     ASSERT(element());
     return protect(element())->effectiveLang();
@@ -666,10 +669,10 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     parameters.required = element->isRequired();
 
     if (!document->settings().langAttributeAwareFormControlUIEnabled())
-        parameters.locale = AtomString { defaultLanguage() };
+        parameters.locale = AtomStringImpl::add(defaultLanguage());
     else {
-        AtomString locale = element->effectiveLang();
-        parameters.locale = locale.isEmpty() ? AtomString { defaultLanguage() } : locale;
+        RefPtr<AtomStringImpl> locale = element->effectiveLang();
+        parameters.locale = isEmpty(locale) ? AtomStringImpl::add(defaultLanguage()) : locale;
     }
 
     auto stepRange = createStepRange(AnyStepHandling::Reject);
@@ -686,7 +689,7 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     else
         parameters.anchorRectInMainFrameView = IntRect();
     parameters.rootFrameID = document->view()->rootFrameID();
-    parameters.currentValue = element->value();
+    parameters.currentValue = element->value().get();
 
     CheckedRef computedStyle = *element->computedStyle();
     parameters.isAnchorElementRTL = computedStyle->writingMode().computedTextDirection() == TextDirection::RTL;
@@ -702,9 +705,9 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
             auto value = option->value();
             if (!element->isValidValue(value))
                 continue;
-            parameters.suggestionValues.append(element->sanitizeValue(value));
+            parameters.suggestionValues.append(element->sanitizeValue(value).get());
             parameters.localizedSuggestionValues.append(element->localizeValue(value));
-            parameters.suggestionLabels.append(value == label ? String() : label);
+            parameters.suggestionLabels.append(equal(value, label) ? nullptr : label);
         }
     }
 

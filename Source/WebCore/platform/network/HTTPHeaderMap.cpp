@@ -67,7 +67,7 @@ HTTPHeaderMap HTTPHeaderMap::isolatedCopy() &&
     return map;
 }
 
-String HTTPHeaderMap::get(StringView name) const
+RefPtr<StringImpl> HTTPHeaderMap::get(StringView name) const
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -76,17 +76,17 @@ String HTTPHeaderMap::get(StringView name) const
     return getUncommonHeader(name);
 }
 
-String HTTPHeaderMap::getUncommonHeader(StringView name) const
+RefPtr<StringImpl> HTTPHeaderMap::getUncommonHeader(StringView name) const
 {
     auto index = m_uncommonHeaders.findIf([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
-    return index != notFound ? m_uncommonHeaders[index].value : String();
+    return index != notFound ? m_uncommonHeaders[index].value : nullptr;
 }
 
 #if USE(CF)
 
-void HTTPHeaderMap::set(CFStringRef name, const String& value)
+void HTTPHeaderMap::set(CFStringRef name, StringImpl* value)
 {
     // Fast path: avoid constructing a temporary String in the common header case.
     if (auto asciiCharacters = CFStringGetASCIICStringSpan(name); asciiCharacters.data()) {
@@ -94,17 +94,17 @@ void HTTPHeaderMap::set(CFStringRef name, const String& value)
         if (findHTTPHeaderName(StringView(asciiCharacters), headerName))
             set(headerName, value);
         else
-            setUncommonHeader(String::fromLatin1(asciiCharacters), value);
+            setUncommonHeader(StringImpl::fromLatin1(asciiCharacters), value);
 
         return;
     }
 
-    set(String(name), value);
+    set(StringImpl::create(name).get(), value);
 }
 
 #endif // USE(CF)
 
-void HTTPHeaderMap::set(const String& name, const String& value)
+void HTTPHeaderMap::set(StringImpl* name, StringImpl* value)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName)) {
@@ -115,7 +115,7 @@ void HTTPHeaderMap::set(const String& name, const String& value)
     setUncommonHeader(name, value);
 }
 
-void HTTPHeaderMap::setUncommonHeader(const String& name, const String& value)
+void HTTPHeaderMap::setUncommonHeader(StringImpl* name, StringImpl* value)
 {
 #if ASSERT_ENABLED
     HTTPHeaderName headerName;
@@ -131,7 +131,7 @@ void HTTPHeaderMap::setUncommonHeader(const String& name, const String& value)
         m_uncommonHeaders[index].value = value;
 }
 
-void HTTPHeaderMap::add(const String& name, const String& value)
+void HTTPHeaderMap::add(StringImpl* name, StringImpl* value)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName)) {
@@ -141,7 +141,7 @@ void HTTPHeaderMap::add(const String& name, const String& value)
     addUncommonHeader(name, value);
 }
 
-void HTTPHeaderMap::addUncommonHeader(const String& name, const String& value)
+void HTTPHeaderMap::addUncommonHeader(StringImpl* name, StringImpl* value)
 {
 #if ASSERT_ENABLED
     HTTPHeaderName headerName;
@@ -157,7 +157,7 @@ void HTTPHeaderMap::addUncommonHeader(const String& name, const String& value)
         m_uncommonHeaders[index].value = makeString(m_uncommonHeaders[index].value, ", "_s, value);
 }
 
-void HTTPHeaderMap::append(const String& name, const String& value)
+void HTTPHeaderMap::append(StringImpl* name, StringImpl* value)
 {
     ASSERT(!contains(name));
 
@@ -168,7 +168,7 @@ void HTTPHeaderMap::append(const String& name, const String& value)
         m_uncommonHeaders.append(UncommonHeader { name, value });
 }
 
-bool HTTPHeaderMap::addIfNotPresent(HTTPHeaderName headerName, const String& value)
+bool HTTPHeaderMap::addIfNotPresent(HTTPHeaderName headerName, StringImpl* value)
 {
     if (contains(headerName))
         return false;
@@ -177,7 +177,7 @@ bool HTTPHeaderMap::addIfNotPresent(HTTPHeaderName headerName, const String& val
     return true;
 }
 
-bool HTTPHeaderMap::contains(const String& name) const
+bool HTTPHeaderMap::contains(StringImpl* name) const
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -188,7 +188,7 @@ bool HTTPHeaderMap::contains(const String& name) const
     }) != notFound;
 }
 
-bool HTTPHeaderMap::remove(const String& name)
+bool HTTPHeaderMap::remove(StringImpl* name)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -199,15 +199,15 @@ bool HTTPHeaderMap::remove(const String& name)
     });
 }
 
-String HTTPHeaderMap::get(HTTPHeaderName name) const
+RefPtr<StringImpl> HTTPHeaderMap::get(HTTPHeaderName name) const
 {
     auto index = m_commonHeaders.findIf([&](auto& header) {
         return header.key == name;
     });
-    return index != notFound ? m_commonHeaders[index].value : String();
+    return index != notFound ? m_commonHeaders[index].value : nullptr;
 }
 
-void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
+void HTTPHeaderMap::set(HTTPHeaderName name, StringImpl* value)
 {
     auto index = m_commonHeaders.findIf([&](auto& header) {
         return header.key == name;
@@ -232,7 +232,7 @@ bool HTTPHeaderMap::remove(HTTPHeaderName name)
     });
 }
 
-void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
+void HTTPHeaderMap::add(HTTPHeaderName name, StringImpl* value)
 {
     auto index = m_commonHeaders.findIf([&](auto& header) {
         return header.key == name;

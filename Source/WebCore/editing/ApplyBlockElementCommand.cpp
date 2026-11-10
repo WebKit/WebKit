@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Ref<Document>&& document, const QualifiedName& tagName, const AtomString& inlineStyle)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Ref<Document>&& document, const QualifiedName& tagName, AtomStringImpl* inlineStyle)
     : CompositeEditCommand(WTF::move(document))
     , m_tagName(tagName)
     , m_inlineStyle(inlineStyle)
@@ -187,7 +187,7 @@ NODELETE static bool isNewLineAtPosition(const Position& position)
     unsigned offset = position.offsetInContainerNode();
     if (offset >= textNode->length())
         return false;
-    return textNode->data()[offset] == '\n';
+    return codeUnitAt(textNode->data(), offset) == '\n';
 }
 
 CheckedPtr<const Style::ComputedStyle> ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
@@ -326,7 +326,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
 Ref<HTMLElement> ApplyBlockElementCommand::createBlockElement()
 {
     Ref element = createHTMLElement(document(), m_tagName);
-    if (m_inlineStyle.length())
+    if (length(m_inlineStyle))
         element->setAttribute(styleAttr, m_inlineStyle);
     return element;
 }

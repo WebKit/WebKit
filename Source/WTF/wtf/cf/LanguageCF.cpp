@@ -44,7 +44,7 @@ static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStrin
 }
 #endif
 
-static String httpStyleLanguageCode(CFStringRef language, ShouldMinimizeLanguages shouldMinimizeLanguages)
+static RefPtr<StringImpl> httpStyleLanguageCode(CFStringRef language, ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     RetainPtr<CFStringRef> preferredLanguageCode;
     // If we can minimize the language list to reduce fingerprinting, we can afford to be more lossless when canonicalizing the locale list.
@@ -72,7 +72,7 @@ static String httpStyleLanguageCode(CFStringRef language, ShouldMinimizeLanguage
     if (CFStringGetLength(mutableLanguageCode.get()) >= 3 && CFStringGetCharacterAtIndex(mutableLanguageCode.get(), 2) == '_')
         CFStringReplace(mutableLanguageCode.get(), CFRangeMake(2, 1), CFSTR("-"));
 
-    return mutableLanguageCode.get();
+    return StringImpl::create(mutableLanguageCode.get());
 }
 
 void listenForLanguageChangeNotifications()
@@ -85,7 +85,7 @@ void listenForLanguageChangeNotifications()
 #endif
 }
 
-Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
+Vector<RefPtr<StringImpl>> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     auto platformLanguages = adoptCF(CFLocaleCopyPreferredLanguages());
 
@@ -100,7 +100,7 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMini
     if (!platformLanguagesCount)
         return { "en"_s };
 
-    Vector<String> languages(platformLanguagesCount, [&](size_t i) {
+    Vector<RefPtr<StringImpl>> languages(platformLanguagesCount, [&](size_t i) {
         RetainPtr platformLanguage = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(platformLanguages.get(), i));
         return httpStyleLanguageCode(platformLanguage.get(), shouldMinimizeLanguages);
     });

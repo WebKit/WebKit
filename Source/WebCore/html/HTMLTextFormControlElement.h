@@ -75,14 +75,14 @@ public:
     WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index) const;
     WEBCORE_EXPORT unsigned selectionStart() const;
     WEBCORE_EXPORT unsigned selectionEnd() const;
-    WEBCORE_EXPORT const AtomString& selectionDirection() const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& selectionDirection() const;
     WEBCORE_EXPORT void setSelectionStart(unsigned);
     WEBCORE_EXPORT void setSelectionEnd(unsigned);
-    WEBCORE_EXPORT void setSelectionDirection(const String&);
+    WEBCORE_EXPORT void setSelectionDirection(StringImpl*);
     WEBCORE_EXPORT void select(SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     WEBCORE_EXPORT ExceptionOr<void> setRangeText(StringView replacement);
-    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode);
-    void setSelectionRange(unsigned start, unsigned end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent(), ForBindings = ForBindings::No);
+    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(StringView replacement, unsigned start, unsigned end, StringImpl* selectionMode);
+    void setSelectionRange(unsigned start, unsigned end, StringImpl* direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent(), ForBindings = ForBindings::No);
     WEBCORE_EXPORT bool setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection = SelectionHasNoDirection, SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent(), ForBindings = ForBindings::No);
 
     void scheduleSelectionChangeEvent();
@@ -91,14 +91,14 @@ public:
     TextFieldSelectionDirection normalizeSelectionDirection(TextFieldSelectionDirection);
 
     std::optional<SimpleRange> selection() const;
-    String selectedText() const;
+    RefPtr<StringImpl> selectedText() const;
 
     void dispatchFormControlChangeEvent() final;
     void scheduleSelectEvent();
 
-    virtual ValueOrReference<String> value() const = 0;
+    virtual ValueOrReference<RefPtr<StringImpl>> value() const = 0;
 
-    virtual ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) = 0;
+    virtual ExceptionOr<void> setValue(StringImpl*, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElement() const = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() = 0;
     virtual Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) = 0;
@@ -108,12 +108,12 @@ public:
     bool selectionChanged(bool shouldFireSelectEvent);
     NODELETE WEBCORE_EXPORT bool lastChangeWasUserEdit() const;
     NODELETE bool wasEverChangedByUserEdit() const;
-    void setInnerTextValue(String&&);
-    String innerTextValue() const;
+    void setInnerTextValue(RefPtr<StringImpl>&&);
+    RefPtr<StringImpl> innerTextValue() const;
 
-    String directionForFormData() const;
+    RefPtr<StringImpl> directionForFormData() const;
 
-    void setTextAsOfLastFormControlChangeEvent(String&& text) { m_textAsOfLastFormControlChangeEvent = WTF::move(text); }
+    void setTextAsOfLastFormControlChangeEvent(RefPtr<StringImpl>&& text) { m_textAsOfLastFormControlChangeEvent = WTF::move(text); }
 
     WEBCORE_EXPORT virtual bool isInnerTextElementEditable() const;
 
@@ -125,7 +125,7 @@ protected:
     HTMLTextFormControlElement(const QualifiedName&, Document&);
     virtual void updatePlaceholderText() = 0;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;
@@ -145,7 +145,7 @@ protected:
 
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
 
-    String valueWithHardLineBreaks() const;
+    RefPtr<StringImpl> valueWithHardLineBreaks() const;
 
     void adjustInnerTextStyle(const Style::ComputedStyle& parentStyle, Style::ComputedStyle& textBlockStyle) const;
 
@@ -194,9 +194,9 @@ private:
     bool m_hasScheduledSelectionChangeEvent { false };
     bool m_isInsideSetSelectionRange { false };
 
-    String m_pointerType { mousePointerEventType() };
+    RefPtr<StringImpl> m_pointerType { mousePointerEventType() };
 
-    String m_textAsOfLastFormControlChangeEvent;
+    RefPtr<StringImpl> m_textAsOfLastFormControlChangeEvent;
 };
 
 NODELETE WEBCORE_EXPORT HTMLTextFormControlElement* enclosingTextFormControl(const Position&);

@@ -87,7 +87,7 @@ SVGUseElement::~SVGUseElement()
         externalDocument->removeClient(*this);
 }
 
-void SVGUseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGUseElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 
@@ -289,7 +289,7 @@ void SVGUseElement::updateUserAgentShadowTree()
         return;
     protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
 
-    AtomString targetID;
+    RefPtr<AtomStringImpl> targetID;
     RefPtr target = findTarget(&targetID);
     if (!target) {
         protect(treeScopeForSVGReferences())->addPendingSVGResource(targetID, *this);
@@ -489,7 +489,7 @@ static void associateReplacementClonesWithOriginals(SVGElement& replacementClone
         associateReplacementCloneWithOriginal(Ref { pair.first }, Ref { pair.second });
 }
 
-RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
+RefPtr<SVGElement> SVGUseElement::findTarget(RefPtr<AtomStringImpl>* targetID) const
 {
     RefPtr correspondingElement = this->correspondingElement();
     Ref original = correspondingElement ? downcast<SVGUseElement>(*correspondingElement) : *this;
@@ -501,7 +501,7 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
         // The caller would use the target ID to wait for a pending resource on the wrong document.
         // If we ever want the change that and let the caller to wait on the external document,
         // we should change this function so it returns the appropriate document to go with the ID.
-        if (!targetID->isNull() && isExternalURIReference(original->href(), protect(original->document())))
+        if (*targetID && isExternalURIReference(original->href(), protect(original->document())))
             *targetID = nullAtom();
     }
     RefPtr target = dynamicDowncast<SVGElement>(targetResult.element.get());

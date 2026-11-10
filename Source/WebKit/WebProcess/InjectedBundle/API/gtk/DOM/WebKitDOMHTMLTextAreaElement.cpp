@@ -364,7 +364,7 @@ void webkit_dom_html_text_area_element_set_selection_range(WebKitDOMHTMLTextArea
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     g_return_if_fail(direction);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedDirection = WTF::String::fromUTF8(direction);
+    RefPtr<StringImpl> convertedDirection = StringImpl::fromUTF8(direction);
     item->setSelectionRange(start, end, convertedDirection);
 }
 
@@ -426,7 +426,7 @@ void webkit_dom_html_text_area_element_set_name(WebKitDOMHTMLTextAreaElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gboolean webkit_dom_html_text_area_element_get_read_only(WebKitDOMHTMLTextAreaElement* self)
@@ -504,7 +504,7 @@ void webkit_dom_html_text_area_element_set_default_value(WebKitDOMHTMLTextAreaEl
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_text_area_element_get_value(WebKitDOMHTMLTextAreaElement* self)
@@ -522,7 +522,7 @@ void webkit_dom_html_text_area_element_set_value(WebKitDOMHTMLTextAreaElement* s
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setValue(convertedValue);
 }
 

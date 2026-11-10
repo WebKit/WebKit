@@ -41,8 +41,8 @@ namespace WebCore {
 struct CDMKeySystemConfiguration {
     using KeysRequirement = CDMRequirement;
 
-    String label;
-    Vector<AtomString> initDataTypes;
+    RefPtr<StringImpl> label;
+    Vector<RefPtr<AtomStringImpl>> initDataTypes;
     Vector<CDMMediaCapability> audioCapabilities;
     Vector<CDMMediaCapability> videoCapabilities;
     CDMRequirement distinctiveIdentifier { CDMRequirement::Optional };

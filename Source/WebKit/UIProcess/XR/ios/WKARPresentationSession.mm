@@ -509,7 +509,7 @@ id<WKARPresentationSession> createPresentationSession(ARSession *session, WKARPr
     PlatformXR::FrameData::InputSource data;
     data.handedness = PlatformXR::XRHandedness::None;
     data.handle = actionIdentifier;
-    data.profiles = Vector<String> { "generic-button-invisible"_s, "generic-button"_s };
+    data.profiles = Vector<RefPtr<StringImpl>> { "generic-button-invisible"_s, "generic-button"_s };
     data.targetRayMode = PlatformXR::XRTargetRayMode::TransientPointer;
 
     data.pointerOrigin.pose = targetRay.pose();

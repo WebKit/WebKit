@@ -149,29 +149,29 @@ const Vector<CaptureDevice>& AVAudioSessionCaptureDeviceManager::captureDevices(
     return m_captureDevices.value();
 }
 
-std::optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
+std::optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* deviceID)
 {
     ASSERT_UNUSED(type, type == CaptureDevice::DeviceType::Microphone);
     for (auto& device : captureDevices()) {
-        if (device.persistentId() == deviceID)
+        if (equal(device.persistentId(), deviceID))
             return device;
     }
     return std::nullopt;
 }
 
-std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID(const String& deviceID)
+std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID(StringImpl* deviceID)
 {
     if (!m_audioSessionCaptureDevices)
         refreshAudioCaptureDevices();
 
     for (auto& device : *m_audioSessionCaptureDevices) {
-        if (device.persistentId() == deviceID)
+        if (equal(device.persistentId(), deviceID))
             return device;
     }
     return std::nullopt;
 }
 
-void AVAudioSessionCaptureDeviceManager::setPreferredMicrophoneID(const String& microphoneID)
+void AVAudioSessionCaptureDeviceManager::setPreferredMicrophoneID(StringImpl* microphoneID)
 {
     auto previousMicrophoneID = m_preferredMicrophoneID;
     m_preferredMicrophoneID = microphoneID;
@@ -181,18 +181,18 @@ void AVAudioSessionCaptureDeviceManager::setPreferredMicrophoneID(const String& 
 
 void AVAudioSessionCaptureDeviceManager::configurePreferredMicrophone()
 {
-    ASSERT(!m_preferredMicrophoneID.isEmpty());
-    if (!m_preferredMicrophoneID.isEmpty())
+    ASSERT(!isEmpty(m_preferredMicrophoneID));
+    if (!isEmpty(m_preferredMicrophoneID))
         setPreferredAudioSessionDeviceIDs();
 }
 
-void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& speakerID)
+void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(StringImpl* speakerID)
 {
     auto previousSpeakerID = m_preferredSpeakerID;
     m_preferredSpeakerID = speakerID;
     if (!setPreferredAudioSessionDeviceIDs())
         m_preferredSpeakerID = WTF::move(previousSpeakerID);
-    else if (!m_preferredSpeakerID.isEmpty()) {
+    else if (!isEmpty(m_preferredSpeakerID)) {
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditions-2.mm>
 #endif
@@ -205,8 +205,8 @@ void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& spe
 bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()
 {
     AVAudioSessionPortDescription *preferredInputPort = nil;
-    if (!m_preferredMicrophoneID.isEmpty()) {
-        RetainPtr nsDeviceUID = m_preferredMicrophoneID.createNSString();
+    if (!isEmpty(m_preferredMicrophoneID)) {
+        RetainPtr nsDeviceUID = createNSString(m_preferredMicrophoneID);
         for (AVAudioSessionPortDescription *portDescription in [m_audioSession availableInputs]) {
             if ([portDescription.UID isEqualToString:nsDeviceUID.get()]) {
                 preferredInputPort = portDescription;
@@ -215,11 +215,11 @@ bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()
         }
     }
     {
-        RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager setting preferred input to '%{public}s'", m_preferredMicrophoneID.utf8());
+        RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager setting preferred input to '%{public}s'", utf8(m_preferredMicrophoneID));
 
         NSError *error = nil;
         if (![[PAL::getAVAudioSessionClassSingleton() sharedInstance] setPreferredInput:preferredInputPort error:&error]) {
-            RELEASE_LOG_ERROR(WebRTC, "AVAudioSessionCaptureDeviceManager failed to set preferred input to '%{public}s' with error: %@", m_preferredMicrophoneID.utf8(), error.localizedDescription);
+            RELEASE_LOG_ERROR(WebRTC, "AVAudioSessionCaptureDeviceManager failed to set preferred input to '%{public}s' with error: %@", utf8(m_preferredMicrophoneID), error.localizedDescription);
             return false;
         }
     }
@@ -304,7 +304,7 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
         for (auto& newState : newAudioDevices) {
             std::optional<CaptureDevice> oldState;
             for (const auto& device : m_audioSessionCaptureDevices.value()) {
-                if (device.type() == newState.type() && device.persistentId() == newState.persistentId()) {
+                if (device.type() == newState.type() && equal(device.persistentId(), newState.persistentId())) {
                     oldState = device;
                     break;
                 }
@@ -348,7 +348,7 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
         if (list1.size() != list2.size())
             return true;
         for (size_t cptr = 0; cptr < list1.size(); ++cptr) {
-            if (list1[cptr].persistentId() != list2[cptr].persistentId() || list1[cptr].enabled() != list2[cptr].enabled())
+            if (!equal(list1[cptr].persistentId(), list2[cptr].persistentId()) || list1[cptr].enabled() != list2[cptr].enabled())
                 return true;
         }
         return false;

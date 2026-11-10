@@ -37,7 +37,7 @@ public:
 
     const CSS::Quotes& quotes() const LIFETIME_BOUND { return m_quotes; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSQuotesValue&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

@@ -53,7 +53,7 @@ public:
     static void sendPing(LocalFrame&, URL&& pingURL, const URL& destinationURL);
     WEBCORE_EXPORT static void sendViolationReport(LocalFrame&, URL&& reportURL, Ref<FormData>&& report, ViolationReportType);
 
-    static String sanitizeURLForReport(const URL&);
+    static RefPtr<StringImpl> sanitizeURLForReport(const URL&);
 
 private:
     enum class ShouldFollowRedirects : bool { No, Yes };

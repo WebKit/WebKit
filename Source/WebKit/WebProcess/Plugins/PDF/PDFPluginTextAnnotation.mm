@@ -50,22 +50,22 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignment)
+static const RefPtr<StringImpl> cssAlignmentValueForNSTextAlignment(NSTextAlignment alignment)
 {
     switch (alignment) {
     case NSTextAlignmentLeft:
-        return "left"_s;
+        return "left"_si;
     case NSTextAlignmentRight:
-        return "right"_s;
+        return "right"_si;
     case NSTextAlignmentCenter:
-        return "center"_s;
+        return "center"_si;
     case NSTextAlignmentJustified:
-        return "justify"_s;
+        return "justify"_si;
     case NSTextAlignmentNatural:
-        return "-webkit-start"_s;
+        return "-webkit-start"_si;
     }
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
@@ -93,10 +93,10 @@ Ref<Element> PDFPluginTextAnnotation::createAnnotationElement()
 
     // FIXME: Match font weight and style as well?
     element->setInlineStyleProperty(CSSPropertyID::Color, serializationForHTML(colorFromCocoaColor([textAnnotation fontColor])));
-    element->setInlineStyleProperty(CSSPropertyID::FontFamily, [[textAnnotation font] familyName]);
+    element->setInlineStyleProperty(CSSPropertyID::FontFamily, StringImpl::create([[textAnnotation font] familyName]).get());
     element->setInlineStyleProperty(CSSPropertyID::TextAlign, cssAlignmentValueForNSTextAlignment([textAnnotation alignment]));
 
-    element->setValue([textAnnotation widgetStringValue]);
+    element->setValue(StringImpl::create([textAnnotation widgetStringValue]).get());
 
     return element;
 }
@@ -111,16 +111,16 @@ void PDFPluginTextAnnotation::updateGeometry()
 
 void PDFPluginTextAnnotation::commit()
 {
-    protect(annotation()).get().widgetStringValue = value().createNSString().get();
+    protect(annotation()).get().widgetStringValue = createNSString(value()).get();
     PDFPluginAnnotation::commit();
 }
 
-String PDFPluginTextAnnotation::value() const
+RefPtr<StringImpl> PDFPluginTextAnnotation::value() const
 {
     return downcast<HTMLTextFormControlElement>(protect(element()))->value();
 }
 
-void PDFPluginTextAnnotation::setValue(const String& value)
+void PDFPluginTextAnnotation::setValue(StringImpl* value)
 {
     downcast<HTMLTextFormControlElement>(protect(element()))->setValue(value);
 }
@@ -131,7 +131,7 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
         return true;
 
     if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && keyboardEvent->type() == eventNames().keydownEvent) {
-        if (keyboardEvent->keyIdentifier() == "U+0009"_s) {
+        if (equal(keyboardEvent->keyIdentifier(), "U+0009"_s)) {
             if (keyboardEvent->ctrlKey() || keyboardEvent->metaKey())
                 return false;
 

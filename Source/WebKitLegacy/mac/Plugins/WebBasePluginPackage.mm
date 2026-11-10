@@ -73,8 +73,8 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     if (!(self = [super init]))
         return nil;
     
-    path = [pluginPath stringByResolvingSymlinksInPath];
-    cfBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:path.createNSString().get()]));
+    path = StringImpl::create([pluginPath stringByResolvingSymlinksInPath]);
+    cfBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:createNSString(path).get()]));
 
     if (!cfBundle) {
         [self release];
@@ -149,27 +149,27 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
             // extension string into components.
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *component in [extension componentsSeparatedByString:@","])
-                mimeClassInfo.extensions.append(component);
+                mimeClassInfo.extensions.append(StringImpl::create(component));
         }
 
-        mimeClassInfo.type = AtomString { String(MIME).convertToASCIILowercase() };
-        mimeClassInfo.desc = dynamic_objc_cast<NSString>([MIMEDictionary objectForKey:WebPluginTypeDescriptionKey]);
+        mimeClassInfo.type = AtomStringImpl::add(convertToASCIILowercase(StringImpl::create(MIME)));
+        mimeClassInfo.desc = StringImpl::create(dynamic_objc_cast<NSString>([MIMEDictionary objectForKey:WebPluginTypeDescriptionKey]));
 
         pluginInfo.mimes.append(mimeClassInfo);
     }
 
-    RetainPtr filename = [path.createNSString() lastPathComponent];
-    pluginInfo.file = filename.get();
+    RetainPtr filename = [createNSString(path) lastPathComponent];
+    pluginInfo.file = StringImpl::create(filename.get());
 
     NSString *theName = [self _objectForInfoDictionaryKey:WebPluginNameKey];
     if (!theName)
         theName = filename.get();
-    pluginInfo.name = theName;
+    pluginInfo.name = StringImpl::create(theName);
 
     NSString *description = [self _objectForInfoDictionaryKey:WebPluginDescriptionKey];
     if (!description)
         description = filename.get();
-    pluginInfo.desc = description;
+    pluginInfo.desc = StringImpl::create(description);
 
     pluginInfo.isApplicationPlugin = false;
 #if PLATFORM(MAC)
@@ -195,7 +195,7 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     [super dealloc];
 }
 
-- (const String&)path
+- (const RefPtr<StringImpl>&)path
 {
     return path;
 }
@@ -205,37 +205,37 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     return pluginInfo;
 }
 
-- (BOOL)supportsExtension:(const String&)extension
+- (BOOL)supportsExtension:(StringImpl*)extension
 {
-    ASSERT(extension.convertToASCIILowercase() == extension);
+    ASSERT(equal(convertToASCIILowercase(extension), extension));
     
     for (auto& entry : pluginInfo.mimes) {
-        if (entry.extensions.contains(extension))
+        if (entry.extensions.containsIf([&](auto& item) { return equal(item, extension); }))
             return YES;
     }
 
     return NO;
 }
 
-- (BOOL)supportsMIMEType:(const WTF::String&)mimeType
+- (BOOL)supportsMIMEType:(StringImpl*)mimeType
 {
-    ASSERT(mimeType.convertToASCIILowercase() == mimeType);
+    ASSERT(equal(convertToASCIILowercase(mimeType), mimeType));
     
     for (auto& entry : pluginInfo.mimes) {
-        if (entry.type == mimeType)
+        if (equal(entry.type, mimeType))
             return YES;
     }
 
     return NO;
 }
 
-- (NSString *)MIMETypeForExtension:(const String&)extension
+- (NSString *)MIMETypeForExtension:(StringImpl*)extension
 {
-    ASSERT(extension.convertToASCIILowercase() == extension);
+    ASSERT(equal(convertToASCIILowercase(extension), extension));
     
     for (auto& entry : pluginInfo.mimes) {
-        if (entry.extensions.contains(extension))
-            return entry.type.createNSString().autorelease();
+        if (entry.extensions.containsIf([&](auto& item) { return equal(item, extension); }))
+            return createNSString(entry.type).autorelease();
     }
 
     return nil;
@@ -243,14 +243,14 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
 
 - (BOOL)isQuickTimePlugIn
 {
-    const String& bundleIdentifier = [self bundleIdentifier];
-    return bundleIdentifier == QuickTimeCocoaPluginIdentifier;
+    const RefPtr<StringImpl>& bundleIdentifier = [self bundleIdentifier];
+    return equal(bundleIdentifier, QuickTimeCocoaPluginIdentifier);
 }
 
 - (BOOL)isJavaPlugIn
 {
-    const String& bundleIdentifier = [self bundleIdentifier];
-    return bundleIdentifier == JavaCocoaPluginIdentifier || bundleIdentifier == JavaCarbonPluginIdentifier;
+    const RefPtr<StringImpl>& bundleIdentifier = [self bundleIdentifier];
+    return equal(bundleIdentifier, JavaCocoaPluginIdentifier) || equal(bundleIdentifier, JavaCarbonPluginIdentifier);
 }
 
 NODELETE static inline void swapIntsInHeader(std::span<uint32_t> rawData)
@@ -361,18 +361,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [protect(pluginDatabases) removeObject:database];
 }
 
-- (String)bundleIdentifier
+- (RefPtr<StringImpl>)bundleIdentifier
 {
-    return CFBundleGetIdentifier(cfBundle.get());
+    return StringImpl::create(protect(CFBundleGetIdentifier(cfBundle.get())).get());
 }
 
-- (String)bundleVersion
+- (RefPtr<StringImpl>)bundleVersion
 {
     RetainPtr infoDictionary = CFBundleGetInfoDictionary(cfBundle.get());
     if (!infoDictionary)
-        return String();
+        return nullptr;
 
-    return dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(infoDictionary.get(), kCFBundleVersionKey));
+    return StringImpl::create(protect(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(infoDictionary.get(), kCFBundleVersionKey))).get());
 }
 
 @end

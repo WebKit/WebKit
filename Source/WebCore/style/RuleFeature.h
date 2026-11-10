@@ -152,7 +152,7 @@ private:
 static_assert(sizeof(RuleFeature) <= 24, "RuleFeature is a frequently allocated object. Keep it small.");
 #pragma pack(pop)
 
-using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, AtomString>;
+using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, RefPtr<AtomStringImpl>>;
 
 using RuleFeatureVector = Vector<RuleFeature>;
 
@@ -179,19 +179,19 @@ struct RuleFeatureSet {
     bool usesRelation(MatchElement::Relation relation) const { return usedRelations[std::to_underlying(relation)]; }
     void setUsesRelation(MatchElement::Relation relation) { usedRelations[std::to_underlying(relation)] = true; }
 
-    HashSet<AtomString> idsInRules;
-    HashSet<AtomString> idsMatchingAncestorsInRules;
-    HashSet<AtomString> attributeLowercaseLocalNamesInRules;
-    HashSet<AtomString> attributeLocalNamesInRules;
+    HashSet<RefPtr<AtomStringImpl>> idsInRules;
+    HashSet<RefPtr<AtomStringImpl>> idsMatchingAncestorsInRules;
+    HashSet<RefPtr<AtomStringImpl>> attributeLowercaseLocalNamesInRules;
+    HashSet<RefPtr<AtomStringImpl>> attributeLocalNamesInRules;
 
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> attributeRules;
+    HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<RuleFeatureVector>> idRules;
+    HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<RuleFeatureVector>> classRules;
+    HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<RuleFeatureVector>> attributeRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> hasPseudoClassRules;
 
-    HashSet<AtomString> classesAffectingHost;
-    HashSet<AtomString> attributesAffectingHost;
+    HashSet<RefPtr<AtomStringImpl>> classesAffectingHost;
+    HashSet<RefPtr<AtomStringImpl>> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasses;
 
@@ -221,9 +221,9 @@ private:
 MatchElement::HasRelation computeHasArgumentRelation(const CSSSelector&);
 
 enum class InvalidationKeyType : uint8_t { Universal = 1, Class, Id, Attribute, Tag };
-NODELETE PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, const AtomString& = starAtom());
+NODELETE PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, AtomStringImpl* = starAtom());
 
-NODELETE bool unlikelyToHaveSelectorForAttribute(const AtomString&);
+NODELETE bool unlikelyToHaveSelectorForAttribute(AtomStringImpl*);
 
 inline bool isUniversalInvalidation(const PseudoClassInvalidationKey& key)
 {

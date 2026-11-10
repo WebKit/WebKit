@@ -70,7 +70,7 @@ public:
     bool isRunning() const;
 
     void setOrientation(WebCore::IntDegrees);
-    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void rotationAngleForCaptureDeviceChanged(StringImpl*, WebCore::VideoFrameRotation);
 
 private:
     CapturePreviewManager(WebCore::PageIdentifier, Function<void(float)>&& audioLevelHandler);
@@ -112,8 +112,8 @@ private:
     std::unique_ptr<LayerHostingContext> m_layerHostingContext WTF_GUARDED_BY_CAPABILITY(mainThread);
     WebCore::HostingContext m_hostingContext WTF_GUARDED_BY_CAPABILITY(mainThread);
 
-    String m_videoDeviceID WTF_GUARDED_BY_CAPABILITY(mainThread);
-    String m_audioDeviceID WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_videoDeviceID WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_audioDeviceID WTF_GUARDED_BY_CAPABILITY(mainThread);
     WebCore::IntSize m_previewSize WTF_GUARDED_BY_CAPABILITY(mainThread);
 
     WebCore::OrientationNotifier m_orientationNotifier WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
@@ -122,7 +122,7 @@ private:
     Lock m_audioLevelLock;
     float m_peakSinceLastLevel WTF_GUARDED_BY_LOCK(m_audioLevelLock) { 0 };
 #if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
-    std::optional<String> m_savedPreferredMicrophoneID WTF_GUARDED_BY_CAPABILITY(mainThread);
+    std::optional<RefPtr<StringImpl>> m_savedPreferredMicrophoneID WTF_GUARDED_BY_CAPABILITY(mainThread);
 #endif
 };
 

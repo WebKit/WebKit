@@ -103,7 +103,7 @@ std::optional<IDBIndexIdentifier> IDBCursorInfo::sourceIndexIdentifier() const
 
 #if !LOG_DISABLED
 
-String IDBCursorInfo::loggingString() const
+RefPtr<StringImpl> IDBCursorInfo::loggingString() const
 {
     auto sourceIdentifier = std::holds_alternative<IDBObjectStoreIdentifier>(m_sourceIdentifier) ? std::get<IDBObjectStoreIdentifier>(m_sourceIdentifier).toUInt64() : std::get<IDBIndexIdentifier>(m_sourceIdentifier).toUInt64();
 

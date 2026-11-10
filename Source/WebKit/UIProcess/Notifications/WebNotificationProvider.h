@@ -57,7 +57,7 @@ public:
     void addNotificationManager(WebNotificationManagerProxy&) override;
     void removeNotificationManager(WebNotificationManagerProxy&) override;
 
-    HashMap<WTF::String, bool> notificationPermissions() override;
+    HashMap<RefPtr<StringImpl>, bool> notificationPermissions() override;
 };
 
 } // namespace WebKit

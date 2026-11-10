@@ -42,21 +42,21 @@ namespace WebCore {
 struct KeypressCommand {
     KeypressCommand() { }
 
-    explicit KeypressCommand(const String& commandName)
+    explicit KeypressCommand(StringImpl* commandName)
         : commandName(commandName)
     {
-        ASSERT(isASCIILower(commandName[0U]));
+        ASSERT(isASCIILower(codeUnitAt(commandName, 0U)));
     }
 
-    KeypressCommand(const String& commandName, const String& text)
+    KeypressCommand(StringImpl* commandName, StringImpl* text)
         : commandName(commandName)
         , text(text)
         , replacementRange { WTF::notFound, 0 }
     {
-        ASSERT(commandName == "insertText:"_s || text.isEmpty());
+        ASSERT(equal(commandName, "insertText:"_s) || isEmpty(text));
     }
 
-    KeypressCommand(const String& commandName, const String& text, Vector<CompositionUnderline>&& underlines, Vector<CompositionHighlight>&& highlights, const CharacterRange& selectedRange, const CharacterRange& replacementRange)
+    KeypressCommand(StringImpl* commandName, StringImpl* text, Vector<CompositionUnderline>&& underlines, Vector<CompositionHighlight>&& highlights, const CharacterRange& selectedRange, const CharacterRange& replacementRange)
         : commandName(commandName)
         , text(text)
         , underlines(WTF::move(underlines))
@@ -64,11 +64,11 @@ struct KeypressCommand {
         , selectedRange(selectedRange)
         , replacementRange(replacementRange)
     {
-        ASSERT(commandName == "setMarkedText:"_s || (underlines.isEmpty() && highlights.isEmpty()));
+        ASSERT(equal(commandName, "setMarkedText:"_s) || (underlines.isEmpty() && highlights.isEmpty()));
     }
 
-    String commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
-    String text;
+    RefPtr<StringImpl> commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
+    RefPtr<StringImpl> text;
     Vector<CompositionUnderline> underlines;
     Vector<CompositionHighlight> highlights;
     CharacterRange selectedRange;

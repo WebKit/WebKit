@@ -84,14 +84,14 @@ void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, con
         result = CryptoKeyAES::importRaw(parameters.identifier, WTF::move(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Jwk: {
-        result = CryptoKeyAES::importJwk(parameters.identifier, WTF::move(std::get<JsonWebKey>(data)), extractable, usages, [](size_t length, const String& alg) -> bool {
+        result = CryptoKeyAES::importJwk(parameters.identifier, WTF::move(std::get<JsonWebKey>(data)), extractable, usages, [](size_t length, StringImpl* alg) -> bool {
             switch (length) {
             case CryptoKeyAES::s_length128:
-                return alg.isNull() || alg == ALG128;
+                return !alg || equal(alg, ALG128);
             case CryptoKeyAES::s_length192:
-                return alg.isNull() || alg == ALG192;
+                return !alg || equal(alg, ALG192);
             case CryptoKeyAES::s_length256:
-                return alg.isNull() || alg == ALG256;
+                return !alg || equal(alg, ALG256);
             }
             return false;
         });
@@ -128,13 +128,13 @@ void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
         JsonWebKey jwk = aesKey.exportJwk();
         switch (aesKey.key().size() * 8) {
         case CryptoKeyAES::s_length128:
-            jwk.alg = String(ALG128);
+            jwk.alg = StringImpl::create(ALG128);
             break;
         case CryptoKeyAES::s_length192:
-            jwk.alg = String(ALG192);
+            jwk.alg = StringImpl::create(ALG192);
             break;
         case CryptoKeyAES::s_length256:
-            jwk.alg = String(ALG256);
+            jwk.alg = StringImpl::create(ALG256);
             break;
         default:
             ASSERT_NOT_REACHED();

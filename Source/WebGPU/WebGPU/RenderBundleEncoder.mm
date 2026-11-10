@@ -1159,7 +1159,7 @@ RefPtr<WebGPU::RenderBundle> RenderBundleEncoder::finish(const WebGPU::RenderBun
     };
 
     auto renderBundle = createRenderBundle();
-    renderBundle->setLabel(String { descriptor.label });
+    renderBundle->setLabel(RefPtr<StringImpl> { descriptor.label });
     m_finished = true;
 
     registerResourceHolder(renderBundle->resources(), renderBundle);
@@ -1202,7 +1202,7 @@ void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder)
     resetIndexBuffer();
 }
 
-void RenderBundleEncoder::insertDebugMarker(String&&)
+void RenderBundleEncoder::insertDebugMarker(RefPtr<StringImpl>&&)
 {
     RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
@@ -1238,7 +1238,7 @@ void RenderBundleEncoder::popDebugGroup()
     // MTLIndirectCommandBuffers don't support debug commands.
 }
 
-void RenderBundleEncoder::pushDebugGroup(String&&)
+void RenderBundleEncoder::pushDebugGroup(RefPtr<StringImpl>&&)
 {
     RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
@@ -1600,9 +1600,9 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
         return;
 }
 
-void RenderBundleEncoder::setLabel(String&& label)
+void RenderBundleEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_indirectCommandBuffer.label = label.createNSString().get();
+    m_indirectCommandBuffer.label = createNSString(label).get();
 }
 
 #undef RETURN_IF_FINISHED
@@ -1657,7 +1657,7 @@ WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBun
 {
     @autoreleasepool {
         // Every WebGPU::RenderBundle that a WebGPU::Metal::RenderBundleEncoder creates is a WebGPU::Metal::RenderBundle.
-        Ref renderBundle = downcast<WebGPU::Metal::RenderBundle>(*protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->finish({ .label = descriptor ? WebGPU::Metal::fromAPI(descriptor->label) : String() }));
+        Ref renderBundle = downcast<WebGPU::Metal::RenderBundle>(*protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->finish({ .label = descriptor ? WebGPU::Metal::fromAPI(descriptor->label) : nullptr }));
         return WebGPU::Metal::releaseToAPI(WTF::move(renderBundle));
     }
 }

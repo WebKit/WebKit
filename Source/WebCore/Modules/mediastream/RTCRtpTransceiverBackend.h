@@ -42,7 +42,7 @@ public:
     virtual std::optional<RTCRtpTransceiverDirection> currentDirection() const = 0;
     virtual void setDirection(RTCRtpTransceiverDirection) = 0;
 
-    virtual String mid() = 0;
+    virtual RefPtr<StringImpl> mid() = 0;
     virtual void stop() = 0;
     virtual bool stopped() const = 0;
     virtual ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodec>&) = 0;

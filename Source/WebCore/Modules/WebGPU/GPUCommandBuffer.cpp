@@ -38,18 +38,18 @@ GPUDevice* GPUCommandBuffer::device() const
     return m_encoder->device();
 }
 
-String GPUCommandBuffer::label() const
+RefPtr<StringImpl> GPUCommandBuffer::label() const
 {
     return m_overrideLabel ? *m_overrideLabel : m_label;
 }
 
-void GPUCommandBuffer::setLabel(String&& label)
+void GPUCommandBuffer::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     protect(m_backing)->setLabel(WTF::move(label));
 }
 
-void GPUCommandBuffer::setOverrideLabel(String&& label)
+void GPUCommandBuffer::setOverrideLabel(RefPtr<StringImpl>&& label)
 {
     m_overrideLabel = WTF::move(label);
 }

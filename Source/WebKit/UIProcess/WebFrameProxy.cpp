@@ -319,13 +319,13 @@ void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data
         page->sendToProcessContainingFrame(m_frameID, Messages::WebProcess::BindAccessibilityFrameWithData(m_frameID, data));
 }
 
-void WebFrameProxy::loadURL(const URL& url, const String& referrer)
+void WebFrameProxy::loadURL(const URL& url, StringImpl* referrer)
 {
     if (RefPtr page = m_page.get())
         page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
 }
 
-void WebFrameProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encodingName, const URL& baseURL)
+void WebFrameProxy::loadData(std::span<const uint8_t> data, StringImpl* type, StringImpl* encodingName, const URL& baseURL)
 {
     ASSERT(!isMainFrame());
     RefPtr page = m_page;
@@ -358,7 +358,7 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
     // FIXME: This should be a call to a single MIMETypeRegistry function; adding a new one if needed.
     // FIXME: This is doing case sensitive comparisons on MIME types, should be using ASCII case insensitive instead.
-    return m_MIMEType == "text/html"_s || m_MIMEType == "image/svg+xml"_s || m_MIMEType == "application/x-webarchive"_s || MIMETypeRegistry::isXMLMIMEType(m_MIMEType);
+    return equal(m_MIMEType, "text/html"_s) || equal(m_MIMEType, "image/svg+xml"_s) || equal(m_MIMEType, "application/x-webarchive"_s) || MIMETypeRegistry::isXMLMIMEType(m_MIMEType);
 }
 
 bool WebFrameProxy::isDisplayingPDFDocument() const
@@ -371,7 +371,7 @@ void WebFrameProxy::didStartProvisionalLoad(URL&& url)
     m_frameLoadState.didStartProvisionalLoad(WTF::move(url));
 }
 
-void WebFrameProxy::didExplicitOpen(URL&& url, String&& mimeType, ShouldClearProvisionalURL shouldClearProvisionalURL)
+void WebFrameProxy::didExplicitOpen(URL&& url, RefPtr<StringImpl>&& mimeType, ShouldClearProvisionalURL shouldClearProvisionalURL)
 {
     m_MIMEType = WTF::move(mimeType);
     m_frameLoadState.didExplicitOpen(WTF::move(url), shouldClearProvisionalURL);
@@ -390,14 +390,14 @@ void WebFrameProxy::didFailProvisionalLoad()
         m_navigateCallback({ }, { });
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const SecurityOriginData& originReportedByWebProcess, LoadedWebArchive loadedWebArchive)
+void WebFrameProxy::didCommitLoad(StringImpl* contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const SecurityOriginData& originReportedByWebProcess, LoadedWebArchive loadedWebArchive)
 {
     m_frameLoadState.didCommitLoad();
 
     if (m_isShowingInitialAboutBlank && !url().isAboutBlank())
         m_isShowingInitialAboutBlank = false;
 
-    m_title = String();
+    m_title = nullptr;
     m_MIMEType = contentType;
     m_containsPluginDocument = containsPluginDocument;
 #if ENABLE(PDF_PLUGIN)
@@ -452,7 +452,7 @@ void WebFrameProxy::didSameDocumentNavigation(URL&& url)
     m_frameLoadState.didSameDocumentNotification(WTF::move(url));
 }
 
-void WebFrameProxy::didChangeTitle(String&& title)
+void WebFrameProxy::didChangeTitle(RefPtr<StringImpl>&& title)
 {
     m_title = WTF::move(title);
 }
@@ -629,7 +629,7 @@ bool WebFrameProxy::isConnected() const
     return false;
 }
 
-void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, String&& frameName, SandboxFlags effectiveSandboxFlags, ReferrerPolicy effectiveReferrerPolicy, WebCore::ScrollbarMode scrollingMode)
+void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, RefPtr<StringImpl>&& frameName, SandboxFlags effectiveSandboxFlags, ReferrerPolicy effectiveReferrerPolicy, WebCore::ScrollbarMode scrollingMode)
 {
     // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
     // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
@@ -724,7 +724,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
         continuation();
 }
 
-void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
+void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, RefPtr<StringImpl>&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, RefPtr<StringImpl>&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
@@ -1253,7 +1253,7 @@ void WebFrameProxy::takeSnapshotOfNode(JSHandleIdentifier identifier, Completion
     sendWithAsyncReply(Messages::WebFrame::TakeSnapshotOfNode(identifier), WTF::move(completion));
 }
 
-void WebFrameProxy::sendMessageToInspectorFrontend(const String& targetId, const String& message)
+void WebFrameProxy::sendMessageToInspectorFrontend(StringImpl* targetId, StringImpl* message)
 {
     if (RefPtr page = m_page.get())
         page->inspectorController().sendMessageToInspectorFrontend(targetId, message);
@@ -1267,11 +1267,11 @@ void WebFrameProxy::requestTextExtraction(WebCore::TextExtraction::Request&& req
     sendWithAsyncReply(Messages::WebFrame::RequestTextExtraction(WTF::move(request)), WTF::move(completion));
 }
 
-void WebFrameProxy::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&& completion)
+void WebFrameProxy::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, RefPtr<StringImpl>&&, Vector<RefPtr<StringImpl>>&&, FloatRect)>&& completion)
 {
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess()) {
         ASSERT_NOT_REACHED();
-        return completion(false, "Internal inconsistency / unexpected state. Please file a bug"_s, { }, { });
+        return completion(false, "Internal inconsistency / unexpected state. Please file a bug"_si, { }, { });
     }
 
     sendWithAsyncReply(Messages::WebFrame::HandleTextExtractionInteraction(WTF::move(interaction)), WTF::move(completion));
@@ -1311,7 +1311,7 @@ void WebFrameProxy::requestContainerJSHandleForExtractedText(TextExtraction::Ext
     sendWithAsyncReply(Messages::WebFrame::RequestContainerJSHandleForExtractedText(WTF::move(extractedText)), WTF::move(completion));
 }
 
-void WebFrameProxy::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+void WebFrameProxy::requestContainerJSHandleForSearchTexts(Vector<RefPtr<StringImpl>>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
 {
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
@@ -1335,7 +1335,7 @@ void WebFrameProxy::findFirstConnectedNode(Vector<NodeIdentifier>&& candidates, 
     sendWithAsyncReply(Messages::WebFrame::FindFirstConnectedNode(WTF::move(candidates)), WTF::move(completion));
 }
 
-void WebFrameProxy::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)
+void WebFrameProxy::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<RefPtr<StringImpl>>>&&)>&& completion)
 {
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
@@ -1343,7 +1343,7 @@ void WebFrameProxy::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHan
     sendWithAsyncReply(Messages::WebFrame::GetSelectorPathsForNode(WTF::move(handle)), WTF::move(completion));
 }
 
-void WebFrameProxy::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+void WebFrameProxy::getNodeForSelectorPaths(Vector<HashSet<RefPtr<StringImpl>>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
 {
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
@@ -1391,7 +1391,7 @@ void WebFrameProxy::updateDocumentSecurityOrigin()
 
 WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkProcess(const URL& url) const
 {
-    String hostAndPort = url.hostAndPort();
+    RefPtr<StringImpl> hostAndPort = url.hostAndPort();
     if (!decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
         return { };
 
@@ -1424,7 +1424,7 @@ void WebFrameProxy::commitCertificateInfo(const URL& url, bool hasCertificateInf
     m_certificateInfo = hasCertificateInfo ? provisionalCertificateInfoFromNetworkProcess(url) : CertificateInfo();
 }
 
-void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
+void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(RefPtr<StringImpl>&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
 {
     // FIXME: This has no corresponding remove call. If we know a host is not being used by the back/forward
     // cache and is not being navigated to, we could clean up this map. Since we don't re-use main frames for

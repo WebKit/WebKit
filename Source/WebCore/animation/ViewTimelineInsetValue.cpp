@@ -40,16 +40,16 @@ static std::optional<Style::ViewTimelineInsetItem::Offset> convertToInsetOffset(
     return std::nullopt;
 }
 
-static std::optional<Style::ViewTimelineInsetItem::Offset> convertToInsetOffset(String&& string)
+static std::optional<Style::ViewTimelineInsetItem::Offset> convertToInsetOffset(RefPtr<StringImpl>&& string)
 {
-    if (string == "auto"_s)
+    if (equal(string, "auto"_s))
         return Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } };
     return std::nullopt;
 }
 
 static std::optional<Style::ViewTimelineInsetItem::Offset> convertToInsetOffset(Ref<CSSOMKeywordValue>&& keywordValue)
 {
-    if (keywordValue->value() == "auto"_s)
+    if (equal(keywordValue->value(), "auto"_s))
         return Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } };
     return std::nullopt;
 }
@@ -66,7 +66,7 @@ static std::optional<Style::ViewTimelineInsetItem::Offset> convertToInsetOffset(
 std::optional<Style::ViewTimelineInsetItem> validateViewTimelineInset(ViewTimelineInsetValue&& value, const Document& document)
 {
     return WTF::switchOn(WTF::move(value),
-        [&](String&& rangeString) -> std::optional<Style::ViewTimelineInsetItem> {
+        [&](RefPtr<StringImpl>&& rangeString) -> std::optional<Style::ViewTimelineInsetItem> {
             return CSSPropertyParserHelpers::parseAbsoluteSingleViewTimelineInsetItemRaw(rangeString, document.cssParserContext(), document);
         },
         [&](Vector<ViewTimelineIndividualInset>&& sequence) -> std::optional<Style::ViewTimelineInsetItem> {

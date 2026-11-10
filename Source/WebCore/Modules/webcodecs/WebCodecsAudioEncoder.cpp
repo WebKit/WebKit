@@ -81,11 +81,11 @@ static bool isSupportedEncoderCodec(const WebCodecsAudioEncoderConfig& config)
 {
     // FIXME: Check codec more accurately.
     const auto& codec = config.codec;
-    bool isMPEG4AAC = codec == "mp4a.40.2"_s || codec == "mp4a.40.02"_s || codec == "mp4a.40.5"_s
-        || codec == "mp4a.40.05"_s || codec == "mp4a.40.29"_s || codec == "mp4a.40.42"_s;
-    bool isCodecAllowed = isMPEG4AAC || codec == "mp3"_s || codec == "opus"_s
-        || codec == "alaw"_s || codec == "ulaw"_s || codec == "flac"_s
-        || codec == "vorbis"_s || codec.startsWith("pcm-"_s);
+    bool isMPEG4AAC = equal(codec, "mp4a.40.2"_s) || equal(codec, "mp4a.40.02"_s) || equal(codec, "mp4a.40.5"_s)
+        || equal(codec, "mp4a.40.05"_s) || equal(codec, "mp4a.40.29"_s) || equal(codec, "mp4a.40.42"_s);
+    bool isCodecAllowed = isMPEG4AAC || equal(codec, "mp3"_s) || equal(codec, "opus"_s)
+        || equal(codec, "alaw"_s) || equal(codec, "ulaw"_s) || equal(codec, "flac"_s)
+        || equal(codec, "vorbis"_s) || startsWith(codec, "pcm-"_s);
 
     if (!isCodecAllowed)
         return false;
@@ -119,7 +119,7 @@ static bool isValidEncoderConfig(const WebCodecsAudioEncoderConfig& config)
 
     // FIXME: New WPT requires this to reject as non valid. For now we just state that it's not supported (webkit.org/b/283900)
     // https://w3c.github.io/webcodecs/opus_codec_registration.html#opus-encoder-config
-    if (config.codec == "opus"_s && config.bitrate && (*config.bitrate < 6000 || *config.bitrate > 510000))
+    if (equal(config.codec, "opus"_s) && config.bitrate && (*config.bitrate < 6000 || *config.bitrate > 510000))
         return false;
 
     if (auto opusConfig = config.opus) {
@@ -171,10 +171,10 @@ NODELETE static ExceptionOr<AudioEncoder::Config> createAudioEncoderConfig(const
 ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebCodecsAudioEncoderConfig&& config)
 {
     if (!isValidEncoderConfig(config))
-        return Exception { ExceptionCode::TypeError, "Config is invalid"_s };
+        return Exception { ExceptionCode::TypeError, "Config is invalid"_si };
 
     if (state() == WebCodecsCodecState::Closed || !scriptExecutionContext())
-        return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is closed"_si };
 
     setState(WebCodecsCodecState::Configured);
     m_isKeyChunkRequired = true;
@@ -205,7 +205,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
         blockControlMessageQueue();
         if (!isSupportedCodec) {
             postTaskToCodec<WebCodecsAudioEncoder>(identifier, *this, [] (auto& encoder) {
-                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_si });
                 encoder.unblockControlMessageQueue();
             });
             return WebCodecsControlMessageOutcome::Processed;
@@ -272,7 +272,7 @@ WebCodecsEncodedAudioChunkMetadata WebCodecsAudioEncoder::createEncodedChunkMeta
         auto baseConfigurationSampleRate = m_baseConfiguration.sampleRate;
         auto baseConfigurationNumberOfChannels = m_baseConfiguration.numberOfChannels;
         metadata.decoderConfig = WebCodecsAudioDecoderConfig {
-            !m_activeConfiguration.codec.isEmpty() ? WTF::move(m_activeConfiguration.codec) : String { m_baseConfiguration.codec },
+            !isEmpty(m_activeConfiguration.codec) ? WTF::move(m_activeConfiguration.codec) : RefPtr<StringImpl> { m_baseConfiguration.codec },
             m_activeConfiguration.sampleRate.value_or(baseConfigurationSampleRate),
             m_activeConfiguration.numberOfChannels.value_or(baseConfigurationNumberOfChannels),
             { },
@@ -296,19 +296,19 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
     auto audioData = frame->data().audioData;
     if (!audioData) {
         ASSERT(frame->isDetached());
-        return Exception { ExceptionCode::TypeError, "AudioData is detached"_s };
+        return Exception { ExceptionCode::TypeError, "AudioData is detached"_si };
     }
     ASSERT(!frame->isDetached());
 
     if (state() != WebCodecsCodecState::Configured)
-        return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is not configured"_si };
 
     queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, audioData = WTF::move(audioData), timestamp = frame->timestamp(), duration = frame->duration()]() mutable {
         // FIXME: These checks are not yet spec-compliant. See also https://github.com/w3c/webcodecs/issues/716
         if (m_baseConfiguration.numberOfChannels != audioData->numberOfChannels()
             || m_baseConfiguration.sampleRate != audioData->sampleRate()) {
             queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& encoder) mutable {
-                encoder.closeEncoder(Exception { ExceptionCode::EncodingError, "Input audio buffer is incompatible with codec parameters"_s });
+                encoder.closeEncoder(Exception { ExceptionCode::EncodingError, "Input audio buffer is incompatible with codec parameters"_si });
             });
             return WebCodecsControlMessageOutcome::Processed;
         }
@@ -335,7 +335,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
 void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
 {
     if (state() != WebCodecsCodecState::Configured) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "AudioEncoder is not configured"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "AudioEncoder is not configured"_si });
         return;
     }
 
@@ -352,18 +352,18 @@ void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
 
 ExceptionOr<void> WebCodecsAudioEncoder::reset()
 {
-    return resetEncoder(Exception { ExceptionCode::AbortError, "Reset called"_s });
+    return resetEncoder(Exception { ExceptionCode::AbortError, "Reset called"_si });
 }
 
 ExceptionOr<void> WebCodecsAudioEncoder::close()
 {
-    return closeEncoder(Exception { ExceptionCode::AbortError, "Close called"_s });
+    return closeEncoder(Exception { ExceptionCode::AbortError, "Close called"_si });
 }
 
 void WebCodecsAudioEncoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsAudioEncoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
     if (!isValidEncoderConfig(config)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_si });
         return;
     }
 
@@ -400,7 +400,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::closeEncoder(Exception&& exception)
 ExceptionOr<void> WebCodecsAudioEncoder::resetEncoder(const Exception& exception)
 {
     if (state() == WebCodecsCodecState::Closed)
-        return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is closed"_si };
 
     setState(WebCodecsCodecState::Unconfigured);
     if (RefPtr internalEncoder = std::exchange(m_internalEncoder, { }))

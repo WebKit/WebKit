@@ -52,11 +52,11 @@ enum class Relation : uint8_t {
     Opener = 1 << 2,
 };
 
-OptionSet<Relation> relationsForRelAttribute(const AtomString& relValue);
+OptionSet<Relation> relationsForRelAttribute(AtomStringImpl* relValue);
 bool isSupportedRelToken(const Document&, StringView token);
 bool hasRel(OptionSet<Relation> linkRelations, Relation);
 
-AtomString parseDownloadAttribute(const Element&, const URL& completedURL, const QualifiedName& downloadAttr);
+RefPtr<AtomStringImpl> parseDownloadAttribute(const Element&, const URL& completedURL, const QualifiedName& downloadAttr);
 
 void sendPings(const Element&, const QualifiedName& pingAttr, const URL& destinationURL);
 
@@ -66,10 +66,10 @@ void navigateHyperlink(
     Element& sourceElement,
     Event&,
     const URL& completedURL,
-    const AtomString& target,
+    AtomStringImpl* target,
     OptionSet<Relation> relations,
     ReferrerPolicy,
-    const AtomString& downloadAttribute = { },
+    AtomStringImpl* downloadAttribute = nullptr,
     std::optional<PrivateClickMeasurement>&& = std::nullopt);
 
 } // namespace WebCore

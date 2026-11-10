@@ -29,6 +29,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT String humanReadableStringFromCodecString(const String&);
+WEBCORE_EXPORT RefPtr<StringImpl> humanReadableStringFromCodecString(StringImpl*);
 
 }

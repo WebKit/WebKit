@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayValidateMerchantEvent);
 
-ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomString& type, URL&& validationURL)
+ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(AtomStringImpl* type, URL&& validationURL)
     : Event(EventInterfaceType::ApplePayValidateMerchantEvent, type, CanBubble::No, IsCancelable::No)
     , m_validationURL(WTF::move(validationURL))
 {

@@ -47,30 +47,30 @@ public:
         return adoptRef(*new WebExtensionLocalization(std::forward<Args>(args)...));
     }
 
-    const String& uniqueIdentifier() LIFETIME_BOUND { return m_uniqueIdentifier; };
+    const RefPtr<StringImpl>& uniqueIdentifier() LIFETIME_BOUND { return m_uniqueIdentifier; };
     RefPtr<JSON::Object> localizationJSON() { return m_localizationJSON; };
 
     RefPtr<JSON::Object> localizedJSONforJSON(RefPtr<JSON::Object>);
-    String localizedStringForKey(String key, Vector<String> placeholders = { });
-    String localizedStringForString(String);
+    RefPtr<StringImpl> localizedStringForKey(RefPtr<StringImpl> key, Vector<RefPtr<StringImpl>> placeholders = { });
+    RefPtr<StringImpl> localizedStringForString(RefPtr<StringImpl>);
 
 private:
     explicit WebExtensionLocalization(WebKit::WebExtension&);
-    explicit WebExtensionLocalization(RefPtr<JSON::Object> localizedJSON, const String& uniqueIdentifier);
-    explicit WebExtensionLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& withBestLocale, const String& uniqueIdentifier);
+    explicit WebExtensionLocalization(RefPtr<JSON::Object> localizedJSON, StringImpl* uniqueIdentifier);
+    explicit WebExtensionLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, StringImpl* withBestLocale, StringImpl* uniqueIdentifier);
 
-    void loadRegionalLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& withBestLocale = { }, const String& uniqueIdentifier = { });
+    void loadRegionalLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, StringImpl* withBestLocale = nullptr, StringImpl* uniqueIdentifier = nullptr);
 
-    RefPtr<JSON::Object> localizationJSONForWebExtension(WebKit::WebExtension&, const String& withLocale);
+    RefPtr<JSON::Object> localizationJSONForWebExtension(WebKit::WebExtension&, StringImpl* withLocale);
     RefPtr<JSON::Array> localizedArrayForArray(RefPtr<JSON::Array>);
     Ref<JSON::Object> predefinedMessages();
 
-    String stringByReplacingNamedPlaceholdersInString(String sourceString, RefPtr<JSON::Object> placeholders);
-    String stringByReplacingPositionalPlaceholdersInString(String sourceString, Vector<String> placeholders = { });
+    RefPtr<StringImpl> stringByReplacingNamedPlaceholdersInString(RefPtr<StringImpl> sourceString, RefPtr<JSON::Object> placeholders);
+    RefPtr<StringImpl> stringByReplacingPositionalPlaceholdersInString(RefPtr<StringImpl> sourceString, Vector<RefPtr<StringImpl>> placeholders = { });
 
     std::unique_ptr<WebCore::Locale> m_locale;
-    String m_localeString;
-    String m_uniqueIdentifier;
+    RefPtr<StringImpl> m_localeString;
+    RefPtr<StringImpl> m_uniqueIdentifier;
     RefPtr<JSON::Object> m_localizationJSON;
 };
 

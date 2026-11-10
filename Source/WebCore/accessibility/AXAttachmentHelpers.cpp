@@ -40,7 +40,7 @@ bool AXAttachmentHelpers::hasProgress(const HTMLAttachmentElement& attachmentEle
 {
     auto& progressString = attachmentElement.getAttribute(progressAttr);
     bool validProgress = false;
-    float result = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
+    float result = std::max<float>(std::min<float>(toFloat(progressString, &validProgress), 1), 0);
     if (progress)
         *progress = result;
     return validProgress;
@@ -52,13 +52,13 @@ void AXAttachmentHelpers::accessibilityText(const HTMLAttachmentElement& attachm
     auto& subtitle = attachmentElement.attachmentSubtitle();
     auto& action = attachmentElement.getAttribute(actionAttr);
 
-    if (action.length())
+    if (length(action))
         textOrder.append(AccessibilityText(action, AccessibilityTextSource::Action));
 
-    if (title.length())
+    if (length(title))
         textOrder.append(AccessibilityText(WTF::move(title), AccessibilityTextSource::Title));
 
-    if (subtitle.length())
+    if (length(subtitle))
         textOrder.append(AccessibilityText(subtitle, AccessibilityTextSource::Subtitle));
 }
 

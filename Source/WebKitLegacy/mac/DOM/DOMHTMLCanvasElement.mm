@@ -67,11 +67,11 @@
 {
     WebCore::JSMainThreadNullState state;
 
-    auto exceptionOrReturnValue = IMPL->toDataURL(type);
+    auto exceptionOrReturnValue = IMPL->toDataURL(StringImpl::create(type).get());
     if (exceptionOrReturnValue.hasException())
         raiseDOMErrorException(exceptionOrReturnValue.releaseException());
 
-    return exceptionOrReturnValue.releaseReturnValue().string.createNSString().autorelease();
+    return createNSString(exceptionOrReturnValue.releaseReturnValue().string).autorelease();
 }
 
 @end

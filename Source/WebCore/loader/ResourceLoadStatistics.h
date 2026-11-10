@@ -80,7 +80,7 @@ struct ResourceLoadStatistics {
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
     WEBCORE_EXPORT bool decode(KeyedDecoder&, unsigned modelVersion);
 
-    WEBCORE_EXPORT String toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
 
     WEBCORE_EXPORT void merge(const ResourceLoadStatistics&);
 
@@ -126,8 +126,8 @@ struct ResourceLoadStatistics {
     // This set represents the registrable domain of the top frame where web API
     // were used in the top frame or one of its subframes.
     HashSet<RegistrableDomain> topFrameRegistrableDomainsWhichAccessedWebAPIs;
-    HashSet<String> fontsFailedToLoad;
-    HashSet<String> fontsSuccessfullyLoaded;
+    HashSet<RefPtr<StringImpl>> fontsFailedToLoad;
+    HashSet<RefPtr<StringImpl>> fontsSuccessfullyLoaded;
     CanvasActivityRecord canvasActivityRecord;
     OptionSet<NavigatorAPIsAccessed> navigatorFunctionsAccessed;
     OptionSet<ScreenAPIsAccessed> screenFunctionsAccessed;

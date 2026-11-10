@@ -177,7 +177,7 @@ void WebInspectorBackend::close()
     closeFrontendConnection();
 }
 
-void WebInspectorBackend::evaluateScriptForTest(const String& script)
+void WebInspectorBackend::evaluateScriptForTest(StringImpl* script)
 {
     if (!m_page->corePage())
         return;
@@ -214,7 +214,7 @@ void WebInspectorBackend::showMainResourceForFrame(WebCore::FrameIdentifier fram
     if (!m_page->corePage())
         return;
 
-    String inspectorFrameIdentifier = protect(protect(m_page->corePage()->inspectorController())->ensurePageAgent())->frameId(protect(frame->coreLocalFrame()).get());
+    RefPtr<StringImpl> inspectorFrameIdentifier = protect(protect(m_page->corePage()->inspectorController())->ensurePageAgent())->frameId(protect(frame->coreLocalFrame()).get());
 
     whenFrontendConnectionEstablished([inspectorFrameIdentifier](auto& frontendConnection) {
         frontendConnection.send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);
@@ -469,7 +469,7 @@ void WebInspectorBackend::removeInstrumentationForDestroyedFrame(LocalFrame& fra
         m_framePageAgentProxies.remove(it);
 }
 
-void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&& completionHandler)
+void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<std::pair<RefPtr<StringImpl>, bool>, RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto result = resourceDataStore->getResponseBody(resourceID);
@@ -478,20 +478,20 @@ void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, C
     // FIXME: <https://webkit.org/b/320234> The sibling proxying replies (Page.getResourceContent,
     // Page.searchInResource) still use a bare error-string reply and should adopt this same
     // Expected-based discriminator.
-    ASSERT(result.has_value() || !result.error().isEmpty());
+    ASSERT(result.has_value() || !isEmpty(result.error()));
     completionHandler(WTF::move(result));
 }
 
-void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<String, String>&&)>&& completionHandler)
+void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto result = resourceDataStore->getSerializedCertificate(resourceID);
     // See getResponseBody: a genuine failure must carry a non-empty message (empty is connection loss).
-    ASSERT(result.has_value() || !result.error().isEmpty());
+    ASSERT(result.has_value() || !isEmpty(result.error()));
     completionHandler(WTF::move(result));
 }
 
-void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&& completionHandler)
+void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, StringImpl* url, CompletionHandler<void(std::expected<std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>, int>, RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     // Site Isolation load leg for Network.loadResource: ProxyingNetworkAgent already routed this to
     // the frame's hosting process, so resolve the frame locally and run the load in its document
@@ -529,63 +529,63 @@ static Vector<Inspector::SearchMatch> convertSearchMatches(JSON::ArrayOf<Inspect
         if (!object)
             continue;
         Inspector::SearchMatch match;
-        if (auto lineNumber = object->getInteger("lineNumber"_s))
+        if (auto lineNumber = object->getInteger("lineNumber"_si))
             match.lineNumber = *lineNumber;
-        match.lineContent = object->getString("lineContent"_s);
+        match.lineContent = object->getString("lineContent"_si);
         result.append(WTF::move(match));
     }
     return result;
 }
 
-void WebInspectorBackend::searchInRequest(WebCore::ResourceLoaderIdentifier resourceID, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&& completionHandler)
+void WebInspectorBackend::searchInRequest(WebCore::ResourceLoaderIdentifier resourceID, StringImpl* query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, RefPtr<StringImpl> errorString)>&& completionHandler)
 {
     // Mirrors InspectorNetworkAgent::searchInRequest, reading from this process's
     // BackendResourceDataStore (the Site Isolation analog of NetworkResourcesData).
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto const* resourceData = resourceDataStore->data(resourceID);
     if (!resourceData) {
-        completionHandler({ }, "Missing resource for given requestId"_s);
+        completionHandler({ }, "Missing resource for given requestId"_si);
         return;
     }
 
     if (!resourceData->hasContent()) {
-        completionHandler({ }, "Missing content of resource for given requestId"_s);
+        completionHandler({ }, "Missing content of resource for given requestId"_si);
         return;
     }
 
     if (resourceData->base64Encoded()) {
-        completionHandler({ }, "Search not supported on base64-encoded resource"_s);
+        completionHandler({ }, "Search not supported on base64-encoded resource"_si);
         return;
     }
 
     auto matches = Inspector::ContentSearchUtilities::searchInTextByLines(resourceData->content(), query, caseSensitive, isRegex);
-    completionHandler(convertSearchMatches(matches.get()), String());
+    completionHandler(convertSearchMatches(matches.get()), nullString());
 }
 
-void WebInspectorBackend::searchInFrameResource(WebCore::FrameIdentifier frameID, const String& url, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&& completionHandler)
+void WebInspectorBackend::searchInFrameResource(WebCore::FrameIdentifier frameID, StringImpl* url, StringImpl* query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, RefPtr<StringImpl> errorString)>&& completionHandler)
 {
     // Mirrors the frame+URL half of InspectorPageAgent::searchInResource: find the resource by URL
     // (main resource vs. cached resource) in this process's copy of the frame, then search its text.
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
-        completionHandler({ }, "Frame not found in this process"_s);
+        completionHandler({ }, "Frame not found in this process"_si);
         return;
     }
     RefPtr localFrame = webFrame->coreLocalFrame();
     if (!localFrame) {
-        completionHandler({ }, "Frame is not local to this process"_s);
+        completionHandler({ }, "Frame is not local to this process"_si);
         return;
     }
 
     RefPtr loader = localFrame->loader().documentLoader();
     if (!loader) {
-        completionHandler({ }, "No document loader for frame"_s);
+        completionHandler({ }, "No document loader for frame"_si);
         return;
     }
 
     URL parsedURL({ }, url);
 
-    String content;
+    RefPtr<StringImpl> content;
     bool success = false;
     if (equalIgnoringFragmentIdentifier(parsedURL, loader->url()))
         success = Inspector::ResourceUtilities::mainResourceContent(localFrame.get(), false, &content);
@@ -600,15 +600,15 @@ void WebInspectorBackend::searchInFrameResource(WebCore::FrameIdentifier frameID
     }
 
     if (!success) {
-        completionHandler({ }, String());
+        completionHandler({ }, nullString());
         return;
     }
 
     auto matches = Inspector::ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive, isRegex);
-    completionHandler(convertSearchMatches(matches.get()), String());
+    completionHandler(convertSearchMatches(matches.get()), nullString());
 }
 
-void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&& completionHandler)
+void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, StringImpl* query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&& completionHandler)
 {
     // Combines both halves of InspectorPageAgent::searchInResources for the frames this process
     // hosts: match each frame's cached subresources, and also this process's BackendResourceDataStore
@@ -620,7 +620,7 @@ void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentif
     // diverges from the legacy path, which double-counts it.
     // Caveat: the join key is a URL string, and a redirected resource has different URLs in the two
     // walks (request vs. final URL), so it can still be counted twice.
-    HashSet<String> cachedResourceURLs;
+    HashSet<RefPtr<StringImpl>> cachedResourceURLs;
 
     auto searchType = isRegex ? Inspector::ContentSearchUtilities::SearchType::Regex : Inspector::ContentSearchUtilities::SearchType::ContainsString;
     auto searchCaseSensitive = caseSensitive ? Inspector::ContentSearchUtilities::SearchCaseSensitive::Yes : Inspector::ContentSearchUtilities::SearchCaseSensitive::No;
@@ -653,7 +653,7 @@ void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentif
 
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     resourceDataStore->forEach([&](const BackendResourceDataStore::ResourceData& entry) {
-        if (!entry.hasContent() || entry.base64Encoded() || entry.url().isNull())
+        if (!entry.hasContent() || entry.base64Encoded() || !entry.url())
             return;
         // Skip entries already emitted by the cached-resource walk to avoid double-counting
         // (e.g. a stylesheet is both a CachedResource and a buffered data-store entry).
@@ -787,7 +787,7 @@ void WebInspectorBackend::disablePageInstrumentation()
     // Reset so a later re-enable seeds fresh proxies as off; the UIProcess ProxyingPageAgent also
     // resets on disable().
     m_showPaintRects = false;
-    m_bootstrapScript = { };
+    m_bootstrapScript = nullptr;
 
     if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
         for (auto& settingName : std::exchange(m_overriddenSettings, { })) {
@@ -806,7 +806,7 @@ void WebInspectorBackend::setShowPaintRects(bool show)
         proxy->setShowPaintRects(show);
 }
 
-void WebInspectorBackend::setSettingOverride(const String& settingName, std::optional<bool> value)
+void WebInspectorBackend::setSettingOverride(StringImpl* settingName, std::optional<bool> value)
 {
     RefPtr corePage = m_page ? m_page->corePage() : nullptr;
     if (!corePage)
@@ -822,7 +822,7 @@ void WebInspectorBackend::setSettingOverride(const String& settingName, std::opt
         m_overriddenSettings.remove(settingName);
 }
 
-void WebInspectorBackend::setBootstrapScript(const String& source)
+void WebInspectorBackend::setBootstrapScript(StringImpl* source)
 {
     m_bootstrapScript = source;
     for (auto& proxy : m_framePageAgentProxies.values())
@@ -878,7 +878,7 @@ void WebInspectorBackend::getFrameCookies(Vector<WebCore::FrameIdentifier>&& fra
     completionHandler(copyToVector(cookies));
 }
 
-void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frameID, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&& completionHandler)
+void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frameID, RefPtr<StringImpl> url, CompletionHandler<void(RefPtr<StringImpl> content, bool base64Encoded, RefPtr<StringImpl> errorString)>&& completionHandler)
 {
     // Return the content of a resource hosted by this WebContent process, for the UIProcess
     // ProxyingPageAgent to serve Page.getResourceContent cross-process under Site Isolation.
@@ -891,17 +891,17 @@ void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frame
     // See webkit.org/b/171780776.
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
-        completionHandler(String(), false, "Frame not found in this process"_s);
+        completionHandler(nullString(), false, "Frame not found in this process"_si);
         return;
     }
     RefPtr localFrame = webFrame->coreLocalFrame();
     if (!localFrame) {
-        completionHandler(String(), false, "Frame is not local to this process"_s);
+        completionHandler(nullString(), false, "Frame is not local to this process"_si);
         return;
     }
     RefPtr loader = localFrame->loader().documentLoader();
     if (!loader) {
-        completionHandler(String(), false, "No document loader for frame"_s);
+        completionHandler(nullString(), false, "No document loader for frame"_si);
         return;
     }
 
@@ -914,7 +914,7 @@ void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frame
     URL parsedURL({ }, url);
     URL loaderURL = loader->url();
 
-    String content;
+    RefPtr<StringImpl> content;
     // Initialize before use: the cached-subresource branch (cachedResourceContent) has a
     // return-false path that leaves base64Encoded untouched, and this reply serializes it across
     // IPC unconditionally, so an uninitialized bool would be undefined behavior.
@@ -931,7 +931,7 @@ void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frame
 
     // Matches InspectorPageAgent::getResourceContent: on a lookup miss, report success with
     // empty content rather than an error -- the frontend already tolerates empty content here.
-    completionHandler(content, base64Encoded, String());
+    completionHandler(content, base64Encoded, nullString());
 }
 
 } // namespace WebKit

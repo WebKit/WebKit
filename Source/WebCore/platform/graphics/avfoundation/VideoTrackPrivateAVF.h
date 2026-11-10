@@ -39,20 +39,20 @@ public:
     int trackIndex() const override { return m_index; }
     Kind kind() const override { return m_kind; }
     TrackID id() const override { return m_id; }
-    String label() const override { return m_label; }
-    String language() const override { return m_language; }
+    RefPtr<StringImpl> label() const override { return m_label; }
+    RefPtr<StringImpl> language() const override { return m_language; }
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }
     void setId(TrackID newId) { m_id = newId; }
-    void setLabel(const String& label) { m_label = label; }
-    void setLanguage(const String& language) { m_language = language; }
+    void setLabel(StringImpl* label) { m_label = label; }
+    void setLanguage(StringImpl* language) { m_language = language; }
     void setTrackIndex(int index) { m_index = index; }
 
     Kind m_kind { Kind::None };
     TrackID m_id;
-    String m_label;
-    String m_language;
+    RefPtr<StringImpl> m_label;
+    RefPtr<StringImpl> m_language;
     int m_index { 0 };
 
     VideoTrackPrivateAVF() = default;

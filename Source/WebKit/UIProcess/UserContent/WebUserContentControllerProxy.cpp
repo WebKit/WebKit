@@ -99,7 +99,7 @@ void WebUserContentControllerProxy::removeNetworkProcess(NetworkProcessProxy& pr
 }
 #endif
 
-IPC::TransferString WebUserContentControllerProxy::cachedTransferString(const String& string) const
+IPC::TransferString WebUserContentControllerProxy::cachedTransferString(StringImpl* string) const
 {
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning)) {
@@ -353,7 +353,7 @@ bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessage
     Ref world = handler.world();
 
     for (auto& existingHandler : m_scriptMessageHandlers.values()) {
-        if (existingHandler->name() == handler.name() && existingHandler->world().identifier() == world->identifier())
+        if (equal(existingHandler->name(), handler.name()) && existingHandler->world().identifier() == world->identifier())
             return false;
     }
 
@@ -365,10 +365,10 @@ bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessage
     return true;
 }
 
-void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String& name, API::ContentWorld& world)
+void WebUserContentControllerProxy::removeUserMessageHandlerForName(StringImpl* name, API::ContentWorld& world)
 {
     for (auto it = m_scriptMessageHandlers.begin(), end = m_scriptMessageHandlers.end(); it != end; ++it) {
-        if (it->value->name() == name && it->value->world().identifier() == world.identifier()) {
+        if (equal(it->value->name(), name) && it->value->world().identifier() == world.identifier()) {
             for (Ref process : m_processes)
                 process->send(Messages::WebUserContentController::RemoveUserScriptMessageHandler(world.identifier(), it->value->identifier()), identifier());
 
@@ -397,11 +397,11 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
     m_scriptMessageHandlers.clear();
 }
 
-void WebUserContentControllerProxy::didPostMessage(WebPageProxy& page, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& reply) const
+void WebUserContentControllerProxy::didPostMessage(WebPageProxy& page, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& reply) const
 {
     RefPtr handler = m_scriptMessageHandlers.get(messageHandlerID);
     if (!handler)
-        return reply(makeUnexpected(String()));
+        return reply(makeUnexpected(nullString()));
     handler->client().didPostMessage(page, WTF::move(frameInfoData), handler->world(), WTF::move(message), WTF::move(reply));
 }
 
@@ -419,7 +419,7 @@ void WebUserContentControllerProxy::addContentRuleList(API::ContentRuleList& con
         process->send(Messages::NetworkContentRuleListManager::AddContentRuleLists { identifier(), { { data, extensionBaseURL } } }, 0);
 }
 
-void WebUserContentControllerProxy::removeContentRuleList(const String& name)
+void WebUserContentControllerProxy::removeContentRuleList(StringImpl* name)
 {
     m_contentRuleLists.remove(name);
 
@@ -455,7 +455,7 @@ void WebUserContentControllerProxy::removeAllContentRuleLists()
     ASSERT(removeWebExtensions == RemoveWebExtensions::No);
 
     const Vector ruleListsToRemove = [&] {
-        Vector<String> ruleListsToRemove;
+        Vector<RefPtr<StringImpl>> ruleListsToRemove;
         for (auto& entry : m_contentRuleLists) {
             const auto& contentRuleListName = entry.key;
             const auto& extensionBaseURL = std::get<URL>(entry.value);
@@ -472,14 +472,14 @@ void WebUserContentControllerProxy::removeAllContentRuleLists()
 }
 #endif
 
-void WebUserContentControllerProxy::addJSBuffer(Ref<WebCore::SharedMemory>&& buffer, API::ContentWorld& world, const String& name)
+void WebUserContentControllerProxy::addJSBuffer(Ref<WebCore::SharedMemory>&& buffer, API::ContentWorld& world, StringImpl* name)
 {
     m_buffers.set({ world.identifier(), name }, buffer);
     for (Ref process : m_processes)
         process->send(Messages::WebUserContentController::AddJSBuffer(WebJSBufferData { buffer, world.worldDataForProcess(process), name }), identifier());
 }
 
-void WebUserContentControllerProxy::removeJSBuffer(API::ContentWorld& world, const String& name)
+void WebUserContentControllerProxy::removeJSBuffer(API::ContentWorld& world, StringImpl* name)
 {
     m_buffers.remove({ world.identifier(), name });
     for (Ref process : m_processes)

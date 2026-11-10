@@ -77,7 +77,7 @@ inline std::string writingModeString(WritingMode writingMode)
 {
     TextStream stream;
     stream << writingMode;
-    return stream.release().utf8().toStdString();
+    return utf8(stream.release()).toStdString();
 }
 
 TEST(WritingMode, LogicalBoxSide)

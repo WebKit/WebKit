@@ -144,7 +144,7 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
     });
 }
 
-void MemoryBackingStoreTransaction::objectStoreRenamed(MemoryObjectStore& objectStore, const String& oldName)
+void MemoryBackingStoreTransaction::objectStoreRenamed(MemoryObjectStore& objectStore, StringImpl* oldName)
 {
     ASSERT(m_objectStores.contains(&objectStore));
     ASSERT(m_info.mode() == IDBTransactionMode::Versionchange);
@@ -154,7 +154,7 @@ void MemoryBackingStoreTransaction::objectStoreRenamed(MemoryObjectStore& object
     m_originalObjectStoreNames.add(objectStore, oldName);
 }
 
-void MemoryBackingStoreTransaction::indexRenamed(MemoryIndex& index, const String& oldName)
+void MemoryBackingStoreTransaction::indexRenamed(MemoryIndex& index, StringImpl* oldName)
 {
     ASSERT(!index.objectStore() || m_objectStores.contains(index.objectStore()));
     ASSERT(m_info.mode() == IDBTransactionMode::Versionchange);
@@ -178,7 +178,7 @@ void MemoryBackingStoreTransaction::abort()
         // If a new index was added with the original name of an index being renamed in this transaction, we need to delete it.
         RefPtr<MemoryIndex> indexToDelete;
         for (auto addedIndex : m_indexes) {
-            if (addedIndex->info().name() == originalName && addedIndex->info().identifier() != identifier) {
+            if (equal(addedIndex->info().name(), originalName) && addedIndex->info().identifier() != identifier) {
                 indexToDelete = addedIndex.ptr();
                 break;
             }

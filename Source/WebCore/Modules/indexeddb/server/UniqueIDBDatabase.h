@@ -90,13 +90,13 @@ public:
         Fail
     };
     void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void deleteObjectStore(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void renameObjectStore(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void deleteObjectStore(UniqueIDBDatabaseTransaction&, StringImpl* objectStoreName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void renameObjectStore(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, StringImpl* newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void clearObjectStore(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void createIndexAsync(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&);
     void didGenerateIndexKeyForRecord(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, const IDBKeyData&, const IndexKey&, std::optional<int64_t> recordID);
-    void deleteIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, const String& indexName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void renameIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void deleteIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, StringImpl* indexName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void renameIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback&&);
     void putOrAddAfterSpaceCheck(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback&&, bool isKeyGenerated, const IndexIDToIndexKeyMap&, const IDBObjectStoreInfo&, SpaceCheckResult);
     void getRecord(const IDBRequestData&, const IDBGetRecordData&, GetResultCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
@@ -124,7 +124,7 @@ public:
     void handleTransactionsAfterAbortingSuspendedClientTransactions();
     WEBCORE_EXPORT bool tryClose();
 
-    WEBCORE_EXPORT String filePath() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> filePath() const;
     NODELETE WEBCORE_EXPORT std::optional<IDBDatabaseNameAndVersion> nameAndVersion() const;
     WEBCORE_EXPORT bool hasDataInMemory() const;
     WEBCORE_EXPORT void handleLowMemoryWarning();

@@ -43,12 +43,18 @@ class FontDescription;
 enum class IsForPlatformFont : bool;
     
 struct CharacterFallbackMapKey {
-    AtomString locale;
-    String string;
+    RefPtr<AtomStringImpl> locale;
+    RefPtr<StringImpl> string;
     bool isForPlatformFont { false };
     ResolvedEmojiPolicy resolvedEmojiPolicy { ResolvedEmojiPolicy::NoPreference };
 
-    bool operator==(const CharacterFallbackMapKey& other) const = default;
+    bool operator==(const CharacterFallbackMapKey& other) const
+    {
+        return locale == other.locale
+            && contentEquals(string, other.string)
+            && isForPlatformFont == other.isForPlatformFont
+            && resolvedEmojiPolicy == other.resolvedEmojiPolicy;
+    }
 };
 
 inline void add(Hasher& hasher, const CharacterFallbackMapKey& key)

@@ -246,7 +246,7 @@ WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::
 {
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->frame = &frame;
-    resource->priv->uri = request.url().string().utf8();
+    resource->priv->uri = utf8(request.url().string());
     resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequestRequester::Main;
     return resource;
 }
@@ -275,8 +275,8 @@ void webkitWebResourceFailed(WebKitWebResource* resource, WebCore::ResourceError
     if (resourceError.tlsErrors())
         g_signal_emit(resource, signals[FAILED_WITH_TLS_ERRORS], 0, resourceError.certificate(), static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()));
     else {
-        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
-            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(utf8(resourceError.domain())),
+            toWebKitError(resourceError.errorCode()), utf8(resourceError.localizedDescription()).legacyCStringPointer()));
         g_signal_emit(resource, signals[FAILED], 0, error.get());
     }
 
@@ -381,7 +381,7 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
             resourceDataCallback(data, task.get());
         });
     else {
-        String url { resource->priv->uri };
+        RefPtr<StringImpl> url = StringImpl::create(resource->priv->uri.span());
         resource->priv->frame->getResourceData(API::URL::create(url).ptr(), [task = WTF::move(task)](API::Data* data) {
             resourceDataCallback(data, task.get());
         });

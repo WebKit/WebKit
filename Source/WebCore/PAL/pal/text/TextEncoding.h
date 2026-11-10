@@ -40,7 +40,7 @@ public:
     TextEncoding() = default;
     PAL_EXPORT TextEncoding(ASCIILiteral name);
     PAL_EXPORT TextEncoding(StringView name);
-    PAL_EXPORT TextEncoding(const String& name);
+    PAL_EXPORT TextEncoding(StringImpl* name);
 
     bool isValid() const { return !m_name.isNull(); }
     ASCIILiteral name() const { return m_name; }
@@ -51,8 +51,8 @@ public:
     const TextEncoding& closestByteBasedEquivalent() const;
     const TextEncoding& encodingForFormSubmissionOrURLParsing() const;
 
-    PAL_EXPORT String decode(std::span<const uint8_t>, bool stopOnError, bool& sawError) const;
-    String decode(std::span<const uint8_t>) const;
+    PAL_EXPORT RefPtr<StringImpl> decode(std::span<const uint8_t>, bool stopOnError, bool& sawError) const;
+    RefPtr<StringImpl> decode(std::span<const uint8_t>) const;
     PAL_EXPORT Vector<uint8_t> encode(StringView, PAL::UnencodableHandling, NFCNormalize = NFCNormalize::Yes) const;
     Vector<uint8_t> encodeForURLParsing(StringView string) const final { return encode(string, PAL::UnencodableHandling::URLEncodedEntities, NFCNormalize::No); }
 
@@ -79,9 +79,9 @@ PAL_EXPORT const TextEncoding& WindowsLatin1Encoding();
 // Unescapes the given string using URL escaping rules.
 // DANGER: If the URL has "%00" in it,
 // the resulting string will have embedded null characters!
-PAL_EXPORT String decodeURLEscapeSequences(StringView, const TextEncoding& = UTF8Encoding());
+PAL_EXPORT RefPtr<StringImpl> decodeURLEscapeSequences(StringView, const TextEncoding& = UTF8Encoding());
 
-inline String TextEncoding::decode(std::span<const uint8_t> characters) const
+inline RefPtr<StringImpl> TextEncoding::decode(std::span<const uint8_t> characters) const
 {
     bool ignored;
     return decode(characters, false, ignored);

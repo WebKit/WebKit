@@ -43,22 +43,22 @@ bool StaticPasteboard::hasData()
     return m_customData.hasData();
 }
 
-Vector<String> StaticPasteboard::typesSafeForBindings(const String&)
+Vector<RefPtr<StringImpl>> StaticPasteboard::typesSafeForBindings(StringImpl*)
 {
     return m_customData.orderedTypes();
 }
 
-Vector<String> StaticPasteboard::typesForLegacyUnsafeBindings()
+Vector<RefPtr<StringImpl>> StaticPasteboard::typesForLegacyUnsafeBindings()
 {
     return m_customData.orderedTypes();
 }
 
-String StaticPasteboard::readString(const String& type)
+RefPtr<StringImpl> StaticPasteboard::readString(StringImpl* type)
 {
     return m_customData.readString(type);
 }
 
-String StaticPasteboard::readStringInCustomData(const String& type)
+RefPtr<StringImpl> StaticPasteboard::readStringInCustomData(StringImpl* type)
 {
     return m_customData.readStringInCustomData(type);
 }
@@ -68,19 +68,19 @@ bool StaticPasteboard::hasNonDefaultData() const
     return !m_nonDefaultDataTypes.isEmpty();
 }
 
-void StaticPasteboard::writeString(const String& type, const String& value)
+void StaticPasteboard::writeString(StringImpl* type, StringImpl* value)
 {
     m_nonDefaultDataTypes.add(type);
     m_customData.writeString(type, value);
 }
 
-void StaticPasteboard::writeData(const String& type, Ref<SharedBuffer>&& data)
+void StaticPasteboard::writeData(StringImpl* type, Ref<SharedBuffer>&& data)
 {
     m_nonDefaultDataTypes.add(type);
     m_customData.writeData(type, WTF::move(data));
 }
 
-void StaticPasteboard::writeStringInCustomData(const String& type, const String& value)
+void StaticPasteboard::writeStringInCustomData(StringImpl* type, StringImpl* value)
 {
     m_nonDefaultDataTypes.add(type);
     m_customData.writeStringInCustomData(type, value);
@@ -93,7 +93,7 @@ void StaticPasteboard::clear()
     m_customData.clear();
 }
 
-void StaticPasteboard::clear(const String& type)
+void StaticPasteboard::clear(StringImpl* type)
 {
     m_nonDefaultDataTypes.remove(type);
     m_customData.clear(type);
@@ -104,19 +104,19 @@ PasteboardCustomData StaticPasteboard::takeCustomData()
     return std::exchange(m_customData, { });
 }
 
-void StaticPasteboard::writeMarkup(const String& markup)
+void StaticPasteboard::writeMarkup(StringImpl* markup)
 {
     m_customData.writeString(textHTMLContentTypeAtom(), markup);
 }
 
-void StaticPasteboard::writePlainText(const String& text, SmartReplaceOption)
+void StaticPasteboard::writePlainText(StringImpl* text, SmartReplaceOption)
 {
     m_customData.writeString(textPlainContentTypeAtom(), text);
 }
 
 void StaticPasteboard::write(const PasteboardURL& url)
 {
-    m_customData.writeString("text/uri-list"_s, url.url.string());
+    m_customData.writeString("text/uri-list"_si, url.url.string());
 }
 
 void StaticPasteboard::write(PasteboardImage&& image)
@@ -128,7 +128,7 @@ void StaticPasteboard::write(PasteboardImage&& image)
     m_fileContentState = Pasteboard::FileContentState::InMemoryImage;
 
 #if PLATFORM(MAC)
-    if (!image.dataInHTMLFormat.isEmpty())
+    if (!isEmpty(image.dataInHTMLFormat))
         writeMarkup(image.dataInHTMLFormat);
 #else
     UNUSED_PARAM(image);
@@ -142,8 +142,8 @@ void StaticPasteboard::write(PasteboardImage&& image)
 
 void StaticPasteboard::write(const PasteboardWebContent& content)
 {
-    String markup;
-    String text;
+    RefPtr<StringImpl> markup;
+    RefPtr<StringImpl> text;
 
 #if PLATFORM(COCOA)
     markup = content.dataInHTMLFormat;
@@ -155,10 +155,10 @@ void StaticPasteboard::write(const PasteboardWebContent& content)
     UNUSED_PARAM(content);
 #endif
 
-    if (!markup.isEmpty())
+    if (!isEmpty(markup))
         writeMarkup(markup);
 
-    if (!text.isEmpty())
+    if (!isEmpty(text))
         writePlainText(text, SmartReplaceOption::CannotSmartReplace);
 }
 

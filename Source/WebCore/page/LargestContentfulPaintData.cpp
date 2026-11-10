@@ -210,7 +210,7 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
         pendingEntry->setRenderTime(paintTimestamp);
 
     if (element.hasID())
-        pendingEntry->setID(element.getIdAttribute().string());
+        pendingEntry->setID(element.getIdAttribute());
 
     LOG_WITH_STREAM(LargestContentfulPaint, stream << " making new entry for " << element << " image " << (image ? image->url().string() : emptyString()) << " id " << pendingEntry->id() <<
         ": entry size " << pendingEntry->size() << ", loadTime " << pendingEntry->loadTime() << ", renderTime " << pendingEntry->renderTime());

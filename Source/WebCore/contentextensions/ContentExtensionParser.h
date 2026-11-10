@@ -44,8 +44,8 @@ enum class CSSSelectorsAllowed : bool {
     Yes
 };
 
-WEBCORE_EXPORT std::expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&, CSSSelectorsAllowed);
-WEBCORE_EXPORT bool isValidCSSSelector(const String&);
+WEBCORE_EXPORT std::expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(StringImpl*, CSSSelectorsAllowed);
+WEBCORE_EXPORT bool isValidCSSSelector(StringImpl*);
 
 CSSParserContext contentExtensionCSSParserContext();
 

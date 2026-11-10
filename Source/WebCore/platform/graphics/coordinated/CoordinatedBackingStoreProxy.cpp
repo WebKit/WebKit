@@ -525,7 +525,7 @@ IntSize CoordinatedBackingStoreProxy::computeTileSize(const IntSize& viewportSiz
     std::call_once(onceFlag, [] {
         const char* tileSizeEnv = getenv("WEBKIT_LAYERS_TILE_SIZE");
         if (tileSizeEnv && *tileSizeEnv) {
-            auto tokens = String::fromLatin1(tileSizeEnv).split('x');
+            auto tokens = split(StringImpl::fromLatin1(tileSizeEnv), 'x');
             if (!tokens.isEmpty()) {
                 int width = parseInteger<int>(tokens[0]).value_or(0);
                 int height = tokens.size() > 1 ? parseInteger<int>(tokens[1]).value_or(0) : width;

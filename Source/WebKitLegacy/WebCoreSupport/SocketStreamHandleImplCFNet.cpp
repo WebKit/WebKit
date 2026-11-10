@@ -76,7 +76,7 @@ NODELETE static inline auto callbacksRunLoopMode()
     return kCFRunLoopCommonModes;
 }
 
-SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool acceptInsecureCertificates)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, StringImpl* credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool acceptInsecureCertificates)
     : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
@@ -100,7 +100,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
         && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
         // Call this asynchronously because the socket stream is not fully constructed at this point.
         callOnMainThread([this, protectedThis = Ref { *this }] {
-            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."_s));
+            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."_si));
         });
         return;
     }
@@ -345,7 +345,7 @@ void SocketStreamHandleImpl::createStreams()
     }
 }
 
-bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSpace& protectionSpace, String& login, String& password)
+bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSpace& protectionSpace, RefPtr<StringImpl>& login, RefPtr<StringImpl>& password)
 {
     // FIXME (<rdar://problem/10416495>): Proxy credentials should be retrieved from AuthBrokerAgent.
 
@@ -403,7 +403,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
     if (!CFHTTPAuthenticationRequiresUserNameAndPassword(authentication.get())) {
         // That's all we can offer...
-        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"_s));
+        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"_si));
         return;
     }
 
@@ -414,26 +414,26 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
     if (!methodCF || !realmCF) {
         // This shouldn't happen, but on some OS versions we get incomplete authentication data, see <rdar://problem/10416316>.
-        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket proxy authentication couldn't be handled"_s));
+        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket proxy authentication couldn't be handled"_si));
         return;
     }
 
-    ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpace::ServerType::ProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
-    String login;
-    String password;
+    ProtectionSpace protectionSpace(StringImpl::create(m_proxyHost.get()).get(), port, ProtectionSpace::ServerType::ProxyHTTPS, StringImpl::create(realmCF.get()).get(), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
+    RefPtr<StringImpl> login;
+    RefPtr<StringImpl> password;
     if (!m_sentStoredCredentials && getStoredCONNECTProxyCredentials(protectionSpace, login, password)) {
         // Try to apply stored credentials, if we haven't tried those already.
         // Create a temporary request to make CFNetwork apply credentials to it. Unfortunately, this cannot work with NTLM authentication.
         RetainPtr<CFHTTPMessageRef> dummyRequest = adoptCF(CFHTTPMessageCreateRequest(0, CFSTR("GET"), m_httpsURL.get(), kCFHTTPVersion1_1));
 
-        Boolean appliedCredentials = CFHTTPMessageApplyCredentials(dummyRequest.get(), authentication.get(), login.createCFString().get(), password.createCFString().get(), 0);
+        Boolean appliedCredentials = CFHTTPMessageApplyCredentials(dummyRequest.get(), authentication.get(), createCFString(login).get(), createCFString(password).get(), 0);
         ASSERT_UNUSED(appliedCredentials, appliedCredentials);
 
         RetainPtr<CFStringRef> proxyAuthorizationString = adoptCF(CFHTTPMessageCopyHeaderFieldValue(dummyRequest.get(), CFSTR("Proxy-Authorization")));
 
         if (!proxyAuthorizationString) {
             // Fails e.g. for NTLM auth.
-            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"_s));
+            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"_si));
             return;
         }
 
@@ -445,13 +445,13 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
     // FIXME: On platforms where AuthBrokerAgent is not available, ask the client if credentials could not be found.
 
-    m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy credentials are not available"_s));
+    m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy credentials are not available"_si));
 }
 
 CFStringRef SocketStreamHandleImpl::copyCFStreamDescription(void* info)
 {
     SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(info);
-    return makeString("WebKit socket stream, "_s, handle->m_url.string()).createCFString().leakRef();
+    return createCFString(makeString("WebKit socket stream, "_s, handle->m_url.string())).leakRef();
 }
 
 void SocketStreamHandleImpl::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
@@ -537,7 +537,7 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
                     addCONNECTCredentials(proxyResponse.get());
                     return;
                 default:
-                    m_client.didFailSocketStream(*this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established, unexpected response code"_s));
+                    m_client.didFailSocketStream(*this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established, unexpected response code"_si));
                     platformClose();
                     return;
                 }
@@ -646,7 +646,7 @@ void SocketStreamHandleImpl::writeStreamCallback(CFStreamEventType type)
 void SocketStreamHandleImpl::reportErrorToClient(CFErrorRef error)
 {
     CFIndex errorCode = CFErrorGetCode(error);
-    String description;
+    RefPtr<StringImpl> description;
 
 #if PLATFORM(MAC)
 
@@ -662,9 +662,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
 
-    if (description.isNull()) {
+    if (!description) {
         RetainPtr<CFStringRef> descriptionCF = adoptCF(CFErrorCopyDescription(error));
-        description = String(descriptionCF.get());
+        description = StringImpl::create(descriptionCF.get());
     }
 
     m_client.didFailSocketStream(*this, SocketStreamError(static_cast<int>(errorCode), m_url.string(), description));

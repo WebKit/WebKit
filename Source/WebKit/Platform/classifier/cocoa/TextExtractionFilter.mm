@@ -102,13 +102,13 @@ void TextExtractionFilter::resetCache()
     m_cache.clear();
 }
 
-void TextExtractionFilter::shouldFilter(const String& text, CompletionHandler<void(bool)>&& completionHandler)
+void TextExtractionFilter::shouldFilter(StringImpl* text, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto textLength = text.length();
+    auto textLength = length(text);
     if (textLength <= chunkSize)
         return completionHandler(false);
 
-    m_modelQueue->dispatch([protectedThis = Ref { *this }, text = text.isolatedCopy(), completionHandler = WTF::move(completionHandler), textLength] mutable {
+    m_modelQueue->dispatch([protectedThis = Ref { *this }, text = isolatedCopy(text), completionHandler = WTF::move(completionHandler), textLength] mutable {
         RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), result = protectedThis->shouldFilter(text), textLength] mutable {
             if (result)
                 RELEASE_LOG_INFO(TextExtraction, "Classifier filtered out %{public}u characters", textLength);
@@ -118,7 +118,7 @@ void TextExtractionFilter::shouldFilter(const String& text, CompletionHandler<vo
     });
 }
 
-bool TextExtractionFilter::shouldFilter(const String& text)
+bool TextExtractionFilter::shouldFilter(StringImpl* text)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -127,19 +127,19 @@ bool TextExtractionFilter::shouldFilter(const String& text)
     if (!m_model)
         return false;
 
-    if (text.length() <= chunkSize)
+    if (length(text) <= chunkSize)
         return false;
 
-    auto cacheKey = text.hash();
+    auto cacheKey = hash(text);
     if (cacheKey) {
         Locker locker { m_cacheLock };
         if (auto cachedEntry = m_cache.find(cacheKey); cachedEntry != m_cache.end())
             return cachedEntry->value;
     }
 
-    const auto allLines = text.split('\n');
+    const auto allLines = split(text, '\n');
     for (auto& line : allLines) {
-        if (line.length() <= chunkSize)
+        if (length(line) <= chunkSize)
             continue;
 
         for (RetainPtr chunk : segmentText(line)) {
@@ -169,15 +169,15 @@ bool TextExtractionFilter::shouldFilter(const String& text)
     return false;
 }
 
-Vector<RetainPtr<NSString>> TextExtractionFilter::segmentText(const String& text)
+Vector<RetainPtr<NSString>> TextExtractionFilter::segmentText(StringImpl* text)
 {
     Vector<RetainPtr<NSString>> segments;
-    if (text.length() <= chunkSize) {
-        segments.append(text.createNSString());
+    if (length(text) <= chunkSize) {
+        segments.append(createNSString(text));
         return segments;
     }
 
-    RetainPtr nsText = text.createNSString();
+    RetainPtr nsText = createNSString(text);
     [m_tokenizer setString:nsText.get()];
 
     NSUInteger textLength = [nsText length];

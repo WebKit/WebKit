@@ -280,7 +280,7 @@ void SimulatedXRDevice::frameTimerFired()
             origin = data.inputSources[i].pointerOrigin.pose;
             if (!origin)
                 continue;
-            if (source.profiles.contains(pair.value->profile)) {
+            if (source.profiles.containsIf([&](auto& profile) { return equal(profile, pair.value->profile); })) {
                 PlatformXR::Ray ray = transformRay(source.pointerOrigin.pose, pair.value->offsetRay);
                 auto hitInWorld = hitTestWorld(ray, pair.value->entityTypes);
                 results.append({ source.handle, hitTestWorldToOrigin(origin.value(), hitInWorld) });
@@ -603,13 +603,13 @@ Vector<PlatformXR::FrameData::Plane> SimulatedXRDevice::detectedPlanes() const
             return FloatPoint(point.x, point.z);
         });
         plane.orientation = planeInfo->orientation == XRPlaneOrientation::Horizontal ? PlatformXR::PlaneOrientation::Horizontal : PlatformXR::PlaneOrientation::Vertical;
-        if (planeInfo->semanticLabel == "floor"_s)
+        if (equal(planeInfo->semanticLabel, "floor"_s))
             plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Floor;
-        else if (planeInfo->semanticLabel == "wall"_s)
+        else if (equal(planeInfo->semanticLabel, "wall"_s))
             plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Wall;
-        else if (planeInfo->semanticLabel == "ceiling"_s)
+        else if (equal(planeInfo->semanticLabel, "ceiling"_s))
             plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Ceiling;
-        else if (planeInfo->semanticLabel == "table"_s)
+        else if (equal(planeInfo->semanticLabel, "table"_s))
             plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Table;
         planes.append(WTF::move(plane));
     }

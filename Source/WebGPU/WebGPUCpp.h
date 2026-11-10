@@ -726,7 +726,7 @@ class XRView;
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpubufferdescriptor
 struct BufferDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     OptionSet<BufferUsage> usage;
     uint64_t size { 0 };
     bool mappedAtCreation { false };
@@ -734,14 +734,14 @@ struct BufferDescriptor {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpuquerysetdescriptor
 struct QuerySetDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     QueryType type { QueryType::Occlusion };
     uint32_t count { 0 };
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpusamplerdescriptor
 struct SamplerDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     AddressMode addressModeU { AddressMode::ClampToEdge };
     AddressMode addressModeV { AddressMode::ClampToEdge };
     AddressMode addressModeW { AddressMode::ClampToEdge };
@@ -756,7 +756,7 @@ struct SamplerDescriptor {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gputexturedescriptor
 struct TextureDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     OptionSet<TextureUsage> usage;
     TextureDimension dimension { TextureDimension::_2d };
     Extent3D size;
@@ -770,7 +770,7 @@ struct TextureDescriptor {
 // The std::nullopt members take their values from the texture, as described in
 // https://gpuweb.github.io/gpuweb/#abstract-opdef-resolving-gputextureviewdescriptor-defaults.
 struct TextureViewDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     std::optional<TextureFormat> format;
     std::optional<TextureViewDimension> dimension;
     uint32_t baseMipLevel { 0 };
@@ -784,25 +784,25 @@ struct TextureViewDescriptor {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpushadermodulecompilationhint
 struct ShaderModuleCompilationHint {
-    String entryPoint;
+    RefPtr<StringImpl> entryPoint;
     Ref<PipelineLayout> layout;
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpushadermoduledescriptor
 struct ShaderModuleDescriptor {
-    String label;
-    String code; // WGSL.
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> code; // WGSL.
     std::span<const ShaderModuleCompilationHint> hints; // Borrowed for the duration of the call.
 } SWIFT_VIEW;
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpucommandencoderdescriptor
 struct CommandEncoderDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpucommandbufferdescriptor
 struct CommandBufferDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpasstimestampwrites
@@ -815,7 +815,7 @@ struct PassTimestampWrites {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpucomputepassdescriptor
 struct ComputePassDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     std::optional<PassTimestampWrites> timestampWrites;
 };
 
@@ -848,7 +848,7 @@ struct RenderPassDepthStencilAttachment {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpassdescriptor
 struct RenderPassDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     // Borrowed for the duration of the call. std::nullopt: no color attachment in that slot.
     std::span<const std::optional<RenderPassColorAttachment>> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
@@ -862,7 +862,7 @@ struct RenderPassDescriptor {
 // https://gpuweb.github.io/gpuweb/#gpuerror
 struct Error {
     ErrorType type { ErrorType::Validation };
-    String message;
+    RefPtr<StringImpl> message;
 };
 
 struct InstanceDescriptor {
@@ -895,7 +895,7 @@ struct RequestAdapterOptions {
 
 // https://gpuweb.github.io/gpuweb/#gpuadapterinfo
 struct AdapterInfo {
-    String name;
+    RefPtr<StringImpl> name;
     bool isFallbackAdapter { false };
     uint32_t subgroupMinSize { 0 };
     uint32_t subgroupMaxSize { 0 };
@@ -903,7 +903,7 @@ struct AdapterInfo {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpudevicedescriptor
 struct DeviceDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     std::span<const FeatureName> requiredFeatures; // Borrowed for the duration of the call.
     std::optional<Limits> requiredLimits; // std::nullopt: the default limits.
 } SWIFT_VIEW;
@@ -937,7 +937,7 @@ struct ImageCopyTextureTagged {
 // https://gpuweb.github.io/gpuweb/#dictdef-gpuexternaltexturedescriptor, with the pixel buffer of the
 // video source.
 struct ExternalTextureDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     // The size the source presents the frame at, which the pixel buffer does not carry. Zero when
@@ -977,7 +977,7 @@ struct XRProjectionLayerDescriptor {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderbundleencoderdescriptor
 struct RenderBundleEncoderDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     // Borrowed for the duration of the call. std::nullopt: no color attachment in that slot.
     std::span<const std::optional<TextureFormat>> colorFormats;
     std::optional<TextureFormat> depthStencilFormat;
@@ -988,7 +988,7 @@ struct RenderBundleEncoderDescriptor {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderbundledescriptor
 struct RenderBundleDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gputexelcopybufferlayout
@@ -1014,20 +1014,20 @@ struct TexelCopyTextureInfo {
 
 // https://gpuweb.github.io/gpuweb/#dom-gpuprogrammablestage-constants
 struct ConstantEntry {
-    String key;
+    RefPtr<StringImpl> key;
     double value { 0 };
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpuprogrammablestage
 struct ProgrammableStage {
     Ref<ShaderModule> module;
-    String entryPoint; // A null string: the only entry point of the module for the stage.
+    RefPtr<StringImpl> entryPoint; // A null string: the only entry point of the module for the stage.
     std::span<const ConstantEntry> constants; // Borrowed for the duration of the call.
 } SWIFT_VIEW;
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpucomputepipelinedescriptor
 struct ComputePipelineDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     RefPtr<PipelineLayout> layout;
     ProgrammableStage compute;
 } SWIFT_VIEW;
@@ -1120,7 +1120,7 @@ struct MultisampleState {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpipelinedescriptor
 struct RenderPipelineDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     RefPtr<PipelineLayout> layout; // nullptr: a layout that the pipeline generates from its shaders.
     VertexState vertex;
     PrimitiveState primitive;
@@ -1132,12 +1132,12 @@ struct RenderPipelineDescriptor {
 // https://gpuweb.github.io/gpuweb/#gpupipelineerror
 struct PipelineError {
     PipelineErrorReason reason { PipelineErrorReason::Validation };
-    String message;
+    RefPtr<StringImpl> message;
 };
 
 // https://gpuweb.github.io/gpuweb/#gpucompilationmessage
 struct CompilationMessage {
-    String message;
+    RefPtr<StringImpl> message;
     CompilationMessageType type { CompilationMessageType::Error };
     uint64_t lineNum { 0 };
     uint64_t linePos { 0 }; // One-based, as in GPUCompilationMessage.
@@ -1195,13 +1195,13 @@ struct BindGroupLayoutEntry {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpubindgrouplayoutdescriptor
 struct BindGroupLayoutDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     std::span<const BindGroupLayoutEntry> entries; // Borrowed for the duration of the call.
 } SWIFT_VIEW;
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpupipelinelayoutdescriptor
 struct PipelineLayoutDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     // Borrowed for the duration of the call. std::nullopt makes a layout that the pipeline
     // generates from its shaders.
     std::optional<std::span<const Ref<BindGroupLayout>>> bindGroupLayouts;
@@ -1225,7 +1225,7 @@ struct BindGroupEntry {
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpubindgroupdescriptor
 struct BindGroupDescriptor {
-    String label;
+    RefPtr<StringImpl> label;
     Ref<BindGroupLayout> layout;
     std::span<const BindGroupEntry> entries; // Borrowed for the duration of the call.
 } SWIFT_VIEW;
@@ -1302,7 +1302,7 @@ public:
     virtual bool isXRCompatible() const = 0;
     // Completes with nullptr when the device cannot be created. An adapter creates one device.
     virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1316,7 +1316,7 @@ public:
     // Rebinds the current frame of an external texture that the bind group binds. Returns false
     // when the bind group has to be recreated instead.
     virtual bool updateExternalTextures(ExternalTexture&) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1327,7 +1327,7 @@ class BindGroupLayout : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<B
 public:
     virtual ~BindGroupLayout() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1349,7 +1349,7 @@ public:
     // The whole contents, where the implementation can reach them. Only the GPU Process can.
     virtual std::span<uint8_t> getBufferContents() = 0;
     virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1360,7 +1360,7 @@ class CommandBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Com
 public:
     virtual ~CommandBuffer() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1380,13 +1380,13 @@ public:
     virtual void copyTextureToTexture(const TexelCopyTextureInfo& source, const TexelCopyTextureInfo& destination, const Extent3D& copySize) = 0;
     // A std::nullopt size is the rest of the buffer after the offset.
     virtual void clearBuffer(Buffer&, uint64_t offset = 0, std::optional<uint64_t> size = std::nullopt) = 0;
-    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) = 0;
     virtual void popDebugGroup() = 0;
-    virtual void insertDebugMarker(String&& markerLabel) = 0;
+    virtual void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) = 0;
     virtual void writeTimestamp(QuerySet&, uint32_t queryIndex) = 0;
     virtual void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset) = 0;
     virtual RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1404,10 +1404,10 @@ public:
     // The dynamic offsets are borrowed for the call. std::nullopt skips the check of their
     // count against the layout.
     virtual void setBindGroup(uint32_t index, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) = 0;
-    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) = 0;
     virtual void popDebugGroup() = 0;
-    virtual void insertDebugMarker(String&& markerLabel) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1419,7 +1419,7 @@ public:
     virtual ~ComputePipeline() = default;
 
     virtual Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1465,10 +1465,10 @@ public:
     // when the device is destroyed or the callback is replaced.
     virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     // An empty callback clears the current one. Setting a callback completes the current one.
-    virtual void resolveDeviceLostPromise(CompletionHandler<void(DeviceLostReason, String&&)>&&) = 0;
+    virtual void resolveDeviceLostPromise(CompletionHandler<void(DeviceLostReason, RefPtr<StringImpl>&&)>&&) = 0;
     // Stops generating errors, for the objects that are created invalid on purpose.
     virtual void pauseAllErrorReporting(bool pause) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1485,7 +1485,7 @@ public:
     // Makes the external texture show the frame in the pixel buffer.
     virtual void updateExternalTexture(CVPixelBufferRef) = 0;
 #endif
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1501,7 +1501,7 @@ public:
 #if PLATFORM(COCOA)
     virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 #endif
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1512,7 +1512,7 @@ class PipelineLayout : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Pi
 public:
     virtual ~PipelineLayout() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1536,7 +1536,7 @@ public:
     // read back that way.
     virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) = 0;
 #endif
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1548,7 +1548,7 @@ public:
     virtual ~QuerySet() = default;
 
     virtual void destroy() = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1572,7 +1572,7 @@ public:
 #if PLATFORM(COCOA)
     virtual void copyExternalImageToTexture(const ImageCopyExternalImage& source, const ImageCopyTextureTagged& destination, const Extent3D& copySize) = 0;
 #endif
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1583,7 +1583,7 @@ class RenderBundle : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Rend
 public:
     virtual ~RenderBundle() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1605,11 +1605,11 @@ public:
     // The dynamic offsets are borrowed for the call. std::nullopt skips the check of their
     // count against the layout.
     virtual void setBindGroup(uint32_t index, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) = 0;
-    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) = 0;
     virtual void popDebugGroup() = 0;
-    virtual void insertDebugMarker(String&& markerLabel) = 0;
+    virtual void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) = 0;
     virtual RefPtr<RenderBundle> finish(const RenderBundleDescriptor&) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1631,9 +1631,9 @@ public:
     // The dynamic offsets are borrowed for the call. std::nullopt skips the check of their
     // count against the layout.
     virtual void setBindGroup(uint32_t index, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) = 0;
-    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) = 0;
     virtual void popDebugGroup() = 0;
-    virtual void insertDebugMarker(String&& markerLabel) = 0;
+    virtual void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) = 0;
     virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth) = 0;
     virtual void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
     virtual void setBlendConstant(const Color&) = 0;
@@ -1643,7 +1643,7 @@ public:
     // The bundles are borrowed for the call.
     virtual void executeBundles(std::span<const Ref<RenderBundle>>) = 0;
     virtual void end() = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1655,7 +1655,7 @@ public:
     virtual ~RenderPipeline() = default;
 
     virtual Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1666,7 +1666,7 @@ class Sampler : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Sampler> 
 public:
     virtual ~Sampler() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1678,7 +1678,7 @@ public:
     virtual ~ShaderModule() = default;
 
     virtual void compilationInfo(CompletionHandler<void(CompilationInfo&&)>&&) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1694,7 +1694,7 @@ public:
     virtual void destroy() = 0;
     // Recreates a destroyed canvas texture, for the frame that reuses it.
     virtual void undestroy() = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1705,7 +1705,7 @@ class TextureView : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Textu
 public:
     virtual ~TextureView() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1718,7 +1718,7 @@ public:
 
     virtual RefPtr<XRProjectionLayer> createProjectionLayer(const XRProjectionLayerDescriptor&) = 0;
     virtual RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&) = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1738,7 +1738,7 @@ public:
     // Drops the compositor textures the layer holds. Called when the page destroys the layer, which can
     // happen long before the last reference to it goes away.
     virtual void destroy() = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1751,7 +1751,7 @@ public:
 
     virtual RefPtr<Texture> colorTexture() = 0;
     virtual RefPtr<Texture> depthStencilTexture() = 0;
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:
@@ -1762,7 +1762,7 @@ class XRView : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRView> {
 public:
     virtual ~XRView() = default;
 
-    virtual void setLabel(String&&) = 0;
+    virtual void setLabel(RefPtr<StringImpl>&&) = 0;
     virtual bool isValid() const = 0;
 
 protected:

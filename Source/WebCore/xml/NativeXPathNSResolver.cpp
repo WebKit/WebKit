@@ -40,7 +40,7 @@ NativeXPathNSResolver::NativeXPathNSResolver(Ref<Node>&& node)
 
 NativeXPathNSResolver::~NativeXPathNSResolver() = default;
 
-AtomString NativeXPathNSResolver::lookupNamespaceURI(const AtomString& prefix)
+RefPtr<AtomStringImpl> NativeXPathNSResolver::lookupNamespaceURI(AtomStringImpl* prefix)
 {
     // This is not done by Node::lookupNamespaceURI as per the DOM3 Core spec,
     // but the XPath spec says that we should do it for XPathNSResolver.

@@ -52,7 +52,7 @@ void ImageBufferRemoteDisplayListBackend::getPixelBuffer(const IntRect&, PixelBu
     destination.zeroFill();
 }
 
-String ImageBufferRemoteDisplayListBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferRemoteDisplayListBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferRemoteDisplayListBackend " << this;

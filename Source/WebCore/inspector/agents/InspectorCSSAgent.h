@@ -108,16 +108,16 @@ public:
     Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<Inspector::Protocol::CSS::CSSStyle> /* inlineStyle */, RefPtr<Inspector::Protocol::CSS::CSSStyle> /* attributesStyle */>> getInlineStylesForNode(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>>>> getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited, std::optional<bool>&& includeKeyframes);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> getAllStyleSheets();
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId&);
-    Inspector::Protocol::ErrorStringOr<String> getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId&);
-    Inspector::Protocol::ErrorStringOr<void> setStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId&, const String& text);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> setStyleText(Ref<JSON::Object>&& styleId, const String& text);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> setRuleSelector(Ref<JSON::Object>&& ruleId, const String& selector);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText);
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(const Inspector::Protocol::Network::FrameId&);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(const Inspector::Protocol::CSS::StyleSheetId&, const String& selector);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> getStyleSheet(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> getStyleSheetText(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<void> setStyleSheetText(StringImpl*, StringImpl* text);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> setStyleText(Ref<JSON::Object>&& styleId, StringImpl* text);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> setRuleSelector(Ref<JSON::Object>&& ruleId, StringImpl* selector);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, StringImpl* headerText);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(StringImpl*, StringImpl* selector);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> getSupportedCSSProperties();
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getSupportedSystemFontFamilyNames();
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> getSupportedSystemFontFamilyNames();
     Inspector::Protocol::ErrorStringOr<void> forcePseudoState(Inspector::Protocol::DOM::NodeId, Ref<JSON::Array>&& forcedPseudoClasses);
     Inspector::Protocol::ErrorStringOr<void> setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode);
 
@@ -164,8 +164,8 @@ public:
     static OptionSet<LayoutFlag> layoutFlagsForNode(Node&);
     static std::optional<LayoutFlag> layoutFlagContextType(RenderObject*);
     static bool layoutFlagsContainLayoutContextType(OptionSet<LayoutFlag>);
-    static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlags(OptionSet<LayoutFlag>);
-    RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
+    static RefPtr<JSON::ArrayOf<RefPtr<StringImpl> /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlags(OptionSet<LayoutFlag>);
+    RefPtr<JSON::ArrayOf<RefPtr<StringImpl> /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
 
     void reset();
 
@@ -186,7 +186,7 @@ private:
 
     Inspector::Protocol::CSS::StyleSheetId unbindStyleSheet(InspectorStyleSheet*);
     InspectorStyleSheet& bindStyleSheet(CSSStyleSheet*);
-    InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, const Inspector::Protocol::CSS::StyleSheetId&);
+    InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, StringImpl* styleSheetId);
     InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
     NODELETE Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 

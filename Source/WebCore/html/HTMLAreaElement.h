@@ -54,9 +54,9 @@ public:
 private:
     HTMLAreaElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool supportsFocus() const final;
-    AtomString target() const final;
+    RefPtr<AtomStringImpl> target() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool isFocusable() const final;

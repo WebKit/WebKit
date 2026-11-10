@@ -55,7 +55,7 @@ UIViewController *NetworkConnectionToWebProcess::paymentCoordinatorPresentingVie
 }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-void NetworkConnectionToWebProcess::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
+void NetworkConnectionToWebProcess::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(StringImpl*, StringImpl*)>&& completionHandler)
 {
     NetworkProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyIdentifier), WTF::move(completionHandler));
 }
@@ -66,7 +66,7 @@ void NetworkConnectionToWebProcess::notifyWillPresentPaymentUI(WebPageProxyIdent
 }
 #endif
 
-void NetworkConnectionToWebProcess::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkConnectionToWebProcess::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     protect(NetworkProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::GetPaymentCoordinatorEmbeddingUserAgent { webPageProxyIdentifier }, WTF::move(completionHandler));
 }
@@ -81,28 +81,28 @@ std::optional<SharedPreferencesForWebProcess> NetworkConnectionToWebProcess::sha
     return m_sharedPreferencesForWebProcess;
 }
 
-const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->boundInterfaceIdentifier();
     return emptyString();
 }
 
-const String& NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->dataConnectionServiceType();
     return emptyString();
 }
 
-const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->sourceApplicationBundleIdentifier();
     return emptyString();
 }
 
-const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->sourceApplicationSecondaryIdentifier();

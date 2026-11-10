@@ -59,7 +59,7 @@ DigitalCredentialsSession::~DigitalCredentialsSession()
     clearAbortAlgorithm();
 
     if (m_promise)
-        m_promise->reject(Exception { ExceptionCode::AbortError, "The credential request was abandoned."_s });
+        m_promise->reject(Exception { ExceptionCode::AbortError, "The credential request was abandoned."_si });
 }
 
 void DigitalCredentialsSession::setAbortAlgorithm(RefPtr<AbortSignal>&& signal, uint32_t identifier)
@@ -112,7 +112,7 @@ void DigitalCredentialsSession::stop()
         coordinator->dismissChooser();
 
     queueSettlement([](auto& promise) {
-        promise.reject(Exception { ExceptionCode::AbortError, "The document was stopped."_s });
+        promise.reject(Exception { ExceptionCode::AbortError, "The document was stopped."_si });
     });
 
     clearAbortAlgorithm();

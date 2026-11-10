@@ -34,28 +34,28 @@ namespace WebCore {
 class WebGLContextEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(WebGLContextEvent);
 public:
-    static Ref<WebGLContextEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
+    static Ref<WebGLContextEvent> create(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, StringImpl* statusMessage)
     {
         return adoptRef(*new WebGLContextEvent(type, canBubble, cancelable, statusMessage));
     }
 
     struct Init : EventInit {
-        String statusMessage;
+        RefPtr<StringImpl> statusMessage;
     };
 
-    static Ref<WebGLContextEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebGLContextEvent> create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebGLContextEvent(type, initializer, isTrusted));
     }
     virtual ~WebGLContextEvent();
 
-    const String& statusMessage() const LIFETIME_BOUND { return m_statusMessage; }
+    const RefPtr<StringImpl>& statusMessage() const LIFETIME_BOUND { return m_statusMessage; }
 
 private:
-    WebGLContextEvent(const AtomString& type, CanBubble, IsCancelable, const String& statusMessage);
-    WebGLContextEvent(const AtomString&, const Init&, IsTrusted);
+    WebGLContextEvent(AtomStringImpl* type, CanBubble, IsCancelable, StringImpl* statusMessage);
+    WebGLContextEvent(AtomStringImpl*, const Init&, IsTrusted);
 
-    String m_statusMessage;
+    RefPtr<StringImpl> m_statusMessage;
 };
 
 } // namespace WebCore

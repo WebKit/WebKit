@@ -49,7 +49,7 @@ RemoteCommandBufferProxy::~RemoteCommandBufferProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCommandBufferProxy::setLabel(String&& label)
+void RemoteCommandBufferProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteCommandBuffer::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

@@ -42,8 +42,8 @@ public:
     virtual ~RenderMathMLFenced();
 
     StringImpl* separators() const { return m_separators.get(); }
-    String openingBrace() const { return m_open; }
-    String closingBrace() const { return m_close; }
+    RefPtr<StringImpl> openingBrace() const { return m_open; }
+    RefPtr<StringImpl> closingBrace() const { return m_close; }
 
     RenderMathMLFencedOperator* closeFenceRenderer() const { return m_closeFenceRenderer.get(); }
     void setCloseFenceRenderer(RenderMathMLFencedOperator& renderer) { m_closeFenceRenderer = renderer; }
@@ -53,8 +53,8 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLFenced"_s; }
 
-    String m_open;
-    String m_close;
+    RefPtr<StringImpl> m_open;
+    RefPtr<StringImpl> m_close;
     RefPtr<StringImpl> m_separators;
 
     SingleThreadWeakPtr<RenderMathMLFencedOperator> m_closeFenceRenderer;

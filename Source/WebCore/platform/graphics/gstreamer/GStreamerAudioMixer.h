@@ -38,8 +38,8 @@ public:
     static bool isAvailable();
     static GStreamerAudioMixer& singleton();
 
-    void ensureState(GstStateChange, const String& deviceId = { });
-    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
+    void ensureState(GstStateChange, StringImpl* deviceId = nullptr);
+    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, StringImpl* deviceId = nullptr, const GRefPtr<GstDevice>& = nullptr);
     void unregisterProducer(const GRefPtr<GstPad>&);
 
     void configureSourcePeriodTime(UTF8CStringView sourceName, uint64_t periodTime);
@@ -54,12 +54,12 @@ private:
     };
 
     struct StreamingMembers {
-        HashMap<String, std::unique_ptr<MixerPipeline>> m_pipelines;
-        HashMap<GstPad*, String> m_padToDeviceId; // Reverse lookup: pad → deviceId.
+        HashMap<RefPtr<StringImpl>, std::unique_ptr<MixerPipeline>> m_pipelines;
+        HashMap<GstPad*, RefPtr<StringImpl>> m_padToDeviceId; // Reverse lookup: pad → deviceId.
     };
 
-    MixerPipeline& ensureMixerPipeline(DataMutexLocker<StreamingMembers>&, const String& deviceId, const GRefPtr<GstDevice>&);
-    void teardownPipeline(const String& deviceId);
+    MixerPipeline& ensureMixerPipeline(DataMutexLocker<StreamingMembers>&, StringImpl* deviceId, const GRefPtr<GstDevice>&);
+    void teardownPipeline(StringImpl* deviceId);
 
     static constexpr Seconds s_teardownTimeout = 60_s;
     DataMutex<StreamingMembers> m_streamingMembers;

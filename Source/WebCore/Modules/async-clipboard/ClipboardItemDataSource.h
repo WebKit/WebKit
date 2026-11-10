@@ -46,8 +46,8 @@ public:
 
     virtual ~ClipboardItemDataSource() = default;
 
-    virtual Vector<String> types() const = 0;
-    virtual void getType(const String&, Ref<DeferredPromise>&&) = 0;
+    virtual Vector<RefPtr<StringImpl>> types() const = 0;
+    virtual void getType(StringImpl*, Ref<DeferredPromise>&&) = 0;
     virtual void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) = 0;
 
 protected:

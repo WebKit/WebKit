@@ -124,8 +124,8 @@ struct MediaEngineSupportParameters {
     bool requiresRemotePlayback { false };
     bool supportsLimitedMatroska { false };
     Vector<ContentType> contentTypesRequiringHardwareSupport { };
-    std::optional<Vector<String>> allowedMediaContainerTypes { };
-    std::optional<Vector<String>> allowedMediaCodecTypes { };
+    std::optional<Vector<RefPtr<StringImpl>>> allowedMediaContainerTypes { };
+    std::optional<Vector<RefPtr<StringImpl>>> allowedMediaCodecTypes { };
     std::optional<Vector<FourCC>> allowedMediaVideoCodecIDs { };
     std::optional<Vector<FourCC>> allowedMediaAudioCodecIDs { };
     std::optional<Vector<FourCC>> allowedMediaCaptionFormatTypes { };
@@ -159,7 +159,7 @@ struct SeekTarget {
     MediaTime negativeThreshold { MediaTime::zeroTime() };
     MediaTime positiveThreshold { MediaTime::zeroTime() };
 
-    WEBCORE_EXPORT String toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
 };
 
 enum class MediaPlayerType {
@@ -249,16 +249,16 @@ public:
     virtual void mediaPlayerActiveSourceBuffersChanged() { }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const { return nullptr; }
+    virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(StringImpl*) const { return nullptr; }
     virtual void mediaPlayerKeyNeeded(const SharedBuffer&) { }
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
+    virtual RefPtr<StringImpl> mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    virtual void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) { }
+    virtual void mediaPlayerInitializationDataEncountered(StringImpl*, RefPtr<ArrayBuffer>&&) { }
     virtual void mediaPlayerWaitingForKeyChanged() { }
 #endif
 
@@ -269,8 +269,8 @@ public:
     virtual void mediaPlayerWillInitializeMediaEngine() { }
     virtual void mediaPlayerDidInitializeMediaEngine() { }
 
-    virtual String mediaPlayerReferrer() const { return String(); }
-    virtual String mediaPlayerUserAgent() const { return String(); }
+    virtual RefPtr<StringImpl> mediaPlayerReferrer() const { return nullptr; }
+    virtual RefPtr<StringImpl> mediaPlayerUserAgent() const { return nullptr; }
     virtual bool mediaPlayerIsFullscreen() const { return false; }
     virtual bool mediaPlayerIsFullscreenPermitted() const { return false; }
     virtual bool mediaPlayerIsVideo() const { return false; }
@@ -280,9 +280,9 @@ public:
     virtual bool mediaPlayerIsLooping() const { return false; }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() const { return nullptr; }
     virtual Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader();
-    virtual bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const { return false; }
+    virtual bool doesHaveAttribute(AtomStringImpl*, RefPtr<AtomStringImpl>* = nullptr) const { return false; }
     virtual bool mediaPlayerShouldUsePersistentCache() const { return true; }
-    virtual String mediaPlayerMediaCacheDirectory() const { return emptyString(); }
+    virtual RefPtr<StringImpl> mediaPlayerMediaCacheDirectory() const { return emptyString(); }
 
     virtual void mediaPlayerDidAddAudioTrack(AudioTrackPrivate&) { }
     virtual void mediaPlayerDidAddTextTrack(InbandTextTrackPrivate&) { }
@@ -299,29 +299,29 @@ public:
     virtual Vector<Ref<PlatformTextTrack>> outOfBandTrackSources() { return { }; }
 
 #if PLATFORM(IOS_FAMILY)
-    virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
+    virtual RefPtr<StringImpl> mediaPlayerNetworkInterfaceName() const { return nullptr; }
 
     using GetRawCookiesCallback = CompletionHandler<void(Vector<Cookie>&&)>;
     virtual void mediaPlayerGetRawCookies(const URL&, GetRawCookiesCallback&& completionHandler) const { completionHandler({ }); }
 #endif
 
-    virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
+    virtual RefPtr<StringImpl> mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
 
-    virtual String mediaPlayerElementId() const { return emptyString(); }
+    virtual RefPtr<StringImpl> mediaPlayerElementId() const { return emptyString(); }
 
     virtual void mediaPlayerEngineFailedToLoad() { }
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
     virtual MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const { return MediaPlayerEnums::VideoFullscreenModeNone; }
     virtual bool mediaPlayerIsVideoFullscreenStandby() const { return false; }
-    virtual Vector<String> mediaPlayerPreferredAudioCharacteristics() const { return Vector<String>(); }
+    virtual Vector<RefPtr<StringImpl>> mediaPlayerPreferredAudioCharacteristics() const { return { }; }
 
     virtual bool mediaPlayerShouldDisableSleep() const { return false; }
     virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     virtual bool mediaPlayerShouldCheckHardwareSupport() const { return false; }
 
-    virtual const std::optional<Vector<String>>& allowedMediaContainerTypes() const;
-    virtual const std::optional<Vector<String>>& allowedMediaCodecTypes() const;
+    virtual const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaContainerTypes() const;
+    virtual const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaCodecTypes() const;
     virtual const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const;
     virtual const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const;
     virtual const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const;
@@ -331,8 +331,8 @@ public:
 
     virtual SecurityOriginData documentSecurityOrigin() const { return { }; }
 
-    virtual String audioOutputDeviceId() const { return { }; }
-    virtual String audioOutputDeviceIdOverride() const { return { }; }
+    virtual RefPtr<StringImpl> audioOutputDeviceId() const { return { }; }
+    virtual RefPtr<StringImpl> audioOutputDeviceIdOverride() const { return { }; }
 
     virtual void mediaPlayerQueueTaskOnEventLoop(Function<void()>&& task) { callOnMainThread(WTF::move(task)); }
 
@@ -381,12 +381,12 @@ public:
     using MediaPlayerEnums::SupportsType;
     static const MediaPlayerFactory* mediaEngine(const MediaPlayerEngineSelection& = { });
     static SupportsType supportsType(const MediaEngineSupportParameters&, const MediaPlayerEngineSelection& = { });
-    static void getSupportedTypes(HashSet<String>&);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>&);
     static bool isAvailable();
-    static HashSet<SecurityOriginData> originsInMediaCache(const String& path);
-    static void clearMediaCache(const String& path, WallTime modifiedSince);
-    static void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>&);
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
+    static HashSet<SecurityOriginData> originsInMediaCache(StringImpl* path);
+    static void clearMediaCache(StringImpl* path, WallTime modifiedSince);
+    static void clearMediaCacheForOrigins(StringImpl* path, const HashSet<SecurityOriginData>&);
+    static bool supportsKeySystem(StringImpl* keySystem, StringImpl* mimeType);
 
     bool supportsPictureInPicture() const;
     bool supportsFullscreen() const;
@@ -394,7 +394,7 @@ public:
     bool canSaveMediaData() const;
     bool supportsProgressMonitoring() const;
     bool requiresImmediateCompositing() const;
-    bool doesHaveAttribute(const AtomString&, AtomString* value = nullptr) const;
+    bool doesHaveAttribute(AtomStringImpl*, RefPtr<AtomStringImpl>* value = nullptr) const;
     PlatformLayer* platformLayer() const;
 
     void reloadAndResumePlaybackIfNeeded();
@@ -421,8 +421,8 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;
-    String accessLog() const;
-    String errorLog() const;
+    RefPtr<StringImpl> accessLog() const;
+    RefPtr<StringImpl> errorLog() const;
 #endif
 
     FloatSize naturalSize();
@@ -462,7 +462,7 @@ public:
     // This is different from the asynchronous MediaKeyError.
     enum MediaKeyException { NoError, InvalidPlayerState, KeySystemNotSupported };
 
-    RefPtr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient&);
+    RefPtr<LegacyCDMSession> createSession(StringImpl* keySystem, LegacyCDMSessionClient&);
     void setCDM(LegacyCDM*);
     void setCDMSession(LegacyCDMSession*);
     void keyAdded();
@@ -586,8 +586,8 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     WirelessPlaybackTargetType wirelessPlaybackTargetType() const;
 
-    String wirelessPlaybackTargetName() const;
-    String wirelessPlaybackRouteName() const;
+    RefPtr<StringImpl> wirelessPlaybackTargetName() const;
+    RefPtr<StringImpl> wirelessPlaybackRouteName() const;
 
     bool wirelessVideoPlaybackDisabled() const;
     void setWirelessVideoPlaybackDisabled(bool);
@@ -630,24 +630,24 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
+    RefPtr<ArrayBuffer> cachedKeyForKeyId(StringImpl* keyId) const;
     void keyNeeded(const SharedBuffer& initData);
-    String mediaKeysStorageDirectory() const;
+    RefPtr<StringImpl> mediaKeysStorageDirectory() const;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void initializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&);
+    void initializationDataEncountered(StringImpl*, RefPtr<ArrayBuffer>&&);
     void waitingForKeyChanged();
     bool waitingForKey() const;
 #endif
 
-    String referrer() const;
-    String userAgent() const;
+    RefPtr<StringImpl> referrer() const;
+    RefPtr<StringImpl> userAgent() const;
 
-    String engineDescription() const;
+    RefPtr<StringImpl> engineDescription() const;
     long platformErrorCode() const;
 
-    String elementId() const;
+    RefPtr<StringImpl> elementId() const;
 
     CachedResourceLoader* cachedResourceLoader() const;
     Ref<PlatformMediaResourceLoader> mediaResourceLoader();
@@ -671,7 +671,7 @@ public:
     Vector<Ref<PlatformTextTrack>> outOfBandTrackSources();
 
 #if PLATFORM(IOS_FAMILY)
-    String mediaPlayerNetworkInterfaceName() const;
+    RefPtr<StringImpl> mediaPlayerNetworkInterfaceName() const;
     void getRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const;
 #endif
 
@@ -687,7 +687,7 @@ public:
 #endif
 #endif
 
-    String languageOfPrimaryAudioTrack() const;
+    RefPtr<StringImpl> languageOfPrimaryAudioTrack() const;
 
     size_t extraMemoryCost() const;
 
@@ -699,8 +699,8 @@ public:
     using VideoPlaybackQualityMetricsPromise = NativePromise<VideoPlaybackQualityMetrics, PlatformMediaError>;
     Ref<VideoPlaybackQualityMetricsPromise> asyncVideoPlaybackQualityMetrics();
 
-    String sourceApplicationIdentifier() const;
-    Vector<String> preferredAudioCharacteristics() const;
+    RefPtr<StringImpl> sourceApplicationIdentifier() const;
+    Vector<RefPtr<StringImpl>> preferredAudioCharacteristics() const;
 
     bool ended() const;
 
@@ -708,15 +708,15 @@ public:
     bool shouldDisableSleep() const;
 
     const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
-    String contentMIMEType() const;
-    String contentTypeCodecs() const;
+    RefPtr<StringImpl> contentMIMEType() const;
+    RefPtr<StringImpl> contentTypeCodecs() const;
     NODELETE bool contentMIMETypeWasInferredFromExtension() const;
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     void setShouldCheckHardwareSupport(bool);
 
-    const std::optional<Vector<String>>& allowedMediaContainerTypes() const;
-    const std::optional<Vector<String>>& allowedMediaCodecTypes() const;
+    const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaContainerTypes() const;
+    const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaCodecTypes() const;
     const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const;
     const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const;
     const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const;
@@ -744,7 +744,7 @@ public:
     LayoutRect playerContentBoxRect() const { return protect(client())->mediaPlayerContentBoxRect(); }
     float playerContentsScale() const { return protect(client())->mediaPlayerContentsScale(); }
     bool shouldUsePersistentCache() const { return protect(client())->mediaPlayerShouldUsePersistentCache(); }
-    String mediaCacheDirectory() const { return protect(client())->mediaPlayerMediaCacheDirectory(); }
+    RefPtr<StringImpl> mediaCacheDirectory() const { return protect(client())->mediaPlayerMediaCacheDirectory(); }
     bool isVideoPlayer() const { return protect(client())->mediaPlayerIsVideo(); }
     void mediaEngineUpdated() { protect(client())->mediaPlayerEngineUpdated(); }
     void resourceNotSupported() { protect(client())->mediaPlayerResourceNotSupported(); }
@@ -762,8 +762,8 @@ public:
     PlatformDynamicRangeLimit platformDynamicRangeLimit() const { return m_platformDynamicRangeLimit; }
     void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit);
 
-    String audioOutputDeviceId() const;
-    String audioOutputDeviceIdOverride() const;
+    RefPtr<StringImpl> audioOutputDeviceId() const;
+    RefPtr<StringImpl> audioOutputDeviceIdOverride() const;
     void audioOutputDeviceChanged();
 
     std::optional<MediaPlayerIdentifier> identifier() const;
@@ -777,7 +777,7 @@ public:
 
     void playerContentBoxRectChanged(const LayoutRect&);
 
-    NODELETE String lastErrorMessage() const;
+    NODELETE RefPtr<StringImpl> lastErrorMessage() const;
 
     void renderVideoWillBeDestroyed();
 
@@ -789,11 +789,11 @@ public:
     void setVideoTarget(const PlatformVideoTarget&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String defaultSpatialTrackingLabel() const;
-    void setDefaultSpatialTrackingLabel(const String&);
+    RefPtr<StringImpl> defaultSpatialTrackingLabel() const;
+    void setDefaultSpatialTrackingLabel(StringImpl*);
 
-    String spatialTrackingLabel() const;
-    void setSpatialTrackingLabel(const String&);
+    RefPtr<StringImpl> spatialTrackingLabel() const;
+    void setSpatialTrackingLabel(StringImpl*);
 #endif
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -816,14 +816,14 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
-    void setSceneIdentifier(const String&);
-    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
+    void setSceneIdentifier(StringImpl*);
+    const RefPtr<StringImpl>& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
 #endif
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);
     NODELETE MessageClientForTesting* messageClientForTesting() const;
 
-    void elementIdChanged(const String&) const;
+    void elementIdChanged(StringImpl*) const;
 
 #if PLATFORM(MAC)
     void setScreenReserved(bool);
@@ -899,8 +899,8 @@ private:
     std::atomic<bool> m_isGatheringVideoFrameMetadata { false };
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String m_defaultSpatialTrackingLabel;
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
 #endif
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -909,11 +909,11 @@ private:
 
     bool m_isInFullscreenOrPictureInPicture { false };
 
-    String m_lastErrorMessage;
+    RefPtr<StringImpl> m_lastErrorMessage;
     ProcessIdentity m_processIdentity;
 
 #if PLATFORM(IOS_FAMILY)
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
 #endif
 
     WeakPtr<MessageClientForTesting> m_internalMessageClient;
@@ -932,13 +932,13 @@ public:
 
     virtual MediaPlayerEnums::MediaEngineIdentifier identifier() const  = 0;
     virtual Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer&) const = 0;
-    virtual void getSupportedTypes(HashSet<String>&) const = 0;
+    virtual void getSupportedTypes(HashSet<RefPtr<StringImpl>>&) const = 0;
     virtual MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&) const = 0;
 
-    virtual HashSet<SecurityOriginData> originsInMediaCache(const String&) const { return { }; }
-    virtual void clearMediaCache(const String&, WallTime) const { }
-    virtual void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) const { }
-    virtual bool supportsKeySystem(const String& /* keySystem */, const String& /* mimeType */) const { return false; }
+    virtual HashSet<SecurityOriginData> originsInMediaCache(StringImpl*) const { return { }; }
+    virtual void clearMediaCache(StringImpl*, WallTime) const { }
+    virtual void clearMediaCacheForOrigins(StringImpl*, const HashSet<SecurityOriginData>&) const { }
+    virtual bool supportsKeySystem(StringImpl* /* keySystem */, StringImpl* /* mimeType */) const { return false; }
 
     // Describes how this factory may be used. Default is Playback; subclasses
     // override only if they need to answer differently for some contexts.
@@ -965,16 +965,16 @@ public:
     WEBCORE_EXPORT static bool registerRemoteEngineIfAvailable(MediaEngineRegistrar, MediaPlayerEnums::MediaEngineIdentifier, PlatformMediaDecodingType);
 };
 
-inline String MediaPlayer::audioOutputDeviceId() const
+inline RefPtr<StringImpl> MediaPlayer::audioOutputDeviceId() const
 {
     RefPtr client = m_client.get();
-    return client ? client->audioOutputDeviceId() : String { };
+    return client ? client->audioOutputDeviceId() : nullptr;
 }
 
-inline String MediaPlayer::audioOutputDeviceIdOverride() const
+inline RefPtr<StringImpl> MediaPlayer::audioOutputDeviceIdOverride() const
 {
     RefPtr client = m_client.get();
-    return client ? client->audioOutputDeviceIdOverride() : String { };
+    return client ? client->audioOutputDeviceIdOverride() : nullptr;
 }
 
 inline bool MediaPlayer::hasMediaEngine() const
@@ -990,7 +990,7 @@ namespace WTF {
 
 template<typename> struct LogArgument;
 template<> struct LogArgument<WebCore::SeekTarget> {
-    static String toString(const WebCore::SeekTarget& target) { return target.toString(); }
+    static RefPtr<StringImpl> toString(const WebCore::SeekTarget& target) { return target.toString(); }
 };
 
 } // namespace WTF

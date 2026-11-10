@@ -65,7 +65,7 @@ public:
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
     WorkerRunLoop& runLoop() LIFETIME_BOUND { return m_runLoop; }
 
-    void start(Function<void(const String&)>&& evaluateCallback = { });
+    void start(Function<void(StringImpl*)>&& evaluateCallback = { });
     void stop(Function<void()>&& terminatedCallback = { });
 
     void startRunningDebuggerTasks();
@@ -74,7 +74,7 @@ public:
     void suspend();
     void resume();
 
-    const String& inspectorIdentifier() const LIFETIME_BOUND { return m_inspectorIdentifier; }
+    const RefPtr<StringImpl>& inspectorIdentifier() const LIFETIME_BOUND { return m_inspectorIdentifier; }
 
     NODELETE static ThreadSafeWeakHashSet<WorkerOrWorkletThread>& workerOrWorkletThreads();
     static void releaseFastMallocFreeMemoryInAllThreads();
@@ -89,7 +89,7 @@ public:
     virtual bool isAudioWorkletThread() const { return false; }
 
 protected:
-    explicit WorkerOrWorkletThread(const String& inspectorIdentifier, WorkerThreadMode = WorkerThreadMode::CreateNewThread);
+    explicit WorkerOrWorkletThread(StringImpl* inspectorIdentifier, WorkerThreadMode = WorkerThreadMode::CreateNewThread);
     void workerOrWorkletThread();
 
     // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
@@ -98,16 +98,16 @@ protected:
 private:
     virtual Ref<Thread> createThread() = 0;
     virtual RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() = 0;
-    virtual void evaluateScriptIfNecessary(String&) { }
+    virtual void evaluateScriptIfNecessary(RefPtr<StringImpl>&) { }
     virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
     void destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&& protectedThis);
 
-    String m_inspectorIdentifier;
+    RefPtr<StringImpl> m_inspectorIdentifier;
     Lock m_threadCreationAndGlobalScopeLock;
     RefPtr<WorkerOrWorkletGlobalScope> m_globalScope;
     const RefPtr<Thread> m_thread;
     const UniqueRef<WorkerRunLoop> m_runLoop;
-    Function<void(const String&)> m_evaluateCallback;
+    Function<void(StringImpl*)> m_evaluateCallback;
     Function<void()> m_stoppedCallback;
     BinarySemaphore m_suspensionSemaphore;
     ThreadSafeWeakHashSet<WorkerOrWorkletThread> m_childThreads;

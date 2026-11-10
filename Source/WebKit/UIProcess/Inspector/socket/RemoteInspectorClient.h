@@ -65,16 +65,16 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=206047
     struct Target {
         TargetID id;
-        String type;
-        String name;
-        String url;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> url;
     };
 
     const HashMap<ConnectionID, Vector<Target>>& targets() const LIFETIME_BOUND { return m_targets; }
-    const String& backendCommandsURL() const LIFETIME_BOUND { return m_backendCommandsURL; }
+    const RefPtr<StringImpl>& backendCommandsURL() const LIFETIME_BOUND { return m_backendCommandsURL; }
 
     void inspect(ConnectionID, TargetID, Inspector::DebuggableType);
-    void sendMessageToBackend(ConnectionID, TargetID, const String&);
+    void sendMessageToBackend(ConnectionID, TargetID, StringImpl*);
     void closeFromFrontend(ConnectionID, TargetID);
 
 private:
@@ -88,11 +88,11 @@ private:
     void setBackendCommands(const Event&);
 
     void didClose(Inspector::RemoteInspectorSocketEndpoint&, ConnectionID) final;
-    HashMap<String, CallHandler>& dispatchMap() final;
+    HashMap<RefPtr<StringImpl>, CallHandler>& dispatchMap() final;
 
-    void sendWebInspectorEvent(const String&);
+    void sendWebInspectorEvent(StringImpl*);
 
-    String m_backendCommandsURL;
+    RefPtr<StringImpl> m_backendCommandsURL;
     const CheckedRef<RemoteInspectorObserver> m_observer;
     std::optional<ConnectionID> m_connectionID;
     HashMap<ConnectionID, Vector<Target>> m_targets;

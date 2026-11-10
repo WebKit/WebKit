@@ -34,20 +34,20 @@ class BeforeTextInsertedEvent final : public Event {
 public:
     virtual ~BeforeTextInsertedEvent();
 
-    static Ref<BeforeTextInsertedEvent> create(const String& text)
+    static Ref<BeforeTextInsertedEvent> create(StringImpl* text)
     {
         return adoptRef(*new BeforeTextInsertedEvent(text));
     }
 
-    const String& text() const LIFETIME_BOUND { return m_text; }
-    void setText(const String& s) { m_text = s; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
+    void setText(StringImpl* s) { m_text = s; }
 
 private:
-    explicit BeforeTextInsertedEvent(const String&);
+    explicit BeforeTextInsertedEvent(StringImpl*);
 
     bool isBeforeTextInsertedEvent() const final { return true; }
 
-    String m_text;
+    RefPtr<StringImpl> m_text;
 };
 
 } // namespace WebCore

@@ -46,13 +46,13 @@ public:
 
     Inspector::InspectorTargetType type() const final { return Inspector::InspectorTargetType::Page; }
 
-    String identifier() const final;
+    RefPtr<StringImpl> identifier() const final;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;
-    void sendMessageToTargetBackend(const String&) override;
+    void sendMessageToTargetBackend(StringImpl*) override;
 
-    static String toTargetID(WebCore::PageIdentifier);
+    static RefPtr<StringImpl> toTargetID(WebCore::PageIdentifier);
 
 private:
     WeakRef<WebPage> m_page;

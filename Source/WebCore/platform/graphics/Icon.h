@@ -57,7 +57,7 @@ class NativeImage;
 
 class Icon : public RefCounted<Icon> {
 public:
-    WEBCORE_EXPORT static RefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
+    WEBCORE_EXPORT static RefPtr<Icon> createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames);
 
     WEBCORE_EXPORT ~Icon();
 
@@ -81,8 +81,8 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    static RefPtr<Icon> createIconForUTI(const String&);
-    static RefPtr<Icon> createIconForFileExtension(const String&);
+    static RefPtr<Icon> createIconForUTI(StringImpl*);
+    static RefPtr<Icon> createIconForFileExtension(StringImpl*);
 #endif
 
 private:

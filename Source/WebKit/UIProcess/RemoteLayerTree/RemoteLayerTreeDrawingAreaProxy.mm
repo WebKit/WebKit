@@ -630,13 +630,13 @@ void RemoteLayerTreeDrawingAreaProxy::updateDeferredInteractionRegions()
 }
 #endif
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, StringImpl* key, MonotonicTime startTime)
 {
     if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))
         connection->send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), identifier());
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, StringImpl* key)
 {
     if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))
         connection->send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), identifier());

@@ -157,7 +157,7 @@ char* newTypedArrayWithSize(JSGlobalObject* globalObject, VM& vm, Structure* str
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (size < 0) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Requested length is negative"_s));
+        throwException(globalObject, scope, createRangeError(globalObject, "Requested length is negative"_si));
         return nullptr;
     }
 
@@ -1664,7 +1664,7 @@ static ALWAYS_INLINE EncodedJSValue arraySpliceImpl(JSGlobalObject* globalObject
             resultObject = speciesResult.second;
         else {
             if (actualDeleteCount > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
-                throwRangeError(globalObject, scope, LengthExceededTheMaximumArrayLengthError);
+                throwRangeError(globalObject, scope, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr());
                 return { };
             }
             resultObject = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), static_cast<uint32_t>(actualDeleteCount));
@@ -2059,7 +2059,7 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlob
     if (auto result = parseIntDouble(value))
         OPERATION_RETURN(scope, JSValue::encode(jsNumber(result.value())));
 
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(String::number(value), 0))));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(makeString(value), 0))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObject* globalObject, JSString* string, int32_t radix))
@@ -2103,7 +2103,7 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntDouble, EncodedJSValue, (JSGlobalObjec
             OPERATION_RETURN(scope, JSValue::encode(jsNumber(result.value())));
     }
 
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(String::number(value), radix))));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(makeString(value), radix))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntInt32, EncodedJSValue, (JSGlobalObject* globalObject, int32_t value, int32_t radix))
@@ -2116,7 +2116,7 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntInt32, EncodedJSValue, (JSGlobalObject
     if (radix == 10)
         OPERATION_RETURN(scope, JSValue::encode(jsNumber(value)));
 
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(String::number(value), radix))));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(makeString(value), radix))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationResolvePromiseFirstResolving, void, (JSGlobalObject* globalObject, JSPromise* promise, EncodedJSValue encodedArgument))
@@ -2871,7 +2871,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject* glob
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (size < 0) [[unlikely]] {
-        throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(ArrayInvalidLengthError).ptr()));
         OPERATION_RETURN(scope, nullptr);
     }
 
@@ -2897,7 +2897,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (size < 0) [[unlikely]] {
-        throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(ArrayInvalidLengthError).ptr()));
         OPERATION_RETURN(scope, nullptr);
     }
 
@@ -2978,7 +2978,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewTypedArrayBufferWithSize, JSObject*, (JSGlo
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (length < 0) [[unlikely]] {
-        throwRangeError(structure->realm(), scope, "length cannot be negative"_s);
+        throwRangeError(structure->realm(), scope, "length cannot be negative"_si);
         OPERATION_RETURN(scope, nullptr);
     }
 
@@ -3658,7 +3658,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringString, JSString*, (JSGloba
     auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, string, search, replacementCell, replacement, nullptr)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, string->get(), search->get(), replacementCell, replacement->get(), nullptr)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitution, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell))
@@ -3681,7 +3681,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitution, 
     auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, string, search, replacementCell, replacement, nullptr)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, string->get(), search->get(), replacementCell, replacement->get(), nullptr)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell))
@@ -3706,9 +3706,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
         OPERATION_RETURN(scope,  stringCell);
 
     // Because replacement string is empty, it cannot include backreferences.
-    size_t searchLength = search->length();
+    size_t searchLength = length(*search);
     size_t matchEnd = matchStart + searchLength;
-    unsigned suffixLength = string->length() - matchEnd;
+    unsigned suffixLength = length(*string) - matchEnd;
     if (!matchStart) {
         if (!suffixLength)
             OPERATION_RETURN(scope, jsEmptyString(vm));
@@ -3739,7 +3739,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithTable8, JSString*
     auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::Yes>(globalObject, stringCell, string, search, replacementCell, replacement, table)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::Yes>(globalObject, stringCell, string->get(), search->get(), replacementCell, replacement->get(), table)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitutionWithTable8, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell, const BoyerMooreHorspoolTable<uint8_t>* table))
@@ -3758,7 +3758,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitutionWi
     auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::Yes>(globalObject, stringCell, string, search, replacementCell, replacement, table)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::Yes>(globalObject, stringCell, string->get(), search->get(), replacementCell, replacement->get(), table)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, const BoyerMooreHorspoolTable<uint8_t>* table))
@@ -3779,9 +3779,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSSt
         OPERATION_RETURN(scope, stringCell);
 
     // Because replacement string is empty, it cannot include backreferences.
-    size_t searchLength = search->length();
+    size_t searchLength = length(*search);
     size_t matchEnd = matchStart + searchLength;
-    unsigned suffixLength = string->length() - matchEnd;
+    unsigned suffixLength = length(*string) - matchEnd;
     if (!matchStart) {
         if (!suffixLength)
             OPERATION_RETURN(scope, jsEmptyString(vm));
@@ -3816,7 +3816,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringGeneric, JSString*, (JSGlob
     auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, replaceUsingStringSearch<StringReplaceMode::Single>(vm, globalObject, stringCell, string, search, replaceValue));
+    OPERATION_RETURN(scope, replaceUsingStringSearch<StringReplaceMode::Single>(vm, globalObject, stringCell, string->get(), search->get(), replaceValue));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringSubstr, JSCell*, (JSGlobalObject* globalObject, JSCell* cell, int32_t from, int32_t span))
@@ -3893,11 +3893,11 @@ JSC_DEFINE_JIT_OPERATION(operationToUpperCase, JSString*, (JSGlobalObject* globa
 
     auto inputString = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-    if (!inputString->length())
+    if (!length(*inputString))
         OPERATION_RETURN(scope, vm.smallStrings.emptyString());
 
-    String uppercasedString = inputString->is8Bit() ? inputString->convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString->convertToUppercaseWithoutLocaleStartingAtFailingIndex16Bit(failingIndex);
-    if (uppercasedString.impl() == inputString->impl())
+    RefPtr<StringImpl> uppercasedString = is8Bit(*inputString) ? convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(*inputString, failingIndex) : convertToUppercaseWithoutLocaleStartingAtFailingIndex16Bit(*inputString, failingIndex);
+    if (uppercasedString.get() == inputString->get())
         OPERATION_RETURN(scope, string);
     OPERATION_RETURN(scope, jsString(vm, WTF::move(uppercasedString)));
 }
@@ -3912,11 +3912,11 @@ JSC_DEFINE_JIT_OPERATION(operationToLowerCase, JSString*, (JSGlobalObject* globa
 
     auto inputString = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-    if (!inputString->length())
+    if (!length(*inputString))
         OPERATION_RETURN(scope, vm.smallStrings.emptyString());
 
-    String lowercasedString = inputString->is8Bit() ? inputString->convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString->convertToLowercaseWithoutLocaleStartingAtFailingIndex16Bit(failingIndex);
-    if (lowercasedString.impl() == inputString->impl())
+    RefPtr<StringImpl> lowercasedString = is8Bit(*inputString) ? convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(*inputString, failingIndex) : convertToLowercaseWithoutLocaleStartingAtFailingIndex16Bit(*inputString, failingIndex);
+    if (lowercasedString.get() == inputString->get())
         OPERATION_RETURN(scope, string);
     OPERATION_RETURN(scope, jsString(vm, WTF::move(lowercasedString)));
 }
@@ -4565,7 +4565,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpEmptyStr, JSCell*,
     }
 
     CallData callData;
-    String replacementString;
+    RefPtr<StringImpl> replacementString;
     OPERATION_RETURN(scope, replaceOneWithStringUsingRegExpSearch(vm, globalObject, thisValue, source, regExp, replacementString));
 }
 
@@ -4602,7 +4602,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpString, JSCell*, (
     auto replacementString = replaceString->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     OPERATION_RETURN(scope, replaceUsingRegExpSearch(
-        vm, globalObject, thisValue, searchValue, callData, replacementString, replaceString));
+        vm, globalObject, thisValue, searchValue, callData, replacementString->get(), replaceString));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceAllRegExpString, JSCell*, (JSGlobalObject* globalObject, JSString* thisValue, RegExpObject* searchValue, JSString* replaceString))
@@ -4621,7 +4621,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceAllRegExpString, JSCell*
     auto replacementString = replaceString->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     OPERATION_RETURN(scope, replaceUsingRegExpSearch(
-        vm, globalObject, thisValue, searchValue, callData, replacementString, replaceString));
+        vm, globalObject, thisValue, searchValue, callData, replacementString->get(), replaceString));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationInt32ToString, char*, (JSGlobalObject* globalObject, int32_t value, int32_t radix))
@@ -4633,7 +4633,7 @@ JSC_DEFINE_JIT_OPERATION(operationInt32ToString, char*, (JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (radix < 2 || radix > 36) {
-        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_s));
+        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_si));
         OPERATION_RETURN(scope, nullptr);
     }
 
@@ -4649,7 +4649,7 @@ JSC_DEFINE_JIT_OPERATION(operationInt52ToString, char*, (JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (radix < 2 || radix > 36) {
-        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_s));
+        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_si));
         OPERATION_RETURN(scope, nullptr);
     }
 
@@ -4665,7 +4665,7 @@ JSC_DEFINE_JIT_OPERATION(operationDoubleToString, char*, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (radix < 2 || radix > 36) {
-        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_s));
+        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_si));
         OPERATION_RETURN(scope, nullptr);
     }
 
@@ -4818,7 +4818,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithStringDescription, Symbol*, (JSGl
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto value = description->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-    OPERATION_RETURN(scope, Symbol::createWithDescription(vm, value, description));
+    OPERATION_RETURN(scope, Symbol::createWithDescription(vm, value->get(), description));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject* globalObject, EncodedJSValue encodedDescription))
@@ -4838,7 +4838,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalOb
     auto value = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, Symbol::createWithDescription(vm, value, string));
+    OPERATION_RETURN(scope, Symbol::createWithDescription(vm, value->get(), string));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSymbolToString, JSString*, (JSGlobalObject* globalObject, Symbol* symbol))
@@ -5033,7 +5033,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchString, char*, (JSGlobalObject* globalOb
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     CodeBlock* codeBlock = callFrame->codeBlock();
     const StringJumpTable& linkedTable = codeBlock->dfgStringSwitchJumpTable(tableIndex);
-    OPERATION_RETURN(scope, linkedTable.ctiForValue(*unlinkedTable, str->impl()).taggedPtr<char*>());
+    OPERATION_RETURN(scope, linkedTable.ctiForValue(*unlinkedTable, str->get()).taggedPtr<char*>());
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompareStringImplLess, uintptr_t, (StringImpl* a, StringImpl* b))
@@ -5886,7 +5886,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringFromCodePointUntyped, EncodedJSValue, (J
 
     uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
     if (codePoint != codePointAsDouble || codePoint > UCHAR_MAX_VALUE) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Arguments contain a value that is out of range of code points"_s);
+        throwRangeError(globalObject, scope, "Arguments contain a value that is out of range of code points"_si);
         OPERATION_RETURN(scope, encodedJSValue());
     }
 
@@ -5894,7 +5894,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringFromCodePointUntyped, EncodedJSValue, (J
         OPERATION_RETURN(scope, JSValue::encode(jsSingleCharacterString(vm, static_cast<char16_t>(codePoint))));
 
     char16_t buffer[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
-    OPERATION_RETURN(scope, JSValue::encode(jsNontrivialString(vm, String({ buffer, 2 }))));
+    OPERATION_RETURN(scope, JSValue::encode(jsNontrivialString(vm, StringImpl::create({ buffer, 2 }))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewRawObject, char*, (VM* vmPointer, Structure* structure, int32_t length, Butterfly* butterfly))
@@ -6120,7 +6120,7 @@ static ALWAYS_INLINE JSObject* newArrayWithSpeciesImpl(JSGlobalObject* globalObj
 
     if (speciesResult.first == SpeciesConstructResult::FastPath) [[likely]] {
         if (length > std::numeric_limits<unsigned>::max()) [[unlikely]] {
-            throwRangeError(globalObject, scope, ArrayInvalidLengthError);
+            throwRangeError(globalObject, scope, StringImpl::create(ArrayInvalidLengthError).ptr());
             return nullptr;
         }
 
@@ -6170,7 +6170,7 @@ JSC_DEFINE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM* vmPointe
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside DFG."_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside DFG."_si);
     OPERATION_RETURN(scope);
 }
 
@@ -6606,7 +6606,7 @@ JSC_DEFINE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject* globa
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto errorMessage = message->value(globalObject);
-    scope.throwException(globalObject, createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), errorMessage));
+    scope.throwException(globalObject, createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), errorMessage->get()));
     OPERATION_RETURN(scope);
 }
 

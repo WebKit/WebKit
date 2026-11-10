@@ -59,16 +59,16 @@ IncomingAudioMediaStreamTrackRendererUnit::~IncomingAudioMediaStreamTrackRendere
     ASSERT(isMainThread());
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::addResetObserver(const String& deviceID, ResetObserver& observer)
+void IncomingAudioMediaStreamTrackRendererUnit::addResetObserver(StringImpl* deviceID, ResetObserver& observer)
 {
     AudioMediaStreamTrackRendererUnit::singleton().addResetObserver(deviceID, observer);
 }
 
-std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrackRendererUnit::addSourceToMixer(const String& deviceID, Ref<AudioSampleDataSource>&& source)
+std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrackRendererUnit::addSourceToMixer(StringImpl* deviceID, Ref<AudioSampleDataSource>&& source)
 {
     assertIsMainThread();
 
-    ASSERT(!deviceID.isEmpty());
+    ASSERT(!isEmpty(deviceID));
     auto& mixer = m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
 
     ASSERT(!mixer.sources.contains(source.get()));
@@ -77,9 +77,9 @@ std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrac
     return std::make_pair(shouldStart, copyToVector(mixer.sources));
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifier, Ref<AudioSampleDataSource>&& source)
+void IncomingAudioMediaStreamTrackRendererUnit::addSource(StringImpl* identifier, Ref<AudioSampleDataSource>&& source)
 {
-    String deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
+    RefPtr<StringImpl> deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? RefPtr { identifier } : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
 #if !RELEASE_LOG_DISABLED
     protect(source->logger())->logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
@@ -99,7 +99,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
     bool shouldStart = result.first;
     auto newSources = WTF::move(result.second);
 
-    postTask([this, protectedThis = Ref { *this }, newSources = WTF::move(newSources), shouldStart, deviceID = deviceID.isolatedCopy(), outputDescription]() mutable {
+    postTask([this, protectedThis = Ref { *this }, newSources = WTF::move(newSources), shouldStart, deviceID = isolatedCopy(deviceID), outputDescription]() mutable {
         assertIsCurrent(m_queue.get());
 
         m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTF::move(newSources);
@@ -120,7 +120,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
 
         m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.mixedSource = mixedSource.ptr();
 
-        callOnMainThread([protectedThis = Ref { *this }, source = WTF::move(mixedSource), deviceID = deviceID.isolatedCopy()]() mutable {
+        callOnMainThread([protectedThis = Ref { *this }, source = WTF::move(mixedSource), deviceID = isolatedCopy(deviceID)]() mutable {
             assertIsMainThread();
 
             auto& mixer = protectedThis->m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
@@ -131,7 +131,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
     });
 }
 
-std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrackRendererUnit::removeSourceFromMixer(const String& deviceID, AudioSampleDataSource& source)
+std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrackRendererUnit::removeSourceFromMixer(StringImpl* deviceID, AudioSampleDataSource& source)
 {
     assertIsMainThread();
 
@@ -144,9 +144,9 @@ std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrac
     return std::make_pair(shouldStop, copyToVector(mixer.sources));
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& identifier, AudioSampleDataSource& source)
+void IncomingAudioMediaStreamTrackRendererUnit::removeSource(StringImpl* identifier, AudioSampleDataSource& source)
 {
-    String deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
+    RefPtr<StringImpl> deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? RefPtr { identifier } : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
 #if !RELEASE_LOG_DISABLED
     protect(source.logger())->logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
@@ -157,14 +157,14 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& ident
     bool shouldStop = result.first;
     auto newSources = WTF::move(result.second);
 
-    postTask([this, protectedThis = Ref { *this }, newSources = WTF::move(newSources), shouldStop, deviceID = deviceID.isolatedCopy()]() mutable {
+    postTask([this, protectedThis = Ref { *this }, newSources = WTF::move(newSources), shouldStop, deviceID = isolatedCopy(deviceID)]() mutable {
         assertIsCurrent(m_queue.get());
 
         m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTF::move(newSources);
         if (!shouldStop)
             return;
 
-        callOnMainThread([protectedThis = Ref { *this }, deviceID = deviceID.isolatedCopy()]() mutable {
+        callOnMainThread([protectedThis = Ref { *this }, deviceID = isolatedCopy(deviceID)]() mutable {
             assertIsMainThread();
 
             auto& mixer = protectedThis->m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;

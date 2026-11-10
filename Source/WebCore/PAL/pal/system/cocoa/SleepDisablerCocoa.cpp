@@ -33,12 +33,12 @@
 
 namespace PAL {
 
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const String& reason, Type type)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(StringImpl* reason, Type type)
 {
     return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason, type));
 }
 
-SleepDisablerCocoa::SleepDisablerCocoa(const String& reason, Type type)
+SleepDisablerCocoa::SleepDisablerCocoa(StringImpl* reason, Type type)
     : SleepDisabler(reason, type)
 {
     switch (type) {
@@ -64,15 +64,15 @@ SleepDisablerCocoa::~SleepDisablerCocoa()
 }
 
 #if PLATFORM(MAC)
-void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String& reason)
+void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(StringImpl* reason)
 {
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reason.createCFString().get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, createCFString(reason).get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
 }
 #endif
 
-void SleepDisablerCocoa::takeSystemSleepDisablingAssertion(const String& reason)
+void SleepDisablerCocoa::takeSystemSleepDisablingAssertion(StringImpl* reason)
 {
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleSystemSleep, reason.createCFString().get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleSystemSleep, createCFString(reason).get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
 }
 
 } // namespace PAL

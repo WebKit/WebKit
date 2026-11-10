@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-NODELETE String logLevelString()
+NODELETE RefPtr<StringImpl> logLevelString()
 {
 #if !LOG_DISABLED
     static NSString * const defaultsDomain = @"WebCoreLogging";
-    return [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
+    return StringImpl::create([[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain]);
 #else
-    return String();
+    return nullptr;
 #endif
 }
 

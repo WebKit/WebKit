@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-Ref<WebGrammarDetail> WebGrammarDetail::create(int location, int length, API::Array* guesses, const String& userDescription)
+Ref<WebGrammarDetail> WebGrammarDetail::create(int location, int length, API::Array* guesses, StringImpl* userDescription)
 {
     return adoptRef(*new WebGrammarDetail(location, length, guesses, userDescription));
 }
@@ -42,7 +42,7 @@ Ref<WebGrammarDetail> WebGrammarDetail::create(const WebCore::GrammarDetail& gra
     return adoptRef(*new WebGrammarDetail(grammarDetail));
 }
 
-WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses, const String& userDescription)
+WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses, StringImpl* userDescription)
 {
     m_grammarDetail.range = WebCore::CharacterRange(location, length);
 

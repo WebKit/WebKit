@@ -76,8 +76,8 @@ public:
     void invalidateAndCancel() override { }
     NetworkDataTask::State state() const override;
 
-    void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
-    String suggestedFilename() const override;
+    void setPendingDownloadLocation(StringImpl*, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
+    RefPtr<StringImpl> suggestedFilename() const override;
 
     WebCore::NetworkLoadMetrics& networkLoadMetrics() LIFETIME_BOUND { return m_networkLoadMetrics; }
 
@@ -89,7 +89,7 @@ public:
 
     bool navigationLosesFrameSpecificStorageAccess() const final { return m_navigationLosesFrameSpecificStorageAccess; }
 
-    String description() const override;
+    RefPtr<StringImpl> description() const override;
 
     void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) override;
     void setPriority(WebCore::ResourceLoadPriority) override;

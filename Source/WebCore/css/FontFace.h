@@ -45,20 +45,20 @@ template<typename> class ExceptionOr;
 class FontFace final : public RefCounted<FontFace>, public ActiveDOMObject, public CSSFontFaceClient {
 public:
     struct Descriptors {
-        String style;
-        String weight;
-        String width;
-        String unicodeRange;
-        String featureSettings;
-        String display;
-        String ascentOverride;
-        String descentOverride;
-        String lineGapOverride;
-        String sizeAdjust;
+        RefPtr<StringImpl> style;
+        RefPtr<StringImpl> weight;
+        RefPtr<StringImpl> width;
+        RefPtr<StringImpl> unicodeRange;
+        RefPtr<StringImpl> featureSettings;
+        RefPtr<StringImpl> display;
+        RefPtr<StringImpl> ascentOverride;
+        RefPtr<StringImpl> descentOverride;
+        RefPtr<StringImpl> lineGapOverride;
+        RefPtr<StringImpl> sizeAdjust;
     };
     
-    using Source = Variant<String, Ref<JSC::ArrayBuffer>, Ref<JSC::ArrayBufferView>>;
-    static Ref<FontFace> create(ScriptExecutionContext&, const AtomString& family, Source&&, const Descriptors&);
+    using Source = Variant<RefPtr<StringImpl>, Ref<JSC::ArrayBuffer>, Ref<JSC::ArrayBufferView>>;
+    static Ref<FontFace> create(ScriptExecutionContext&, AtomStringImpl* family, Source&&, const Descriptors&);
     static Ref<FontFace> create(ScriptExecutionContext*, CSSFontFace&);
     virtual ~FontFace();
 
@@ -67,29 +67,29 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(CSSFontFaceClient);
 
-    ExceptionOr<void> setFamily(ScriptExecutionContext&, const AtomString&);
-    ExceptionOr<void> setStyle(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setWeight(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setWidth(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setUnicodeRange(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setFeatureSettings(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setDisplay(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setAscentOverride(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setDescentOverride(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setLineGapOverride(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setSizeAdjust(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setFamily(ScriptExecutionContext&, AtomStringImpl*);
+    ExceptionOr<void> setStyle(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setWeight(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setWidth(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setUnicodeRange(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setFeatureSettings(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setDisplay(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setAscentOverride(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setDescentOverride(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setLineGapOverride(ScriptExecutionContext&, StringImpl*);
+    ExceptionOr<void> setSizeAdjust(ScriptExecutionContext&, StringImpl*);
 
-    AtomString family() const;
-    String style() const;
-    String weight() const;
-    String width() const;
-    String unicodeRange() const;
-    String featureSettings() const;
-    String display() const;
-    String ascentOverride() const;
-    String descentOverride() const;
-    String lineGapOverride() const;
-    String sizeAdjust() const;
+    RefPtr<AtomStringImpl> family() const;
+    RefPtr<StringImpl> style() const;
+    RefPtr<StringImpl> weight() const;
+    RefPtr<StringImpl> width() const;
+    RefPtr<StringImpl> unicodeRange() const;
+    RefPtr<StringImpl> featureSettings() const;
+    RefPtr<StringImpl> display() const;
+    RefPtr<StringImpl> ascentOverride() const;
+    RefPtr<StringImpl> descentOverride() const;
+    RefPtr<StringImpl> lineGapOverride() const;
+    RefPtr<StringImpl> sizeAdjust() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     NODELETE LoadStatus status() const;

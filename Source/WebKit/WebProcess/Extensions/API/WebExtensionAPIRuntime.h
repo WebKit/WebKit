@@ -41,8 +41,8 @@ class WebExtensionAPIRuntime;
 
 class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
 public:
-    JSValueRef reportError(String errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
-    JSValueRef reportError(const String& errorMessage, WebExtensionCallbackHandler&);
+    JSValueRef reportError(RefPtr<StringImpl> errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
+    JSValueRef reportError(StringImpl* errorMessage, WebExtensionCallbackHandler&);
 
 private:
     friend class WebExtensionAPIRuntime;
@@ -60,20 +60,20 @@ public:
 
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    URL getURL(const String& resourcePath, String& outExceptionString);
+    URL getURL(StringImpl* resourcePath, RefPtr<StringImpl>& outExceptionString);
     RefPtr<JSON::Object> getManifest();
-    String getVersion();
+    RefPtr<StringImpl> getVersion();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
     double getFrameId(JSContextRef, JSValueRef);
-    String getDocumentId(JSContextRef, JSValueRef, String& outExceptionString);
+    RefPtr<StringImpl> getDocumentId(JSContextRef, JSValueRef, RefPtr<StringImpl>& outExceptionString);
 
     void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
 
     void openOptionsPage(Ref<WebExtensionCallbackHandler>&&);
     void reload();
 
-    NODELETE String runtimeIdentifier();
+    NODELETE RefPtr<StringImpl> runtimeIdentifier();
 
     NODELETE JSValueRef lastError();
 
@@ -81,11 +81,11 @@ public:
     JSValueRef platformArch(JSContextRef);
     JSValueRef platformOS(JSContextRef);
 
-    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const WebExtensionMessage&, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
+    void sendMessage(WebPageProxyIdentifier, WebFrame&, StringImpl* extensionID, const WebExtensionMessage&, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, StringImpl* extensionID, RefPtr<JSON::Value> options, RefPtr<StringImpl>& outExceptionString);
 
-    void sendNativeMessage(WebFrame&, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&&);
-    RefPtr<WebExtensionAPIPort> connectNative(WebPageProxyIdentifier, JSContextRef, const String& applicationID);
+    void sendNativeMessage(WebFrame&, StringImpl* applicationID, StringImpl* messageJSON, Ref<WebExtensionCallbackHandler>&&);
+    RefPtr<WebExtensionAPIPort> connectNative(WebPageProxyIdentifier, JSContextRef, StringImpl* applicationID);
 
     WebExtensionAPIEvent& onConnect();
     WebExtensionAPIEvent& onInstalled();
@@ -97,7 +97,7 @@ public:
 private:
     friend class WebExtensionAPIWebPageRuntime;
 
-    static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<String>& name, const String& sourceKey, String& outExceptionString);
+    static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<RefPtr<StringImpl>>& name, StringImpl* sourceKey, RefPtr<StringImpl>& outExceptionString);
 
     const RefPtr<WebExtensionAPIEvent> m_onConnect;
     const RefPtr<WebExtensionAPIEvent> m_onInstalled;
@@ -113,8 +113,8 @@ class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebEx
 public:
     WebExtensionAPIWebPageRuntime& runtime() final { return *this; }
 
-    void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
+    void sendMessage(WebPage&, WebFrame&, StringImpl* extensionID, StringImpl* messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, StringImpl* extensionID, RefPtr<JSON::Value> options, RefPtr<StringImpl>& outExceptionString);
 };
 
 JSValueRef toWebAPI(JSContextRef, const WebExtensionMessageSenderParameters&);

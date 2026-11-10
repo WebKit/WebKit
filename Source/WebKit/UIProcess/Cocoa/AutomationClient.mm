@@ -73,7 +73,7 @@ bool AutomationClient::remoteAutomationAllowed() const
     return false;
 }
 
-void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const RemoteInspector::Client::SessionCapabilities& sessionCapabilities)
+void AutomationClient::requestAutomationSession(StringImpl* sessionIdentifier, const RemoteInspector::Client::SessionCapabilities& sessionCapabilities)
 {
     auto configuration = adoptNS([[_WKAutomationSessionConfiguration alloc] init]);
     [configuration setAcceptInsecureCertificates:sessionCapabilities.acceptInsecureCertificates];
@@ -92,7 +92,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
-    RunLoop::mainSingleton().dispatch([this, requestedSessionIdentifier = sessionIdentifier.createNSString(), configuration = WTF::move(configuration)] {
+    RunLoop::mainSingleton().dispatch([this, requestedSessionIdentifier = createNSString(sessionIdentifier), configuration = WTF::move(configuration)] {
         if (m_delegateMethods.requestAutomationSession)
             [m_delegate.get() _processPool:m_processPool.get().get() didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier.get() configuration:configuration.get()];
     });
@@ -108,26 +108,26 @@ void AutomationClient::requestedDebuggablesToWakeUp()
     });
 }
 
-String AutomationClient::browserName() const
+RefPtr<StringImpl> AutomationClient::browserName() const
 {
     if (m_delegateMethods.browserNameForAutomation)
-        return [m_delegate.get() _processPoolBrowserNameForAutomation:m_processPool.get().get()];
+        return StringImpl::create([m_delegate.get() _processPoolBrowserNameForAutomation:m_processPool.get().get()]);
 
     // Fall back to using the unlocalized app name (i.e., 'Safari').
     RetainPtr appBundle = [NSBundle mainBundle];
     if (RetainPtr displayName = dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(_kCFBundleDisplayNameKey)]))
-        return displayName.get();
-    return dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)]);
+        return StringImpl::create(displayName.get());
+    return StringImpl::create(dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)]));
 }
 
-String AutomationClient::browserVersion() const
+RefPtr<StringImpl> AutomationClient::browserVersion() const
 {
     if (m_delegateMethods.browserVersionForAutomation)
-        return [m_delegate.get() _processPoolBrowserVersionForAutomation:m_processPool.get().get()];
+        return StringImpl::create([m_delegate.get() _processPoolBrowserVersionForAutomation:m_processPool.get().get()]);
 
     // Fall back to using the app short version (i.e., '11.1.1').
     RetainPtr appBundle = [NSBundle mainBundle];
-    return dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(_kCFBundleShortVersionStringKey)]);
+    return StringImpl::create(dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(_kCFBundleShortVersionStringKey)]));
 }
 
 } // namespace WebKit

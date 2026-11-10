@@ -56,15 +56,15 @@ namespace SpatialImageControls {
 
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
 
-static const AtomString& spatialImageControlsElementIdentifier()
+static const RefPtr<AtomStringImpl>& spatialImageControlsElementIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("spatial-image-controls"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("spatial-image-controls"_s);
     return identifier;
 }
 
-static const AtomString& spatialImageControlsButtonIdentifier()
+static const RefPtr<AtomStringImpl>& spatialImageControlsButtonIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("spatial-image-controls-button"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("spatial-image-controls-button"_s);
     return identifier;
 }
 
@@ -159,44 +159,44 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         Ref controlLayer = HTMLDivElement::create(document.get());
         controlLayer->setIdAttribute(spatialImageControlsElementIdentifier());
         controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
-        controlLayer->setAttributeWithoutSynchronization(HTMLNames::dirAttr, isRTL ? "rtl"_s : "ltr"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyID::Display, "flex"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyID::FlexDirection, "column"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyID::JustifyContent, "space-between"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyID::Position, "relative"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyID::BoxSizing, "border-box"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyID::BorderRadius, "inherit"_s);
+        controlLayer->setAttributeWithoutSynchronization(HTMLNames::dirAttr, isRTL ? "rtl"_atom : "ltr"_atom);
+        controlLayer->setInlineStyleProperty(CSSPropertyID::Display, "flex"_si);
+        controlLayer->setInlineStyleProperty(CSSPropertyID::FlexDirection, "column"_si);
+        controlLayer->setInlineStyleProperty(CSSPropertyID::JustifyContent, "space-between"_si);
+        controlLayer->setInlineStyleProperty(CSSPropertyID::Position, "relative"_si);
+        controlLayer->setInlineStyleProperty(CSSPropertyID::BoxSizing, "border-box"_si);
+        controlLayer->setInlineStyleProperty(CSSPropertyID::BorderRadius, "inherit"_si);
         controlLayer->setInlineStyleProperty(CSSPropertyID::Padding, paddingValue, CSSUnitType::Px);
         shadowRoot->appendChild(controlLayer);
 
-        static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(spatialImageControlsUserAgentStyleSheet));
+        static MainThreadNeverDestroyed<const RefPtr<StringImpl>> shadowStyle(StringImpl::createWithoutCopying(spatialImageControlsUserAgentStyleSheet));
         Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-        style->setTextContent(String { shadowStyle });
+        style->setTextContent(RefPtr<StringImpl> { shadowStyle.get() });
         controlLayer->appendChild(WTF::move(style));
 
         Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, document.get());
         button->setIdAttribute(spatialImageControlsButtonIdentifier());
-        button->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString(localizedMediaControlElementString("EnterFullscreenButton"_s)));
+        button->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(localizedMediaControlElementString("EnterFullscreenButton"_si)));
         controlLayer->appendChild(button);
 
         Ref backgroundBlurLayer = HTMLDivElement::create(document.get());
-        backgroundBlurLayer->setIdAttribute("background-tint"_s);
+        backgroundBlurLayer->setIdAttribute("background-tint"_atom);
         controlLayer->appendChild(backgroundBlurLayer);
 
         Ref blur = HTMLDivElement::create(document.get());
-        blur->setIdAttribute("blur"_s);
+        blur->setIdAttribute("blur"_atom);
         backgroundBlurLayer->appendChild(blur);
 
         Ref tint = HTMLDivElement::create(document.get());
-        tint->setIdAttribute("tint"_s);
+        tint->setIdAttribute("tint"_atom);
         backgroundBlurLayer->appendChild(tint);
 
         Ref bottomGradient = HTMLDivElement::create(document.get());
-        bottomGradient->setIdAttribute("bottom-gradient"_s);
+        bottomGradient->setIdAttribute("bottom-gradient"_atom);
         controlLayer->appendChild(bottomGradient);
 
         Ref bottomLabelText = HTMLDivElement::create(document.get());
-        bottomLabelText->setIdAttribute("label"_s);
+        bottomLabelText->setIdAttribute("label"_atom);
 #if ENABLE(PANORAMA_IMAGE_CONTROLS)
         bottomLabelText->setTextContent(isSpatialImage ? imageControlsLabelSpatial() : imageControlsLabelPanorama());
 #else
@@ -206,9 +206,9 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
 
         Ref glyphSpan = HTMLSpanElement::create(document.get());
 #if ENABLE(PANORAMA_IMAGE_CONTROLS)
-        glyphSpan->setIdAttribute(isSpatialImage ? "spatial-glyph"_s : "pano-glyph"_s);
+        glyphSpan->setIdAttribute(isSpatialImage ? "spatial-glyph"_atom : "pano-glyph"_atom);
 #else
-        glyphSpan->setIdAttribute("spatial-glyph"_s);
+        glyphSpan->setIdAttribute("spatial-glyph"_atom);
 #endif
         bottomLabelText->insertBefore(glyphSpan, protect(bottomLabelText->firstChild()));
 
@@ -236,8 +236,8 @@ static void logImageControlsInteraction(const HTMLImageElement& imageElement)
     }
 
     DiagnosticLoggingClient::ValueDictionary dictionary;
-    dictionary.set("type"_s, imageType);
-    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("ImageControlsInteraction"_s, "Safari"_s, dictionary, ShouldSample::No);
+    dictionary.set("type"_si, imageType);
+    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("ImageControlsInteraction"_si, "Safari"_si, dictionary, ShouldSample::No);
 }
 
 bool handleEvent(HTMLElement& element, Event& event)

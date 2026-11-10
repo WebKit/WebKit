@@ -206,7 +206,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyPCMMachServiceName(WKWebsiteDataS
 
 void WKWebsiteDataStoreConfigurationSetPCMMachServiceName(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef name)
 {
-    protect(WebKit::toImpl(configuration))->setPCMMachServiceName(name ? protect(WebKit::toImpl(name))->string() : String());
+    protect(WebKit::toImpl(configuration))->setPCMMachServiceName(name ? protect(WebKit::toImpl(name))->string() : nullptr);
 }
 
 bool WKWebsiteDataStoreConfigurationHasOriginQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)

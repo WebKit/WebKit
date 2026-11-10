@@ -54,7 +54,7 @@ public:
 
     ~XRBinding();
 
-    NODELETE void setLabel(String&&) final;
+    NODELETE void setLabel(RefPtr<StringImpl>&&) final;
 
     NODELETE bool isValid() const final;
     RefPtr<WebGPU::XRProjectionLayer> createProjectionLayer(const WebGPU::XRProjectionLayerDescriptor&) final;

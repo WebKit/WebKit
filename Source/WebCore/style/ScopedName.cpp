@@ -39,7 +39,7 @@ auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSVa
 {
     if (RefPtr stringValue = dynamicDowncast<CSSStringValue>(value)) {
         return ScopedName {
-            .name = AtomString { toStyleFromCSSValue<String>(state, value).value },
+            .name = AtomStringImpl::add(toStyleFromCSSValue<String>(state, value).value),
             .scopeOrdinal = state.styleScopeOrdinal(),
             .isIdentifier = false,
         };

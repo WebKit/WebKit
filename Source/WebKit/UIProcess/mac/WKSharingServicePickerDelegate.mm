@@ -79,7 +79,7 @@
     _sourceFrame = sourceFrame;
 }
 
-- (void)setAttachmentID:(String)attachmentID
+- (void)setAttachmentID:(RefPtr<StringImpl>)attachmentID
 {
     _attachmentID = attachmentID;
 }
@@ -126,7 +126,7 @@
     if (!items.count)
         return;
 
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     std::span<const uint8_t> dataReference;
 
     RetainPtr<id> item = [items objectAtIndex:0];
@@ -135,8 +135,8 @@
         RetainPtr data = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
         dataReference = span(data.get());
 
-        types.append(NSPasteboardTypeRTFD);
-        types.append(WebCore::legacyRTFDPasteboardTypeSingleton());
+        types.append(StringImpl::create(NSPasteboardTypeRTFD));
+        types.append(StringImpl::create(WebCore::legacyRTFDPasteboardTypeSingleton()));
     } else if (RetainPtr data = dynamic_objc_cast<NSData>(item.get())) {
         RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData(bridge_cast(data.get()), NULL));
         RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
@@ -145,7 +145,7 @@
             return;
 
         dataReference = span(data.get());
-        types.append(NSPasteboardTypeTIFF);
+        types.append(StringImpl::create(NSPasteboardTypeTIFF));
     } else if (RetainPtr itemProvider = dynamic_objc_cast<NSItemProvider>(item.get())) {
         RefPtr menuProxy = _menuProxy.get();
         WeakPtr weakPage = menuProxy ? menuProxy->page() : nullptr;

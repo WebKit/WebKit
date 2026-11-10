@@ -39,13 +39,13 @@ class GPURenderBundleEncoder;
 
 class GPURenderBundle : public RefCountedAndCanMakeWeakPtr<GPURenderBundle> {
 public:
-    static Ref<GPURenderBundle> create(Ref<::WebGPU::RenderBundle>&& backing, String&& label, GPURenderBundleEncoder& renderBundleEncoder)
+    static Ref<GPURenderBundle> create(Ref<::WebGPU::RenderBundle>&& backing, RefPtr<StringImpl>&& label, GPURenderBundleEncoder& renderBundleEncoder)
     {
         return adoptRef(*new GPURenderBundle(WTF::move(backing), WTF::move(label), renderBundleEncoder));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     ::WebGPU::RenderBundle& backing() { return m_backing; }
     const ::WebGPU::RenderBundle& backing() const { return m_backing; }
@@ -55,10 +55,10 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPURenderBundle(Ref<::WebGPU::RenderBundle>&&, String&& label, GPURenderBundleEncoder&);
+    GPURenderBundle(Ref<::WebGPU::RenderBundle>&&, RefPtr<StringImpl>&& label, GPURenderBundleEncoder&);
 
     const Ref<::WebGPU::RenderBundle> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

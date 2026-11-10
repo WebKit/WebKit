@@ -84,7 +84,7 @@ public:
 
     NODELETE SVGElement* viewportElement(ViewportElementType = ViewportElementType::Any) const;
 
-    String title() const override;
+    RefPtr<StringImpl> title() const override;
     virtual bool supportsMarkers() const { return false; }
     bool hasRelativeLengths() const { return m_selfHasRelativeLengths || !m_childElementsWithRelativeLengths.isEmptyIgnoringNullReferences(); }
     virtual bool needsPendingResourceHandling() const { return true; }
@@ -146,7 +146,7 @@ public:
 
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) override;
 
-    static QualifiedName animatableAttributeForName(const AtomString&);
+    static QualifiedName animatableAttributeForName(AtomStringImpl*);
 #ifndef NDEBUG
     bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
@@ -157,8 +157,8 @@ public:
 
     virtual bool haveLoadedRequiredResources();
 
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
+    bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool removeEventListener(AtomStringImpl* eventType, EventListener&, const EventListenerOptions&) override;
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
 
@@ -192,7 +192,7 @@ public:
     ColorInterpolation colorInterpolation() const;
 
     // These are needed for the RenderTree, animation and DOM.
-    inline AtomString className() const; // Defined in SVGElementInlines.h
+    inline RefPtr<AtomStringImpl> className() const; // Defined in SVGElementInlines.h
     SVGAnimatedString& classNameAnimated() { return m_className; }
 
     SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
@@ -208,16 +208,16 @@ protected:
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
 
     void finishParsingChildren() override;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     SVGElementRareData& ensureSVGRareData();
 
-    void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomString&);
+    void reportAttributeParsingError(SVGParsingError, const QualifiedName&, AtomStringImpl*);
     CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&) const;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void postConnectionSteps() override;
     void removingSteps(RemovalType, ContainerNode&) override;

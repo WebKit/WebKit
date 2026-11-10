@@ -83,11 +83,11 @@ bool deviceClassIsHomeView()
 #endif
 }
 
-String deviceName()
+RefPtr<StringImpl> deviceName()
 {
 #if ENABLE(MOBILE_GESTALT_DEVICE_NAME)
     static NeverDestroyed<RetainPtr<CFStringRef>> deviceName = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr)));
-    return deviceName.get().get();
+    return StringImpl::create(deviceName.get().get());
 #else
     if (!deviceClassIsSmallScreen())
         return "iPad"_s;

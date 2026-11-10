@@ -64,7 +64,7 @@ bool HTMLTableColElement::hasPresentationalHintsForAttribute(const QualifiedName
     return HTMLTablePartElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTableColElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTableColElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLMultiLengthToStyle(style, CSSPropertyID::Width, value);
@@ -74,7 +74,7 @@ void HTMLTableColElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTableColElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLTableColElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLTablePartElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -83,7 +83,7 @@ void HTMLTableColElement::attributeChanged(const QualifiedName& name, const Atom
         if (CheckedPtr col = dynamicDowncast<RenderTableCol>(renderer()))
             col->updateFromElement();
     } else if (name == widthAttr) {
-        if (!newValue.isEmpty()) {
+        if (!isEmpty(newValue)) {
             if (CheckedPtr col = dynamicDowncast<RenderTableCol>(renderer())) {
                 int newWidth = parseHTMLInteger(newValue).value_or(0);
                 if (newWidth != col->borderBoxWidth())
@@ -107,7 +107,7 @@ void HTMLTableColElement::setSpan(unsigned span)
     setUnsignedIntegralAttribute(spanAttr, limitToOnlyHTMLNonNegative(span, defaultSpan));
 }
 
-String HTMLTableColElement::width() const
+RefPtr<StringImpl> HTMLTableColElement::width() const
 {
     return attributeWithoutSynchronization(widthAttr);
 }

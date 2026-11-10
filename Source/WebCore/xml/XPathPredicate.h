@@ -46,7 +46,7 @@ private:
 class StringExpression final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(StringExpression);
 public:
-    explicit StringExpression(String&&);
+    explicit StringExpression(RefPtr<StringImpl>&&);
 
 private:
     Value evaluate() const final;

@@ -154,7 +154,7 @@ void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
 
 void RemoteAudioSessionProxyManager::updateSpatialExperience()
 {
-    String sceneIdentifier;
+    RefPtr<StringImpl> sceneIdentifier;
     std::optional<AudioSession::SoundStageSize> maxSize;
     for (Ref proxy : m_proxies) {
         if (!proxy->isActive())

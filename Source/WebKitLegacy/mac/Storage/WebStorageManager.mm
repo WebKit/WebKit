@@ -127,7 +127,7 @@ void WebKitInitializeStorageIfNecessary()
         return;
 
     auto *storagePath = [WebStorageManager _storageDirectoryPath];
-    WebKit::StorageTracker::initializeTracker(storagePath, WebStorageTrackerClient::sharedWebStorageTrackerClient());
+    WebKit::StorageTracker::initializeTracker(StringImpl::create(storagePath).get(), WebStorageTrackerClient::sharedWebStorageTrackerClient());
 
 #if PLATFORM(IOS_FAMILY)
     [[NSURL fileURLWithPath:storagePath] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];

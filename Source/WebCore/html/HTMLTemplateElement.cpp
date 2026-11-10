@@ -94,7 +94,7 @@ void HTMLTemplateElement::adoptDeserializedContent(Ref<TemplateContentDocumentFr
     lazyInitialize(m_content, WTF::move(content));
 }
 
-const AtomString& HTMLTemplateElement::shadowRootMode() const
+const RefPtr<AtomStringImpl>& HTMLTemplateElement::shadowRootMode() const
 {
     auto modeString = attributeWithoutSynchronization(HTMLNames::shadowrootmodeAttr);
     auto mode = parseShadowRootMode(modeString);
@@ -103,7 +103,7 @@ const AtomString& HTMLTemplateElement::shadowRootMode() const
     return serializeShadowRootMode(*mode);
 }
 
-const AtomString& HTMLTemplateElement::shadowRootSlotAssignment() const
+const RefPtr<AtomStringImpl>& HTMLTemplateElement::shadowRootSlotAssignment() const
 {
     auto value = attributeWithoutSynchronization(HTMLNames::shadowrootslotassignmentAttr);
     return serializeSlotAssignmentMode(parseSlotAssignmentMode(value));

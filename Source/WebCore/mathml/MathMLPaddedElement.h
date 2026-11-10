@@ -45,7 +45,7 @@ public:
 private:
     MathMLPaddedElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     std::optional<Length> m_width;
     std::optional<Length> m_height;

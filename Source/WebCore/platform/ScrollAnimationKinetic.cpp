@@ -227,7 +227,7 @@ void ScrollAnimationKinetic::serviceAnimation(MonotonicTime currentTime)
         didEnd();
 }
 
-String ScrollAnimationKinetic::debugDescription() const
+RefPtr<StringImpl> ScrollAnimationKinetic::debugDescription() const
 {
     TextStream textStream;
     textStream << "ScrollAnimationKinetic " << this << " active " << isActive() << " current offset " << currentOffset();

@@ -262,7 +262,7 @@ public:
     bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
     void setWillSendRequestReturnsNullOnRedirect(bool f) { m_willSendRequestReturnsNullOnRedirect = f; }
     void setWillSendRequestAddsHTTPBody(JSStringRef body) { m_willSendRequestHTTPBody = toWTFString(body); }
-    String willSendRequestHTTPBody() const { return m_willSendRequestHTTPBody; }
+    RefPtr<StringImpl> willSendRequestHTTPBody() const { return m_willSendRequestHTTPBody; }
 
     void setTextDirection(JSContextRef, JSStringRef);
 
@@ -509,7 +509,7 @@ private:
 
     WKRetainPtr<WKURLRef> m_testURL; // Set by InjectedBundlePage once provisional load starts.
 
-    String m_willSendRequestHTTPBody;
+    RefPtr<StringImpl> m_willSendRequestHTTPBody;
     WTF::Seconds m_timeout { 30_s };
 
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;

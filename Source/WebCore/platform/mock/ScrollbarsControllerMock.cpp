@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerMock);
 
-ScrollbarsControllerMock::ScrollbarsControllerMock(ScrollableArea& scrollableArea, Function<void(const String&)>&& logger)
+ScrollbarsControllerMock::ScrollbarsControllerMock(ScrollableArea& scrollableArea, Function<void(StringImpl*)>&& logger)
     : ScrollbarsController(scrollableArea)
     , m_logger(WTF::move(logger))
 {
@@ -74,19 +74,19 @@ void ScrollbarsControllerMock::willRemoveHorizontalScrollbar(Scrollbar* scrollba
 
 void ScrollbarsControllerMock::mouseEnteredContentArea()
 {
-    m_logger("mouseEnteredContentArea"_s);
+    m_logger("mouseEnteredContentArea"_si);
     ScrollbarsController::mouseEnteredContentArea();
 }
 
 void ScrollbarsControllerMock::mouseMovedInContentArea()
 {
-    m_logger("mouseMovedInContentArea"_s);
+    m_logger("mouseMovedInContentArea"_si);
     ScrollbarsController::mouseMovedInContentArea();
 }
 
 void ScrollbarsControllerMock::mouseExitedContentArea()
 {
-    m_logger("mouseExitedContentArea"_s);
+    m_logger("mouseExitedContentArea"_si);
     ScrollbarsController::mouseExitedContentArea();
 }
 

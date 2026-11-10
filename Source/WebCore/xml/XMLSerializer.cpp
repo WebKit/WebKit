@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-String XMLSerializer::serializeToString(Node& node)
+RefPtr<StringImpl> XMLSerializer::serializeToString(Node& node)
 {
     return serializeFragment(node, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::NoExcludingURLsForPrivacy, SerializationSyntax::XML);
 }

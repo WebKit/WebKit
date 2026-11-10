@@ -30,6 +30,7 @@
 #include "HandleMessage.h" // NOLINT
 #include "SharedPreferencesForWebProcess.h" // NOLINT
 #include "TestWithEnabledByAndConjunctionMessages.h" // NOLINT
+#include <wtf/text/StringView.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)

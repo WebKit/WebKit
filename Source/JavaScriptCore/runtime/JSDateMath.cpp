@@ -400,20 +400,20 @@ PlainGregorianDateTime DateCache::msToGregorianDateTime(double millisecondsFromE
     return result;
 }
 
-double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
+double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, StringImpl* date)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (date == m_cachedDateString)
+    if (equal(date, m_cachedDateString))
         return m_cachedDateStringValue;
 
     // After ICU 72, CLDR generates narrowNoBreakSpace for date time format. Thus, `new Date().toLocaleString('en-US')` starts generating
     // a string including narrowNoBreakSpaces instead of simple spaces. However since code in the wild assumes `new Date(new Date().toLocaleString('en-US'))`
     // works, we need to maintain the ability to parse string including narrowNoBreakSpaces. Rough consensus among implementaters is replacing narrowNoBreakSpaces
     // with simple spaces before parsing.
-    String updatedString = makeStringByReplacingAll(date, narrowNoBreakSpace, space);
+    RefPtr<StringImpl> updatedString = makeStringByReplacingAll(date, narrowNoBreakSpace, space);
 
-    auto expectedString = updatedString.tryGetUTF8();
+    auto expectedString = tryGetUTF8(updatedString);
     if (!expectedString) {
         if (expectedString.error() == UTF8ConversionError::OutOfMemory)
             throwOutOfMemoryError(globalObject, scope);
@@ -448,22 +448,22 @@ TimeZone DateCache::defaultTimeZone()
     return timeZoneCache()->m_canonicalTimeZone;
 }
 
-String DateCache::timeZoneDisplayName(bool isDST)
+RefPtr<StringImpl> DateCache::timeZoneDisplayName(bool isDST)
 {
-    if (m_timeZoneStandardDisplayNameCache.isNull()) {
+    if (!m_timeZoneStandardDisplayNameCache) {
         auto& timeZoneCache = *this->timeZoneCache();
-        auto language = defaultLanguage().utf8();
+        auto language = utf8(defaultLanguage());
         {
             Vector<char16_t, 32> standardDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language.legacyCStringPointer(), standardDisplayNameBuffer);
             if (U_SUCCESS(status))
-                m_timeZoneStandardDisplayNameCache = String::adopt(WTF::move(standardDisplayNameBuffer));
+                m_timeZoneStandardDisplayNameCache = StringImpl::adopt(WTF::move(standardDisplayNameBuffer));
         }
         {
             Vector<char16_t, 32> dstDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language.legacyCStringPointer(), dstDisplayNameBuffer);
             if (U_SUCCESS(status))
-                m_timeZoneDSTDisplayNameCache = String::adopt(WTF::move(dstDisplayNameBuffer));
+                m_timeZoneDSTDisplayNameCache = StringImpl::adopt(WTF::move(dstDisplayNameBuffer));
         }
     }
     if (isDST)
@@ -508,7 +508,7 @@ static TimeZone retrieveTimeZoneInformation()
             // Resolve through intlResolveTimeZoneID so the host TZ collapses onto its IANA
             // primary identifier (e.g. "Asia/Calcutta" -> "Asia/Kolkata") and UTC-equivalent
             // names map to the UTC TimeZoneID.
-            String primary = toPrimaryIanaTimeZoneIdentifier(timeZoneID.span());
+            RefPtr<StringImpl> primary = toPrimaryIanaTimeZoneIdentifier(timeZoneID.span());
             if (auto id = intlResolveTimeZoneID(primary))
                 canonical = TimeZone::fromID(id.value());
         }
@@ -539,7 +539,7 @@ void DateCache::timeZoneCacheSlow()
 {
     ASSERT(!m_timeZoneCache);
     TimeZone canonical = retrieveTimeZoneInformation();
-    String timeZoneForICU = canonical.toICUString();
+    RefPtr<StringImpl> timeZoneForICU = canonical.toICUString();
     StringView timeZoneView(timeZoneForICU);
     auto upconverted = timeZoneView.upconvertedCharacters();
     auto* cache = new OpaqueICUTimeZone;
@@ -559,10 +559,10 @@ void DateCache::clearForTimeZoneChange()
     for (auto& cache : m_brokenDownDateCaches)
         cache.reset();
     m_yearMonthDayCache = std::nullopt;
-    m_cachedDateString = String();
+    m_cachedDateString = nullptr;
     m_cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
-    m_timeZoneStandardDisplayNameCache = String();
-    m_timeZoneDSTDisplayNameCache = String();
+    m_timeZoneStandardDisplayNameCache = nullptr;
+    m_timeZoneDSTDisplayNameCache = nullptr;
     m_cachedTimeZoneID = WTF::lastTimeZoneID();
 }
 

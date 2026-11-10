@@ -49,7 +49,7 @@ public:
     virtual void didFinishLoading(ModelPlayer&, NodeIdentifier) = 0;
     virtual void didFailLoading(ModelPlayer&, NodeIdentifier, const ResourceError&) = 0;
 #if ENABLE(MODEL_PROCESS)
-    virtual void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType) = 0;
+    virtual void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, StringImpl* convertedMIMEType) = 0;
 #endif
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     // FIXME: This should be made consistent with didFinishLoading/didFailLoading, by splitting it into a didFinishEnvironmentMapLoading and a didFailEnvironmentMapLoading which takes a `const ResourceError&`.
@@ -71,7 +71,7 @@ public:
     virtual RefPtr<GraphicsLayer> graphicsLayer() const = 0;
 
     virtual bool isVisible() const = 0;
-    virtual void logWarning(ModelPlayer&, const String& warningMessage) = 0;
+    virtual void logWarning(ModelPlayer&, StringImpl* warningMessage) = 0;
 };
 
 }

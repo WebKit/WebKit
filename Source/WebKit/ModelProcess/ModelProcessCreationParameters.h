@@ -37,7 +37,7 @@ struct ModelProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     SecurityFlags::Storage securityFlags;
     ProcessID parentPID;
-    String applicationVisibleName;
+    RefPtr<StringImpl> applicationVisibleName;
     bool restrictiveRenderingMode { false };
     std::optional<int> debugEntityMemoryLimit;
     std::optional<int> debugImmersiveEntityMemoryLimit;

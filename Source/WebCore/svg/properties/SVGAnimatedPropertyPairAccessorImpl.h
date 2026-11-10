@@ -59,7 +59,7 @@ private:
         animatedProperty.setDirty();
     }
 
-    std::optional<String> synchronize(const OwnerType& owner) const final
+    std::optional<RefPtr<StringImpl>> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = protect(property1(owner))->isDirty();
         bool dirty2 = protect(property2(owner))->isDirty();
@@ -68,8 +68,8 @@ private:
 
         auto type = protect(property2(owner))->baseVal();
 
-        String string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
-        String string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
+        RefPtr<StringImpl> string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
+        RefPtr<StringImpl> string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
         return type == SVGMarkerOrientAuto || type == SVGMarkerOrientAutoStartReverse ? string2 : string1;
     }
 
@@ -96,16 +96,16 @@ public:
     static const SVGMemberAccessor<OwnerType>& singleton(int initialValue1, int initialValue2) { return Base::template singleton<SVGAnimatedIntegerPairAccessor, property1, property2>(initialValue1, initialValue2); }
 
 private:
-    std::optional<String> synchronize(const OwnerType& owner) const final
+    std::optional<RefPtr<StringImpl>> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = protect(property1(owner))->isDirty();
         bool dirty2 = protect(property2(owner))->isDirty();
         if (!(dirty1 || dirty2))
             return std::nullopt;
 
-        String string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
-        String string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
-        return string1 == string2 ? string1 : makeString(string1, ", "_s, string2);
+        RefPtr<StringImpl> string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
+        RefPtr<StringImpl> string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
+        return equal(string1, string2) ? string1 : makeString(string1, ", "_s, string2);
     }
 
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
@@ -131,16 +131,16 @@ public:
     static const SVGMemberAccessor<OwnerType>& singleton(float initialValue1, float initialValue2) { return Base::template singleton<SVGAnimatedNumberPairAccessor, property1, property2>(initialValue1, initialValue2); }
 
 private:
-    std::optional<String> synchronize(const OwnerType& owner) const final
+    std::optional<RefPtr<StringImpl>> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = protect(property1(owner))->isDirty();
         bool dirty2 = protect(property2(owner))->isDirty();
         if (!(dirty1 || dirty2))
             return std::nullopt;
 
-        String string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
-        String string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
-        return string1 == string2 ? string1 : makeString(string1, ", "_s, string2);
+        RefPtr<StringImpl> string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
+        RefPtr<StringImpl> string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
+        return equal(string1, string2) ? string1 : makeString(string1, ", "_s, string2);
     }
 
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final

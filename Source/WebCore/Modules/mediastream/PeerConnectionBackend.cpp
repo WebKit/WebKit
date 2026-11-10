@@ -66,7 +66,7 @@ namespace WebCore {
 
 #if USE(LIBWEBRTC)
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, const String& kind)
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, StringImpl* kind)
 {
     RefPtr page = downcast<Document>(context).page();
     if (!page)
@@ -74,7 +74,7 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(Sc
     return page->webRTCProvider().receiverCapabilities(kind);
 }
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, const String& kind)
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, StringImpl* kind)
 {
     RefPtr page = downcast<Document>(context).page();
     if (!page)
@@ -91,13 +91,13 @@ static std::unique_ptr<PeerConnectionBackend> createNoPeerConnectionBackend(RTCP
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createNoPeerConnectionBackend;
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext&, const String&)
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext&, StringImpl*)
 {
     ASSERT_NOT_REACHED();
     return { };
 }
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext&, const String&)
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext&, StringImpl*)
 {
     ASSERT_NOT_REACHED();
     return { };
@@ -107,14 +107,14 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(Scri
 #if PLATFORM(WPE) || PLATFORM(GTK)
 class JSONFileHandler {
 public:
-    JSONFileHandler(String&& path)
+    JSONFileHandler(RefPtr<StringImpl>&& path)
         : m_path(WTF::move(path))
     {
         Locker lock(m_clientsLock);
         open(true);
     }
 
-    void log(String&& event)
+    void log(RefPtr<StringImpl>&& event)
     {
         Locker lock(m_clientsLock);
         if (m_logFile)
@@ -146,13 +146,13 @@ private:
         assertIsHeld(m_clientsLock);
         ASSERT(!m_logFile);
 
-        m_logFile = FilePrintStream::open(m_path.utf8(), overwrite ? "w"_s : "a"_s);
+        m_logFile = FilePrintStream::open(utf8(m_path), overwrite ? "w"_s : "a"_s);
 
         // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
         setvbuf(m_logFile->file(), nullptr, _IONBF, 0);
     }
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     Lock m_clientsLock;
     std::unique_ptr<FilePrintStream> m_logFile WTF_GUARDED_BY_LOCK(m_clientsLock);
     Vector<uint64_t> m_clients WTF_GUARDED_BY_LOCK(m_clientsLock);
@@ -160,8 +160,8 @@ private:
 
 JSONFileHandler& jsonFileHandler()
 {
-    auto path = String::fromUTF8(getenv("WEBKIT_WEBRTC_JSON_EVENTS_FILE"));
-    ASSERT(!path.isEmpty());
+    auto path = StringImpl::fromUTF8(getenv("WEBKIT_WEBRTC_JSON_EVENTS_FILE"));
+    ASSERT(!isEmpty(path));
     static NeverDestroyed<JSONFileHandler> sharedInstance(WTF::move(path));
     return sharedInstance;
 }
@@ -185,8 +185,8 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
 #endif
 
 #if !RELEASE_LOG_DISABLED && (PLATFORM(WPE) || PLATFORM(GTK))
-    m_jsonFilePath = String::fromUTF8(getenv("WEBKIT_WEBRTC_JSON_EVENTS_FILE"));
-    if (!m_jsonFilePath.isEmpty())
+    m_jsonFilePath = StringImpl::fromUTF8(getenv("WEBKIT_WEBRTC_JSON_EVENTS_FILE"));
+    if (!isEmpty(m_jsonFilePath))
         jsonFileHandler().addClient(m_logIdentifier);
 
     m_logger->addMessageHandlerObserver(*this);
@@ -209,7 +209,7 @@ PeerConnectionBackend::~PeerConnectionBackend()
 void PeerConnectionBackend::handleLogMessage(const WTFLogChannel& channel, WTFLogLevel, std::optional<WTFLogLocation>, const Vector<JSONLogValue>& values)
 {
     auto name = StringView::fromLatin1(channel.name);
-    if (name != "WebRTC"_s)
+    if (!equal(name, "WebRTC"_s))
         return;
 
     // Ignore logs containing only the call site information or JSON logs.
@@ -221,26 +221,26 @@ void PeerConnectionBackend::handleLogMessage(const WTFLogChannel& channel, WTFLo
 
     // Parse "foo::bar(hexidentifier) "
     auto& callSite = values[0].value;
-    auto leftParenthesisIndex = callSite.reverseFind('(');
+    auto leftParenthesisIndex = reverseFind(callSite, '(');
     if (leftParenthesisIndex == notFound)
         return;
 
-    auto rightParenthesisIndex = callSite.reverseFind(')');
+    auto rightParenthesisIndex = reverseFind(callSite, ')');
     if (rightParenthesisIndex == notFound)
         return;
 
     if (!m_logIdentifierString)
         m_logIdentifierString = makeString(m_logIdentifier);
 
-    auto identifier = callSite.substring(leftParenthesisIndex + 1, rightParenthesisIndex - leftParenthesisIndex - 1);
-    if (identifier != m_logIdentifierString)
+    auto identifier = substring(callSite, leftParenthesisIndex + 1, rightParenthesisIndex - leftParenthesisIndex - 1);
+    if (!equal(identifier, m_logIdentifierString))
         return;
 
-    String event;
+    RefPtr<StringImpl> event;
 
     // Check if the third message is a multi-lines string, concatenating such message would look ugly in log events.
-    if (values.size() >= 3 && values[2].value.find("\r\n"_s) != notFound)
-        event = generateJSONLogEvent(MessageLogEvent { values[1].value, { byteCast<uint8_t>(values[2].value.span8()) } }, false);
+    if (values.size() >= 3 && find(values[2].value, "\r\n"_s) != notFound)
+        event = generateJSONLogEvent(MessageLogEvent { values[1].value, { byteCast<uint8_t>(span8(values[2].value)) } }, false);
     else {
         StringBuilder builder;
         for (auto& value : values.subvector(1))
@@ -260,13 +260,13 @@ void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, CreateCallbac
     doCreateOffer(WTF::move(options));
 }
 
-void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
+void PeerConnectionBackend::createOfferSucceeded(RefPtr<StringImpl>&& sdp)
 {
     ASSERT(isMainThread());
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "SDP offer created:\n", sdp);
-    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateOfferSucceeded, logIdentifier(), sdp.utf8());
+    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateOfferSucceeded, logIdentifier(), utf8(sdp));
 #endif
 
     ASSERT(m_offerAnswerCallback);
@@ -296,13 +296,13 @@ void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, CreateCallb
     doCreateAnswer(WTF::move(options));
 }
 
-void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
+void PeerConnectionBackend::createAnswerSucceeded(RefPtr<StringImpl>&& sdp)
 {
     ASSERT(isMainThread());
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "SDP answer created:\n", sdp);
-    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateAnswerSucceeded, logIdentifier(), sdp.utf8());
+    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateAnswerSucceeded, logIdentifier(), utf8(sdp));
 #endif
 
     ASSERT(m_offerAnswerCallback);
@@ -340,12 +340,12 @@ struct MediaStreamAndTrackItem {
 static void setAssociatedRemoteStreams(RTCRtpReceiver& receiver, const PeerConnectionBackend::TransceiverState& state, Vector<MediaStreamAndTrackItem>& addList, Vector<MediaStreamAndTrackItem>& removeList)
 {
     for (auto& currentStream : receiver.associatedStreams()) {
-        if (currentStream && std::ranges::none_of(state.receiverStreams, [&currentStream](auto& stream) { return stream->id() == currentStream->id(); }))
+        if (currentStream && std::ranges::none_of(state.receiverStreams, [&currentStream](auto& stream) { return equal(stream->id(), currentStream->id()); }))
             removeList.append({ Ref { *currentStream }, Ref { receiver.track() } });
     }
 
     for (auto& stream : state.receiverStreams) {
-        if (std::ranges::none_of(receiver.associatedStreams(), [&stream](auto& currentStream) { return stream->id() == currentStream->id(); }))
+        if (std::ranges::none_of(receiver.associatedStreams(), [&stream](auto& currentStream) { return equal(stream->id(), currentStream->id()); }))
             addList.append({ stream, Ref { receiver.track() } });
     }
 
@@ -408,7 +408,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             for (auto& transceiverState : *transceiverStates) {
                 RefPtr<RTCRtpTransceiver> transceiver;
                 for (auto& item : peerConnection.currentTransceivers()) {
-                    if (item->mid() == transceiverState.mid) {
+                    if (equal(item->mid(), transceiverState.mid)) {
                         transceiver = item.ptr();
                         break;
                     }
@@ -430,7 +430,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             }
 
             for (auto& pair : removeList) {
-                DEBUG_LOG(LOGIDENTIFIER, "Removing track "_s, pair.track->id(), " from MediaStream "_s, pair.stream->id());
+                DEBUG_LOG(LOGIDENTIFIER, "Removing track "_s, pair.track->id(), " from MediaStream "_s, protect(pair.stream)->id());
                 protect(pair.stream->privateStream())->removeTrack(protect(pair.track->privateTrack()));
                 if (peerConnection.isClosed())
                     return;
@@ -478,7 +478,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         Vector<MediaStreamAndTrackItem> removeList;
         if (transceiverStates) {
             for (auto& transceiver : peerConnection.currentTransceivers()) {
-                if (std::ranges::none_of(*transceiverStates, [&transceiver](auto& state) { return state.mid == transceiver->mid(); })) {
+                if (std::ranges::none_of(*transceiverStates, [&transceiver](auto& state) { return equal(state.mid, transceiver->mid()); })) {
                     for (auto& stream : transceiver->receiver().associatedStreams()) {
                         if (stream)
                             removeList.append({ Ref { *stream }, Ref { transceiver->receiver().track() } });
@@ -512,7 +512,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             for (auto& transceiverState : *transceiverStates) {
                 RefPtr<RTCRtpTransceiver> transceiver;
                 for (auto& item : peerConnection.currentTransceivers()) {
-                    if (item->mid() == transceiverState.mid) {
+                    if (equal(item->mid(), transceiverState.mid)) {
                         transceiver = item.ptr();
                         break;
                     }
@@ -594,7 +594,7 @@ void PeerConnectionBackend::iceGatheringStateChanged(RTCIceGatheringState state)
     });
 }
 
-static String extractIPAddress(StringView sdp)
+static RefPtr<StringImpl> extractIPAddress(StringView sdp)
 {
     unsigned counter = 0;
     for (auto item : StringView { sdp }.split(' ')) {
@@ -607,10 +607,10 @@ static String extractIPAddress(StringView sdp)
 static inline bool shouldIgnoreIceCandidate(const RTCIceCandidate& iceCandidate)
 {
     auto address = extractIPAddress(iceCandidate.candidate());
-    if (!address.endsWithIgnoringASCIICase(".local"_s))
+    if (!endsWithIgnoringASCIICase(address, ".local"_s))
         return false;
 
-    if (!WTF::isVersion4UUID(StringView { address }.left(address.length() - 6))) {
+    if (!WTF::isVersion4UUID(StringView { address }.left(length(address) - 6))) {
         RELEASE_LOG_ERROR(WebRTC, "mDNS candidate is not a Version 4 UUID");
         return true;
     }
@@ -663,12 +663,12 @@ void PeerConnectionBackend::disableICECandidateFiltering()
     m_shouldFilterICECandidates = false;
 }
 
-void PeerConnectionBackend::validateSDP(const String& sdp) const
+void PeerConnectionBackend::validateSDP(StringImpl* sdp) const
 {
 #if ASSERT_ENABLED
     if (!m_shouldFilterICECandidates)
         return;
-    sdp.split('\n', [](auto line) {
+    split(sdp, '\n', [](auto line) {
         ASSERT(!line.startsWith("a=candidate"_s) || line.contains(".local"_s));
     });
 #else
@@ -676,7 +676,7 @@ void PeerConnectionBackend::validateSDP(const String& sdp) const
 #endif
 }
 
-void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&& descriptions)
+void PeerConnectionBackend::newICECandidate(RefPtr<StringImpl>&& sdp, RefPtr<StringImpl>&& mid, unsigned short sdpMLineIndex, RefPtr<StringImpl>&& serverURL, std::optional<DescriptionStates>&& descriptions)
 {
     ActiveDOMObject::queueTaskKeepingObjectAlive(protect(m_peerConnection).get(), TaskSource::Networking, [logSiteIdentifier = LOGIDENTIFIER, this, protectedThis = Ref { *this }, sdp = WTF::move(sdp), mid = WTF::move(mid), sdpMLineIndex, serverURL = WTF::move(serverURL), descriptions = WTF::move(descriptions)](auto& peerConnection) mutable {
         if (peerConnection.isClosed())
@@ -692,14 +692,14 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
         ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
         m_finishedGatheringCandidates = false;
 
-        ASSERT(!m_shouldFilterICECandidates || sdp.contains(".local"_s) || sdp.contains(" srflx "_s) || sdp.contains(" relay "_s));
+        ASSERT(!m_shouldFilterICECandidates || contains(sdp, ".local"_s) || contains(sdp, " srflx "_s) || contains(sdp, " relay "_s));
         auto candidate = RTCIceCandidate::create(WTF::move(sdp), WTF::move(mid), sdpMLineIndex);
         ALWAYS_LOG(logSiteIdentifier, "Dispatching ICE event for SDP ", candidate->candidate());
         peerConnection.dispatchEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTF::move(candidate), WTF::move(serverURL)));
     });
 }
 
-void PeerConnectionBackend::newDataChannel(UniqueRef<RTCDataChannelHandler>&& channelHandler, String&& label, RTCDataChannelInit&& channelInit)
+void PeerConnectionBackend::newDataChannel(UniqueRef<RTCDataChannelHandler>&& channelHandler, RefPtr<StringImpl>&& label, RTCDataChannelInit&& channelInit)
 {
     protect(m_peerConnection)->dispatchDataChannelEvent(WTF::move(channelHandler), WTF::move(label), WTF::move(channelInit));
 }
@@ -728,19 +728,19 @@ void PeerConnectionBackend::markAsNeedingNegotiation(uint32_t eventId)
     protect(m_peerConnection)->updateNegotiationNeededFlag(eventId);
 }
 
-ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, FixedVector<String>&&)
+ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, FixedVector<RefPtr<StringImpl>>&&)
 {
-    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
+    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_si };
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(const String&, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag)
+ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(StringImpl*, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag)
 {
-    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
+    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_si };
 }
 
 ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&)
 {
-    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
+    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_si };
 }
 
 void PeerConnectionBackend::generateCertificate(Document& document, const CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
@@ -778,15 +778,15 @@ WTFLogChannel& PeerConnectionBackend::logChannel() const
 static Ref<JSON::Object> toJSONObject(const PeerConnectionBackend::TransceiverState& transceiverState)
 {
     auto object = JSON::Object::create();
-    object->setString("mid"_s, transceiverState.mid);
+    object->setString("mid"_si, transceiverState.mid);
 
     auto receiverStreams = JSON::Array::create();
     for (auto receiverStream : transceiverState.receiverStreams)
         receiverStreams->pushString(receiverStream->id());
-    object->setArray("receiverStreams"_s, WTF::move(receiverStreams));
+    object->setArray("receiverStreams"_si, WTF::move(receiverStreams));
 
     if (auto firedDirection = transceiverState.firedDirection)
-        object->setString("firedDirection"_s, convertEnumerationToString(*firedDirection));
+        object->setString("firedDirection"_si, convertEnumerationToString(*firedDirection));
 
     return object;
 }
@@ -800,12 +800,12 @@ static Ref<JSON::Array> toJSONArray(const PeerConnectionBackend::TransceiverStat
     return array;
 }
 
-static String toJSONString(const PeerConnectionBackend::TransceiverState& transceiverState)
+static RefPtr<StringImpl> toJSONString(const PeerConnectionBackend::TransceiverState& transceiverState)
 {
     return toJSONObject(transceiverState)->toJSONString();
 }
 
-static String toJSONString(const PeerConnectionBackend::TransceiverStates& transceiverStates)
+static RefPtr<StringImpl> toJSONString(const PeerConnectionBackend::TransceiverStates& transceiverStates)
 {
     return toJSONArray(transceiverStates)->toJSONString();
 }
@@ -820,14 +820,14 @@ void PeerConnectionBackend::deref() const
     m_peerConnection->deref();
 }
 
-String PeerConnectionBackend::generateJSONLogEvent(LogEvent&& logEvent, bool isForGatherLogs)
+RefPtr<StringImpl> PeerConnectionBackend::generateJSONLogEvent(LogEvent&& logEvent, bool isForGatherLogs)
 {
     ASCIILiteral type;
-    String event;
+    RefPtr<StringImpl> event;
     WTF::switchOn(WTF::move(logEvent), [&](MessageLogEvent&& logEvent) {
         type = "event"_s;
         StringBuilder builder;
-        auto strippedMessage = logEvent.message.removeCharacters([](auto character) {
+        auto strippedMessage = removeCharacters(logEvent.message, [](auto character) {
             return character == '\n';
         });
         builder.append("{\"message\":\""_s, strippedMessage, "\",\"payload\":\""_s);
@@ -849,7 +849,7 @@ String PeerConnectionBackend::generateJSONLogEvent(LogEvent&& logEvent, bool isF
     return makeString("{\"peer-connection\":\""_s, m_logIdentifierString, "\",\"timestamp\":"_s, timestamp, ",\"type\":\""_s, type, "\",\"event\":"_s, event, '}');
 }
 
-void PeerConnectionBackend::emitJSONLogEvent(String&& event)
+void PeerConnectionBackend::emitJSONLogEvent(RefPtr<StringImpl>&& event)
 {
 #if PLATFORM(WPE) || PLATFORM(GTK)
     if (!isJSONLogStreamingEnabled())
@@ -866,12 +866,12 @@ void PeerConnectionBackend::emitJSONLogEvent(String&& event)
 
 namespace WTF {
 
-String LogArgument<WebCore::PeerConnectionBackend::TransceiverState>::toString(const WebCore::PeerConnectionBackend::TransceiverState& transceiverState)
+RefPtr<StringImpl> LogArgument<WebCore::PeerConnectionBackend::TransceiverState>::toString(const WebCore::PeerConnectionBackend::TransceiverState& transceiverState)
 {
     return toJSONString(transceiverState);
 }
 
-String LogArgument<WebCore::PeerConnectionBackend::TransceiverStates>::toString(const WebCore::PeerConnectionBackend::TransceiverStates& transceiverStates)
+RefPtr<StringImpl> LogArgument<WebCore::PeerConnectionBackend::TransceiverStates>::toString(const WebCore::PeerConnectionBackend::TransceiverStates& transceiverStates)
 {
     return toJSONString(transceiverStates);
 }

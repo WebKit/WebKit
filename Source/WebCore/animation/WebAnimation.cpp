@@ -171,7 +171,7 @@ void WebAnimation::effectTimingDidChange()
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
 }
 
-void WebAnimation::setId(String&& id)
+void WebAnimation::setId(RefPtr<StringImpl>&& id)
 {
     m_id = WTF::move(id);
 
@@ -909,7 +909,7 @@ void WebAnimation::willChangeRenderer()
         keyframeEffect->willChangeRenderer();
 }
 
-void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<WebAnimationTime> currentTime, std::optional<WebAnimationTime> scheduledTime)
+void WebAnimation::enqueueAnimationPlaybackEvent(AtomStringImpl* type, std::optional<WebAnimationTime> currentTime, std::optional<WebAnimationTime> scheduledTime)
 {
     auto timelineTime = m_timeline ? protect(m_timeline)->currentTime() : std::nullopt;
     auto event = AnimationPlaybackEvent::create(type, this, scheduledTime, timelineTime, currentTime);
@@ -1917,14 +1917,14 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return WTF::switchOn(property,
             [&](CSSPropertyID propertyId) {
                 auto string = computedStyleExtractor.propertyValueSerializationInStyle(*animatedStyle, propertyId, CSS::defaultSerializationContext(), CSSValuePool::singleton(), nullptr, Style::ExtractorState::PropertyValueType::Computed);
-                if (string.isEmpty())
+                if (isEmpty(string))
                     return false;
                 auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(propertyId, animatedStyle->writingMode());
                 return inlineStyle->setProperty(resolvedCSSProperty, WTF::move(string), { protect(styledElement->document()) });
             },
-            [&](const AtomString& customProperty) {
+            [&](AtomStringImpl* customProperty) {
                 auto string = computedStyleExtractor.customPropertyValueSerializationInStyle(*animatedStyle, customProperty, CSS::defaultSerializationContext());
-                if (!string.isEmpty())
+                if (!isEmpty(string))
                     return inlineStyle->setCustomProperty(customProperty, WTF::move(string), { protect(styledElement->document()) });
                 return false;
             }

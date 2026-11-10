@@ -40,7 +40,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebKit {
 using namespace WebCore;
 
-static std::optional<String> base64EncodedPNGData(SkImage& image)
+static std::optional<RefPtr<StringImpl>> base64EncodedPNGData(SkImage& image)
 {
     auto data = SkPngEncoder::Encode(nullptr, &image, { });
     if (!data)
@@ -49,7 +49,7 @@ static std::optional<String> base64EncodedPNGData(SkImage& image)
     return base64EncodeToString(data->byteSpan());
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& handle)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& handle)
 {
     auto bitmap = ShareableBitmap::create(WTF::move(handle), SharedMemory::Protection::ReadOnly);
     if (!bitmap)
@@ -63,7 +63,7 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(Shar
 }
 
 #if !PLATFORM(GTK)
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
 {
 #if PLATFORM(WPE)
     auto skiaImage = snapshot.image();

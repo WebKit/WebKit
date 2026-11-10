@@ -55,7 +55,7 @@ CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, std::option
 
 CSSCursorImageValue::~CSSCursorImageValue() = default;
 
-String CSSCursorImageValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSCursorImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
     auto text = m_imageValue->cssText(context);
     if (!m_hotSpot)

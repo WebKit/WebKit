@@ -75,7 +75,7 @@ TemporalPlainMonthDayConstructor::TemporalPlainMonthDayConstructor(VM& vm, Struc
 
 void TemporalPlainMonthDayConstructor::finishCreation(VM& vm, TemporalPlainMonthDayPrototype* plainMonthDayPrototype)
 {
-    Base::finishCreation(vm, 2, "PlainMonthDay"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, "PlainMonthDay"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainMonthDayPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -91,13 +91,13 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
     double isoMonth = callFrame->argument(0).toIntegerWithTruncation(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!std::isfinite(isoMonth)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay month property must be finite"_s);
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay month property must be finite"_si);
 
     // Step 4: d = ? ToIntegerWithTruncation(isoDay).
     double isoDay = callFrame->argument(1).toIntegerWithTruncation(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!std::isfinite(isoDay)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay day property must be finite"_s);
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay day property must be finite"_si);
 
     // Steps 5-7: if calendar is undefined use "iso8601"; if not a String throw TypeError; CanonicalizeCalendar.
     CalendarID calId = iso8601CalendarID();
@@ -109,7 +109,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
         RETURN_IF_EXCEPTION(scope, { });
         auto canonicalized = isBuiltinCalendar(rawCalendarId);
         if (!canonicalized) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+            return throwVMRangeError(globalObject, scope, "invalid calendar ID"_si);
         calId = *canonicalized;
     }
 
@@ -120,14 +120,14 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
         referenceYear = refYearArg.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(referenceYear)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay reference year must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay reference year must be finite"_si);
     }
 
     // Step 9: If IsValidISODate(y, m, d) is false, throw RangeError.
     if (!ISO8601::isYearWithinLimits(referenceYear)
         || !ISO8601::isValidISODate(referenceYear, isoMonth, isoDay)
         || !ISO8601::isDateTimeWithinLimits(referenceYear, isoMonth, isoDay, 12, 0, 0, 0, 0, 0)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "PlainMonthDay: date out of range of ECMAScript representation"_s);
+        return throwVMRangeError(globalObject, scope, "PlainMonthDay: date out of range of ECMAScript representation"_si);
 
     // Step 10: If ISODateWithinLimits(CreateISODateRecord(y, m, d)) is false, throw RangeError.
     // Step 11: Return ? CreateTemporalMonthDay(isoDate, calendar, NewTarget).

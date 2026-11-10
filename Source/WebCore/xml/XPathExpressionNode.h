@@ -36,7 +36,7 @@ struct EvaluationContext {
     RefPtr<Node> node;
     unsigned size;
     unsigned position;
-    HashMap<String, String> variableBindings;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> variableBindings;
     bool hadTypeConversionError;
 };
 

@@ -56,13 +56,13 @@ public:
         PresentationStyle presentationStyle { PresentationStyle::Unspecified };
     };
 
-    static ExceptionOr<Ref<ClipboardItem>> create(Vector<KeyValuePair<String, Ref<DOMPromise>>>&&, const Options&);
+    static ExceptionOr<Ref<ClipboardItem>> create(Vector<KeyValuePair<RefPtr<StringImpl>, Ref<DOMPromise>>>&&, const Options&);
     static Ref<ClipboardItem> create(Clipboard&, const PasteboardItemInfo&);
-    static Ref<Blob> blobFromString(ScriptExecutionContext*, const String& stringData, const String& type);
+    static Ref<Blob> blobFromString(ScriptExecutionContext*, StringImpl* stringData, StringImpl* type);
 
-    Vector<String> types() const;
-    void getType(const String&, Ref<DeferredPromise>&&);
-    static bool supports(ScriptExecutionContext&, const String& type);
+    Vector<RefPtr<StringImpl>> types() const;
+    void getType(StringImpl*, Ref<DeferredPromise>&&);
+    static bool supports(ScriptExecutionContext&, StringImpl* type);
 
     void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&);
 
@@ -71,7 +71,7 @@ public:
     NODELETE Clipboard* clipboard();
 
 private:
-    ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&&, const Options&);
+    ClipboardItem(Vector<KeyValuePair<RefPtr<StringImpl>, Ref<DOMPromise>>>&&, const Options&);
     ClipboardItem(Clipboard&, const PasteboardItemInfo&);
 
     WeakPtr<Clipboard, WeakPtrImplWithEventTargetData> m_clipboard;

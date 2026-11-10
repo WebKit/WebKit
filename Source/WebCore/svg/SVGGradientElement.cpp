@@ -57,7 +57,7 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     }
 }
 
-void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGGradientElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::gradientUnitsAttr:

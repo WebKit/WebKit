@@ -61,12 +61,12 @@ void URL::invalidate()
     m_queryEnd = 0;
 }
 
-URL::URL(const URL& base, const String& relative, const URLTextEncoding* encoding)
+URL::URL(const URL& base, StringImpl* relative, const URLTextEncoding* encoding)
 {
-    *this = URLParser(String { relative },  base, encoding).result();
+    *this = URLParser(RefPtr<StringImpl> { relative },  base, encoding).result();
 }
 
-URL::URL(String&& absoluteURL, const URLTextEncoding* encoding)
+URL::URL(RefPtr<StringImpl>&& absoluteURL, const URLTextEncoding* encoding)
 {
     *this = URLParser(WTF::move(absoluteURL), URL(), encoding).result();
 }
@@ -80,14 +80,14 @@ NODELETE static bool shouldTrimFromURL(char16_t character)
 URL URL::isolatedCopy() const &
 {
     URL result = *this;
-    result.m_string = result.m_string.isolatedCopy();
+    result.m_string = WTF::isolatedCopy(result.m_string);
     return result;
 }
 
 URL URL::isolatedCopy() &&
 {
     URL result { WTF::move(*this) };
-    result.m_string = WTF::move(result.m_string).isolatedCopy();
+    result.m_string = WTF::isolatedCopy(WTF::move(result.m_string));
     return result;
 }
 
@@ -97,10 +97,10 @@ StringView URL::lastPathComponent() const LIFETIME_BOUND
         return { };
 
     unsigned end = m_pathEnd - 1;
-    if (m_string[end] == '/')
+    if (codeUnitAt(m_string, end) == '/')
         --end;
 
-    size_t start = m_string.reverseFind('/', end);
+    size_t start = reverseFind(m_string, '/', end);
     if (start < pathStart())
         return { };
     ++start;
@@ -148,8 +148,8 @@ unsigned URL::pathStart() const
 {
     unsigned start = m_hostEnd + m_portLength;
     if (start == m_schemeEnd + 1U
-        && start + 1 < m_string.length()
-        && m_string[start] == '/' && m_string[start + 1] == '.')
+        && start + 1 < length(m_string)
+        && codeUnitAt(m_string, start) == '/' && codeUnitAt(m_string, start + 1) == '.')
         start += 2;
     return start;
 }
@@ -176,17 +176,17 @@ std::optional<uint16_t> URL::port() const
     return m_portLength ? parseInteger<uint16_t>(StringView(m_string).substring(m_hostEnd + 1, m_portLength - 1)) : std::nullopt;
 }
 
-String URL::hostAndPort() const
+RefPtr<StringImpl> URL::hostAndPort() const
 {
     if (auto port = this->port())
         return makeString(host(), ':', port.value());
     return host().toString();
 }
 
-String URL::protocolHostAndPort() const
+RefPtr<StringImpl> URL::protocolHostAndPort() const
 {
     if (!hasCredentials())
-        return m_string.left(pathStart());
+        return left(m_string, pathStart());
 
     return makeString(
         StringView(m_string).left(m_userStart),
@@ -205,7 +205,7 @@ NODELETE static std::optional<Latin1Character> decodeEscapeSequence(StringView i
     return toASCIIHexValue(digit1, digit2);
 }
 
-static String decodeEscapeSequencesFromParsedURL(StringView input)
+static RefPtr<StringImpl> decodeEscapeSequencesFromParsedURL(StringView input)
 {
     ASSERT(input.containsOnlyASCII());
 
@@ -227,15 +227,15 @@ static String decodeEscapeSequencesFromParsedURL(StringView input)
 
     // FIXME: Is UTF-8 always the correct encoding?
     // FIXME: This returns a null string when we encounter an invalid UTF-8 sequence. Is that OK?
-    return String::fromUTF8(percentDecoded.span());
+    return StringImpl::fromUTF8(percentDecoded.span());
 }
 
-String URL::user() const
+RefPtr<StringImpl> URL::user() const
 {
     return decodeEscapeSequencesFromParsedURL(encodedUser());
 }
 
-String URL::password() const
+RefPtr<StringImpl> URL::password() const
 {
     return decodeEscapeSequencesFromParsedURL(encodedPassword());
 }
@@ -262,7 +262,7 @@ StringView URL::fragmentIdentifier() const LIFETIME_BOUND
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#the-fragment-directive
-String URL::consumeFragmentDirective()
+RefPtr<StringImpl> URL::consumeFragmentDirective()
 {
     ASCIILiteral fragmentDirectiveDelimiter = ":~:"_s;
     auto fragment = fragmentIdentifier();
@@ -285,20 +285,20 @@ String URL::consumeFragmentDirective()
 
 URL URL::truncatedForUseAsBase() const
 {
-    return URL(m_string.left(m_pathAfterLastSlash));
+    return URL(left(m_string, m_pathAfterLastSlash));
 }
 
 #if !USE(CF)
 
-String URL::fileSystemPath() const
+RefPtr<StringImpl> URL::fileSystemPath() const
 {
     if (!protocolIsFile())
         return { };
 
     auto result = decodeEscapeSequencesFromParsedURL(path());
 #if PLATFORM(WIN)
-    if (result.startsWith('/'))
-        result = result.substring(1);
+    if (startsWith(result, '/'))
+        result = substring(result, 1);
 #endif
     return result;
 }
@@ -330,7 +330,7 @@ static void assertProtocolIsGood(StringView protocol)
 
 static Lock defaultPortForProtocolMapForTestingLock;
 
-using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
+using DefaultPortForProtocolMapForTesting = HashMap<RefPtr<StringImpl>, uint16_t>;
 NODELETE static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     static DefaultPortForProtocolMapForTesting* defaultPortForProtocolMap;
@@ -345,7 +345,7 @@ NODELETE static DefaultPortForProtocolMapForTesting& ensureDefaultPortForProtoco
     return *defaultPortForProtocolMap;
 }
 
-void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol)
+void registerDefaultPortForProtocolForTesting(uint16_t port, StringImpl* protocol)
 {
     Locker locker { defaultPortForProtocolMapForTestingLock };
     ensureDefaultPortForProtocolMapForTesting().add(protocol, port);
@@ -393,7 +393,7 @@ bool URL::protocolIs(StringView protocol) const
 
     // Do the comparison without making a new string object.
     for (unsigned i = 0; i < m_schemeEnd; ++i) {
-        if (!isASCIIAlphaCaselessEqual(m_string[i], protocol[i]))
+        if (!isASCIIAlphaCaselessEqual(codeUnitAt(m_string, i), protocol[i]))
             return false;
     }
     return true;
@@ -431,7 +431,7 @@ bool URL::setProtocol(StringView newProtocol)
     if (URLParser::isSpecialScheme(this->protocol()) != URLParser::isSpecialScheme(*newProtocolCanonicalized))
         return true;
 
-    if ((m_passwordEnd != m_userStart || port()) && *newProtocolCanonicalized == "file"_s)
+    if ((m_passwordEnd != m_userStart || port()) && equal(*newProtocolCanonicalized, "file"_s))
         return true;
 
     if (protocolIsFile() && host().isEmpty())
@@ -475,7 +475,7 @@ unsigned URL::credentialsEnd() const
 {
     // Include '@' too if we have it.
     unsigned end = m_passwordEnd;
-    if (end != m_hostEnd && m_string[end] == '@')
+    if (end != m_hostEnd && codeUnitAt(m_string, end) == '@')
         end += 1;
     return end;
 }
@@ -606,10 +606,10 @@ void URL::removeHostAndPort()
 }
 
 template<typename StringType>
-static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(char16_t))
+static RefPtr<StringImpl> percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(char16_t))
 {
-    auto encode = [shouldEncode] (const StringType& input) {
-        auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> String {
+    auto encode = [shouldEncode] (StringView input) {
+        auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> RefPtr<StringImpl> {
             StringBuilder builder(OverflowPolicy::RecordOverflow);
             for (char c : span) {
                 if (shouldEncode(c))
@@ -625,9 +625,10 @@ static String percentEncodeCharacters(const StringType& input, bool(*shouldEncod
         return result.value();
     };
 
-    for (size_t i = 0; i < input.length(); ++i) {
-        if (shouldEncode(input[i])) [[unlikely]]
-            return encode(input);
+    StringView inputView { input };
+    for (size_t i = 0; i < inputView.length(); ++i) {
+        if (shouldEncode(inputView[i])) [[unlikely]]
+            return encode(inputView);
     }
     if constexpr (std::is_same_v<StringType, StringView>)
         return input.toString();
@@ -635,12 +636,12 @@ static String percentEncodeCharacters(const StringType& input, bool(*shouldEncod
         return input;
 }
 
-void URL::parse(String&& string)
+void URL::parse(RefPtr<StringImpl>&& string)
 {
     *this = URLParser(WTF::move(string)).result();
 }
 
-void URL::parseAllowingC0AtEnd(String&& string)
+void URL::parseAllowingC0AtEnd(RefPtr<StringImpl>&& string)
 {
     *this = URLParser(WTF::move(string), { }, URLTextEncodingSentinelAllowingC0AtEnd).result();
 }
@@ -649,8 +650,8 @@ void URL::remove(unsigned start, unsigned length)
 {
     if (!length)
         return;
-    ASSERT(start < m_string.length());
-    ASSERT(length <= m_string.length() - start);
+    ASSERT(start < WTF::length(m_string));
+    ASSERT(length <= WTF::length(m_string) - start);
 
     auto stringAfterRemoval = makeStringByRemoving(std::exchange(m_string, { }), start, length);
     parse(WTF::move(stringAfterRemoval));
@@ -664,7 +665,7 @@ void URL::setUser(StringView newUser)
     unsigned end = m_userEnd;
     if (!newUser.isEmpty()) {
         bool slashSlashNeeded = m_userStart == m_schemeEnd + 1U;
-        bool needSeparator = end == m_hostEnd || (end == m_passwordEnd && m_string[end] != '@');
+        bool needSeparator = end == m_hostEnd || (end == m_passwordEnd && codeUnitAt(m_string, end) != '@');
         parse(makeString(
             StringView(m_string).left(m_userStart),
             slashSlashNeeded ? "//"_s : ""_s,
@@ -674,7 +675,7 @@ void URL::setUser(StringView newUser)
         ));
     } else {
         // Remove '@' if we now have neither user nor password.
-        if (m_userEnd == m_passwordEnd && end != m_hostEnd && m_string[end] == '@')
+        if (m_userEnd == m_passwordEnd && end != m_hostEnd && codeUnitAt(m_string, end) == '@')
             end += 1;
         remove(m_userStart, end - m_userStart);
     }
@@ -721,7 +722,7 @@ void URL::removeFragmentIdentifier()
     if (!m_isValid)
         return;
 
-    m_string = m_string.left(m_queryEnd);
+    m_string = left(m_string, m_queryEnd);
 }
 
 void URL::removeQueryAndFragmentIdentifier()
@@ -729,7 +730,7 @@ void URL::removeQueryAndFragmentIdentifier()
     if (!m_isValid)
         return;
 
-    m_string = m_string.left(m_pathEnd);
+    m_string = left(m_string, m_pathEnd);
     m_queryEnd = m_pathEnd;
 }
 
@@ -749,7 +750,7 @@ void URL::setQuery(StringView newQuery)
     ));
 }
 
-static String escapePathWithoutCopying(StringView path)
+static RefPtr<StringImpl> escapePathWithoutCopying(StringView path)
 {
     auto questionMarkOrNumberSignOrNonASCII = [] (char16_t character) {
         return character == '?' || character == '#' || !isASCII(character);
@@ -787,12 +788,12 @@ StringView URL::viewWithoutFragmentIdentifier() const LIFETIME_BOUND
     return StringView(m_string).left(m_queryEnd);
 }
 
-String URL::stringWithoutFragmentIdentifier() const
+RefPtr<StringImpl> URL::stringWithoutFragmentIdentifier() const
 {
     if (!m_isValid)
         return m_string;
 
-    return m_string.left(m_queryEnd);
+    return left(m_string, m_queryEnd);
 }
 
 bool equalIgnoringFragmentIdentifier(const URL& a, const URL& b)
@@ -814,13 +815,13 @@ bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
 
     // Check the scheme.
     for (unsigned i = 0; i < a.m_schemeEnd; ++i) {
-        if (toASCIILower(a.string()[i]) != toASCIILower(b.string()[i]))
+        if (toASCIILower(codeUnitAt(a.string(), i)) != toASCIILower(codeUnitAt(b.string(), i)))
             return false;
     }
 
     // And the host.
     for (unsigned i = 0; i < hostLengthA; ++i) {
-        if (toASCIILower(a.string()[hostStartA + i]) != toASCIILower(b.string()[hostStartB + i]))
+        if (toASCIILower(codeUnitAt(a.string(), hostStartA + i)) != toASCIILower(codeUnitAt(b.string(), hostStartB + i)))
             return false;
     }
 
@@ -851,12 +852,12 @@ bool URL::isMatchingDomain(StringView domain) const
 }
 
 // FIXME: Rename this so it's clear that it does the appropriate escaping for URL query field values.
-String encodeWithURLEscapeSequences(const String& input)
+RefPtr<StringImpl> encodeWithURLEscapeSequences(StringImpl* input)
 {
     return percentEncodeCharacters(input, URLParser::isInUserInfoEncodeSet);
 }
 
-String percentEncodeFragmentDirectiveSpecialCharacters(const String& input)
+RefPtr<StringImpl> percentEncodeFragmentDirectiveSpecialCharacters(StringImpl* input)
 {
     return percentEncodeCharacters(input, URLParser::isSpecialCharacterForFragmentDirective);
 }
@@ -897,7 +898,7 @@ bool protocolIs(StringView string, ASCIILiteral protocol)
 
 void URL::print() const
 {
-    SAFE_PRINTF("%s\n", m_string.utf8());
+    SAFE_PRINTF("%s\n", utf8(m_string));
 }
 
 #endif
@@ -914,7 +915,7 @@ URL::StripResult URL::strippedForUseAsReferrer() const
 
     unsigned end = credentialsEnd();
 
-    if (m_userStart == end && m_queryEnd == m_string.length())
+    if (m_userStart == end && m_queryEnd == length(m_string))
         return { m_string, false };
 
     return { makeString(StringView(m_string).left(m_userStart), StringView(m_string).substring(end, m_queryEnd - end)), true };
@@ -935,20 +936,20 @@ URL::StripResult URL::strippedForUseAsReferrerWithExplicitPort() const
 
     unsigned end = credentialsEnd();
 
-    if (m_userStart == end && m_queryEnd == m_string.length())
+    if (m_userStart == end && m_queryEnd == length(m_string))
         return { makeString(StringView(m_string).left(m_hostEnd), ':', static_cast<unsigned>(*port), StringView(m_string).substring(pathStart())), true };
 
     return { makeString(StringView(m_string).left(m_hostEnd), ':', static_cast<unsigned>(*port), StringView(m_string).substring(end, m_queryEnd - end)), true };
 }
 
-String URL::strippedForUseAsReport() const
+RefPtr<StringImpl> URL::strippedForUseAsReport() const
 {
     if (!m_isValid)
         return m_string;
 
     unsigned end = credentialsEnd();
 
-    if (m_userStart == end && m_pathEnd == m_string.length())
+    if (m_userStart == end && m_pathEnd == length(m_string))
         return m_string;
 
     return makeString(StringView(m_string).left(m_userStart), StringView(m_string).substring(end, m_pathEnd - end));
@@ -972,17 +973,15 @@ bool protocolIsInHTTPFamily(StringView url)
 }
 
 
-static StaticStringImpl aboutBlankString { "about:blank" };
 SUPPRESS_NODELETE const URL& aboutBlankURL()
 {
-    static NeverDestroyed<URL> staticBlankURL { &aboutBlankString };
+    static NeverDestroyed<URL> staticBlankURL { "about:blank"_si };
     return staticBlankURL;
 }
 
-static StaticStringImpl aboutSrcDocString { "about:srcdoc" };
 SUPPRESS_NODELETE const URL& aboutSrcDocURL()
 {
-    static NeverDestroyed<URL> staticSrcDocURL { &aboutSrcDocString };
+    static NeverDestroyed<URL> staticSrcDocURL { "about:srcdoc"_si };
     return staticSrcDocURL;
 }
 
@@ -1098,7 +1097,7 @@ bool portAllowed(const URL& url)
     return false;
 }
 
-String mimeTypeFromDataURL(StringView dataURL)
+RefPtr<StringImpl> mimeTypeFromDataURL(StringView dataURL)
 {
     ASSERT(protocolIsInternal(dataURL, "data"_s));
 
@@ -1113,14 +1112,14 @@ String mimeTypeFromDataURL(StringView dataURL)
         return emptyString();
     }
     if (index == 5)
-        return "text/plain"_s;
+        return "text/plain"_si;
     ASSERT(index >= 5);
     return dataURL.substring(5, index - 5).convertToASCIILowercase();
 }
 
-String URL::stringCenterEllipsizedToLength(unsigned length) const
+RefPtr<StringImpl> URL::stringCenterEllipsizedToLength(unsigned length) const
 {
-    if (m_string.length() <= length)
+    if (WTF::length(m_string) <= length)
         return m_string;
 
     return makeString(StringView(m_string).left(length / 2 - 1), "..."_s, StringView(m_string).right(length / 2 - 2));
@@ -1150,7 +1149,7 @@ StringView URL::queryWithLeadingQuestionMark() const LIFETIME_BOUND
 
 StringView URL::fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND
 {
-    if (!m_isValid || m_string.length() <= m_queryEnd)
+    if (!m_isValid || length(m_string) <= m_queryEnd)
         return { };
 
     return StringView(m_string).substring(m_queryEnd);
@@ -1259,12 +1258,12 @@ bool URL::hostIsIPAddress(StringView host)
 
 #endif
 
-Vector<KeyValuePair<String, String>> queryParameters(const URL& url)
+Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> queryParameters(const URL& url)
 {
     return URLParser::parseURLEncodedForm(url.query());
 }
 
-Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstURL, const URL& secondURL)
+Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> differingQueryParameters(const URL& firstURL, const URL& secondURL)
 {
     auto firstQueryParameters = URLParser::parseURLEncodedForm(firstURL.query());
     auto secondQueryParameters = URLParser::parseURLEncodedForm(secondURL.query());
@@ -1275,13 +1274,13 @@ Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstUR
     if (secondQueryParameters.isEmpty())
         return firstQueryParameters;
     
-    auto compare = [] (const KeyValuePair<String, String>& a, const KeyValuePair<String, String>& b) {
+    auto compare = [] (const KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>& a, const KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>& b) {
         if (auto result = codePointCompare(a.key, b.key); is_neq(result))
             return result;
         return codePointCompare(a.value, b.value);
         
     };
-    auto comparesLessThan = [compare] (const KeyValuePair<String, String>& a, const KeyValuePair<String, String>& b) {
+    auto comparesLessThan = [compare] (const KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>& a, const KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>& b) {
         return compare(a, b) < 0;
     };
     
@@ -1291,7 +1290,7 @@ Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstUR
     size_t totalSecondQueryParameters = secondQueryParameters.size();
     size_t indexInFirstQueryParameters = 0;
     size_t indexInSecondQueryParameters = 0;
-    Vector<KeyValuePair<String, String>> differingQueryParameters;
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> differingQueryParameters;
     while (indexInFirstQueryParameters < totalFirstQueryParameters && indexInSecondQueryParameters < totalSecondQueryParameters) {
         auto comparison = compare(firstQueryParameters[indexInFirstQueryParameters], secondQueryParameters[indexInSecondQueryParameters]);
         if (is_lt(comparison)) {
@@ -1332,22 +1331,22 @@ bool isEqualIgnoringQueryAndFragments(const URL& a, const URL& b)
     return substringIgnoringQueryAndFragments(a) == substringIgnoringQueryAndFragments(b);
 }
 
-Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
+Vector<RefPtr<StringImpl>> removeQueryParameters(URL& url, const HashSet<RefPtr<StringImpl>>& keysToRemove)
 {
     if (keysToRemove.isEmpty())
         return { };
 
-    return removeQueryParameters(url, [&](auto& key, auto&) {
+    return removeQueryParameters(url, [&](StringImpl* key, StringImpl*) {
         return keysToRemove.contains(key);
     });
 }
 
-Vector<String> removeQueryParameters(URL& url, NOESCAPE const Function<bool(const String&, const String&)>& shouldRemove)
+Vector<RefPtr<StringImpl>> removeQueryParameters(URL& url, NOESCAPE const Function<bool(StringImpl*, StringImpl*)>& shouldRemove)
 {
     if (!url.hasQuery())
         return { };
 
-    Vector<String> removedParameters;
+    Vector<RefPtr<StringImpl>> removedParameters;
     StringBuilder queryWithoutRemovalKeys;
     for (auto bytes : url.query().split('&')) {
         auto nameAndValue = URLParser::parseQueryNameAndValue(bytes);
@@ -1355,7 +1354,7 @@ Vector<String> removeQueryParameters(URL& url, NOESCAPE const Function<bool(cons
             continue;
 
         auto& key = nameAndValue->key;
-        if (key.isEmpty())
+        if (isEmpty(key))
             continue;
 
         if (shouldRemove(key, nameAndValue->value)) {

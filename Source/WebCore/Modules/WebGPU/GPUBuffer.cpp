@@ -39,7 +39,7 @@ GPUBuffer::~GPUBuffer()
         device->willDestroyBuffer(*this);
 }
 
-GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, String&& label, GPUDevice& device)
+GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, RefPtr<StringImpl>&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_bufferSize(bufferSize)
@@ -63,12 +63,12 @@ GPUDevice* GPUBuffer::device() const
     return m_device;
 }
 
-String GPUBuffer::label() const
+RefPtr<StringImpl> GPUBuffer::label() const
 {
     return m_label;
 }
 
-void GPUBuffer::setLabel(String&& label)
+void GPUBuffer::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));
@@ -78,7 +78,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
 {
     if (m_mapState != GPUBufferMapState::Unmapped) {
         m_backing->generateAValidationError();
-        promise.reject(Exception { ExceptionCode::OperationError, "pendingMapPromise"_s });
+        promise.reject(Exception { ExceptionCode::OperationError, "pendingMapPromise"_si });
         return;
     }
 
@@ -90,7 +90,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTF::move(promise), protectedThis = protect(*this), offset, size](bool success) mutable {
         if (!protectedThis->m_pendingMapPromise) {
             if (protectedThis->m_destroyed)
-                promise.reject(Exception { ExceptionCode::OperationError, "buffer destroyed during mapAsync"_s });
+                promise.reject(Exception { ExceptionCode::OperationError, "buffer destroyed during mapAsync"_si });
             else
                 promise.resolve();
             return;
@@ -106,7 +106,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
             if (protectedThis->m_mapState == GPUBufferMapState::Pending)
                 protectedThis->m_mapState = GPUBufferMapState::Unmapped;
 
-            promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_s });
+            promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_si });
         }
     });
 }
@@ -154,34 +154,34 @@ static bool containsRange(size_t offset, size_t endOffset, const auto& mappedRan
 ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(GPUSize64 offset, std::optional<GPUSize64> optionalSize)
 {
     if (m_mapState != GPUBufferMapState::Mapped || m_destroyed)
-        return Exception { ExceptionCode::OperationError, "not mapped or destroyed"_s };
+        return Exception { ExceptionCode::OperationError, "not mapped or destroyed"_si };
 
     if (offset > m_bufferSize)
-        return Exception { ExceptionCode::OperationError, "offset > bufferSize"_s };
+        return Exception { ExceptionCode::OperationError, "offset > bufferSize"_si };
 
     auto size = optionalSize.value_or(m_bufferSize - offset);
     auto checkedEndOffset = checkedSum<uint64_t>(offset, size);
     if (checkedEndOffset.hasOverflowed())
-        return Exception { ExceptionCode::OperationError, "has overflowed"_s };
+        return Exception { ExceptionCode::OperationError, "has overflowed"_si };
 
     auto endOffset = checkedEndOffset.value();
     if (offset % 8)
-        return Exception { ExceptionCode::OperationError, "validation failed offset % 8"_s };
+        return Exception { ExceptionCode::OperationError, "validation failed offset % 8"_si };
 
     if (size % 4)
-        return Exception { ExceptionCode::OperationError, "validation failed size % 4"_s };
+        return Exception { ExceptionCode::OperationError, "validation failed size % 4"_si };
 
     if (offset < m_mappedRangeOffset)
-        return Exception { ExceptionCode::OperationError, "validation failed offset < m_mappedRangeOffset"_s };
+        return Exception { ExceptionCode::OperationError, "validation failed offset < m_mappedRangeOffset"_si };
 
     if (endOffset > m_mappedRangeSize + m_mappedRangeOffset)
-        return Exception { ExceptionCode::OperationError, "getMappedRangeFailed because offset + size > mappedRangeSize + mappedRangeOffset"_s };
+        return Exception { ExceptionCode::OperationError, "getMappedRangeFailed because offset + size > mappedRangeSize + mappedRangeOffset"_si };
 
     if (endOffset > m_bufferSize)
-        return Exception { ExceptionCode::OperationError, "validation failed endOffset > bufferSize"_s };
+        return Exception { ExceptionCode::OperationError, "validation failed endOffset > bufferSize"_si };
 
     if (containsRange(offset, endOffset, m_mappedRanges, m_mappedPoints))
-        return Exception { ExceptionCode::OperationError, "validation failed - containsRange"_s };
+        return Exception { ExceptionCode::OperationError, "validation failed - containsRange"_si };
 
     if (offset == endOffset)
         m_mappedPoints.add(offset);
@@ -204,7 +204,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(GPUSize64 offset, s
     });
 
     if (!result)
-        return Exception { ExceptionCode::OperationError, "getMappedRange failed"_s };
+        return Exception { ExceptionCode::OperationError, "getMappedRange failed"_si };
 
     return result.releaseNonNull();
 }

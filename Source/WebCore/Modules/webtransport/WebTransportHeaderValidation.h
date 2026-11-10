@@ -35,12 +35,12 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 // https://w3c.github.io/webtransport/#dom-webtransportoptions-headers
-WEBCORE_EXPORT ExceptionOr<Vector<KeyValuePair<String, String>>> validateAndNormalizeWebTransportHeaders(const FetchHeaders::Init&);
+WEBCORE_EXPORT ExceptionOr<Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>> validateAndNormalizeWebTransportHeaders(const FetchHeaders::Init&);
 
 // Defense-in-depth re-validation of WebTransport request headers received by the NetworkProcess
 // over IPC from a WebContent process. The WebContent side already performs this validation in
 // validateAndNormalizeWebTransportHeaders; a compromised WebContent process could bypass
 // it, so the NetworkProcess must re-check before acting on the headers.
-WEBCORE_EXPORT bool areValidWebTransportHeaders(const Vector<KeyValuePair<String, String>>&);
+WEBCORE_EXPORT bool areValidWebTransportHeaders(const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&);
 
 } // namespace WebCore

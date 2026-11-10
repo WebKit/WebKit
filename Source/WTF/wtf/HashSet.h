@@ -565,7 +565,7 @@ inline bool HashSet<T, U, V, W, shouldValidateKey>::isValidValue(const ValueType
     if (ValueTraits::isDeletedValue(value))
         return false;
 
-    if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+    if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted) {
         if (value == ValueTraits::emptyValue())
             return false;
     } else {

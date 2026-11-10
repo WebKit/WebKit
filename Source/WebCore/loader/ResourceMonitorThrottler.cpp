@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-ResourceMonitorThrottler::ResourceMonitorThrottler(String&& directoryPath, size_t count, Seconds duration, size_t maxHosts)
+ResourceMonitorThrottler::ResourceMonitorThrottler(RefPtr<StringImpl>&& directoryPath, size_t count, Seconds duration, size_t maxHosts)
     : m_config { count, duration, maxHosts }
 {
     ASSERT(!isMainThread());
@@ -79,7 +79,7 @@ ResourceMonitorThrottler::~ResourceMonitorThrottler()
     }
 }
 
-auto ResourceMonitorThrottler::throttlerForHost(const String& host) -> AccessThrottler&
+auto ResourceMonitorThrottler::throttlerForHost(StringImpl* host) -> AccessThrottler&
 {
     ASSERT(!isMainThread());
 
@@ -93,7 +93,7 @@ void ResourceMonitorThrottler::removeOldestThrottler()
     ASSERT(!isMainThread());
 
     auto oldest = ContinuousApproximateTime::infinity();
-    String oldestKey;
+    RefPtr<StringImpl> oldestKey;
 
     for (auto it : m_throttlersByHost) {
         auto time = it.value.newestAccessTime();
@@ -102,26 +102,26 @@ void ResourceMonitorThrottler::removeOldestThrottler()
             oldestKey = it.key;
         }
     }
-    ASSERT(!oldestKey.isNull());
+    ASSERT(oldestKey);
     m_throttlersByHost.remove(oldestKey);
 }
 
-bool ResourceMonitorThrottler::tryAccess(const String& host, ContinuousApproximateTime time)
+bool ResourceMonitorThrottler::tryAccess(StringImpl* host, ContinuousApproximateTime time)
 {
     ASSERT(!isMainThread());
-    ASSERT(!host.isEmpty());
+    ASSERT(!isEmpty(host));
 
     auto& throttler = throttlerForHost(host);
     bool wasGranted = throttler.tryAccessAndUpdateHistory(time, m_config);
 
     if (wasGranted) {
-        RESOURCEMONITOR_RELEASE_LOG("Throttler granted for unloading the resource for %" PUBLIC_LOG_STRING ".", host.utf8());
+        RESOURCEMONITOR_RELEASE_LOG("Throttler granted for unloading the resource for %" PUBLIC_LOG_STRING ".", utf8(host));
 
         maintainHosts(time);
         if (m_persistence)
             m_persistence->recordAccess(host, time);
     } else
-        RESOURCEMONITOR_RELEASE_LOG("Throttler denied for unloading the resource for %" PUBLIC_LOG_STRING ".", host.utf8());
+        RESOURCEMONITOR_RELEASE_LOG("Throttler denied for unloading the resource for %" PUBLIC_LOG_STRING ".", utf8(host));
 
     return wasGranted;
 }

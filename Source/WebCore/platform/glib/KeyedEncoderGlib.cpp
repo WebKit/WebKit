@@ -52,53 +52,53 @@ KeyedEncoderGlib::~KeyedEncoderGlib()
     ASSERT(m_objectStack.isEmpty());
 }
 
-void KeyedEncoderGlib::encodeBytes(const String& key, std::span<const uint8_t> bytes)
+void KeyedEncoderGlib::encodeBytes(StringImpl* key, std::span<const uint8_t> bytes)
 {
     GRefPtr gBytes = gBytesNewStatic(bytes);
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
 }
 
-void KeyedEncoderGlib::encodeBool(const String& key, bool value)
+void KeyedEncoderGlib::encodeBool(StringImpl* key, bool value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_boolean(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_boolean(value));
 }
 
-void KeyedEncoderGlib::encodeUInt32(const String& key, uint32_t value)
+void KeyedEncoderGlib::encodeUInt32(StringImpl* key, uint32_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_uint32(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_uint32(value));
 }
     
-void KeyedEncoderGlib::encodeUInt64(const String& key, uint64_t value)
+void KeyedEncoderGlib::encodeUInt64(StringImpl* key, uint64_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_uint64(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_uint64(value));
 }
 
-void KeyedEncoderGlib::encodeInt32(const String& key, int32_t value)
+void KeyedEncoderGlib::encodeInt32(StringImpl* key, int32_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_int32(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_int32(value));
 }
 
-void KeyedEncoderGlib::encodeInt64(const String& key, int64_t value)
+void KeyedEncoderGlib::encodeInt64(StringImpl* key, int64_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_int64(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_int64(value));
 }
 
-void KeyedEncoderGlib::encodeFloat(const String& key, float value)
+void KeyedEncoderGlib::encodeFloat(StringImpl* key, float value)
 {
     encodeDouble(key, value);
 }
 
-void KeyedEncoderGlib::encodeDouble(const String& key, double value)
+void KeyedEncoderGlib::encodeDouble(StringImpl* key, double value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_double(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), g_variant_new_double(value));
 }
 
-void KeyedEncoderGlib::encodeString(const String& key, const String& value)
+void KeyedEncoderGlib::encodeString(StringImpl* key, StringImpl* value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), gVariantNewString(value.utf8()));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(key), gVariantNewString(utf8(value)));
 }
 
-void KeyedEncoderGlib::beginObject(const String& key)
+void KeyedEncoderGlib::beginObject(StringImpl* key)
 {
     GRefPtr<GVariantBuilder> builder = adoptGRef(g_variant_builder_new(G_VARIANT_TYPE("a{sv}")));
     m_objectStack.append(std::make_pair(key, builder));
@@ -108,11 +108,11 @@ void KeyedEncoderGlib::beginObject(const String& key)
 void KeyedEncoderGlib::endObject()
 {
     GVariantBuilder* builder = m_variantBuilderStack.takeLast();
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", m_objectStack.last().first.utf8(), g_variant_builder_end(builder));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(m_objectStack.last().first), g_variant_builder_end(builder));
     m_objectStack.removeLast();
 }
 
-void KeyedEncoderGlib::beginArray(const String& key)
+void KeyedEncoderGlib::beginArray(StringImpl* key)
 {
     m_arrayStack.append(std::make_pair(key, adoptGRef(g_variant_builder_new(G_VARIANT_TYPE("aa{sv}")))));
 }
@@ -130,7 +130,7 @@ void KeyedEncoderGlib::endArrayElement()
 
 void KeyedEncoderGlib::endArray()
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", m_arrayStack.last().first.utf8(), g_variant_builder_end(m_arrayStack.last().second.get()));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", utf8(m_arrayStack.last().first), g_variant_builder_end(m_arrayStack.last().second.get()));
     m_arrayStack.removeLast();
 }
 

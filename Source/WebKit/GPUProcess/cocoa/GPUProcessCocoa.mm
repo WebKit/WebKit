@@ -82,7 +82,7 @@ RetainPtr<NSDictionary> GPUProcess::additionalStateForDiagnosticReport() const
 
             auto stateInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:backendMap.size()]);
             // FIXME: Log some additional diagnostic state on RemoteRenderingBackend.
-            [webProcessConnectionInfo setObject:stateInfo.get() forKey:webProcessIdentifier.loggingString().createNSString().get()];
+            [webProcessConnectionInfo setObject:stateInfo.get() forKey:createNSString(webProcessIdentifier.loggingString()).get()];
         }
 
         if ([webProcessConnectionInfo count])
@@ -94,7 +94,7 @@ RetainPtr<NSDictionary> GPUProcess::additionalStateForDiagnosticReport() const
 #endif // USE(OS_STATE)
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-void GPUProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
+void GPUProcess::dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key)
 {
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
@@ -158,7 +158,7 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
 #endif
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS) && USE(EXTENSIONKIT)
-    MTLSetShaderCachePath(parameters.containerCachesDirectory.createNSString().get());
+    MTLSetShaderCachePath(createNSString(parameters.containerCachesDirectory).get());
 #endif
 
 #if USE(EXTENSIONKIT)
@@ -198,7 +198,7 @@ void GPUProcess::requestSharedSimulationConnection(CoreIPCAuditToken&& modelProc
 #endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<String>&)>&& completionHandler)
+void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<RefPtr<StringImpl>>&)>&& completionHandler)
 {
 #if HAVE(CORE_RE)
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
@@ -210,7 +210,7 @@ void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity proce
         }
 
         RELEASE_LOG(ModelElement, "GPUProcess: Memory attribution ID request succeeded");
-        completionHandler(String(attributionTaskID.get()));
+        completionHandler(StringImpl::create(attributionTaskID.get()));
     });
 #else
     UNUSED_PARAM(processIdentity);
@@ -218,11 +218,11 @@ void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity proce
 #endif
 }
 
-void GPUProcess::unregisterMemoryAttributionID(const String& attributionID, CompletionHandler<void()>&& completionHandler)
+void GPUProcess::unregisterMemoryAttributionID(StringImpl* attributionID, CompletionHandler<void()>&& completionHandler)
 {
 #if HAVE(CORE_RE)
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
-    sharedSimulationConnectionHelper->unregisterMemoryAttributionID(attributionID.createNSString().get(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<id> appService) mutable {
+    sharedSimulationConnectionHelper->unregisterMemoryAttributionID(createNSString(attributionID).get(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<id> appService) mutable {
         if (appService)
             RELEASE_LOG(ModelElement, "GPUProcess: Memory attribution ID unregistration succeeded");
         else
@@ -269,7 +269,7 @@ bool GPUProcess::setCaptureAttributionString(const WebCore::SecurityOriginData& 
 
     RetainPtr visibleName = applicationVisibleNameFromOrigin(captureOrigin);
     if (!visibleName)
-        visibleName = applicationVisibleName().createNSString();
+        visibleName = createNSString(applicationVisibleName());
 
     if ([PAL::getSTDynamicActivityAttributionPublisherClassSingleton() respondsToSelector:@selector(setCurrentAttributionWebsiteString:auditToken:)])
         [PAL::getSTDynamicActivityAttributionPublisherClassSingleton() setCurrentAttributionWebsiteString:visibleName.get() auditToken:auditToken.value()];
@@ -286,7 +286,7 @@ bool GPUProcess::setCaptureAttributionString(const WebCore::SecurityOriginData& 
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(APP_PRIVACY_REPORT) && !PLATFORM(MACCATALYST)
-bool GPUProcess::setCaptureTCCIdentity(const String& fallbackBundleIdentifier)
+bool GPUProcess::setCaptureTCCIdentity(StringImpl* fallbackBundleIdentifier)
 {
     auto auditToken = protect(parentProcessConnection())->getAuditToken();
     if (!auditToken) {
@@ -298,17 +298,17 @@ bool GPUProcess::setCaptureTCCIdentity(const String& fallbackBundleIdentifier)
     RetainPtr bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:*auditToken error:&error];
     RELEASE_LOG_ERROR_IF(error, WebRTC, "setCaptureTCCIdentity: -[LSBundleProxy bundleProxyWithAuditToken:error:] failed with error %s", [[error localizedDescription] UTF8String]);
 
-    String bundleIdentifier = [bundleProxy bundleIdentifier];
-    if (bundleIdentifier.isNull())
+    RefPtr<StringImpl> bundleIdentifier = StringImpl::create([bundleProxy bundleIdentifier]);
+    if (!bundleIdentifier)
         bundleIdentifier = fallbackBundleIdentifier;
 
-    if (bundleIdentifier.isNull()) {
+    if (!bundleIdentifier) {
         RELEASE_LOG_ERROR(WebRTC, "setCaptureTCCIdentity: unable to get the bundle identifier");
         return false;
     }
 
     // FIXME: Adopting is needed here but static analysis is not able to tell.
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().legacyCStringPointer()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, utf8(bundleIdentifier).legacyCStringPointer()));
     if (!identity) {
         RELEASE_LOG_ERROR(WebRTC, "setCaptureTCCIdentity: tcc_identity_create returned null");
         return false;

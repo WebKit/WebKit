@@ -113,17 +113,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 #undef NSHTTPCookieSameSiteNone
 
 Cookie::Cookie(NSHTTPCookie *cookie)
-    : name { cookie.name }
-    , value { cookie.value }
-    , domain { cookie.domain }
-    , path { cookie.path }
-    , partitionKey { cookie._storagePartition }
+    : name { StringImpl::create(cookie.name) }
+    , value { StringImpl::create(cookie.value) }
+    , domain { StringImpl::create(cookie.domain) }
+    , path { StringImpl::create(cookie.path) }
+    , partitionKey { StringImpl::create(cookie._storagePartition) }
     , created { cookieCreated(cookie) }
     , expires { cookieExpiry(cookie) }
     , httpOnly { static_cast<bool>(cookie.HTTPOnly) }
     , secure { static_cast<bool>(cookie.secure) }
     , session { static_cast<bool>(cookie.sessionOnly) }
-    , comment { cookie.comment }
+    , comment { StringImpl::create(cookie.comment) }
     , commentURL { cookie.commentURL }
     , ports { portVectorFromList(retainPtr(cookie.portList).get()) }
 {
@@ -137,26 +137,26 @@ RetainPtr<NSHTTPCookie> Cookie::createNSHTTPCookie() const
 
     RetainPtr properties = adoptNS([[NSMutableDictionary alloc] initWithCapacity:14]);
 
-    if (!comment.isNull())
-        [properties setObject:comment.createNSString().get() forKey:NSHTTPCookieComment];
+    if (comment)
+        [properties setObject:createNSString(comment).get() forKey:NSHTTPCookieComment];
 
     if (!commentURL.isNull())
         [properties setObject:commentURL.createNSURL().get() forKey:NSHTTPCookieCommentURL];
 
-    if (!domain.isNull())
-        [properties setObject:domain.createNSString().get() forKey:NSHTTPCookieDomain];
+    if (domain)
+        [properties setObject:createNSString(domain).get() forKey:NSHTTPCookieDomain];
 
-    if (!name.isNull())
-        [properties setObject:name.createNSString().get() forKey:NSHTTPCookieName];
+    if (name)
+        [properties setObject:createNSString(name).get() forKey:NSHTTPCookieName];
 
-    if (!path.isNull())
-        [properties setObject:path.createNSString().get() forKey:NSHTTPCookiePath];
+    if (path)
+        [properties setObject:createNSString(path).get() forKey:NSHTTPCookiePath];
 
-    if (!partitionKey.isNull())
-        [properties setObject:partitionKey.createNSString().get() forKey:@"StoragePartition"];
+    if (partitionKey)
+        [properties setObject:createNSString(partitionKey).get() forKey:@"StoragePartition"];
 
-    if (!value.isNull())
-        [properties setObject:value.createNSString().get() forKey:NSHTTPCookieValue];
+    if (value)
+        [properties setObject:createNSString(value).get() forKey:NSHTTPCookieValue];
 
     if (expires) {
         RetainPtr expirationDate = [NSDate dateWithTimeIntervalSince1970:*expires / 1000.0];
@@ -189,17 +189,17 @@ RetainPtr<NSHTTPCookie> Cookie::createNSHTTPCookie() const
 bool Cookie::operator==(const Cookie& other) const
 {
     ASSERT(!name.isHashTableDeletedValue());
-    return name == other.name
-        && value == other.value
-        && domain == other.domain
-        && path == other.path
-        && partitionKey == other.partitionKey
+    return equal(name, other.name)
+        && equal(value, other.value)
+        && equal(domain, other.domain)
+        && equal(path, other.path)
+        && equal(partitionKey, other.partitionKey)
         && created == other.created
         && expires == other.expires
         && httpOnly == other.httpOnly
         && secure == other.secure
         && session == other.session
-        && comment == other.comment
+        && equal(comment, other.comment)
         && commentURL == other.commentURL
         && ports == other.ports
         && sameSite == other.sameSite;
@@ -215,24 +215,24 @@ unsigned Cookie::hash() const
 
 namespace CookieUtil {
 
-String cookieStringForScript(String&& storedValue)
+RefPtr<StringImpl> cookieStringForScript(RefPtr<StringImpl>&& storedValue)
 {
     // ASCII round-trips through UTF-8 as itself, so there's nothing to decode.
-    if (!storedValue.is8Bit() || storedValue.containsOnlyASCII())
+    if (!is8Bit(storedValue) || containsOnlyASCII(storedValue))
         return WTF::move(storedValue);
-    return String::fromUTF8ReplacingInvalidSequences(storedValue.span8());
+    return StringImpl::fromUTF8ReplacingInvalidSequences(span8(storedValue));
 }
 
-String cookieStringForStorage(const String& scriptValue)
+RefPtr<StringImpl> cookieStringForStorage(StringImpl* scriptValue)
 {
     // ASCII round-trips through UTF-8 as itself, so there's nothing to encode.
-    if (scriptValue.containsOnlyASCII())
+    if (containsOnlyASCII(scriptValue))
         return scriptValue;
 
     // Encode the string as UTF-8 and create an ISO-Latin-1 string of those bytes. Constructing a
     // string with the UTF-8 bytes reinterpreted as Latin-1 is the way to get CFNetwork to preserve
     // those UTF-8 bytes when parsing/storing the cookie.
-    return String(byteCast<Latin1Character>(scriptValue.utf8().span()));
+    return StringImpl::create(byteCast<Latin1Character>(utf8(scriptValue).span()));
 }
 
 } // namespace CookieUtil

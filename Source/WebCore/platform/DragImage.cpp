@@ -153,7 +153,7 @@ DragImage DragImage::create(NativeImage&, GraphicsClient*, float)
     return { };
 }
 
-DragImage DragImage::createIconForCachedImageFilename(const String&)
+DragImage DragImage::createIconForCachedImageFilename(StringImpl*)
 {
     notImplemented();
     return { };

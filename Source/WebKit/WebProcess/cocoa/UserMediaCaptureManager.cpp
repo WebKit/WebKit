@@ -164,7 +164,7 @@ void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifie
     }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::sourceConfigurationChanged(RealtimeMediaSourceIdentifier identifier, String&& persistentID, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities)
+void UserMediaCaptureManager::sourceConfigurationChanged(RealtimeMediaSourceIdentifier identifier, RefPtr<StringImpl>&& persistentID, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities)
 {
     auto iterator = m_sources.find(identifier);
     if (iterator == m_sources.end())
@@ -190,7 +190,7 @@ void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdent
     }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier identifier, WebCore::MediaConstraintType invalidConstraint, String&& message)
+void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier identifier, WebCore::MediaConstraintType invalidConstraint, RefPtr<StringImpl>&& message)
 {
     auto iterator = m_sources.find(identifier);
     if (iterator == m_sources.end())

@@ -82,7 +82,7 @@ private:
     void resume() final;
     void invalidateAndCancel() final;
     State state() const final { return m_state; }
-    void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
+    void setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
 
     // FunctionDispatcher
     void dispatch(Function<void()>&&) final;

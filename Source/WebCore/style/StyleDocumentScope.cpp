@@ -136,9 +136,9 @@ void DocumentScope::releaseMemory()
     m_matchResultCache = { };
 }
 
-void DocumentScope::setPreferredStylesheetSetName(const WTF::String& name)
+void DocumentScope::setPreferredStylesheetSetName(StringImpl* name)
 {
-    if (m_preferredStylesheetSetName == name)
+    if (equal(m_preferredStylesheetSetName, name))
         return;
     m_preferredStylesheetSetName = name;
     didChangeActiveStyleSheetCandidates();

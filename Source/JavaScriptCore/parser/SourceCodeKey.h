@@ -75,7 +75,7 @@ public:
     }
 
     SourceCodeKey(
-        const UnlinkedSourceCode& sourceCode, const String& name, SourceCodeType codeType, LexicallyScopedFeatures lexicallyScopedFeatures,
+        const UnlinkedSourceCode& sourceCode, StringImpl* name, SourceCodeType codeType, LexicallyScopedFeatures lexicallyScopedFeatures,
         JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
         OptionSet<CodeGenerationMode> codeGenerationMode, std::optional<int> functionConstructorParametersEndPosition)
             : m_sourceCode(sourceCode)
@@ -115,7 +115,7 @@ public:
             && length() == other.length()
             && m_flags == other.m_flags
             && m_functionConstructorParametersEndPosition == other.m_functionConstructorParametersEndPosition
-            && m_name == other.m_name
+            && equal(m_name, other.m_name)
             && host() == other.host()
             && (m_sourceCode == other.m_sourceCode || string() == other.string());
     }
@@ -127,7 +127,7 @@ public:
 
 private:
     UnlinkedSourceCode m_sourceCode;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     SourceCodeFlags m_flags;
     int m_functionConstructorParametersEndPosition;
     unsigned m_hash;

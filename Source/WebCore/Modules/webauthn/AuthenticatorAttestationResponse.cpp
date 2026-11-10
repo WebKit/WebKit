@@ -176,7 +176,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
             return nullptr;
         }
         auto y = it->second.getByteString();
-        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
+        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
 
         if (!peerKey)
             return nullptr;
@@ -192,7 +192,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
 
 RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAttestationResponse::toJSON()
 {
-    Vector<String> transports;
+    Vector<RefPtr<StringImpl>> transports;
     for (auto transport : getTransports())
         transports.append(toString(transport));
     RegistrationResponseJSON::AuthenticatorAttestationResponseJSON value;

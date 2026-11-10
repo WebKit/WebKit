@@ -118,7 +118,7 @@ public:
 
     NODELETE WEBCORE_EXPORT LocalFrame* frame() const final;
 
-    RefPtr<WebCore::MediaQueryList> matchMedia(const String&);
+    RefPtr<WebCore::MediaQueryList> matchMedia(StringImpl*);
 
     WEBCORE_EXPORT unsigned pendingUnloadEventListeners() const;
 
@@ -178,17 +178,17 @@ public:
     void stop();
     bool isStopping() const { return m_isStopping; }
 
-    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
+    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl* urlString, AtomStringImpl* frameName, StringImpl* windowFeaturesString);
 
-    void showModalDialog(const String& urlString, const String& dialogFeaturesString, LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction);
+    void showModalDialog(StringImpl* urlString, StringImpl* dialogFeaturesString, LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction);
 
     void prewarmLocalStorageIfNecessary();
 
-    void alert(const String& message);
-    bool confirmForBindings(const String& message);
-    String prompt(const String& message, const String& defaultValue);
+    void alert(StringImpl* message);
+    bool confirmForBindings(StringImpl* message);
+    RefPtr<StringImpl> prompt(StringImpl* message, StringImpl* defaultValue);
 
-    bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
+    bool find(StringImpl*, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
 
     NODELETE bool offscreenBuffering() const;
 
@@ -205,15 +205,15 @@ public:
 
     unsigned length() const;
 
-    NODELETE AtomString name() const;
-    void setName(const AtomString&);
+    NODELETE RefPtr<AtomStringImpl> name() const;
+    void setName(AtomStringImpl*);
 
-    String status() const;
-    void setStatus(const String&);
+    RefPtr<StringImpl> status() const;
+    void setStatus(StringImpl*);
 
     void disownOpener();
 
-    String origin() const;
+    RefPtr<StringImpl> origin() const;
     SecurityOrigin* securityOrigin() const;
 
     // DOM Level 2 AbstractView Interface
@@ -226,11 +226,11 @@ public:
 
     // DOM Level 2 Style Interface
 
-    WEBCORE_EXPORT Ref<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
+    WEBCORE_EXPORT Ref<CSSStyleDeclaration> getComputedStyle(Element&, StringImpl* pseudoElt) const;
 
     // WebKit extensions
 
-    WEBCORE_EXPORT RefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
+    WEBCORE_EXPORT RefPtr<CSSRuleList> getMatchedCSSRules(Element*, StringImpl* pseudoElt, bool authorOnly = true) const;
     double devicePixelRatio() const;
 
     RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
@@ -280,9 +280,9 @@ public:
 
     // Events
     // EventTarget API
-    WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    WEBCORE_EXPORT bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
     using EventTarget::addEventListener;
-    WEBCORE_EXPORT bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
+    WEBCORE_EXPORT bool removeEventListener(AtomStringImpl* eventType, EventListener&, const EventListenerOptions&) final;
     void removeAllEventListeners() final;
 
     using EventTarget::dispatchEvent;
@@ -313,8 +313,8 @@ public:
     CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
     CustomElementRegistry& ensureCustomElementRegistry();
 
-    ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
-    ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, const String& selectors);
+    ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, StringImpl* selectors);
+    ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, StringImpl* selectors);
 
     ExceptionOr<Ref<DOMRect>> convertRectToMainFrameCoordinates(const DOMRectInit&);
 
@@ -344,8 +344,8 @@ public:
     void startListeningForDeviceMotionIfNecessary();
     void stopListeningForDeviceMotionIfNecessary();
 
-    bool isAllowedToUseDeviceOrientation(String& message) const;
-    bool isAllowedToUseDeviceMotion(String& message) const;
+    bool isAllowedToUseDeviceOrientation(RefPtr<StringImpl>& message) const;
+    bool isAllowedToUseDeviceMotion(RefPtr<StringImpl>& message) const;
 
     DeviceOrientationController* deviceOrientationController() const;
     DeviceMotionController* deviceMotionController() const;
@@ -408,11 +408,11 @@ private:
 
     NODELETE bool allowedToChangeWindowGeometry() const;
 
-    static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
+    static ExceptionOr<RefPtr<Frame>> createWindow(StringImpl* urlString, AtomStringImpl* frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
 
 #if ENABLE(DEVICE_ORIENTATION)
-    bool isAllowedToUseDeviceMotionOrOrientation(String& message) const;
-    bool hasPermissionToReceiveDeviceMotionOrOrientationEvents(String& message) const;
+    bool isAllowedToUseDeviceMotionOrOrientation(RefPtr<StringImpl>& message) const;
+    bool hasPermissionToReceiveDeviceMotionOrOrientationEvents(RefPtr<StringImpl>& message) const;
     void failedToRegisterDeviceMotionEventListener();
 #endif
 
@@ -488,7 +488,7 @@ private:
     uint64_t m_interactionCount { 0 };
     bool m_hasDispatchedInputEvent { false };
 
-    String m_status;
+    RefPtr<StringImpl> m_status;
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_scrollEventListenerCount { 0 };
@@ -544,7 +544,7 @@ private:
     JSC::Weak<JSDOMGlobalObject> m_cachedMainWorldGlobalObject;
 };
 
-inline String LocalDOMWindow::status() const
+inline RefPtr<StringImpl> LocalDOMWindow::status() const
 {
     return m_status;
 }

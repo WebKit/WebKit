@@ -75,7 +75,7 @@ unsigned StyleSheetContents::estimatedSizeInBytes() const
     return size;
 }
 
-StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
+StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, StringImpl* originalURL, const CSSParserContext& context)
     : m_ownerRule(ownerRule)
     , m_originalURL(originalURL)
     , m_defaultNamespace(starAtom())
@@ -254,7 +254,7 @@ unsigned StyleSheetContents::ruleCount() const
 
 void StyleSheetContents::clearCharsetRule()
 {
-    m_encodingFromCharsetRule = String();
+    m_encodingFromCharsetRule = nullptr;
 }
 
 void StyleSheetContents::clearRules()
@@ -270,10 +270,10 @@ void StyleSheetContents::clearRules()
     clearCharsetRule();
 }
 
-void StyleSheetContents::parserSetEncodingFromCharsetRule(const String& encoding)
+void StyleSheetContents::parserSetEncodingFromCharsetRule(StringImpl* encoding)
 {
     // Parser enforces that there is ever only one @charset.
-    ASSERT(m_encodingFromCharsetRule.isNull());
+    ASSERT(!m_encodingFromCharsetRule);
     m_encodingFromCharsetRule = encoding; 
 }
 
@@ -400,17 +400,17 @@ bool StyleSheetContents::wrapperDeleteRule(unsigned index)
     return true;
 }
 
-void StyleSheetContents::parserAddNamespace(const AtomString& prefix, const AtomString& uri)
+void StyleSheetContents::parserAddNamespace(AtomStringImpl* prefix, AtomStringImpl* uri)
 {
-    ASSERT(!uri.isNull());
-    if (prefix.isNull()) {
+    ASSERT(uri);
+    if (!prefix) {
         m_defaultNamespace = uri;
         return;
     }
     m_namespacePrefixMap.set(prefix, uri);
 }
 
-const AtomString& StyleSheetContents::namespaceURIFromPrefix(const AtomString& prefix)
+const RefPtr<AtomStringImpl>& StyleSheetContents::namespaceURIFromPrefix(AtomStringImpl* prefix)
 {
     auto it = m_namespacePrefixMap.find(prefix);
     if (it == m_namespacePrefixMap.end())
@@ -449,7 +449,7 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet& cached
     return false;
 }
 
-bool StyleSheetContents::parseString(const String& sheetText)
+bool StyleSheetContents::parseString(StringImpl* sheetText)
 {
     CSSParser::parseStyleSheet(sheetText, parserContext(), *this);
     return true;

@@ -49,7 +49,7 @@
 WebCore::CookieStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
-    NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), [[NSBundle mainBundle] bundleIdentifier]);
+    NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), StringImpl::create([[NSBundle mainBundle] bundleIdentifier]).get());
     return *NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID());
 }
 
@@ -83,7 +83,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
     return (__bridge CFDataRef)webview.get()._sourceApplicationAuditData;
 }
 
-String WebFrameNetworkingContext::sourceApplicationIdentifier() const
+RefPtr<StringImpl> WebFrameNetworkingContext::sourceApplicationIdentifier() const
 {
     return emptyString();
 }

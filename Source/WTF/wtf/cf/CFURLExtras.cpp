@@ -50,15 +50,15 @@ RetainPtr<CFDataRef> bytesAsCFData(CFURLRef url)
     return toCFDataNoCopy(buffer.leakSpan(), kCFAllocatorMalloc);
 }
 
-String bytesAsString(CFURLRef url)
+RefPtr<StringImpl> bytesAsString(CFURLRef url)
 {
     if (!url)
         return { };
     auto bytesLength = CFURLGetBytes(url, nullptr, 0);
     RELEASE_ASSERT(bytesLength != -1);
-    RELEASE_ASSERT(bytesLength <= static_cast<CFIndex>(String::MaxLength));
+    RELEASE_ASSERT(bytesLength <= static_cast<CFIndex>(StringImpl::MaxLength));
     std::span<Latin1Character> buffer;
-    auto result = String::createUninitialized(bytesLength, buffer);
+    auto result = StringImpl::createUninitialized(bytesLength, buffer);
     CFURLGetBytes(url, byteCast<UInt8>(buffer.data()), buffer.size());
     return result;
 }
@@ -91,7 +91,7 @@ bool isSameOrigin(CFURLRef a, const URL& b)
         return protocolHostAndPortAreEqual(a, b);
 
     auto aBytes = bytesAsVector(a);
-    RELEASE_ASSERT(aBytes.size() <= String::MaxLength);
+    RELEASE_ASSERT(aBytes.size() <= StringImpl::MaxLength);
 
     StringView aString { byteCast<Latin1Character>(aBytes.span()) };
     StringView bString { b.string() };

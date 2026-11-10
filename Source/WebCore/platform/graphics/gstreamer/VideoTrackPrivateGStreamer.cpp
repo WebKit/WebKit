@@ -84,11 +84,11 @@ void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
         return;
 
     auto codec = player->codecForStreamId(streamId);
-    if (codec.isEmpty())
+    if (isEmpty(codec))
         return;
 
     auto configuration = this->configuration();
-    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting codec to %s", codec.ascii().data());
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting codec to %s", ascii(codec).data());
     configuration.codec = WTF::move(codec);
     setConfiguration(WTF::move(configuration));
 }
@@ -131,14 +131,14 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 
     auto mimeCodec = GMallocString::unsafeAdoptFromUTF8(gst_codec_utils_caps_get_mime_codec(caps.get()));
     if (!mimeCodec.isEmpty()) {
-        String codec(mimeCodec.span());
+        RefPtr<StringImpl> codec = StringImpl::create(mimeCodec.span());
         if (!gst_check_version(1, 22, 8)) {
             // The gst_codec_utils_caps_get_mime_codec() function will return all the codec parameters,
             // including the default ones, so to strip them away, re-parse the returned string, using
             // WebCore VPx codec string parser.
             // This workaround is needed only for GStreamer versions older than 1.22.8. Merge-request:
             // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/5716
-            if (codec.startsWith("vp09"_s) && codec.endsWith(".01.01.01.01.00"_s)) {
+            if (startsWith(codec, "vp09"_s) && endsWith(codec, ".01.01.01.01.00"_s)) {
                 auto parsedRecord = parseVPCodecParameters(codec);
                 ASSERT(parsedRecord);
                 codec = createVPCodecParametersString(*parsedRecord);
@@ -198,7 +198,7 @@ TrackID VideoTrackPrivateGStreamer::id() const
     return m_data->m_trackID.value_or(m_data->m_id);
 }
 
-std::optional<String> VideoTrackPrivateGStreamer::trackUID() const
+std::optional<RefPtr<StringImpl>> VideoTrackPrivateGStreamer::trackUID() const
 {
     auto player = m_data->m_player.get();
     if (player && player->isMediaStreamPlayer())
@@ -207,12 +207,12 @@ std::optional<String> VideoTrackPrivateGStreamer::trackUID() const
     return std::nullopt;
 }
 
-String VideoTrackPrivateGStreamer::label() const
+RefPtr<StringImpl> VideoTrackPrivateGStreamer::label() const
 {
     return m_data->m_label;
 }
 
-String VideoTrackPrivateGStreamer::language() const
+RefPtr<StringImpl> VideoTrackPrivateGStreamer::language() const
 {
     return m_data->m_language;
 }

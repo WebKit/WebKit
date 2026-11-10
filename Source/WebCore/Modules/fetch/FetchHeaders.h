@@ -41,37 +41,37 @@ template<typename> class ExceptionOr;
 class FetchHeaders : public RefCounted<FetchHeaders> {
 public:
     using Guard = FetchHeadersGuard;
-    using Init = Variant<Vector<Vector<String>>, Vector<KeyValuePair<String, String>>>;
+    using Init = Variant<Vector<Vector<RefPtr<StringImpl>>>, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>>;
     static ExceptionOr<Ref<FetchHeaders>> create(std::optional<Init>&&);
 
-    static Ref<FetchHeaders> create(Guard guard = Guard::None, HTTPHeaderMap&& headers = { }, Vector<String>&& setCookieValues = { }) { return adoptRef(*new FetchHeaders { guard, WTF::move(headers), WTF::move(setCookieValues) }); }
+    static Ref<FetchHeaders> create(Guard guard = Guard::None, HTTPHeaderMap&& headers = { }, Vector<RefPtr<StringImpl>>&& setCookieValues = { }) { return adoptRef(*new FetchHeaders { guard, WTF::move(headers), WTF::move(setCookieValues) }); }
     static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders { headers }); }
 
-    ExceptionOr<void> append(const String& name, const String& value);
-    ExceptionOr<void> remove(const String&);
-    ExceptionOr<String> get(const String&) const;
-    NODELETE const Vector<String>& getSetCookie() const;
-    ExceptionOr<bool> has(const String&) const;
-    ExceptionOr<void> set(const String& name, const String& value);
+    ExceptionOr<void> append(StringImpl* name, StringImpl* value);
+    ExceptionOr<void> remove(StringImpl*);
+    ExceptionOr<RefPtr<StringImpl>> get(StringImpl*) const;
+    NODELETE const Vector<RefPtr<StringImpl>>& getSetCookie() const;
+    ExceptionOr<bool> has(StringImpl*) const;
+    ExceptionOr<void> set(StringImpl* name, StringImpl* value);
 
     ExceptionOr<void> fill(const Init&);
     ExceptionOr<void> fill(const FetchHeaders&);
     void filterAndFill(const HTTPHeaderMap&, Guard);
 
-    String fastGet(HTTPHeaderName) const;
+    RefPtr<StringImpl> fastGet(HTTPHeaderName) const;
     bool fastHas(HTTPHeaderName) const;
-    void fastSet(HTTPHeaderName, const String& value);
+    void fastSet(HTTPHeaderName, StringImpl* value);
 
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-        std::optional<KeyValuePair<String, String>> next();
+        std::optional<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> next();
 
     private:
         const Ref<FetchHeaders> m_headers;
         size_t m_currentIndex { 0 };
         size_t m_setCookieIndex { 0 };
-        Vector<String> m_keys;
+        Vector<RefPtr<StringImpl>> m_keys;
         size_t m_updateCounter { 0 };
     };
     Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }
@@ -83,16 +83,16 @@ public:
     Guard guard() const { return m_guard; }
 
 private:
-    FetchHeaders(Guard, HTTPHeaderMap&&, Vector<String>&&);
+    FetchHeaders(Guard, HTTPHeaderMap&&, Vector<RefPtr<StringImpl>>&&);
     explicit FetchHeaders(const FetchHeaders&);
 
     Guard m_guard;
     HTTPHeaderMap m_headers;
-    Vector<String> m_setCookieValues;
+    Vector<RefPtr<StringImpl>> m_setCookieValues;
     uint64_t m_updateCounter { 0 };
 };
 
-inline FetchHeaders::FetchHeaders(Guard guard, HTTPHeaderMap&& headers, Vector<String>&& setCookieValues)
+inline FetchHeaders::FetchHeaders(Guard guard, HTTPHeaderMap&& headers, Vector<RefPtr<StringImpl>>&& setCookieValues)
     : m_guard(guard)
     , m_headers(WTF::move(headers))
     , m_setCookieValues(WTF::move(setCookieValues))
@@ -107,7 +107,7 @@ inline FetchHeaders::FetchHeaders(const FetchHeaders& other)
 {
 }
 
-inline String FetchHeaders::fastGet(HTTPHeaderName name) const
+inline RefPtr<StringImpl> FetchHeaders::fastGet(HTTPHeaderName name) const
 {
     ASSERT(name != HTTPHeaderName::SetCookie);
     return m_headers.get(name);
@@ -119,7 +119,7 @@ inline bool FetchHeaders::fastHas(HTTPHeaderName name) const
     return m_headers.contains(name);
 }
 
-inline void FetchHeaders::fastSet(HTTPHeaderName name, const String& value)
+inline void FetchHeaders::fastSet(HTTPHeaderName name, StringImpl* value)
 {
     ASSERT(name != HTTPHeaderName::SetCookie);
     m_headers.set(name, value);

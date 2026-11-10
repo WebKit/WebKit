@@ -325,7 +325,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_si });
         return;
     }
 
@@ -397,7 +397,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     case 16384:
         break;
     default:
-        return Exception { ExceptionCode::IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
+        return Exception { ExceptionCode::IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_si };
     }
 
     // An IndexSizeError exception must be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels
@@ -405,19 +405,19 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     // In this case an IndexSizeError must be thrown.
 
     if (!numberOfInputChannels && !numberOfOutputChannels)
-        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_si };
 
     // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfInputChannels > maxNumberOfChannels)
-        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_si };
 
     // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfOutputChannels > maxNumberOfChannels)
-        return Exception { ExceptionCode::IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_si };
 
     return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
 }
@@ -977,7 +977,7 @@ const SecurityOrigin* BaseAudioContext::origin() const
     return context ? context->securityOrigin() : nullptr;
 }
 
-void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message)
 {
     if (RefPtr context = scriptExecutionContext())
         context->addConsoleMessage(source, level, message);
@@ -1008,7 +1008,7 @@ PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void BaseAudioContext::addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&& descriptors)
+void BaseAudioContext::addAudioParamDescriptors(StringImpl* processorName, Vector<AudioParamDescriptor>&& descriptors)
 {
     ASSERT(!m_parameterDescriptorMap.contains(processorName));
     bool wasEmpty = m_parameterDescriptorMap.isEmpty();

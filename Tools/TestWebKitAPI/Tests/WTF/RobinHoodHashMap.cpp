@@ -1112,7 +1112,7 @@ TEST(WTF_RobinHoodHashMap, Random_IsEvenlyDistributed)
 
 TEST(WTF_RobinHoodHashMap, ReserveInitialCapacity)
 {
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, String> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map;
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(0u, map.capacity());
 
@@ -1143,9 +1143,9 @@ TEST(WTF_RobinHoodHashMap, ReserveInitialCapacity)
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(8u, map.capacity());
 
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, String> map2;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map2;
     map2.reserveInitialCapacity(9999);
-    EXPECT_FALSE(map2.remove("foo1"_s));
+    EXPECT_FALSE(map2.remove("foo1"_si));
 
     for (int i = 0; i < 2000; ++i)
         map2.add(makeString("foo"_s, i), makeString("bar"_s, i));
@@ -1222,17 +1222,17 @@ TEST(WTF_RobinHoodHashMap, AddAndIdentity)
 {
     MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, unsigned> map;
     for (unsigned index = 0; index < 1e3; ++index) {
-        auto string = String::number(index);
-        auto result = map.set(string.impl(), index);
+        auto string = makeString(index);
+        auto result = map.set(string.get(), index);
         EXPECT_TRUE(result.isNewEntry);
-        EXPECT_EQ(result.iterator->key, string.impl());
+        EXPECT_EQ(result.iterator->key.get(), string.get());
     }
     for (unsigned index = 0; index < 1e3; ++index) {
-        auto string = String::number(index);
-        auto result = map.add(string.impl(), index + 1);
+        auto string = makeString(index);
+        auto result = map.add(string.get(), index + 1);
         EXPECT_FALSE(result.isNewEntry);
         EXPECT_EQ(result.iterator->value, index);
-        EXPECT_NE(result.iterator->key, string.impl());
+        EXPECT_NE(result.iterator->key.get(), string.get());
     }
 }
 
@@ -1240,32 +1240,32 @@ TEST(WTF_RobinHoodHashMap, LargeRemoval)
 {
     MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, unsigned> map;
     for (unsigned index = 0; index < 1e4; ++index) {
-        auto string = String::number(index);
-        map.set(string.impl(), index);
+        auto string = makeString(index);
+        map.set(string.get(), index);
     }
     EXPECT_EQ(map.size(), 1e4);
     for (unsigned index = 0; index < 1e4; ++index) {
         if (index & 0x1) {
-            auto string = String::number(index);
-            bool removed = map.remove(string.impl());
+            auto string = makeString(index);
+            bool removed = map.remove(string.get());
             EXPECT_TRUE(removed);
         }
     }
     EXPECT_EQ(map.size(), 1e4 / 2);
     for (unsigned index = 0; index < 1e4; ++index) {
-        auto string = String::number(index);
+        auto string = makeString(index);
         if (index & 0x1)
-            EXPECT_FALSE(map.contains(string.impl()));
+            EXPECT_FALSE(map.contains(string.get()));
         else {
-            unsigned value = map.get(string.impl());
+            unsigned value = map.get(string.get());
             EXPECT_EQ(value, index);
         }
     }
 
     for (unsigned index = 0; index < 1e4; ++index) {
         if (!(index & 0x1)) {
-            auto string = String::number(index);
-            bool removed = map.remove(string.impl());
+            auto string = makeString(index);
+            bool removed = map.remove(string.get());
             EXPECT_TRUE(removed);
         }
     }

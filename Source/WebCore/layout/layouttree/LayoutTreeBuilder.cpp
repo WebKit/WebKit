@@ -180,13 +180,13 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
     stream << " (" << &layoutBox << ")";
     if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox)) {
         auto textContent = inlineTextBox->content();
-        stream << " length->(" << textContent.length() << ")";
+        stream << " length->(" << length(textContent) << ")";
 
         textContent = makeStringByReplacingAll(textContent, '\\', "\\\\"_s);
         textContent = makeStringByReplacingAll(textContent, '\n', "\\n"_s);
 
         const size_t maxPrintedLength = 80;
-        if (textContent.length() > maxPrintedLength) {
+        if (length(textContent) > maxPrintedLength) {
             auto substring = StringView(textContent).left(maxPrintedLength);
             stream << " \"" << substring << "\"...";
         } else
@@ -214,7 +214,7 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
     }
 }
 
-String layoutTreeAsText(const InitialContainingBlock& initialContainingBlock, const LayoutState* layoutState)
+RefPtr<StringImpl> layoutTreeAsText(const InitialContainingBlock& initialContainingBlock, const LayoutState* layoutState)
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
@@ -227,7 +227,7 @@ String layoutTreeAsText(const InitialContainingBlock& initialContainingBlock, co
 void showLayoutTree(const InitialContainingBlock& initialContainingBlock, const LayoutState* layoutState)
 {
     auto treeAsText = layoutTreeAsText(initialContainingBlock, layoutState);
-    SAFE_WTFLOGALWAYS("%s", treeAsText.utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(treeAsText));
 }
 
 void showLayoutTree(const InitialContainingBlock& initialContainingBlock)

@@ -123,7 +123,7 @@ template<> struct Coder<WTF::URL> {
     template<typename Decoder>
     static std::optional<WTF::URL> decode(Decoder& decoder)
     {
-        std::optional<String> string;
+        std::optional<RefPtr<StringImpl>> string;
         decoder >> string;
         if (!string)
             return std::nullopt;
@@ -131,35 +131,35 @@ template<> struct Coder<WTF::URL> {
     }
 };
 
-template<> struct Coder<WTF::String> {
+template<> struct Coder<RefPtr<StringImpl>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::String& string)
+    static void encode(Encoder& encoder, StringImpl* string)
     {
         // Special case the null string.
-        if (string.isNull()) {
+        if (!string) {
             encoder << std::numeric_limits<uint32_t>::max();
             return;
         }
 
-        bool is8Bit = string.is8Bit();
+        bool is8Bit = WTF::is8Bit(string);
 
-        encoder << string.length() << is8Bit;
+        encoder << length(string) << is8Bit;
 
         if (is8Bit)
-            encoder.encodeFixedLengthData(byteCast<uint8_t>(string.span8()));
+            encoder.encodeFixedLengthData(byteCast<uint8_t>(span8(string)));
         else
-            encoder.encodeFixedLengthData(asBytes(string.span16()));
+            encoder.encodeFixedLengthData(asBytes(span16(string)));
     }
 
     template<typename CharacterType, typename Decoder>
-    static std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
+    static std::optional<RefPtr<StringImpl>> decodeStringText(Decoder& decoder, uint32_t length)
     {
         // Before allocating the string, make sure that the decoder buffer is big enough.
         if (!decoder.template bufferIsLargeEnoughToContain<CharacterType>(length))
             return std::nullopt;
 
         std::span<CharacterType> buffer;
-        String string = String::createUninitialized(length, buffer);
+        RefPtr<StringImpl> string = StringImpl::createUninitialized(length, buffer);
         if (!decoder.decodeFixedLengthData(asMutableByteSpan(buffer)))
             return std::nullopt;
 
@@ -167,7 +167,7 @@ template<> struct Coder<WTF::String> {
     }
 
     template<typename Decoder>
-    static std::optional<WTF::String> decode(Decoder& decoder)
+    static std::optional<RefPtr<StringImpl>> decode(Decoder& decoder)
     {
         std::optional<uint32_t> length;
         decoder >> length;
@@ -176,7 +176,7 @@ template<> struct Coder<WTF::String> {
 
         if (*length == std::numeric_limits<uint32_t>::max()) {
             // This is the null string.
-            return String();
+            return RefPtr<StringImpl> { };
         }
 
         std::optional<bool> is8Bit;

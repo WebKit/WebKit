@@ -46,7 +46,7 @@ void NavigationPreloadManager::disable(Promise&& promise)
     registration->container().disableNavigationPreload(registration->identifier(), WTF::move(promise));
 }
 
-void NavigationPreloadManager::setHeaderValue(String&& value, Promise&& promise)
+void NavigationPreloadManager::setHeaderValue(RefPtr<StringImpl>&& value, Promise&& promise)
 {
     Ref registration = m_registration.get();
     registration->container().setNavigationPreloadHeaderValue(registration->identifier(), WTF::move(value), WTF::move(promise));

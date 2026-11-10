@@ -35,11 +35,11 @@ WebProcessExtensionManager& WebProcessExtensionManager::singleton()
     return extensionManager;
 }
 
-void WebProcessExtensionManager::scanModules(const String& webProcessExtensionsDirectory, Vector<String>& modules)
+void WebProcessExtensionManager::scanModules(StringImpl* webProcessExtensionsDirectory, Vector<RefPtr<StringImpl>>& modules)
 {
     auto moduleNames = FileSystem::listDirectory(webProcessExtensionsDirectory);
     for (auto& moduleName : moduleNames) {
-        if (!moduleName.endsWith(".so"_s))
+        if (!endsWith(moduleName, ".so"_s))
             continue;
 
         auto modulePath = FileSystem::pathByAppendingComponent(webProcessExtensionsDirectory, moduleName);
@@ -48,11 +48,11 @@ void WebProcessExtensionManager::scanModules(const String& webProcessExtensionsD
     }
 }
 
-static void parseUserData(API::Object* userData, String& webProcessExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
+static void parseUserData(API::Object* userData, RefPtr<StringImpl>& webProcessExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
 {
     ASSERT(userData->type() == API::Object::Type::String);
 
-    auto userDataString = downcast<API::String>(userData)->string().utf8();
+    auto userDataString = utf8(downcast<API::String>(userData)->string());
     const auto userDataSpan = byteCast<char>(userDataString.spanIncludingNullTerminator());
     GRefPtr<GVariant> variant = adoptGRef(g_variant_parse(nullptr, userDataSpan.data(), userDataSpan.last(1).data(), nullptr, nullptr));
 
@@ -102,14 +102,14 @@ void WebProcessExtensionManager::initialize(InjectedBundle* bundle, API::Object*
     ASSERT(userDataObject);
     m_extension = adoptGRef(webkitWebProcessExtensionCreate(bundle));
 
-    String webProcessExtensionsDirectory;
+    RefPtr<StringImpl> webProcessExtensionsDirectory;
     GRefPtr<GVariant> userData;
     parseUserData(userDataObject, webProcessExtensionsDirectory, userData);
 
-    if (webProcessExtensionsDirectory.isNull())
+    if (!webProcessExtensionsDirectory)
         return;
 
-    Vector<String> modulePaths;
+    Vector<RefPtr<StringImpl>> modulePaths;
     scanModules(webProcessExtensionsDirectory, modulePaths);
 
     for (size_t i = 0; i < modulePaths.size(); ++i) {

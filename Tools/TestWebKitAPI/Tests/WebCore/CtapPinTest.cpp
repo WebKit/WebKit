@@ -55,20 +55,20 @@ using namespace fido::pin;
 TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 {
     // Failure cases
-    auto result = validateAndConvertToUTF8("123"_s);
+    auto result = validateAndConvertToUTF8("123"_si);
     EXPECT_FALSE(result);
     result = validateAndConvertToUTF8(emptyString());
     EXPECT_FALSE(result);
-    result = validateAndConvertToUTF8("1234567812345678123456781234567812345678123456781234567812345678"_s);
+    result = validateAndConvertToUTF8("1234567812345678123456781234567812345678123456781234567812345678"_si);
     EXPECT_FALSE(result);
 
     // Success cases
-    result = validateAndConvertToUTF8("1234"_s);
+    result = validateAndConvertToUTF8("1234"_si);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 4u);
     EXPECT_EQ(*result, "1234"_s);
 
-    result = validateAndConvertToUTF8("123456781234567812345678123456781234567812345678123456781234567"_s);
+    result = validateAndConvertToUTF8("123456781234567812345678123456781234567812345678123456781234567"_si);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 63u);
     EXPECT_EQ(*result, "123456781234567812345678123456781234567812345678123456781234567"_s);
@@ -77,11 +77,11 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 TEST(CtapPinTest, TestSetPinRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
-    String pin = "1234"_s;
+    RefPtr<StringImpl> pin = "1234"_si;
 
     auto request = SetPinRequest::tryCreate(PINUVAuthProtocol::kPinProtocol1, pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_TRUE(request);
@@ -129,7 +129,7 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
@@ -153,11 +153,11 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_EQ(newPinEnc.size(), 64u);
     EXPECT_TRUE(equalSpans(newPinEnc.span(), std::span { expectedNewPinEnc }));
 
-    String pin2 = "123"_s;
+    RefPtr<StringImpl> pin2 = "123"_si;
     auto request2 = SetPinRequest::tryCreate(PINUVAuthProtocol::kPinProtocol1, pin2, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_FALSE(request2);
 
-    String pin3 = "01234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950"_s;
+    RefPtr<StringImpl> pin3 = "01234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950"_si;
     auto request3 = SetPinRequest::tryCreate(PINUVAuthProtocol::kPinProtocol1, pin3, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_FALSE(request3);
 }
@@ -265,7 +265,7 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
 TEST(CtapPinTest, TestTokenRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -317,7 +317,7 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
@@ -396,11 +396,11 @@ TEST(CtapPinTest, TestPinAuth)
 
 TEST(CtapPinTest, TestSetPinRequestProtocol2)
 {
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
-    String pin = "1234"_s;
+    RefPtr<StringImpl> pin = "1234"_si;
 
     auto request = SetPinRequest::tryCreate(PINUVAuthProtocol::kPinProtocol2, pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_TRUE(request);
@@ -455,7 +455,7 @@ TEST(CtapPinTest, TestSetPinRequestProtocol2)
 
 TEST(CtapPinTest, TestTokenRequestProtocol2)
 {
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -542,7 +542,7 @@ TEST(CtapPinTest, TestProtocol2HKDFKeyDerivation)
 TEST(CtapPinTest, TestHmacSecretRequestCreate)
 {
     // Generate an EC key pair as the peer key
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -573,7 +573,7 @@ TEST(CtapPinTest, TestHmacSecretRequestCreate)
 
 TEST(CtapPinTest, TestHmacSecretRequestInvalidSalts)
 {
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -591,7 +591,7 @@ TEST(CtapPinTest, TestHmacSecretRequestInvalidSalts)
 TEST(CtapPinTest, TestHmacSecretResponseRoundTrip)
 {
     // Generate an EC key pair as the peer key
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -616,7 +616,7 @@ TEST(CtapPinTest, TestHmacSecretResponseRoundTrip)
 
 TEST(CtapPinTest, TestHmacSecretResponseInvalidSize)
 {
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 

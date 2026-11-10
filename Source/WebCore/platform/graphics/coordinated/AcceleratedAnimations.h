@@ -49,8 +49,8 @@ public:
     void setTransforms(Transforms&& transforms) { m_transforms = WTF::move(transforms); }
 
     void add(Ref<const AcceleratedAnimation>&&, MonotonicTime);
-    void remove(const String&);
-    void pause(const String&, Seconds);
+    void remove(StringImpl*);
+    void pause(StringImpl*, Seconds);
 
     void apply(AcceleratedAnimation::ApplyResult&, MonotonicTime) const;
 

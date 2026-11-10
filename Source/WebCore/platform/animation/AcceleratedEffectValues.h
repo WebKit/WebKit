@@ -95,7 +95,7 @@ struct AcceleratedEffectValues {
     WEBCORE_EXPORT AcceleratedEffectValues clone() const;
     WEBCORE_EXPORT TransformationMatrix computedTransformationMatrix(const FloatRect&) const;
 
-    String dumpProperty(AcceleratedEffectProperty) const;
+    RefPtr<StringImpl> dumpProperty(AcceleratedEffectProperty) const;
 };
 
 } // namespace WebCore

@@ -175,7 +175,7 @@ void RemoteBuffer::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteBuffer::setLabel(String&& label)
+void RemoteBuffer::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

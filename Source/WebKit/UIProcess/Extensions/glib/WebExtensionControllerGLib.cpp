@@ -31,37 +31,37 @@ void WebExtensionController::initializePlatform()
     notImplemented();
 }
 
-void WebExtensionController::testResult(bool, String, String, unsigned)
+void WebExtensionController::testResult(bool, RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }
 
-void WebExtensionController::testEqual(bool, String, String, String, String, unsigned)
+void WebExtensionController::testEqual(bool, RefPtr<StringImpl>, RefPtr<StringImpl>, RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }
 
-void WebExtensionController::testLogMessage(String, String, unsigned)
+void WebExtensionController::testLogMessage(RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }
 
-void WebExtensionController::testSentMessage(String, String, String, unsigned)
+void WebExtensionController::testSentMessage(RefPtr<StringImpl>, RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }
 
-void WebExtensionController::testAdded(String, String, unsigned)
+void WebExtensionController::testAdded(RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }
 
-void WebExtensionController::testStarted(String, String, unsigned)
+void WebExtensionController::testStarted(RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }
 
-void WebExtensionController::testFinished(String, bool, String, String, unsigned)
+void WebExtensionController::testFinished(RefPtr<StringImpl>, bool, RefPtr<StringImpl>, RefPtr<StringImpl>, unsigned)
 {
     notImplemented();
 }

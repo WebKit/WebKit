@@ -91,9 +91,9 @@ class DetachedOffscreenCanvas {
     friend class OffscreenCanvas;
 
 public:
-    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&, String&& inheritedLanguage, TextDirection inheritedDirection);
+    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&, RefPtr<StringImpl>&& inheritedLanguage, TextDirection inheritedDirection);
     // Decoded after crossing a process boundary, where only the placeholder's identity can travel.
-    WEBCORE_EXPORT DetachedOffscreenCanvas(const IntSize&, bool originClean, std::optional<RemotePlaceholderRenderingContextIdentifier>, String&& inheritedLanguage, TextDirection inheritedDirection);
+    WEBCORE_EXPORT DetachedOffscreenCanvas(const IntSize&, bool originClean, std::optional<RemotePlaceholderRenderingContextIdentifier>, RefPtr<StringImpl>&& inheritedLanguage, TextDirection inheritedDirection);
     WEBCORE_EXPORT DetachedOffscreenCanvas(DetachedOffscreenCanvas&&);
     WEBCORE_EXPORT DetachedOffscreenCanvas& operator=(DetachedOffscreenCanvas&&);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
@@ -103,7 +103,7 @@ public:
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
     bool originClean() const { return m_originClean; }
     WEBCORE_EXPORT std::optional<RemotePlaceholderRenderingContextIdentifier> placeholderIdentifier() const;
-    const String& inheritedLanguage() const LIFETIME_BOUND { return m_inheritedLanguage; }
+    const RefPtr<StringImpl>& inheritedLanguage() const LIFETIME_BOUND { return m_inheritedLanguage; }
     TextDirection inheritedDirection() const { return m_inheritedDirection; }
 
 private:
@@ -113,7 +113,7 @@ private:
     Variant<RefPtr<PlaceholderRenderingContextSource>, RemotePlaceholderRenderingContextIdentifier> m_placeholder;
     IntSize m_size;
     bool m_originClean;
-    String m_inheritedLanguage;
+    RefPtr<StringImpl> m_inheritedLanguage;
     TextDirection m_inheritedDirection;
 };
 
@@ -121,7 +121,7 @@ class OffscreenCanvas final : public ActiveDOMObject, public CanvasBase, public 
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
 public:
     struct ImageEncodeOptions {
-        String type = "image/png"_s;
+        RefPtr<StringImpl> type = "image/png"_si;
         double quality = 1.0;
     };
 
@@ -174,7 +174,7 @@ public:
     bool isDetached() const { return m_detached; };
 
     // https://html.spec.whatwg.org/multipage/canvas.html#offscreencanvas-inherited-lang
-    const AtomString& inheritedLanguage() const LIFETIME_BOUND { return m_inheritedLanguage; }
+    const RefPtr<AtomStringImpl>& inheritedLanguage() const LIFETIME_BOUND { return m_inheritedLanguage; }
     // https://html.spec.whatwg.org/multipage/canvas.html#offscreencanvas-inherited-direction
     TextDirection inheritedDirection() const { return m_inheritedDirection; }
 
@@ -202,7 +202,7 @@ private:
 
     std::unique_ptr<CanvasRenderingContext> m_context;
     RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
-    AtomString m_inheritedLanguage;
+    RefPtr<AtomStringImpl> m_inheritedLanguage;
     TextDirection m_inheritedDirection { TextDirection::LTR };
     bool m_detached { false };
     bool m_hasScheduledCommit { false };

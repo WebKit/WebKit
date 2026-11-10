@@ -42,7 +42,7 @@ CSSGridTrackSizesValue::CSSGridTrackSizesValue(CSS::GridTrackSizes&& list)
 {
 }
 
-String CSSGridTrackSizesValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSGridTrackSizesValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_list);
 }

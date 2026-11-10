@@ -92,21 +92,21 @@ inline std::string writingModeString(WritingMode writingMode)
 {
     TextStream stream;
     stream << writingMode;
-    return stream.release().utf8().toStdString();
+    return utf8(stream.release()).toStdString();
 }
 
 inline std::string flowModeString(FlowMode flowMode)
 {
     TextStream stream;
     stream << flowMode;
-    return stream.release().utf8().toStdString();
+    return utf8(stream.release()).toStdString();
 }
 
 inline std::string flowReversalString(FlowReversal reversal)
 {
     TextStream stream;
     stream << "(main=" << reversal.main << ", cross=" << reversal.cross << ")";
-    return stream.release().utf8().toStdString();
+    return utf8(stream.release()).toStdString();
 }
 
 // Tests all combinations of WritingMode, mainAxis, and FlowReversal

@@ -38,7 +38,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class DeviceOrientationEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationEvent);
 public:
-    static Ref<DeviceOrientationEvent> create(const AtomString& eventType, DeviceOrientationData* orientation)
+    static Ref<DeviceOrientationEvent> create(AtomStringImpl* eventType, DeviceOrientationData* orientation)
     {
         return adoptRef(*new DeviceOrientationEvent(eventType, orientation));
     }
@@ -58,11 +58,11 @@ public:
     std::optional<double> compassHeading() const;
     std::optional<double> compassAccuracy() const;
 
-    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy);
+    void initDeviceOrientationEvent(AtomStringImpl* type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy);
 #else
     NODELETE std::optional<bool> absolute() const;
 
-    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
+    void initDeviceOrientationEvent(AtomStringImpl* type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -73,7 +73,7 @@ public:
 
 private:
     DeviceOrientationEvent();
-    DeviceOrientationEvent(const AtomString& eventType, DeviceOrientationData*);
+    DeviceOrientationEvent(AtomStringImpl* eventType, DeviceOrientationData*);
 
     RefPtr<DeviceOrientationData> m_orientation;
 };

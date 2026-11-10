@@ -310,7 +310,7 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     if (dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData)
         return false;
 
-    if (m_resourceRequest.httpMethod() != newRequest.httpMethod())
+    if (!equal(m_resourceRequest.httpMethod(), newRequest.httpMethod()))
         return false;
 
     if (m_resourceRequest.httpBody() != newRequest.httpBody())
@@ -332,9 +332,9 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     for (const auto& header : newHeaders) {
         if (header.keyAsHTTPHeaderName) {
             if (!shouldIgnoreHeaderForCacheReuse(header.keyAsHTTPHeaderName.value())
-                && header.value != oldHeaders.get(header.keyAsHTTPHeaderName.value()))
+                && !equal(header.value, oldHeaders.get(header.keyAsHTTPHeaderName.value())))
                 return false;
-        } else if (header.value != oldHeaders.get(header.key))
+        } else if (!equal(header.value, oldHeaders.get(header.key)))
             return false;
     }
 

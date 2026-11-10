@@ -660,7 +660,7 @@ void webkit_dom_dom_window_alert(WebKitDOMDOMWindow* self, const gchar* message)
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
     g_return_if_fail(message);
     auto* item = WebKit::core(self);
-    WTF::String convertedMessage = WTF::String::fromUTF8(message);
+    RefPtr<StringImpl> convertedMessage = StringImpl::fromUTF8(message);
     item->alert(convertedMessage);
 }
 
@@ -670,7 +670,7 @@ gboolean webkit_dom_dom_window_confirm(WebKitDOMDOMWindow* self, const gchar* me
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), FALSE);
     g_return_val_if_fail(message, FALSE);
     auto* item = WebKit::core(self);
-    WTF::String convertedMessage = WTF::String::fromUTF8(message);
+    RefPtr<StringImpl> convertedMessage = StringImpl::fromUTF8(message);
     gboolean result = item->confirmForBindings(convertedMessage);
     return result;
 }
@@ -682,8 +682,8 @@ gchar* webkit_dom_dom_window_prompt(WebKitDOMDOMWindow* self, const gchar* messa
     g_return_val_if_fail(message, 0);
     g_return_val_if_fail(defaultValue, 0);
     auto* item = WebKit::core(self);
-    WTF::String convertedMessage = WTF::String::fromUTF8(message);
-    WTF::String convertedDefaultValue = WTF::String::fromUTF8(defaultValue);
+    RefPtr<StringImpl> convertedMessage = StringImpl::fromUTF8(message);
+    RefPtr<StringImpl> convertedDefaultValue = StringImpl::fromUTF8(defaultValue);
     gchar* result = convertToUTF8String(item->prompt(convertedMessage, convertedDefaultValue));
     return result;
 }
@@ -694,7 +694,7 @@ gboolean webkit_dom_dom_window_find(WebKitDOMDOMWindow* self, const gchar* strin
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), FALSE);
     g_return_val_if_fail(string, FALSE);
     auto* item = WebKit::core(self);
-    WTF::String convertedString = WTF::String::fromUTF8(string);
+    RefPtr<StringImpl> convertedString = StringImpl::fromUTF8(string);
     gboolean result = item->find(convertedString, caseSensitive, backwards, wrap, wholeWord, searchInFrames, showDialog);
     return result;
 }
@@ -754,7 +754,7 @@ WebKitDOMCSSStyleDeclaration* webkit_dom_dom_window_get_computed_style(WebKitDOM
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(element), 0);
     auto* item = WebKit::core(self);
     WebCore::Element* convertedElement = WebKit::core(element);
-    WTF::String convertedPseudoElement = WTF::String::fromUTF8(pseudoElement);
+    RefPtr<StringImpl> convertedPseudoElement = StringImpl::fromUTF8(pseudoElement);
     RefPtr<WebCore::CSSStyleDeclaration> gobjectResult = WTF::getPtr(item->getComputedStyle(*convertedElement, convertedPseudoElement));
     return WebKit::kit(gobjectResult.get());
 }
@@ -934,7 +934,7 @@ void webkit_dom_dom_window_set_name(WebKitDOMDOMWindow* self, const gchar* value
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
     g_return_if_fail(value);
     auto* item = WebKit::core(self);
-    item->setName(WTF::AtomString::fromUTF8(value));
+    item->setName(AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_dom_window_get_status(WebKitDOMDOMWindow* self)
@@ -952,7 +952,7 @@ void webkit_dom_dom_window_set_status(WebKitDOMDOMWindow* self, const gchar* val
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
     g_return_if_fail(value);
     auto* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setStatus(convertedValue);
 }
 
@@ -1079,7 +1079,7 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
     if (!webkitNamespace)
         return FALSE;
 
-    auto handler = webkitNamespace->messageHandlers()->namedItem(world, AtomString::fromUTF8(handlerName));
+    auto handler = webkitNamespace->messageHandlers()->namedItem(world, AtomStringImpl::fromUTF8(handlerName));
     if (!handler)
         return FALSE;
     

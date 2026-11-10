@@ -86,8 +86,8 @@ private:
     } m_geoclue;
     struct {
         GRefPtr<GDBusProxy> locationPortal;
-        std::optional<String> senderName;
-        std::optional<String> sessionId;
+        std::optional<RefPtr<StringImpl>> senderName;
+        std::optional<RefPtr<StringImpl>> sessionId;
         unsigned locationUpdatedSignalId;
         unsigned responseSignalId;
     } m_portal;

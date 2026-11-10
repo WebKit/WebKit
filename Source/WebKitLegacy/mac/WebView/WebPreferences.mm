@@ -1541,7 +1541,7 @@ public:
 + (void)_setInitialDefaultTextEncodingToSystemEncoding
 {
     [[NSUserDefaults standardUserDefaults] registerDefaults:
-        @{ WebKitDefaultTextEncodingNamePreferenceKey: PAL::defaultTextEncodingNameForSystemLanguage().createNSString().get() }];
+        @{ WebKitDefaultTextEncodingNamePreferenceKey: createNSString(PAL::defaultTextEncodingNameForSystemLanguage()).get() }];
 }
 
 NODELETE static RetainPtr<NSString>& classIBCreatorID()

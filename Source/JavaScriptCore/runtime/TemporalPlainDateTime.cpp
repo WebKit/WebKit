@@ -73,7 +73,7 @@ static TemporalPlainDateTime* createTemporalDateTimeImpl(JSGlobalObject* globalO
 
     // Step 1: If ISODateTimeWithinLimits(isoDateTime) is false, throw a RangeError exception.
     if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), plainTime.microsecond(), plainTime.nanosecond())) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_si);
         return { };
     }
 
@@ -167,7 +167,7 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
         return result;
     }
 
-    throwRangeError(globalObject, scope, "invalid date string"_s);
+    throwRangeError(globalObject, scope, "invalid date string"_si);
     return { };
 }
 
@@ -220,7 +220,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.tostring
-String TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
+RefPtr<StringImpl> TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -241,7 +241,7 @@ String TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue opt
 
     // Step 4: NOTE: The following steps read options in alphabetical order.
     // Step 5: Let showCalendar be ? GetTemporalShowCalendarNameOption(resolvedOptions).
-    String calOpt = temporalShowCalendarName(globalObject, options);
+    RefPtr<StringImpl> calOpt = temporalShowCalendarName(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 6: Let digits be ? GetTemporalFractionalSecondDigitsOption(resolvedOptions).
@@ -262,7 +262,7 @@ String TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue opt
     std::optional<TemporalUnit> smallestUnit = std::get<std::optional<TemporalUnit>>(smallestUnitResult);
     // Step 10: If smallestUnit is ~hour~, throw a RangeError exception.
     if (smallestUnit == TemporalUnit::Hour) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for PlainDateTime.toString"_s);
+        throwRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for PlainDateTime.toString"_si);
         return { };
     }
 
@@ -274,11 +274,11 @@ String TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue opt
     if (std::get<0>(data.precision) == Precision::Auto) {
         auto base = toString();
         auto calId = calendarIDAsString();
-        if (calOpt == "never"_s)
+        if (equal(calOpt, "never"_s))
             return base;
-        if (calOpt == "always"_s)
+        if (equal(calOpt, "always"_s))
             return makeString(base, "[u-ca="_s, calId, ']');
-        if (calOpt == "critical"_s)
+        if (equal(calOpt, "critical"_s))
             return makeString(base, "[!u-ca="_s, calId, ']');
         if (calendarID() != iso8601CalendarID())
             return makeString(base, "[u-ca="_s, calId, ']');
@@ -294,18 +294,18 @@ String TemporalPlainDateTime::toString(JSGlobalObject* globalObject, JSValue opt
         roundedTime.hour(), roundedTime.minute(), roundedTime.second(),
         roundedTime.millisecond(), roundedTime.microsecond(), roundedTime.nanosecond());
     if (roundOutOfRange) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Rounding result is outside the representable range"_s);
+        throwRangeError(globalObject, scope, "Rounding result is outside the representable range"_si);
         return { };
     }
 
     // Step 14: Return ISODateTimeToString(result, plainDateTime.[[Calendar]], precision.[[Precision]], showCalendar).
     auto base = ISO8601::temporalDateTimeToString(roundedDate, roundedTime, data.precision);
     auto calId = calendarIDAsString();
-    if (calOpt == "never"_s)
+    if (equal(calOpt, "never"_s))
         return base;
-    if (calOpt == "always"_s)
+    if (equal(calOpt, "always"_s))
         return makeString(base, "[u-ca="_s, calId, ']');
-    if (calOpt == "critical"_s)
+    if (equal(calOpt, "critical"_s))
         return makeString(base, "[!u-ca="_s, calId, ']');
     if (calendarID() != iso8601CalendarID())
         return makeString(base, "[u-ca="_s, calId, ']');
@@ -322,7 +322,7 @@ ISO8601::Duration TemporalPlainDateTime::differenceTemporalPlainDateTime(JSGloba
 
     // Step 2: If CalendarEquals(dateTime.[[Calendar]], other.[[Calendar]]) is false, throw a RangeError exception.
     if (m_calendarID != other->m_calendarID) [[unlikely]] {
-        throwRangeError(globalObject, scope, "cannot compute difference between date-times with different calendars"_s);
+        throwRangeError(globalObject, scope, "cannot compute difference between date-times with different calendars"_si);
         return { };
     }
 

@@ -34,12 +34,12 @@ namespace CSS {
 
 // MARK: - DeprecatedCSSOMValue Creation
 
-Ref<DeprecatedCSSOMValue> makeCustomDeprecatedCSSOMValue(Function<WTF::String(const SerializationContext&)>&& functor, CSSStyleDeclaration& owner)
+Ref<DeprecatedCSSOMValue> makeCustomDeprecatedCSSOMValue(Function<RefPtr<StringImpl>(const SerializationContext&)>&& functor, CSSStyleDeclaration& owner)
 {
     return DeprecatedCSSOMCustomValue::create(WTF::move(functor), owner);
 }
 
-Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(Function<WTF::String(const SerializationContext&)>&& functor, CSSStyleDeclaration& owner)
+Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(Function<RefPtr<StringImpl>(const SerializationContext&)>&& functor, CSSStyleDeclaration& owner)
 {
     return DeprecatedCSSOMPrimitiveValue::create(WTF::move(functor), owner);
 }

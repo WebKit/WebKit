@@ -1063,11 +1063,11 @@ static bool handleControlCommand(std::span<const char> command)
 {
     if (spanHasPrefix(command, "#CHECK FOR WORLD LEAKS"_span) || spanHasPrefix(command, "#LIST CHILD PROCESSES"_span)) {
         // DumpRenderTree does not support checking for world leaks or listing child processes.
-        WTF::String result("\n"_s);
-        unsigned resultLength = result.length();
+        RefPtr<StringImpl> result("\n"_si);
+        unsigned resultLength = length(result);
         printf("Content-Type: text/plain\n");
         printf("Content-Length: %u\n", resultLength);
-        fwrite(result.utf8().legacyCStringPointer(), 1, resultLength, stdout);
+        fwrite(utf8(result).legacyCStringPointer(), 1, resultLength, stdout);
         printf("#EOF\n");
         fprintf(stderr, "#EOF\n");
         fflush(stdout);
@@ -1428,9 +1428,9 @@ static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
     // conversion methods cannot. After the conversion to a buffer, we turn that buffer into
     // a CFString via fromUTF8WithLatin1Fallback().createCFString() which can be appended to
     // the result without any conversion.
-    if (auto utf8Result = WTF::String(innerText).tryGetUTF8()) {
+    if (auto utf8Result = tryGetUTF8(StringImpl::create(innerText))) {
         auto string = WTF::move(utf8Result.value());
-        [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(string.span()).createCFString().get()];
+        [result appendFormat:@"%@\n", createCFString(StringImpl::fromUTF8WithLatin1Fallback(string.span())).get()];
     } else
         [result appendString:@"\n"];
 
@@ -1519,12 +1519,12 @@ static void dumpBackForwardListForWebView(WebView *view)
 #if !PLATFORM(IOS_FAMILY)
 static void changeWindowScaleIfNeeded(const char* testPathOrURL)
 {
-    auto localPathOrURL = String::fromUTF8(testPathOrURL);
+    auto localPathOrURL = StringImpl::fromUTF8(testPathOrURL);
     float currentScaleFactor = [[[mainFrame webView] window] backingScaleFactor];
     float requiredScaleFactor = 1;
-    if (localPathOrURL.containsIgnoringASCIICase("/hidpi-3x-"_s))
+    if (containsIgnoringASCIICase(localPathOrURL, "/hidpi-3x-"_s))
         requiredScaleFactor = 3;
-    else if (localPathOrURL.containsIgnoringASCIICase("/hidpi-"_s))
+    else if (containsIgnoringASCIICase(localPathOrURL, "/hidpi-"_s))
         requiredScaleFactor = 2;
     if (currentScaleFactor == requiredScaleFactor)
         return;
@@ -1735,7 +1735,7 @@ static void setJSCOptions(const WTR::TestOptions& options)
     static WTF::StringBuilder savedOptions;
 
     if (!savedOptions.isEmpty()) {
-        JSC::Options::setOptions(savedOptions.toString().ascii().data());
+        JSC::Options::setOptions(ascii(savedOptions.toString()).data());
         savedOptions.clear();
     }
 
@@ -1836,7 +1836,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     [[NSPasteboard generalPasteboard] declareTypes:@[NSStringPboardType] owner:nil];
 #endif
 
-    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(StringImpl::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 
 #if ENABLE(VIDEO)
     if (!options.captionDisplayMode().empty())
@@ -1918,7 +1918,7 @@ static void runTest(const std::string& inputLine)
     ASSERT(!inputLine.empty());
 
     auto command = WTR::parseInputLine(inputLine);
-    WTF::setCrashLogMessage(makeString("CRASHING TEST: "_s, String::fromUTF8(command.pathOrURL.c_str())).utf8());
+    WTF::setCrashLogMessage(utf8(makeString("CRASHING TEST: "_s, StringImpl::fromUTF8(command.pathOrURL.c_str()))));
     auto testHeader = WTR::testHeaderForTest(command, WTR::TestOptions::keyTypeMapping());
     if (auto disabledKey = WTR::firstDisabledKeyForTest(command, testHeader, disabledKeys)) {
         WTR::dumpSkippedTestReply(*disabledKey);
@@ -1956,7 +1956,7 @@ static void runTest(const std::string& inputLine)
         testPath = [url.get() absoluteString];
 
     auto message = makeString("CRASHING TEST: "_s, testPath);
-    WTF::setCrashLogMessage(message.utf8());
+    WTF::setCrashLogMessage(utf8(message));
 
     auto options = testOptionsForTest(command, WTF::move(testHeader.features));
 

@@ -100,9 +100,9 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->lexicallyScopedFeatures(), rootNode->hasCapturedVariables());
-    if (!source.provider()->sourceURLDirective().isNull())
+    if (source.provider()->sourceURLDirective())
         unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURLDirective());
-    if (!source.provider()->sourceMappingURLDirective().isNull())
+    if (source.provider()->sourceMappingURLDirective())
         unlinkedCodeBlock->setSourceMappingURLDirective(source.provider()->sourceMappingURLDirective());
 
     RefPtr<TDZEnvironmentLink> parentVariablesUnderTDZ;
@@ -156,16 +156,16 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
     DerivedContextType derivedContextType = executable->derivedContextType();
     bool isArrowFunctionContext = executable->isArrowFunctionContext();
     SourceCodeKey key(
-        source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, executable->lexicallyScopedFeatures(), scriptMode,
+        source, nullptr, CacheTypes<UnlinkedCodeBlockType>::codeType, executable->lexicallyScopedFeatures(), scriptMode,
         derivedContextType, evalContextType, isArrowFunctionContext, codeGenerationMode,
         std::nullopt);
     UnlinkedCodeBlockType* unlinkedCodeBlock = m_sourceCode.findCacheAndUpdateAge<UnlinkedCodeBlockType>(vm, key);
     if (unlinkedCodeBlock && Options::useCodeCache()) {
         executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->lexicallyScopedFeatures(), unlinkedCodeBlock->hasCapturedVariables());
-        if (unlinkedCodeBlock->sourceURLDirective())
-            source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
-        if (unlinkedCodeBlock->sourceMappingURLDirective())
-            source.provider()->setSourceMappingURLDirective(unlinkedCodeBlock->sourceMappingURLDirective());
+        if (RefPtr sourceURLDirective = unlinkedCodeBlock->sourceURLDirective())
+            source.provider()->setSourceURLDirective(sourceURLDirective);
+        if (RefPtr sourceMappingURLDirective = unlinkedCodeBlock->sourceMappingURLDirective())
+            source.provider()->setSourceMappingURLDirective(sourceMappingURLDirective);
         return unlinkedCodeBlock;
     }
 
@@ -211,9 +211,9 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
         functionConstructorParametersEndPosition);
     UnlinkedFunctionExecutable* executable = m_sourceCode.findCacheAndUpdateAge<UnlinkedFunctionExecutable>(vm, key);
     if (executable && Options::useCodeCache()) {
-        if (!executable->sourceURLDirective().isNull())
+        if (executable->sourceURLDirective())
             source.provider()->setSourceURLDirective(executable->sourceURLDirective());
-        if (!executable->sourceMappingURLDirective().isNull())
+        if (executable->sourceMappingURLDirective())
             source.provider()->setSourceMappingURLDirective(executable->sourceMappingURLDirective());
         return executable;
     }
@@ -228,7 +228,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     StatementNode* funcDecl = program->singleStatement();
     if (!funcDecl) [[unlikely]] {
         JSToken token;
-        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error"_s, -1);
+        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error"_si, -1);
         return nullptr;
     }
     ASSERT(funcDecl->isFuncDeclNode());
@@ -244,9 +244,9 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, metadata, UnlinkedNormalFunction, constructAbility, InlineAttribute::None, JSParserScriptMode::Classic, nullptr, { }, std::nullopt, DerivedContextType::None, EvalContextType::FunctionEvalContext, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
 
-    if (!source.provider()->sourceURLDirective().isNull())
+    if (source.provider()->sourceURLDirective())
         functionExecutable->setSourceURLDirective(source.provider()->sourceURLDirective());
-    if (!source.provider()->sourceMappingURLDirective().isNull())
+    if (source.provider()->sourceMappingURLDirective())
         functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURLDirective());
 
     // We initially start with hasCapturedVariables = false.
@@ -280,7 +280,7 @@ void writeCodeBlock(const SourceCodeKey& key, const SourceCodeValue& value)
 static SourceCodeKey sourceCodeKeyForSerializedBytecode(VM&, const SourceCode& sourceCode, SourceCodeType codeType, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode)
 {
     return SourceCodeKey(
-        sourceCode, String(), codeType, lexicallyScopedFeatures, scriptMode,
+        sourceCode, nullString(), codeType, lexicallyScopedFeatures, scriptMode,
         DerivedContextType::None, EvalContextType::None, false, codeGenerationMode,
         std::nullopt);
 }

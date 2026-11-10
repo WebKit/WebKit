@@ -54,7 +54,7 @@ public:
     void searchWithGoogle(const WebCore::LocalFrame*) override;
     void lookUpInDictionary(WebCore::LocalFrame*) override;
     bool isSpeaking() const override;
-    void speak(const WTF::String&) override;
+    void speak(StringImpl*) override;
     void stopSpeaking() override;
     void showContextMenu() override;
 

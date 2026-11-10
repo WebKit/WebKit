@@ -50,7 +50,7 @@ static const RuntimeTypeMask RuntimeTypeMaskAllTypes = TypeFunction | TypeUndefi
 
 class JSValue;
 RuntimeType runtimeTypeForValue(JSValue);
-String runtimeTypeAsString(RuntimeType);
+RefPtr<StringImpl> runtimeTypeAsString(RuntimeType);
 
 ALWAYS_INLINE bool runtimeTypeIsPrimitive(RuntimeTypeMask type)
 {

@@ -74,18 +74,18 @@ public:
 
     const NetworkLoadParameters& parameters() const LIFETIME_BOUND { return m_parameters; }
     const URL& url() const LIFETIME_BOUND { return parameters().request.url(); }
-    String attributedBundleIdentifier(WebPageProxyIdentifier);
+    RefPtr<StringImpl> attributedBundleIdentifier(WebPageProxyIdentifier);
 
     void convertTaskToDownload(PendingDownload&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, ResponseCompletionHandler&&);
     NODELETE void setPendingDownloadID(DownloadID);
-    void setSuggestedFilename(const String&);
-    void setPendingDownloadLocation(const String& path, SandboxExtension::Handle&&, bool allowOverwrite);
+    void setSuggestedFilename(StringImpl*);
+    void setPendingDownloadLocation(StringImpl* path, SandboxExtension::Handle&&, bool allowOverwrite);
     NODELETE void setPendingDownload(PendingDownload&);
     std::optional<DownloadID> pendingDownloadID() { return m_task->pendingDownloadID(); }
 
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
 
-    String description() const;
+    RefPtr<StringImpl> description() const;
     void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     void setTimingAllowFailedFlag();

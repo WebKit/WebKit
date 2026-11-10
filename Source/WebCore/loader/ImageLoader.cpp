@@ -191,7 +191,7 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
 {
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " clearImageWithoutConsideringPendingLoadEvent");
 
-    ASSERT(m_failedLoadURL.isEmpty());
+    ASSERT(isEmpty(m_failedLoadURL));
     if (RefPtr oldImage = std::exchange(m_image, nullptr)) {
         m_hasPendingBeforeLoadEvent = false;
         if (m_hasPendingLoadEvent || m_hasPendingErrorEvent) {
@@ -224,13 +224,13 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement, current URL is " << attr);
 
     // Avoid loading a URL we already failed to load.
-    if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
+    if (!isEmpty(m_failedLoadURL) && equal(attr, m_failedLoadURL))
         return;
 
     RefPtr<CachedImage> newImage;
 
     // Do not load any image if the 'src' attribute is missing.
-    if (attr.isNull()) {
+    if (!attr) {
         didUpdateCachedImage(relevantMutation, WTF::move(newImage));
         return;
     }
@@ -271,7 +271,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 
     // Use URL from original request for same URL loads in order to preserve the original base URL.
     URL imageURL;
-    if (RefPtr image = m_image; image && attr == m_pendingURL)
+    if (RefPtr image = m_image; image && equal(attr, m_pendingURL))
         imageURL = image->url();
     else {
         if (imageElement) {
@@ -429,11 +429,11 @@ void ImageLoader::updateFromElementIgnoringPreviousError(RelevantMutation releva
 
 void ImageLoader::updateFromElementIgnoringPreviousErrorToSameValue()
 {
-    if (!m_image || !m_image->allowsCaching() || !m_failedLoadURL.isEmpty() || element().document().activeServiceWorker()) {
+    if (!m_image || !m_image->allowsCaching() || !isEmpty(m_failedLoadURL) || element().document().activeServiceWorker()) {
         updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         return;
     }
-    if (m_hasPendingLoadEvent || !m_pendingURL.isEmpty())
+    if (m_hasPendingLoadEvent || !isEmpty(m_pendingURL))
         return;
     ASSERT(m_image);
     m_hasPendingLoadEvent = true;
@@ -470,10 +470,10 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 {
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished - hasPendingLoadEvent " << m_hasPendingLoadEvent);
 
-    ASSERT(m_failedLoadURL.isEmpty());
+    ASSERT(isEmpty(m_failedLoadURL));
     ASSERT_UNUSED(resource, &resource == m_image.get());
 
-    m_pendingURL = { };
+    m_pendingURL = nullptr;
 
     if (isDeferred()) {
         LazyLoadElementObserver::unobserveIfLazyLoadOnly(protect(element()), protect(document()));
@@ -700,7 +700,7 @@ bool ImageLoader::hasPendingActivity() const
     return (m_hasPendingLoadEvent && !imageWillBeLoadedLater) || m_hasPendingErrorEvent;
 }
 
-void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender, const AtomString& eventType)
+void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender, AtomStringImpl* eventType)
 {
     ASSERT_UNUSED(eventSender, eventSender == &loadEventSenderSingleton());
     if (eventType == eventNames().loadEvent)
@@ -773,7 +773,7 @@ void ImageLoader::elementDidMoveToNewDocument(Document& oldDocument)
 
 inline void ImageLoader::clearFailedLoadURL()
 {
-    m_failedLoadURL = { };
+    m_failedLoadURL = nullptr;
 }
 
 void ImageLoader::loadDeferredImage()

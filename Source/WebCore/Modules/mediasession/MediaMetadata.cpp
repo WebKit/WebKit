@@ -50,12 +50,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ArtworkImageLoader);
 
-Ref<ArtworkImageLoader> ArtworkImageLoader::create(Document& document, const String& src, ArtworkImageLoaderCallback&& callback)
+Ref<ArtworkImageLoader> ArtworkImageLoader::create(Document& document, StringImpl* src, ArtworkImageLoaderCallback&& callback)
 {
     return adoptRef(*new ArtworkImageLoader(document, src, WTF::move(callback)));
 }
 
-ArtworkImageLoader::ArtworkImageLoader(Document& document, const String& src, ArtworkImageLoaderCallback&& callback)
+ArtworkImageLoader::ArtworkImageLoader(Document& document, StringImpl* src, ArtworkImageLoaderCallback&& callback)
     : m_document(document)
     , m_src(src)
     , m_callback(WTF::move(callback))
@@ -76,7 +76,7 @@ void ArtworkImageLoader::requestImageResource()
     options.contentSecurityPolicyImposition = document->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest request(ResourceRequest(document->parseURL(m_src)), options);
-    request.setInitiatorType(AtomString { document->documentURI() });
+    request.setInitiatorType(AtomStringImpl::add(document->documentURI()).get());
     m_cachedImage = protect(document->cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
 
     if (m_cachedImage)
@@ -137,27 +137,27 @@ void MediaMetadata::resetMediaSession()
     m_artworkImage = std::nullopt;
 }
 
-void MediaMetadata::setTitle(const String& title)
+void MediaMetadata::setTitle(StringImpl* title)
 {
-    if (m_metadata.title == title)
+    if (equal(m_metadata.title, title))
         return;
 
     m_metadata.title = title;
     metadataUpdated();
 }
 
-void MediaMetadata::setArtist(const String& artist)
+void MediaMetadata::setArtist(StringImpl* artist)
 {
-    if (m_metadata.artist == artist)
+    if (equal(m_metadata.artist, artist))
         return;
 
     m_metadata.artist = artist;
     metadataUpdated();
 }
 
-void MediaMetadata::setAlbum(const String& album)
+void MediaMetadata::setAlbum(StringImpl* album)
 {
-    if (m_metadata.album == album)
+    if (equal(m_metadata.album, album))
         return;
 
     m_metadata.album = album;
@@ -216,7 +216,7 @@ void MediaMetadata::refreshArtworkImage()
     if (!m_session)
         return;
 
-    m_artworkImageSrc = String();
+    m_artworkImageSrc = nullptr;
     m_artworkImage = std::nullopt;
 
     size_t numArtworks = m_defaultImages.size() ? m_defaultImages.size() : m_metadata.artwork.size();
@@ -227,8 +227,8 @@ void MediaMetadata::refreshArtworkImage()
     Vector<Pair> artworks(numArtworks, [&](size_t index) -> Pair {
         if (m_defaultImages.size())
             return { -1, m_defaultImages[index].string() };
-        auto size = [&](const String& sizes) -> IntSize {
-            if (sizes.isEmpty())
+        auto size = [&](StringImpl* sizes) -> IntSize {
+            if (isEmpty(sizes))
                 return { };
             if (equalIgnoringASCIICase(sizes, "any"_s))
                 return IntSize { MediaSessionArtworkSizing::idealSize }; // We prefer image tagged with "any" size.
@@ -267,7 +267,7 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
     if (!document)
         return;
 
-    String artworkImageSrc = artworks[index].src;
+    RefPtr<StringImpl> artworkImageSrc = artworks[index].src;
 
     m_artworkLoader = ArtworkImageLoader::create(*document, artworkImageSrc, [weakThis = WeakPtr { *this }, index, artworkImageSrc, artworks = WTF::move(artworks)](Image* image) mutable {
         RefPtr strongThis = weakThis;
@@ -301,9 +301,9 @@ void MediaMetadata::setArtworkImage(std::optional<SizedImage>&& image)
 }
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-void MediaMetadata::setTrackIdentifier(const String& identifier)
+void MediaMetadata::setTrackIdentifier(StringImpl* identifier)
 {
-    if (m_metadata.trackIdentifier == identifier)
+    if (equal(m_metadata.trackIdentifier, identifier))
         return;
 
     m_metadata.trackIdentifier = identifier;

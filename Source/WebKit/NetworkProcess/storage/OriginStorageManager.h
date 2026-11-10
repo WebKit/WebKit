@@ -61,14 +61,14 @@ class OriginStorageManager final : public CanMakeWeakPtr<OriginStorageManager>, 
     WTF_MAKE_TZONE_ALLOCATED(OriginStorageManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OriginStorageManager);
 public:
-    static String originFileIdentifier();
+    static RefPtr<StringImpl> originFileIdentifier();
 
-    OriginStorageManager(OriginQuotaManager::Parameters&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
+    OriginStorageManager(OriginQuotaManager::Parameters&&, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& cusotmLocalStoragePath, RefPtr<StringImpl>&& customIDBStoragePath, RefPtr<StringImpl>&& customCacheStoragePath, UnifiedOriginStorageLevel);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
     WebCore::StorageEstimate estimate();
-    const String& path() const LIFETIME_BOUND { return m_path; }
+    const RefPtr<StringImpl>& path() const LIFETIME_BOUND { return m_path; }
     NODELETE OriginQuotaManager& quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&);
     FileSystemStorageManager* existingFileSystemStorageManager();
@@ -84,14 +84,14 @@ public:
     ServiceWorkerStorageManager& serviceWorkerStorageManager() LIFETIME_BOUND;
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
-    String resolvedPath(WebsiteDataType);
+    RefPtr<StringImpl> resolvedPath(WebsiteDataType);
     bool isActive();
     bool hasDataInMemory();
     bool isEmpty();
     using DataTypeSizeMap = HashMap<WebsiteDataType, uint64_t, IntHash<WebsiteDataType>, WTF::StrongEnumHashTraits<WebsiteDataType>>;
     DataTypeSizeMap fetchDataTypesInList(OptionSet<WebsiteDataType>, bool shouldComputeSize);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
-    void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
+    void moveData(OptionSet<WebsiteDataType>, StringImpl* localStoragePath, StringImpl* idbStoragePath);
     void deleteEmptyDirectory();
     std::optional<WallTime> originFileCreationTimestamp() const { return m_originFileCreationTimestamp; }
     void setOriginFileCreationTimestamp(std::optional<WallTime> timestamp) { m_originFileCreationTimestamp = timestamp; }
@@ -107,10 +107,10 @@ private:
     StorageBucket& defaultBucket() LIFETIME_BOUND;
 
     const std::unique_ptr<StorageBucket> m_defaultBucket;
-    String m_path;
-    String m_customLocalStoragePath;
-    String m_customIDBStoragePath;
-    String m_customCacheStoragePath;
+    RefPtr<StringImpl> m_path;
+    RefPtr<StringImpl> m_customLocalStoragePath;
+    RefPtr<StringImpl> m_customIDBStoragePath;
+    RefPtr<StringImpl> m_customCacheStoragePath;
     const Ref<OriginQuotaManager> m_quotaManager;
     UnifiedOriginStorageLevel m_level;
     Markable<WallTime> m_originFileCreationTimestamp;

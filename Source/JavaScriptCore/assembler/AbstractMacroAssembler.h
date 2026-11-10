@@ -1211,7 +1211,7 @@ protected:
         m_tempRegistersValidBits |= registerMask;
     }
 
-    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTF::move(str) }); }
+    void commentImpl(RefPtr<StringImpl>&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTF::move(str) }); }
 
     friend class AllowMacroScratchRegisterUsage;
     friend class AllowMacroScratchRegisterUsageIf;
@@ -1219,7 +1219,7 @@ protected:
     unsigned m_tempRegistersValidBits;
     bool m_allowScratchRegister { true };
 
-    Vector<std::pair<Label, String>> m_comments;
+    Vector<std::pair<Label, RefPtr<StringImpl>>> m_comments;
 
     Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
     Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;

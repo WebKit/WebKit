@@ -45,7 +45,7 @@ public:
         bool hasUAVisualTransition { false };
     };
 
-    static Ref<PopStateEvent> create(JSC::JSGlobalObject&, const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<PopStateEvent> create(JSC::JSGlobalObject&, AtomStringImpl*, const Init&, IsTrusted = IsTrusted::No);
     static Ref<PopStateEvent> createForBindings();
 
     const JSValueInWrappedObject& state() const LIFETIME_BOUND { return m_state; }
@@ -59,7 +59,7 @@ public:
 
 private:
     PopStateEvent();
-    PopStateEvent(JSC::JSGlobalObject&, const AtomString&, const Init&, IsTrusted);
+    PopStateEvent(JSC::JSGlobalObject&, AtomStringImpl*, const Init&, IsTrusted);
     PopStateEvent(RefPtr<SerializedScriptValue>&&, History*);
 
     JSValueInWrappedObject m_state;

@@ -42,12 +42,12 @@ DebugInfo DebugInfo::isolatedCopy() &&
 
 DebugInfo::Message DebugInfo::Message::isolatedCopy() const &
 {
-    return { messageLevel, message.isolatedCopy() };
+    return { messageLevel, WTF::isolatedCopy(message) };
 }
 
 DebugInfo::Message DebugInfo::Message::isolatedCopy() &&
 {
-    return { messageLevel, WTF::move(message).isolatedCopy() };
+    return { messageLevel, WTF::isolatedCopy(WTF::move(message)) };
 }
 
 } // namespace WebKit::PCM

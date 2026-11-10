@@ -150,22 +150,22 @@ void RTCController::enableICECandidateFiltering()
 }
 
 #if USE(LIBWEBRTC)
-static String toWebRTCLogLevel(webrtc::LoggingSeverity severity)
+static RefPtr<StringImpl> toWebRTCLogLevel(webrtc::LoggingSeverity severity)
 {
     switch (severity) {
     case webrtc::LoggingSeverity::LS_VERBOSE:
-        return "verbose"_s;
+        return "verbose"_si;
     case webrtc::LoggingSeverity::LS_INFO:
-        return "info"_s;
+        return "info"_si;
     case webrtc::LoggingSeverity::LS_WARNING:
-        return "warning"_s;
+        return "warning"_si;
     case webrtc::LoggingSeverity::LS_ERROR:
-        return "error"_s;
+        return "error"_si;
     case webrtc::LoggingSeverity::LS_NONE:
-        return "none"_s;
+        return "none"_si;
     }
     ASSERT_NOT_REACHED();
-    return ""_s;
+    return ""_si;
 }
 #endif
 
@@ -183,7 +183,7 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
 #if USE(LIBWEBRTC)
     if (!m_logSink) {
         m_logSink = makeUnique<LibWebRTCLogSink>([weakThis = WeakPtr { *this }](auto&& logLevel, auto&& logMessage) {
-            ensureOnMainThread([weakThis, logMessage = fromStdString(logMessage).isolatedCopy(), logLevel] mutable {
+            ensureOnMainThread([weakThis, logMessage = isolatedCopy(fromStdString(logMessage)), logLevel] mutable {
                 if (RefPtr protectedThis = weakThis.get())
                     protectedThis->m_callback("backend-logs"_s, WTF::move(logMessage), toWebRTCLogLevel(logLevel), nullptr);
             });

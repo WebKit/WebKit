@@ -40,8 +40,8 @@
 namespace WebKit::AutomationKeyIdentity {
 
 struct Identity {
-    String key;
-    String code;
+    RefPtr<StringImpl> key;
+    RefPtr<StringImpl> code;
     bool isKeypad { false };
 };
 
@@ -55,8 +55,8 @@ static NSString * const isKeypadKey = @"isKeypad";
 inline void setIdentity(id event, const Identity& identity)
 {
     objc_setAssociatedObject(event, &associatedObjectKey, @{
-        keyKey: identity.key.createNSString().get(),
-        codeKey: identity.code.createNSString().get(),
+        keyKey: createNSString(identity.key).get(),
+        codeKey: createNSString(identity.code).get(),
         isKeypadKey: @(identity.isKeypad),
     }, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
@@ -68,8 +68,8 @@ inline std::optional<Identity> identity(id event)
         return std::nullopt;
 
     return Identity {
-        dynamic_objc_cast<NSString>([dictionary objectForKey:keyKey]),
-        dynamic_objc_cast<NSString>([dictionary objectForKey:codeKey]),
+        StringImpl::create(dynamic_objc_cast<NSString>([dictionary objectForKey:keyKey])),
+        StringImpl::create(dynamic_objc_cast<NSString>([dictionary objectForKey:codeKey])),
         static_cast<bool>([dynamic_objc_cast<NSNumber>([dictionary objectForKey:isKeypadKey]) boolValue]),
     };
 }

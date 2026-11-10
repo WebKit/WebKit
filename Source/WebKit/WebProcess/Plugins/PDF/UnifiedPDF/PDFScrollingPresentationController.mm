@@ -88,10 +88,10 @@ bool PDFScrollingPresentationController::handleKeyboardCommand(const WebKeyboard
         return false;
 
     auto commandName = commands[0].commandName;
-    if (commandName == "scrollToBeginningOfDocument:"_s)
+    if (equal(commandName, "scrollToBeginningOfDocument:"_s))
         return protect(m_plugin->scrollAnimator().keyboardScrollingAnimator())->beginKeyboardScrollGesture(ScrollDirection::ScrollUp, ScrollGranularity::Document, false);
 
-    if (commandName == "scrollToEndOfDocument:"_s)
+    if (equal(commandName, "scrollToEndOfDocument:"_s))
         return protect(m_plugin->scrollAnimator().keyboardScrollingAnimator())->beginKeyboardScrollGesture(ScrollDirection::ScrollDown, ScrollGranularity::Document, false);
 
     return false;
@@ -143,7 +143,7 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
 {
     RefPtr pageBackgroundsContainerLayer = m_pageBackgroundsContainerLayer;
     if (!pageBackgroundsContainerLayer) {
-        pageBackgroundsContainerLayer = createGraphicsLayer("Page backgrounds"_s, GraphicsLayer::Type::Normal);
+        pageBackgroundsContainerLayer = createGraphicsLayer("Page backgrounds"_si, GraphicsLayer::Type::Normal);
         m_pageBackgroundsContainerLayer = pageBackgroundsContainerLayer.copyRef();
         pageBackgroundsContainerLayer->setAnchorPoint({ });
         scrolledContentsLayer.addChild(pageBackgroundsContainerLayer.releaseNonNull());
@@ -151,7 +151,7 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
 
     RefPtr contentsLayer = m_contentsLayer;
     if (!contentsLayer) {
-        contentsLayer = createGraphicsLayer("PDF contents"_s, m_plugin->isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
+        contentsLayer = createGraphicsLayer("PDF contents"_si, m_plugin->isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer = contentsLayer.copyRef();
         contentsLayer->setAnchorPoint({ });
         contentsLayer->setDrawsContent(true);
@@ -165,7 +165,7 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
 #if ENABLE(PDFKIT_PAINTED_SELECTIONS)
     RefPtr selectionLayer = m_selectionLayer;
     if (!selectionLayer) {
-        selectionLayer = createGraphicsLayer("PDF selections"_s, GraphicsLayer::Type::TiledBacking);
+        selectionLayer = createGraphicsLayer("PDF selections"_si, GraphicsLayer::Type::TiledBacking);
         m_selectionLayer = selectionLayer.copyRef();
         selectionLayer->setAnchorPoint({ });
         selectionLayer->setDrawsContent(true);

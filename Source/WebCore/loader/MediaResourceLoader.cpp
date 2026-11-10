@@ -63,7 +63,7 @@ void MediaResourceLoader::recordResponsesForTesting()
     shouldRecordResponsesForTesting = true;
 }
 
-MediaResourceLoader::MediaResourceLoader(Document& document, Element& element, const String& crossOriginMode, FetchOptions::Destination destination)
+MediaResourceLoader::MediaResourceLoader(Document& document, Element& element, StringImpl* crossOriginMode, FetchOptions::Destination destination)
     : ContextDestructionObserver(&document)
     , m_document(document)
     , m_element(element)
@@ -136,7 +136,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
 
 #if PLATFORM(MAC)
     // FIXME: Workaround for <rdar://problem/26071607>. We are not able to do CORS checking on 304 responses because they are usually missing the headers we need.
-    if (!m_crossOriginMode.isNull())
+    if (m_crossOriginMode)
         request.makeUnconditional();
 #endif
 
@@ -203,7 +203,7 @@ Document* MediaResourceLoader::document()
     return m_document.get();
 }
 
-const String& MediaResourceLoader::crossOriginMode() const
+const RefPtr<StringImpl>& MediaResourceLoader::crossOriginMode() const
 {
     assertIsMainThread();
     IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
@@ -218,7 +218,7 @@ Vector<ResourceResponse> MediaResourceLoader::responsesForTesting() const
     return m_responsesForTesting;
 }
 
-static bool isManifestMIMEType(const URL& url, const String& mimeType)
+static bool isManifestMIMEType(const URL& url, StringImpl* mimeType)
 {
     static constexpr SortedArraySet staticManifestMIMETypesSet { WTF::toArray<ComparableLettersLiteral>({
         "application/json"_s,
@@ -229,7 +229,7 @@ static bool isManifestMIMEType(const URL& url, const String& mimeType)
         "audio/x-mpegurl"_s
     }) };
 
-    if (mimeType.isEmpty() || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream"_s))
+    if (isEmpty(mimeType) || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream"_s))
         return staticManifestMIMETypesSet.contains(ContentType::fromURL(url).containerType());
 
     return staticManifestMIMETypesSet.contains(mimeType);
@@ -326,20 +326,20 @@ void MediaResource::responseReceived(const CachedResource& resource, const Resou
 
     Ref protectedThis { *this };
     if (m_resource->resourceError().isAccessControl()) {
-        static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy."_s);
+        static NeverDestroyed<const RefPtr<StringImpl>> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy."_s);
         protect(m_loader->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck.store(false);
         if (RefPtr client = this->client())
-            client->accessControlCheckFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
+            client->accessControlCheckFailed(*this, ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), consoleMessage.get()));
         ensureShutdown();
         return;
     }
 
     if (!m_loader->verifyMediaResponse(resource.url(), response, protect(resource.origin()).get())) {
-        static NeverDestroyed<const String> consoleMessage("Media response origin validation failed."_s);
+        static NeverDestroyed<const RefPtr<StringImpl>> consoleMessage("Media response origin validation failed."_s);
         protect(m_loader->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         if (RefPtr client = this->client())
-            client->loadFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
+            client->loadFailed(*this, ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), consoleMessage.get()));
         ensureShutdown();
         return;
     }
@@ -395,12 +395,12 @@ void MediaResource::dataSent(CachedResource& resource, unsigned long long bytesS
         client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void MediaResource::sendPartialPlaylistLine(String& line)
+void MediaResource::sendPartialPlaylistLine(RefPtr<StringImpl>& line)
 {
-    if (!line.length())
+    if (!length(line))
         return;
 
-    if (line.contains("EXT-X-MEDIA:TYPE=SUBTITLES"_s))
+    if (contains(line, "EXT-X-MEDIA:TYPE=SUBTITLES"_s))
         return;
 
     RefPtr client = protect(*this)->client();
@@ -425,9 +425,9 @@ void MediaResource::dataReceived(CachedResource& resource, const SharedBuffer& b
 
     ASSERT_UNUSED(resource, &resource == m_resource);
 
-    if (m_shouldSuppressHLSSubtitles && resource.response().mimeType() == "application/x-mpegurl"_s) {
-        String partialPlaylist = makeString(m_partialPlaylistLine, String::fromUTF8(byteCast<char>(buffer.span())));
-        auto lines = partialPlaylist.split('\n');
+    if (m_shouldSuppressHLSSubtitles && equal(resource.response().mimeType(), "application/x-mpegurl"_s)) {
+        RefPtr<StringImpl> partialPlaylist = makeString(m_partialPlaylistLine, StringImpl::fromUTF8(byteCast<char>(buffer.span())));
+        auto lines = split(partialPlaylist, '\n');
         if (lines.isEmpty())
             return;
 
@@ -459,7 +459,7 @@ void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMe
         return ensureShutdown();
     }
 
-    if (m_shouldSuppressHLSSubtitles && (!m_partialPlaylistLine.isEmpty() || m_partialPlaylistByteCount)) {
+    if (m_shouldSuppressHLSSubtitles && (!isEmpty(m_partialPlaylistLine) || m_partialPlaylistByteCount)) {
         sendPartialPlaylistLine(m_partialPlaylistLine);
 
         long long expectedLength = resource.response().expectedContentLength();
@@ -469,7 +469,7 @@ void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMe
             client->dataReceived(*this, remainingBuffer);
         }
 
-        m_partialPlaylistLine = { };
+        m_partialPlaylistLine = nullptr;
         m_partialPlaylistByteCount = 0;
     }
 

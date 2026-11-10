@@ -37,7 +37,7 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITSizeStatistics);
 
-JITSizeStatistics::Marker JITSizeStatistics::markStart(String identifier, CCallHelpers& jit)
+JITSizeStatistics::Marker JITSizeStatistics::markStart(RefPtr<StringImpl> identifier, CCallHelpers& jit)
 {
     Marker marker;
     marker.identifier = identifier;
@@ -61,7 +61,7 @@ void JITSizeStatistics::markEnd(Marker marker, CCallHelpers& jit, JITPlan& planR
 
 void JITSizeStatistics::dump(PrintStream& out) const
 {
-    Vector<std::pair<String, Entry>> entries;
+    Vector<std::pair<RefPtr<StringImpl>, Entry>> entries;
 
     for (auto pair : m_data)
         entries.append(std::make_pair(pair.key, pair.value));

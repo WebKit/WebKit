@@ -119,7 +119,7 @@ bool TextFieldInputType::isEmptyValue() const
     if (!innerText) {
         if (element()->shadowRoot())
             return true; // Shadow tree is empty
-        return visibleValue().isEmpty();
+        return isEmpty(visibleValue());
     }
 
     for (auto* text = TextNodeTraversal::firstWithin(*innerText); text; text = TextNodeTraversal::next(*text, innerText.get())) {
@@ -136,7 +136,7 @@ bool TextFieldInputType::valueMissing(StringView value) const
     return element->isMutable() && element->isRequired() && value.isEmpty();
 }
 
-void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void TextFieldInputType::setValue(StringImpl* sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     ASSERT(element());
 
@@ -150,14 +150,14 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
 
     // Visible value needs update if it differs from sanitized value, if it was set with setValue().
     // event_behavior == DispatchNoEvent usually means this call is not a user edit.
-    bool needsTextUpdate = valueChanged || (eventBehavior == TextFieldEventBehavior::DispatchNoEvent && sanitizedValue != input->innerTextValue());
+    bool needsTextUpdate = valueChanged || (eventBehavior == TextFieldEventBehavior::DispatchNoEvent && !equal(sanitizedValue, input->innerTextValue()));
     if (needsTextUpdate)
         updateInnerTextValue();
     if (!valueChanged)
         return;
 
     if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
-        auto max = visibleValue().length();
+        auto max = length(visibleValue());
         if (input->focused())
             input->setSelectionRange(max, max);
         else
@@ -185,7 +185,7 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
     }
 
     if (!input->focused())
-        input->setTextAsOfLastFormControlChangeEvent(String(sanitizedValue));
+        input->setTextAsOfLastFormControlChangeEvent(RefPtr<StringImpl>(sanitizedValue));
 
     if (UserTypingGestureIndicator::processingUserTypingGesture())
         didSetValueByUserEdit();
@@ -212,8 +212,8 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
     Ref element = *this->element();
     if (!element->focused())
         return ShouldCallBaseEventHandler::Yes;
-    const String& key = event.keyIdentifier();
-    if (RefPtr suggestionPicker = m_suggestionPicker; suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s || key == "U+001B"_s)) {
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (RefPtr suggestionPicker = m_suggestionPicker; suggestionPicker && (equal(key, "Enter"_s) || equal(key, "Up"_s) || equal(key, "Down"_s) || equal(key, "U+001B"_s))) {
         suggestionPicker->handleKeydownWithIdentifier(key);
         event.setDefaultHandled();
     }
@@ -230,10 +230,10 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)
         return;
     if (m_suggestionPicker)
         return;
-    const String& key = event.keyIdentifier();
-    if (key == "Up"_s)
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (equal(key, "Up"_s))
         spinButtonStepUp();
-    else if (key == "Down"_s)
+    else if (equal(key, "Down"_s))
         spinButtonStepDown();
     else
         return;
@@ -303,7 +303,7 @@ void TextFieldInputType::handleBlurEvent()
 bool TextFieldInputType::shouldSubmitImplicitly(Event& event)
 {
     auto* textEvent = dynamicDowncast<TextEvent>(event);
-    return (event.type() == eventNames().textInputEvent && textEvent && textEvent->data() == "\n"_s)
+    return (event.type() == eventNames().textInputEvent && textEvent && equal(textEvent->data(), "\n"_s))
         || InputType::shouldSubmitImplicitly(event);
 }
 
@@ -480,18 +480,18 @@ void TextFieldInputType::createDataListDropdownIndicator()
     dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None, IsImportant::Yes);
 }
 
-static ValueOrReference<String> limitLength(const String& string LIFETIME_BOUND, unsigned maxLength)
+static RefPtr<StringImpl> limitLength(StringImpl* string, unsigned maxLength)
 {
-    if (string.length() <= maxLength) [[likely]]
-        return string;
+    if (length(string) <= maxLength) [[likely]]
+        return RefPtr { string };
 
     unsigned newLength = maxLength;
-    if (newLength > 0 && U16_IS_LEAD(string[newLength - 1]))
+    if (newLength > 0 && U16_IS_LEAD(codeUnitAt(string, newLength - 1)))
         --newLength;
-    return string.left(newLength);
+    return left(string, newLength);
 }
 
-static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)
+static RefPtr<StringImpl> autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case AutoFillButtonType::Contacts:
@@ -512,7 +512,7 @@ static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFill
     return { };
 }
 
-static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFillButtonType)
+static RefPtr<StringImpl> autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case AutoFillButtonType::Contacts:
@@ -530,7 +530,7 @@ static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFill
     return { };
 }
 
-static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
+static RefPtr<AtomStringImpl> autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case AutoFillButtonType::Contacts:
@@ -551,7 +551,7 @@ static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButt
     return { };
 }
 
-static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillButtonType autoFillButtonType)
+static bool isAutoFillButtonTypeChanged(AtomStringImpl* attribute, AutoFillButtonType autoFillButtonType)
 {
     if (attribute == UserAgentParts::webkitContactsAutoFillButton() && autoFillButtonType != AutoFillButtonType::Contacts)
         return true;
@@ -566,16 +566,16 @@ static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillBut
     return false;
 }
 
-ValueOrReference<String> TextFieldInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> TextFieldInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
     if (!containsHTMLLineBreak(proposedValue)) [[likely]]
         return limitLength(proposedValue, HTMLInputElement::maxEffectiveLength);
 
     // Passing a lambda instead of a function name helps the compiler inline isHTMLLineBreak.
-    auto proposedValueWithoutLineBreaks = proposedValue.removeCharacters([](auto character) {
+    auto proposedValueWithoutLineBreaks = removeCharacters(proposedValue, [](auto character) {
         return isHTMLLineBreak(character);
     });
-    return String(limitLength(proposedValueWithoutLineBreaks, HTMLInputElement::maxEffectiveLength));
+    return limitLength(proposedValueWithoutLineBreaks.get(), HTMLInputElement::maxEffectiveLength);
 }
 
 void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& event)
@@ -588,7 +588,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     // because they can be mismatched by sanitizeValue() in
     // HTMLInputElement::subtreeHasChanged() in some cases.
     auto innerText = element->innerTextValue();
-    unsigned oldLength = innerText.length();
+    unsigned oldLength = length(innerText);
 
     // selectionLength represents the selection length of this text field to be
     // removed by this insertion.
@@ -611,11 +611,11 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     // FIXME: This may cause a lot of String allocations in the worst case scenario.
-    String eventText = event.text();
-    unsigned textLength = eventText.length();
-    while (textLength > 0 && isHTMLLineBreak(eventText[textLength - 1]))
+    RefPtr<StringImpl> eventText = event.text();
+    unsigned textLength = length(eventText);
+    while (textLength > 0 && isHTMLLineBreak(codeUnitAt(eventText, textLength - 1)))
         textLength--;
-    eventText = makeStringByReplacingAll(eventText.left(textLength), "\r\n"_s, " "_s);
+    eventText = makeStringByReplacingAll(left(eventText, textLength), "\r\n"_s, " "_s);
     eventText = makeStringByReplacingAll(eventText, '\r', ' ');
     eventText = makeStringByReplacingAll(eventText, '\n', ' ');
     event.setText(limitLength(eventText, appendableLength));
@@ -662,12 +662,12 @@ bool TextFieldInputType::appendFormData(DOMFormData& formData) const
     // FIXME: should type=number be TextFieldInputType to begin with?
     if (element->isNumberField())
         return true;
-    if (auto& dirname = element->attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+    if (auto& dirname = element->attributeWithoutSynchronization(dirnameAttr); dirname)
         formData.append(dirname, element->directionForFormData());
     return true;
 }
 
-String TextFieldInputType::convertFromVisibleValue(const String& visibleValue) const
+RefPtr<StringImpl> TextFieldInputType::convertFromVisibleValue(StringImpl* visibleValue) const
 {
     return visibleValue;
 }
@@ -690,7 +690,7 @@ void TextFieldInputType::subtreeHasChanged()
     // backward compatibility. https://bugs.webkit.org/show_bug.cgi?id=150346
     auto innerText = convertFromVisibleValue(element->innerTextValue());
     if (!supportsSelectionAPI())
-        innerText = sanitizeValue(innerText);
+        innerText = sanitizeValue(innerText).get();
     element->setValueFromRenderer(innerText);
     element->updatePlaceholderVisibility();
     // Recalc for :invalid change.
@@ -857,7 +857,7 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
 
     autoFillButton->setUserAgentPart(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
     autoFillButton->setAttributeWithoutSynchronization(roleAttr, HTMLNames::buttonTag->localName());
-    autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { autoFillButtonTypeToAccessibilityLabel(autoFillButtonType) });
+    autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomStringImpl::add(autoFillButtonTypeToAccessibilityLabel(autoFillButtonType)).get());
     autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
 }
 
@@ -883,7 +883,7 @@ void TextFieldInputType::updateAutoFillButton()
         bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(part, autoFillButtonType);
         if (shouldUpdateAutoFillButtonType) {
             autoFillButton->setUserAgentPart(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
-            autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { autoFillButtonTypeToAccessibilityLabel(autoFillButtonType) });
+            autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomStringImpl::add(autoFillButtonTypeToAccessibilityLabel(autoFillButtonType)).get());
             autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
         }
         autoFillButton->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Block, IsImportant::Yes);
@@ -921,7 +921,7 @@ void TextFieldInputType::dataListButtonElementWasClicked()
     Ref<HTMLInputElement> input(*element());
     if (input->hasDataList()) {
         m_isFocusingWithDataListDropdown = true;
-        unsigned max = visibleValue().length();
+        unsigned max = length(visibleValue());
         input->setSelectionRange(max, max);
         m_isFocusingWithDataListDropdown = false;
 
@@ -956,9 +956,9 @@ Vector<DataListSuggestion> TextFieldInputType::suggestions()
     Vector<DataListSuggestion> matchesContainingValue;
 
     Ref element = *this->element();
-    String elementValue = element->value();
+    RefPtr<StringImpl> elementValue = element->value();
 
-    if (!m_cachedSuggestions.first.isNull() && equalIgnoringASCIICase(m_cachedSuggestions.first, elementValue))
+    if (m_cachedSuggestions.first && equalIgnoringASCIICase(m_cachedSuggestions.first, elementValue))
         return m_cachedSuggestions.second;
 
     RefPtr page = element->document().page();
@@ -969,14 +969,14 @@ Vector<DataListSuggestion> TextFieldInputType::suggestions()
             suggestion.value = option->value();
             if (!element->isValidValue(suggestion.value))
                 continue;
-            suggestion.value = sanitizeValue(suggestion.value);
+            suggestion.value = sanitizeValue(suggestion.value).get();
             suggestion.label = option->label();
-            if (suggestion.value == suggestion.label)
-                suggestion.label = { };
+            if (equal(suggestion.value, suggestion.label))
+                suggestion.label = nullptr;
 
-            if (elementValue.isEmpty() || suggestion.value.startsWithIgnoringASCIICase(elementValue))
+            if (isEmpty(elementValue) || startsWithIgnoringASCIICase(suggestion.value, elementValue))
                 suggestions.append(WTF::move(suggestion));
-            else if (suggestion.value.containsIgnoringASCIICase(elementValue) || (canShowLabels && suggestion.label.containsIgnoringASCIICase(elementValue)))
+            else if (containsIgnoringASCIICase(suggestion.value, elementValue) || (canShowLabels && containsIgnoringASCIICase(suggestion.label, elementValue)))
                 matchesContainingValue.append(WTF::move(suggestion));
         }
     }
@@ -987,7 +987,7 @@ Vector<DataListSuggestion> TextFieldInputType::suggestions()
     return suggestions;
 }
 
-void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
+void TextFieldInputType::didSelectDataListOption(StringImpl* selectedOption)
 {
     protect(element())->setValue(selectedOption, DispatchInputAndChangeEvent);
 }

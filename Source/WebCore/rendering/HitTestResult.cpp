@@ -296,7 +296,7 @@ bool HitTestResult::allowsFollowingImageURL() const
     return protect(document->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
-String HitTestResult::selectedText() const
+RefPtr<StringImpl> HitTestResult::selectedText() const
 {
     if (!m_innerNonSharedNode)
         return emptyString();
@@ -320,44 +320,44 @@ String HitTestResult::selectedText() const
     return emptyString();
 }
 
-String HitTestResult::spellingToolTip(TextDirection& dir) const
+RefPtr<StringImpl> HitTestResult::spellingToolTip(TextDirection& dir) const
 {
     dir = TextDirection::LTR;
     // Return the tool tip string associated with this point, if any. Only markers associated with bad grammar
     // currently supply strings, but maybe someday markers associated with misspelled words will also.
     if (!m_innerNonSharedNode)
-        return String();
+        return nullptr;
     
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
-        return String();
+        return nullptr;
     WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarkerType::Grammar);
     if (!marker)
-        return String();
+        return nullptr;
 
     if (auto* renderer = m_innerNonSharedNode->renderer())
         dir = renderer->writingMode().computedTextDirection();
     return marker->description();
 }
 
-String HitTestResult::replacedString() const
+RefPtr<StringImpl> HitTestResult::replacedString() const
 {
     // Return the replaced string associated with this point, if any. This marker is created when a string is autocorrected, 
     // and is used for generating a contextual menu item that allows it to easily be changed back if desired.
     if (!m_innerNonSharedNode)
-        return String();
+        return nullptr;
 
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
-        return String();
+        return nullptr;
     WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarkerType::Replacement);
     if (!marker)
-        return String();
+        return nullptr;
     
     return marker->description();
 }    
     
-String HitTestResult::title(TextDirection& dir) const
+RefPtr<StringImpl> HitTestResult::title(TextDirection& dir) const
 {
     dir = TextDirection::LTR;
     // Find the title in the nearest enclosing DOM node.
@@ -365,17 +365,17 @@ String HitTestResult::title(TextDirection& dir) const
     for (RefPtr titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentInComposedTree()) {
         if (RefPtr titleElement = dynamicDowncast<Element>(*titleNode)) {
             auto title = titleElement->title();
-            if (!title.isNull()) {
+            if (title) {
                 if (auto renderer = titleElement->renderer())
                     dir = renderer->writingMode().computedTextDirection();
                 return title;
             }
         }
     }
-    return String();
+    return nullptr;
 }
 
-String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
+RefPtr<StringImpl> HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 {
     for (RefPtr truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
         RefPtr element = dynamicDowncast<Element>(*truncatedNode);
@@ -394,20 +394,20 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
     }
 
     dir = TextDirection::LTR;
-    return String();
+    return nullptr;
 }
 
-String displayString(const String& string, const Node* node)
+RefPtr<StringImpl> displayString(StringImpl* string, const Node* node)
 {
     if (!node)
         return string;
     return protect(node->document())->displayStringModifiedByEncoding(string);
 }
 
-String HitTestResult::altDisplayString() const
+RefPtr<StringImpl> HitTestResult::altDisplayString() const
 {
     if (!m_innerNonSharedNode)
-        return String();
+        return nullptr;
 
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(*m_innerNonSharedNode))
         return displayString(image->attributeWithoutSynchronization(altAttr), m_innerNonSharedNode.get());
@@ -415,7 +415,7 @@ String HitTestResult::altDisplayString() const
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_innerNonSharedNode))
         return displayString(input->attributeWithoutSynchronization(altAttr), m_innerNonSharedNode.get());
 
-    return String();
+    return nullptr;
 }
 
 RefPtr<Node> HitTestResult::nodeForImageData() const
@@ -519,7 +519,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!url.isValid())
         return URL();
 
-    if (element->serviceType() == "application/pdf"_s || (element->serviceType().isEmpty() && url.path().endsWithIgnoringASCIICase(".pdf"_s)))
+    if (equal(element->serviceType(), "application/pdf"_s) || (isEmpty(element->serviceType()) && url.path().endsWithIgnoringASCIICase(".pdf"_s)))
         return url;
     return URL();
 }
@@ -803,18 +803,18 @@ bool HitTestResult::isOverLink() const
     return m_innerURLElement && m_innerURLElement->isLink();
 }
 
-String HitTestResult::titleDisplayString() const
+RefPtr<StringImpl> HitTestResult::titleDisplayString() const
 {
     if (!m_innerURLElement)
-        return String();
+        return nullptr;
     
     return displayString(protect(m_innerURLElement)->title(), m_innerURLElement.get());
 }
 
-String HitTestResult::textContent() const
+RefPtr<StringImpl> HitTestResult::textContent() const
 {
     if (!m_innerURLElement)
-        return String();
+        return nullptr;
     return protect(m_innerURLElement)->textContent();
 }
 
@@ -905,23 +905,23 @@ HitTestResult::NodeSet& HitTestResult::mutableListBasedTestResult()
     return *m_listBasedTestResult;
 }
 
-Vector<String> HitTestResult::dictationAlternatives() const
+Vector<RefPtr<StringImpl>> HitTestResult::dictationAlternatives() const
 {
     // Return the dictation context handle if the text at this point has DictationAlternative marker, which means this text is
     if (!m_innerNonSharedNode)
-        return Vector<String>();
+        return { };
 
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
-        return Vector<String>();
+        return { };
 
     WeakPtr marker = markers->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarkerType::DictationAlternatives);
     if (!marker)
-        return Vector<String>();
+        return { };
 
     RefPtr frame = innerNonSharedNode()->document().frame();
     if (!frame)
-        return Vector<String>();
+        return { };
 
     return protect(frame->editor())->dictationAlternativesForMarker(*marker);
 }
@@ -945,7 +945,7 @@ Element* HitTestResult::innerNonSharedElement() const
     return node->parentElement();
 }
 
-String HitTestResult::linkSuggestedFilename() const
+RefPtr<StringImpl> HitTestResult::linkSuggestedFilename() const
 {
     RefPtr urlElement = URLElement();
     if (!is<HTMLAnchorElement>(urlElement))

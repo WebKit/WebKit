@@ -107,15 +107,15 @@ void MediaSourcePrivateGStreamer::handleLogMessage(const WTFLogChannel& channel,
 
     // Parse "foo::bar(hexidentifier) "
     auto& signature = values[0].value;
-    auto leftParenthesisIndex = signature.reverseFind('(');
+    auto leftParenthesisIndex = reverseFind(signature, '(');
     if (leftParenthesisIndex == notFound)
         return;
 
-    auto rightParenthesisIndex = signature.reverseFind(')');
+    auto rightParenthesisIndex = reverseFind(signature, ')');
     if (rightParenthesisIndex == notFound)
         return;
 
-    auto identifierString = signature.substring(leftParenthesisIndex + 1, rightParenthesisIndex - leftParenthesisIndex - 1);
+    auto identifierString = substring(signature, leftParenthesisIndex + 1, rightParenthesisIndex - leftParenthesisIndex - 1);
     auto identifier = WTF::parseInteger<uint64_t>(identifierString, 16);
     if (!identifier)
         return;
@@ -131,20 +131,20 @@ void MediaSourcePrivateGStreamer::handleLogMessage(const WTFLogChannel& channel,
     // Find the C++ method name, foo::bar() -> bar.
     auto methodName = emptyString();
     if (location)
-        methodName = String::fromUTF8(location->function);
+        methodName = StringImpl::fromUTF8(location->function);
     else {
-        auto methodNameSeparatorIndex = signature.reverseFind(':');
+        auto methodNameSeparatorIndex = reverseFind(signature, ':');
         if (methodNameSeparatorIndex != notFound)
-            methodName = signature.substring(methodNameSeparatorIndex + 1, leftParenthesisIndex - methodNameSeparatorIndex - 1);
+            methodName = substring(signature, methodNameSeparatorIndex + 1, leftParenthesisIndex - methodNameSeparatorIndex - 1);
     }
 
     auto message = builder.toString();
     const char* file = location ? location->file : __FILE__;
     int line = location ? location->line : __LINE__;
 #if GST_CHECK_VERSION(1, 22, 0)
-    SAFE_GST_DEBUG_LOG_ID_LITERAL(GST_CAT_DEFAULT, gstDebugLevel, file, methodName.utf8(), line, identifierString.utf8(), message.utf8());
+    SAFE_GST_DEBUG_LOG_ID_LITERAL(GST_CAT_DEFAULT, gstDebugLevel, file, utf8(methodName), line, utf8(identifierString), utf8(message));
 #else
-    SAFE_GST_DEBUG_LOG(GST_CAT_DEFAULT, gstDebugLevel, file, methodName.utf8(), line, nullptr, "%s: %s", identifierString.utf8(), message.utf8());
+    SAFE_GST_DEBUG_LOG(GST_CAT_DEFAULT, gstDebugLevel, file, utf8(methodName), line, nullptr, "%s: %s", utf8(identifierString), utf8(message));
 #endif
 }
 #endif // !RELEASE_LOG_DISABLED && !defined(GST_DISABLE_GST_DEBUG)

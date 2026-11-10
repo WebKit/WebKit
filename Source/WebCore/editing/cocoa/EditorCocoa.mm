@@ -86,7 +86,7 @@
 
 namespace WebCore {
 
-String Editor::selectionInHTMLFormat()
+RefPtr<StringImpl> Editor::selectionInHTMLFormat()
 {
     if (ImageOverlay::isInsideOverlay(document().selection().selection()))
         return { };
@@ -95,7 +95,7 @@ String Editor::selectionInHTMLFormat()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std::pair<String, RefPtr<SharedBuffer>>>& outTypesAndData)
+void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std::pair<RefPtr<StringImpl>, RefPtr<SharedBuffer>>>& outTypesAndData)
 {
     auto elementRange = makeRangeSelectingNode(element);
     protect(client())->getClientPasteboardData(elementRange, outTypesAndData);
@@ -105,7 +105,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std
     if (elementRange) {
         if (auto archive = LegacyWebArchive::create(*elementRange)) {
             if (auto data = archive->rawDataRepresentation()) {
-                outTypesAndData.append(std::make_pair(WebArchivePboardType, SharedBuffer::create(data.get())));
+                outTypesAndData.append(std::make_pair(webArchivePboardTypeString(), SharedBuffer::create(data.get())));
             }
         }
     }
@@ -164,17 +164,17 @@ static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document&
 
 static RetainPtr<NSAttributedString> attributedStringByReplacingRemoteFrameMarkers(RetainPtr<NSAttributedString>&& string, const HashMap<FrameIdentifier, AttributedString>& remoteFrameContent)
 {
-    HashMap<String, AttributedString> contentByFrameIdentifier;
+    HashMap<RefPtr<StringImpl>, AttributedString> contentByFrameIdentifier;
     for (auto& [frameIdentifier, content] : remoteFrameContent)
         contentByFrameIdentifier.set(makeString(frameIdentifier.toUInt64()), content);
 
     RetainPtr result = adoptNS([[NSMutableAttributedString alloc] initWithAttributedString:string]);
-    HashSet<String> replacedFrameIdentifiers;
+    HashSet<RefPtr<StringImpl>> replacedFrameIdentifiers;
     while (true) {
-        Vector<std::pair<NSRange, String>> markers;
+        Vector<std::pair<NSRange, RefPtr<StringImpl>>> markers;
         [result enumerateAttribute:protect(remoteFrameIdentifierAttributeName()) inRange:NSMakeRange(0, [result length]) options:0 usingBlock:[&](id value, NSRange range, BOOL *) {
             if (RetainPtr identifier = dynamic_objc_cast<NSString>(value))
-                markers.append({ range, identifier.get() });
+                markers.append({ range, StringImpl::create(identifier.get()) });
         }];
 
         if (markers.isEmpty())
@@ -279,14 +279,14 @@ RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 
 // FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
 // This was left in a bad state when selectedTextForDataTransfer was added. Need to look over clients and fix this.
-String Editor::stringSelectionForPasteboard()
+RefPtr<StringImpl> Editor::stringSelectionForPasteboard()
 {
     if (!canCopy())
         return emptyString();
     return makeStringByReplacingAll(selectedText(), noBreakSpace, ' ');
 }
 
-String Editor::stringSelectionForPasteboardWithImageAltText()
+RefPtr<StringImpl> Editor::stringSelectionForPasteboardWithImageAltText()
 {
     if (!canCopy())
         return emptyString();
@@ -305,15 +305,15 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
                 pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
         }
     } else {
-        String text = attributedString.string;
+        RefPtr<StringImpl> text = StringImpl::create(attributedString.string);
         if (shouldInsertText(text, selectedRange(), EditorInsertAction::Pasted))
             pasteAsPlainText(text, false);
     }
 }
 
-String Editor::userVisibleString(const URL& url)
+RefPtr<StringImpl> Editor::userVisibleString(const URL& url)
 {
-    return WTF::userVisibleString(url.createNSURL().get());
+    return StringImpl::create(protect(WTF::userVisibleString(url.createNSURL().get())).get());
 }
 
 RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)
@@ -365,11 +365,11 @@ void Editor::takeFindStringFromSelection()
 
     auto stringFromSelection = protect(document().frame())->displayStringModifiedByEncoding(selectedTextForDataTransfer());
 #if PLATFORM(MAC)
-    Vector<String> types;
-    types.append(String(legacyStringPasteboardTypeSingleton()));
+    Vector<RefPtr<StringImpl>> types;
+    types.append(StringImpl::create(legacyStringPasteboardTypeSingleton()));
     auto context = PagePasteboardContext::create(document().pageID());
-    platformStrategies()->pasteboardStrategy()->setTypes(types, NSPasteboardNameFind, context.get());
-    platformStrategies()->pasteboardStrategy()->setStringForType(WTF::move(stringFromSelection), legacyStringPasteboardTypeSingleton(), NSPasteboardNameFind, context.get());
+    platformStrategies()->pasteboardStrategy()->setTypes(types, StringImpl::create(NSPasteboardNameFind).get(), context.get());
+    platformStrategies()->pasteboardStrategy()->setStringForType(WTF::move(stringFromSelection), StringImpl::create(legacyStringPasteboardTypeSingleton()).get(), StringImpl::create(NSPasteboardNameFind).get(), context.get());
 #else
     if (CheckedPtr client = this->client()) {
         // Since the find pasteboard doesn't exist on iOS, WebKit maintains its own notion of the latest find string,
@@ -379,15 +379,15 @@ void Editor::takeFindStringFromSelection()
 #endif
 }
 
-String Editor::platformContentTypeForBlobType(const String& type) const
+RefPtr<StringImpl> Editor::platformContentTypeForBlobType(StringImpl* type) const
 {
     auto utiType = UTIFromMIMEType(type);
-    if (!utiType.isEmpty())
+    if (!isEmpty(utiType))
         return utiType;
     return type;
 }
 
-void Editor::readSelectionFromPasteboard(const String& pasteboardName)
+void Editor::readSelectionFromPasteboard(StringImpl* pasteboardName)
 {
     Ref dataTransfer = DataTransfer::createForCopyAndPaste(protect(document()),
         DataTransfer::StoreMode::Readonly,
@@ -431,7 +431,7 @@ static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment
     }
 }
 
-void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName, EditAction action)
+void Editor::replaceNodeFromPasteboard(Node& node, StringImpl* pasteboardName, EditAction action)
 {
     if (&node.document() != &document())
         return;
@@ -453,7 +453,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
     // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
     // FIXME: We can also remove `setInsertionPasteboard` altogether once Mail compose on macOS no longer uses WebKitLegacy,
     // since it's only implemented for WebKitLegacy on macOS, and the only known client is Mail compose.
-    protect(client())->setInsertionPasteboard(NSPasteboardNameGeneral);
+    protect(client())->setInsertionPasteboard(StringImpl::create(NSPasteboardNameGeneral).get());
 #endif
 
     bool chosePlainText;
@@ -464,7 +464,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
     }
 
 #if PLATFORM(MAC)
-    protect(client())->setInsertionPasteboard({ });
+    protect(client())->setInsertionPasteboard(nullptr);
 #endif
 }
 
@@ -506,28 +506,28 @@ static RetainPtr<CGImageRef> fallbackImageForMultiRepresentationHEIC(std::span<c
     return adoptCF(CGBitmapContextCreateImage(context.get()));
 }
 
-void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data, const String& altText)
+void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data, StringImpl* altText)
 {
     Ref document = this->document();
 
-    String primaryType = "image/x-apple-adaptive-glyph"_s;
+    RefPtr<StringImpl> primaryType = "image/x-apple-adaptive-glyph"_si;
     Ref primaryBuffer = SharedBuffer::create(data);
 
-    String fallbackType = "image/png"_s;
+    RefPtr<StringImpl> fallbackType = "image/png"_si;
     auto fallbackData = encodeData(fallbackImageForMultiRepresentationHEIC(data).get(), fallbackType, std::nullopt);
     Ref fallbackBuffer = SharedBuffer::create(WTF::move(fallbackData));
 
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
 
     auto source = HTMLSourceElement::create(document);
-    source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), primaryBuffer->copyData(), primaryType)) });
-    source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { primaryType });
+    source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomStringImpl::add(DOMURL::createObjectURL(document, Blob::create(document.ptr(), primaryBuffer->copyData(), primaryType))).get());
+    source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomStringImpl::add(primaryType).get());
     picture->appendChild(WTF::move(source));
 
     auto image = HTMLImageElement::create(document);
-    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
-    if (!altText.isEmpty())
-        image->setAttributeWithoutSynchronization(HTMLNames::altAttr, AtomString { altText });
+    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomStringImpl::add(DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType))).get());
+    if (!isEmpty(altText))
+        image->setAttributeWithoutSynchronization(HTMLNames::altAttr, AtomStringImpl::add(altText).get());
     picture->appendChild(WTF::move(image));
 
     auto fragment = document->createDocumentFragment();
@@ -537,7 +537,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
         auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
         auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
-        registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTF::move(primaryBuffer));
+        registerAttachmentIdentifier(primaryIdentifier, "image/heic"_si, makeString(primaryIdentifier, ".heic"_s), WTF::move(primaryBuffer));
         source->setAttachmentElement(WTF::move(primaryAttachment));
 
         auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());

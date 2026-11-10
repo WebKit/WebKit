@@ -238,48 +238,48 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
     return phaseFromNSEventPhase([event phase]);
 }
 
-String textFromEvent(NSEvent *event, bool replacesSoftSpace)
+RefPtr<StringImpl> textFromEvent(NSEvent *event, bool replacesSoftSpace)
 {
     if (replacesSoftSpace)
         return emptyString();
     if ([event type] == NSEventTypeFlagsChanged)
         return emptyString();
-    return String([event characters]);
+    return StringImpl::create([event characters]);
 }
 
-String unmodifiedTextFromEvent(NSEvent *event, bool replacesSoftSpace)
+RefPtr<StringImpl> unmodifiedTextFromEvent(NSEvent *event, bool replacesSoftSpace)
 {
     if (replacesSoftSpace)
         return emptyString();
     if ([event type] == NSEventTypeFlagsChanged)
         return emptyString();
-    return String([event charactersIgnoringModifiers]);
+    return StringImpl::create([event charactersIgnoringModifiers]);
 }
 
-String keyForKeyEvent(NSEvent *event)
+RefPtr<StringImpl> keyForKeyEvent(NSEvent *event)
 {
     switch ([event keyCode]) {
     case kVK_RightCommand:
     case kVK_Command:
-        return "Meta"_s;
+        return "Meta"_si;
     case kVK_Shift:
     case kVK_RightShift:
-        return "Shift"_s;
+        return "Shift"_si;
     case kVK_CapsLock:
-        return "CapsLock"_s;
+        return "CapsLock"_si;
     case kVK_Option: // Left Alt.
     case kVK_RightOption: // Right Alt.
-        return "Alt"_s;
+        return "Alt"_si;
     case kVK_Control:
     case kVK_RightControl:
-        return "Control"_s;
+        return "Control"_si;
     }
 
     // If the event is an NSEventTypeFlagsChanged events and we have not returned yet then this means we could not
     // identify the modifier key. We return now and report the key as "Unidentified".
     // Note that [event characters] below raises an exception if called on an NSEventTypeFlagsChanged event.
     if ([event type] == NSEventTypeFlagsChanged)
-        return "Unidentified"_s;
+        return "Unidentified"_si;
 
     // If more than one key is being pressed and the key combination includes one or more modifier keys
     // that result in the key no longer producing a printable character (e.g., Control + a), then the
@@ -292,165 +292,165 @@ String keyForKeyEvent(NSEvent *event)
     // characters / charactersIgnoringModifiers return an empty string for dead keys.
     // https://developer.apple.com/reference/appkit/nsevent/1534183-characters
     if (!length)
-        return "Dead"_s;
+        return "Dead"_si;
     // High unicode codepoints are coded with a character sequence in macOS.
     if (length > 1)
-        return string.get();
+        return StringImpl::create(string.get());
     return keyForCharCode([string characterAtIndex:0]);
 }
 
 // https://w3c.github.io/uievents-code/
-String codeForKeyEvent(NSEvent *event)
+RefPtr<StringImpl> codeForKeyEvent(NSEvent *event)
 {
     switch ([event keyCode]) {
     // Keys in the alphanumeric section.
-    case kVK_ANSI_Grave: return "Backquote"_s;
-    case kVK_ANSI_Backslash: return "Backslash"_s;
-    case kVK_Delete: return "Backspace"_s;
-    case kVK_ANSI_LeftBracket: return "BracketLeft"_s;
-    case kVK_ANSI_RightBracket: return "BracketRight"_s;
-    case kVK_ANSI_Comma: return "Comma"_s;
-    case kVK_ANSI_0: return "Digit0"_s;
-    case kVK_ANSI_1: return "Digit1"_s;
-    case kVK_ANSI_2: return "Digit2"_s;
-    case kVK_ANSI_3: return "Digit3"_s;
-    case kVK_ANSI_4: return "Digit4"_s;
-    case kVK_ANSI_5: return "Digit5"_s;
-    case kVK_ANSI_6: return "Digit6"_s;
-    case kVK_ANSI_7: return "Digit7"_s;
-    case kVK_ANSI_8: return "Digit8"_s;
-    case kVK_ANSI_9: return "Digit9"_s;
-    case kVK_ANSI_Equal: return "Equal"_s;
-    case kVK_ISO_Section: return "IntlBackslash"_s;
-    case kVK_JIS_Underscore: return "IntlRo"_s;
-    case kVK_JIS_Yen: return "IntlYen"_s;
-    case kVK_ANSI_A: return "KeyA"_s;
-    case kVK_ANSI_B: return "KeyB"_s;
-    case kVK_ANSI_C: return "KeyC"_s;
-    case kVK_ANSI_D: return "KeyD"_s;
-    case kVK_ANSI_E: return "KeyE"_s;
-    case kVK_ANSI_F: return "KeyF"_s;
-    case kVK_ANSI_G: return "KeyG"_s;
-    case kVK_ANSI_H: return "KeyH"_s;
-    case kVK_ANSI_I: return "KeyI"_s;
-    case kVK_ANSI_J: return "KeyJ"_s;
-    case kVK_ANSI_K: return "KeyK"_s;
-    case kVK_ANSI_L: return "KeyL"_s;
-    case kVK_ANSI_M: return "KeyM"_s;
-    case kVK_ANSI_N: return "KeyN"_s;
-    case kVK_ANSI_O: return "KeyO"_s;
-    case kVK_ANSI_P: return "KeyP"_s;
-    case kVK_ANSI_Q: return "KeyQ"_s;
-    case kVK_ANSI_R: return "KeyR"_s;
-    case kVK_ANSI_S: return "KeyS"_s;
-    case kVK_ANSI_T: return "KeyT"_s;
-    case kVK_ANSI_U: return "KeyU"_s;
-    case kVK_ANSI_V: return "KeyV"_s;
-    case kVK_ANSI_W: return "KeyW"_s;
-    case kVK_ANSI_X: return "KeyX"_s;
-    case kVK_ANSI_Y: return "KeyY"_s;
-    case kVK_ANSI_Z: return "KeyZ"_s;
-    case kVK_ANSI_Minus: return "Minus"_s;
-    case kVK_ANSI_Period: return "Period"_s;
-    case kVK_ANSI_Quote: return "Quote"_s;
-    case kVK_ANSI_Semicolon: return "Semicolon"_s;
-    case kVK_ANSI_Slash: return "Slash"_s;
+    case kVK_ANSI_Grave: return "Backquote"_si;
+    case kVK_ANSI_Backslash: return "Backslash"_si;
+    case kVK_Delete: return "Backspace"_si;
+    case kVK_ANSI_LeftBracket: return "BracketLeft"_si;
+    case kVK_ANSI_RightBracket: return "BracketRight"_si;
+    case kVK_ANSI_Comma: return "Comma"_si;
+    case kVK_ANSI_0: return "Digit0"_si;
+    case kVK_ANSI_1: return "Digit1"_si;
+    case kVK_ANSI_2: return "Digit2"_si;
+    case kVK_ANSI_3: return "Digit3"_si;
+    case kVK_ANSI_4: return "Digit4"_si;
+    case kVK_ANSI_5: return "Digit5"_si;
+    case kVK_ANSI_6: return "Digit6"_si;
+    case kVK_ANSI_7: return "Digit7"_si;
+    case kVK_ANSI_8: return "Digit8"_si;
+    case kVK_ANSI_9: return "Digit9"_si;
+    case kVK_ANSI_Equal: return "Equal"_si;
+    case kVK_ISO_Section: return "IntlBackslash"_si;
+    case kVK_JIS_Underscore: return "IntlRo"_si;
+    case kVK_JIS_Yen: return "IntlYen"_si;
+    case kVK_ANSI_A: return "KeyA"_si;
+    case kVK_ANSI_B: return "KeyB"_si;
+    case kVK_ANSI_C: return "KeyC"_si;
+    case kVK_ANSI_D: return "KeyD"_si;
+    case kVK_ANSI_E: return "KeyE"_si;
+    case kVK_ANSI_F: return "KeyF"_si;
+    case kVK_ANSI_G: return "KeyG"_si;
+    case kVK_ANSI_H: return "KeyH"_si;
+    case kVK_ANSI_I: return "KeyI"_si;
+    case kVK_ANSI_J: return "KeyJ"_si;
+    case kVK_ANSI_K: return "KeyK"_si;
+    case kVK_ANSI_L: return "KeyL"_si;
+    case kVK_ANSI_M: return "KeyM"_si;
+    case kVK_ANSI_N: return "KeyN"_si;
+    case kVK_ANSI_O: return "KeyO"_si;
+    case kVK_ANSI_P: return "KeyP"_si;
+    case kVK_ANSI_Q: return "KeyQ"_si;
+    case kVK_ANSI_R: return "KeyR"_si;
+    case kVK_ANSI_S: return "KeyS"_si;
+    case kVK_ANSI_T: return "KeyT"_si;
+    case kVK_ANSI_U: return "KeyU"_si;
+    case kVK_ANSI_V: return "KeyV"_si;
+    case kVK_ANSI_W: return "KeyW"_si;
+    case kVK_ANSI_X: return "KeyX"_si;
+    case kVK_ANSI_Y: return "KeyY"_si;
+    case kVK_ANSI_Z: return "KeyZ"_si;
+    case kVK_ANSI_Minus: return "Minus"_si;
+    case kVK_ANSI_Period: return "Period"_si;
+    case kVK_ANSI_Quote: return "Quote"_si;
+    case kVK_ANSI_Semicolon: return "Semicolon"_si;
+    case kVK_ANSI_Slash: return "Slash"_si;
 
     // Functional keys in alphanumeric section.
-    case kVK_Option: return "AltLeft"_s;
-    case kVK_RightOption: return "AltRight"_s;
-    case kVK_CapsLock: return "CapsLock"_s;
+    case kVK_Option: return "AltLeft"_si;
+    case kVK_RightOption: return "AltRight"_si;
+    case kVK_CapsLock: return "CapsLock"_si;
     // ContextMenu.
-    case kVK_Control: return "ControlLeft"_s;
-    case kVK_RightControl: return "ControlRight"_s;
-    case kVK_Return: return "Enter"_s; //  Labeled Return on Apple keyboards.
-    case kVK_Command: return "MetaLeft"_s;
-    case kVK_RightCommand: return "MetaRight"_s;
-    case kVK_Shift: return "ShiftLeft"_s;
-    case kVK_RightShift: return "ShiftRight"_s;
-    case kVK_Space: return "Space"_s;
-    case kVK_Tab: return "Tab"_s;
+    case kVK_Control: return "ControlLeft"_si;
+    case kVK_RightControl: return "ControlRight"_si;
+    case kVK_Return: return "Enter"_si; //  Labeled Return on Apple keyboards.
+    case kVK_Command: return "MetaLeft"_si;
+    case kVK_RightCommand: return "MetaRight"_si;
+    case kVK_Shift: return "ShiftLeft"_si;
+    case kVK_RightShift: return "ShiftRight"_si;
+    case kVK_Space: return "Space"_si;
+    case kVK_Tab: return "Tab"_si;
 
     // Functional keys found on Japanese and Korean keyboards.
     // Convert.
-    case kVK_JIS_Kana: return "KanaMode"_s;
+    case kVK_JIS_Kana: return "KanaMode"_si;
     // Lang1.
-    case kVK_JIS_Eisu: return "Lang2"_s; // Japanese (Mac keyboard): eisu.
+    case kVK_JIS_Eisu: return "Lang2"_si; // Japanese (Mac keyboard): eisu.
     // Lang3.
     // Lang4.
     // Lang5.
     // NonConvert.
 
     // Keys in the ControlPad section.
-    case kVK_ForwardDelete: return "Delete"_s;
-    case kVK_End: return "End"_s;
-    case kVK_Help: return "Help"_s;
-    case kVK_Home: return "Home"_s;
+    case kVK_ForwardDelete: return "Delete"_si;
+    case kVK_End: return "End"_si;
+    case kVK_Help: return "Help"_si;
+    case kVK_Home: return "Home"_si;
     // Insert: Not present on Apple keyboards.
-    case kVK_PageDown: return "PageDown"_s;
-    case kVK_PageUp: return "PageUp"_s;
+    case kVK_PageDown: return "PageDown"_si;
+    case kVK_PageUp: return "PageUp"_si;
 
     // Keys in the ArrowPad section.
-    case kVK_DownArrow: return "ArrowDown"_s;
-    case kVK_LeftArrow: return "ArrowLeft"_s;
-    case kVK_RightArrow: return "ArrowRight"_s;
-    case kVK_UpArrow: return "ArrowUp"_s;
+    case kVK_DownArrow: return "ArrowDown"_si;
+    case kVK_LeftArrow: return "ArrowLeft"_si;
+    case kVK_RightArrow: return "ArrowRight"_si;
+    case kVK_UpArrow: return "ArrowUp"_si;
 
     // Keys in the Numpad section.
-    case kVK_ANSI_KeypadClear: return "NumLock"_s; // The specification says to use "NumLock" on Mac for the numpad Clear key.
-    case kVK_ANSI_Keypad0: return "Numpad0"_s;
-    case kVK_ANSI_Keypad1: return "Numpad1"_s;
-    case kVK_ANSI_Keypad2: return "Numpad2"_s;
-    case kVK_ANSI_Keypad3: return "Numpad3"_s;
-    case kVK_ANSI_Keypad4: return "Numpad4"_s;
-    case kVK_ANSI_Keypad5: return "Numpad5"_s;
-    case kVK_ANSI_Keypad6: return "Numpad6"_s;
-    case kVK_ANSI_Keypad7: return "Numpad7"_s;
-    case kVK_ANSI_Keypad8: return "Numpad8"_s;
-    case kVK_ANSI_Keypad9: return "Numpad9"_s;
-    case kVK_ANSI_KeypadPlus: return "NumpadAdd"_s;
+    case kVK_ANSI_KeypadClear: return "NumLock"_si; // The specification says to use "NumLock" on Mac for the numpad Clear key.
+    case kVK_ANSI_Keypad0: return "Numpad0"_si;
+    case kVK_ANSI_Keypad1: return "Numpad1"_si;
+    case kVK_ANSI_Keypad2: return "Numpad2"_si;
+    case kVK_ANSI_Keypad3: return "Numpad3"_si;
+    case kVK_ANSI_Keypad4: return "Numpad4"_si;
+    case kVK_ANSI_Keypad5: return "Numpad5"_si;
+    case kVK_ANSI_Keypad6: return "Numpad6"_si;
+    case kVK_ANSI_Keypad7: return "Numpad7"_si;
+    case kVK_ANSI_Keypad8: return "Numpad8"_si;
+    case kVK_ANSI_Keypad9: return "Numpad9"_si;
+    case kVK_ANSI_KeypadPlus: return "NumpadAdd"_si;
     // NumpadBackspace.
     // NumpadClear: The specification says that the numpad Clear key should always be encoded as "NumLock" on Mac.
     // NumpadClearEntry.
-    case kVK_JIS_KeypadComma: return "NumpadComma"_s;
-    case kVK_ANSI_KeypadDecimal: return "NumpadDecimal"_s;
-    case kVK_ANSI_KeypadDivide: return "NumpadDivide"_s;
-    case kVK_ANSI_KeypadEnter: return "NumpadEnter"_s;
-    case kVK_ANSI_KeypadEquals: return "NumpadEqual"_s;
+    case kVK_JIS_KeypadComma: return "NumpadComma"_si;
+    case kVK_ANSI_KeypadDecimal: return "NumpadDecimal"_si;
+    case kVK_ANSI_KeypadDivide: return "NumpadDivide"_si;
+    case kVK_ANSI_KeypadEnter: return "NumpadEnter"_si;
+    case kVK_ANSI_KeypadEquals: return "NumpadEqual"_si;
     // NumpadHash.
     // NumpadMemoryAdd.
     // NumpadMemoryClear.
     // NumpadMemoryRecall.
     // NumpadMemoryStore.
     // NumpadMemorySubtract.
-    case kVK_ANSI_KeypadMultiply: return "NumpadMultiply"_s;
+    case kVK_ANSI_KeypadMultiply: return "NumpadMultiply"_si;
     // NumpadParenLeft.
     // NumpadParenRight.
     // NumpadStar: The specification says to use "NumpadMultiply" for the * key on numeric keypads.
-    case kVK_ANSI_KeypadMinus: return "NumpadSubtract"_s;
+    case kVK_ANSI_KeypadMinus: return "NumpadSubtract"_si;
 
     // Keys in the Function section.
-    case kVK_Escape: return "Escape"_s;
-    case kVK_F1: return "F1"_s;
-    case kVK_F2: return "F2"_s;
-    case kVK_F3: return "F3"_s;
-    case kVK_F4: return "F4"_s;
-    case kVK_F5: return "F5"_s;
-    case kVK_F6: return "F6"_s;
-    case kVK_F7: return "F7"_s;
-    case kVK_F8: return "F8"_s;
-    case kVK_F9: return "F9"_s;
-    case kVK_F10: return "F10"_s;
-    case kVK_F11: return "F11"_s;
-    case kVK_F12: return "F12"_s;
-    case kVK_F13: return "F13"_s;
-    case kVK_F14: return "F14"_s;
-    case kVK_F15: return "F15"_s;
-    case kVK_F16: return "F16"_s;
-    case kVK_F17: return "F17"_s;
-    case kVK_F18: return "F18"_s;
-    case kVK_F19: return "F19"_s;
-    case kVK_F20: return "F20"_s;
+    case kVK_Escape: return "Escape"_si;
+    case kVK_F1: return "F1"_si;
+    case kVK_F2: return "F2"_si;
+    case kVK_F3: return "F3"_si;
+    case kVK_F4: return "F4"_si;
+    case kVK_F5: return "F5"_si;
+    case kVK_F6: return "F6"_si;
+    case kVK_F7: return "F7"_si;
+    case kVK_F8: return "F8"_si;
+    case kVK_F9: return "F9"_si;
+    case kVK_F10: return "F10"_si;
+    case kVK_F11: return "F11"_si;
+    case kVK_F12: return "F12"_si;
+    case kVK_F13: return "F13"_si;
+    case kVK_F14: return "F14"_si;
+    case kVK_F15: return "F15"_si;
+    case kVK_F16: return "F16"_si;
+    case kVK_F17: return "F17"_si;
+    case kVK_F18: return "F18"_si;
+    case kVK_F19: return "F19"_si;
+    case kVK_F20: return "F20"_si;
     // Fn: This is typically a hardware key that does not generate a separate code.
     // FnLock.
     // PrintScreen.
@@ -476,9 +476,9 @@ String codeForKeyEvent(NSEvent *event)
     // MediaTrackPrevious.
     // Power.
     // Sleep.
-    case kVK_VolumeDown: return "AudioVolumeDown"_s;
-    case kVK_Mute: return "AudioVolumeMute"_s;
-    case kVK_VolumeUp: return "AudioVolumeUp"_s;
+    case kVK_VolumeDown: return "AudioVolumeDown"_si;
+    case kVK_Mute: return "AudioVolumeMute"_si;
+    case kVK_VolumeUp: return "AudioVolumeUp"_si;
     // WakeUp.
 
     // Legacy modifier keys.
@@ -507,11 +507,11 @@ String codeForKeyEvent(NSEvent *event)
     // Katakana.
 
     default:
-        return "Unidentified"_s;
+        return "Unidentified"_si;
     }
 }
 
-String keyIdentifierForKeyEvent(NSEvent* event)
+RefPtr<StringImpl> keyIdentifierForKeyEvent(NSEvent* event)
 {
     if ([event type] == NSEventTypeFlagsChanged) {
         switch ([event keyCode]) {
@@ -543,7 +543,7 @@ String keyIdentifierForKeyEvent(NSEvent* event)
     RetainPtr<NSString> string = [event charactersIgnoringModifiers];
     if ([string length] != 1) {
         LOG(Events, "received an unexpected number of characters in key event: %zu", [string length]);
-        return "Unidentified"_s;
+        return "Unidentified"_si;
     }
     return keyIdentifierForCharCode([string characterAtIndex:0]);
 }
@@ -834,19 +834,19 @@ public:
 
         // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
         if (m_windowsVirtualKeyCode == VK_RETURN) {
-            m_text = "\r"_s;
+            m_text = "\r"_si;
             m_unmodifiedText = m_text;
         }
 
         // AppKit sets text to "\x7F" for backspace, but the correct KeyboardEvent character code is 8.
         if (m_windowsVirtualKeyCode == VK_BACK) {
-            m_text = "\x8"_s;
+            m_text = "\x8"_si;
             m_unmodifiedText = m_text;
         }
 
         // Always use 9 for Tab -- we don't want to use AppKit's different character for shift-tab.
         if (m_windowsVirtualKeyCode == VK_TAB) {
-            m_text = "\x9"_s;
+            m_text = "\x9"_si;
             m_unmodifiedText = m_text;
         }
 

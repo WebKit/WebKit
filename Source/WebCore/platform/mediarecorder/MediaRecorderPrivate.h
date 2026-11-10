@@ -71,16 +71,16 @@ public:
     };
     WEBCORE_EXPORT static AudioVideoSelectedTracks selectTracks(MediaStreamPrivate&);
 
-    using FetchDataCallback = CompletionHandler<void(Ref<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
+    using FetchDataCallback = CompletionHandler<void(Ref<FragmentedSharedBuffer>&&, StringImpl* mimeType, double)>;
     virtual void fetchData(FetchDataCallback&&) = 0;
-    virtual String mimeType() const = 0;
+    virtual RefPtr<StringImpl> mimeType() const = 0;
 
     void stop(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
 
-    using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&, unsigned, unsigned)>;
-    virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType()), 0, 0); }
+    using StartRecordingCallback = CompletionHandler<void(ExceptionOr<RefPtr<StringImpl>>&&, unsigned, unsigned)>;
+    virtual void startRecording(StartRecordingCallback&& callback) { callback(mimeType(), 0, 0); }
 
     void trackMutedChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
     void trackEnabledChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }

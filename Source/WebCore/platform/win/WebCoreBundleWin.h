@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT String webKitBundlePath();
-WEBCORE_EXPORT String webKitBundlePath(StringView path);
-WEBCORE_EXPORT String webKitBundlePath(StringView name, StringView type, StringView directory);
-WEBCORE_EXPORT String webKitBundlePath(const Vector<StringView>& components);
+WEBCORE_EXPORT RefPtr<StringImpl> webKitBundlePath();
+WEBCORE_EXPORT RefPtr<StringImpl> webKitBundlePath(StringView path);
+WEBCORE_EXPORT RefPtr<StringImpl> webKitBundlePath(StringView name, StringView type, StringView directory);
+WEBCORE_EXPORT RefPtr<StringImpl> webKitBundlePath(const Vector<StringView>& components);
 
 }

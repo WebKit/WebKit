@@ -51,7 +51,7 @@ public:
 
     Type type() const { return m_type; }
 
-    virtual const String& integrity() const { return nullString(); }
+    virtual const RefPtr<StringImpl>& integrity() const { return nullString(); }
     virtual bool isTopLevelModule() const { return false; }
 
     static Ref<ScriptFetchParameters> create(Type type)

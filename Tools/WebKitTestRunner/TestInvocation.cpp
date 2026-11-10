@@ -102,7 +102,7 @@ TestInvocation::~TestInvocation() = default;
 
 bool TestInvocation::urlContains(StringView searchString) const
 {
-    return m_urlString.containsIgnoringASCIICase(searchString);
+    return containsIgnoringASCIICase(m_urlString, searchString);
 }
 
 void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
@@ -154,15 +154,15 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     return beginTestMessageBody;
 }
 
-static String addQueryParameter(const String& urlString, ASCIILiteral parameter)
+static RefPtr<StringImpl> addQueryParameter(StringImpl* urlString, ASCIILiteral parameter)
 {
-    auto index = urlString.find('?');
+    auto index = find(urlString, '?');
     if (index != notFound)
-        return makeString(urlString.left(index + 1), parameter, '&', urlString.substring(index + 1));
-    index = urlString.find('#');
+        return makeString(left(urlString, index + 1), parameter, '&', substring(urlString, index + 1));
+    index = find(urlString, '#');
     if (index == notFound)
-        index = urlString.length();
-    return makeString(urlString.left(index), '?', parameter, urlString.substring(index));
+        index = length(urlString);
+    return makeString(left(urlString, index), '?', parameter, substring(urlString, index));
 }
 
 void TestInvocation::loadTestInCrossOriginIframe()
@@ -173,7 +173,7 @@ void TestInvocation::loadTestInCrossOriginIframe()
         "<script>"
         "    testRunner.dumpChildFramesAsText()"
         "</script>"
-        "<iframe src=\""_s, url.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
+        "<iframe src=\""_s, utf8(url).span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
     WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
 }
 
@@ -189,7 +189,7 @@ void TestInvocation::invoke()
     testController.setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
     if (m_options.shouldDumpResourceLoadCallbacks())
         testController.dumpResourceLoadCallbacks();
-    testController.dumpResourceResponseMIMETypes(String::fromUTF8(m_options.resourceResponseMIMETypesToDump().c_str()));
+    testController.dumpResourceResponseMIMETypes(StringImpl::fromUTF8(m_options.resourceResponseMIMETypesToDump().c_str()));
 
     WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(testController.websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
 
@@ -344,7 +344,7 @@ void TestInvocation::dumpResults()
     }
 
     if (m_shouldDumpResourceLoadStatistics)
-        m_textOutput.append(m_savedResourceLoadStatistics.isNull() ? TestController::singleton().dumpResourceLoadStatistics() : m_savedResourceLoadStatistics);
+        m_textOutput.append(!m_savedResourceLoadStatistics ? TestController::singleton().dumpResourceLoadStatistics() : m_savedResourceLoadStatistics);
 
     if (m_shouldDumpPrivateClickMeasurement)
         m_textOutput.append(TestController::singleton().dumpPrivateClickMeasurement());
@@ -352,7 +352,7 @@ void TestInvocation::dumpResults()
     if (m_textOutput.hasOverflowed())
         dump("text output overflowed"_s);
     else if (m_textOutput.length() || !m_audioResult)
-        dump(m_textOutput.toString().utf8());
+        dump(utf8(m_textOutput.toString()));
     else
         dumpAudio(m_audioResult.get());
 
@@ -570,7 +570,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         auto baseURLWK = stringValue(loadDataDictionary, "baseURL");
         auto unreachableURLWK = stringValue(loadDataDictionary, "unreachableURL");
         TestController::singleton().setUseWorkQueue(true);
-        TestController::singleton().workQueueManager().queueLoadHTMLString(toWTFString(contentWK), baseURLWK ? toWTFString(baseURLWK) : String(), unreachableURLWK ? toWTFString(unreachableURLWK) : String());
+        TestController::singleton().workQueueManager().queueLoadHTMLString(toWTFString(contentWK), baseURLWK ? toWTFString(baseURLWK) : nullptr, unreachableURLWK ? toWTFString(unreachableURLWK) : nullptr);
         return;
     }
 
@@ -1260,7 +1260,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         auto testDictionary = dictionaryValue(messageBody);
         auto attrLabelWK = stringValue(testDictionary, "AttrLabel");
         auto applicationLabelWK = stringValue(testDictionary, "ApplicationLabel");
-        TestController::singleton().cleanUpKeychain(toWTFString(attrLabelWK), applicationLabelWK ? toWTFString(applicationLabelWK) : String());
+        TestController::singleton().cleanUpKeychain(toWTFString(attrLabelWK), applicationLabelWK ? toWTFString(applicationLabelWK) : nullptr);
         return nullptr;
     }
 
@@ -1453,17 +1453,17 @@ void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallback
     m_UIScriptContext->runUIScript(toWTFString(script), scriptCallbackID);
 }
 
-void TestInvocation::uiScriptDidComplete(const String& result, unsigned scriptCallbackID)
+void TestInvocation::uiScriptDidComplete(StringImpl* result, unsigned scriptCallbackID)
 {
     TestController::singleton().uiScriptDidComplete(result, scriptCallbackID);
 }
 
-void TestInvocation::outputText(const WTF::String& text)
+void TestInvocation::outputText(StringImpl* text)
 {
     m_textOutput.append(text);
 }
 
-void TestInvocation::outputResourceLoadCallback(const String& text)
+void TestInvocation::outputResourceLoadCallback(StringImpl* text)
 {
     m_savedResourceLoadCallbacks.append(text);
 }
@@ -1500,7 +1500,7 @@ void TestInvocation::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
 
-    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n"_s);
+    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n"_si);
 
     postPageMessage("ForceImmediateCompletion");
 
@@ -1527,7 +1527,7 @@ void TestInvocation::waitForPostDumpWatchdogTimerFired()
 #if PLATFORM(COCOA)
     char buffer[1024];
     snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
-    outputText(String::fromLatin1(buffer));
+    outputText(StringImpl::fromLatin1(buffer));
 #endif
     done();
 }

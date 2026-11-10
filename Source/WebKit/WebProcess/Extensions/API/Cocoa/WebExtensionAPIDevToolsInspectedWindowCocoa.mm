@@ -60,17 +60,17 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPage
 
     std::optional<WTF::URL> frameURL;
     if (NSString *url = options[frameURLKey]) {
-        frameURL = URL { url };
+        frameURL = URL { StringImpl::create(url) };
 
         if (!frameURL.value().isValid()) {
-            *outExceptionString = toErrorString(nullString(), frameURLKey, makeString("'"_s, String(url), "' is not a valid URL"_s)).createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(frameURLKey).get(), makeString("'"_s, StringImpl::create(url), "' is not a valid URL"_s))).autorelease();
             return;
         }
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(webPageProxyIdentifier, expression, frameURL), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RunJavaScriptResult, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(webPageProxyIdentifier, StringImpl::create(expression).get(), frameURL), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RunJavaScriptResult, WebExtensionError>&& result) mutable {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -79,7 +79,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPage
 
         if (!result.value()) {
             // If an error occurred, element 0 will be undefined, and element 1 will contain an object giving details about the error.
-            String valueKey = result.value().error() ? result.value().error()->message : emptyString();
+            RefPtr<StringImpl> valueKey = result.value().error() ? result.value().error()->message : emptyString();
             auto valueData = JSValueMakeString(globalContext, toJSString(valueKey).get());
             SUPPRESS_UNCOUNTED_ARG auto resultObject = fromObject(globalContext, {
                 { "isExceptionKey"_s, Protected(globalContext, JSValueMakeBoolean(globalContext, true)) },

@@ -99,9 +99,9 @@ public:
     void setWindowIsKey(bool);
     bool windowIsKey() const { return m_windowIsKey; }
 
-    void setTextInChromeInputField(const String&);
+    void setTextInChromeInputField(StringImpl*);
     void selectChromeInputField();
-    String getSelectedTextInChromeInputField();
+    RefPtr<StringImpl> getSelectedTextInChromeInputField();
 
     bool isSecureEventInputEnabled() const;
 

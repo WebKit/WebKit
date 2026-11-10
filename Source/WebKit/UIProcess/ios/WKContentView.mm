@@ -232,7 +232,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     RetainPtr<WKInspectorHighlightView> _inspectorHighlightView;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String _spatialTrackingLabel;
+    RefPtr<StringImpl> _spatialTrackingLabel;
     RetainPtr<UIView> _spatialTrackingView;
 #endif
 
@@ -317,7 +317,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
         _spatialTrackingView = adoptNS([[UIView alloc] init]);
         [_spatialTrackingView layer].separatedState = kCALayerSeparatedStateTracked;
         _spatialTrackingLabel = makeString("WKContentView Label: "_s, createVersion4UUIDString());
-        [[_spatialTrackingView layer] setValue:_spatialTrackingLabel.createNSString().get() forKeyPath:@"separatedOptions.STSLabel"];
+        [[_spatialTrackingView layer] setValue:createNSString(_spatialTrackingLabel).get() forKeyPath:@"separatedOptions.STSLabel"];
         [_spatialTrackingView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin];
         [_spatialTrackingView setFrame:CGRectMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), 0, 0)];
         [_spatialTrackingView setUserInteractionEnabled:NO];
@@ -833,7 +833,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-- (const String&)spatialTrackingLabel
+- (const RefPtr<StringImpl>&)spatialTrackingLabel
 {
     return _spatialTrackingLabel;
 }

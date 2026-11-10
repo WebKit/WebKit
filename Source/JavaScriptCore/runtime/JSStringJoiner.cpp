@@ -178,13 +178,13 @@ static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::sp
 }
 
 template<typename OutputCharacterType, typename SeparatorCharacterType>
-static inline String joinStrings(const JSStringJoiner::Entries& strings, std::span<const SeparatorCharacterType> separator, unsigned joinedLength)
+static inline RefPtr<StringImpl> joinStrings(const JSStringJoiner::Entries& strings, std::span<const SeparatorCharacterType> separator, unsigned joinedLength)
 {
     ASSERT(joinedLength);
 
     std::span<OutputCharacterType> data;
-    String result = StringImpl::tryCreateUninitialized(joinedLength, data);
-    if (result.isNull()) [[unlikely]]
+    RefPtr<StringImpl> result = StringImpl::tryCreateUninitialized(joinedLength, data);
+    if (!result) [[unlikely]]
         return result;
 
     unsigned size = strings.size();
@@ -236,13 +236,13 @@ static inline String joinStrings(const JSStringJoiner::Entries& strings, std::sp
         break;
     }
     }
-    ASSERT(data.data() == result.span<OutputCharacterType>().data() + joinedLength);
+    ASSERT(data.data() == span<OutputCharacterType>(result).data() + joinedLength);
 
     return result;
 }
 
 template<IndexingType indexingShape, typename OutputCharacterType, typename SeparatorCharacterType>
-static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* strings, unsigned size, std::span<const SeparatorCharacterType> separator, unsigned joinedLength)
+static inline RefPtr<StringImpl> joinStrings(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* strings, unsigned size, std::span<const SeparatorCharacterType> separator, unsigned joinedLength)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -251,8 +251,8 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
         return emptyString();
 
     std::span<OutputCharacterType> data;
-    String result = StringImpl::tryCreateUninitialized(joinedLength, data);
-    if (result.isNull()) [[unlikely]] {
+    RefPtr<StringImpl> result = StringImpl::tryCreateUninitialized(joinedLength, data);
+    if (!result) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
@@ -296,7 +296,7 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
         break;
     }
     }
-    ASSERT(data.data() == result.span<OutputCharacterType>().data() + joinedLength);
+    ASSERT(data.data() == span<OutputCharacterType>(result).data() + joinedLength);
 
     return result;
 }
@@ -336,7 +336,7 @@ JSString* JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
     if (!length)
         return jsEmptyString(vm);
 
-    String result;
+    RefPtr<StringImpl> result;
     if (m_isAll8Bit)
         result = joinStrings<Latin1Character>(m_strings, m_separator.span8(), length);
     else {
@@ -346,7 +346,7 @@ JSString* JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
             result = joinStrings<char16_t>(m_strings, m_separator.span16(), length);
     }
 
-    if (result.isNull()) [[unlikely]] {
+    if (!result) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
@@ -371,7 +371,7 @@ JSString* JSExactLengthJoiner::joinImpl(JSGlobalObject* globalObject, const Writ
         return { };
     }
 
-    String result;
+    RefPtr<StringImpl> result;
     if (m_isAll8Bit)
         result = joinStrings<indexingShape, Latin1Character>(globalObject, data, length, m_separator.span8(), totalLength);
     else {
@@ -418,8 +418,8 @@ JSString* joinIntegerTypedArray(JSGlobalObject* globalObject, std::span<const El
 
     auto join = [&]<typename CharacterType>(std::span<const CharacterType> separatorCharacters) -> JSString* {
         std::span<CharacterType> data;
-        String result = StringImpl::tryCreateUninitialized(totalLength, data);
-        if (result.isNull()) [[unlikely]] {
+        RefPtr<StringImpl> result = StringImpl::tryCreateUninitialized(totalLength, data);
+        if (!result) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
@@ -597,7 +597,7 @@ ALWAYS_INLINE bool JSTypedArrayJoiner<ElementType, CharacterType>::append(Elemen
         appendStringToData(data, static_cast<double>(element));
 
     m_length = m_buffer.size() - data.size();
-    return m_length <= String::MaxLength;
+    return m_length <= StringImpl::MaxLength;
 }
 
 template<typename ElementType, typename CharacterType>
@@ -608,7 +608,7 @@ bool JSTypedArrayJoiner<ElementType, CharacterType>::appendSeparators(size_t cou
 
     CheckedSize room = m_separator.size();
     room *= count;
-    if (room.hasOverflowed() || room > String::MaxLength - m_length) [[unlikely]]
+    if (room.hasOverflowed() || room > StringImpl::MaxLength - m_length) [[unlikely]]
         return false;
 
     if (!ensureRoom(room)) [[unlikely]]
@@ -661,7 +661,7 @@ JSString* JSTypedArrayJoiner<ElementType, CharacterType>::join(JSGlobalObject* g
 
     m_buffer.shrink(m_length);
     m_buffer.shrinkToFit();
-    return jsString(vm, String::adopt(WTF::move(m_buffer)));
+    return jsString(vm, StringImpl::adopt(WTF::move(m_buffer)));
 }
 
 template<typename ElementType>

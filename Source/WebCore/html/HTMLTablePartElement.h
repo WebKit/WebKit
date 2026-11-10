@@ -44,7 +44,7 @@ protected:
     }
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
 
 private:
     NODELETE bool isHTMLTablePartElement() const final { return true; }

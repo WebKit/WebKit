@@ -57,7 +57,7 @@ private:
     void stop() final;
     void clear() final;
     void setVolume(float) final;
-    void setAudioOutputDevice(const String&) final;
+    void setAudioOutputDevice(StringImpl*) final;
 
     NODELETE void reset();
     void setRegisteredDataSource(RefPtr<AudioSampleDataSource>&&);
@@ -70,7 +70,7 @@ private:
     bool m_shouldRecreateDataSource { false };
     using ResetObserver = AudioMediaStreamTrackRendererUnit::ResetObserver;
     const Ref<ResetObserver> m_resetObserver;
-    String m_deviceID;
+    RefPtr<StringImpl> m_deviceID;
 };
 
 }

@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackPrivateBase);
 
-std::optional<String> TrackPrivateBase::trackUID() const
+std::optional<RefPtr<StringImpl>> TrackPrivateBase::trackUID() const
 {
     return std::nullopt;
 }
@@ -49,10 +49,10 @@ std::optional<bool> TrackPrivateBase::defaultEnabled() const
 bool TrackPrivateBase::operator==(const TrackPrivateBase& track) const
 {
     return id() == track.id()
-        && label() == track.label()
-        && language() == track.language()
+        && equal(label(), track.label())
+        && equal(language(), track.language())
         && trackIndex() == track.trackIndex()
-        && trackUID() == track.trackUID()
+        && contentEquals(trackUID(), track.trackUID())
         && defaultEnabled() == track.defaultEnabled()
         && startTimeVariance() == track.startTimeVariance();
 }

@@ -56,7 +56,7 @@ public:
 #endif
     void endFrame() final;
     void destroy() final;
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final;
 
 private:

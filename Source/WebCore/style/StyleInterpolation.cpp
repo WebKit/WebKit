@@ -175,12 +175,12 @@ static Ref<const CustomProperty> interpolatedCustomProperty(const Style::Compute
     return context.progress < 0.5 ? from : to;
 }
 
-static std::pair<RefPtr<const CustomProperty>, RefPtr<const CustomProperty>> customPropertyValuesForInterpolation(const AtomString& customProperty, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle)
+static std::pair<RefPtr<const CustomProperty>, RefPtr<const CustomProperty>> customPropertyValuesForInterpolation(AtomStringImpl* customProperty, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle)
 {
     return { fromStyle.customPropertyValue(customProperty), toStyle.customPropertyValue(customProperty) };
 }
 
-static void interpolateCustomProperty(const AtomString& customProperty, Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
+static void interpolateCustomProperty(AtomStringImpl* customProperty, Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
 {
     Context context { customProperty, progress, false, compositeOperation, iterationCompositeOperation, currentIteration, client };
 
@@ -246,7 +246,7 @@ bool isAdditiveOrCumulative(const AnimatableCSSProperty& property)
         [](CSSPropertyID propertyId) {
             return !CSSProperty::animationUsesNonAdditiveOrCumulativeInterpolation(propertyId);
         },
-        [](const AtomString&) {
+        [](AtomStringImpl*) {
             return true;
         }
     );
@@ -258,7 +258,7 @@ bool isAccelerated(const AnimatableCSSProperty& property, const Settings& settin
         [&](CSSPropertyID propertyId) {
             return CSSProperty::animationIsAccelerated(propertyId, settings);
         },
-        [](const AtomString&) {
+        [](AtomStringImpl*) {
             return false;
         }
     );
@@ -270,7 +270,7 @@ bool canInterpolate(const AnimatableCSSProperty& property)
         [](CSSPropertyID propertyId) {
             return propertyId == CSSPropertyID::Custom || !!WrapperMap::singleton().wrapper(propertyId);
         },
-        [](const AtomString&) {
+        [](AtomStringImpl*) {
             // FIXME: This should only be true for properties that are registered custom properties.
             return true;
         }
@@ -285,7 +285,7 @@ bool equals(const AnimatableCSSProperty& property, const Style::ComputedStyle& a
                 return wrapper->equals(a, b);
             return true;
         },
-        [&](const AtomString& customProperty) {
+        [&](AtomStringImpl* customProperty) {
             auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForInterpolation(customProperty, a, b);
             if (aCustomPropertyValue && bCustomPropertyValue)
                 return *aCustomPropertyValue == *bCustomPropertyValue;
@@ -302,7 +302,7 @@ bool canInterpolate(const AnimatableCSSProperty& property, const Style::Computed
                 return wrapper->canInterpolate(a, b, CompositeOperation::Replace);
             return true;
         },
-        [&](const AtomString& customProperty) {
+        [&](AtomStringImpl* customProperty) {
             auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForInterpolation(customProperty, a, b);
             if (!aCustomPropertyValue || !bCustomPropertyValue || aCustomPropertyValue == bCustomPropertyValue)
                 return false;
@@ -343,7 +343,7 @@ void interpolate(const AnimatableCSSProperty& property, Style::ComputedStyle& de
         [&](CSSPropertyID propertyId) {
             interpolateStandardProperty(propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration, client);
         },
-        [&](const AtomString& customProperty) {
+        [&](AtomStringImpl* customProperty) {
             interpolateCustomProperty(customProperty, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration, client);
         }
     );
@@ -362,7 +362,7 @@ bool requiresInterpolationForAccumulativeIteration(const AnimatableCSSProperty& 
                 return wrapper->requiresInterpolationForAccumulativeIteration(a, b);
             return false;
         },
-        [&](const AtomString& customProperty) {
+        [&](AtomStringImpl* customProperty) {
             auto [from, to] = customPropertyValuesForInterpolation(customProperty, a, b);
             if (!from || !to)
                 return false;

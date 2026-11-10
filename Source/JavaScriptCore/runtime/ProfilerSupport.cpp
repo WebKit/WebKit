@@ -80,7 +80,7 @@ ProfilerSupport::ProfilerSupport()
     : m_queue(WorkQueue::create("JSC PerfLog"_s))
 {
     if (Options::useTextMarkers()) {
-        m_file = FileSystem::createDumpFile(makeString("marker-"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".txt"_s, String { Options::textMarkersDirectory() });
+        m_file = FileSystem::createDumpFile(makeString("marker-"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".txt"_s, StringImpl::create(unsafeSpan(Options::textMarkersDirectory())).get());
         RELEASE_ASSERT(m_file);
 
 #if OS(LINUX)
@@ -200,21 +200,21 @@ void ProfilerSupport::markInterval(const void* identifier, Category, MonotonicTi
     });
 }
 
-void ProfilerSupport::dumpIonGraphFunction(const String& functionName, ASCIILiteral tier, bool osr, Ref<JSON::Object>&& function)
+void ProfilerSupport::dumpIonGraphFunction(StringImpl* functionName, ASCIILiteral tier, bool osr, Ref<JSON::Object>&& function)
 {
     if (!Options::dumpIonGraph())
         return;
     auto json = JSON::Object::create();
     auto functions = JSON::Array::create();
     functions->pushObject(WTF::move(function));
-    json->setInteger("version"_s, 1);
-    json->setArray("functions"_s, WTF::move(functions));
+    json->setInteger("version"_si, 1);
+    json->setArray("functions"_si, WTF::move(functions));
     auto string = json->toJSONString();
 
     auto tierSuffix = osr ? makeString("-"_s, tier, "-OSR"_s) : makeString("-"_s, tier);
-    auto handle = FileSystem::createDumpFile(makeString("iongraph-"_s, functionName, tierSuffix, "-"_s, WTF::getCurrentProcessID(), "-"_s, generateTimestamp()), ".json"_s, String { Options::ionGraphDirectory() });
+    auto handle = FileSystem::createDumpFile(makeString("iongraph-"_s, functionName, tierSuffix, "-"_s, WTF::getCurrentProcessID(), "-"_s, generateTimestamp()), ".json"_s, StringImpl::create(unsafeSpan(Options::ionGraphDirectory())).get());
     RELEASE_ASSERT(handle);
-    handle.write(WTF::asByteSpan(string.utf8().span()));
+    handle.write(WTF::asByteSpan(utf8(string).span()));
     handle.flush();
 }
 

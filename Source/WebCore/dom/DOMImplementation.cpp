@@ -75,19 +75,19 @@ DOMImplementation::DOMImplementation(Document& document)
 {
 }
 
-ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomString& qualifiedName, const String& publicId, const String& systemId)
+ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(AtomStringImpl* qualifiedName, StringImpl* publicId, StringImpl* systemId)
 {
     if (!NameValidation::isValidDoctypeName(qualifiedName))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid doctype name: '"_s, qualifiedName, '\'') };
     return DocumentType::create(protect(document()), qualifiedName, publicId, systemId);
 }
 
-static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, const Settings& settings)
+static inline Ref<XMLDocument> createXMLDocument(StringImpl* namespaceURI, const Settings& settings)
 {
     RefPtr<XMLDocument> document;
-    if (namespaceURI == SVGNames::svgNamespaceURI)
+    if (equal(namespaceURI, SVGNames::svgNamespaceURI.get()))
         document = SVGDocument::create(nullptr, settings, URL());
-    else if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
+    else if (equal(namespaceURI, HTMLNames::xhtmlNamespaceURI.get()))
         document = XMLDocument::createXHTML(nullptr, settings, URL());
     else
         document = XMLDocument::create(nullptr, settings, URL());
@@ -95,7 +95,7 @@ static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, con
     return document.releaseNonNull();
 }
 
-ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType* documentType)
+ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, DocumentType* documentType)
 {
     Ref thisDocument = m_document.get();
     Ref document = createXMLDocument(namespaceURI, thisDocument->settings());
@@ -104,7 +104,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString
     document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
 
     RefPtr<Element> documentElement;
-    if (!qualifiedName.isEmpty()) {
+    if (!isEmpty(qualifiedName)) {
         ASSERT(!document->window()); // If domWindow is not null, createElementNS could find CustomElementRegistry and arbitrary scripts.
         auto result = document->createElementNS(namespaceURI, qualifiedName);
         if (result.hasException())
@@ -120,7 +120,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString
     return document;
 }
 
-Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
+Ref<HTMLDocument> DOMImplementation::createHTMLDocument(RefPtr<StringImpl>&& title)
 {
     Ref thisDocument = m_document.get();
     Ref document = HTMLDocument::create(nullptr, thisDocument->settings(), URL(), { });
@@ -130,7 +130,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     Ref headElement = HTMLHeadElement::create(document);
     htmlElement->appendChild(headElement);
 
-    if (!title.isNull()) {
+    if (title) {
         Ref titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(WTF::move(title)));
         headElement->appendChild(titleElement);
@@ -138,7 +138,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
 
     htmlElement->appendChild(HTMLBodyElement::create(document));
 
-    document->appendChild(DocumentType::create(document, "html"_s, emptyString(), emptyString()));
+    document->appendChild(DocumentType::create(document, "html"_si, emptyString(), emptyString()));
     document->appendChild(htmlElement);
 
     document->setContextDocument(thisDocument->contextDocument());
@@ -146,7 +146,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& contentType, LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier)
+Ref<Document> DOMImplementation::createDocument(StringImpl* contentType, LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,

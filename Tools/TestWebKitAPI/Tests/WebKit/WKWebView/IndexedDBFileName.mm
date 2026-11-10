@@ -83,9 +83,9 @@ static void runTest()
     NSString *existingDatabaseName = @"IndexedDBTest";
     NSString *createdDatabaseName = @"IndexedDBOther";
     NSString *unusedDatabaseName = @"IndexedDBUnused";
-    RetainPtr existingDatbaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { existingDatabaseName }).createNSString();
-    RetainPtr createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { createdDatabaseName }).createNSString();
-    RetainPtr unusedDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { createdDatabaseName }).createNSString();
+    RetainPtr existingDatbaseHash = createNSString(WebCore::SQLiteFileSystem::computeHashForFileName(StringImpl::create(existingDatabaseName).get()));
+    RetainPtr createdDatabaseHash = createNSString(WebCore::SQLiteFileSystem::computeHashForFileName(StringImpl::create(createdDatabaseName).get()));
+    RetainPtr unusedDatabaseHash = createNSString(WebCore::SQLiteFileSystem::computeHashForFileName(StringImpl::create(createdDatabaseName).get()));
     NSURL *idbRootURL = [websiteDataStoreConfiguration.get() _indexedDBDatabaseDirectory];
     NSURL *oldVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v0"];
     NSURL *newVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v1"];
@@ -138,10 +138,10 @@ static void createDirectories(StringView testName)
     RetainPtr resourceDatabaseFileURL = [NSBundle.test_resourcesBundle URLForResource:@"IndexedDB" withExtension:@"sqlite3"];
     // Existing database to be opened by test page.
     RetainPtr existingDatabaseName = @"IndexedDBTest";
-    String existingDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { existingDatabaseName.get() });
+    RefPtr<StringImpl> existingDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(StringImpl::create(existingDatabaseName.get()).get());
     // Database to be created by test page.
     RetainPtr createdDatabaseName = @"IndexedDBOther";
-    String createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { createdDatabaseName.get() });
+    RefPtr<StringImpl> createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(StringImpl::create(createdDatabaseName.get()).get());
     // Existing database that test page does not use at all; only used for verify data migration.
     RetainPtr unusedDatabaseName = @"IndexedDBUnused";
     RetainPtr fileOrigin = @"file__0";
@@ -168,7 +168,7 @@ static void createDirectories(StringView testName)
         return;
 
     [defaultFileManager removeItemAtURL:existingDatabaseDirectoryURL.get() error:nil];
-    RetainPtr v1ExistingDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), existingDatabaseHash.createNSString().get()]]];
+    RetainPtr v1ExistingDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), createNSString(existingDatabaseHash).get()]]];
     [defaultFileManager createDirectoryAtURL:v1ExistingDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
     EXPECT_NULL(error);
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[v1ExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
@@ -181,7 +181,7 @@ static void createDirectories(StringView testName)
     EXPECT_NULL(error);
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[appleDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
     EXPECT_NULL(error);
-    RetainPtr v1WebKitOriginDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), @"https_webkit.org_0", existingDatabaseHash.createNSString().get()]]];
+    RetainPtr v1WebKitOriginDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), @"https_webkit.org_0", createNSString(existingDatabaseHash).get()]]];
     [defaultFileManager createDirectoryAtURL:v1WebKitOriginDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
     EXPECT_NULL(error);
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[v1WebKitOriginDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
@@ -190,7 +190,7 @@ static void createDirectories(StringView testName)
         return;
 
     EXPECT_WK_STREQ("collision", testName.toString());
-    RetainPtr v1CreatedDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), createdDatabaseHash.createNSString().get()]]];
+    RetainPtr v1CreatedDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), createNSString(createdDatabaseHash).get()]]];
     [defaultFileManager createDirectoryAtURL:v1CreatedDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
     EXPECT_NULL(error);
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[v1CreatedDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
@@ -286,8 +286,8 @@ TEST(IndexedDB, OpenDatabaseAfterDatabaseNameUpgrade)
     }];
     TestWebKitAPI::Util::run(&done);
     RetainPtr indexedDBDirectory = [NSURL fileURLWithPath:indexedDBDirectoryString.get() isDirectory:YES];
-    String databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTest"_s);
-    RetainPtr indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:databaseHash.createNSString().get()];
+    RefPtr<StringImpl> databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTest"_s);
+    RetainPtr indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:createNSString(databaseHash).get()];
     RetainPtr indexedDBDatabaseFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
     RetainPtr resourceDatabaseFileURL = [NSBundle.test_resourcesBundle URLForResource:@"IndexedDB" withExtension:@"sqlite3"];
     RetainPtr fileManager = [NSFileManager defaultManager];
@@ -333,8 +333,8 @@ TEST(IndexedDB, OpenDatabaseWithMismatchedMetadataVersionAndName)
     }];
     TestWebKitAPI::Util::run(&done);
     RetainPtr indexedDBDirectory = [NSURL fileURLWithPath:indexedDBDirectoryString.get() isDirectory:YES];
-    String databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTest"_s);
-    RetainPtr indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:databaseHash.createNSString().get()];
+    RefPtr<StringImpl> databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTest"_s);
+    RetainPtr indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:createNSString(databaseHash).get()];
     RetainPtr indexedDBDatabaseFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
     RetainPtr resourceDatabaseFileURL = [NSBundle.test_resourcesBundle URLForResource:@"IndexedDBWrongMetadataVersion" withExtension:@"sqlite3"];
     RetainPtr fileManager = [NSFileManager defaultManager];

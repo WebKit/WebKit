@@ -48,9 +48,9 @@ class SerializedPlatformDataCueValue {
 public:
     struct Data {
 #if PLATFORM(COCOA)
-        String type;
-        HashMap<String, String> otherAttributes;
-        String key;
+        RefPtr<StringImpl> type;
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> otherAttributes;
+        RefPtr<StringImpl> key;
         RetainPtr<NSLocale> locale;
         Variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>> value;
         bool operator==(const Data&) const;

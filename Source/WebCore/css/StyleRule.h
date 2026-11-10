@@ -49,7 +49,7 @@ class StyleRuleKeyframe;
 class StyleProperties;
 class StyleSheetContents;
 
-using CascadeLayerName = Vector<AtomString>;
+using CascadeLayerName = Vector<RefPtr<AtomStringImpl>>;
     
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 class StyleRuleBase : public RefCounted<StyleRuleBase>, public NoVirtualDestructorBase {
@@ -94,7 +94,7 @@ public:
 
     WEBCORE_EXPORT void operator delete(StyleRuleBase*, std::destroying_delete_t);
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
 protected:
     explicit StyleRuleBase(StyleRuleType, bool hasDocumentSecurityOrigin = false);
@@ -150,7 +150,7 @@ public:
     NODELETE static unsigned averageSizeInBytes();
     void setProperties(Ref<StyleProperties>&&);
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 protected:
     StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     StyleRule(const StyleRule&);
@@ -184,7 +184,7 @@ public:
     // Used by CSSOM.
     void wrapperAdoptOriginalSelectorList(CSSSelectorList&&);
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 protected:
     StyleRuleWithNesting(const StyleRuleWithNesting&);
 
@@ -203,7 +203,7 @@ public:
     static Ref<StyleRuleNestedDeclarations> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleNestedDeclarations(WTF::move(properties))); }
     Ref<StyleRuleNestedDeclarations> copy() const { return adoptRef(*new StyleRuleNestedDeclarations(*this)); }
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 private:
     explicit StyleRuleNestedDeclarations(Ref<StyleProperties>&&);
     StyleRuleNestedDeclarations(const StyleRuleNestedDeclarations&) = default;
@@ -228,10 +228,10 @@ private:
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
-    NODELETE static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
+    NODELETE static Ref<StyleRuleFontPaletteValues> create(AtomStringImpl* name, Vector<RefPtr<AtomStringImpl>>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
-    const AtomString& name() const LIFETIME_BOUND { return m_name; }
-    const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const Vector<RefPtr<AtomStringImpl>>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
     std::optional<FontPaletteIndex> basePalette() const { return m_basePalette; }
     const Vector<FontPaletteValues::OverriddenColor>& overrideColors() const LIFETIME_BOUND { return m_overrideColors; }
     FontPaletteValues::CustomPalette customPalette() const { return { m_name, m_basePalette, m_overrideColors }; }
@@ -239,11 +239,11 @@ public:
     Ref<StyleRuleFontPaletteValues> copy() const { return adoptRef(*new StyleRuleFontPaletteValues(*this)); }
 
 private:
-    StyleRuleFontPaletteValues(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors);
+    StyleRuleFontPaletteValues(AtomStringImpl* name, Vector<RefPtr<AtomStringImpl>>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors);
     StyleRuleFontPaletteValues(const StyleRuleFontPaletteValues&) = default;
 
-    AtomString m_name;
-    Vector<AtomString> m_fontFamilies;
+    RefPtr<AtomStringImpl> m_name;
+    Vector<RefPtr<AtomStringImpl>> m_fontFamilies;
     std::optional<FontPaletteIndex> m_basePalette;
     Vector<FontPaletteValues::OverriddenColor> m_overrideColors;
 };
@@ -270,20 +270,20 @@ private:
 
 class StyleRuleFontFeatureValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&&);
+    static Ref<StyleRuleFontFeatureValues> create(const Vector<RefPtr<AtomStringImpl>>& fontFamilies, Ref<FontFeatureValues>&&);
 
-    const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
-    void setFontFamilies(Vector<AtomString>&& fontFamilies) { m_fontFamilies = WTF::move(fontFamilies); }
+    const Vector<RefPtr<AtomStringImpl>>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
+    void setFontFamilies(Vector<RefPtr<AtomStringImpl>>&& fontFamilies) { m_fontFamilies = WTF::move(fontFamilies); }
 
     Ref<FontFeatureValues> value() const { return m_value; }
 
     Ref<StyleRuleFontFeatureValues> copy() const { return adoptRef(*new StyleRuleFontFeatureValues(*this)); }
 
 private:
-    StyleRuleFontFeatureValues(const Vector<AtomString>&, Ref<FontFeatureValues>&&);
+    StyleRuleFontFeatureValues(const Vector<RefPtr<AtomStringImpl>>&, Ref<FontFeatureValues>&&);
     StyleRuleFontFeatureValues(const StyleRuleFontFeatureValues&) = default;
 
-    Vector<AtomString> m_fontFamilies;
+    Vector<RefPtr<AtomStringImpl>> m_fontFamilies;
     const Ref<FontFeatureValues> m_value;
 };
 
@@ -319,7 +319,7 @@ public:
     friend class CSSGroupingRule;
     friend class CSSStyleSheet;
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 protected:
     StyleRuleGroup(StyleRuleType, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleGroup(const StyleRuleGroup&);
@@ -336,7 +336,7 @@ public:
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTF::move(queries); }
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 private:
     StyleRuleMedia(MQ::MediaQueryList&&, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleMedia(const StyleRuleMedia&);
@@ -346,17 +346,17 @@ private:
 
 class StyleRuleSupports final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
+    static Ref<StyleRuleSupports> create(StringImpl* conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleSupports> copy() const { return adoptRef(*new StyleRuleSupports(*this)); }
 
-    String conditionText() const { return m_conditionText; }
+    const RefPtr<StringImpl>& conditionText() const LIFETIME_BOUND { return m_conditionText; }
     bool conditionIsSupported() const { return m_conditionIsSupported; }
 
 private:
-    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
+    StyleRuleSupports(StringImpl* conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleSupports(const StyleRuleSupports&) = default;
 
-    String m_conditionText;
+    RefPtr<StringImpl> m_conditionText;
     bool m_conditionIsSupported;
 };
 
@@ -396,8 +396,8 @@ private:
 class StyleRuleProperty final : public StyleRuleBase {
 public:
     struct Descriptor {
-        AtomString name;
-        String syntax { };
+        RefPtr<AtomStringImpl> name;
+        RefPtr<StringImpl> syntax { };
         std::optional<bool> inherits { };
         RefPtr<const CSSVariableData> initialValue { };
     };
@@ -465,19 +465,19 @@ private:
 
 class StyleRuleNamespace final : public StyleRuleBase {
 public:
-    NODELETE static Ref<StyleRuleNamespace> create(const AtomString& prefix, const AtomString& uri);
+    NODELETE static Ref<StyleRuleNamespace> create(AtomStringImpl* prefix, AtomStringImpl* uri);
 
     Ref<StyleRuleNamespace> copy() const { return adoptRef(*new StyleRuleNamespace(*this)); }
 
-    AtomString prefix() const { return m_prefix; }
-    AtomString uri() const { return m_uri; }
+    const RefPtr<AtomStringImpl>& prefix() const LIFETIME_BOUND { return m_prefix; }
+    const RefPtr<AtomStringImpl>& uri() const LIFETIME_BOUND { return m_uri; }
 
 private:
-    StyleRuleNamespace(const AtomString& prefix, const AtomString& uri);
+    StyleRuleNamespace(AtomStringImpl* prefix, AtomStringImpl* uri);
     StyleRuleNamespace(const StyleRuleNamespace&) = default;
 
-    AtomString m_prefix;
-    AtomString m_uri;
+    RefPtr<AtomStringImpl> m_prefix;
+    RefPtr<AtomStringImpl> m_uri;
 };
     
 inline StyleRuleBase::StyleRuleBase(StyleRuleType type, bool hasDocumentSecurityOrigin)

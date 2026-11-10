@@ -36,11 +36,11 @@ class WEBCORE_EXPORT CaptureDeviceManager {
 public:
     virtual const Vector<CaptureDevice>& captureDevices() = 0;
     virtual void computeCaptureDevices(CompletionHandler<void()>&&);
-    virtual std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    virtual std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, StringImpl*);
 
 protected:
     virtual ~CaptureDeviceManager();
-    CaptureDevice captureDeviceFromPersistentID(const String& captureDeviceID);
+    CaptureDevice captureDeviceFromPersistentID(StringImpl* captureDeviceID);
     void deviceChanged();
 };
 

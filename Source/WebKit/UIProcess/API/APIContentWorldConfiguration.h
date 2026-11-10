@@ -43,8 +43,8 @@ public:
 
     Ref<ContentWorldConfiguration> copy() const;
 
-    NODELETE const WTF::String& name() const LIFETIME_BOUND;
-    void setName(WTF::String&&);
+    NODELETE const RefPtr<StringImpl>& name() const LIFETIME_BOUND;
+    void setName(RefPtr<StringImpl>&&);
 
     NODELETE bool allowAccessToClosedShadowRoots() const;
     NODELETE void setAllowAccessToClosedShadowRoots(bool);
@@ -73,7 +73,7 @@ private:
     struct Data {
         Data();
 
-        WTF::String name;
+        RefPtr<StringImpl> name;
         bool allowAccessToClosedShadowRoots : 1 { false };
         bool allowAutofill : 1 { false };
         bool allowElementUserInfo : 1 { false };

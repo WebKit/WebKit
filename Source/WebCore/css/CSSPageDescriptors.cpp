@@ -48,67 +48,67 @@ StyleRuleType CSSPageDescriptors::ruleType() const
 // MARK: - Descriptors
 
 // 'margin'
-String CSSPageDescriptors::margin() const
+RefPtr<StringImpl> CSSPageDescriptors::margin() const
 {
     return getPropertyValueInternal(CSSPropertyID::Margin);
 }
 
-ExceptionOr<void> CSSPageDescriptors::setMargin(const String& value)
+ExceptionOr<void> CSSPageDescriptors::setMargin(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::Margin, value, IsImportant::No);
 }
 
 // 'margin-top'
-String CSSPageDescriptors::marginTop() const
+RefPtr<StringImpl> CSSPageDescriptors::marginTop() const
 {
     return getPropertyValueInternal(CSSPropertyID::MarginTop);
 }
 
-ExceptionOr<void> CSSPageDescriptors::setMarginTop(const String& value)
+ExceptionOr<void> CSSPageDescriptors::setMarginTop(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::MarginTop, value, IsImportant::No);
 }
 
 // 'margin-right'
-String CSSPageDescriptors::marginRight() const
+RefPtr<StringImpl> CSSPageDescriptors::marginRight() const
 {
     return getPropertyValueInternal(CSSPropertyID::MarginRight);
 }
 
-ExceptionOr<void> CSSPageDescriptors::setMarginRight(const String& value)
+ExceptionOr<void> CSSPageDescriptors::setMarginRight(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::MarginRight, value, IsImportant::No);
 }
 
 // 'margin-bottom'
-String CSSPageDescriptors::marginBottom() const
+RefPtr<StringImpl> CSSPageDescriptors::marginBottom() const
 {
     return getPropertyValueInternal(CSSPropertyID::MarginBottom);
 }
 
-ExceptionOr<void> CSSPageDescriptors::setMarginBottom(const String& value)
+ExceptionOr<void> CSSPageDescriptors::setMarginBottom(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::MarginBottom, value, IsImportant::No);
 }
 
 // 'margin-left'
-String CSSPageDescriptors::marginLeft() const
+RefPtr<StringImpl> CSSPageDescriptors::marginLeft() const
 {
     return getPropertyValueInternal(CSSPropertyID::MarginLeft);
 }
 
-ExceptionOr<void> CSSPageDescriptors::setMarginLeft(const String& value)
+ExceptionOr<void> CSSPageDescriptors::setMarginLeft(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::MarginLeft, value, IsImportant::No);
 }
 
 // @page 'size'
-String CSSPageDescriptors::size() const
+RefPtr<StringImpl> CSSPageDescriptors::size() const
 {
     return getPropertyValueInternal(CSSPropertyID::PageSize);
 }
 
-ExceptionOr<void> CSSPageDescriptors::setSize(const String& value)
+ExceptionOr<void> CSSPageDescriptors::setSize(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::PageSize, value, IsImportant::No);
 }

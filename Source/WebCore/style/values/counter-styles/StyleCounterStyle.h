@@ -97,7 +97,7 @@ struct CounterStyle {
 
     bool operator==(const CounterStyle&) const = default;
     bool operator==(const CustomIdent& other) const { auto* identifier = std::get_if<CustomIdent>(&m_value); return identifier && *identifier == other; }
-    bool operator==(const AtomString& other) const { auto* identifier = std::get_if<CustomIdent>(&m_value); return identifier && identifier->value == other; }
+    bool operator==(AtomStringImpl* other) const { auto* identifier = std::get_if<CustomIdent>(&m_value); return identifier && identifier->value == other; }
     bool operator==(CSSValueID other) const { auto* identifier = std::get_if<CustomIdent>(&m_value); return identifier && identifier->value == nameString(other); }
 
 private:

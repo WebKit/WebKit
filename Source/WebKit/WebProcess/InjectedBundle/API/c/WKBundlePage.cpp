@@ -512,33 +512,33 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
         RefPtr highlightDataArray = WebKit::toImpl(highlightData);
         highlights.reserveInitialCapacity(highlightDataArray->size());
         for (RefPtr dictionary : highlightDataArray->elementsOfType<API::Dictionary>()) {
-            auto startOffset = downcast<API::UInt64>(dictionary->get("from"_s))->value();
+            auto startOffset = downcast<API::UInt64>(dictionary->get("from"_si))->value();
 
             std::optional<WebCore::Color> backgroundHighlightColor;
             std::optional<WebCore::Color> foregroundHighlightColor;
 
-            if (RefPtr backgroundColor = dictionary->get("color"_s))
+            if (RefPtr backgroundColor = dictionary->get("color"_si))
                 backgroundHighlightColor = WebCore::CSSPropertyParserHelpers::deprecatedParseColorRawWithoutContext(downcast<API::String>(backgroundColor)->string());
 
-            if (RefPtr foregroundColor = dictionary->get("foregroundColor"_s))
+            if (RefPtr foregroundColor = dictionary->get("foregroundColor"_si))
                 foregroundHighlightColor = WebCore::CSSPropertyParserHelpers::deprecatedParseColorRawWithoutContext(downcast<API::String>(foregroundColor)->string());
 
             highlights.append({
                 static_cast<unsigned>(startOffset),
-                static_cast<unsigned>(startOffset + downcast<API::UInt64>(dictionary->get("length"_s))->value()),
+                static_cast<unsigned>(startOffset + downcast<API::UInt64>(dictionary->get("length"_si))->value()),
                 backgroundHighlightColor,
                 foregroundHighlightColor
             });
         }
     }
 
-    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
+    HashMap<RefPtr<StringImpl>, Vector<WebCore::CharacterRange>> annotations;
     if (annotationData) {
         if (RefPtr annotationDataArray = WebKit::toImpl(annotationData)) {
             for (RefPtr dictionary : annotationDataArray->elementsOfType<API::Dictionary>()) {
-                auto location = downcast<API::UInt64>(dictionary->get("from"_s))->value();
-                auto length = downcast<API::UInt64>(dictionary->get("length"_s))->value();
-                auto name = Ref { *downcast<API::String>(dictionary->get("annotation"_s)) }->string();
+                auto location = downcast<API::UInt64>(dictionary->get("from"_si))->value();
+                auto length = downcast<API::UInt64>(dictionary->get("length"_si))->value();
+                auto name = Ref { *downcast<API::String>(dictionary->get("annotation"_si)) }->string();
 
                 auto it = annotations.find(name);
                 if (it == annotations.end())
@@ -559,7 +559,7 @@ bool WKBundlePageHasComposition(WKBundlePageRef pageRef)
 
 void WKBundlePageConfirmComposition(WKBundlePageRef pageRef)
 {
-    protect(WebKit::toImpl(pageRef))->confirmCompositionForTesting(String());
+    protect(WebKit::toImpl(pageRef))->confirmCompositionForTesting(nullString());
 }
 
 void WKBundlePageConfirmCompositionWithText(WKBundlePageRef pageRef, WKStringRef text)

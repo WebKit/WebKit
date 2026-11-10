@@ -237,13 +237,13 @@ public:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(certificate));
         m_certificate = certificate;
         m_tlsErrors = tlsErrors;
-        m_failingURL = URL(String::fromLatin1(failingURI));
+        m_failingURL = URL(StringImpl::fromLatin1(failingURI));
         return true;
     }
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
-    UTF8CString host() const { return m_failingURL.host().toString().utf8(); }
+    UTF8CString host() const { return utf8(m_failingURL.host().toString()); }
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;
@@ -261,7 +261,7 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert_true(G_IS_TLS_CERTIFICATE(test->certificate()));
     g_assert_cmpuint(test->tlsErrors(), ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
-    ASSERT_CMP_CSTRING(test->host(), ==, kHttpsServer->baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(test->host(), ==, utf8(kHttpsServer->baseURL().host().toString()));
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadFailedWithTLSErrors);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
@@ -591,8 +591,8 @@ static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpoi
     g_assert_false(webkit_authentication_request_is_retry(request));
     auto* origin = webkit_authentication_request_get_security_origin(request);
     g_assert_nonnull(origin);
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, kHttpsServer->baseURL().protocol().toString().utf8());
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, kHttpsServer->baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, utf8(kHttpsServer->baseURL().protocol().toString()));
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, utf8(kHttpsServer->baseURL().host().toString()));
     g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, kHttpsServer->port());
     webkit_security_origin_unref(origin);
     webkit_authentication_request_cancel(request);

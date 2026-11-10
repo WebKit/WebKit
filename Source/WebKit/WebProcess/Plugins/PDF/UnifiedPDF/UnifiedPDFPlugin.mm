@@ -236,7 +236,7 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     Ref document = element.document();
     Ref annotationContainer = document->createElement(HTMLNames::divTag, false);
     m_annotationContainer = annotationContainer.copyRef();
-    annotationContainer->setAttributeWithoutSynchronization(HTMLNames::idAttr, "annotationContainer"_s);
+    annotationContainer->setAttributeWithoutSynchronization(HTMLNames::idAttr, "annotationContainer"_atom);
     Ref annotationStyleElement = document->createElement(HTMLNames::styleTag, false);
     annotationStyleElement->setTextContent(annotationStyle());
     annotationContainer->appendChild(annotationStyleElement);
@@ -298,9 +298,9 @@ void UnifiedPDFPlugin::installAnnotationContainer()
 
 UnifiedPDFPlugin::~UnifiedPDFPlugin() = default;
 
-static String mutationObserverNotificationString()
+static RefPtr<StringImpl> mutationObserverNotificationString()
 {
-    static NeverDestroyed<String> notificationString = "PDFFormDidChangeValue"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> notificationString = "PDFFormDidChangeValue"_s;
     return notificationString;
 }
 
@@ -324,7 +324,7 @@ void UnifiedPDFPlugin::teardown()
         protect(frame->coreLocalFrame()->view())->removePluginScrollableAreaForScrollingNodeID(*m_scrollingNodeID);
     }
 
-    [[NSNotificationCenter defaultCenter] removeObserver:m_pdfMutationObserver.get() name:mutationObserverNotificationString().createNSString().get() object:m_pdfDocument.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_pdfMutationObserver.get() name:createNSString(mutationObserverNotificationString()).get() object:m_pdfDocument.get()];
     m_pdfMutationObserver = nullptr;
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
@@ -408,7 +408,7 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (RefPtr view = m_view.get())
         view->layerHostingStrategyDidChange();
 
-    [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:mutationObserverNotificationString().createNSString().get() object:m_pdfDocument.get()];
+    [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:createNSString(mutationObserverNotificationString()).get() object:m_pdfDocument.get()];
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     enableDataDetection();
@@ -528,13 +528,13 @@ void UnifiedPDFPlugin::teardownPasswordEntryForm()
     m_passwordField = nullptr;
 }
 
-void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
+void UnifiedPDFPlugin::attemptToUnlockPDF(StringImpl* password)
 {
     std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride;
     if (isLocked())
         shouldUpdateAutoSizeScaleOverride = ShouldUpdateAutoSizeScale::Yes;
 
-    if (![m_pdfDocument unlockWithPassword:password.createNSString().get()]) {
+    if (![m_pdfDocument unlockWithPassword:createNSString(password).get()]) {
         Ref { *m_passwordField }->resetField();
         Ref { *m_passwordForm }->unlockFailed();
         return;
@@ -557,7 +557,7 @@ void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
     revealFragmentIfNeeded();
 }
 
-RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
+RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(StringImpl* name, GraphicsLayer::Type layerType)
 {
     if (RefPtr graphicsLayer = createGraphicsLayer(*this, layerType)) {
         graphicsLayer->setName(name);
@@ -622,7 +622,7 @@ void UnifiedPDFPlugin::ensureLayers()
 
     RefPtr rootLayer = m_rootLayer;
     if (!rootLayer) {
-        rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
+        rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_si, GraphicsLayer::Type::Normal);
         m_rootLayer = rootLayer.copyRef();
         rootLayer->setAnchorPoint({ });
         rootLayer->setBackgroundColor(pluginBackgroundColor());
@@ -631,7 +631,7 @@ void UnifiedPDFPlugin::ensureLayers()
 
     RefPtr scrollContainerLayer = m_scrollContainerLayer;
     if (!scrollContainerLayer) {
-        scrollContainerLayer = createGraphicsLayer("UnifiedPDFPlugin scroll container"_s, GraphicsLayer::Type::ScrollContainer);
+        scrollContainerLayer = createGraphicsLayer("UnifiedPDFPlugin scroll container"_si, GraphicsLayer::Type::ScrollContainer);
         lazyInitialize(m_scrollContainerLayer, Ref { *scrollContainerLayer });
         scrollContainerLayer->setAnchorPoint({ });
         scrollContainerLayer->setMasksToBounds(true);
@@ -640,14 +640,14 @@ void UnifiedPDFPlugin::ensureLayers()
 
     RefPtr scrolledContentsLayer = m_scrolledContentsLayer;
     if (!scrolledContentsLayer) {
-        scrolledContentsLayer = createGraphicsLayer("UnifiedPDFPlugin scrolled contents"_s, GraphicsLayer::Type::ScrolledContents);
+        scrolledContentsLayer = createGraphicsLayer("UnifiedPDFPlugin scrolled contents"_si, GraphicsLayer::Type::ScrolledContents);
         lazyInitialize(m_scrolledContentsLayer, Ref { *scrolledContentsLayer });
         scrolledContentsLayer->setAnchorPoint({ });
         scrollContainerLayer->addChild(*scrolledContentsLayer);
     }
 
     if (!m_overflowControlsContainer) {
-        RefPtr overflowControlsContainer = createGraphicsLayer("Overflow controls container"_s, GraphicsLayer::Type::Normal);
+        RefPtr overflowControlsContainer = createGraphicsLayer("Overflow controls container"_si, GraphicsLayer::Type::Normal);
         lazyInitialize(m_overflowControlsContainer, Ref { *overflowControlsContainer });
         overflowControlsContainer->setAnchorPoint({ });
         rootLayer->addChild(*overflowControlsContainer);
@@ -1670,7 +1670,7 @@ bool UnifiedPDFPlugin::updateOverflowControlsLayers(bool needsHorizontalScrollba
             return false;
 
         if (needLayer) {
-            layer = createGraphicsLayer(layerName, GraphicsLayer::Type::Normal);
+            layer = createGraphicsLayer(StringImpl::create(layerName).ptr(), GraphicsLayer::Type::Normal);
             if (!layer)
                 return false;
 
@@ -2691,13 +2691,13 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const IntPoint
     };
 }
 
-Vector<String> UnifiedPDFPlugin::contextMenuItemTitlesForTesting(const IntPoint& contextMenuEventRootViewPoint) const
+Vector<RefPtr<StringImpl>> UnifiedPDFPlugin::contextMenuItemTitlesForTesting(const IntPoint& contextMenuEventRootViewPoint) const
 {
     auto contextMenu = createContextMenu(contextMenuEventRootViewPoint, WebEventInputSource::UserDriven);
     if (!contextMenu)
         return { };
 
-    return WTF::compactMap(contextMenu->items, [](auto& item) -> std::optional<String> {
+    return WTF::compactMap(contextMenu->items, [](auto& item) -> std::optional<RefPtr<StringImpl>> {
         if (item.separator == ContextMenuItemIsSeparator::Yes)
             return std::nullopt;
         return item.title;
@@ -2709,7 +2709,7 @@ bool UnifiedPDFPlugin::isDisplayModeContextMenuItemTag(ContextMenuItemTag tag) c
     return tag == ContextMenuItemTag::SinglePage || tag == ContextMenuItemTag::SinglePageContinuous || tag == ContextMenuItemTag::TwoPages || tag == ContextMenuItemTag::TwoPagesContinuous;
 }
 
-String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) const
+RefPtr<StringImpl> UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) const
 {
     switch (tag) {
     case ContextMenuItemTag::Invalid:
@@ -2730,7 +2730,7 @@ String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) cons
         return contextMenuItemPDFNextPage();
     // The title for the OpenWithDefaultViewer item is determined in the UI Process.
     case ContextMenuItemTag::OpenWithDefaultViewer:
-        return ""_s;
+        return ""_si;
     case ContextMenuItemTag::PreviousPage:
         return contextMenuItemPDFPreviousPage();
     case ContextMenuItemTag::SinglePage:
@@ -2992,7 +2992,7 @@ void UnifiedPDFPlugin::performCopyLinkOperation(const IntPoint& contextMenuEvent
 
 #pragma mark Editing Commands
 
-bool UnifiedPDFPlugin::handleEditingCommand(const String& commandName, const String& argument)
+bool UnifiedPDFPlugin::handleEditingCommand(StringImpl* commandName, StringImpl* argument)
 {
     if (equalLettersIgnoringASCIICase(commandName, "scrollpagebackward"_s) || equalLettersIgnoringASCIICase(commandName, "scrollpageforward"_s))
         return forwardEditingCommandToEditor(commandName, argument);
@@ -3011,7 +3011,7 @@ bool UnifiedPDFPlugin::handleEditingCommand(const String& commandName, const Str
     return false;
 }
 
-bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
+bool UnifiedPDFPlugin::isEditingCommandEnabled(StringImpl* commandName)
 {
     if (equalLettersIgnoringASCIICase(commandName, "scrollpagebackward"_s) || equalLettersIgnoringASCIICase(commandName, "scrollpageforward"_s))
         return true;
@@ -3077,8 +3077,8 @@ bool UnifiedPDFPlugin::takeFindStringFromSelection()
     if (!hasSelection())
         return false;
 
-    String findString { m_currentSelection.get().string };
-    if (findString.isEmpty())
+    RefPtr<StringImpl> findString { StringImpl::create(m_currentSelection.get().string) };
+    if (isEmpty(findString))
         return false;
 
 #if PLATFORM(MAC)
@@ -3097,7 +3097,7 @@ bool UnifiedPDFPlugin::takeFindStringFromSelection()
     return true;
 }
 
-bool UnifiedPDFPlugin::forwardEditingCommandToEditor(const String& commandName, const String& argument) const
+bool UnifiedPDFPlugin::forwardEditingCommandToEditor(StringImpl* commandName, StringImpl* argument) const
 {
     RefPtr frame = m_frame.get();
     if (!frame)
@@ -3321,9 +3321,9 @@ void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
     notifySelectionChanged();
 }
 
-String UnifiedPDFPlugin::fullDocumentString() const
+RefPtr<StringImpl> UnifiedPDFPlugin::fullDocumentString() const
 {
-    return [pdfDocument() string];
+    return StringImpl::create([pdfDocument() string]);
 }
 
 PDFPluginTextExtractionContent UnifiedPDFPlugin::textExtractionContent() const
@@ -3339,8 +3339,8 @@ PDFPluginTextExtractionContent UnifiedPDFPlugin::textExtractionContent() const
         if (!page)
             continue;
 
-        String pageText = [page string];
-        if (pageText.isEmpty())
+        RefPtr<StringImpl> pageText = StringImpl::create([page string]);
+        if (isEmpty(pageText))
             continue;
 
         if (textBuilder.length())
@@ -3370,40 +3370,40 @@ PDFPluginTextExtractionContent UnifiedPDFPlugin::textExtractionContent() const
                 continue;
 
             RetainPtr linkSelection = [page selectionForRect:[annotation bounds]];
-            String linkText = linkSelection ? String { [linkSelection string] } : nullString();
-            if (linkText.isEmpty())
+            RefPtr<StringImpl> linkText = linkSelection ? StringImpl::create([linkSelection string]) : nullString();
+            if (isEmpty(linkText))
                 continue;
 
-            auto offset = pageText.find(linkText, searchOffset);
+            auto offset = find(pageText, linkText, searchOffset);
             if (offset == notFound)
-                offset = pageText.find(linkText);
+                offset = find(pageText, linkText);
             if (offset == notFound)
                 continue;
 
-            searchOffset = offset + linkText.length();
+            searchOffset = offset + length(linkText);
 
-            links.append(PDFPluginTextExtractionLink { WTF::move(url), CharacterRange { pageTextStart + offset, linkText.length() }, pageToRootView([annotation bounds], page) });
+            links.append(PDFPluginTextExtractionLink { WTF::move(url), CharacterRange { pageTextStart + offset, length(linkText) }, pageToRootView([annotation bounds], page) });
         }
     }
 
     return { textBuilder.toString(), WTF::move(links) };
 }
 
-String UnifiedPDFPlugin::selectionString() const
+RefPtr<StringImpl> UnifiedPDFPlugin::selectionString() const
 {
     if (!hasSelection())
         return { };
-    return [m_currentSelection string];
+    return StringImpl::create([m_currentSelection string]);
 }
 
-std::pair<String, String> UnifiedPDFPlugin::stringsBeforeAndAfterSelection(int characterCount) const
+std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> UnifiedPDFPlugin::stringsBeforeAndAfterSelection(int characterCount) const
 {
     RetainPtr selection = m_currentSelection;
     if (!selection)
         return { };
 
     auto selectionLength = [selection string].length;
-    auto stringBeforeSelection = [&] -> String {
+    auto stringBeforeSelection = [&] -> RefPtr<StringImpl> {
         RetainPtr beforeSelection = adoptNS([selection copy]);
         [beforeSelection extendSelectionAtStart:characterCount];
 
@@ -3419,10 +3419,10 @@ std::pair<String, String> UnifiedPDFPlugin::stringsBeforeAndAfterSelection(int c
             return { };
         }
 
-        return [result substringToIndex:targetIndex];
+        return StringImpl::create([result substringToIndex:targetIndex]);
     }();
 
-    auto stringAfterSelection = [&] -> String {
+    auto stringAfterSelection = [&] -> RefPtr<StringImpl> {
         RetainPtr afterSelection = adoptNS([selection copy]);
         [afterSelection extendSelectionAtEnd:characterCount];
 
@@ -3432,7 +3432,7 @@ std::pair<String, String> UnifiedPDFPlugin::stringsBeforeAndAfterSelection(int c
             return { };
         }
 
-        return [result substringFromIndex:selectionLength];
+        return StringImpl::create([result substringFromIndex:selectionLength]);
     }();
 
     return { WTF::move(stringBeforeSelection), WTF::move(stringAfterSelection) };
@@ -3576,9 +3576,9 @@ NODELETE static NSStringCompareOptions compareOptionsForFindOptions(WebCore::Fin
     return compareOptions;
 }
 
-bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+bool UnifiedPDFPlugin::findString(StringImpl* target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
-    if (target.isEmpty()) {
+    if (isEmpty(target)) {
         m_lastFindString = target;
         setCurrentSelection(nullptr);
         m_findMatchRects.clear();
@@ -3590,16 +3590,16 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
         // If the max was zero, any result means we exceeded the max, so we can skip computing the actual count.
         // FIXME: How can always returning true without searching if passed a max of 0 be right?
         // Even if it is right, why not put that special case inside countFindMatches instead of here?
-        return !target.isEmpty() && (!maxMatchCount || countFindMatches(target, options, maxMatchCount));
+        return !isEmpty(target) && (!maxMatchCount || countFindMatches(target, options, maxMatchCount));
     }
 
     bool wrapSearch = options.contains(FindOption::WrapAround);
     auto compareOptions = compareOptionsForFindOptions(options);
 
     auto nextMatchForString = [&]() -> RetainPtr<PDFSelection> {
-        if (!target.length())
+        if (!length(target))
             return nullptr;
-        RetainPtr nsTarget = target.createNSString();
+        RetainPtr nsTarget = createNSString(target);
         RetainPtr foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:m_currentSelection.get() withOptions:compareOptions];
         if (!foundSelection && wrapSearch) {
             RetainPtr emptySelection = adoptNS([PAL::allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
@@ -3608,7 +3608,7 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
         return foundSelection;
     };
 
-    if (m_lastFindString != target) {
+    if (!equal(m_lastFindString, target)) {
         setCurrentSelection(nullptr);
         m_lastFindString = target;
 
@@ -3633,11 +3633,11 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
     return true;
 }
 
-void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::FindOptions options)
+void UnifiedPDFPlugin::collectFindMatchRects(StringImpl* target, WebCore::FindOptions options)
 {
     m_findMatchRects.clear();
 
-    RetainPtr foundSelections = [m_pdfDocument findString:target.createNSString().get() withOptions:compareOptionsForFindOptions(options)];
+    RetainPtr foundSelections = [m_pdfDocument findString:createNSString(target).get() withOptions:compareOptionsForFindOptions(options)];
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL PDFSelection *selection in foundSelections.get()) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -3668,13 +3668,13 @@ Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect& cli
     return visibleRectsForFindMatchRects(m_findMatchRects, clipRect);
 }
 
-Vector<WebFoundTextRange::PDFData> UnifiedPDFPlugin::findTextMatches(const String& target, WebCore::FindOptions options)
+Vector<WebFoundTextRange::PDFData> UnifiedPDFPlugin::findTextMatches(StringImpl* target, WebCore::FindOptions options)
 {
     Vector<WebFoundTextRange::PDFData> matches;
-    if (!target.length())
+    if (!length(target))
         return matches;
 
-    RetainPtr foundSelections = [m_pdfDocument findString:target.createNSString().get() withOptions:compareOptionsForFindOptions(options)];
+    RetainPtr foundSelections = [m_pdfDocument findString:createNSString(target).get() withOptions:compareOptionsForFindOptions(options)];
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL PDFSelection *selection in foundSelections.get()) {
         RetainPtr startPage = [[selection pages] firstObject];
@@ -3924,7 +3924,7 @@ WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(P
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(nsAttributedString.get());
 #else
-    dictionaryPopupInfo.text = [nsAttributedString string];
+    dictionaryPopupInfo.text = StringImpl::create([nsAttributedString string]);
 #endif
 
     if (auto textIndicator = textIndicatorForSelection(selection, { }, presentationTransition))
@@ -3960,7 +3960,7 @@ bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
     return true;
 }
 
-std::pair<String, RetainPtr<PDFSelection>> UnifiedPDFPlugin::textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint& rootViewPoint, WebHitTestResultData& data)
+std::pair<RefPtr<StringImpl>, RetainPtr<PDFSelection>> UnifiedPDFPlugin::textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint& rootViewPoint, WebHitTestResultData& data)
 {
     if (existingSelectionContainsPoint(rootViewPoint))
         return { selectionString(), m_currentSelection };
@@ -4001,15 +4001,15 @@ std::pair<String, RetainPtr<PDFSelection>> UnifiedPDFPlugin::textForImmediateAct
         if (!url)
             continue;
 
-        data.absoluteLinkURL = [url absoluteString];
-        data.linkLabel = [wordSelection string];
-        return { [wordSelection string], wordSelection };
+        data.absoluteLinkURL = StringImpl::create([url absoluteString]);
+        data.linkLabel = StringImpl::create([wordSelection string]);
+        return { StringImpl::create([wordSelection string]), wordSelection };
     }
 
 #if ENABLE(REVEAL)
     RetainPtr lookupText = DictionaryLookup::stringForPDFSelection(wordSelection.get());
     if (lookupText && lookupText.get().length)
-        return { lookupText.get(), wordSelection };
+        return { StringImpl::create(lookupText.get()), wordSelection };
 #endif
 
     return { { }, wordSelection };
@@ -4029,7 +4029,7 @@ void UnifiedPDFPlugin::showTranslationUIForSelection(PDFSelection *selection)
     auto rectForSelectionInMainFrameView = convertFromRootViewToMainFrameView(rectForSelectionInRootView(selection));
     auto pluginFrameInRootView = convertFromPluginToRootView(IntRect { IntPoint { }, size() });
     auto pluginLocationInMainFrameView = convertFromRootViewToMainFrameView(FloatPoint { pluginFrameInRootView.location() });
-    TranslationContextMenuInfo info { selection.string, WebCore::IntRect { rectForSelectionInMainFrameView }, roundedIntPoint(pluginLocationInMainFrameView) };
+    TranslationContextMenuInfo info { StringImpl::create(selection.string), WebCore::IntRect { rectForSelectionInMainFrameView }, roundedIntPoint(pluginLocationInMainFrameView) };
     protect(page)->send(Messages::WebPageProxy::HandleContextMenuTranslation { info });
 }
 #endif
@@ -4598,7 +4598,7 @@ Vector<WebCore::FloatRect> UnifiedPDFPlugin::annotationRectsForTesting() const
 }
 
 
-void UnifiedPDFPlugin::setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value)
+void UnifiedPDFPlugin::setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, StringImpl* value)
 {
     if (pageIndex >= m_documentLayout.pageCount())
         return;
@@ -4612,23 +4612,23 @@ void UnifiedPDFPlugin::setTextAnnotationValueForTesting(unsigned pageIndex, unsi
     if (!annotationIsWidgetOfType(annotation.get(), WidgetType::Text))
         return;
 
-    [annotation setWidgetStringValue:value.createNSString().get()];
+    [annotation setWidgetStringValue:createNSString(value).get()];
     setNeedsRepaintForAnnotation(annotation.get(), repaintRequirementsForAnnotation(annotation.get(), IsAnnotationCommit::Yes));
 }
 
-void UnifiedPDFPlugin::setPDFDisplayModeForTesting(const String& mode)
+void UnifiedPDFPlugin::setPDFDisplayModeForTesting(StringImpl* mode)
 {
-    setDisplayModeAndUpdateLayout([mode] {
-        if (mode == "SinglePageDiscrete"_s)
+    setDisplayModeAndUpdateLayout([mode = RefPtr { mode }] {
+        if (equal(mode, "SinglePageDiscrete"_s))
             return PDFPluginDisplayMode::SinglePageDiscrete;
 
-        if (mode == "SinglePageContinuous"_s)
+        if (equal(mode, "SinglePageContinuous"_s))
             return PDFPluginDisplayMode::SinglePageContinuous;
 
-        if (mode == "TwoUpDiscrete"_s)
+        if (equal(mode, "TwoUpDiscrete"_s))
             return PDFPluginDisplayMode::TwoUpDiscrete;
 
-        if (mode == "TwoUpContinuous"_s)
+        if (equal(mode, "TwoUpContinuous"_s))
             return PDFPluginDisplayMode::TwoUpContinuous;
 
         ASSERT_NOT_REACHED();
@@ -4942,7 +4942,7 @@ DocumentEditingContext UnifiedPDFPlugin::documentEditingContext(DocumentEditingC
             return AttributedString::fromNSAttributedString({ [selection attributedString] });
 
         ASSERT(wantsPlainText);
-        return AttributedString { String { [selection string] }, { }, { } };
+        return AttributedString { StringImpl::create([selection string]), { }, { } };
     }();
 
     // FIXME: We should populate `contextBefore` and `contextAfter` as well, but PDFKit currently doesn't expose
@@ -5015,10 +5015,10 @@ bool UnifiedPDFPlugin::platformPopulateEditorStateIfNeeded(EditorState& state) c
     state.isInPlugin = true;
     state.selectionType = selectionGeometries.isEmpty() ? WebCore::SelectionType::Caret : WebCore::SelectionType::Range;
 
-    auto selectedString = String { [selection string] };
+    auto selectedString = StringImpl::create([selection string]);
     state.postLayoutData = EditorState::PostLayoutData { };
-    state.postLayoutData->selectedTextLength = selectedString.length();
-    state.postLayoutData->canCopy = !selectedString.isEmpty() && [m_pdfDocument allowsCopying];
+    state.postLayoutData->selectedTextLength = length(selectedString);
+    state.postLayoutData->canCopy = !isEmpty(selectedString) && [m_pdfDocument allowsCopying];
 #if PLATFORM(IOS_FAMILY)
     state.postLayoutData->isStableStateUpdate = true;
     state.postLayoutData->wordAtSelection = WTF::move(selectedString);

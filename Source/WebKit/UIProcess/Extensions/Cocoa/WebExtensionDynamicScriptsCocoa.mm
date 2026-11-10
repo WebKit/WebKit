@@ -62,7 +62,7 @@ namespace WebExtensionDynamicScripts {
 
 static bool userStyleSheetMatchesContent(Ref<API::UserStyleSheet> userStyleSheet, SourcePair styleSheetContent, WebCore::UserContentInjectedFrames injectedFrames)
 {
-    return userStyleSheet->userStyleSheet().source() == styleSheetContent.first && userStyleSheet->userStyleSheet().injectedFrames() == injectedFrames;
+    return equal(userStyleSheet->userStyleSheet().source(), styleSheetContent.first) && userStyleSheet->userStyleSheet().injectedFrames() == injectedFrames;
 }
 
 static NSArray *getFrames(_WKFrameTreeNode *currentNode, const WebExtensionScriptInjectionParameters& parameters)
@@ -131,7 +131,7 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
             }
 
             if (parameters.function) {
-                RetainPtr javaScript = adoptNS([[NSString alloc] initWithFormat:@"return (%@)(...arguments)", parameters.function.value().createNSString().get()]);
+                RetainPtr javaScript = adoptNS([[NSString alloc] initWithFormat:@"return (%@)(...arguments)", createNSString(parameters.function.value()).get()]);
                 NSArray *arguments = parameters.arguments ? parseJSON(protect(parameters.arguments.value()), JSONOptions::FragmentsAllowed) : @[ ];
 
                 [webView _callAsyncJavaScript:javaScript.get() arguments:@{ @"arguments": arguments } inFrame:frameInfo inContentWorld:checked_objc_cast<WKContentWorld>(executionWorld->wrapper()) withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
@@ -142,7 +142,7 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
             }
 
             for (auto& script : borrow(scriptPairs)) {
-                [webView _evaluateJavaScript:script.first.createNSString().get() withSourceURL:script.second.createNSURL().get() inFrame:frameInfo inContentWorld:checked_objc_cast<WKContentWorld>(executionWorld->wrapper()) withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
+                [webView _evaluateJavaScript:createNSString(script.first).get() withSourceURL:script.second.createNSURL().get() inFrame:frameInfo inContentWorld:checked_objc_cast<WKContentWorld>(executionWorld->wrapper()) withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
                 }).get()];
             }
@@ -190,7 +190,7 @@ WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resul
     WebExtensionScriptInjectionResultParameters parameters;
 
     if (resultOfExecution)
-        parameters.resultJSON = encodeJSONString(resultOfExecution, JSONOptions::FragmentsAllowed);
+        parameters.resultJSON = StringImpl::create(encodeJSONString(resultOfExecution, JSONOptions::FragmentsAllowed));
 
     if (info) {
         parameters.frameIdentifier = toWebExtensionFrameIdentifier(info);
@@ -198,7 +198,7 @@ WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resul
     }
 
     if (errorMessage)
-        parameters.error = errorMessage;
+        parameters.error = StringImpl::create(errorMessage);
 
     return parameters;
 }

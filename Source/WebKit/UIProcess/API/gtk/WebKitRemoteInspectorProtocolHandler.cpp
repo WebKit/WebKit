@@ -49,16 +49,16 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler) override
     {
-        String message = jsMessage.toString();
-        Vector<String> tokens = message.split(':');
+        RefPtr<StringImpl> message = jsMessage.toString();
+        Vector<RefPtr<StringImpl>> tokens = split(message, ':');
         if (tokens.size() != 3)
-            return completionHandler(makeUnexpected(String()));
+            return completionHandler(makeUnexpected(nullptr));
 
         URL requestURL = page.pageLoadState().url();
         m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[0]).value_or(0), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[1]).value_or(0), tokens[2]);
-        return completionHandler(makeUnexpected(String()));
+        return completionHandler(makeUnexpected(nullptr));
     }
 
     ~ScriptMessageClient() { }
@@ -84,7 +84,7 @@ RemoteInspectorProtocolHandler::~RemoteInspectorProtocolHandler()
     }
 
     for (auto* userContentManager : m_userContentManagers) {
-        webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->removeUserMessageHandlerForName("inspector"_s, API::ContentWorld::pageContentWorldSingleton());
+        webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->removeUserMessageHandlerForName("inspector"_si, API::ContentWorld::pageContentWorldSingleton());
         g_object_weak_unref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
 }
@@ -101,7 +101,7 @@ void RemoteInspectorProtocolHandler::userContentManagerDestroyed(RemoteInspector
 
 void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
+    URL requestURL = URL(StringImpl::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
     if (!requestURL.port()) {
         GUniquePtr<GError> error(g_error_new_literal(WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI, "Cannot show inspector URL: no port provided"));
         webkit_uri_scheme_request_finish_error(request, error.get());
@@ -113,7 +113,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     auto webViewResult = m_webViews.add(webView, nullptr);
     if (webViewResult.isNewEntry) {
         g_signal_connect(webView, "notify::uri", G_CALLBACK(+[](WebKitWebView* webView, GParamSpec*, RemoteInspectorProtocolHandler* handler) {
-            URL webViewURL = URL(String::fromUTF8(webkit_web_view_get_uri(webView)));
+            URL webViewURL = URL(StringImpl::fromUTF8(webkit_web_view_get_uri(webView)));
             if (!webViewURL.protocolIs("inspector"_s) || !handler->m_inspectorClients.contains(webViewURL.hostAndPort())) {
                 g_signal_handlers_disconnect_by_data(webView, handler);
                 g_object_weak_unref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), handler);
@@ -126,7 +126,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     auto* userContentManager = webkit_web_view_get_user_content_manager(webView);
     auto userContentManagerResult = m_userContentManagers.add(userContentManager);
     if (userContentManagerResult.isNewEntry) {
-        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_s, API::ContentWorld::pageContentWorldSingleton());
+        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_si, API::ContentWorld::pageContentWorldSingleton());
         webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->addUserScriptMessageHandler(handler.get());
         g_object_weak_ref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
@@ -136,13 +136,13 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     }).iterator->value.get();
     webViewResult.iterator->value = client;
 
-    auto html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI).toString().utf8();
+    auto html = utf8(client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI).toString());
     GRefPtr bytes = gBytesNew(html.span());
     GRefPtr stream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
     webkit_uri_scheme_request_finish(request, stream.get(), html.length(), "text/html");
 }
 
-void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, uint64_t connectionID, uint64_t tatgetID, const String& targetType)
+void RemoteInspectorProtocolHandler::inspect(StringImpl* hostAndPort, uint64_t connectionID, uint64_t tatgetID, StringImpl* targetType)
 {
     if (auto* client = m_inspectorClients.get(hostAndPort))
         client->inspect(connectionID, tatgetID, targetType);
@@ -158,7 +158,7 @@ void RemoteInspectorProtocolHandler::updateTargetList(WebKitWebView* webView)
     scriptBuilder.append("document.getElementById('targetlist').innerHTML='"_s);
     clientForWebView->appendTargetList(scriptBuilder, RemoteInspectorClient::InspectorType::UI, RemoteInspectorClient::ShouldEscapeSingleQuote::Yes);
     scriptBuilder.append("';"_s);
-    auto script = scriptBuilder.toString().utf8();
+    auto script = utf8(scriptBuilder.toString());
     auto scriptCharacters = byteCast<char>(script.span());
     webkit_web_view_evaluate_javascript(webView, scriptCharacters.data(), scriptCharacters.size(), nullptr, nullptr, nullptr, nullptr, nullptr);
 }

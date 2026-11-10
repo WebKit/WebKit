@@ -60,7 +60,7 @@ void RemoteTextureView::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteTextureView::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteTextureView::setLabel(String&& label)
+void RemoteTextureView::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

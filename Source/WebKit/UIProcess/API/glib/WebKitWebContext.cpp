@@ -209,7 +209,7 @@ private:
     HashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebPageProxyIdentifier>, GRefPtr<WebKitURISchemeRequest>> m_requests;
 };
 
-typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
+typedef HashMap<RefPtr<StringImpl>, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 
 #if ENABLE(REMOTE_INSPECTOR)
 class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
@@ -229,9 +229,9 @@ public:
 private:
     bool remoteAutomationAllowed() const override { return true; }
 
-    String browserName() const override;
-    String browserVersion() const override;
-    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
+    RefPtr<StringImpl> browserName() const override;
+    RefPtr<StringImpl> browserVersion() const override;
+    void requestAutomationSession(StringImpl* sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
     void closeAutomationSession() override
     {
         webkitWebContextWillCloseAutomationSession(m_webContext);
@@ -286,7 +286,7 @@ struct _WebKitWebContextPrivate {
     std::unique_ptr<WebKitProtocolHandler> webkitProtocolHandler;
 
 #if !ENABLE(2022_GLIB_API)
-    HashSet<String> dnsPrefetchedHosts;
+    HashSet<RefPtr<StringImpl>> dnsPrefetchedHosts;
     PAL::HysteresisActivity dnsPrefetchHystereris;
 #endif
 
@@ -302,7 +302,7 @@ WEBKIT_DEFINE_FINAL_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT, GO
 std::unique_ptr<WebKitNotificationProvider> s_serviceWorkerNotificationProvider;
 
 #if ENABLE(REMOTE_INSPECTOR)
-String WebKitAutomationClient::browserName() const
+RefPtr<StringImpl> WebKitAutomationClient::browserName() const
 {
     if (!m_webContext->priv->automationSession)
         return { };
@@ -310,7 +310,7 @@ String WebKitAutomationClient::browserName() const
     return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
 }
 
-String WebKitAutomationClient::browserVersion() const
+RefPtr<StringImpl> WebKitAutomationClient::browserVersion() const
 {
     if (!m_webContext->priv->automationSession)
         return { };
@@ -318,7 +318,7 @@ String WebKitAutomationClient::browserVersion() const
     return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
 }
 
-void WebKitAutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+void WebKitAutomationClient::requestAutomationSession(StringImpl* sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     if (m_webContext->priv->automationSession)
         g_critical("WebKitWebContext already has an active automation session.");
@@ -450,7 +450,7 @@ static void webkitWebContextConstructed(GObject* object)
         // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
-    configuration->setTimeZoneOverride(String { priv->timeZoneOverride });
+    configuration->setTimeZoneOverride(StringImpl::fromUTF8(priv->timeZoneOverride.span()));
 
 #if !ENABLE(2022_GLIB_API)
     if (!priv->websiteDataManager)
@@ -1093,7 +1093,7 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
     g_return_val_if_fail(uri, nullptr);
 
-    WebCore::ResourceRequest request(String::fromUTF8(uri));
+    WebCore::ResourceRequest request(StringImpl::fromUTF8(uri));
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
     auto downloadProxy = context->priv->processPool->download(websiteDataStore, nullptr, request, { });
     auto download = webkitDownloadCreate(downloadProxy.get());
@@ -1174,9 +1174,9 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
     WebKitWebContextPrivate* priv = context->priv;
     ensureFaviconDatabase(context);
 
-    String directoryPath = FileSystem::stringFromFileSystemRepresentation(path);
+    RefPtr<StringImpl> directoryPath = FileSystem::stringFromFileSystemRepresentation(path);
     // Use default if nullptr is passed as parameter.
-    if (directoryPath.isEmpty()) {
+    if (isEmpty(directoryPath)) {
 #if PLATFORM(GTK)
         const char* portDirectory = "webkitgtk";
 #elif PLATFORM(WPE)
@@ -1185,7 +1185,7 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
         GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_cache_dir(), portDirectory, "icondatabase", nullptr));
         directoryPath = FileSystem::stringFromFileSystemRepresentation(databaseDirectory.get());
     }
-    priv->faviconDatabaseDirectory = directoryPath.utf8();
+    priv->faviconDatabaseDirectory = utf8(directoryPath);
 
     // Build the full path to the icon database file on disk.
     auto faviconDatabasePath = gBuildFilename(priv->faviconDatabaseDirectory, "WebpageIcons.db");
@@ -1387,10 +1387,10 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     }
 
     auto handler = WebKitURISchemeHandler::create(context, callback, userData, destroyNotify);
-    auto addResult = context->priv->uriSchemeHandlers.add(String::fromUTF8(scheme), WTF::move(handler));
+    auto addResult = context->priv->uriSchemeHandlers.add(StringImpl::fromUTF8(scheme), WTF::move(handler));
     if (addResult.isNewEntry) {
         for (auto* webView : context->priv->webViews.values())
-            webkitWebViewGetPage(webView).setURLSchemeHandlerForScheme(*addResult.iterator->value, String::fromUTF8(scheme));
+            webkitWebViewGetPage(webView).setURLSchemeHandlerForScheme(*addResult.iterator->value, StringImpl::fromUTF8(scheme));
     } else
         g_critical("Cannot register URI scheme %s more than once", scheme);
 }
@@ -1573,14 +1573,14 @@ const gchar* const* webkit_web_context_get_spell_checking_languages(WebKitWebCon
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
 #if ENABLE(SPELLCHECK)
-    Vector<String> spellCheckingLanguages = TextChecker::loadedSpellCheckingLanguages();
+    Vector<RefPtr<StringImpl>> spellCheckingLanguages = TextChecker::loadedSpellCheckingLanguages();
     if (spellCheckingLanguages.isEmpty())
         return nullptr;
 
     static GRefPtr<GPtrArray> languagesToReturn;
     languagesToReturn = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (const auto& language : spellCheckingLanguages)
-        g_ptr_array_add(languagesToReturn.get(), gStrdup(language.utf8()));
+        g_ptr_array_add(languagesToReturn.get(), gStrdup(utf8(language)));
     g_ptr_array_add(languagesToReturn.get(), nullptr);
 
     return reinterpret_cast<char**>(languagesToReturn->pdata);
@@ -1612,9 +1612,9 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
     g_return_if_fail(languages);
 
 #if ENABLE(SPELLCHECK)
-    Vector<String> spellCheckingLanguages;
+    Vector<RefPtr<StringImpl>> spellCheckingLanguages;
     for (const char* language : span(const_cast<char**>(languages)))
-        spellCheckingLanguages.append(String::fromUTF8(language));
+        spellCheckingLanguages.append(StringImpl::fromUTF8(language));
     TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }
@@ -1644,13 +1644,13 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
     if (!languagesSpan.size())
         return;
 
-    Vector<String> languages;
+    Vector<RefPtr<StringImpl>> languages;
     for (auto language : languagesSpan) {
         // Do not propagate the C locale to WebCore.
         if (!g_ascii_strcasecmp(language, "C") || !g_ascii_strcasecmp(language, "POSIX"))
             languages.append("en-US"_s);
         else
-            languages.append(makeStringByReplacingAll(String::fromUTF8(language), '_', '-'));
+            languages.append(makeStringByReplacingAll(StringImpl::fromUTF8(language), '_', '-'));
     }
     context->priv->processPool->setOverrideLanguages(WTF::move(languages));
 }
@@ -1754,9 +1754,9 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(hostname);
 
-    if (context->priv->dnsPrefetchedHosts.add(String::fromUTF8(hostname)).isNewEntry) {
+    if (context->priv->dnsPrefetchedHosts.add(StringImpl::fromUTF8(hostname)).isNewEntry) {
         auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-        websiteDataStore.networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
+        websiteDataStore.networkProcess().send(Messages::NetworkProcess::PrefetchDNS(StringImpl::fromUTF8(hostname)), 0);
     }
     context->priv->dnsPrefetchHystereris.impulse();
 }
@@ -1782,7 +1782,7 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
 
     auto certificateInfo = WebCore::CertificateInfo(certificate, static_cast<GTlsCertificateFlags>(0));
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-    websiteDataStore.allowSpecificHTTPSCertificateForHost(certificateInfo, String::fromUTF8(host));
+    websiteDataStore.allowSpecificHTTPSCertificateForHost(certificateInfo, StringImpl::fromUTF8(host));
 }
 #endif
 
@@ -1876,10 +1876,10 @@ guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
 }
 #endif
 
-static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* map, bool allowed)
+static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<RefPtr<StringImpl>, bool>* map, bool allowed)
 {
-    String string = webkitSecurityOriginGetSecurityOriginData(origin).toString();
-    if (string != "null"_s)
+    RefPtr<StringImpl> string = webkitSecurityOriginGetSecurityOriginData(origin).toString();
+    if (!equal(string, "null"_s))
         map->set(string, allowed);
 }
 
@@ -1910,12 +1910,12 @@ static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* 
  */
 void webkit_web_context_initialize_notification_permissions(WebKitWebContext* context, GList* allowedOrigins, GList* disallowedOrigins)
 {
-    HashMap<String, bool> map;
+    HashMap<RefPtr<StringImpl>, bool> map;
     g_list_foreach(allowedOrigins, [](gpointer data, gpointer userData) {
-        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, bool>*>(userData), true);
+        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<RefPtr<StringImpl>, bool>*>(userData), true);
     }, &map);
     g_list_foreach(disallowedOrigins, [](gpointer data, gpointer userData) {
-        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, bool>*>(userData), false);
+        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<RefPtr<StringImpl>, bool>*>(userData), false);
     }, &map);
     context->priv->notificationProvider->setNotificationPermissions(WTF::move(map));
 }

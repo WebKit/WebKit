@@ -61,7 +61,7 @@ final class PhoneNumberPossessionController {
     @_expose(Cxx)
     func request(
         _ request: sending WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: sending WTF.String,
+        origin: sending WTF.StringImpl?,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor?,
         completionHandler: sending WebKit.PhoneNumberPossessionRequestCompletionHandler
     ) {
@@ -125,7 +125,7 @@ extension PhoneNumberPossessionController {
 
         func request(
             _ request: sending WebKit.RefCountedPhoneNumberPossessionRequest,
-            origin: sending WTF.String,
+            origin: sending WTF.StringImpl?,
             presentationAnchor: PhoneNumberPossessionPresentationAnchor?
         ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
             if hasStartedRequest {

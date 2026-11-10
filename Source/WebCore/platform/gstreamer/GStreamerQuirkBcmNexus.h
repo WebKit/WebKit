@@ -35,10 +35,10 @@ public:
 
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;
     std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const final { return GST_ELEMENT_FACTORY_TYPE_PARSER; }
-    Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
+    Vector<RefPtr<StringImpl>> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
 
 private:
-    Vector<String> m_disallowedWebAudioDecoders;
+    Vector<RefPtr<StringImpl>> m_disallowedWebAudioDecoders;
 };
 
 } // namespace WebCore

@@ -150,13 +150,13 @@ public:
     void removeRemoteTextTrack(WebCore::TrackID);
     void remoteTextTrackConfigurationChanged(WebCore::TrackID, TextTrackPrivateRemoteConfiguration&&);
 
-    void parseWebVTTFileHeader(WebCore::TrackID, String&&);
+    void parseWebVTTFileHeader(WebCore::TrackID, RefPtr<StringImpl>&&);
     void parseWebVTTCueData(WebCore::TrackID, std::span<const uint8_t>);
     void parseWebVTTCueDataStruct(WebCore::TrackID, WebCore::ISOWebVTTCue&&);
 
     void addDataCue(WebCore::TrackID, MediaTime&& start, MediaTime&& end, std::span<const uint8_t>);
 #if ENABLE(DATACUE_VALUE)
-    void addDataCueWithType(WebCore::TrackID, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&, String&&);
+    void addDataCueWithType(WebCore::TrackID, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&, RefPtr<StringImpl>&&);
     void updateDataCue(WebCore::TrackID, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
     void removeDataCue(WebCore::TrackID, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
 #endif
@@ -171,7 +171,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void waitingForKeyChanged(bool);
-    void initializationDataEncountered(const String&, std::span<const uint8_t>);
+    void initializationDataEncountered(StringImpl*, std::span<const uint8_t>);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -290,8 +290,8 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const final;
-    String accessLog() const final;
-    String errorLog() const final;
+    RefPtr<StringImpl> accessLog() const final;
+    RefPtr<StringImpl> errorLog() const final;
 #endif
 
     void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy) final;
@@ -359,8 +359,8 @@ private:
     bool hasAvailableVideoFrame() const final;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    String wirelessPlaybackTargetName() const final;
-    String wirelessPlaybackRouteName() const final;
+    RefPtr<StringImpl> wirelessPlaybackTargetName() const final;
+    RefPtr<StringImpl> wirelessPlaybackRouteName() const final;
     WebCore::MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
 
     bool wirelessVideoPlaybackDisabled() const final;
@@ -392,14 +392,14 @@ private:
     unsigned audioDecodedByteCount() const final;
     unsigned videoDecodedByteCount() const final;
 
-    String engineDescription() const final;
+    RefPtr<StringImpl> engineDescription() const final;
 
 #if ENABLE(WEB_AUDIO)
     WebCore::AudioSourceProvider* audioSourceProvider() final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<WebCore::LegacyCDMSession> createSession(const String&, WebCore::LegacyCDMSessionClient&) final;
+    RefPtr<WebCore::LegacyCDMSession> createSession(StringImpl*, WebCore::LegacyCDMSessionClient&) final;
     void setCDM(WebCore::LegacyCDM*) final;
     void setCDMSession(WebCore::LegacyCDMSession*) final;
     void keyAdded() final;
@@ -422,7 +422,7 @@ private:
 
     void tracksChanged() final;
 
-    String languageOfPrimaryAudioTrack() const final;
+    RefPtr<StringImpl> languageOfPrimaryAudioTrack() const final;
 
     size_t extraMemoryCost() const final;
 
@@ -461,10 +461,10 @@ private:
     void setShouldCheckHardwareSupport(bool) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String defaultSpatialTrackingLabel() const final;
-    void setDefaultSpatialTrackingLabel(const String&) final;
-    String spatialTrackingLabel() const final;
-    void setSpatialTrackingLabel(const String&) final;
+    RefPtr<StringImpl> defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(StringImpl*) final;
+    RefPtr<StringImpl> spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(StringImpl*) final;
 #endif
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -547,8 +547,8 @@ private:
     WebCore::HostingContext m_layerHostingContext;
     std::optional<WebCore::VideoFrameMetadata> m_videoFrameMetadata;
     bool m_isGatheringVideoFrameMetadata { false };
-    String m_defaultSpatialTrackingLabel;
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
     WeakPtr<WebCore::MessageClientForTesting> m_internalMessageClient;
     HashMap<RemoteMediaResourceLoaderIdentifier, Ref<RemoteMediaResourceLoaderProxy>> m_mediaResourceLoaders;
 };

@@ -65,7 +65,7 @@ public:
     void setHTTPCookieAcceptPolicy(PAL::SessionID, WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
 
 #if USE(SOUP)
-    void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, SoupCookiePersistentStorageType);
+    void setCookiePersistentStorage(PAL::SessionID, StringImpl* storagePath, SoupCookiePersistentStorageType);
 #endif
 
     void notifyCookiesDidChange(PAL::SessionID);
@@ -74,10 +74,10 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void getHostnamesWithCookies(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
+    void getHostnamesWithCookies(PAL::SessionID, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
 
     void deleteCookie(PAL::SessionID, const WebCore::Cookie&, CompletionHandler<void()>&&);
-    void deleteCookiesForHostnames(PAL::SessionID, const Vector<String>&, CompletionHandler<void()>&&);
+    void deleteCookiesForHostnames(PAL::SessionID, const Vector<RefPtr<StringImpl>>&, CompletionHandler<void()>&&);
     void deleteAllCookies(PAL::SessionID, CompletionHandler<void()>&&);
     void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, CompletionHandler<void()>&&);
 

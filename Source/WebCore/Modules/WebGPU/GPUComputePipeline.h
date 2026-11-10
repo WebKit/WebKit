@@ -53,8 +53,8 @@ public:
     NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
     static void willDestroyDevice(GPUDevice&);
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
@@ -62,8 +62,8 @@ public:
     const ::WebGPU::ComputePipeline& backing() const { return m_backing; }
 
     NODELETE GPUDevice* device() const;
-    const String& shaderSource() const { return m_shaderModuleDescriptor.code; }
-    void updateShader(const String&, CompletionHandler<void(bool)>&&);
+    const RefPtr<StringImpl>& shaderSource() const { return m_shaderModuleDescriptor.code; }
+    void updateShader(StringImpl*, CompletionHandler<void(bool)>&&);
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

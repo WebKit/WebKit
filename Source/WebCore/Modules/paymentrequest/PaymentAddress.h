@@ -40,30 +40,30 @@ public:
         return adoptRef(*new PaymentAddress(std::forward<Args>(args)...));
     }
 
-    const String& country() const LIFETIME_BOUND { return m_country; }
-    const Vector<String>& addressLine() const LIFETIME_BOUND { return m_addressLine; }
-    const String& region() const LIFETIME_BOUND { return m_region; }
-    const String& city() const LIFETIME_BOUND { return m_city; }
-    const String& dependentLocality() const LIFETIME_BOUND { return m_dependentLocality; }
-    const String& postalCode() const LIFETIME_BOUND { return m_postalCode; }
-    const String& sortingCode() const LIFETIME_BOUND { return m_sortingCode; }
-    const String& organization() const LIFETIME_BOUND { return m_organization; }
-    const String& recipient() const LIFETIME_BOUND { return m_recipient; }
-    const String& phone() const LIFETIME_BOUND { return m_phone; }
+    const RefPtr<StringImpl>& country() const LIFETIME_BOUND { return m_country; }
+    const Vector<RefPtr<StringImpl>>& addressLine() const LIFETIME_BOUND { return m_addressLine; }
+    const RefPtr<StringImpl>& region() const LIFETIME_BOUND { return m_region; }
+    const RefPtr<StringImpl>& city() const LIFETIME_BOUND { return m_city; }
+    const RefPtr<StringImpl>& dependentLocality() const LIFETIME_BOUND { return m_dependentLocality; }
+    const RefPtr<StringImpl>& postalCode() const LIFETIME_BOUND { return m_postalCode; }
+    const RefPtr<StringImpl>& sortingCode() const LIFETIME_BOUND { return m_sortingCode; }
+    const RefPtr<StringImpl>& organization() const LIFETIME_BOUND { return m_organization; }
+    const RefPtr<StringImpl>& recipient() const LIFETIME_BOUND { return m_recipient; }
+    const RefPtr<StringImpl>& phone() const LIFETIME_BOUND { return m_phone; }
 
 private:
-    PaymentAddress(const String& country, const Vector<String>& addressLine, const String& region, const String& city, const String& dependentLocality, const String& postalCode, const String& sortingCode, const String& organization, const String& recipient, const String& phone);
+    PaymentAddress(StringImpl* country, const Vector<RefPtr<StringImpl>>& addressLine, StringImpl* region, StringImpl* city, StringImpl* dependentLocality, StringImpl* postalCode, StringImpl* sortingCode, StringImpl* organization, StringImpl* recipient, StringImpl* phone);
 
-    String m_country;
-    Vector<String> m_addressLine;
-    String m_region;
-    String m_city;
-    String m_dependentLocality;
-    String m_postalCode;
-    String m_sortingCode;
-    String m_organization;
-    String m_recipient;
-    String m_phone;
+    RefPtr<StringImpl> m_country;
+    Vector<RefPtr<StringImpl>> m_addressLine;
+    RefPtr<StringImpl> m_region;
+    RefPtr<StringImpl> m_city;
+    RefPtr<StringImpl> m_dependentLocality;
+    RefPtr<StringImpl> m_postalCode;
+    RefPtr<StringImpl> m_sortingCode;
+    RefPtr<StringImpl> m_organization;
+    RefPtr<StringImpl> m_recipient;
+    RefPtr<StringImpl> m_phone;
 };
 
 } // namespace WebCore

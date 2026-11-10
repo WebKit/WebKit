@@ -125,7 +125,7 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
 {
     RefPtr context = document.scriptExecutionContext();
     if (!context)
-        return promise.reject(Exception { ExceptionCode::AbortError, "Document has no script execution context."_s });
+        return promise.reject(Exception { ExceptionCode::AbortError, "Document has no script execution context."_si });
 
     if (m_interactionState != InteractionState::Idle) {
         // The spec queues this on the *requesting* document's global, which is not the
@@ -143,7 +143,7 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
     m_activeSession = session.ptr();
 
     if (!m_page)
-        return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Page was destroyed."_s });
+        return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Page was destroyed."_si });
 
     auto validatedRequestsOrException = m_client->validateAndParseDigitalCredentialRequests(
         protect(document.topOrigin()),
@@ -164,7 +164,7 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
         return request.has_value();
     });
     if (!hasValidatedRequest && !hasOpenID4VPRequest)
-        return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_s });
+        return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_si });
 
     if (signal) {
         ASSERT(!signal->aborted());
@@ -179,7 +179,7 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
     }
 
     if (signal && signal->aborted())
-        return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Signal was already aborted."_s });
+        return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Signal was already aborted."_si });
 
     initiateTheCredentialRequest(document, WTF::move(validatedCredentialRequests), WTF::move(unvalidatedRequests), signal);
 }
@@ -231,13 +231,13 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(std::expecte
 
     auto& responseData = responseOrException.value();
 
-    if (responseData.responseDataJSON.isEmpty())
-        return rejectTheCredentialRequestWith(Exception { ExceptionCode::NotAllowedError, "The user cancelled the credential request."_s });
+    if (isEmpty(responseData.responseDataJSON))
+        return rejectTheCredentialRequestWith(Exception { ExceptionCode::NotAllowedError, "The user cancelled the credential request."_si });
 
     session->queueSettlement([weakThis = WeakPtr { *this }, responseDataJSON = responseData.responseDataJSON, protocol = responseData.protocol](auto& promise) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            promise.reject(Exception { ExceptionCode::AbortError, "Page was destroyed."_s });
+            promise.reject(Exception { ExceptionCode::AbortError, "Page was destroyed."_si });
             return;
         }
 
@@ -245,7 +245,7 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(std::expecte
         if (parsedObject.hasException())
             promise.reject(parsedObject.releaseException());
         else if (!parsedObject.returnValue())
-            promise.reject(Exception { ExceptionCode::TypeError, "Parsed JSON data is not an object."_s });
+            promise.reject(Exception { ExceptionCode::TypeError, "Parsed JSON data is not an object."_si });
         else {
             auto returnValue = parsedObject.releaseReturnValue();
             Ref credential = DigitalCredential::create({ returnValue->vm(), returnValue }, protocol);
@@ -254,19 +254,19 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(std::expecte
     });
 }
 
-ExceptionOr<JSC::JSObject*> CredentialRequestCoordinator::parseDigitalCredentialsResponseData(const String& responseDataJSON) const
+ExceptionOr<JSC::JSObject*> CredentialRequestCoordinator::parseDigitalCredentialsResponseData(StringImpl* responseDataJSON) const
 {
     RefPtr page = m_page.get();
     if (!page)
-        return Exception { ExceptionCode::AbortError, "Page was destroyed."_s };
+        return Exception { ExceptionCode::AbortError, "Page was destroyed."_si };
 
     RefPtr document = page->localTopDocument();
     if (!document)
-        return Exception { ExceptionCode::AbortError, "No Document."_s };
+        return Exception { ExceptionCode::AbortError, "No Document."_si };
 
     auto* globalObject = document->globalObject();
     if (!globalObject)
-        return Exception { ExceptionCode::AbortError, "No JavaScript global object available."_s };
+        return Exception { ExceptionCode::AbortError, "No JavaScript global object available."_si };
 
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -274,18 +274,18 @@ ExceptionOr<JSC::JSObject*> CredentialRequestCoordinator::parseDigitalCredential
     auto parsedJSON = JSC::JSONParse(globalObject, responseDataJSON);
 
     if (!parsedJSON)
-        return Exception { ExceptionCode::SyntaxError, "Failed to parse response JSON data."_s };
+        return Exception { ExceptionCode::SyntaxError, "Failed to parse response JSON data."_si };
 
     if (scope.exception()) [[unlikely]] {
         LOG(DigitalCredentials, "Failed to parse response JSON data");
         bool cleared = scope.tryClearException();
         // We're on the main thread so we can't get a termination exception.
         ASSERT_UNUSED(cleared, cleared);
-        return Exception { ExceptionCode::SyntaxError, "Failed to parse response JSON data."_s };
+        return Exception { ExceptionCode::SyntaxError, "Failed to parse response JSON data."_si };
     }
 
     if (!parsedJSON.isObject())
-        return Exception { ExceptionCode::TypeError, "Parsed JSON data is not an object."_s };
+        return Exception { ExceptionCode::TypeError, "Parsed JSON data is not an object."_si };
 
     return parsedJSON.getObject();
 }
@@ -340,7 +340,7 @@ void CredentialRequestCoordinator::abortTheCredentialRequest(ExceptionOr<JSC::JS
         else if (protectedReason)
             promise.template rejectType<IDLAny>(protectedReason->get());
         else
-            promise.reject(Exception { ExceptionCode::AbortError, "The credential request was aborted."_s });
+            promise.reject(Exception { ExceptionCode::AbortError, "The credential request was aborted."_si });
     });
 }
 

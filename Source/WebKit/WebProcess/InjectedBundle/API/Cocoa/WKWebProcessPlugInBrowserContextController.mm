@@ -490,13 +490,13 @@ NODELETE static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction act
         }
 
     private:
-        bool shouldInsertText(WebKit::WebPage&, const WTF::String& text, const std::optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction action) final
+        bool shouldInsertText(WebKit::WebPage&, StringImpl* text, const std::optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction action) final
         {
             if (!m_delegateMethods.shouldInsertText)
                 return true;
 
             RetainPtr controller = m_controller.get();
-            return [controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:controller.get() shouldInsertText:text.createNSString().get() replacingRange:protect(wrapper(*WebKit::createHandle(rangeToReplace))).get() givenAction:toWK(action)];
+            return [controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:controller.get() shouldInsertText:createNSString(text).get() replacingRange:protect(wrapper(*WebKit::createHandle(rangeToReplace))).get() givenAction:toWK(action)];
         }
 
         bool shouldChangeSelectedRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity affinity, bool stillSelecting) final
@@ -522,7 +522,7 @@ NODELETE static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction act
             return [controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:controller.get() shouldChangeSelectedRange:apiFromRange.get() toRange:apiToRange.get() affinity:apiAffinity stillSelecting:stillSelecting];
         }
 
-        void didChange(WebKit::WebPage&, const String&) final
+        void didChange(WebKit::WebPage&, StringImpl*) final
         {
             if (!m_delegateMethods.didChange)
                 return;
@@ -540,7 +540,7 @@ NODELETE static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction act
             [controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:controller.get() willWriteRangeToPasteboard:protect(wrapper(WebKit::createHandle(range).get())).get()];
         }
 
-        void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final
+        void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& range, Vector<RefPtr<StringImpl>>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final
         {
             if (!m_delegateMethods.getPasteboardDataForRange)
                 return;
@@ -549,7 +549,7 @@ NODELETE static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction act
             RetainPtr dataByType = [controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:controller.get() pasteboardDataForRange:protect(wrapper(WebKit::createHandle(range).get())).get()];
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *type in dataByType.get()) {
-                pasteboardTypes.append(type);
+                pasteboardTypes.append(StringImpl::create(type));
                 pasteboardData.append(WebCore::SharedBuffer::create(dataByType.get()[type]));
             };
         }
@@ -619,7 +619,7 @@ NODELETE static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction act
 
 - (NSString *)_groupIdentifier
 {
-    return _page->pageGroup().identifier().createNSString().autorelease();
+    return createNSString(_page->pageGroup().identifier()).autorelease();
 }
 
 @end

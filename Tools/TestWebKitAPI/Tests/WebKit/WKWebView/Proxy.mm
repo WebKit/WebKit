@@ -588,7 +588,7 @@ TEST(WebKit, SOCKS5ProxyChangeLetsLoadInFlightFinish)
 
     // The load that was in flight during the change finishes through proxy A. The response closes
     // the connection, so that this test is about that load, and not about reusing the connection.
-    connectionAwaitingResponse->send(HTTPResponse({ { "Connection"_s, "close"_s } }, "<script>alert('proxy A')</script>"_s).serialize());
+    connectionAwaitingResponse->send(HTTPResponse({ { "Connection"_s, "close"_s } }, "<script>alert('proxy A')</script>"_si).serialize());
     EXPECT_WK_STREQ([webView _test_waitForAlert], "proxy A");
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/second"]]];
@@ -762,7 +762,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
         HTTPServer server([connectionCount = 0, shouldRelaxThirdPartyCookieBlocking] (Connection connection) mutable {
             ++connectionCount;
             connection.receiveHTTPRequest([connection, connectionCount, shouldRelaxThirdPartyCookieBlocking] (Vector<char>&& request) {
-                String reply;
+                RefPtr<StringImpl> reply;
                 constexpr auto body =
                 "<script>"
                     "fetch("

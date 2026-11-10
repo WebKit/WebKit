@@ -51,7 +51,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     ASSERT(type() == InternalFunctionType || type() == NullSetterFunctionType);
 }
 
-void InternalFunction::finishCreation(VM& vm, unsigned length, const String& name, PropertyAdditionMode nameAdditionMode)
+void InternalFunction::finishCreation(VM& vm, unsigned length, StringImpl* name, PropertyAdditionMode nameAdditionMode)
 {
     Base::finishCreation(vm);
 
@@ -83,11 +83,11 @@ void InternalFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, InternalFunction);
 
-String InternalFunction::name()
+RefPtr<StringImpl> InternalFunction::name()
 {
 #if ASSERT_ENABLED
     auto gcOwnedData = m_originalName->tryGetValue();
-    const String& name = gcOwnedData;
+    const RefPtr<StringImpl>& name = gcOwnedData;
     ASSERT(name); // m_originalName was built from a String, and hence, there is no rope to resolve.
     return name;
 #else
@@ -95,14 +95,14 @@ String InternalFunction::name()
 #endif
 }
 
-String InternalFunction::displayName(VM& vm)
+RefPtr<StringImpl> InternalFunction::displayName(VM& vm)
 {
     JSValue displayName = getDirect(vm, vm.propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
     
-    return String();
+    return nullptr;
 }
 
 CallData InternalFunction::getCallData(JSCell* cell)
@@ -133,11 +133,11 @@ CallData InternalFunction::getConstructData(JSCell* cell)
     return constructData;
 }
 
-String InternalFunction::calculatedDisplayName(VM& vm)
+RefPtr<StringImpl> InternalFunction::calculatedDisplayName(VM& vm)
 {
-    String explicitName = displayName(vm);
+    RefPtr<StringImpl> explicitName = displayName(vm);
     
-    if (!explicitName.isEmpty())
+    if (!isEmpty(explicitName))
         return explicitName;
     
     return name();
@@ -187,7 +187,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     return baseClass;
 }
 
-InternalFunction* InternalFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeFunction nativeFunction)
+InternalFunction* InternalFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGlobalObject* globalObject, unsigned length, StringImpl* name, NativeFunction nativeFunction)
 {
     Structure* structure = Structure::create(vm, globalObject, globalObject->objectPrototype(), TypeInfo(InternalFunctionType, InternalFunction::StructureFlags | MasqueradesAsUndefined), InternalFunction::info());
     globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(globalObject->vm(), "Allocated masquerading object");

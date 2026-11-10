@@ -63,9 +63,9 @@ public:
     bool hasHDRGainMap() const;
     bool hasHDRColorSpace() const;
 
-    String uti() const;
-    String filenameExtension() const;
-    String accessibilityDescription() const;
+    RefPtr<StringImpl> uti() const;
+    RefPtr<StringImpl> filenameExtension() const;
+    RefPtr<StringImpl> accessibilityDescription() const;
     std::optional<IntPoint> hotSpot() const;
     SubsamplingLevel maximumSubsamplingLevel() const;
     SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor, AllowImageSubsampling) const;
@@ -132,9 +132,9 @@ private:
     mutable std::optional<Color> m_singlePixelSolidColor;
     mutable bool m_hasHDRGainMap { false };
 
-    mutable String m_uti;
-    mutable String m_filenameExtension;
-    mutable String m_accessibilityDescription;
+    mutable RefPtr<StringImpl> m_uti;
+    mutable RefPtr<StringImpl> m_filenameExtension;
+    mutable RefPtr<StringImpl> m_accessibilityDescription;
     mutable std::optional<IntPoint> m_hotSpot;
     mutable SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };
 

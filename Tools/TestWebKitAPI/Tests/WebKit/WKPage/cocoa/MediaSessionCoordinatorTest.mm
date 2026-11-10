@@ -225,35 +225,35 @@ public:
         if (!result)
             NSLog(@"-[_createMediaSessionCoordinatorForTesting:completionHandler:] failed!");
 
-        waitForEventListenerToBeCalled("coordinatorstatechange"_s);
-        ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_s));
+        waitForEventListenerToBeCalled("coordinatorstatechange"_si);
+        ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_si));
     }
 
     TestWKWebView* webView() const { return _webView.get(); }
     _WKMockMediaSessionCoordinator* coordinator() const { return _coordinator.get(); }
 
-    void loadPageAndBecomeReady(const String& pageName)
+    void loadPageAndBecomeReady(StringImpl* pageName)
     {
-        [_webView synchronouslyLoadTestPageNamed:pageName.createNSString().get()];
+        [_webView synchronouslyLoadTestPageNamed:createNSString(pageName).get()];
 
         bool canplaythrough = false;
         [webView() performAfterReceivingMessage:@"canplaythrough event" action:[&] {
             canplaythrough = true;
         }];
-        runScriptWithUserGesture("load()"_s);
+        runScriptWithUserGesture("load()"_si);
         Util::run(&canplaythrough);
     }
 
-    void runScriptWithUserGesture(const String& script)
+    void runScriptWithUserGesture(StringImpl* script)
     {
-        [_webView objectByEvaluatingJavaScriptWithUserGesture:script.createNSString().get()];
+        [_webView objectByEvaluatingJavaScriptWithUserGesture:createNSString(script).get()];
     }
 
     void play()
     {
         bool playing = false;
         [_webView performAfterReceivingMessage:@"play event" action:[&] { playing = true; }];
-        runScriptWithUserGesture("audio.play()"_s);
+        runScriptWithUserGesture("audio.play()"_si);
         Util::run(&playing);
     }
 
@@ -261,7 +261,7 @@ public:
     {
         bool paused = false;
         [_webView performAfterReceivingMessage:@"pause event" action:[&] { paused = true; }];
-        runScriptWithUserGesture("audio.pause()"_s);
+        runScriptWithUserGesture("audio.pause()"_si);
         Util::run(&paused);
     }
 
@@ -269,13 +269,13 @@ public:
     {
         for (auto event : events) {
             auto eventMessage = makeString(event, " event"_s);
-            [webView() performAfterReceivingMessage:eventMessage.createNSString().get() action:[this, eventMessage = WTF::move(eventMessage)] {
+            [webView() performAfterReceivingMessage:createNSString(eventMessage).get() action:[this, eventMessage = WTF::move(eventMessage)] {
                 _eventListenersCalled.add(eventMessage);
             }];
         }
     }
 
-    bool eventListenerWasCalled(const String& event)
+    bool eventListenerWasCalled(StringImpl* event)
     {
         return _eventListenersCalled.contains(makeString(event, " event"_s));
     }
@@ -297,9 +297,9 @@ public:
         return;
     }
 
-    void waitForEventListenerToBeCalled(const String& event)
+    void waitForEventListenerToBeCalled(StringImpl* event)
     {
-        executeUntil([&] {
+        executeUntil([&, event = RefPtr { event }] {
             return eventListenerWasCalled(event);
         });
     }
@@ -308,7 +308,7 @@ public:
     {
         for (auto handler : handlers) {
             auto handlerMessage = makeString(handler, suffix);
-            RetainPtr nsHandlerMessage = handlerMessage.createNSString();
+            RetainPtr nsHandlerMessage = createNSString(handlerMessage);
             [_messageHandlers addObject:nsHandlerMessage.get()];
             [webView() performAfterReceivingMessage:nsHandlerMessage.get() action:[this, handlerMessage = WTF::move(handlerMessage)] {
                 _sessionMessagesPosted.add(handlerMessage);
@@ -326,14 +326,14 @@ public:
         listenForMessagesPosted(handlers, " handler"_s);
     }
 
-    bool sessionHandlerWasCalled(const String& handler)
+    bool sessionHandlerWasCalled(StringImpl* handler)
     {
         return _sessionMessagesPosted.contains(makeString(handler, " handler"_s));
     }
 
-    void waitForSessionHandlerToBeCalled(const String& handler)
+    void waitForSessionHandlerToBeCalled(StringImpl* handler)
     {
-        executeUntil([&] {
+        executeUntil([&, handler = RefPtr { handler }] {
             return sessionHandlerWasCalled(handler);
         });
     }
@@ -344,25 +344,25 @@ public:
         listenForMessagesPosted(handlers, " rejected"_s);
     }
 
-    void clearPromiseMessages(const String& promise)
+    void clearPromiseMessages(StringImpl* promise)
     {
         _sessionMessagesPosted.remove(makeString(promise, " resolved"_s));
         _sessionMessagesPosted.remove(makeString(promise, " rejected"_s));
     }
 
-    bool promiseWasResolved(const String& promise)
+    bool promiseWasResolved(StringImpl* promise)
     {
         return _sessionMessagesPosted.contains(makeString(promise, " resolved"_s));
     }
 
-    bool promiseWasRejected(const String& promise)
+    bool promiseWasRejected(StringImpl* promise)
     {
         return _sessionMessagesPosted.contains(makeString(promise, " rejected"_s));
     }
 
-    void waitForPromise(const String& promise)
+    void waitForPromise(StringImpl* promise)
     {
-        executeUntil([&] {
+        executeUntil([&, promise = RefPtr { promise }] {
             return promiseWasResolved(promise) || promiseWasRejected(promise);
         }, 200);
     }
@@ -371,8 +371,8 @@ private:
     RetainPtr<_WKMockMediaSessionCoordinator> _coordinator;
     RetainPtr<WKWebViewConfiguration> _configuration;
     RetainPtr<TestWKWebView> _webView;
-    HashSet<String> _sessionMessagesPosted;
-    HashSet<String> _eventListenersCalled;
+    HashSet<RefPtr<StringImpl>> _sessionMessagesPosted;
+    HashSet<RefPtr<StringImpl>> _eventListenersCalled;
     RetainPtr<NSMutableArray> _messageHandlers;
 };
 
@@ -383,7 +383,7 @@ TEST_F(MediaSessionCoordinatorTest, DISABLED_JoinAndLeave)
 TEST_F(MediaSessionCoordinatorTest, JoinAndLeave)
 #endif
 {
-    loadPageAndBecomeReady("media-remote"_s);
+    loadPageAndBecomeReady("media-remote"_si);
     listenForPromiseMessages({ "join"_s });
 
     createCoordinator();
@@ -394,27 +394,27 @@ TEST_F(MediaSessionCoordinatorTest, JoinAndLeave)
     // 'join()' should fail if the remote coordinator refuses.
     coordinator().failsCommands = YES;
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForPromise("join"_s);
-    ASSERT_TRUE(promiseWasRejected("join"_s));
-    clearPromiseMessages("join"_s);
+    waitForPromise("join"_si);
+    ASSERT_TRUE(promiseWasRejected("join"_si));
+    clearPromiseMessages("join"_si);
     EXPECT_STREQ("join", coordinator().lastMethodCalled.UTF8String);
 
     // And it shoud succeed if it allows it.
     coordinator().failsCommands = NO;
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForPromise("join"_s);
-    ASSERT_TRUE(promiseWasResolved("join"_s));
-    clearPromiseMessages("join"_s);
+    waitForPromise("join"_si);
+    ASSERT_TRUE(promiseWasResolved("join"_si));
+    clearPromiseMessages("join"_si);
     EXPECT_STREQ("join", coordinator().lastMethodCalled.UTF8String);
 
     state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
     EXPECT_STREQ("joined", [state UTF8String]);
 
     [webView() objectByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.leave()"];
-    String lastMethodCalled;
+    RefPtr<StringImpl> lastMethodCalled;
     executeUntil([&] {
-        lastMethodCalled = coordinator().lastMethodCalled;
-        return lastMethodCalled == "leave"_s;
+        lastMethodCalled = StringImpl::create(coordinator().lastMethodCalled);
+        return equal(lastMethodCalled, "leave"_s);
     });
     EXPECT_EQ("leave"_s, lastMethodCalled);
 
@@ -423,8 +423,8 @@ TEST_F(MediaSessionCoordinatorTest, JoinAndLeave)
 
     // It shouldn't be possible to re-join a close coordinator.
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForPromise("join"_s);
-    ASSERT_TRUE(promiseWasRejected("join"_s));
+    waitForPromise("join"_si);
+    ASSERT_TRUE(promiseWasRejected("join"_si));
     EXPECT_STREQ("", coordinator().lastMethodCalled.UTF8String);
 }
 
@@ -435,29 +435,29 @@ TEST_F(MediaSessionCoordinatorTest, DISABLED_StateChanges)
 TEST_F(MediaSessionCoordinatorTest, StateChanges)
 #endif
 {
-    loadPageAndBecomeReady("media-remote"_s);
+    loadPageAndBecomeReady("media-remote"_si);
 
     listenForPromiseMessages({ "join"_s });
     createCoordinator();
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForPromise("join"_s);
-    ASSERT_TRUE(promiseWasResolved("join"_s));
-    clearPromiseMessages("join"_s);
+    waitForPromise("join"_si);
+    ASSERT_TRUE(promiseWasResolved("join"_si));
+    clearPromiseMessages("join"_si);
     EXPECT_STREQ("join", coordinator().lastMethodCalled.UTF8String);
 
     [webView() objectByEvaluatingJavaScript:@"navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 })"];
-    String lastStateChange;
+    RefPtr<StringImpl> lastStateChange;
     executeUntil([&] {
-        lastStateChange = coordinator().lastStateChange;
-        return lastStateChange == "positionStateChanged"_s;
+        lastStateChange = StringImpl::create(coordinator().lastStateChange);
+        return equal(lastStateChange, "positionStateChanged"_s);
     });
     EXPECT_EQ("positionStateChanged"_s, lastStateChange);
 
     for (NSString *state in @[ @"havemetadata", @"havecurrentdata", @"havefuturedata", @"haveenoughdata", @"havenothing" ]) {
         [webView() objectByEvaluatingJavaScript:[NSString stringWithFormat:@"navigator.mediaSession.readyState = '%@'", state]];
         executeUntil([&] {
-            lastStateChange = coordinator().lastStateChange;
-            return lastStateChange == "readyStateChanged"_s;
+            lastStateChange = StringImpl::create(coordinator().lastStateChange);
+            return equal(lastStateChange, "readyStateChanged"_s);
         });
         EXPECT_EQ("readyStateChanged"_s, lastStateChange);
 
@@ -468,8 +468,8 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     for (NSString *state in @[ @"paused", @"playing", @"none" ]) {
         [webView() objectByEvaluatingJavaScript:[NSString stringWithFormat:@"navigator.mediaSession.playbackState = '%@'", state]];
         executeUntil([&] {
-            lastStateChange = coordinator().lastStateChange;
-            return lastStateChange == "playbackStateChanged"_s;
+            lastStateChange = StringImpl::create(coordinator().lastStateChange);
+            return equal(lastStateChange, "playbackStateChanged"_s);
         });
         EXPECT_EQ("playbackStateChanged"_s, lastStateChange);
 
@@ -478,10 +478,10 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     }
 
     [webView() objectByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.leave()"];
-    String lastMethodCalled;
+    RefPtr<StringImpl> lastMethodCalled;
     executeUntil([&] {
-        lastMethodCalled = coordinator().lastMethodCalled;
-        return lastMethodCalled == "leave"_s;
+        lastMethodCalled = StringImpl::create(coordinator().lastMethodCalled);
+        return equal(lastMethodCalled, "leave"_s);
     });
     EXPECT_EQ("leave"_s, lastMethodCalled);
 
@@ -496,14 +496,14 @@ TEST_F(MediaSessionCoordinatorTest, DISABLED_CoordinatorMethodCallbacks)
 TEST_F(MediaSessionCoordinatorTest, CoordinatorMethodCallbacks)
 #endif
 {
-    loadPageAndBecomeReady("media-remote"_s);
+    loadPageAndBecomeReady("media-remote"_si);
 
     listenForPromiseMessages({ "join"_s });
     createCoordinator();
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForPromise("join"_s);
-    ASSERT_TRUE(promiseWasResolved("join"_s));
-    clearPromiseMessages("join"_s);
+    waitForPromise("join"_si);
+    ASSERT_TRUE(promiseWasResolved("join"_si));
+    clearPromiseMessages("join"_si);
     EXPECT_STREQ("join", coordinator().lastMethodCalled.UTF8String);
 
     listenForPromiseMessages({ "play"_s, "pause"_s, "seekTo"_s, "setTrack"_s });
@@ -518,9 +518,9 @@ TEST_F(MediaSessionCoordinatorTest, CoordinatorMethodCallbacks)
         NSString *args = methodInfo[1];
         auto str = [NSString stringWithFormat:@"callMethod('%@', %@)", method, args];
         [webView() objectByEvaluatingJavaScript:str];
-        waitForPromise(method);
-        ASSERT_TRUE(promiseWasResolved(method));
-        clearPromiseMessages(method);
+        waitForPromise(StringImpl::create(method).get());
+        ASSERT_TRUE(promiseWasResolved(StringImpl::create(method).get()));
+        clearPromiseMessages(StringImpl::create(method).get());
         EXPECT_STREQ(method.UTF8String, coordinator().lastMethodCalled.UTF8String);
     }
 }
@@ -532,44 +532,44 @@ TEST_F(MediaSessionCoordinatorTest, DISABLED_CallSessionMethods)
 TEST_F(MediaSessionCoordinatorTest, CallSessionMethods)
 #endif
 {
-    loadPageAndBecomeReady("media-remote"_s);
+    loadPageAndBecomeReady("media-remote"_si);
     listenForSessionHandlerMessages({ "play"_s, "pause"_s, "seekto"_s, "nexttrack"_s });
 
     listenForPromiseMessages({ "join"_s });
     createCoordinator();
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForPromise("join"_s);
-    ASSERT_TRUE(promiseWasResolved("join"_s));
-    clearPromiseMessages("join"_s);
+    waitForPromise("join"_si);
+    ASSERT_TRUE(promiseWasResolved("join"_si));
+    clearPromiseMessages("join"_si);
     EXPECT_STREQ("join", coordinator().lastMethodCalled.UTF8String);
 
-    String lastMethodCalled;
+    RefPtr<StringImpl> lastMethodCalled;
 
     [coordinator() seekSessionToTime:20];
     executeUntil([&] {
-        lastMethodCalled = coordinator().lastMethodCalled;
-        return lastMethodCalled == "seekSessionToTime"_s;
+        lastMethodCalled = StringImpl::create(coordinator().lastMethodCalled);
+        return equal(lastMethodCalled, "seekSessionToTime"_s);
     });
     EXPECT_EQ("seekSessionToTime"_s, lastMethodCalled);
 
     [coordinator() playSession];
     executeUntil([&] {
-        lastMethodCalled = coordinator().lastMethodCalled;
-        return lastMethodCalled == "playSession"_s;
+        lastMethodCalled = StringImpl::create(coordinator().lastMethodCalled);
+        return equal(lastMethodCalled, "playSession"_s);
     });
     EXPECT_EQ("playSession"_s, lastMethodCalled);
 
     [coordinator() pauseSession];
     executeUntil([&] {
-        lastMethodCalled = coordinator().lastMethodCalled;
-        return lastMethodCalled == "pauseSession"_s;
+        lastMethodCalled = StringImpl::create(coordinator().lastMethodCalled);
+        return equal(lastMethodCalled, "pauseSession"_s);
     });
     EXPECT_EQ("pauseSession"_s, lastMethodCalled);
 
     [coordinator() setSessionTrack:@"Track 0"];
     executeUntil([&] {
-        lastMethodCalled = coordinator().lastMethodCalled;
-        return lastMethodCalled == "setSessionTrack"_s;
+        lastMethodCalled = StringImpl::create(coordinator().lastMethodCalled);
+        return equal(lastMethodCalled, "setSessionTrack"_s);
     });
     EXPECT_EQ("setSessionTrack"_s, lastMethodCalled);
 }
@@ -581,7 +581,7 @@ TEST_F(MediaSessionCoordinatorTest, DISABLED_JoinAndPrivateLeave)
 TEST_F(MediaSessionCoordinatorTest, JoinAndPrivateLeave)
 #endif
 {
-    loadPageAndBecomeReady("media-remote"_s);
+    loadPageAndBecomeReady("media-remote"_si);
     listenForPromiseMessages({ "join"_s });
 
     createCoordinator();
@@ -595,8 +595,8 @@ TEST_F(MediaSessionCoordinatorTest, JoinAndPrivateLeave)
     // Check that when we join a session; the 'coordinatorstatechange' event will be
     // fired and the coordinator state changes to 'waiting'.
     [webView() objectByEvaluatingJavaScript:@"joinSession()"];
-    waitForEventListenerToBeCalled("coordinatorstatechange"_s);
-    ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_s));
+    waitForEventListenerToBeCalled("coordinatorstatechange"_si);
+    ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_si));
     state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
     EXPECT_STREQ("joined", [state UTF8String]);
 
@@ -604,7 +604,7 @@ TEST_F(MediaSessionCoordinatorTest, JoinAndPrivateLeave)
     // in the UI process, the 'coordinatorstatechange' event will be fired in JS (in web
     // process) and that the coordinator state will change to 'closed'.
     [coordinator() sessionStateChanged:WKMediaSessionCoordinatorStateClosed];
-    waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+    waitForEventListenerToBeCalled("coordinatorstatechange"_si);
     state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
     EXPECT_STREQ("closed", [state UTF8String]);
 }

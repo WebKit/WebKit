@@ -35,7 +35,7 @@ namespace WebCore {
 struct KeyframeEffectOptions : EffectTiming {
     IterationCompositeOperation iterationComposite { IterationCompositeOperation::Replace };
     CompositeOperation composite { CompositeOperation::Replace };
-    String pseudoElement;
+    RefPtr<StringImpl> pseudoElement;
 };
 
 } // namespace WebCore

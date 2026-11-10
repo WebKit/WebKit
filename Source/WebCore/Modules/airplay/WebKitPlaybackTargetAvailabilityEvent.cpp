@@ -35,21 +35,21 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitPlaybackTargetAvailabilityEvent);
 
-static const AtomString& stringForPlaybackTargetAvailability(bool available)
+static const RefPtr<AtomStringImpl>& stringForPlaybackTargetAvailability(bool available)
 {
-    static MainThreadNeverDestroyed<const AtomString> availableString("available"_s);
-    static MainThreadNeverDestroyed<const AtomString> notAvailableString("not-available"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> availableString("available"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> notAvailableString("not-available"_s);
 
     return available ? availableString : notAvailableString;
 }
 
-WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, bool available)
+WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(AtomStringImpl* eventType, bool available)
     : Event(EventInterfaceType::WebKitPlaybackTargetAvailabilityEvent, eventType, CanBubble::No, IsCancelable::No)
     , m_availability(stringForPlaybackTargetAvailability(available))
 {
 }
 
-WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, Init&& initializer, IsTrusted isTrusted)
+WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(AtomStringImpl* eventType, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::WebKitPlaybackTargetAvailabilityEvent, eventType, WTF::move(initializer), isTrusted)
     , m_availability(WTF::move(initializer.availability))
 {

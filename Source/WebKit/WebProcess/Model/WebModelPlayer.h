@@ -100,9 +100,9 @@ private:
         RetainPtr<WKBridgeModelLoader> loader;
         RetainPtr<NSData> retainedData;
 
-        HashMap<String, WebModel::TypedResourceId> meshIDs;
-        HashMap<String, WebModel::TypedResourceId> materialIDs;
-        HashMap<String, WebModel::TypedResourceId> textureIDs;
+        HashMap<RefPtr<StringImpl>, WebModel::TypedResourceId> meshIDs;
+        HashMap<RefPtr<StringImpl>, WebModel::TypedResourceId> materialIDs;
+        HashMap<RefPtr<StringImpl>, WebModel::TypedResourceId> textureIDs;
 
         bool didFinishLoading { false };
         bool pendingClientFinishLoadingNotification { false };
@@ -116,7 +116,7 @@ private:
 #if ENABLE(SPATIAL_PORTAL)
         std::optional<WebCore::TransformationMatrix> childTransform;
         std::optional<WebCore::NodeIdentifier> anchorNode;
-        String anchorPlacementName;
+        RefPtr<StringImpl> anchorPlacementName;
         std::optional<WebCore::TransformationMatrix> anchorCorrection;
 #endif
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -198,7 +198,7 @@ private:
     void disableEnvironmentMap() final;
     void enableSystemEnvironmentMap() final;
 #endif
-    String environmentMapForTesting() const final;
+    RefPtr<StringImpl> environmentMapForTesting() const final;
     void pushEnvironmentMapToModel();
     WebCore::StageModeOperation effectiveStageMode() const;
 #if ENABLE(SPATIAL_PORTAL)
@@ -206,7 +206,7 @@ private:
     void setPortalAction(WebCore::PortalActionKind) final;
     bool isSpatialPortal() const { return !!m_portalTransform; }
     void notifyPortalTransformUpdated();
-    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement) final;
     bool isAnchoredTo(const HostedModel&, WebCore::NodeIdentifier ancestorNode) const;
     void pushPortalChildTransform(WebCore::NodeIdentifier);
     void pushAnchoredPortalChildTransforms(WebCore::NodeIdentifier anchorNode);

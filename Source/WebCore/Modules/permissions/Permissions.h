@@ -37,7 +37,6 @@ class JSObject;
 } // namespace JSC
 
 namespace WTF {
-class String;
 }
 
 namespace WebCore {
@@ -61,7 +60,7 @@ public:
     NODELETE NavigatorBase* navigator();
     void query(JSC::Strong<JSC::JSObject>, Ref<DeferredPromise>&&);
     WEBCORE_EXPORT static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext&);
-    WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(const String&);
+    WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(StringImpl*);
 
 private:
     explicit Permissions(NavigatorBase&);

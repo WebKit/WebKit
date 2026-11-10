@@ -69,15 +69,15 @@ bool shouldLogFormActivity()
     return AXObjectCache::isAppleInternalInstall();
 }
 
-void logFormActivity(const String& message)
+void logFormActivity(StringImpl* message)
 {
 #if !LOG_DISABLED
     if (LOG_CHANNEL(AccessibilityFormErrors).state != logChannelStateOff) {
-        LOG(AccessibilityFormErrors, "%s", message.utf8());
+        LOG(AccessibilityFormErrors, "%s", utf8(message));
         return;
     }
 #endif
-    RELEASE_LOG(AccessibilityFormErrors, "%" PUBLIC_LOG_STRING, message.utf8());
+    RELEASE_LOG(AccessibilityFormErrors, "%" PUBLIC_LOG_STRING, utf8(message));
 }
 
 // How long to keep watching after a submission attempt. Long enough for a server round-trip to come
@@ -185,17 +185,17 @@ static bool isErrorMessageShaped(AXCoreObject& object)
     return !containsNonMessageContent(object, foundStaticText, 0) && foundStaticText;
 }
 
-static bool isWorthAnnouncing(const String& text)
+static bool isWorthAnnouncing(StringImpl* text)
 {
-    if (text.isEmpty())
+    if (isEmpty(text))
         return false;
-    if (text.length() > maximumErrorMessageLength) {
-        AXFORMLOG("Rejecting text of length "_s, text.length(), " as too long to be a validation message."_s);
+    if (length(text) > maximumErrorMessageLength) {
+        AXFORMLOG("Rejecting text of length "_s, length(text), " as too long to be a validation message."_s);
         return false;
     }
 
-    for (unsigned i = 0; i < text.length(); ++i) {
-        char16_t character = text[i];
+    for (unsigned i = 0; i < length(text); ++i) {
+        char16_t character = codeUnitAt(text, i);
         if (!isPunctuation(character) && !isUnicodeWhitespace(character))
             return true;
     }
@@ -211,7 +211,7 @@ static void appendStaticText(AXCoreObject& object, StringBuilder& builder, unsig
     for (const Ref<AXCoreObject>& child : children) {
         if (child->isStaticText()) {
             auto text = child->stringValue();
-            if (text.isEmpty())
+            if (isEmpty(text))
                 continue;
             if (!builder.isEmpty())
                 builder.append(' ');
@@ -222,7 +222,7 @@ static void appendStaticText(AXCoreObject& object, StringBuilder& builder, unsig
     }
 }
 
-static String messageText(AXCoreObject& object)
+static RefPtr<StringImpl> messageText(AXCoreObject& object)
 {
     if (object.isStaticText())
         return object.stringValue();
@@ -235,11 +235,11 @@ static String messageText(AXCoreObject& object)
 // Empty, or invalid by the page's own marking, the browser's validation, or an error detection already found.
 static bool isEmptyOrInvalid(AccessibilityObject& field)
 {
-    if (field.isTextControl() && field.stringValue().isEmpty())
+    if (field.isTextControl() && isEmpty(field.stringValue()))
         return true;
-    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(field.element()); select && select->value().isEmpty())
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(field.element()); select && isEmpty(select->value()))
         return true;
-    return field.invalidStatusIncludingInferred() != "false"_s;
+    return !equal(field.invalidStatusIncludingInferred(), "false"_s);
 }
 
 // Close enough under a field to be about it, rather than about the part of the page around it.
@@ -455,7 +455,7 @@ static std::optional<Color> renderedTextColor(Element& message)
     std::optional<Color> firstColor;
     for (Ref node : composedTreeDescendants(message)) {
         RefPtr text = dynamicDowncast<Text>(node.get());
-        if (!text || text->data().containsOnly<isASCIIWhitespace>())
+        if (!text || containsOnly<isASCIIWhitespace>(text->data()))
             continue;
 
         CheckedPtr renderer = text->renderer();
@@ -556,7 +556,7 @@ void AXFormActivityMonitor::collectErrorMessagesFrom(AccessibilityObject& object
             return;
     }
 
-    String text = messageText(object).simplifyWhiteSpace(isASCIIWhitespace);
+    RefPtr<StringImpl> text = simplifyWhiteSpace(messageText(object), isASCIIWhitespace);
     if (!isWorthAnnouncing(text))
         return;
 
@@ -576,7 +576,7 @@ void AXFormActivityMonitor::collectErrorMessagesFrom(AccessibilityObject& object
             if (!existing || !existing->isShadowIncludingInclusiveAncestorOf(*element))
                 continue;
             // The same element arriving whole, after text inside it arrived on its own, is the whole message.
-            if (existing == element && text.contains(candidate.text))
+            if (existing == element && contains(text, candidate.text))
                 candidate.text = WTF::move(text);
             return;
         }
@@ -587,19 +587,19 @@ void AXFormActivityMonitor::collectErrorMessagesFrom(AccessibilityObject& object
         });
     }
 
-    if (m_candidateErrorMessages.containsIf([&] (const CandidateErrorMessage& candidate) { return candidate.text == text; }))
+    if (m_candidateErrorMessages.containsIf([&] (const CandidateErrorMessage& candidate) { return equal(candidate.text, text); }))
         return;
 
     m_candidateErrorMessages.append(CandidateErrorMessage { WTF::move(text), element });
 }
 
-void AXFormActivityMonitor::onAnnouncedText(const String& text)
+void AXFormActivityMonitor::onAnnouncedText(StringImpl* text)
 {
     if (!isWatching())
         return;
 
-    auto announced = text.simplifyWhiteSpace(isASCIIWhitespace);
-    if (announced.isEmpty() || m_announcedText.size() >= maximumAnnouncedText)
+    auto announced = simplifyWhiteSpace(text, isASCIIWhitespace);
+    if (isEmpty(announced) || m_announcedText.size() >= maximumAnnouncedText)
         return;
 
     m_announcedText.add(WTF::move(announced));
@@ -737,7 +737,7 @@ void AXFormActivityMonitor::report()
         for (size_t fieldIndex = 0; fieldIndex < fieldInfo.size(); ++fieldIndex) {
             const auto& info = fieldInfo[fieldIndex];
             RefPtr fieldObject = CheckedRef { m_cache }->get(info.field.ptr());
-            AXFORMLOG("  field "_s, fieldIndex, " role "_s, fieldObject ? roleToString(fieldObject->role()) : String { "none"_s },
+            AXFORMLOG("  field "_s, fieldIndex, " role "_s, fieldObject ? roleToString(fieldObject->role()) : "none"_si,
                 " bounds "_s, info.rect.x(), ","_s, info.rect.y(), " "_s, info.rect.width(), "x"_s, info.rect.height(),
                 info.wasRenderedAtAttempt ? ", rendered at the attempt"_s : ", not rendered at the attempt"_s,
                 !info.isEmptyOrInvalid ? ", no accessibility object"_s : (*info.isEmptyOrInvalid ? ", empty or invalid"_s : ", filled in and valid"_s));
@@ -769,8 +769,8 @@ void AXFormActivityMonitor::report()
 
         // A page may reuse one element for a status and then an error, so take what the message says now.
         if (RefPtr errorObject = CheckedRef { m_cache }->get(*errorElement)) {
-            auto currentText = messageText(*errorObject).simplifyWhiteSpace(isASCIIWhitespace);
-            if (isWorthAnnouncing(currentText) && !currentText.contains(candidate.text))
+            auto currentText = simplifyWhiteSpace(messageText(*errorObject), isASCIIWhitespace);
+            if (isWorthAnnouncing(currentText) && !contains(currentText, candidate.text))
                 candidate.text = WTF::move(currentText);
         }
         auto textColor = renderedTextColor(*errorElement);
@@ -782,10 +782,10 @@ void AXFormActivityMonitor::report()
     if (shouldLogFormActivity()) {
         for (const auto& message : messageInfo) {
             const auto& candidate = candidates[message.candidateIndex];
-            AXFORMLOG("  candidate "_s, message.candidateIndex, " length "_s, candidate.text.length(),
+            AXFORMLOG("  candidate "_s, message.candidateIndex, " length "_s, length(candidate.text),
                 " insideForm "_s, message.isInsideForm, " bounds "_s, message.rect.x(), ","_s, message.rect.y(),
                 " "_s, message.rect.width(), "x"_s, message.rect.height(),
-                " color "_s, message.textColor ? serializationForCSS(*message.textColor) : String { "none"_s },
+                " color "_s, message.textColor ? serializationForCSS(*message.textColor) : "none"_si,
                 message.isErrorColored ? ", an error color"_s : ", not an error color"_s);
         }
     }
@@ -869,7 +869,7 @@ void AXFormActivityMonitor::report()
     });
 
     Vector<AXObjectCache::DetectedFormErrorPairing> detectedErrors;
-    Vector<String> pairedText;
+    Vector<RefPtr<StringImpl>> pairedText;
     for (const auto& pairing : acceptedPairings) {
         RefPtr errorElement = candidates[pairing.candidateIndex].element.get();
         if (!errorElement)
@@ -877,7 +877,7 @@ void AXFormActivityMonitor::report()
 
         detectedErrors.append({ .field = fieldInfo[pairing.fieldIndex].field, .message = errorElement.releaseNonNull() });
         const auto& text = candidates[pairing.candidateIndex].text;
-        if (!pairedText.contains(text))
+        if (!pairedText.containsIf([&](auto& item) { return equal(item, text); }))
             pairedText.append(text);
     }
 
@@ -889,14 +889,14 @@ void AXFormActivityMonitor::report()
     // This class repairs forms in multiple ways -- the first of which is pairing fields and error messages,
     // aria-errormessage style. The second is announcing errors that appear (if they were not already done so
     // via role=alert or similar). Avoid announcing error messages that were already announced.
-    Vector<String> unannouncedText;
+    Vector<RefPtr<StringImpl>> unannouncedText;
     for (const auto& text : pairedText) {
         // Deliberately not an equality test, since an announcement folds in the name of the icon beside the
         // message (if present) and so the spoken string is longer than the message itself.
         bool alreadyReceived = false;
         for (const auto& announcedText : announced) {
-            if (announcedText.contains(text) || text.contains(announcedText)) {
-                AXFORMLOG("  a message of length "_s, text.length(), " was already announced, so not repeating it."_s);
+            if (contains(announcedText, text) || contains(text, announcedText)) {
+                AXFORMLOG("  a message of length "_s, length(text), " was already announced, so not repeating it."_s);
                 alreadyReceived = true;
                 break;
             }
@@ -918,7 +918,7 @@ void AXFormActivityMonitor::report()
     unsigned errorFieldCount = 0;
     for (auto& field : fields) {
         RefPtr fieldObject = CheckedRef { m_cache }->getOrCreate(field.get());
-        if (fieldObject && !fieldObject->isIgnored() && fieldObject->invalidStatusIncludingInferred() != "false"_s)
+        if (fieldObject && !fieldObject->isIgnored() && !equal(fieldObject->invalidStatusIncludingInferred(), "false"_s))
             ++errorFieldCount;
     }
 

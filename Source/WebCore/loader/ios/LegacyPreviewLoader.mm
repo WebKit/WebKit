@@ -222,24 +222,24 @@ void LegacyPreviewLoader::previewConverterDidFailConverting(PreviewConverter& co
     resourceLoader->didFail(converter.previewError());
 }
 
-void LegacyPreviewLoader::providePasswordForPreviewConverter(PreviewConverter& converter, Function<void(const String&)>&& completionHandler)
+void LegacyPreviewLoader::providePasswordForPreviewConverter(PreviewConverter& converter, Function<void(StringImpl*)>&& completionHandler)
 {
     ASSERT_UNUSED(converter, &converter == m_converter);
 
     RefPtr resourceLoader = m_resourceLoader.get();
     if (!resourceLoader) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 
     if (resourceLoader->reachedTerminalState()) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 
     Ref client = m_client;
     if (!client->supportsPasswordEntry()) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 

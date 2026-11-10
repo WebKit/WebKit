@@ -70,12 +70,12 @@ Ref<ContentWorldConfiguration> ContentWorldConfiguration::copy() const
     return other;
 }
 
-const WTF::String& ContentWorldConfiguration::name() const
+const RefPtr<StringImpl>& ContentWorldConfiguration::name() const
 {
     return m_data.name;
 }
 
-void ContentWorldConfiguration::setName(WTF::String&& name)
+void ContentWorldConfiguration::setName(RefPtr<StringImpl>&& name)
 {
     m_data.name = WTF::move(name);
 }

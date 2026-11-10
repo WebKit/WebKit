@@ -56,10 +56,10 @@ class SharedBuffer;
 
 class CDM : public RefCounted<CDM>, public CDMPrivateClient, private ContextDestructionObserver {
 public:
-    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystem(StringImpl*);
     static bool isPersistentType(MediaKeySessionType);
 
-    static Ref<CDM> create(Document&, const String& keySystem, const String& mediaKeysHashSalt);
+    static Ref<CDM> create(Document&, StringImpl* keySystem, StringImpl* mediaKeysHashSalt);
     ~CDM();
 
     // ContextDestructionObserver.
@@ -69,24 +69,24 @@ public:
     using SupportedConfigurationCallback = Function<void(std::optional<MediaKeySystemConfiguration>)>;
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
 
-    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
     void loadAndInitialize();
     RefPtr<CDMInstance> createInstance();
     bool supportsServerCertificates() const;
     bool supportsSessions() const;
-    bool supportsInitDataType(const AtomString&) const;
+    bool supportsInitDataType(AtomStringImpl*) const;
 
-    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);
-    bool supportsInitData(const AtomString& initDataType, const SharedBuffer&);
+    RefPtr<SharedBuffer> sanitizeInitData(AtomStringImpl* initDataType, const SharedBuffer&);
+    bool supportsInitData(AtomStringImpl* initDataType, const SharedBuffer&);
 
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
 
-    std::optional<String> sanitizeSessionId(const String& sessionId);
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl* sessionId);
 
-    String storageDirectory() const;
+    RefPtr<StringImpl> storageDirectory() const;
 
-    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
+    const RefPtr<StringImpl>& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -94,14 +94,14 @@ public:
 #endif
 
 private:
-    CDM(Document&, const String& keySystem, const String& mediaKeysHashSalt);
+    CDM(Document&, StringImpl* keySystem, StringImpl* mediaKeysHashSalt);
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
-    String m_keySystem;
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_keySystem;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
     const std::unique_ptr<CDMPrivate> m_private;
 };
 

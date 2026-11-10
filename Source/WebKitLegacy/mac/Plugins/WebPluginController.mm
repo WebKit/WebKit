@@ -446,7 +446,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
         }
         RefPtr coreFrame = core(frame);
         WebCore::FrameLoadRequest frameLoadRequest { *coreFrame, request };
-        frameLoadRequest.setFrameName(target);
+        frameLoadRequest.setFrameName(AtomStringImpl::add((__bridge CFStringRef)target).get());
         frameLoadRequest.setShouldCheckNewWindowPolicy(true);
         protect(coreFrame->loader())->load(WTF::move(frameLoadRequest));
     }

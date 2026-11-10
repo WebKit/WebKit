@@ -56,7 +56,7 @@ public:
 
     ~XRSubImage();
 
-    NODELETE void setLabel(String&&) final;
+    NODELETE void setLabel(RefPtr<StringImpl>&&) final;
 
     NODELETE bool isValid() const final;
     void update(const XRProjectionLayer&);

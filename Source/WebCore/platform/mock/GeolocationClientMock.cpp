@@ -64,7 +64,7 @@ void GeolocationClientMock::setPosition(GeolocationPositionData&& position)
     asyncUpdateController();
 }
 
-void GeolocationClientMock::setPositionUnavailableError(const String& errorMessage)
+void GeolocationClientMock::setPositionUnavailableError(StringImpl* errorMessage)
 {
     m_hasError = true;
     m_errorMessage = errorMessage;
@@ -115,7 +115,7 @@ void GeolocationClientMock::permissionTimerFired()
     // which fire synchronously from Geolocation::setIsAllowed() cannot reentrantly modify
     // m_pendingPermission.
     for (Ref permission : m_pendingPermission)
-        permission->setIsAllowed(allowed, { });
+        permission->setIsAllowed(allowed, nullptr);
     m_pendingPermission.clear();
 }
 
@@ -131,7 +131,7 @@ void GeolocationClientMock::geolocationDestroyed()
     ASSERT(!m_isActive);
 }
 
-void GeolocationClientMock::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
+void GeolocationClientMock::startUpdating(StringImpl* authorizationToken, bool enableHighAccuracy)
 {
     ASSERT(!m_isActive);
     UNUSED_PARAM(authorizationToken);
@@ -182,7 +182,7 @@ void GeolocationClientMock::controllerTimerFired()
 void GeolocationClientMock::clearError()
 {
     m_hasError = false;
-    m_errorMessage = String();
+    m_errorMessage = nullptr;
 }
 
 } // WebCore

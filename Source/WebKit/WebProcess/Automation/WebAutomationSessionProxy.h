@@ -65,13 +65,13 @@ class WebAutomationSessionProxy : public IPC::MessageReceiver
     , public ThreadSafeRefCounted<WebAutomationSessionProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WebAutomationSessionProxy);
 public:
-    static Ref<WebAutomationSessionProxy> create(const String& sessionIdentifier);
+    static Ref<WebAutomationSessionProxy> create(StringImpl* sessionIdentifier);
     ~WebAutomationSessionProxy();
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    String sessionIdentifier() const { return m_sessionIdentifier; }
+    RefPtr<StringImpl> sessionIdentifier() const { return m_sessionIdentifier; }
 
     void didClearWindowObjectForFrame(WebFrame&);
     void willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier);
@@ -79,21 +79,21 @@ public:
     struct JSCallbackIdentifierType { };
     using JSCallbackIdentifier = ObjectIdentifier<JSCallbackIdentifierType>;
 
-    void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, const String& result, const String& errorType);
+    void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, StringImpl* result, StringImpl* errorType);
 
     void cancelPendingEvaluateJavaScriptCallbacks();
 
-    bool isKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
-    void addKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
+    bool isKnownReference(WebCore::FrameIdentifier, StringImpl* nodeHandle);
+    void addKnownReference(WebCore::FrameIdentifier, StringImpl* nodeHandle);
 
 private:
-    explicit WebAutomationSessionProxy(const String& sessionIdentifier);
+    explicit WebAutomationSessionProxy(StringImpl* sessionIdentifier);
     JSObjectRef scriptObject(JSGlobalContextRef);
     void setScriptObject(JSGlobalContextRef, JSObjectRef);
     JSObjectRef scriptObjectForFrame(WebFrame&);
-    std::expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
-    static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
-    WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
+    std::expected<Ref<WebCore::Element>, RefPtr<StringImpl>> elementForNodeHandle(WebFrame&, StringImpl*);
+    static RefPtr<StringImpl> errorTypeFromJavaScriptExceptionName(StringImpl* exceptionName);
+    WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, RefPtr<StringImpl>& error);
 
     void ensureObserverForFrame(WebFrame&);
 
@@ -101,37 +101,37 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
-    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
-    void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
-    void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
-    void resolveChildFrameWithName(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& name, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
-    void resolveParentFrame(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
+    void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, StringImpl* function, Vector<RefPtr<StringImpl>> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(RefPtr<StringImpl>&&, RefPtr<StringImpl>&&)>&&);
+    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, StringImpl* expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(RefPtr<StringImpl>&&, RefPtr<StringImpl>&&)>&&);
+    void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<WebCore::FrameIdentifier>)>&&);
+    void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, StringImpl* nodeHandle, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<WebCore::FrameIdentifier>)>&&);
+    void resolveChildFrameWithName(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, StringImpl* name, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<WebCore::FrameIdentifier>)>&&);
+    void resolveParentFrame(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<WebCore::FrameIdentifier>)>&&);
     void focusFrame(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(Inspector::CommandResult<void>)>&&);
-    void computeElementLayout(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(std::optional<String>, WebCore::FloatRect, std::optional<WebCore::IntPoint>, bool)>&&);
-    void frameViewportInLayoutViewport(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FloatRect>)>&&);
-    void getComputedRole(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
-    void getComputedLabel(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
-    void consumeUserActivation(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, bool)>&&);
-    void selectOptionElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>)>&&);
-    void setFilesForInputFileUpload(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& filenames, CompletionHandler<void(std::optional<String>)>&&);
-    void takeScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, String&&)>&&);
-    void documentRectForScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)>&&);
-    void snapshotRectForScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)>&&);
-    void getCookiesForFrame(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, Vector<WebCore::Cookie>)>&&);
-    void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
+    void computeElementLayout(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, WebCore::FloatRect, std::optional<WebCore::IntPoint>, bool)>&&);
+    void frameViewportInLayoutViewport(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<WebCore::FloatRect>)>&&);
+    void getComputedRole(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<RefPtr<StringImpl>>)>&&);
+    void getComputedLabel(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, std::optional<RefPtr<StringImpl>>)>&&);
+    void consumeUserActivation(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, bool)>&&);
+    void selectOptionElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, CompletionHandler<void(std::optional<RefPtr<StringImpl>>)>&&);
+    void setFilesForInputFileUpload(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, Vector<RefPtr<StringImpl>>&& filenames, CompletionHandler<void(std::optional<RefPtr<StringImpl>>)>&&);
+    void takeScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, RefPtr<StringImpl>&&)>&&);
+    void documentRectForScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, WebCore::IntRect&&)>&&);
+    void snapshotRectForScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, WebCore::IntRect&&)>&&);
+    void getCookiesForFrame(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RefPtr<StringImpl>>, Vector<WebCore::Cookie>)>&&);
+    void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, RefPtr<StringImpl> cookieName, CompletionHandler<void(std::optional<RefPtr<StringImpl>>)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
+    void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, StringImpl*, const JSC::MessageType&, const WallTime&) override;
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
 #endif
 
-    String m_sessionIdentifier;
+    RefPtr<StringImpl> m_sessionIdentifier;
     JSC::PrivateName m_scriptObjectIdentifier;
 
-    HashMap<WebCore::FrameIdentifier, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
+    HashMap<WebCore::FrameIdentifier, HashMap<JSCallbackIdentifier, CompletionHandler<void(RefPtr<StringImpl>&&, RefPtr<StringImpl>&&)>>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
     HashMap<WebCore::FrameIdentifier, Ref<WebAutomationDOMWindowObserver>> m_frameObservers;
 
     // Outlives the page's global object, which is where the JS-side maps live, so a
@@ -142,7 +142,7 @@ private:
     // and survives the process swaps this cannot. Evicting an entry therefore costs one
     // synchronous lookup, never a wrong answer, so it is bounded far more tightly than
     // the UI-process copy.
-    HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
+    HashMap<WebCore::FrameIdentifier, ListHashSet<RefPtr<StringImpl>>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
 #endif

@@ -35,7 +35,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
-class String;
 }
 
 namespace WebCore {
@@ -64,12 +63,12 @@ public:
 
     bool containsObserver(const ReportingObserver&) const;
 
-    WEBCORE_EXPORT static MemoryCompactRobinHoodHashMap<String, String> parseReportingEndpointsFromHeader(const String&, const URL& baseURL);
-    void parseReportingEndpoints(const String&, const URL& baseURL);
+    WEBCORE_EXPORT static MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> parseReportingEndpointsFromHeader(StringImpl*, const URL& baseURL);
+    void parseReportingEndpoints(StringImpl*, const URL& baseURL);
 
-    String endpointURIForToken(const String&) const;
+    RefPtr<StringImpl> endpointURIForToken(StringImpl*) const;
 
-    WEBCORE_EXPORT void generateTestReport(String&& message, String&& group);
+    WEBCORE_EXPORT void generateTestReport(RefPtr<StringImpl>&& message, RefPtr<StringImpl>&& group);
 
 private:
     WEBCORE_EXPORT explicit ReportingScope(ScriptExecutionContext&);
@@ -78,7 +77,7 @@ private:
     Deque<Ref<Report>> m_queuedReports;
     HashCountedSet<ViolationReportType, IntHash<ViolationReportType>, WTF::StrongEnumHashTraits<ViolationReportType>> m_queuedReportTypeCounts;
 
-    MemoryCompactRobinHoodHashMap<String, String> m_reportingEndpoints;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_reportingEndpoints;
 };
 
 }

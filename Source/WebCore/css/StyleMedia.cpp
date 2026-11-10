@@ -36,13 +36,13 @@ StyleMedia::StyleMedia(LocalDOMWindow& window)
 {
     if (window.document()) {
         protect(window.document())->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Warning,
-            "window.styleMedia is a deprecated draft version of window.matchMedia API, and it will be removed in the future."_s));
+            "window.styleMedia is a deprecated draft version of window.matchMedia API, and it will be removed in the future."_si));
     }
 }
 
-String StyleMedia::type() const
+RefPtr<StringImpl> StyleMedia::type() const
 {
-    return "screen"_s;
+    return "screen"_si;
 }
 
 } // namespace WebCore

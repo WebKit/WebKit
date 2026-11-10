@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-void Theme::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
+void Theme::drawNamedImage(StringImpl* name, GraphicsContext& context, const FloatSize& size) const
 {
     // We only handle one icon at the moment.
-    if (name != "wireless-playback"_s)
+    if (!equal(name, "wireless-playback"_s))
         return;
 
     GraphicsContextStateSaver stateSaver(context);
@@ -89,7 +89,7 @@ void Theme::drawNamedImage(const String& name, GraphicsContext& context, const F
     context.fillPath(outline);
 }
 
-String Theme::invertedNamedImage(const String& name) const
+RefPtr<StringImpl> Theme::invertedNamedImage(StringImpl* name) const
 {
     return name;
 }

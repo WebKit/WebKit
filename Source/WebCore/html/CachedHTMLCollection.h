@@ -46,7 +46,7 @@ public:
     
     unsigned length() const override;
     Element* item(unsigned offset) const override;
-    Element* namedItem(const AtomString&) const override;
+    Element* namedItem(AtomStringImpl*) const override;
     size_t memoryCost() const final;
 
     // For CollectionIndexCache; do not use elsewhere.

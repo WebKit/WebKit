@@ -51,6 +51,6 @@ struct FontShadow {
 WEBCORE_EXPORT FontShadow fontShadowFromNSShadow(NSShadow *);
 #endif
 
-WEBCORE_EXPORT String serializationForCSS(const FontShadow&);
+WEBCORE_EXPORT RefPtr<StringImpl> serializationForCSS(const FontShadow&);
 
 } // namespace WebCore

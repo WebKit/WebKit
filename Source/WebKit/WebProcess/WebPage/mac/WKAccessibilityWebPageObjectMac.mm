@@ -291,13 +291,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         RetainPtr<id> value;
         if ([attribute isEqualToString:@"AXDataDetectorExistsAtPoint"] || [attribute isEqualToString:@"AXDidShowDataDetectorMenuAtPoint"]) {
             bool boolValue;
-            if (protectedSelf->m_page->corePage()->pageOverlayController().copyAccessibilityAttributeBoolValueForPoint(attribute.get(), point, boolValue))
+            if (protectedSelf->m_page->corePage()->pageOverlayController().copyAccessibilityAttributeBoolValueForPoint(StringImpl::create(attribute.get()), point, boolValue))
                 value = [NSNumber numberWithBool:boolValue];
         }
         if ([attribute isEqualToString:@"AXDataDetectorTypeAtPoint"]) {
-            String stringValue;
-            if (protectedSelf->m_page->corePage()->pageOverlayController().copyAccessibilityAttributeStringValueForPoint(attribute.get(), point, stringValue))
-                value = stringValue.createNSString();
+            RefPtr<StringImpl> stringValue;
+            if (protectedSelf->m_page->corePage()->pageOverlayController().copyAccessibilityAttributeStringValueForPoint(StringImpl::create(attribute.get()), point, stringValue))
+                value = createNSString(stringValue);
         }
         return value;
     }).autorelease();

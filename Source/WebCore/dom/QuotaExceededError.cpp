@@ -28,15 +28,15 @@
 
 namespace WebCore {
 
-Ref<QuotaExceededError> QuotaExceededError::create(const String& message, QuotaExceededErrorOptions&& options)
+Ref<QuotaExceededError> QuotaExceededError::create(StringImpl* message, QuotaExceededErrorOptions&& options)
 {
     return adoptRef(*new QuotaExceededError(message, WTF::move(options)));
 }
 
 static constexpr DOMException::LegacyCode legacyCodeForQuotaExceeded = 22;
 
-QuotaExceededError::QuotaExceededError(const String& message, QuotaExceededErrorOptions&& options)
-    : DOMException(legacyCodeForQuotaExceeded, "QuotaExceededError"_s, message.isEmpty() ? "The quota has been exceeded."_s : message, Type::QuotaExceededError)
+QuotaExceededError::QuotaExceededError(StringImpl* message, QuotaExceededErrorOptions&& options)
+    : DOMException(legacyCodeForQuotaExceeded, "QuotaExceededError"_si, isEmpty(message) ? "The quota has been exceeded."_si : RefPtr { message }, Type::QuotaExceededError)
     , m_quota(options.quota)
     , m_requested(options.requested)
 {

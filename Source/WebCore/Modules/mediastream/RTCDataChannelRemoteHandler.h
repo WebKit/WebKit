@@ -50,7 +50,7 @@ public:
     ~RTCDataChannelRemoteHandler();
 
     WEBCORE_EXPORT void didChangeReadyState(RTCDataChannelState);
-    WEBCORE_EXPORT void didReceiveStringData(String&&);
+    WEBCORE_EXPORT void didReceiveStringData(RefPtr<StringImpl>&&);
     WEBCORE_EXPORT void didReceiveRawData(std::span<const uint8_t>);
     WEBCORE_EXPORT void didDetectError(Ref<RTCError>&&);
     WEBCORE_EXPORT void bufferedAmountIsDecreasing(size_t);

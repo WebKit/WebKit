@@ -37,7 +37,7 @@ public:
     virtual bool openWindow(WebInspectorUIProxy&) = 0;
     virtual void didClose(WebInspectorUIProxy&) = 0;
     virtual bool bringToFront(WebInspectorUIProxy&) = 0;
-    virtual void inspectedURLChanged(WebInspectorUIProxy&, const String& url) = 0;
+    virtual void inspectedURLChanged(WebInspectorUIProxy&, StringImpl* url) = 0;
     virtual bool attach(WebInspectorUIProxy&) = 0;
     virtual bool detach(WebInspectorUIProxy&) = 0;
     virtual void didChangeAttachedHeight(WebInspectorUIProxy&, unsigned height) = 0;

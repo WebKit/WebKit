@@ -31,20 +31,20 @@ namespace WebCore {
 
 class CreateLinkCommand : public CompositeEditCommand {
 public:
-    static Ref<CreateLinkCommand> create(Ref<Document>&& document, const String& linkURL)
+    static Ref<CreateLinkCommand> create(Ref<Document>&& document, StringImpl* linkURL)
     {
         return adoptRef(*new CreateLinkCommand(WTF::move(document), linkURL));
     }
 
 private:
-    CreateLinkCommand(Ref<Document>&&, const String& linkURL);
+    CreateLinkCommand(Ref<Document>&&, StringImpl* linkURL);
 
     void doApply() override;
     EditAction editingAction() const override { return EditAction::CreateLink; }
 
-    String inputEventData() const override { return m_url; }
+    RefPtr<StringImpl> inputEventData() const override { return m_url; }
     
-    String m_url;
+    RefPtr<StringImpl> m_url;
 };
 
 } // namespace WebCore

@@ -36,12 +36,12 @@ public:
     ~BackgroundFetchEvent();
 
     using Init = BackgroundFetchEventInit;
-    static Ref<BackgroundFetchEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<BackgroundFetchEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
 
     NODELETE BackgroundFetchRegistration& registration() const;
 
 protected:
-    BackgroundFetchEvent(enum EventInterfaceType, const AtomString&, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);
+    BackgroundFetchEvent(enum EventInterfaceType, AtomStringImpl*, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);
 
 private:
     bool isBackgroundFetchEvent() const final { return true; }

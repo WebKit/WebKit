@@ -135,7 +135,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 #endif
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
-    if ((!d->m_user.isEmpty() || !d->m_password.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
+    if ((!isEmpty(d->m_user) || !isEmpty(d->m_password)) && !firstRequest().url().protocolIsInHTTPFamily()) {
         URL urlWithCredentials(firstRequest().url());
         urlWithCredentials.setUser(d->m_user);
         urlWithCredentials.setPassword(d->m_password);
@@ -143,7 +143,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     }
 
     if (shouldUseCredentialStorage && firstRequest().url().protocolIsInHTTPFamily()) {
-        if (d->m_user.isEmpty() && d->m_password.isEmpty()) {
+        if (isEmpty(d->m_user) && isEmpty(d->m_password)) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication,
             // try and reuse the credential preemptively, as allowed by RFC 2617.
             if (CheckedPtr networkStorageSession = d->m_context->storageSession())
@@ -411,7 +411,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
 
     const auto& previousRequest = d->m_previousRequest.isNull() ? d->m_firstRequest : d->m_previousRequest;
     if (redirectResponse.httpStatusCode() == httpStatus307TemporaryRedirect) {
-        String lastHTTPMethod = d->m_lastHTTPMethod;
+        RefPtr<StringImpl> lastHTTPMethod = d->m_lastHTTPMethod;
         if (!equalIgnoringASCIICase(lastHTTPMethod, request.httpMethod())) {
             request.setHTTPMethod(lastHTTPMethod);
 
@@ -419,16 +419,16 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
             if (!equalLettersIgnoringASCIICase(lastHTTPMethod, "get"_s) && body && !body->isEmpty())
                 request.setHTTPBody(WTF::move(body));
 
-            String originalContentType = previousRequest.httpContentType();
-            if (!originalContentType.isEmpty())
+            RefPtr<StringImpl> originalContentType = previousRequest.httpContentType();
+            if (!isEmpty(originalContentType))
                 request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
         }
     } else if (redirectResponse.httpStatusCode() == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
         if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
-            request.setHTTPMethod("HEAD"_s);
+            request.setHTTPMethod("HEAD"_si);
 
-        String originalContentType = previousRequest.httpContentType();
-        if (!originalContentType.isEmpty())
+        RefPtr<StringImpl> originalContentType = previousRequest.httpContentType();
+        if (!isEmpty(originalContentType))
             request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
     }
 
@@ -442,7 +442,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     d->m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
-    if (auto authorization = previousRequest.httpHeaderField(HTTPHeaderName::Authorization); !authorization.isNull()
+    if (auto authorization = previousRequest.httpHeaderField(HTTPHeaderName::Authorization); !!authorization
         && protocolHostAndPortAreEqual(previousRequest.url(), request.url()))
         request.setHTTPHeaderField(HTTPHeaderName::Authorization, authorization);
 
@@ -454,7 +454,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     } else {
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
-        if (d->m_user.isEmpty() && d->m_password.isEmpty() && !redirectResponse.isNull()) {
+        if (isEmpty(d->m_user) && isEmpty(d->m_password) && !redirectResponse.isNull()) {
             Credential credential;
             if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                 credential = networkStorageSession->credentialStorage().get(request.cachePartition(), request.url());
@@ -529,15 +529,15 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
     if (!challenge.protectionSpace().isPasswordBased())
         return false;
 
-    if (!d->m_user.isEmpty() || !d->m_password.isEmpty()) {
-        auto credential = adoptNS([[NSURLCredential alloc] initWithUser:d->m_user.createNSString().get()
-            password:d->m_password.createNSString().get() persistence:NSURLCredentialPersistenceForSession]);
+    if (!isEmpty(d->m_user) || !isEmpty(d->m_password)) {
+        auto credential = adoptNS([[NSURLCredential alloc] initWithUser:createNSString(d->m_user).get()
+            password:createNSString(d->m_password).get() persistence:NSURLCredentialPersistenceForSession]);
         d->m_currentMacChallenge = RetainPtr { challenge.nsURLAuthenticationChallenge() };
         d->m_currentWebChallenge = challenge;
         receivedCredential(challenge, Credential(credential.get()));
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
-        d->m_user = String();
-        d->m_password = String();
+        d->m_user = nullptr;
+        d->m_password = nullptr;
         return true;
     }
 

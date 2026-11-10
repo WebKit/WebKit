@@ -141,7 +141,7 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
     if (document().quirks().shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk()) {
         // Translate the request to enter fullscreen into requesting native fullscreen
         // for the last inner video element with a non-zero area.
-        auto maybeVideoList = element->querySelectorAll("video"_s);
+        auto maybeVideoList = element->querySelectorAll("video"_si);
         if (maybeVideoList.hasException()) {
             completionHandler({ });
             return;
@@ -332,7 +332,7 @@ ExceptionOr<void> DocumentFullscreen::willEnterFullscreen(Element& element, HTML
                 return;
             protectedThis->didExitFullscreen([] (auto) { });
         });
-        return Exception { ExceptionCode::TypeError, "Element requested for fullscreen has changed."_s };
+        return Exception { ExceptionCode::TypeError, "Element requested for fullscreen has changed."_si };
     }
 
     INFO_LOG(LOGIDENTIFIER);
@@ -472,7 +472,7 @@ static void clearFullscreenFlags(Element& element)
 void DocumentFullscreen::exitFullscreen(Document& document, Ref<DeferredPromise>&& promise)
 {
     if (!document.isFullyActive() || !protect(document.fullscreen())->fullscreenElement()) {
-        promise->reject(Exception { ExceptionCode::TypeError, "Not in fullscreen"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Not in fullscreen"_si });
         return;
     }
     protect(document.fullscreen())->exitFullscreen([promise = WTF::move(promise)](auto result) {
@@ -721,7 +721,7 @@ void DocumentFullscreen::fullyExitFullscreen()
     });
 }
 
-NODELETE static bool hasJSEventListener(Node& node, const AtomString& eventType)
+NODELETE static bool hasJSEventListener(Node& node, AtomStringImpl* eventType)
 {
     for (const auto& listener : node.eventListeners(eventType)) {
         if (listener->callback().type() == EventListener::JSEventListenerType)

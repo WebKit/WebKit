@@ -35,21 +35,27 @@ namespace WGSL::AST {
 class Identifier : public Node {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static Identifier make(const String& id) { return { SourceSpan::empty(), String(id) }; }
-    static Identifier make(String&& id) { return { SourceSpan::empty(), WTF::move(id) }; }
-    static Identifier makeWithSpan(SourceSpan span, String&& id) { return { WTF::move(span), WTF::move(id) }; }
+    static Identifier make(StringImpl* id) { return { SourceSpan::empty(), RefPtr<StringImpl>(id) }; }
+    static Identifier make(RefPtr<StringImpl>&& id) { return { SourceSpan::empty(), WTF::move(id) }; }
+    static Identifier makeWithSpan(SourceSpan span, RefPtr<StringImpl>&& id) { return { WTF::move(span), WTF::move(id) }; }
     static Identifier makeWithSpan(SourceSpan span, StringView id) { return { WTF::move(span), id }; }
 
     NodeKind kind() const override;
-    operator String&() { return m_id; }
-    operator const String&() const { return m_id; }
+    operator RefPtr<StringImpl>&() { return m_id; }
+    operator const RefPtr<StringImpl>&() const { return m_id; }
+    operator StringImpl*() const { return m_id.get(); }
 
-    const String& id() const LIFETIME_BOUND { return m_id; }
+    // Identifiers used to compare by content via the implicit conversion to String; keep that rather than
+    // letting == fall through to the implicit StringImpl* conversion and compare identity.
+    bool operator==(const Identifier& other) const { return equal(m_id, other.m_id); }
+    template<typename T> bool operator==(const T& other) const { return equal(m_id, other); }
+
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; }
 
     void dump(PrintStream&) const;
 
 private:
-    Identifier(const SourceSpan& span, String&& id)
+    Identifier(const SourceSpan& span, RefPtr<StringImpl>&& id)
         : Node(span)
         , m_id(WTF::move(id))
     { }
@@ -58,7 +64,7 @@ private:
         : Identifier(span, id.toString())
     { }
 
-    String m_id;
+    RefPtr<StringImpl> m_id;
 };
 
 inline void Identifier::dump(PrintStream& out) const
@@ -75,7 +81,7 @@ namespace WTF {
 template<> class StringTypeAdapter<WGSL::AST::Identifier> : public StringTypeAdapter<StringImpl*> {
 public:
     StringTypeAdapter(const WGSL::AST::Identifier& id)
-        : StringTypeAdapter<StringImpl*> { id.id().impl() }
+        : StringTypeAdapter<StringImpl*> { id.id().get() }
     { }
 };
 

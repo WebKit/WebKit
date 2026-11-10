@@ -34,12 +34,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(XRLayerEvent);
 
-Ref<XRLayerEvent> XRLayerEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<XRLayerEvent> XRLayerEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new XRLayerEvent(type, WTF::move(initializer), isTrusted));
 }
 
-XRLayerEvent::XRLayerEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+XRLayerEvent::XRLayerEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::XRLayerEvent, type, WTF::move(initializer), isTrusted)
     , m_layer(WTF::move(initializer.layer))
 {

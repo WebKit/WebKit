@@ -43,7 +43,7 @@ CSSImageValue::CSSImageValue()
 {
 }
 
-CSSImageValue::CSSImageValue(CSS::URL&& location, AtomString&& initiatorType)
+CSSImageValue::CSSImageValue(CSS::URL&& location, RefPtr<AtomStringImpl>&& initiatorType)
     : CSSValue(ClassType::Image)
     , m_location(WTF::move(location))
     , m_initiatorType(WTF::move(initiatorType))
@@ -63,12 +63,12 @@ Ref<CSSImageValue> CSSImageValue::create()
     return adoptRef(*new CSSImageValue);
 }
 
-Ref<CSSImageValue> CSSImageValue::create(CSS::URL location, AtomString initiatorType)
+Ref<CSSImageValue> CSSImageValue::create(CSS::URL location, RefPtr<AtomStringImpl> initiatorType)
 {
     return adoptRef(*new CSSImageValue(WTF::move(location), WTF::move(initiatorType)));
 }
 
-Ref<CSSImageValue> CSSImageValue::create(WTF::URL imageURL, AtomString initiatorType)
+Ref<CSSImageValue> CSSImageValue::create(WTF::URL imageURL, RefPtr<AtomStringImpl> initiatorType)
 {
     return create(CSS::URL { .specified = imageURL.string(), .resolved = WTF::move(imageURL), .modifiers = { } }, WTF::move(initiatorType));
 }
@@ -128,7 +128,7 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
         CSS::applyModifiersToLoaderOptions(m_location.modifiers, loadOptions);
 
         CachedResourceRequest request(ResourceRequest(URL { m_location.resolved }), loadOptions);
-        if (m_initiatorType.isEmpty())
+        if (isEmpty(m_initiatorType))
             request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
         else
             request.setInitiatorType(m_initiatorType);
@@ -159,10 +159,10 @@ bool CSSImageValue::equals(const CSSImageValue& other) const
     return m_location == other.m_location;
 }
 
-String CSSImageValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (m_isInvalid)
-        return ""_s;
+        return ""_si;
 
     return CSS::serializationForCSS(context, m_location);
 }

@@ -39,7 +39,7 @@ class GPUUncapturedErrorEvent final : public Event {
 public:
     virtual ~GPUUncapturedErrorEvent() = default;
 
-    static Ref<GPUUncapturedErrorEvent> create(const AtomString& type, GPUUncapturedErrorEventInit&& gpuUncapturedErrorEventInitDict)
+    static Ref<GPUUncapturedErrorEvent> create(AtomStringImpl* type, GPUUncapturedErrorEventInit&& gpuUncapturedErrorEventInitDict)
     {
         return adoptRef(*new GPUUncapturedErrorEvent(type, WTF::move(gpuUncapturedErrorEventInitDict)));
     }
@@ -47,9 +47,9 @@ public:
     NODELETE GPUError& error() const;
 
 private:
-    GPUUncapturedErrorEvent(const AtomString&, GPUUncapturedErrorEventInit&&);
+    GPUUncapturedErrorEvent(AtomStringImpl*, GPUUncapturedErrorEventInit&&);
 
-    String m_type;
+    RefPtr<StringImpl> m_type;
     GPUUncapturedErrorEventInit m_uncapturedErrorEventInit;
 };
 

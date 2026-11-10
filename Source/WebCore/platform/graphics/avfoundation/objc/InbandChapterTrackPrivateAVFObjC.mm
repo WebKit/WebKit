@@ -62,12 +62,12 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
         if (!hasClients())
             return;
         ASSERT(hasOneClient());
-        ChapterData chapterData = { PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), [item stringValue] };
+        ChapterData chapterData = { PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), StringImpl::create([item stringValue]) };
         if (m_processedChapters.contains(chapterData))
             return;
         m_processedChapters.append(chapterData);
 
-        ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), String::number(chapterNumber), [item stringValue]);
+        ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), makeString(chapterNumber), StringImpl::create([item stringValue]));
         INFO_LOG(identifier, "created cue ", cueData);
         notifyMainThreadClient([cueData = crossThreadCopy(WTF::move(cueData))](TrackPrivateBaseClient& client) mutable {
             downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTF::move(cueData));
@@ -101,12 +101,12 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
     }
 }
 
-String InbandChapterTrackPrivateAVFObjC::language() const
+RefPtr<StringImpl> InbandChapterTrackPrivateAVFObjC::language() const
 {
-    if (!m_language.isEmpty())
+    if (!isEmpty(m_language))
         return m_language;
 
-    m_language = [m_locale localeIdentifier];
+    m_language = StringImpl::create([m_locale localeIdentifier]);
     return m_language;
 }
 

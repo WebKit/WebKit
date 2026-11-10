@@ -39,7 +39,7 @@ public:
     WEBCORE_EXPORT ~SpeechRecognitionRequest();
 
     SpeechRecognitionConnectionClientIdentifier clientIdentifier() const { return m_info.clientIdentifier; }
-    const String& lang() const LIFETIME_BOUND { return m_info.lang; }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_info.lang; }
     bool continuous() const { return m_info.continuous;; }
     bool interimResults() const { return m_info.interimResults; }
     uint64_t maxAlternatives() const { return m_info.maxAlternatives; }

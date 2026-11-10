@@ -96,7 +96,7 @@ ScrollbarsController& ScrollableArea::scrollbarsController() const
 void ScrollableArea::internalCreateScrollbarsController()
 {
     if (mockScrollbarsControllerEnabled()) {
-        auto mockController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [weakThis = WeakPtr { *this }](const String& message) {
+        auto mockController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [weakThis = WeakPtr { *this }](StringImpl* message) {
             if (CheckedPtr protectedThis = weakThis)
                 protectedThis->logMockScrollbarsControllerMessage(message);
         });
@@ -587,12 +587,12 @@ bool ScrollableArea::allowsVerticalScrolling() const
     return verticalScrollbar && verticalScrollbar->enabled();
 }
 
-String ScrollableArea::horizontalScrollbarStateForTesting() const
+RefPtr<StringImpl> ScrollableArea::horizontalScrollbarStateForTesting() const
 {
     return scrollbarsController().horizontalScrollbarStateForTesting();
 }
 
-String ScrollableArea::verticalScrollbarStateForTesting() const
+RefPtr<StringImpl> ScrollableArea::verticalScrollbarStateForTesting() const
 {
     return scrollbarsController().verticalScrollbarStateForTesting();
 }

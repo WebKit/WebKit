@@ -209,7 +209,7 @@ public:
     WEBCORE_EXPORT SharedBufferDataView getSomeData(size_t position) const;
     WEBCORE_EXPORT Ref<SharedBuffer> getContiguousData(size_t position, size_t length) const;
 
-    WEBCORE_EXPORT String toHexString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toHexString() const;
 
     void hintMemoryNotNeededSoon() const;
 
@@ -285,7 +285,7 @@ public:
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };
-    WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
+    WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(StringImpl* filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
 
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData() const;
@@ -330,7 +330,7 @@ private:
     WEBCORE_EXPORT explicit SharedBuffer(sk_sp<SkData>&&);
 #endif
 
-    WEBCORE_EXPORT static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
+    WEBCORE_EXPORT static RefPtr<SharedBuffer> createFromReadingFile(StringImpl* filePath);
 };
 
 class SharedBufferBuilder {
@@ -443,7 +443,7 @@ private:
     const size_t m_size;
 };
 
-RefPtr<SharedBuffer> utf8Buffer(const String&);
+RefPtr<SharedBuffer> utf8Buffer(StringImpl*);
 
 template<typename T>
 inline bool SharedBuffer::isSpanWithinBounds(std::span<T> otherSpan) const

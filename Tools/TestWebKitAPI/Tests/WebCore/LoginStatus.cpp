@@ -39,9 +39,9 @@ namespace TestWebKitAPI {
 
 TEST(LoginStatus, DefaultExpiryWebAuthn)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn.domain().string(), "example.com"_s);
@@ -57,9 +57,9 @@ TEST(LoginStatus, DefaultExpiryWebAuthn)
 
 TEST(LoginStatus, DefaultExpiryPasswordManager)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::PasswordManager);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::PasswordManager);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::PasswordManager);
@@ -70,9 +70,9 @@ TEST(LoginStatus, DefaultExpiryPasswordManager)
 
 TEST(LoginStatus, DefaultExpiryUnmanaged)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::Unmanaged);
@@ -83,10 +83,10 @@ TEST(LoginStatus, DefaultExpiryUnmanaged)
 
 TEST(LoginStatus, CustomExpiryBelowLong)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
     auto customExpiry = LoginStatus::TimeToLiveLong - 48_h;
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, customExpiry);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, customExpiry);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::WebAuthn);
@@ -97,10 +97,10 @@ TEST(LoginStatus, CustomExpiryBelowLong)
 
 TEST(LoginStatus, CustomExpiryBelowShort)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
     auto customExpiry = LoginStatus::TimeToLiveShort - 48_h;
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::PasswordManager, customExpiry);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::PasswordManager, customExpiry);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::PasswordManager);
@@ -111,10 +111,10 @@ TEST(LoginStatus, CustomExpiryBelowShort)
 
 TEST(LoginStatus, RenewedExpiry)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
     auto customExpiry = LoginStatus::TimeToLiveShort - 48_h;
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, customExpiry);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, customExpiry);
     auto loggedIn = loggedInResult.releaseReturnValue();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn->authType(), LoginStatus::AuthenticationType::WebAuthn);
@@ -133,14 +133,14 @@ TEST(LoginStatus, RenewedExpiry)
 
 TEST(LoginStatus, InvalidUsernames)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
     // Whitespace is not allowed.
-    auto loggedInResult = LoginStatus::create(loginDomain, "I use spaces"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
+    auto loggedInResult = LoginStatus::create(loginDomain, "I use spaces"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedInResult.hasException());
 
     // Newlines are not allowed.
-    loggedInResult = LoginStatus::create(loginDomain, "Enter\nreturn"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
+    loggedInResult = LoginStatus::create(loginDomain, "Enter\nreturn"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedInResult.hasException());
 
     // There is a max length to usernames.
@@ -153,10 +153,10 @@ TEST(LoginStatus, InvalidUsernames)
 
 TEST(LoginStatus, ClampedExpiryLong)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
     // Too long expiries for managed auth types should be clamped to LoginStatus::TimeToLiveLong.
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, LoginStatus::TimeToLiveLong + 24_h);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, LoginStatus::TimeToLiveLong + 24_h);
     auto loggedIn = loggedInResult.releaseReturnValue();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn->authType(), LoginStatus::AuthenticationType::WebAuthn);
@@ -175,10 +175,10 @@ TEST(LoginStatus, ClampedExpiryLong)
 
 TEST(LoginStatus, ClampedExpiryShort)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
 
     // Too long expiries for unmanaged auth types should be clamped to LoginStatus::TimeToLiveShort.
-    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged, LoginStatus::TimeToLiveShort + 24_h);
+    auto loggedInResult = LoginStatus::create(loginDomain, "admin"_si, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged, LoginStatus::TimeToLiveShort + 24_h);
     auto loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
     ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::Unmanaged);
@@ -197,7 +197,7 @@ TEST(LoginStatus, ClampedExpiryShort)
 
 TEST(LoginStatus, EmptyUsername)
 {
-    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_si } };
     auto loggedInResult = LoginStatus::create(loginDomain, emptyString(), LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged);
     ASSERT_FALSE(loggedInResult.hasException());
 }

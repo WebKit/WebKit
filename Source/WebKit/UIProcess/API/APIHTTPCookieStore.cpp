@@ -62,7 +62,7 @@ static Vector<WebCore::Cookie> filterCookiesByAppBoundDomains(Vector<WebCore::Co
         return cookies;
 
     return WTF::compactMap(WTF::move(cookies), [&](auto&& cookie) -> std::optional<WebCore::Cookie> {
-        if (appBoundDomains.contains(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookie.domain)))
+        if (appBoundDomains.contains(WebCore::RegistrableDomain::uncheckedCreateFromHost(RefPtr<StringImpl> { cookie.domain }.get())))
             return WTF::move(cookie);
         return std::nullopt;
     });
@@ -173,7 +173,7 @@ void HTTPCookieStore::deleteAllCookies(CompletionHandler<void()>&& completionHan
         networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteAllCookies(m_sessionID), [callbackAggregator] { });
 }
 
-void HTTPCookieStore::deleteCookiesForHostnames(const Vector<WTF::String>& hostnames, CompletionHandler<void()>&& completionHandler)
+void HTTPCookieStore::deleteCookiesForHostnames(const Vector<RefPtr<StringImpl>>& hostnames, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr networkProcess = networkProcessIfExists())
         networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteCookiesForHostnames(m_sessionID, hostnames), WTF::move(completionHandler));

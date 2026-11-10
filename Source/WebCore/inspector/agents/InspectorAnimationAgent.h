@@ -67,9 +67,9 @@ public:
     // AnimationBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect>> requestEffect(const Inspector::Protocol::Animation::AnimationId&);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> requestEffectTarget(const Inspector::Protocol::Animation::AnimationId&);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveAnimation(const Inspector::Protocol::Animation::AnimationId&, const String& objectGroup);
+    Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect>> requestEffect(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> requestEffectTarget(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveAnimation(StringImpl*, StringImpl* objectGroup);
     Inspector::Protocol::ErrorStringOr<void> startTracking();
     Inspector::Protocol::ErrorStringOr<void> stopTracking();
 
@@ -91,11 +91,11 @@ protected:
     virtual Inspector::Protocol::DOM::NodeId pushStyleableElementToFrontend(const Styleable&) = 0;
 
 private:
-    NODELETE String findAnimationId(WebAnimation&);
-    WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
+    NODELETE RefPtr<StringImpl> findAnimationId(WebAnimation&);
+    WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, StringImpl* animationId);
     void bindAnimation(WebAnimation&, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace);
     void animationBindingTimerFired();
-    void unbindAnimation(const String& animationId);
+    void unbindAnimation(StringImpl* animationId);
     void animationDestroyedTimerFired();
     void reset();
 

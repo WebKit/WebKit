@@ -40,10 +40,10 @@ struct BackgroundFetchRecordInformation {
     FetchOptions options;
     FetchHeadersGuard guard { FetchHeadersGuard::None };
     HTTPHeaderMap httpHeaders;
-    String referrer;
+    RefPtr<StringImpl> referrer;
 
-    BackgroundFetchRecordInformation isolatedCopy() const & { return { identifier, internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), referrer.isolatedCopy() }; }
-    BackgroundFetchRecordInformation isolatedCopy() && { return { identifier, WTF::move(internalRequest).isolatedCopy(), WTF::move(options).isolatedCopy(), guard, WTF::move(httpHeaders).isolatedCopy(), WTF::move(referrer).isolatedCopy() }; }
+    BackgroundFetchRecordInformation isolatedCopy() const & { return { identifier, internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), WTF::isolatedCopy(referrer) }; }
+    BackgroundFetchRecordInformation isolatedCopy() && { return { identifier, WTF::move(internalRequest).isolatedCopy(), WTF::move(options).isolatedCopy(), guard, WTF::move(httpHeaders).isolatedCopy(), WTF::isolatedCopy(WTF::move(referrer)) }; }
 };
 
 } // namespace WebCore

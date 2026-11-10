@@ -36,7 +36,7 @@ public:
 
     const CSS::FontPalette& fontPalette() const LIFETIME_BOUND { return m_fontPalette; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFontPaletteValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

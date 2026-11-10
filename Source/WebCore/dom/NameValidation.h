@@ -49,9 +49,9 @@ NODELETE bool isValidDoctypeName(StringView);
 // https://www.w3.org/TR/xml/#NT-Name - used by createProcessingInstruction
 NODELETE bool isValidXMLName(StringView);
 
-ExceptionOr<QualifiedName> parseQualifiedElementName(const AtomString& namespaceURI, const AtomString& qualifiedName);
-ExceptionOr<QualifiedName> parseQualifiedAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName);
-ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedAttributeName(const AtomString& qualifiedName);
+ExceptionOr<QualifiedName> parseQualifiedElementName(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName);
+ExceptionOr<QualifiedName> parseQualifiedAttributeName(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName);
+ExceptionOr<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> parseQualifiedAttributeName(AtomStringImpl* qualifiedName);
 
 NODELETE bool hasValidNamespaceForElements(const QualifiedName&);
 NODELETE bool hasValidNamespaceForAttributes(const QualifiedName&);

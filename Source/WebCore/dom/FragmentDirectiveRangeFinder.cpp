@@ -115,7 +115,7 @@ static std::optional<BoundaryPoint> boundaryPointAtIndexInNodes(unsigned index, 
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#is-at-a-word-boundary
-static bool indexIsAtWordBoundary(const String& string, unsigned index)
+static bool indexIsAtWordBoundary(StringImpl* string, unsigned index)
 {
     UBreakIterator* it = wordBreakIterator(string);
     return ubrk_isBoundary(it, index);
@@ -135,9 +135,9 @@ NODELETE static bool isVisibleTextNode(const Text& node)
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#find-a-range-from-a-node-list
-static std::optional<SimpleRange> findRangeFromNodeList(const String& query, const SimpleRange& searchRange, Vector<Ref<Text>>& nodes, WordBounded wordStartBounded, WordBounded wordEndBounded)
+static std::optional<SimpleRange> findRangeFromNodeList(StringImpl* query, const SimpleRange& searchRange, Vector<Ref<Text>>& nodes, WordBounded wordStartBounded, WordBounded wordEndBounded)
 {
-    String searchBuffer;
+    RefPtr<StringImpl> searchBuffer;
     
     if (nodes.size() < 1)
         return std::nullopt;
@@ -175,17 +175,17 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     
     while (!matchIndex) {
         // FIXME: find only using the base characters i.e. also fold accents and others.
-        auto potentialIndex = searchBuffer.findIgnoringASCIICase(foldedQuery, searchStart);
+        auto potentialIndex = findIgnoringASCIICase(StringView { searchBuffer }, foldedQuery, searchStart);
 
         if (potentialIndex == notFound)
             return std::nullopt;
         matchIndex = potentialIndex;
         
         start = boundaryPointAtIndexInNodes(*matchIndex, nodes, BoundaryPointIsAtEnd::No);
-        end = boundaryPointAtIndexInNodes(*matchIndex + foldedQuery.length(), nodes, BoundaryPointIsAtEnd::Yes);
+        end = boundaryPointAtIndexInNodes(*matchIndex + length(foldedQuery), nodes, BoundaryPointIsAtEnd::Yes);
         
         if (((wordStartBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex))
-            || ((wordEndBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex + foldedQuery.length()))) {
+            || ((wordEndBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex + length(foldedQuery)))) {
             searchStart = *matchIndex + 1;
             matchIndex = std::nullopt;
         }
@@ -195,7 +195,7 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     if (nodes.last().ptr() == &searchRange.endContainer())
         endInset = searchRange.endContainer().length() - searchRange.endOffset();
     
-    if (*matchIndex + foldedQuery.length() > searchBuffer.length() - endInset)
+    if (*matchIndex + length(foldedQuery) > length(searchBuffer) - endInset)
         return std::nullopt;
     
     ASSERT_WITH_MESSAGE(start, "Scroll To Text Fragment: Start cannot be null");
@@ -211,7 +211,7 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     
 }
 // https://wicg.github.io/scroll-to-text-fragment/#find-a-string-in-range
-static std::optional<SimpleRange> rangeOfStringInRange(const String& query, SimpleRange& searchRange, WordBounded wordStartBounded, WordBounded wordEndBounded)
+static std::optional<SimpleRange> rangeOfStringInRange(StringImpl* query, SimpleRange& searchRange, WordBounded wordStartBounded, WordBounded wordEndBounded)
 {
     while (!searchRange.collapsed()) {
         RefPtr currentNode = searchRange.startContainer();
@@ -305,7 +305,7 @@ static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRan
 
         auto string = node->textContent();
 
-        if (!isUnicodeWhitespace(string[offset]))
+        if (!isUnicodeWhitespace(codeUnitAt(string, offset)))
             return newRange;
         offset++;
 
@@ -325,11 +325,11 @@ std::optional<SimpleRange> findRangeFromTextDirective(const ParsedTextDirective 
 {
     auto searchRange = makeRangeSelectingNodeContents(document);
     std::optional<SimpleRange> matchRange;
-    WordBounded mustEndAtWordBoundary = (!parsedTextDirective.endText.isEmpty() || parsedTextDirective.suffix.isEmpty()) ? WordBounded::Yes : WordBounded::No;
+    WordBounded mustEndAtWordBoundary = (!isEmpty(parsedTextDirective.endText) || isEmpty(parsedTextDirective.suffix)) ? WordBounded::Yes : WordBounded::No;
     std::optional<SimpleRange> potentialMatch;
     
     while (!searchRange.collapsed()) {
-        if (!parsedTextDirective.prefix.isEmpty()) {
+        if (!isEmpty(parsedTextDirective.prefix)) {
             auto prefixMatch = rangeOfStringInRange(parsedTextDirective.prefix, searchRange, WordBounded::Yes, WordBounded::No);
             if (!prefixMatch)
                 return std::nullopt;
@@ -371,7 +371,7 @@ std::optional<SimpleRange> findRangeFromTextDirective(const ParsedTextDirective 
         
         auto rangeEndSearchRange = makeSimpleRange(potentialMatch->end, searchRange.end);
         while (!rangeEndSearchRange.collapsed()) {
-            if (!parsedTextDirective.endText.isEmpty()) {
+            if (!isEmpty(parsedTextDirective.endText)) {
                 mustEndAtWordBoundary = !parsedTextDirective.suffix ? WordBounded::Yes : WordBounded::No;
                 auto endTextMatch = rangeOfStringInRange(parsedTextDirective.endText, rangeEndSearchRange, WordBounded::Yes, mustEndAtWordBoundary);
                 if (!endTextMatch)
@@ -384,7 +384,7 @@ std::optional<SimpleRange> findRangeFromTextDirective(const ParsedTextDirective 
             if (!potentialMatch || potentialMatch->collapsed())
                 return std::nullopt;
             
-            if (parsedTextDirective.suffix.isEmpty())
+            if (isEmpty(parsedTextDirective.suffix))
                 return potentialMatch;
             
             std::optional<SimpleRange> suffixRange = makeSimpleRange(potentialMatch->end, searchRange.end);
@@ -399,14 +399,14 @@ std::optional<SimpleRange> findRangeFromTextDirective(const ParsedTextDirective 
             if (suffixMatch->start == suffixRange->start)
                 return potentialMatch;
             
-            if (parsedTextDirective.endText.isEmpty())
+            if (isEmpty(parsedTextDirective.endText))
                 break;
             
             rangeEndSearchRange.start = potentialMatch->end;
         }
         
         if (rangeEndSearchRange.collapsed()) {
-            ASSERT(!parsedTextDirective.endText.isEmpty());
+            ASSERT(!isEmpty(parsedTextDirective.endText));
             return std::nullopt;
         }
     }

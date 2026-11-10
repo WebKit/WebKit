@@ -54,26 +54,26 @@ void ConstantValue::dump(PrintStream& out) const
 {
     WTF::switchOn(*this,
         [&](double d) {
-            out.print(String::number(d));
+            out.print(makeString(d));
         },
         [&](float f) {
-            out.print(String::number(f));
+            out.print(makeString(f));
             if (std::isfinite(f))
                 out.print("f");
         },
         [&](half h) {
-            out.print(String::number(h));
+            out.print(makeString(static_cast<float>(h)));
             if (std::isfinite(static_cast<double>(h)))
                 out.print("h");
         },
         [&](int64_t i) {
-            out.print(String::number(i));
+            out.print(makeString(i));
         },
         [&](int32_t i) {
-            out.print(String::number(i), "i");
+            out.print(makeString(i), "i");
         },
         [&](uint32_t u) {
-            out.print(String::number(u), "u");
+            out.print(makeString(u), "u");
         },
         [&](bool b) {
             out.print(b ? "true" : "false");

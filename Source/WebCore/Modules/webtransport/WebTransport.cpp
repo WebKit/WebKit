@@ -77,7 +77,7 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& context, String&& url, WebTransportOptions&& options)
+ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& context, RefPtr<StringImpl>&& url, WebTransportOptions&& options)
 {
     URL parsedURL(WTF::move(url));
     if (!parsedURL.isValid() || !parsedURL.protocolIs("https"_s) || parsedURL.hasFragmentIdentifier())
@@ -87,11 +87,11 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
     if (!dedicated && !options.serverCertificateHashes.isEmpty())
         return Exception { ExceptionCode::NotSupportedError };
 
-    HashSet<String> uniqueProtocols;
-    Vector<String> escapedProtocols(ReserveCapacityTag { }, options.protocols.size());
+    HashSet<RefPtr<StringImpl>> uniqueProtocols;
+    Vector<RefPtr<StringImpl>> escapedProtocols(ReserveCapacityTag { }, options.protocols.size());
     for (auto& protocol : options.protocols) {
         auto escapedProtocol = RFC8941::escapeString(protocol);
-        if (!escapedProtocol || escapedProtocol->isEmpty() || escapedProtocol->length() > 512)
+        if (!escapedProtocol || isEmpty(*escapedProtocol) || length(*escapedProtocol) > 512)
             return Exception { ExceptionCode::SyntaxError };
 
         if (!uniqueProtocols.add(*escapedProtocol).isNewEntry)
@@ -101,7 +101,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
     options.protocols = WTF::move(escapedProtocols);
 
     // https://w3c.github.io/webtransport/#dom-webtransportoptions-headers
-    Vector<KeyValuePair<String, String>> additionalHeaders;
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> additionalHeaders;
     if (options.headersInit) {
         auto validatedHeaders = validateAndNormalizeWebTransportHeaders(*options.headersInit);
         if (validatedHeaders.hasException())
@@ -172,7 +172,7 @@ static ClientOrigin clientOrigin(ScriptExecutionContext& context)
 
 // FIXME: Rename SocketProvider to NetworkProvider or something to reflect that it provides a little more than just simple sockets. SocketAndTransportProvider?
 
-WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& incomingBidirectionalStreams, Ref<ReadableStream>&& incomingUnidirectionalStreams, const WebTransportOptions& options, Ref<WebTransportDatagramDuplexStream>&& datagrams, Ref<DatagramSource>&& datagramSource, Ref<WebTransportReceiveStreamSource>&& receiveStreamSource, Ref<WebTransportBidirectionalStreamSource>&& bidirectionalStreamSource, URL&& url, Vector<KeyValuePair<String, String>>&& additionalHeaders)
+WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& incomingBidirectionalStreams, Ref<ReadableStream>&& incomingUnidirectionalStreams, const WebTransportOptions& options, Ref<WebTransportDatagramDuplexStream>&& datagrams, Ref<DatagramSource>&& datagramSource, Ref<WebTransportReceiveStreamSource>&& receiveStreamSource, Ref<WebTransportBidirectionalStreamSource>&& bidirectionalStreamSource, URL&& url, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& additionalHeaders)
     : ActiveDOMObject(&context)
     , m_incomingBidirectionalStreams(WTF::move(incomingBidirectionalStreams))
     , m_incomingUnidirectionalStreams(WTF::move(incomingUnidirectionalStreams))
@@ -448,7 +448,7 @@ void WebTransport::setAnticipatedConcurrentIncomingBidirectionalStreams(std::opt
     m_anticipatedConcurrentIncomingBidirectionalStreams = value;
 }
 
-String& WebTransport::protocol()
+RefPtr<StringImpl>& WebTransport::protocol()
 {
     return m_protocol;
 }
@@ -483,7 +483,7 @@ static UTF8CString trimToValidUTF8Length1024(UTF8CString&& string)
     while (true) {
         if (!string.length())
             return WTF::move(string);
-        auto decoded = String::fromUTF8(string.span());
+        auto decoded = StringImpl::fromUTF8(string.span());
         if (!decoded)
             string = UTF8CString { string.span().first(string.length() - 1) };
         else
@@ -522,7 +522,7 @@ void WebTransport::close(WebTransportCloseInfo&& closeInfo)
         return;
     if (m_state == State::Connecting)
         return cleanupWithSessionError();
-    m_session->terminate(closeInfo.closeCode, trimToValidUTF8Length1024(closeInfo.reason.utf8()));
+    m_session->terminate(closeInfo.closeCode, trimToValidUTF8Length1024(utf8(closeInfo.reason)));
     cleanup(DOMException::create(ExceptionCode::AbortError), WTF::move(closeInfo));
 }
 
@@ -683,7 +683,7 @@ Ref<WebTransportSendGroup> WebTransport::createSendGroup()
     return WebTransportSendGroup::create(*this);
 }
 
-void WebTransport::didFail(std::optional<uint32_t>&& code, String&& message)
+void WebTransport::didFail(std::optional<uint32_t>&& code, RefPtr<StringImpl>&& message)
 {
     if (code) {
         WebTransportCloseInfo closeInfo {

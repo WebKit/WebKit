@@ -35,9 +35,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUTextureBindingLayout::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("sampleType"_s, convertEnumerationToString(sampleType));
-    json->setString("viewDimension"_s, convertEnumerationToString(viewDimension));
-    json->setBoolean("multisampled"_s, multisampled);
+    json->setString("sampleType"_si, convertEnumerationToString(sampleType));
+    json->setString("viewDimension"_si, convertEnumerationToString(viewDimension));
+    json->setBoolean("multisampled"_si, multisampled);
     return json;
 }
 

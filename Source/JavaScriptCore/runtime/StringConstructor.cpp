@@ -133,7 +133,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, Cal
         uint32_t codePoint = truncateDoubleToUint32(codePointAsDouble);
 
         if (codePoint != codePointAsDouble || codePoint > UCHAR_MAX_VALUE)
-            return throwVMError(globalObject, scope, createRangeError(globalObject, "Arguments contain a value that is out of range of code points"_s));
+            return throwVMError(globalObject, scope, createRangeError(globalObject, "Arguments contain a value that is out of range of code points"_si));
 
         if (U_IS_BMP(codePoint))
             builder.append(static_cast<char16_t>(codePoint));
@@ -153,7 +153,7 @@ JSString* stringFromCodePoint(JSGlobalObject* globalObject, int32_t arg)
 
     uint32_t codePoint = static_cast<uint32_t>(arg);
     if (arg < 0 || codePoint > UCHAR_MAX_VALUE) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Arguments contain a value that is out of range of code points"_s);
+        throwRangeError(globalObject, scope, "Arguments contain a value that is out of range of code points"_si);
         return nullptr;
     }
     scope.release();
@@ -162,7 +162,7 @@ JSString* stringFromCodePoint(JSGlobalObject* globalObject, int32_t arg)
         return jsSingleCharacterString(vm, static_cast<char16_t>(codePoint));
 
     char16_t buffer[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
-    return jsNontrivialString(vm, String({ buffer, 2 }));
+    return jsNontrivialString(vm, StringImpl::create({ buffer, 2 }));
 }
 
 // https://tc39.es/ecma262/#sec-string.raw

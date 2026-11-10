@@ -55,34 +55,34 @@ public:
     
     static CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(const Document&, const URL&);
 
-    String cookieRequestHeaderFieldValue(Document&, const URL&) const;
+    RefPtr<StringImpl> cookieRequestHeaderFieldValue(Document&, const URL&) const;
 
     static IncludeSecureCookies shouldIncludeSecureCookies(const URL&);
 
     // These two functions implement document.cookie API, with special rules for HttpOnly cookies.
-    virtual String cookies(Document&, const URL&) const;
-    virtual void setCookies(Document&, const URL&, const String& cookieString);
+    virtual RefPtr<StringImpl> cookies(Document&, const URL&) const;
+    virtual void setCookies(Document&, const URL&, StringImpl* cookieString);
 
     virtual bool cookiesEnabled(Document&);
     virtual void remoteCookiesEnabled(const Document&, CompletionHandler<void(bool)>&&) const;
-    virtual std::pair<String, SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies) const;
+    virtual std::pair<RefPtr<StringImpl>, SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies) const;
     // Lets WebKit2 compare header values without sending the header to a web process.
     virtual std::optional<SHA1::Digest> cookieRequestHeaderFieldValueDigest(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies) const;
     virtual bool getRawCookies(Document&, const URL&, Vector<Cookie>&) const;
     virtual void setRawCookie(const Document&, const Cookie&, ShouldPartitionCookie);
-    virtual void deleteCookie(const Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&);
+    virtual void deleteCookie(const Document&, const URL&, StringImpl* cookieName, CompletionHandler<void()>&&);
 
     virtual void getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<Cookie>>&&)>&&) const;
     virtual void setCookieAsync(Document&, const URL&, const Cookie&, CompletionHandler<void(bool)>&&) const;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     virtual void addChangeListener(const WebCore::Document&, const CookieChangeListener&);
-    virtual void removeChangeListener(const String& host, const CookieChangeListener&);
+    virtual void removeChangeListener(StringImpl* host, const CookieChangeListener&);
 #endif
 
     // Cookie Cache.
     virtual void clearCache() { }
-    virtual void clearCacheForHost(const String&) { }
+    virtual void clearCacheForHost(StringImpl*) { }
 
     virtual ~CookieJar();
 protected:

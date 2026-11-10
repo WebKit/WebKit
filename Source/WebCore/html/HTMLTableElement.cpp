@@ -283,7 +283,7 @@ static bool setTableCellsChanged(Element& element)
     return cellChanged;
 }
 
-static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& borderTop, bool& borderRight, bool& borderBottom, bool& borderLeft)
+static bool getBordersFromFrameAttributeValue(AtomStringImpl* value, bool& borderTop, bool& borderRight, bool& borderBottom, bool& borderLeft)
 {
     borderTop = false;
     borderRight = false;
@@ -309,7 +309,7 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
     return true;
 }
 
-void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::widthAttr:
@@ -322,26 +322,26 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
         addPropertyToPresentationalHintStyle(style, CSSPropertyID::BorderWidth, parseBorderWidthAttribute(value), CSSUnitType::Px);
         break;
     case AttributeNames::bordercolorAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLColorToStyle(style, CSSPropertyID::BorderColor, value);
         break;
     case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyID::BackgroundColor, value);
         break;
     case AttributeNames::backgroundAttr:
-        if (auto url = value.string().trim(isASCIIWhitespace); !url.isEmpty())
+        if (auto url = trim(value, isASCIIWhitespace); !isEmpty(url))
             style.setProperty(CSSProperty(CSSPropertyID::BackgroundImage, CSSImageValue::create(protect(document())->encodingParseURL(url))));
         break;
     case AttributeNames::valignAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::VerticalAlign, value);
         break;
     case AttributeNames::cellspacingAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLPixelsToStyle(style, CSSPropertyID::BorderSpacing, value);
         break;
     case AttributeNames::alignAttr:
-        if (!value.isEmpty()) {
+        if (!isEmpty(value)) {
             if (equalLettersIgnoringASCIICase(value, "center"_s)) {
                 addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginInlineStart, CSSValueID::Auto);
                 addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginInlineEnd, CSSValueID::Auto);
@@ -396,7 +396,7 @@ bool HTMLTableElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLTableElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -431,7 +431,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
             m_rulesAttr = TableRules::All;
         break;
     case AttributeNames::cellpaddingAttr:
-        if (!newValue.isEmpty())
+        if (!isEmpty(newValue))
             m_padding = std::max(0, parseHTMLInteger(newValue).value_or(0));
         else
             m_padding = 1;
@@ -591,12 +591,12 @@ Ref<HTMLCollection> HTMLTableElement::tBodies()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableTBodiesCollection>(*this);
 }
 
-const AtomString& HTMLTableElement::rules() const
+const RefPtr<AtomStringImpl>& HTMLTableElement::rules() const
 {
     return attributeWithoutSynchronization(rulesAttr);
 }
 
-const AtomString& HTMLTableElement::summary() const
+const RefPtr<AtomStringImpl>& HTMLTableElement::summary() const
 {
     return attributeWithoutSynchronization(summaryAttr);
 }

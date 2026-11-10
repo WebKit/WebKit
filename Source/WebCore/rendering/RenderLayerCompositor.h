@@ -354,11 +354,11 @@ public:
 
     void widgetDidChangeSize(RenderWidget&);
 
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
-    WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> trackedRepaintRectsAsText() const;
 
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0);
-    WEBCORE_EXPORT std::optional<String> platformLayerTreeAsText(Element&, OptionSet<PlatformLayerTreeAsTextFlags>);
+    WEBCORE_EXPORT RefPtr<StringImpl> layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0);
+    WEBCORE_EXPORT std::optional<RefPtr<StringImpl>> platformLayerTreeAsText(Element&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
     float deviceScaleFactor() const override;
     float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;

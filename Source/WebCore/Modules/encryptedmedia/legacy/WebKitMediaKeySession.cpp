@@ -50,14 +50,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitMediaKeySession);
 
-Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(Document& document, WebKitMediaKeys& keys, const String& keySystem)
+Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(Document& document, WebKitMediaKeys& keys, StringImpl* keySystem)
 {
     auto session = adoptRef(*new WebKitMediaKeySession(document, keys, keySystem));
     session->suspendIfNeeded();
     return session;
 }
 
-WebKitMediaKeySession::WebKitMediaKeySession(Document& document, WebKitMediaKeys& keys, const String& keySystem)
+WebKitMediaKeySession::WebKitMediaKeySession(Document& document, WebKitMediaKeys& keys, StringImpl* keySystem)
     : ActiveDOMObject(&document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -88,13 +88,13 @@ void WebKitMediaKeySession::close()
     }
 }
 
-RefPtr<ArrayBuffer> WebKitMediaKeySession::cachedKeyForKeyId(const String& keyId) const
+RefPtr<ArrayBuffer> WebKitMediaKeySession::cachedKeyForKeyId(StringImpl* keyId) const
 {
     RefPtr session = m_session;
     return session ? session->cachedKeyForKeyID(keyId) : nullptr;
 }
 
-void WebKitMediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData, const String& mediaKeysHashSalt)
+void WebKitMediaKeySession::generateKeyRequest(StringImpl* mimeType, Ref<Uint8Array>&& initData, StringImpl* mediaKeysHashSalt)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "mimeType: ", mimeType);
     m_mediaKeysHashSalt = mediaKeysHashSalt;
@@ -117,7 +117,7 @@ void WebKitMediaKeySession::keyRequestTimerFired()
 
         // 1. Let cdm be the cdm loaded in the MediaKeys constructor.
         // 2. Let destinationURL be null.
-        String destinationURL;
+        RefPtr<StringImpl> destinationURL;
         WebKitMediaKeyError::Code errorCode = 0;
         uint32_t systemCode = 0;
 
@@ -219,7 +219,7 @@ void WebKitMediaKeySession::addKeyTimerFired()
     }
 }
 
-void WebKitMediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
+void WebKitMediaKeySession::sendMessage(Uint8Array* message, RefPtr<StringImpl> destinationURL)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     auto event = WebKitMediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
@@ -237,7 +237,7 @@ void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t syst
     queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(keyerrorEvent));
 }
 
-String WebKitMediaKeySession::mediaKeysStorageDirectory() const
+RefPtr<StringImpl> WebKitMediaKeySession::mediaKeysStorageDirectory() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
     return document ? document->mediaKeysStorageDirectory() : emptyString();

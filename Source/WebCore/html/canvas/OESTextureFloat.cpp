@@ -41,7 +41,7 @@ OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
 
     // Spec requires WEBGL_color_buffer_float to be turned on implicitly here.
     // Enable it both in the backend and in WebKit.
-    context.getExtension("WEBGL_color_buffer_float"_s);
+    context.getExtension("WEBGL_color_buffer_float"_si);
 
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.

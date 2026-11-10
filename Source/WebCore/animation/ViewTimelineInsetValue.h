@@ -49,8 +49,8 @@ struct ViewTimelineInsetItem;
 // which gets flattened into the union `(CSSNumericValue or DOMString or CSSOMKeywordValue)`.
 // Tracked via https://github.com/w3c/csswg-drafts/issues/11477
 
-using ViewTimelineIndividualInset = Variant<Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
-using ViewTimelineInsetValue = Variant<String, Vector<ViewTimelineIndividualInset>>;
+using ViewTimelineIndividualInset = Variant<Ref<CSSNumericValue>, RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
+using ViewTimelineInsetValue = Variant<RefPtr<StringImpl>, Vector<ViewTimelineIndividualInset>>;
 
 std::optional<Style::ViewTimelineInsetItem> validateViewTimelineInset(ViewTimelineInsetValue&&, const Document&);
 

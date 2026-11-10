@@ -254,7 +254,7 @@ void webkit_dom_html_body_element_set_a_link(WebKitDOMHTMLBodyElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BODY_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBodyElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alinkAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alinkAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_body_element_get_background(WebKitDOMHTMLBodyElement* self)
@@ -272,7 +272,7 @@ void webkit_dom_html_body_element_set_background(WebKitDOMHTMLBodyElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BODY_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBodyElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::backgroundAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::backgroundAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_body_element_get_bg_color(WebKitDOMHTMLBodyElement* self)
@@ -290,7 +290,7 @@ void webkit_dom_html_body_element_set_bg_color(WebKitDOMHTMLBodyElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BODY_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBodyElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::bgcolorAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::bgcolorAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_body_element_get_link(WebKitDOMHTMLBodyElement* self)
@@ -308,7 +308,7 @@ void webkit_dom_html_body_element_set_link(WebKitDOMHTMLBodyElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BODY_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBodyElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::linkAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::linkAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_body_element_get_text(WebKitDOMHTMLBodyElement* self)
@@ -326,7 +326,7 @@ void webkit_dom_html_body_element_set_text(WebKitDOMHTMLBodyElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BODY_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBodyElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::textAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::textAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_body_element_get_v_link(WebKitDOMHTMLBodyElement* self)
@@ -344,7 +344,7 @@ void webkit_dom_html_body_element_set_v_link(WebKitDOMHTMLBodyElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BODY_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBodyElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::vlinkAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::vlinkAttr, AtomStringImpl::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

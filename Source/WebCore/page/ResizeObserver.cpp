@@ -216,7 +216,7 @@ void ResizeObserver::deliverObservations()
     if (!context)
         return;
 
-    InspectorInstrumentation::willFireObserverCallback(*context, "ResizeObserver"_s);
+    InspectorInstrumentation::willFireObserverCallback(*context, "ResizeObserver"_si);
     jsCallback->invoke(*this, entries, *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }

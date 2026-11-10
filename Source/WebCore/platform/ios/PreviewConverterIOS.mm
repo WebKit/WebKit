@@ -92,11 +92,11 @@ PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConv
 {
 }
 
-HashSet<String, ASCIICaseInsensitiveHash> PreviewConverter::platformSupportedMIMETypes()
+HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> PreviewConverter::platformSupportedMIMETypes()
 {
-    HashSet<String, ASCIICaseInsensitiveHash> supportedMIMETypes;
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> supportedMIMETypes;
     for (NSString *mimeType in QLPreviewGetSupportedMIMETypesSetSingleton())
-        supportedMIMETypes.add(mimeType);
+        supportedMIMETypes.add(StringImpl::create(mimeType));
     return supportedMIMETypes;
 }
 
@@ -112,14 +112,14 @@ ResourceResponse PreviewConverter::platformPreviewResponse() const
     return response;
 }
 
-String PreviewConverter::previewFileName() const
+RefPtr<StringImpl> PreviewConverter::previewFileName() const
 {
-    return [m_platformConverter previewFileName];
+    return StringImpl::create([m_platformConverter previewFileName]);
 }
 
-String PreviewConverter::previewUTI() const
+RefPtr<StringImpl> PreviewConverter::previewUTI() const
 {
-    return [m_platformConverter previewUTI];
+    return StringImpl::create([m_platformConverter previewUTI]);
 }
 
 void PreviewConverter::platformAppend(const SharedBufferDataView& data)
@@ -139,18 +139,18 @@ void PreviewConverter::platformFailedAppending()
 
 bool PreviewConverter::isPlatformPasswordError(const ResourceError& error) const
 {
-    return error.errorCode() == kQLReturnPasswordProtected && error.domain() == "QuickLookErrorDomain"_s;
+    return error.errorCode() == kQLReturnPasswordProtected && equal(error.domain(), "QuickLookErrorDomain"_s);
 }
 
-static NSDictionary *optionsWithPassword(const String& password)
+static NSDictionary *optionsWithPassword(StringImpl* password)
 {
-    if (password.isNull())
+    if (!password)
         return nil;
     
-    return @{ bridge_cast(PAL::get_QuickLook_kQLPreviewOptionPasswordKeySingleton()) : password.createNSString().get() };
+    return @{ bridge_cast(PAL::get_QuickLook_kQLPreviewOptionPasswordKeySingleton()) : createNSString(password).get() };
 }
 
-void PreviewConverter::platformUnlockWithPassword(const String& password)
+void PreviewConverter::platformUnlockWithPassword(StringImpl* password)
 {
     m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:protect(m_originalResponse.nsURLResponse()).get() options:protect(optionsWithPassword(password))]);
 }

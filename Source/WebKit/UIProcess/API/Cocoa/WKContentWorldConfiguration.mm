@@ -89,7 +89,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
     Ref<API::ContentWorldConfiguration> configuration = *_worldConfiguration;
 
-    configuration->setName(checked_objc_cast<NSString>([coder decodeObjectOfClass:[NSString class] forKey:@"name"]));
+    configuration->setName(StringImpl::create(checked_objc_cast<NSString>([coder decodeObjectOfClass:[NSString class] forKey:@"name"])));
     configuration->setAllowAccessToClosedShadowRoots([coder decodeBoolForKey:@"allowAccessToClosedShadowRoots"]);
     configuration->setAllowAutofill([coder decodeBoolForKey:@"allowAutofill"]);
     configuration->setAllowElementUserInfo([coder decodeBoolForKey:@"allowElementUserInfo"]);
@@ -194,12 +194,12 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSString *)name
 {
-    return _worldConfiguration->name().createNSString().autorelease();
+    return createNSString(_worldConfiguration->name()).autorelease();
 }
 
 - (void)setName:(NSString *)name
 {
-    protect(*_worldConfiguration)->setName(name);
+    protect(*_worldConfiguration)->setName(StringImpl::create(name));
 }
 
 - (BOOL)allowAccessToClosedShadowRoots

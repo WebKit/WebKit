@@ -42,26 +42,26 @@ class Report : public RefCounted<Report> {
 public:
     // The body dictionaries of Report.idl.
     struct COEPInheritenceViolationReportBody {
-        String type;
-        String blockedURL;
-        String disposition;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> blockedURL;
+        RefPtr<StringImpl> disposition;
     };
 
     struct CORPViolationReportBody {
-        String type;
-        String blockedURL;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> blockedURL;
         FetchRequestDestination destination;
-        String disposition;
+        RefPtr<StringImpl> disposition;
     };
 
     struct CSPViolationReportBody {
-        String documentURL;
-        String referrer;
-        String blockedURL;
-        String effectiveDirective;
-        String originalPolicy;
-        String sourceFile;
-        String sample;
+        RefPtr<StringImpl> documentURL;
+        RefPtr<StringImpl> referrer;
+        RefPtr<StringImpl> blockedURL;
+        RefPtr<StringImpl> effectiveDirective;
+        RefPtr<StringImpl> originalPolicy;
+        RefPtr<StringImpl> sourceFile;
+        RefPtr<StringImpl> sample;
         SecurityPolicyViolationEventDisposition disposition;
         unsigned short statusCode;
         std::optional<uint64_t> lineNumber;
@@ -69,41 +69,41 @@ public:
     };
 
     struct DeprecationReportBody {
-        String id;
+        RefPtr<StringImpl> id;
         WallTime anticipatedRemoval;
-        String message;
-        String sourceFile;
+        RefPtr<StringImpl> message;
+        RefPtr<StringImpl> sourceFile;
         std::optional<unsigned> lineNumber;
         std::optional<unsigned> columnNumber;
     };
 
     struct IntegrityViolationReportBody {
-        String documentURL;
-        String blockedURL;
-        String destination;
+        RefPtr<StringImpl> documentURL;
+        RefPtr<StringImpl> blockedURL;
+        RefPtr<StringImpl> destination;
         bool reportOnly;
     };
 
     struct TestReportBody {
-        String message;
+        RefPtr<StringImpl> message;
     };
 
-    NODELETE WEBCORE_EXPORT static Ref<Report> create(const String& type, const String& url, RefPtr<ReportBody>&&);
+    NODELETE WEBCORE_EXPORT static Ref<Report> create(StringImpl* type, StringImpl* url, RefPtr<ReportBody>&&);
 
     WEBCORE_EXPORT ~Report();
 
-    NODELETE WEBCORE_EXPORT const String& type() const;
-    NODELETE WEBCORE_EXPORT const String& url() const;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& type() const;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& url() const;
     ReportBody* body() const { return m_body.get(); }
     RefPtr<ReportBody> bodyForSerialization() const { return m_body; }
 
-    static Ref<FormData> createReportFormDataForViolation(const String& type, const URL&, const String& userAgent, const String& destination, NOESCAPE const Function<void(JSON::Object&)>& populateBody);
+    static Ref<FormData> createReportFormDataForViolation(StringImpl* type, const URL&, StringImpl* userAgent, StringImpl* destination, NOESCAPE const Function<void(JSON::Object&)>& populateBody);
 
 private:
-    WEBCORE_EXPORT Report(const String& type, const String& url, RefPtr<ReportBody>&&);
+    WEBCORE_EXPORT Report(StringImpl* type, StringImpl* url, RefPtr<ReportBody>&&);
 
-    String m_type;
-    String m_url;
+    RefPtr<StringImpl> m_type;
+    RefPtr<StringImpl> m_url;
     const RefPtr<ReportBody> m_body;
 };
 

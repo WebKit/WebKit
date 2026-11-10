@@ -81,7 +81,7 @@ public:
     void showConsole();
     void showResources();
 
-    void showMainResourceForFrame(const String& frameIdentifier);
+    void showMainResourceForFrame(StringImpl* frameIdentifier);
 
     void startPageProfiling();
     void stopPageProfiling();
@@ -99,10 +99,10 @@ public:
 
     void setIsVisible(bool);
 
-    void updateFindString(const String&);
+    void updateFindString(StringImpl*);
 
-    void sendMessageToFrontend(const String& message);
-    void evaluateInFrontendForTesting(const String& expression);
+    void sendMessageToFrontend(StringImpl* message);
+    void evaluateInFrontendForTesting(StringImpl* expression);
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     void setDiagnosticLoggingAvailable(bool);
@@ -120,12 +120,12 @@ public:
     void moveWindowBy(float x, float y) override;
 
     bool isRemote() const final { return false; }
-    String localizedStringsURL() const override;
-    String backendCommandsURL() const final { return String(); }
+    RefPtr<StringImpl> localizedStringsURL() const override;
+    RefPtr<StringImpl> backendCommandsURL() const final { return nullptr; }
     Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::WebPage; }
-    String targetPlatformName() const override;
-    String targetBuildVersion() const override;
-    String targetProductVersion() const override;
+    RefPtr<StringImpl> targetPlatformName() const override;
+    RefPtr<StringImpl> targetBuildVersion() const override;
+    RefPtr<StringImpl> targetProductVersion() const override;
     bool targetIsSimulator() const final { return false; }
     unsigned inspectionLevel() const override { return m_inspectionLevel; }
 
@@ -146,20 +146,20 @@ public:
 
     void changeSheetRect(const WebCore::FloatRect&) override;
 
-    void openURLExternally(const String& url) override;
-    void revealFileExternally(const String& path) override;
+    void openURLExternally(StringImpl* url) override;
+    void revealFileExternally(StringImpl* path) override;
     void requestDisableSiteIsolation() override;
 
     bool canSave(WebCore::InspectorFrontendClient::SaveMode) override;
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs) override;
 
     bool canLoad() override;
-    void load(const WTF::String& path, WTF::CompletionHandler<void(const WTF::String&)>&&) override;
+    void load(StringImpl* path, WTF::CompletionHandler<void(StringImpl*)>&&) override;
 
     bool canPickColorFromScreen() override;
     void pickColorFromScreen(WTF::CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
 
-    void inspectedURLChanged(const String&) override;
+    void inspectedURLChanged(StringImpl*) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
 
     void setInspectorPageDeveloperExtrasEnabled(bool) override;
@@ -170,7 +170,7 @@ public:
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
-    void logDiagnosticEvent(const WTF::String& eventName, const WebCore::DiagnosticLoggingDictionary&) override;
+    void logDiagnosticEvent(StringImpl* eventName, const WebCore::DiagnosticLoggingDictionary&) override;
 #endif
         
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -181,7 +181,7 @@ public:
     void inspectedPageDidNavigate(const URL&) override;
 #endif
 
-    void sendMessageToBackend(const String&) override;
+    void sendMessageToBackend(StringImpl*) override;
     WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
     WebCore::Page* frontendPage() final;
         

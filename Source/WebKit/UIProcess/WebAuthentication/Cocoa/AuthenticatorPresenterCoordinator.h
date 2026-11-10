@@ -56,23 +56,23 @@ public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
     using CredentialRequestHandler = Function<void(ASCAppleIDCredential *, NSError *)>;
 
-    static Ref<AuthenticatorPresenterCoordinator> create(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
+    static Ref<AuthenticatorPresenterCoordinator> create(const AuthenticatorManager&, StringImpl* rpId, const TransportSet&, WebCore::ClientDataType, StringImpl* username);
     ~AuthenticatorPresenterCoordinator();
 
     void updatePresenter(WebAuthenticationStatus);
-    void requestPin(uint64_t retries, CompletionHandler<void(const String&)>&&);
-    void requestNewPin(uint64_t, CompletionHandler<void(const String&)>&&);
+    void requestPin(uint64_t retries, CompletionHandler<void(StringImpl*)>&&);
+    void requestNewPin(uint64_t, CompletionHandler<void(StringImpl*)>&&);
     void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&);
     void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&);
     void dimissPresenter(WebAuthenticationResult);
 
     void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTF::move(handler); }
     void setLAContext(LAContext *);
-    void didSelectAssertionResponse(const String& credentialName, LAContext *);
-    void setPin(const String&);
+    void didSelectAssertionResponse(StringImpl* credentialName, LAContext *);
+    void setPin(StringImpl*);
 
 private:
-    AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
+    AuthenticatorPresenterCoordinator(const AuthenticatorManager&, StringImpl* rpId, const TransportSet&, WebCore::ClientDataType, StringImpl* username);
 
     WeakPtr<AuthenticatorManager> m_manager;
     const RetainPtr<ASCAuthorizationPresentationContext> m_context;
@@ -89,9 +89,9 @@ private:
     RetainPtr<LAContext> m_laContext;
 
     CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)> m_responseHandler;
-    HashMap<String, Ref<WebCore::AuthenticatorAssertionResponse>> m_credentials;
+    HashMap<RefPtr<StringImpl>, Ref<WebCore::AuthenticatorAssertionResponse>> m_credentials;
 
-    CompletionHandler<void(const String&)> m_pinHandler;
+    CompletionHandler<void(StringImpl*)> m_pinHandler;
 #if HAVE(ASC_AUTH_UI)
     bool m_presentedPIN { false };
 #endif

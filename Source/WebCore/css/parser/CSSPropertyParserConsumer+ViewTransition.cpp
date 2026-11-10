@@ -49,7 +49,7 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::Pro
         auto type = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueID::None });
         if (!type)
              return nullptr;
-        if (type->value.startsWith("-ua-"_s))
+        if (startsWith(type->value, "-ua-"_s))
             return nullptr;
         list.append(CSSCustomIdentValue::create(WTF::move(*type)));
     } while (!range.atEnd());

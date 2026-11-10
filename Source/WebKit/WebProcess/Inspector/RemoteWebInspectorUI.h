@@ -67,9 +67,9 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by RemoteWebInspectorUI messages
-    void initialize(DebuggableInfoData&&, const String& backendCommandsURL);
-    void updateFindString(const String&);
-    void sendMessageToFrontend(const String&);
+    void initialize(DebuggableInfoData&&, StringImpl* backendCommandsURL);
+    void updateFindString(StringImpl*);
+    void sendMessageToFrontend(StringImpl*);
     void showConsole();
     void showResources();
 
@@ -89,12 +89,12 @@ public:
     void moveWindowBy(float x, float y) override;
 
     bool isRemote() const final { return true; }
-    String localizedStringsURL() const override;
-    String backendCommandsURL() const final { return m_backendCommandsURL; }
+    RefPtr<StringImpl> localizedStringsURL() const override;
+    RefPtr<StringImpl> backendCommandsURL() const final { return m_backendCommandsURL; }
     Inspector::DebuggableType debuggableType() const override;
-    String targetPlatformName() const override;
-    String targetBuildVersion() const override;
-    String targetProductVersion() const override;
+    RefPtr<StringImpl> targetPlatformName() const override;
+    RefPtr<StringImpl> targetBuildVersion() const override;
+    RefPtr<StringImpl> targetProductVersion() const override;
     bool targetIsSimulator() const override;
 
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance) override;
@@ -108,26 +108,26 @@ public:
     void reopen() override;
     void resetState() override;
 
-    void openURLExternally(const String& url) override;
-    void revealFileExternally(const String& path) override;
+    void openURLExternally(StringImpl* url) override;
+    void revealFileExternally(StringImpl* path) override;
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs) override;
-    void load(const String& path, CompletionHandler<void(const String&)>&&) override;
+    void load(StringImpl* path, CompletionHandler<void(StringImpl*)>&&) override;
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
-    void inspectedURLChanged(const String&) override;
+    void inspectedURLChanged(StringImpl*) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
     void setInspectorPageDeveloperExtrasEnabled(bool) override;
 
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor) override;
     double pageZoomFactor() const override;
 
-    void sendMessageToBackend(const String&) override;
+    void sendMessageToBackend(StringImpl*) override;
     WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
     WebCore::Page* frontendPage() final;
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
-    void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingDictionary&) override;
+    void logDiagnosticEvent(StringImpl* eventName, const WebCore::DiagnosticLoggingDictionary&) override;
 #endif
         
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -158,7 +158,7 @@ private:
 #endif
 
     DebuggableInfoData m_debuggableInfo;
-    String m_backendCommandsURL;
+    RefPtr<StringImpl> m_backendCommandsURL;
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool m_diagnosticLoggingAvailable { false };

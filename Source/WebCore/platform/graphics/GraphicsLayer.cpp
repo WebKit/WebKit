@@ -64,63 +64,63 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsLayer);
 
 #if ENABLE(THREADED_ANIMATIONS)
-String acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty property)
+RefPtr<StringImpl> acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty property)
 {
     switch (property) {
     case AcceleratedEffectProperty::Opacity:
-        return "opacity"_s;
+        return "opacity"_si;
     case AcceleratedEffectProperty::Transform:
-        return "transform"_s;
+        return "transform"_si;
     case AcceleratedEffectProperty::Translate:
-        return "translate"_s;
+        return "translate"_si;
     case AcceleratedEffectProperty::Rotate:
-        return "rotate"_s;
+        return "rotate"_si;
     case AcceleratedEffectProperty::Scale:
-        return "scale"_s;
+        return "scale"_si;
     case AcceleratedEffectProperty::OffsetPath:
-        return "offset-path"_s;
+        return "offset-path"_si;
     case AcceleratedEffectProperty::OffsetDistance:
-        return "offset-distance"_s;
+        return "offset-distance"_si;
     case AcceleratedEffectProperty::OffsetPosition:
-        return "offset-position"_s;
+        return "offset-position"_si;
     case AcceleratedEffectProperty::OffsetAnchor:
-        return "offset-anchor"_s;
+        return "offset-anchor"_si;
     case AcceleratedEffectProperty::OffsetRotate:
-        return "offset-rotate"_s;
+        return "offset-rotate"_si;
     case AcceleratedEffectProperty::Filter:
-        return "filter"_s;
+        return "filter"_si;
     case AcceleratedEffectProperty::BackdropFilter:
-        return "backdrop-filter"_s;
+        return "backdrop-filter"_si;
     default:
         ASSERT_NOT_REACHED();
-        return "invalid"_s;
+        return "invalid"_si;
     }
     ASSERT_NOT_REACHED();
-    return ""_s;
+    return ""_si;
 }
 #endif
 
-String animatedPropertyIDAsString(AnimatedProperty property)
+RefPtr<StringImpl> animatedPropertyIDAsString(AnimatedProperty property)
 {
     switch (property) {
     case AnimatedProperty::Translate:
     case AnimatedProperty::Scale:
     case AnimatedProperty::Rotate:
     case AnimatedProperty::Transform:
-        return "transform"_s;
+        return "transform"_si;
     case AnimatedProperty::Opacity:
-        return "opacity"_s;
+        return "opacity"_si;
     case AnimatedProperty::BackgroundColor:
-        return "background-color"_s;
+        return "background-color"_si;
     case AnimatedProperty::Filter:
-        return "filter"_s;
+        return "filter"_si;
     case AnimatedProperty::WebkitBackdropFilter:
-        return "backdrop-filter"_s;
+        return "backdrop-filter"_si;
     case AnimatedProperty::Invalid:
-        return "invalid"_s;
+        return "invalid"_si;
     }
     ASSERT_NOT_REACHED();
-    return ""_s;
+    return ""_si;
 }
 
 using RepaintMap = HashMap<const GraphicsLayer*, Vector<FloatRect>>;
@@ -261,7 +261,7 @@ void GraphicsLayer::clearClient()
     m_client = &EmptyGraphicsLayerClient::singleton();
 }
 
-String GraphicsLayer::debugName() const
+RefPtr<StringImpl> GraphicsLayer::debugName() const
 {
     return name();
 }
@@ -727,7 +727,7 @@ FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverage
     return unionRect(coverageRect, expandedRect);
 }
 
-String GraphicsLayer::animationNameForTransition(AnimatedProperty property)
+RefPtr<StringImpl> GraphicsLayer::animationNameForTransition(AnimatedProperty property)
 {
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
     return makeString("-|transition"_s, static_cast<int>(property), '-');
@@ -1152,7 +1152,7 @@ void GraphicsLayer::setShadowPath(const Path& path)
 #endif
 }
 
-String GraphicsLayer::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent) const
+RefPtr<StringImpl> GraphicsLayer::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent) const
 {
     TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     ts.setIndent(baseIndent);
@@ -1169,15 +1169,15 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     if (!layer)
         return;
 
-    String output = layer->layerTreeAsText(WebCore::AllLayerTreeAsTextOptions);
-    SAFE_WTFLOGALWAYS("%s\n", output.utf8());
+    RefPtr<StringImpl> output = layer->layerTreeAsText(WebCore::AllLayerTreeAsTextOptions);
+    SAFE_WTFLOGALWAYS("%s\n", utf8(output));
 
     // The tree is too large to print to the os log so save the tree output
     // to a file in case we don't have easy access to stderr.
     auto [tempFilePath, fileHandle] = FileSystem::openTemporaryFile("GraphicsLayerTree"_s);
     if (fileHandle) {
-        fileHandle.write(byteCast<uint8_t>(output.utf8().span()));
-        SAFE_WTFLOGALWAYS("Saved GraphicsLayer Tree to %s", tempFilePath.utf8());
+        fileHandle.write(byteCast<uint8_t>(utf8(output).span()));
+        SAFE_WTFLOGALWAYS("Saved GraphicsLayer Tree to %s", utf8(tempFilePath));
     } else
         WTFLogAlways("Failed to open temporary file for saving the GraphicsLayer Tree.");
 }

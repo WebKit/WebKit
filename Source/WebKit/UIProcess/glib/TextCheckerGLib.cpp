@@ -157,15 +157,15 @@ void TextChecker::toggleSpellingUIIsShowing()
 {
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String& /* misspelledWord */)
+void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, StringImpl* /* misspelledWord */)
 {
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& /* badGrammarPhrase */, const GrammarDetail& /* grammarDetail */)
+void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, StringImpl* /* badGrammarPhrase */, const GrammarDetail& /* grammarDetail */)
 {
 }
 
-void TextChecker::getGuessesForWord(SpellDocumentTag, const String& word, const String& /* context */, int32_t /* insertionPoint */, Vector<String>& guesses, bool)
+void TextChecker::getGuessesForWord(SpellDocumentTag, StringImpl* word, StringImpl* /* context */, int32_t /* insertionPoint */, Vector<RefPtr<StringImpl>>& guesses, bool)
 {
 #if ENABLE(SPELLCHECK)
     guesses = TextCheckerEnchant::singleton().getGuessesForWord(word);
@@ -175,7 +175,7 @@ void TextChecker::getGuessesForWord(SpellDocumentTag, const String& word, const 
 #endif
 }
 
-void TextChecker::learnWord(SpellDocumentTag, const String& word)
+void TextChecker::learnWord(SpellDocumentTag, StringImpl* word)
 {
 #if ENABLE(SPELLCHECK)
     TextCheckerEnchant::singleton().learnWord(word);
@@ -184,7 +184,7 @@ void TextChecker::learnWord(SpellDocumentTag, const String& word)
 #endif
 }
 
-void TextChecker::ignoreWord(SpellDocumentTag, const String& word)
+void TextChecker::ignoreWord(SpellDocumentTag, StringImpl* word)
 {
 #if ENABLE(SPELLCHECK)
     TextCheckerEnchant::singleton().ignoreWord(word);
@@ -279,7 +279,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
 }
 #endif // USE(UNIFIED_TEXT_CHECKING)
 
-void TextChecker::setSpellCheckingLanguages(const Vector<String>& languages)
+void TextChecker::setSpellCheckingLanguages(const Vector<RefPtr<StringImpl>>& languages)
 {
 #if ENABLE(SPELLCHECK)
     TextCheckerEnchant::singleton().updateSpellCheckingLanguages(languages);
@@ -288,12 +288,12 @@ void TextChecker::setSpellCheckingLanguages(const Vector<String>& languages)
 #endif
 }
 
-Vector<String> TextChecker::loadedSpellCheckingLanguages()
+Vector<RefPtr<StringImpl>> TextChecker::loadedSpellCheckingLanguages()
 {
 #if ENABLE(SPELLCHECK)
     return TextCheckerEnchant::singleton().loadedSpellCheckingLanguages();
 #else
-    return Vector<String>();
+    return Vector<RefPtr<StringImpl>>();
 #endif
 }
 

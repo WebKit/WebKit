@@ -56,7 +56,7 @@ DeviceOrientationEvent::DeviceOrientationEvent()
 {
 }
 
-DeviceOrientationEvent::DeviceOrientationEvent(const AtomString& eventType, DeviceOrientationData* orientation)
+DeviceOrientationEvent::DeviceOrientationEvent(AtomStringImpl* eventType, DeviceOrientationData* orientation)
 #if ENABLE(DEVICE_ORIENTATION)
     : Event(EventInterfaceType::DeviceOrientationEvent, eventType, CanBubble::No, IsCancelable::No)
 #else
@@ -96,7 +96,7 @@ std::optional<double> DeviceOrientationEvent::compassAccuracy() const
     return m_orientation->compassAccuracy();
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy)
+void DeviceOrientationEvent::initDeviceOrientationEvent(AtomStringImpl* type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy)
 {
     if (isBeingDispatched())
         return;
@@ -112,7 +112,7 @@ std::optional<bool> DeviceOrientationEvent::absolute() const
     return m_orientation->absolute();
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute)
+void DeviceOrientationEvent::initDeviceOrientationEvent(AtomStringImpl* type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute)
 {
     if (isBeingDispatched())
         return;
@@ -129,9 +129,9 @@ void DeviceOrientationEvent::requestPermission(Document& document, PermissionPro
     RefPtr window = document.window();
     RefPtr page = document.page();
     if (!window || !page)
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_si });
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!window->isAllowedToUseDeviceOrientation(errorMessage)) {
         document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: "_s, errorMessage, '.'));
         return promise.resolve(PermissionState::Denied);
@@ -139,7 +139,7 @@ void DeviceOrientationEvent::requestPermission(Document& document, PermissionPro
 
     protect(page->deviceOrientationAndMotionAccessController())->shouldAllowAccess(protect(document), [promise = WTF::move(promise)](PermissionState permissionState) mutable {
         if (permissionState == PermissionState::Prompt)
-            return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device orientation access requires a user gesture to prompt"_s });
+            return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device orientation access requires a user gesture to prompt"_si });
         promise.resolve(permissionState);
     });
 }

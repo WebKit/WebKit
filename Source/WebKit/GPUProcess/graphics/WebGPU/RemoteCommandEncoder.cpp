@@ -174,7 +174,7 @@ void RemoteCommandEncoder::clearBuffer(
     protect(m_backing)->clearBuffer(protect(*convertedBuffer), offset, size);
 }
 
-void RemoteCommandEncoder::pushDebugGroup(String&& groupLabel)
+void RemoteCommandEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(m_backing)->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -184,7 +184,7 @@ void RemoteCommandEncoder::popDebugGroup()
     protect(m_backing)->popDebugGroup();
 }
 
-void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
+void RemoteCommandEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(m_backing)->insertDebugMarker(WTF::move(markerLabel));
 }
@@ -226,7 +226,7 @@ void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descrip
     objectHeap->addObject(identifier, remoteCommandBuffer);
 }
 
-void RemoteCommandEncoder::setLabel(String&& label)
+void RemoteCommandEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

@@ -88,21 +88,24 @@ public:
     void setCustomElementRegistry(RefPtr<CustomElementRegistry>&&);
     CustomElementRegistry* customElementRegistry() const { return m_customElementRegistry.get(); }
 
-    WEBCORE_EXPORT RefPtr<Element> getElementById(const AtomString&) const;
-    WEBCORE_EXPORT RefPtr<Element> getElementById(const String&) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementById(AtomStringImpl*) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementById(StringImpl*) const;
     RefPtr<Element> getElementById(StringView) const;
-    RefPtr<Element> elementByIdResolvingReferenceTarget(const AtomString&) const;
-    const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getAllElementsById(const AtomString&) const;
-    inline bool hasElementWithId(const AtomString&) const; // Defined in TreeScopeInlines.h.
-    inline bool containsMultipleElementsWithId(const AtomString& id) const; // Defined in TreeScopeInlines.h.
-    void addElementById(const AtomString& elementId, Element&, bool notifyObservers = true);
-    void removeElementById(const AtomString& elementId, Element&, bool notifyObservers = true);
+    // Pointer and StringView overloads are ambiguous for smart pointer arguments.
+    RefPtr<Element> getElementById(const RefPtr<AtomStringImpl>& elementId) const { return getElementById(elementId.get()); }
+    RefPtr<Element> getElementById(const RefPtr<StringImpl>& elementId) const { return getElementById(elementId.get()); }
+    RefPtr<Element> elementByIdResolvingReferenceTarget(AtomStringImpl*) const;
+    const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getAllElementsById(AtomStringImpl*) const;
+    inline bool hasElementWithId(AtomStringImpl*) const; // Defined in TreeScopeInlines.h.
+    inline bool containsMultipleElementsWithId(AtomStringImpl* id) const; // Defined in TreeScopeInlines.h.
+    void addElementById(AtomStringImpl* elementId, Element&, bool notifyObservers = true);
+    void removeElementById(AtomStringImpl* elementId, Element&, bool notifyObservers = true);
 
-    WEBCORE_EXPORT RefPtr<Element> getElementByName(const AtomString&) const;
-    inline bool hasElementWithName(const AtomString&) const; // Defined in TreeScopeInlines.h.
-    inline bool containsMultipleElementsWithName(const AtomString&) const; // Defined in TreeScopeInlines.h.
-    void addElementByName(const AtomString&, Element&);
-    void removeElementByName(const AtomString&, Element&);
+    WEBCORE_EXPORT RefPtr<Element> getElementByName(AtomStringImpl*) const;
+    inline bool hasElementWithName(AtomStringImpl*) const; // Defined in TreeScopeInlines.h.
+    inline bool containsMultipleElementsWithName(AtomStringImpl*) const; // Defined in TreeScopeInlines.h.
+    void addElementByName(AtomStringImpl*, Element&);
+    void removeElementByName(AtomStringImpl*, Element&);
 
     NODELETE Document& documentScope() const { return m_documentScope.get(); }
     static constexpr ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
@@ -113,19 +116,19 @@ public:
     NODELETE WEBCORE_EXPORT Node* ancestorNodeInThisScope(Node*) const;
     NODELETE WEBCORE_EXPORT Element* ancestorElementInThisScope(Element*) const;
 
-    void addImageMap(HTMLMapElement&, const AtomString& name, const AtomString& id);
-    void removeImageMap(HTMLMapElement&, const AtomString& name, const AtomString& id);
-    RefPtr<HTMLMapElement> getImageMap(const AtomString&) const;
+    void addImageMap(HTMLMapElement&, AtomStringImpl* name, AtomStringImpl* id);
+    void removeImageMap(HTMLMapElement&, AtomStringImpl* name, AtomStringImpl* id);
+    RefPtr<HTMLMapElement> getImageMap(AtomStringImpl*) const;
 
-    void addImageElementByUsemap(const AtomString&, HTMLImageElement&);
-    void removeImageElementByUsemap(const AtomString&, HTMLImageElement&);
-    RefPtr<HTMLImageElement> imageElementByUsemap(const AtomString&) const;
+    void addImageElementByUsemap(AtomStringImpl*, HTMLImageElement&);
+    void removeImageElementByUsemap(AtomStringImpl*, HTMLImageElement&);
+    RefPtr<HTMLImageElement> imageElementByUsemap(AtomStringImpl*) const;
 
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
-    void addLabel(const AtomString& forAttributeValue, HTMLLabelElement&);
-    void removeLabel(const AtomString& forAttributeValue, HTMLLabelElement&);
-    const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* labelElementsForId(const AtomString& forAttributeValue);
+    void addLabel(AtomStringImpl* forAttributeValue, HTMLLabelElement&);
+    void removeLabel(AtomStringImpl* forAttributeValue, HTMLLabelElement&);
+    const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* labelElementsForId(AtomStringImpl* forAttributeValue);
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
     WEBCORE_EXPORT Vector<Ref<Element>> elementsFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
@@ -149,18 +152,18 @@ public:
     NODELETE std::span<const Ref<CSSStyleSheet>> adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&&);
 
-    void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
-    void removeSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
-    LegacyRenderSVGResourceContainer* lookupLegacySVGResoureById(const AtomString& id) const;
+    void addSVGResource(AtomStringImpl* id, LegacyRenderSVGResourceContainer&);
+    void removeSVGResource(AtomStringImpl* id, LegacyRenderSVGResourceContainer&);
+    LegacyRenderSVGResourceContainer* lookupLegacySVGResoureById(AtomStringImpl* id) const;
 
-    void addPendingSVGResource(const AtomString& id, SVGElement&);
-    bool isIdOfPendingSVGResource(const AtomString& id) const;
-    bool isPendingSVGResource(SVGElement&, const AtomString& id) const;
+    void addPendingSVGResource(AtomStringImpl* id, SVGElement&);
+    bool isIdOfPendingSVGResource(AtomStringImpl* id) const;
+    bool isPendingSVGResource(SVGElement&, AtomStringImpl* id) const;
     void clearHasPendingSVGResourcesIfPossible(SVGElement&);
     void removeElementFromPendingSVGResources(SVGElement&);
-    WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> removePendingSVGResource(const AtomString&);
-    void markPendingSVGResourcesForRemoval(const AtomString&);
-    RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(const AtomString&);
+    WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> removePendingSVGResource(AtomStringImpl*);
+    void markPendingSVGResourcesForRemoval(AtomStringImpl*);
+    RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(AtomStringImpl*);
 
     // FIXME: Add a ThreadSafetyAnalysis annotated Lock subclass that allows for asserted reads from the mutator
     static ALWAYS_INLINE Lock& treeScopeMutationLock();

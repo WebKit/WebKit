@@ -64,7 +64,7 @@ using FontFeatureSettings = FontTaggedSettings<int>;
 
 struct FontCustomPlatformSerializedData {
     Ref<SharedBuffer> fontFaceData;
-    String itemInCollection;
+    RefPtr<StringImpl> itemInCollection;
     RenderingResourceIdentifier renderingResourceIdentifier;
 };
 
@@ -72,11 +72,11 @@ struct FontCustomPlatformData : public ThreadSafeRefCounted<FontCustomPlatformDa
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FontCustomPlatformData);
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
-    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> create(SharedBuffer&, const String&);
-    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> createMemorySafe(SharedBuffer&, const String&);
+    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> create(SharedBuffer&, StringImpl*);
+    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> createMemorySafe(SharedBuffer&, StringImpl*);
 
 #if PLATFORM(WIN) && USE(CAIRO)
-    FontCustomPlatformData(const String& name, FontPlatformData::CreationData&&);
+    FontCustomPlatformData(StringImpl* name, FontPlatformData::CreationData&&);
 #elif USE(CORE_TEXT)
     FontCustomPlatformData(CTFontDescriptorRef fontDescriptor, FontPlatformData::CreationData&& creationData)
         : fontDescriptor(fontDescriptor)
@@ -96,10 +96,10 @@ public:
     NODELETE WEBCORE_EXPORT FontCustomPlatformSerializedData serializedData() const;
     WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool);
 
-    const String& sourceURL() const { return m_sourceURL; }
-    void setSourceURL(String sourceURL)
+    const RefPtr<StringImpl>& sourceURL() const { return m_sourceURL; }
+    void setSourceURL(RefPtr<StringImpl> sourceURL)
     {
-        ASSERT(m_sourceURL.isEmpty());
+        ASSERT(isEmpty(m_sourceURL));
         m_sourceURL = WTF::move(sourceURL);
     }
 
@@ -109,11 +109,11 @@ public:
     void clearUnusedVariationTypefacesCacheEntries() const;
 #endif
 
-    static bool supportsFormat(const String&);
+    static bool supportsFormat(StringImpl*);
     NODELETE static bool supportsTechnology(const FontTechnology&);
 
 #if PLATFORM(WIN) && USE(CAIRO)
-    String name;
+    RefPtr<StringImpl> name;
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
 #elif USE(CAIRO)
@@ -126,7 +126,7 @@ public:
 
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 
-    String m_sourceURL;
+    RefPtr<StringImpl> m_sourceURL;
 };
 
 inline bool computeSyntheticBold(bool hasWeightVariationAxis, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)

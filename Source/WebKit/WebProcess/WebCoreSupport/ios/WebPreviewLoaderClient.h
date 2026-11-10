@@ -38,22 +38,22 @@ class WebFrame;
 
 class WebPreviewLoaderClient final : public WebCore::LegacyPreviewLoaderClient {
 public:
-    static Ref<WebPreviewLoaderClient> create(const String& fileName, const String& uti, WebCore::PageIdentifier pageID)
+    static Ref<WebPreviewLoaderClient> create(StringImpl* fileName, StringImpl* uti, WebCore::PageIdentifier pageID)
     {
         return adoptRef(*new WebPreviewLoaderClient(fileName, uti, pageID));
     }
     ~WebPreviewLoaderClient();
 
 private:
-    WebPreviewLoaderClient(const String& fileName, const String& uti, WebCore::PageIdentifier);
+    WebPreviewLoaderClient(StringImpl* fileName, StringImpl* uti, WebCore::PageIdentifier);
     void didReceiveData(const WebCore::SharedBuffer&) override;
     void didFinishLoading() override;
     void didFail() override;
     bool supportsPasswordEntry() const override { return true; }
-    void didRequestPassword(Function<void(const String&)>&&) override;
+    void didRequestPassword(Function<void(StringImpl*)>&&) override;
 
-    const String m_fileName;
-    const String m_uti;
+    const RefPtr<StringImpl> m_fileName;
+    const RefPtr<StringImpl> m_uti;
     const WebCore::PageIdentifier m_pageID;
     WebCore::SharedBufferBuilder m_buffer;
 };

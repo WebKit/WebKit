@@ -61,7 +61,7 @@ public:
 
     void forSocketInGroup(WebCore::ScriptExecutionContextIdentifier, NOESCAPE const Function<void(LibWebRTCSocket&)>&);
     std::unique_ptr<webrtc::AsyncPacketSocket> createUdpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
-    std::unique_ptr<webrtc::AsyncPacketSocket> createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
+    std::unique_ptr<webrtc::AsyncPacketSocket> createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, RefPtr<StringImpl>&& userAgent, const webrtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
 
     CheckedPtr<LibWebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
     void removeResolver(LibWebRTCResolverIdentifier identifier) { m_resolvers.remove(identifier); }

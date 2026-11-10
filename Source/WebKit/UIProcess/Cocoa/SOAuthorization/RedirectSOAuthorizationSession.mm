@@ -87,8 +87,8 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         // show an empty URL or a blank page. These changes ensure a relevant URL bar and useful page content during the load.
         if (!navigationAction->isProcessingUserGesture()) {
             page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-            auto html = makeString("<script>location = '"_s, response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>"_s).utf8();
-            page->loadData(SharedBuffer::create(html.span()), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+            auto html = utf8(makeString("<script>location = '"_s, response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>"_s));
+            page->loadData(SharedBuffer::create(html.span()), "text/html"_si, "UTF-8"_si, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
             return;
         }
 #endif
@@ -99,13 +99,13 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
     if (response.httpStatusCode() == httpStatus200OK) {
         invokeCallback(true);
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-        page->loadData(SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        page->loadData(SharedBuffer::create(data), "text/html"_si, "UTF-8"_si, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
         return;
     }
 
     // FIXME: Enable the useRedirectionForCurrentNavigation code path for all redirections.
     if (response.httpStatusCode() == httpStatus307TemporaryRedirect
-        && navigationAction->request().httpMethod() == "POST"_s) {
+        && equal(navigationAction->request().httpMethod(), "POST"_s)) {
         page->useRedirectionForCurrentNavigation(response);
         invokeCallback(false);
         return;
@@ -119,7 +119,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: loading 401 response body (%zu bytes)", static_cast<size_t>(data.length));
         invokeCallback(true);
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-        page->loadData(SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        page->loadData(SharedBuffer::create(data), "text/html"_si, "UTF-8"_si, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
         return;
     }
 

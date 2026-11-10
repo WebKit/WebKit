@@ -51,30 +51,30 @@ public:
 
     static Ref<DataTransfer> create();
     static Ref<DataTransfer> createForCopyAndPaste(const Document&, StoreMode, std::unique_ptr<Pasteboard>&&);
-    static Ref<DataTransfer> createForInputEvent(const String& plainText, const String& htmlText);
+    static Ref<DataTransfer> createForInputEvent(StringImpl* plainText, StringImpl* htmlText);
 
     WEBCORE_EXPORT ~DataTransfer();
 
-    String dropEffect() const;
-    void setDropEffect(const String&);
+    RefPtr<StringImpl> dropEffect() const;
+    void setDropEffect(StringImpl*);
 
-    NODELETE String effectAllowed() const;
-    void setEffectAllowed(const String&);
+    NODELETE RefPtr<StringImpl> effectAllowed() const;
+    void setEffectAllowed(StringImpl*);
 
     DataTransferItemList& items(Document&);
-    Vector<String> types(Document&) const;
-    Vector<String> typesForItemList(Document&) const;
+    Vector<RefPtr<StringImpl>> types(Document&) const;
+    Vector<RefPtr<StringImpl>> typesForItemList(Document&) const;
 
     FileList& files(Document*) const;
     FileList& files(Document&) const;
 
-    void clearData(const String& type = String());
+    void clearData(StringImpl* type = nullptr);
 
-    String getData(Document&, const String& type) const;
-    String getDataForItem(Document&, const String& type) const;
+    RefPtr<StringImpl> getData(Document&, StringImpl* type) const;
+    RefPtr<StringImpl> getDataForItem(Document&, StringImpl* type) const;
 
-    void setData(Document&, const String& type, const String& data);
-    void setDataFromItemList(Document&, const String& type, const String& data);
+    void setData(Document&, StringImpl* type, StringImpl* data);
+    void setDataFromItemList(Document&, StringImpl* type, StringImpl* data);
 
     void setDragImage(Ref<Element>&&, int x, int y);
 
@@ -84,8 +84,8 @@ public:
     NODELETE bool canReadData() const;
     NODELETE bool canWriteData() const;
 
-    bool hasFileOfType(const String&);
-    bool hasStringOfType(Document&, const String&);
+    bool hasFileOfType(StringImpl*);
+    bool hasStringOfType(Document&, StringImpl*);
 
     Pasteboard& pasteboard() { return *m_pasteboard; }
     void commitToPasteboard(Pasteboard&);
@@ -96,7 +96,7 @@ public:
     static Ref<DataTransfer> createForDrop(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     static Ref<DataTransfer> createForUpdatingDropTarget(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
 
-    bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"_s; }
+    bool dropEffectIsUninitialized() const { return equal(m_dropEffect, "uninitialized"_s); }
 
     OptionSet<DragOperation> sourceOperationMask() const;
     OptionSet<DragOperation> destinationOperationMask() const;
@@ -119,7 +119,7 @@ public:
 
 private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
-    DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste, String&& effectAllowed = "uninitialized"_s);
+    DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste, RefPtr<StringImpl>&& effectAllowed = "uninitialized"_si);
 
     NODELETE bool allowsFileAccess() const;
 
@@ -131,23 +131,23 @@ private:
     bool forFileDrag() const { return false; }
 #endif
 
-    String readStringFromPasteboard(Document&, const String& lowercaseType, WebContentReadingPolicy) const;
+    RefPtr<StringImpl> readStringFromPasteboard(Document&, StringImpl* lowercaseType, WebContentReadingPolicy) const;
     bool shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const;
 
     enum class AddFilesType : bool { No, Yes };
-    Vector<String> types(Document&, AddFilesType) const;
+    Vector<RefPtr<StringImpl>> types(Document&, AddFilesType) const;
     Vector<Ref<File>> filesFromPasteboardAndItemList(ScriptExecutionContext*) const;
 
     StoreMode m_storeMode;
-    String m_originIdentifier;
+    RefPtr<StringImpl> m_originIdentifier;
     const std::unique_ptr<Pasteboard> m_pasteboard;
     const std::unique_ptr<DataTransferItemList> m_itemList;
 
     mutable RefPtr<FileList> m_fileList;
 
 #if ENABLE(DRAG_SUPPORT)
-    String m_dropEffect;
-    String m_effectAllowed;
+    RefPtr<StringImpl> m_dropEffect;
+    RefPtr<StringImpl> m_effectAllowed;
     CachedResourceHandle<CachedImage> m_dragImage;
     float m_dragImageDensity { 1 };
     RefPtr<Element> m_dragImageElement;

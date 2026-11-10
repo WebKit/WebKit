@@ -77,7 +77,7 @@ public:
 
     // MediaPlayer Factory Methods
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types);
     NODELETE static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     MediaPlayer::NetworkState networkState() const override;
@@ -105,7 +105,7 @@ private:
 
     bool didPassCORSAccessCheck() const final;
 
-    void load(const String&) override;
+    void load(StringImpl*) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #endif
@@ -165,7 +165,7 @@ private:
 
     MediaPlayer::MovieLoadType movieLoadType() const override { return MediaPlayer::MovieLoadType::LiveStream; }
 
-    String engineDescription() const override;
+    RefPtr<StringImpl> engineDescription() const override;
 
     size_t extraMemoryCost() const override { return 0; }
 
@@ -267,8 +267,8 @@ private:
     };
     CurrentFramePainter m_imagePainter;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<AudioTrackPrivateMediaStream>> m_audioTrackMap;
-    MemoryCompactRobinHoodHashMap<String, Ref<VideoTrackPrivateMediaStream>> m_videoTrackMap;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<AudioTrackPrivateMediaStream>> m_audioTrackMap;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<VideoTrackPrivateMediaStream>> m_videoTrackMap;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };

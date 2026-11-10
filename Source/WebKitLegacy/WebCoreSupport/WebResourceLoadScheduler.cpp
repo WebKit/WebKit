@@ -72,7 +72,7 @@ auto WebResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy creat
         return m_nonHTTPProtocolHost.ptr();
 
     m_hosts.checkConsistency();
-    String hostName = url.host().toString();
+    RefPtr<StringImpl> hostName = url.host().toString();
     CheckedPtr host = m_hosts.get(hostName);
     if (!host && createHostPolicy == CreateIfNotFound) {
         auto newHost = makeUnique<HostInformation>(hostName, maxRequestsInFlightPerHost);
@@ -83,7 +83,7 @@ auto WebResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy creat
 }
 
 WebResourceLoadScheduler::WebResourceLoadScheduler()
-    : m_nonHTTPProtocolHost(makeUniqueRef<HostInformation>(String(), maxRequestsInFlightForNonHTTPProtocols))
+    : m_nonHTTPProtocolHost(makeUniqueRef<HostInformation>(nullString(), maxRequestsInFlightForNonHTTPProtocols))
     , m_requestTimer(*this, &WebResourceLoadScheduler::requestTimerFired)
     , m_suspendPendingRequestsCount(0)
     , m_isSerialLoadingEnabled(false)
@@ -238,7 +238,7 @@ void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resou
 
     CheckedPtr newHost = hostForURL(redirectURL, CreateIfNotFound);
 
-    if (oldHost->name() == newHost->name())
+    if (equal(oldHost->name(), newHost->name()))
         return;
 
     newHost->addLoadInProgress(resourceLoader);
@@ -279,7 +279,7 @@ void WebResourceLoadScheduler::servePendingRequests(CheckedRef<HostInformation>&
             // For non-named hosts - everything but http(s) - we should only enforce the limit if the document isn't done parsing 
             // and we don't know all stylesheets yet.
             RefPtr document = resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame().document() : nullptr;
-            bool shouldLimitRequests = !host->name().isNull() || (document && (document->parsing() || !document->haveStylesheetsLoaded()));
+            bool shouldLimitRequests = !!host->name() || (document && (document->parsing() || !document->haveStylesheetsLoaded()));
             if (shouldLimitRequests && host->limitRequests(priority))
                 return;
 
@@ -327,7 +327,7 @@ void WebResourceLoadScheduler::requestTimerFired()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebResourceLoadScheduler::HostInformation);
 
-WebResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsigned maxRequestsInFlight)
+WebResourceLoadScheduler::HostInformation::HostInformation(StringImpl* name, unsigned maxRequestsInFlight)
     : m_name(name)
     , m_maxRequestsInFlight(maxRequestsInFlight)
 {

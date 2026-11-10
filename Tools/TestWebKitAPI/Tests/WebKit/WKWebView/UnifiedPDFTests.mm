@@ -126,9 +126,9 @@ public:
         [webView setForceWindowToBecomeKey:YES];
     }
 
-    void synchronouslyLoadPDFDocument(String documentName)
+    void synchronouslyLoadPDFDocument(RefPtr<StringImpl> documentName)
     {
-        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:[NSBundle.test_resourcesBundle URLForResource:documentName.createNSString().get() withExtension:@"pdf"]]);
+        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:[NSBundle.test_resourcesBundle URLForResource:createNSString(documentName).get() withExtension:@"pdf"]]);
         [webView synchronouslyLoadRequest:request.get()];
         [[webView window] makeFirstResponder:webView.get()];
         [[webView window] makeKeyAndOrderFront:nil];
@@ -165,7 +165,7 @@ TEST_F(UnifiedPDFWithKeyboardScrolling, KeyboardScrollingInSinglePageMode)
     if constexpr (!unifiedPDFForTestingEnabled)
         return;
 
-    synchronouslyLoadPDFDocument("multiple-pages"_s);
+    synchronouslyLoadPDFDocument("multiple-pages"_si);
 
     [webView objectByEvaluatingJavaScript:@"internals.setPDFDisplayModeForTesting(document.querySelector('embed'), 'SinglePageDiscrete')"];
     [webView waitForNextPresentationUpdate];
@@ -194,7 +194,7 @@ TEST_F(UnifiedPDFWithKeyboardScrolling, DisplayModeTransitionLandingPage)
     if constexpr (!unifiedPDFForTestingEnabled)
         return;
 
-    synchronouslyLoadPDFDocument("multiple-pages-colored"_s);
+    synchronouslyLoadPDFDocument("multiple-pages-colored"_si);
 
     auto colorsBefore = [webView sampleColors];
 
@@ -546,7 +546,7 @@ public:
 
     void SetUp() override
     {
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> {
             { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink() } },
         }, HTTPServer::Protocol::HttpsProxy);
 
@@ -590,9 +590,9 @@ TEST_P(EmbeddedPDFFitsToFrame, Test)
             return makeString("<object id='pdf' "_s, layout, " type='application/pdf' data='"_s, pdfURL, "'></object>"_s);
         }
         ASSERT_NOT_REACHED();
-        return String { };
+        return RefPtr<StringImpl> { };
     }();
-    server->addResponse("/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML });
+    server->addResponse("/main"_si, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML });
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
     [navigationDelegate waitForDidFinishNavigation];
@@ -666,7 +666,7 @@ public:
     static constexpr NSRect iframeFrame { { iframeLeft, iframeTop }, { iframeWidth, iframeHeight } };
 
     // The spacer makes the main frame scrollable.
-    virtual String spacerHTML() const { return "<div style='height:2000px'></div>"_s; }
+    virtual RefPtr<StringImpl> spacerHTML() const { return "<div style='height:2000px'></div>"_si; }
 
     void SetUp() override
     {
@@ -674,7 +674,7 @@ public:
             "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
             "px; border:0' src='"_s, GetParam().subframeURL("/test.pdf"_s), "'></iframe>"_s, spacerHTML());
 
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML } },
             { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink() } },
         }, HTTPServer::Protocol::HttpsProxy);
@@ -962,20 +962,20 @@ public:
     {
         pdf = pdfWithPhoneNumber();
 
-        auto iframeHTML = [](const String& iframeURL) {
+        auto iframeHTML = [](StringImpl* iframeURL) {
             return makeString("<iframe style='position:absolute; left:"_s, iframeLeft, "px; top:"_s, iframeTop,
                 "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight, "px; border:"_s, iframeBorder, "px solid black; padding:"_s, iframePadding, "px' src='"_s, iframeURL,
                 "'></iframe>"_s);
         };
-        auto mainHTML = [&](const String& iframeURL) {
+        auto mainHTML = [&](StringImpl* iframeURL) {
             return makeString("<body style='margin:0'>"_s, iframeHTML(iframeURL), "<div style='height:2000px'></div>"_s);
         };
-        String mainHTMLWithoutScrollBars { makeString("<html style='overflow:hidden'><body style='margin:0'>"_s, iframeHTML(GetParam().subframeURL("/test.pdf"_s)), "</body></html>"_s) };
+        RefPtr<StringImpl> mainHTMLWithoutScrollBars { makeString("<html style='overflow:hidden'><body style='margin:0'>"_s, iframeHTML(GetParam().subframeURL("/test.pdf"_s)), "</body></html>"_s) };
         auto nestedFrameHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, nestedFrameLeft, "px; top:"_s, nestedFrameTop,
             "px; width:300px; height:200px; border:0' src='test.pdf'></iframe></body>"_s);
         auto nestedFrameURL = GetParam().subframeURL("/nested.html"_s);
 
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML(GetParam().subframeURL("/test.pdf"_s)) } },
             { "/main-with-nested-frame"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML(nestedFrameURL) } },
             { "/main-without-scroll-bars"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTMLWithoutScrollBars } },
@@ -1170,7 +1170,7 @@ INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFDataDetection, testing::ValuesIn
 
 class EmbeddedPDFLookUpAfterPinch : public EmbeddedPDFLookUp {
 public:
-    String spacerHTML() const override { return "<div style='width:2000px; height:2000px'></div>"_s; }
+    RefPtr<StringImpl> spacerHTML() const override { return "<div style='width:2000px; height:2000px'></div>"_si; }
 };
 
 TEST_P(EmbeddedPDFLookUpAfterPinch, LookUpTargetsTheSameWordAfterPinchZoom)
@@ -1578,7 +1578,7 @@ class EmbeddedPDFHUDSiteIsolation : public testing::TestWithParam<EmbeddedPDFHUD
 public:
     PDFEmbedElement embedElement() const { return GetParam().embedElement; }
 
-    String embeddedPDFHTML(ASCIILiteral position) const
+    RefPtr<StringImpl> embeddedPDFHTML(ASCIILiteral position) const
     {
         auto pdfURL = GetParam().siteIsolationParameters.subframeURL("/test.pdf"_s);
         auto layout = makeString("width='300' height='150' style='position:absolute; "_s, position, "; border:0'"_s);
@@ -1594,30 +1594,30 @@ public:
         return { };
     }
 
-    String mainHTML() const
+    RefPtr<StringImpl> mainHTML() const
     {
         return embeddedPDFHTML("left:10px; top:28px"_s);
     }
 
-    String scrollableMainHTML() const
+    RefPtr<StringImpl> scrollableMainHTML() const
     {
         // Same embedded PDF, but tall enough that the main frame actually scrolls.
         return makeString(mainHTML(), "<div style='height:2000px'></div>"_s);
     }
 
-    String mainHTMLWithIframe() const
+    RefPtr<StringImpl> mainHTMLWithIframe() const
     {
         return makeString("<iframe src='"_s, GetParam().siteIsolationParameters.subframeURL("/frame"_s), "' style='position:absolute; left:10px; top:28px; width:400px; height:300px; border:0'></iframe>"_s);
     }
 
-    String scrollableFrameHTML() const
+    RefPtr<StringImpl> scrollableFrameHTML() const
     {
         return makeString("<body style='margin:0'>"_s, embeddedPDFHTML("left:0; top:100px"_s), "<div style='height:2000px'></div></body>"_s);
     }
 
     void SetUp() override
     {
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML() } },
             { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFData() } },
         }, HTTPServer::Protocol::HttpsProxy);
@@ -1662,7 +1662,7 @@ TEST_P(EmbeddedPDFHUDSiteIsolation, HUDMatchesOffset)
 
 TEST_P(EmbeddedPDFHUDSiteIsolation, HUDTracksMainFrameScroll)
 {
-    server->setResponse("/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, scrollableMainHTML() });
+    server->setResponse("/main"_si, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, scrollableMainHTML() });
 
     loadAndWaitForHUDFrame(10, 28, 300, 150);
 
@@ -1677,8 +1677,8 @@ TEST_P(EmbeddedPDFHUDSiteIsolation, HUDTracksMainFrameScroll)
 
 TEST_P(EmbeddedPDFHUDSiteIsolation, HUDTracksScrolledIframe)
 {
-    server->setResponse("/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTMLWithIframe() });
-    server->addResponse("/frame"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, scrollableFrameHTML() });
+    server->setResponse("/main"_si, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTMLWithIframe() });
+    server->addResponse("/frame"_si, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, scrollableFrameHTML() });
 
     loadAndWaitForHUDFrame(10, 128, 300, 150);
 
@@ -1698,12 +1698,12 @@ INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::Value
 
 class EmbeddedPDFHUDAfterPinch : public EmbeddedPDFHUDSiteIsolation {
 public:
-    String zoomMainHTML() const { return makeString(mainHTML(), "<div style='width:2000px; height:2000px'></div>"_s); }
+    RefPtr<StringImpl> zoomMainHTML() const { return makeString(mainHTML(), "<div style='width:2000px; height:2000px'></div>"_s); }
 };
 
 TEST_P(EmbeddedPDFHUDAfterPinch, HUDScalesWithPinchZoom)
 {
-    server->setResponse("/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, zoomMainHTML() });
+    server->setResponse("/main"_si, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, zoomMainHTML() });
 
     loadAndWaitForHUDFrame(10, 28, 300, 150);
 
@@ -1757,7 +1757,7 @@ public:
     static constexpr int pdfLeft = 100;
     static constexpr int pdfTop = 120;
 
-    String mainHTML() const
+    RefPtr<StringImpl> mainHTML() const
     {
         auto pdfURL = GetParam().siteIsolationParameters.subframeURL("/test.pdf"_s);
         auto layout = makeString("id='pdf' style='position:absolute; left:"_s, pdfLeft, "px; top:"_s, pdfTop, "px; width:400px; height:300px; border:0'"_s);
@@ -1769,7 +1769,7 @@ public:
 
     void SetUp() override
     {
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML() } },
             { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink() } },
         }, HTTPServer::Protocol::HttpsProxy);
@@ -2044,10 +2044,10 @@ UNIFIED_PDF_TEST(CopySelectedText)
     EXPECT_WK_STREQ(@"Test", [[UIPasteboard generalPasteboard] string]);
 }
 
-static void doCopyEditActionTest(String resourceName, bool copyAllowed)
+static void doCopyEditActionTest(RefPtr<StringImpl> resourceName, bool copyAllowed)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF()]);
-    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:resourceName.createNSString() withExtension:@"pdf"]]];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:createNSString(resourceName) withExtension:@"pdf"]]];
     [webView waitForNextPresentationUpdate];
 
     [webView selectTextInGranularity:UITextGranularityDocument atPoint:CGPointMake(100, 100)];
@@ -2058,12 +2058,12 @@ static void doCopyEditActionTest(String resourceName, bool copyAllowed)
 
 UNIFIED_PDF_TEST(CopyEditActionOnRegularContent)
 {
-    doCopyEditActionTest("test"_s, true);
+    doCopyEditActionTest("test"_si, true);
 }
 
 UNIFIED_PDF_TEST(CopyEditActionOnDisallowedContent)
 {
-    doCopyEditActionTest("copying-disabled"_s, false);
+    doCopyEditActionTest("copying-disabled"_si, false);
 }
 
 UNIFIED_PDF_TEST(SelectTextInRotatedPage)
@@ -2513,7 +2513,7 @@ static HTTPServer pdfServerWithSandboxCSPDirective()
 {
     RetainPtr pdfURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
     HTTPResponse response { [NSData dataWithContentsOfURL:pdfURL.get()] };
-    response.setHeaderField("Content-Security-Policy"_s, "sandbox allow-scripts;"_s);
+    response.setHeaderField("Content-Security-Policy"_si, "sandbox allow-scripts;"_si);
     return { { { "/"_s, response } } };
 }
 

@@ -181,13 +181,13 @@ bool AccessibilityListBoxOption::canSetSelectedAttribute() const
     return !selectElement || !selectElement->isDisabledFormControl();
 }
 
-String AccessibilityListBoxOption::stringValue() const
+RefPtr<StringImpl> AccessibilityListBoxOption::stringValue() const
 {
     if (!m_node)
         return { };
 
     auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
-    if (!ariaLabel.isEmpty())
+    if (!isEmpty(ariaLabel))
         return ariaLabel;
 
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*m_node))

@@ -141,7 +141,7 @@ std::unique_ptr<StackTrace> StackTrace::captureStackTrace(size_t maxFrames, size
     return std::unique_ptr<StackTrace> { new (NotNull, storage) StackTrace(size, initialFrame) };
 }
 
-String StackTrace::toString() const
+RefPtr<StringImpl> StackTrace::toString() const
 {
     StringPrintStream stream;
     dump(stream);

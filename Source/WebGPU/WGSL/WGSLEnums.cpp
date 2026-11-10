@@ -66,7 +66,7 @@ namespace WGSL {
     ENUM_DEFINE_PARSE_ENTRY_ LPAREN __name, CONTINUATION
 
 #define ENUM_DEFINE_PARSE(__name) \
-    const __name* parse##__name(const String& __string) \
+    const __name* parse##__name(StringImpl* __string) \
     { \
         static constexpr SortedArrayMap __map { WTF::toArray<std::pair<ComparableASCIILiteral, __name>>({ \
             EXPAND(ENUM_##__name(ENUM_DEFINE_PARSE_ENTRY LPAREN __name RPAREN)) \

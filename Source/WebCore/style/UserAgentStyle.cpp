@@ -115,7 +115,7 @@ static const MQ::MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
-static StyleSheetContents* parseUASheet(const WTF::String& str)
+static StyleSheetContents* parseUASheet(StringImpl* str)
 {
     Ref sheet = StyleSheetContents::create(CSSParserContext(UASheetMode));
     sheet->parseString(str);
@@ -175,19 +175,19 @@ void UserAgentStyle::initDefaultStyleSheet()
     defaultQuirksStyle = &RuleSet::create().leakRef();
     mediaQueryStyleSheet = &StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef();
 
-    WTF::String defaultRules;
+    RefPtr<StringImpl> defaultRules;
     auto extraDefaultStyleSheet = RenderTheme::singleton().extraDefaultStyleSheet();
-    if (extraDefaultStyleSheet.isEmpty())
+    if (isEmpty(extraDefaultStyleSheet))
         defaultRules = StringImpl::createWithoutCopying(htmlUserAgentStyleSheet);
     else
         defaultRules = makeString(std::span { htmlUserAgentStyleSheet }, extraDefaultStyleSheet);
     defaultStyleSheet = parseUASheet(defaultRules);
     addToDefaultStyle(protect(*defaultStyleSheet));
 
-    counterStylesStyleSheet = parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet));
+    counterStylesStyleSheet = parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet).ptr());
     addToCounterStyleRegistry(protect(*counterStylesStyleSheet));
 
-    quirksStyleSheet = parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet));
+    quirksStyleSheet = parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet).ptr());
 
     RuleSetBuilder quirkBuilder(*defaultQuirksStyle, screenEval());
     quirkBuilder.addRulesFromSheet(protect(*quirksStyleSheet));
@@ -200,7 +200,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (is<HTMLElement>(element)) {
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
             if (!htmlSwitchControlStyleSheet && input->isSwitch()) {
-                htmlSwitchControlStyleSheet = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet));
+                htmlSwitchControlStyleSheet = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet).ptr());
                 addToDefaultStyle(protect(*htmlSwitchControlStyleSheet));
             }
         }
@@ -212,50 +212,50 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
         if (!popoverStyleSheet && element.document().settings().popoverAttributeEnabled() && element.hasAttributeWithoutSynchronization(popoverAttr)) {
-            popoverStyleSheet = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet));
+            popoverStyleSheet = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet).ptr());
             addToDefaultStyle(protect(*popoverStyleSheet));
         }
 
         if (!selectMultipleAndListBoxStyleSheet && is<HTMLSelectElement>(element) && element.document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled()) {
-            selectMultipleAndListBoxStyleSheet = parseUASheet(StringImpl::createWithoutCopying(selectMultipleAndListBoxUserAgentStyleSheet));
+            selectMultipleAndListBoxStyleSheet = parseUASheet(StringImpl::createWithoutCopying(selectMultipleAndListBoxUserAgentStyleSheet).ptr());
             addToDefaultStyle(protect(*selectMultipleAndListBoxStyleSheet));
         }
 
         if (isAnyOf<HTMLFormControlElement, HTMLMeterElement, HTMLProgressElement>(element) && !element.document().settings().verticalFormControlsEnabled()) {
             if (!horizontalFormControlsStyleSheet) {
-                horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet));
+                horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet).ptr());
                 addToDefaultStyle(protect(*horizontalFormControlsStyleSheet));
             }
         }
 
     } else if (is<SVGElement>(element)) {
         if (!svgStyleSheet) {
-            svgStyleSheet = parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet));
+            svgStyleSheet = parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet).ptr());
             addToDefaultStyle(protect(*svgStyleSheet));
         }
     }
 #if ENABLE(MATHML)
     else if (is<MathMLElement>(element)) {
         if (!mathMLStyleSheet) {
-            mathMLStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet));
+            mathMLStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet).ptr());
             addToDefaultStyle(protect(*mathMLStyleSheet));
         }
         if (!mathMLCoreExtrasStyleSheet && element.document().settings().coreMathMLEnabled()) {
-            mathMLCoreExtrasStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet));
+            mathMLCoreExtrasStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet).ptr());
             addToDefaultStyle(protect(*mathMLCoreExtrasStyleSheet));
         }
         if (!mathMLCoreMathvariantStyleSheet && element.document().settings().coreMathMLDeprecateLegacyMathvariant()) {
-            mathMLCoreMathvariantStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreMathvariantUserAgentStyleSheet));
+            mathMLCoreMathvariantStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreMathvariantUserAgentStyleSheet).ptr());
             addToDefaultStyle(*mathMLCoreMathvariantStyleSheet);
         }
         if (element.document().settings().cssMathDepthEnabled()) {
             if (!mathMLFontSizeMathStyleSheet) {
-                mathMLFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet));
+                mathMLFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet).ptr());
                 addToDefaultStyle(protect(*mathMLFontSizeMathStyleSheet));
             }
         } else {
             if (!mathMLLegacyFontSizeMathStyleSheet) {
-                mathMLLegacyFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet));
+                mathMLLegacyFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet).ptr());
                 addToDefaultStyle(protect(*mathMLLegacyFontSizeMathStyleSheet));
             }
         }
@@ -264,13 +264,13 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr documentFullscreen = element.document().fullscreenIfExists(); !fullscreenStyleSheet && documentFullscreen) {
-        fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet));
+        fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet).ptr());
         addToDefaultStyle(protect(*fullscreenStyleSheet));
     }
 #endif // ENABLE(FULLSCREEN_API)
 
     if (!viewTransitionsStyleSheet) {
-        viewTransitionsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet));
+        viewTransitionsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet).ptr());
         addToDefaultStyle(protect(*viewTransitionsStyleSheet));
         addUserAgentKeyframes(protect(*viewTransitionsStyleSheet));
     }

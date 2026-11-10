@@ -198,7 +198,7 @@ const char* webkit_website_data_get_name(WebKitWebsiteData* websiteData)
         if (websiteData->record.displayName == "Local documents on your computer"_s)
             websiteData->displayName = UTF8CString::unsafeFromUTF8(_("Local files"));
         else
-            websiteData->displayName = websiteData->record.displayName.utf8();
+            websiteData->displayName = utf8(websiteData->record.displayName);
     }
     return websiteData->displayName.legacyCStringPointer();
 }

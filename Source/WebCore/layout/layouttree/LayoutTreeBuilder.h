@@ -34,7 +34,7 @@ class InitialContainingBlock;
 class LayoutState;
 
 #if ENABLE(TREE_DEBUGGING)
-String layoutTreeAsText(const InitialContainingBlock&, const LayoutState*);
+RefPtr<StringImpl> layoutTreeAsText(const InitialContainingBlock&, const LayoutState*);
 void showLayoutTree(const InitialContainingBlock&, const LayoutState*);
 void showLayoutTree(const InitialContainingBlock&);
 void showInlineTreeAndRuns(TextStream&, const LayoutState&, const ElementBox& inlineFormattingRoot, size_t depth);

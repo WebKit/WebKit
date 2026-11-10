@@ -37,7 +37,7 @@ namespace API {
 using namespace WebCore;
 using namespace WebKit;
 
-Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
+Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorManager& manager, StringImpl* rpId, const TransportSet& transports, ClientDataType type, StringImpl* userName)
 {
     return adoptRef(*new WebAuthenticationPanel(manager, rpId, transports, type, userName));
 }
@@ -49,7 +49,7 @@ WebAuthenticationPanel::WebAuthenticationPanel()
     m_manager->enableNativeSupport();
 }
 
-WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
+WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, StringImpl* rpId, const TransportSet& transports, ClientDataType type, StringImpl* userName)
     : m_client(WebAuthenticationPanelClient::create())
     , m_weakManager(manager)
     , m_rpId(rpId)

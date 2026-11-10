@@ -87,7 +87,7 @@ void RemoteComputePassEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU:
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::pushDebugGroup(String&& groupLabel)
+void RemoteComputePassEncoderProxy::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     auto sendResult = send(Messages::RemoteComputePassEncoder::PushDebugGroup(WTF::move(groupLabel)));
     UNUSED_VARIABLE(sendResult);
@@ -99,13 +99,13 @@ void RemoteComputePassEncoderProxy::popDebugGroup()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::insertDebugMarker(String&& markerLabel)
+void RemoteComputePassEncoderProxy::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     auto sendResult = send(Messages::RemoteComputePassEncoder::InsertDebugMarker(WTF::move(markerLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setLabel(String&& label)
+void RemoteComputePassEncoderProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteComputePassEncoder::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

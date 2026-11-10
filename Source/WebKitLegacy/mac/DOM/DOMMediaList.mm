@@ -55,13 +55,13 @@
 - (NSString *)mediaText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->mediaText().createNSString().autorelease();
+    return createNSString(IMPL->mediaText()).autorelease();
 }
 
 - (void)setMediaText:(NSString *)newMediaText
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setMediaText(newMediaText);
+    IMPL->setMediaText(StringImpl::create(newMediaText).get());
 }
 
 - (unsigned)length
@@ -73,19 +73,19 @@
 - (NSString *)item:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->item(index).createNSString().autorelease();
+    return createNSString(IMPL->item(index)).autorelease();
 }
 
 - (void)deleteMedium:(NSString *)oldMedium
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->deleteMedium(oldMedium));
+    raiseOnDOMError(IMPL->deleteMedium(StringImpl::create(oldMedium).get()));
 }
 
 - (void)appendMedium:(NSString *)newMedium
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->appendMedium(newMedium);
+    IMPL->appendMedium(StringImpl::create(newMedium).get());
 }
 
 @end

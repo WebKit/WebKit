@@ -42,10 +42,10 @@
 @implementation WKReloadFrameErrorRecoveryAttempter {
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<_WKFrameHandle> _frameHandle;
-    String _urlString;
+    RefPtr<StringImpl> _urlString;
 }
 
-- (id)initWithWebView:(WKWebView *)webView frameHandle:(_WKFrameHandle *)frameHandle urlString:(const String&)urlString
+- (id)initWithWebView:(WKWebView *)webView frameHandle:(_WKFrameHandle *)frameHandle urlString:(StringImpl*)urlString
 {
     if (!(self = [super init]))
         return nil;

@@ -118,7 +118,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToString, (JSGlobalOb
         RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, monthDay->toString())));
 
     // Step 4: showCalendar = ? GetTemporalShowCalendarNameOption(resolvedOptions).
-    String calendarName = temporalShowCalendarName(globalObject, options);
+    RefPtr<StringImpl> calendarName = temporalShowCalendarName(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 5: Return TemporalMonthDayToString(plainMonthDay, showCalendar).
@@ -205,9 +205,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject
     auto resolved = TemporalCore::plainMonthDayWith(calendarId, monthDay->plainMonthDay().isoPlainDate(), partialFields, overflow);
     if (!resolved) [[unlikely]] {
         if (resolved.error().kind == TemporalErrorKind::TypeError)
-            throwTypeError(globalObject, scope, String(resolved.error().message));
+            throwTypeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
         else
-            throwRangeError(globalObject, scope, String(resolved.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
         return { };
     }
 
@@ -282,7 +282,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
             double ey = eraYearProp.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (!std::isfinite(ey)) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "eraYear must be finite"_s);
+                return throwVMRangeError(globalObject, scope, "eraYear must be finite"_si);
             merged.eraYear = clampTo<int32_t>(ey);
         }
     }
@@ -292,7 +292,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
         double y = yearProp.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(y)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "year must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "year must be finite"_si);
         merged.year = clampTo<int32_t>(y);
     }
     // Merge requires a year identifier — either `year` or era+eraYear pair.
@@ -310,13 +310,13 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
     } else {
         auto mcStr = TemporalCore::calendarMonthCode(calendarId, monthDay->plainMonthDay().isoPlainDate());
         if (!mcStr) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(mcStr.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(mcStr.error().message));
             return { };
         }
         merged.monthCode = ISO8601::parseMonthCode(*mcStr);
         auto dayResult = TemporalCore::calendarDay(calendarId, monthDay->plainMonthDay().isoPlainDate());
         if (!dayResult) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(dayResult.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(dayResult.error().message));
             return { };
         }
         merged.day = static_cast<uint8_t>(*dayResult);
@@ -326,9 +326,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
     auto resolved = TemporalCore::dateFromFields(calendarId, merged, TemporalOverflow::Constrain);
     if (!resolved) [[unlikely]] {
         if (resolved.error().kind == TemporalErrorKind::TypeError)
-            throwTypeError(globalObject, scope, String(resolved.error().message));
+            throwTypeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
         else
-            throwRangeError(globalObject, scope, String(resolved.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
         return { };
     }
 

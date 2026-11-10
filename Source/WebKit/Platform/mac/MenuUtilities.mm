@@ -112,7 +112,7 @@ static RetainPtr<PlatformDDAction> actionForMenuItem(NSMenuItem *item)
     return dynamic_objc_cast<PlatformDDAction>(WTF::move(action));
 }
 
-NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
+NSMenuItem *menuItemForTelephoneNumber(StringImpl* telephoneNumber)
 {
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
@@ -121,12 +121,12 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
 
-    RetainPtr<NSArray> proposedMenuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForValue:telephoneNumber.createNSString().get() type:PAL::get_DataDetectorsCore_DDBinderPhoneNumberKeySingleton() service:nil context:actionContext.get()];
+    RetainPtr<NSArray> proposedMenuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForValue:createNSString(telephoneNumber).get() type:PAL::get_DataDetectorsCore_DDBinderPhoneNumberKeySingleton() service:nil context:actionContext.get()];
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *item in proposedMenuItems.get()) {
         RetainPtr action = actionForMenuItem(item);
         if ([retainPtr(action.get().actionUTI) hasPrefix:@"com.apple.dial"]) {
-            item.title = formattedPhoneNumberString(telephoneNumber.createNSString().get()).get();
+            item.title = formattedPhoneNumberString(createNSString(telephoneNumber).get()).get();
             return item;
         }
     }
@@ -134,7 +134,7 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
     return nil;
 }
 
-RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *webView, const WebCore::IntRect& rect)
+RetainPtr<NSMenu> menuForTelephoneNumber(StringImpl* telephoneNumber, NSView *webView, const WebCore::IntRect& rect)
 {
     if (!PAL::isRevealFrameworkAvailable() || !PAL::isRevealCoreFrameworkAvailable())
         return nil;
@@ -142,8 +142,8 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *
     RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
     auto urlComponents = adoptNS([[NSURLComponents alloc] init]);
     [urlComponents setScheme:@"tel"];
-    [urlComponents setPath:telephoneNumber.createNSString().get()];
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithURL:retainPtr([urlComponents URL]).get() rangeInContext:NSMakeRange(0, telephoneNumber.length())]);
+    [urlComponents setPath:createNSString(telephoneNumber).get()];
+    auto item = adoptNS([PAL::allocRVItemInstance() initWithURL:retainPtr([urlComponents URL]).get() rangeInContext:NSMakeRange(0, length(telephoneNumber))]);
     auto presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
     auto delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] initWithRect:rect]);
     auto context = WebCore::createRVPresentingContextWithRetainedDelegate(NSZeroPoint, webView, delegate.get());
@@ -162,10 +162,10 @@ enum class SymbolType : bool { Public, Private };
 
 struct SymbolNameWithType {
     SymbolType type;
-    String name;
+    RefPtr<StringImpl> name;
 };
 
-static std::optional<SymbolNameWithType> symbolForTransformationItem(String symbolName)
+static std::optional<SymbolNameWithType> symbolForTransformationItem(RefPtr<StringImpl> symbolName)
 {
     // The images used for the items in the transformation submenu are not all localized
     // for the same scripts, so we must ensure that the images are shown only when a
@@ -175,7 +175,7 @@ static std::optional<SymbolNameWithType> symbolForTransformationItem(String symb
     RetainPtr scriptCode = [currentLocale scriptCode];
     RetainPtr languageCode = [currentLocale languageCode];
 
-    const auto isoScriptCode = scriptCode ? scriptNameToCode(String(scriptCode.get())) : localeToScriptCode(languageCode.get());
+    const auto isoScriptCode = scriptCode ? scriptNameToCode(StringImpl::create(scriptCode.get()).get()) : localeToScriptCode(StringImpl::create(languageCode.get()).get());
 
     switch (isoScriptCode) {
     case USCRIPT_CYRILLIC:
@@ -249,7 +249,7 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
         return { { SymbolType::Public, "bold"_s } };
     case WebCore::ContextMenuItemTagCapitalize:
     case WebCore::ContextMenuItemTagTransformationsMenu:
-        return symbolForTransformationItem("textformat.characters"_s);
+        return symbolForTransformationItem("textformat.characters"_si);
     case WebCore::ContextMenuItemTagConvertToSimplifiedChinese:
     case WebCore::ContextMenuItemTagConvertToTraditionalChinese:
     case WebCore::ContextMenuItemTagDefaultDirection:
@@ -292,9 +292,9 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
     case WebCore::ContextMenuItemTagLookUpInDictionary:
         return { { SymbolType::Public, "character.book.closed"_s } };
     case WebCore::ContextMenuItemTagMakeLowerCase:
-        return symbolForTransformationItem("characters.lowercase"_s);
+        return symbolForTransformationItem("characters.lowercase"_si);
     case WebCore::ContextMenuItemTagMakeUpperCase:
-        return symbolForTransformationItem("characters.uppercase"_s);
+        return symbolForTransformationItem("characters.uppercase"_si);
     case WebCore::ContextMenuItemTagMediaMute:
         return { { SymbolType::Public, "speaker.slash"_s } };
     case WebCore::ContextMenuItemTagMediaPlayPause: {
@@ -384,7 +384,7 @@ void addImageToMenuItem(NSMenuItem *item, const WebCore::ContextMenuAction actio
 {
     if (auto symbolNameWithType = symbolNameWithTypeForAction(action, useAlternateImage)) {
         const auto symbolType = symbolNameWithType.value().type;
-        RetainPtr symbolName = symbolNameWithType.value().name.createNSString();
+        RetainPtr symbolName = createNSString(symbolNameWithType.value().name);
 
         if (symbolType == SymbolType::Public)
             [item _setActionImage:[NSImage imageWithSystemSymbolName:symbolName.get() accessibilityDescription:nil]];

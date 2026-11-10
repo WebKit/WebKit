@@ -78,7 +78,7 @@ void DateTimeNumericFieldElement::adjustMinInlineSize(Style::ComputedStyle& styl
     float inlineSize = 0;
     for (char c = '0'; c <= '9'; ++c) {
         auto numberString = locale->convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
-        auto textRun = RenderBlock::constructTextRun(numberString, style);
+        auto textRun = RenderBlock::constructTextRun(numberString.get(), style);
         inlineSize = std::max(inlineSize, font->width(protect(textRun)));
     }
 
@@ -90,7 +90,7 @@ int DateTimeNumericFieldElement::maximum() const
     return m_range.maximum;
 }
 
-String DateTimeNumericFieldElement::formatValue(int value) const
+RefPtr<StringImpl> DateTimeNumericFieldElement::formatValue(int value) const
 {
     CheckedRef locale = localeForOwner();
 
@@ -131,7 +131,7 @@ void DateTimeNumericFieldElement::setValueAsIntegerByStepping(int value)
 
 void DateTimeNumericFieldElement::setARIAValueAttributesWithInteger(int value)
 {
-    auto string = AtomString::number(value);
+    auto string = AtomStringImpl::number(value);
     setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, string);
     setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, string);
 }
@@ -152,14 +152,14 @@ void DateTimeNumericFieldElement::stepUp()
     setValueAsIntegerByStepping(newValue);
 }
 
-ValueOrReference<String> DateTimeNumericFieldElement::value() const
+ValueOrReference<RefPtr<StringImpl>> DateTimeNumericFieldElement::value() const
 {
     if (m_hasValue)
         return formatValue(m_value);
     return emptyString();
 }
 
-String DateTimeNumericFieldElement::placeholderValue() const
+RefPtr<StringImpl> DateTimeNumericFieldElement::placeholderValue() const
 {
     return m_placeholder;
 }
@@ -170,8 +170,8 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
         return;
 
     auto charCode = static_cast<char16_t>(keyboardEvent.charCode());
-    String number = protect(localeForOwner())->convertFromLocalizedNumber(span(charCode));
-    int digit = number[0] - '0';
+    RefPtr<StringImpl> number = protect(localeForOwner())->convertFromLocalizedNumber(StringImpl::create(span(charCode)).ptr());
+    int digit = codeUnitAt(number, 0) - '0';
     if (digit < 0 || digit > 9)
         return;
 
@@ -181,7 +181,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
     if (timeSinceLastDigitChar > typeAheadTimeout) {
         m_typeAheadBuffer.clear();
     } else if (auto length = m_typeAheadBuffer.length()) {
-        unsigned maxLength = formatValue(m_range.maximum).length();
+        unsigned maxLength = WTF::length(formatValue(m_range.maximum));
         if (length == maxLength)
             m_typeAheadBuffer.clear();
     }

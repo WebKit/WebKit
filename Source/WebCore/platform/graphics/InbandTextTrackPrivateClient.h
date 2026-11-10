@@ -53,7 +53,7 @@ public:
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t>) = 0;
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&) = 0;
+    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, StringImpl*) = 0;
     virtual void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) = 0;
     virtual void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) = 0;
 #endif
@@ -62,7 +62,7 @@ public:
     virtual void updateGenericCue(InbandGenericCue&) = 0;
     virtual void removeGenericCue(InbandGenericCue&) = 0;
 
-    virtual void parseWebVTTFileHeader(String&&) { ASSERT_NOT_REACHED(); }
+    virtual void parseWebVTTFileHeader(RefPtr<StringImpl>&&) { ASSERT_NOT_REACHED(); }
     virtual void parseWebVTTCueData(std::span<const uint8_t>) = 0;
     virtual void parseWebVTTCueData(ISOWebVTTCue&&) = 0;
 };

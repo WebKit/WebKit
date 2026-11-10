@@ -59,7 +59,7 @@ public:
     void seekTo(double, CompletionHandler<void(bool)>&&);
     void play(CompletionHandler<void(bool)>&&);
     void pause(CompletionHandler<void(bool)>&&);
-    void setTrack(const String&, CompletionHandler<void(bool)>&&);
+    void setTrack(StringImpl*, CompletionHandler<void(bool)>&&);
 
     USING_CAN_MAKE_WEAKPTR(MediaSessionCoordinatorClient);
 
@@ -75,17 +75,17 @@ private:
     void coordinateSeekTo(double, MediaSessionCommandCompletionHandler&&);
     void coordinatePlay(MediaSessionCommandCompletionHandler&&);
     void coordinatePause(MediaSessionCommandCompletionHandler&&);
-    void coordinateSetTrack(const String&, MediaSessionCommandCompletionHandler&&);
+    void coordinateSetTrack(StringImpl*, MediaSessionCommandCompletionHandler&&);
     void positionStateChanged(const std::optional<WebCore::MediaPositionState>&);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);
-    void trackIdentifierChanged(const String&);
+    void trackIdentifierChanged(StringImpl*);
 
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
     void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
-    void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
+    void setSessionTrack(StringImpl*, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
 

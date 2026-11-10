@@ -48,7 +48,7 @@ NODELETE bool noExtendedTextEncodingNameUsed();
 NODELETE bool isJapaneseEncoding(ASCIILiteral canonicalEncodingName);
 NODELETE bool shouldShowBackslashAsCurrencySymbolIn(ASCIILiteral canonicalEncodingName);
 
-PAL_EXPORT String defaultTextEncodingNameForSystemLanguage();
+PAL_EXPORT RefPtr<StringImpl> defaultTextEncodingNameForSystemLanguage();
 
 #if PLATFORM(COCOA)
 PAL_EXPORT CFStringEncoding webDefaultCFStringEncoding();

@@ -38,7 +38,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerAgent);
 
 ServiceWorkerAgent::ServiceWorkerAgent(WorkerAgentContext& context)
-    : InspectorAgentBase("ServiceWorker"_s, context)
+    : InspectorAgentBase("ServiceWorker"_si, context)
     , m_serviceWorkerGlobalScope(downcast<ServiceWorkerGlobalScope>(context.globalScope.get()))
     , m_backendDispatcher(Inspector::ServiceWorkerBackendDispatcher::create(protect(context.backendDispatcher), this))
 {

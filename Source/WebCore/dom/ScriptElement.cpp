@@ -120,9 +120,9 @@ void ScriptElement::finishParsingChildren()
         m_trustedScriptText = scriptContent();
 }
 
-void ScriptElement::handleSourceAttribute(const String& sourceURL)
+void ScriptElement::handleSourceAttribute(StringImpl* sourceURL)
 {
-    if (ignoresLoadRequest() || sourceURL.isNull())
+    if (ignoresLoadRequest() || !sourceURL)
         return;
 
     prepareScript(); // FIXME: Provide a real starting line number here.
@@ -141,7 +141,7 @@ void ScriptElement::dispatchErrorEvent()
     protect(element())->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-static void reportSpeculationRulesError(LocalFrame& frame, const String& errorMessage)
+static void reportSpeculationRulesError(LocalFrame& frame, StringImpl* errorMessage)
 {
     // https://html.spec.whatwg.org/C#report-an-exception
     auto& world = mainThreadNormalWorldSingleton();
@@ -160,21 +160,21 @@ static void reportSpeculationRulesError(LocalFrame& frame, const String& errorMe
 }
 
 // https://html.spec.whatwg.org/C#prepare-the-script-element (Steps 8-12)
-std::optional<ScriptType> ScriptElement::determineScriptType(const String& type, const String& language, bool isHTMLDocument, bool speculationRulesPrefetchEnabled)
+std::optional<ScriptType> ScriptElement::determineScriptType(StringImpl* type, StringImpl* language, bool isHTMLDocument, bool speculationRulesPrefetchEnabled)
 {
     // Step 8. If any of the following are true:
     //  - el has a type attribute whose value is the empty string;
     //  - el has no type attribute but it has a language attribute and that attribute's value is the empty string; or
     //  - el has neither a type attribute nor a language attribute,
     // then let the script block's type string for this script element be "text/javascript".
-    if (type.isNull()) {
-        if (language.isEmpty())
+    if (!type) {
+        if (isEmpty(language))
             return ScriptType::Classic;
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(makeString("text/"_s, language)))
             return ScriptType::Classic;
         return std::nullopt;
     }
-    if (type.isEmpty())
+    if (isEmpty(type))
         return ScriptType::Classic; // Assume text/javascript.
 
     // Step 9. If the script block's type string is a JavaScript MIME type essence match, then set el's type to "classic".
@@ -224,7 +224,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     if (wasParserInserted && !hasAsyncAttribute())
         m_forceAsync = true;
 
-    String sourceText = scriptContent();
+    RefPtr<StringImpl> sourceText = scriptContent();
     Ref element = this->element();
     Ref context = *element->scriptExecutionContext();
 
@@ -233,14 +233,14 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     if (m_startPosition.m_line > OrdinalNumber::beforeFirst() && scriptStartPosition.m_line > OrdinalNumber::beforeFirst())
         m_startPosition.m_line = scriptStartPosition.m_line;
 
-    if (context->settingsValues().trustedTypesEnabled && sourceText != m_trustedScriptText) {
-        auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, is<HTMLScriptElement>(element) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s);
+    if (context->settingsValues().trustedTypesEnabled && !equal(sourceText, m_trustedScriptText)) {
+        auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, StringImpl::create(is<HTMLScriptElement>(element) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s).ptr());
         if (trustedText.hasException())
             return false;
         sourceText = trustedText.releaseReturnValue();
     }
 
-    if (!hasSourceAttribute() && sourceText.isEmpty())
+    if (!hasSourceAttribute() && isEmpty(sourceText))
         return false;
 
     if (!element->isConnected())
@@ -283,10 +283,10 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
     // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
     // even for the module tags, we handle the "charset" attribute.
-    if (auto attributeValue = charsetAttributeValue(); !attributeValue.isEmpty())
+    if (auto attributeValue = charsetAttributeValue(); !isEmpty(attributeValue))
         m_characterEncoding = WTF::move(attributeValue);
     else
-        m_characterEncoding = document->charset();
+        m_characterEncoding = RefPtr<AtomStringImpl> { document->charset() };
 
     switch (scriptType) {
     case ScriptType::Classic: {
@@ -372,13 +372,13 @@ void ScriptElement::updateTaintedOriginFromSourceURL()
     m_taintedOrigin[JSC::SourceTaintKind::ScriptTrackingPrivacy] = JSC::SourceTaintedOrigin::KnownTainted;
 }
 
-bool ScriptElement::requestClassicScript(const String& sourceURL)
+bool ScriptElement::requestClassicScript(StringImpl* sourceURL)
 {
     Ref element = this->element();
     ASSERT(element->isConnected());
     ASSERT(!m_loadableScript);
     Ref document = element->document();
-    if (!sourceURL.isEmpty()) {
+    if (!isEmpty(sourceURL)) {
         auto script = LoadableClassicScript::create(element->nonce(), element->attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriority(),
             element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), element->localName(), element->isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -401,7 +401,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     return false;
 }
 
-bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosition& scriptStartPosition)
+bool ScriptElement::requestModuleScript(StringImpl* sourceText, const TextPosition& scriptStartPosition)
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
     // Module is always CORS request. If attribute is not given, it should be same-origin credential.
@@ -409,14 +409,14 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
     Ref document = element->document();
     auto nonce = element->nonce();
     auto crossOriginMode = element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
-    if (crossOriginMode.isNull())
-        crossOriginMode = CachedScriptFetcher::defaultCrossOriginModeForModule;
+    if (!crossOriginMode)
+        crossOriginMode = AtomStringImpl::add(CachedScriptFetcher::defaultCrossOriginModeForModule);
 
     if (hasSourceAttribute()) {
         ASSERT(element->isConnected());
 
-        String sourceURL = sourceAttributeValue();
-        if (sourceURL.isEmpty()) {
+        RefPtr<StringImpl> sourceURL = sourceAttributeValue();
+        if (isEmpty(sourceURL)) {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
                 element.dispatchErrorEvent();
             });
@@ -432,13 +432,13 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
         }
 
         m_isExternalScript = true;
-        AtomString integrity = element->attributeWithoutSynchronization(HTMLNames::integrityAttr);
-        if (integrity.isNull())
-            integrity = AtomString { protect(document->globalObject()->importMap())->integrityForURL(moduleScriptRootURL) };
+        RefPtr<AtomStringImpl> integrity = element->attributeWithoutSynchronization(HTMLNames::integrityAttr);
+        if (!integrity)
+            integrity = AtomStringImpl::add(protect(document->globalObject()->importMap())->integrityForURL(moduleScriptRootURL));
         Ref script = LoadableModuleScript::create(LoadableModuleScript::IsInline::No, nonce, integrity, referrerPolicy(), fetchPriority(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
 
-        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, String(integrity), nullString(), m_parserInserted)) {
+        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, RefPtr<StringImpl>(integrity), nullString(), m_parserInserted)) {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
                 element.dispatchErrorEvent();
             });
@@ -513,7 +513,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? document.ptr() : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
-    WTFBeginSignpost(this, ExecuteScriptElement, "executing classic script from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8() : "inline"_s, hasAsyncAttribute(), hasDeferAttribute());
+    WTFBeginSignpost(this, ExecuteScriptElement, "executing classic script from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? utf8(sourceCode.url().string()) : "inline"_s, hasAsyncAttribute(), hasDeferAttribute());
     protect(frame->script())->evaluateIgnoringException(sourceCode);
     WTFEndSignpost(this, ExecuteScriptElement);
 }
@@ -547,7 +547,7 @@ void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
     if (!frame)
         return;
 
-    WTFBeginSignpost(this, RegisterImportMap, "registering import-map from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8() : "inline"_s, hasAsyncAttribute(), hasDeferAttribute());
+    WTFBeginSignpost(this, RegisterImportMap, "registering import-map from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? utf8(sourceCode.url().string()) : "inline"_s, hasAsyncAttribute(), hasDeferAttribute());
     protect(frame->script())->registerImportMap(sourceCode, document->baseURL());
     WTFEndSignpost(this, RegisterImportMap);
 }
@@ -639,7 +639,7 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
     RefPtr loadableScript = pendingScript.loadableScript();
     Ref document = element().document();
     if (document->identifier() != m_preparationTimeDocumentIdentifier) {
-        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not executing script because it moved between documents during fetching"_s);
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not executing script because it moved between documents during fetching"_si);
     } else {
         if (loadableScript)
             executeScriptAndDispatchEvent(*loadableScript);
@@ -662,12 +662,12 @@ bool ScriptElement::ignoresLoadRequest() const
     return m_alreadyStarted || m_isExternalScript || m_parserInserted == ParserInserted::Yes || !element().isConnected();
 }
 
-String ScriptElement::scriptContent() const
+RefPtr<StringImpl> ScriptElement::scriptContent() const
 {
     return TextNodeTraversal::childTextContent(protect(element()));
 }
 
-void ScriptElement::setTrustedScriptText(const String& text)
+void ScriptElement::setTrustedScriptText(StringImpl* text)
 {
     m_trustedScriptText = text;
 }
@@ -701,7 +701,7 @@ void ScriptElement::registerSpeculationRules(const ScriptSourceCode& sourceCode)
     if (sourceCode.isEmpty()) {
         dispatchErrorEvent();
         if (frame)
-            reportSpeculationRulesError(*frame, "Speculation rules script has empty content"_s);
+            reportSpeculationRulesError(*frame, "Speculation rules script has empty content"_si);
         return;
     }
 
@@ -724,7 +724,7 @@ void ScriptElement::registerSpeculationRules(const ScriptSourceCode& sourceCode)
         document->considerSpeculationRules();
     else {
         dispatchErrorEvent();
-        reportSpeculationRulesError(*frame, "Failed to register speculation rules"_s);
+        reportSpeculationRulesError(*frame, "Failed to register speculation rules"_si);
     }
 }
 

@@ -39,18 +39,18 @@ template <typename... Parameters>
 void SQLiteStatementBindAllParameters(Ref<WebExtensionSQLiteDatabase>, Parameters&&...);
 
 template <typename... Parameters>
-int SQLiteDatabaseExecute(Ref<WebExtensionSQLiteDatabase>, const String& query, Parameters&&...);
+int SQLiteDatabaseExecute(Ref<WebExtensionSQLiteDatabase>, StringImpl* query, Parameters&&...);
 
 template <typename... Parameters>
-Ref<WebExtensionSQLiteRowEnumerator> SQLiteDatabaseFetch(Ref<WebExtensionSQLiteDatabase>, const String& query, Parameters&&...);
+Ref<WebExtensionSQLiteRowEnumerator> SQLiteDatabaseFetch(Ref<WebExtensionSQLiteDatabase>, StringImpl* query, Parameters&&...);
 
-bool SQLiteDatabaseEnumerate(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error>&, const String& query, Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>);
-
-template <typename... Parameters>
-bool SQLiteDatabaseEnumerateRows(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error>&, const String& query, std::tuple<Parameters...>&&, Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>);
+bool SQLiteDatabaseEnumerate(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error>&, StringImpl* query, Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>);
 
 template <typename... Parameters>
-bool SQLiteDatabaseExecuteAndReturnError(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error>&, const String& query, Parameters&&...);
+bool SQLiteDatabaseEnumerateRows(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error>&, StringImpl* query, std::tuple<Parameters...>&&, Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>);
+
+template <typename... Parameters>
+bool SQLiteDatabaseExecuteAndReturnError(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error>&, StringImpl* query, Parameters&&...);
 
 
 inline bool SQLiteIsExecutionError(int errorCode)
@@ -70,7 +70,7 @@ void SQLiteStatementBindAllParameters(RefPtr<WebExtensionSQLiteStatement>, T&&, 
 template <int currentParameterIndex>
 void SQLiteStatementBindAllParameters(RefPtr<WebExtensionSQLiteStatement>);
 template <typename... Parameters>
-int SQLiteDatabaseExecuteAndReturnIntError(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error> = nullptr, const String& query = { }, Parameters&&...);
+int SQLiteDatabaseExecuteAndReturnIntError(Ref<WebExtensionSQLiteDatabase>, RefPtr<API::Error> = nullptr, StringImpl* query = nullptr, Parameters&&...);
 
 template <typename... Parameters>
 void SQLiteStatementBindAllParameters(RefPtr<WebExtensionSQLiteStatement> statement, Parameters&&... parameters)
@@ -79,20 +79,20 @@ void SQLiteStatementBindAllParameters(RefPtr<WebExtensionSQLiteStatement> statem
 }
 
 template <typename... Parameters>
-int SQLiteDatabaseExecute(Ref<WebExtensionSQLiteDatabase> database, const String& query, Parameters&&... parameters)
+int SQLiteDatabaseExecute(Ref<WebExtensionSQLiteDatabase> database, StringImpl* query, Parameters&&... parameters)
 {
     return SQLiteDatabaseExecuteAndReturnIntError(database, nullptr, query, std::forward<Parameters>(parameters)...);
 }
 
 template <typename... Parameters>
-bool SQLiteDatabaseExecuteAndReturnError(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error>& error, const String& query, Parameters&&... parameters)
+bool SQLiteDatabaseExecuteAndReturnError(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error>& error, StringImpl* query, Parameters&&... parameters)
 {
     int result = SQLiteDatabaseExecuteAndReturnIntError(database, error, query, std::forward<Parameters>(parameters)...);
     return result == SQLITE_DONE || result == SQLITE_OK;
 }
 
 template <typename... Parameters>
-int SQLiteDatabaseExecuteAndReturnIntError(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error> error, const String& query, Parameters&&... parameters)
+int SQLiteDatabaseExecuteAndReturnIntError(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error> error, StringImpl* query, Parameters&&... parameters)
 {
     RefPtr<API::Error> statementError;
     RefPtr statement = WebExtensionSQLiteStatement::create(database, query, statementError);
@@ -114,7 +114,7 @@ int SQLiteDatabaseExecuteAndReturnIntError(Ref<WebExtensionSQLiteDatabase> datab
 }
 
 template <typename... Parameters>
-Ref<WebExtensionSQLiteRowEnumerator> SQLiteDatabaseFetch(Ref<WebExtensionSQLiteDatabase> database, const String& query, Parameters&&... parameters)
+Ref<WebExtensionSQLiteRowEnumerator> SQLiteDatabaseFetch(Ref<WebExtensionSQLiteDatabase> database, StringImpl* query, Parameters&&... parameters)
 {
     RefPtr<API::Error> error;
     RefPtr statement = WebExtensionSQLiteStatement::create(database, query, error);
@@ -292,7 +292,7 @@ typename std::enable_if<Index < Count, bool>::type SQLiteStatementBind(Ref<WebEx
 }
 
 template<typename... Args>
-bool SQLiteDatabaseEnumerate(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error>& error, const String& query, Args&&... args)
+bool SQLiteDatabaseEnumerate(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error>& error, StringImpl* query, Args&&... args)
 {
     RefPtr statement = WebExtensionSQLiteStatement::create(database, query, error);
     if (error)
@@ -313,7 +313,7 @@ bool SQLiteDatabaseEnumerate(RefPtr<WebExtensionSQLiteStatement> statement, RefP
 }
 
 template<typename... Parameters>
-bool SQLiteDatabaseEnumerateRows(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error>& error, const String& query, std::tuple<Parameters...>&& parameters, Function<void(RefPtr<WebExtensionSQLiteRow>, bool)> enumerationBlock)
+bool SQLiteDatabaseEnumerateRows(Ref<WebExtensionSQLiteDatabase> database, RefPtr<API::Error>& error, StringImpl* query, std::tuple<Parameters...>&& parameters, Function<void(RefPtr<WebExtensionSQLiteRow>, bool)> enumerationBlock)
 {
     RefPtr statement = WebExtensionSQLiteStatement::create(database, query, error);
     if (error)

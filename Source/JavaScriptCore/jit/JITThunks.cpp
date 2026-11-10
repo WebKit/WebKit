@@ -119,7 +119,7 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const NativeExecutable& a
 {
     if (&a == &b)
         return true;
-    return a.function() == b.function() && a.constructor() == b.constructor() && a.implementationVisibility() == b.implementationVisibility() && a.length() == b.length() && a.name() == b.name();
+    return a.function() == b.function() && a.constructor() == b.constructor() && a.implementationVisibility() == b.implementationVisibility() && a.length() == b.length() && WTF::equal(a.name(), b.name());
 }
 
 inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutable>& a, const Weak<NativeExecutable>& b)
@@ -135,7 +135,7 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutab
 inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutable>& a, const HostFunctionKey& b)
 {
     auto& aExecutable = getMayBeDyingNativeExecutable(a);
-    return aExecutable.function() == std::get<0>(b) && aExecutable.constructor() == std::get<1>(b) && aExecutable.implementationVisibility() == std::get<2>(b) && aExecutable.length() == std::get<3>(b) && aExecutable.name() == std::get<4>(b);
+    return aExecutable.function() == std::get<0>(b) && aExecutable.constructor() == std::get<1>(b) && aExecutable.implementationVisibility() == std::get<2>(b) && aExecutable.length() == std::get<3>(b) && WTF::equal(aExecutable.name(), std::get<4>(b));
 }
 
 CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
@@ -309,12 +309,12 @@ WeakHandleOwner::FinalizeResult JITThunks::finalize(Handle<Unknown> handle, void
     return FinalizeResult::KeepImpl;
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, StringImpl* name)
 {
     return hostFunctionStub(vm, function, constructor, nullptr, implementationVisibility, NoIntrinsic, nullptr, length, name);
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ThunkGenerator generator, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, const DOMJIT::Signature* signature, unsigned length, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ThunkGenerator generator, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, const DOMJIT::Signature* signature, unsigned length, StringImpl* name)
 {
     ASSERT(!isCompilationThread());
     ASSERT(Options::useJIT());
@@ -362,7 +362,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction funct
     return nativeExecutable;
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, ThunkGenerator generator, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, unsigned length, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, ThunkGenerator generator, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, unsigned length, StringImpl* name)
 {
     return hostFunctionStub(vm, function, callHostFunctionAsConstructor, generator, implementationVisibility, intrinsic, nullptr, length, name);
 }

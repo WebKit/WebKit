@@ -46,14 +46,14 @@ namespace WebCore {
 class DOMMapAdapter;
 class RTCStatsReport;
 
-void initializeRTCStatsReportBackingMap(RTCStatsReport&, const HashMap<String, String>&);
+void initializeRTCStatsReportBackingMap(RTCStatsReport&, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&);
 
 class LibWebRTCStatsCollector : public webrtc::RTCStatsCollectorCallback {
 public:
     using CollectorCallback = CompletionHandler<void(webrtc::scoped_refptr<const webrtc::RTCStatsReport>&&)>;
     static webrtc::scoped_refptr<LibWebRTCStatsCollector> create(CollectorCallback&& callback) { return webrtc::make_ref_counted<LibWebRTCStatsCollector>(WTF::move(callback)); }
 
-    static Ref<RTCStatsReport> createReport(webrtc::scoped_refptr<const webrtc::RTCStatsReport>&&, HashMap<String, String>&&);
+    static Ref<RTCStatsReport> createReport(webrtc::scoped_refptr<const webrtc::RTCStatsReport>&&, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
 
     explicit LibWebRTCStatsCollector(CollectorCallback&&);
     ~LibWebRTCStatsCollector();

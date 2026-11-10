@@ -64,7 +64,7 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
     return *m_webVTTParser;
 }
 
-void InbandWebVTTTextTrack::parseWebVTTFileHeader(String&& header)
+void InbandWebVTTTextTrack::parseWebVTTFileHeader(RefPtr<StringImpl>&& header)
 {
     parser().parseFileHeader(WTF::move(header));
 }

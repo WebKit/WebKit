@@ -53,23 +53,23 @@ public:
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
     NODELETE WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);
     
-    using URLEncodedForm = Vector<KeyValuePair<String, String>>;
+    using URLEncodedForm = Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>;
     WTF_EXPORT_PRIVATE static URLEncodedForm parseURLEncodedForm(StringView);
-    WTF_EXPORT_PRIVATE static std::optional<KeyValuePair<String, String>> parseQueryNameAndValue(StringView);
-    WTF_EXPORT_PRIVATE static String serialize(const URLEncodedForm&);
+    WTF_EXPORT_PRIVATE static std::optional<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> parseQueryNameAndValue(StringView);
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> serialize(const URLEncodedForm&);
 
     NODELETE WTF_EXPORT_PRIVATE static bool isSpecialScheme(StringView);
-    WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(StringView scheme);
+    WTF_EXPORT_PRIVATE static std::optional<RefPtr<StringImpl>> maybeCanonicalizeScheme(StringView scheme);
 
     static const UIDNA& internationalDomainNameTranscoder();
     NODELETE static bool isInUserInfoEncodeSet(char16_t);
     NODELETE static bool isSpecialCharacterForFragmentDirective(char16_t);
 
     NODELETE static std::optional<uint16_t> defaultPortForProtocol(StringView);
-    WTF_EXPORT_PRIVATE static std::optional<String> formURLDecode(StringView input);
+    WTF_EXPORT_PRIVATE static std::optional<RefPtr<StringImpl>> formURLDecode(StringView input);
 
 private:
-    URLParser(String&&, const URL& = { }, const URLTextEncoding* = nullptr);
+    URLParser(RefPtr<StringImpl>&&, const URL& = { }, const URLTextEncoding* = nullptr);
     URL result() { return m_url; }
 
     friend class URL;
@@ -80,7 +80,7 @@ private:
     bool m_urlIsFile { false };
     bool m_hostHasPercentOrNonASCII { false };
     bool m_didSeeSyntaxViolation { false };
-    String m_inputString;
+    RefPtr<StringImpl> m_inputString;
     const void* m_inputBegin { nullptr };
 
     static constexpr size_t defaultInlineBufferSize = 2048;
@@ -126,7 +126,7 @@ private:
     void appendToASCIIBuffer(std::span<const char16_t>);
     template<typename CharacterType, typename TrivialCodePointPrefix> void consumeTrivialCodePoints(CodePointIterator<CharacterType>&, NOESCAPE const TrivialCodePointPrefix&);
     template<typename CharacterType> void encodeNonUTF8Query(const Vector<char16_t>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
-    void copyASCIIStringUntil(const String&, size_t length);
+    void copyASCIIStringUntil(StringImpl*, size_t length);
     bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length) LIFETIME_BOUND;
     char16_t parsedDataView(size_t position);

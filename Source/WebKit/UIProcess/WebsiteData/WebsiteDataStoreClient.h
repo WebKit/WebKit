@@ -66,11 +66,11 @@ public:
         challenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
     }
 
-    virtual void openWindowFromServiceWorker(const String&, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
+    virtual void openWindowFromServiceWorker(StringImpl*, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
     {
         completionHandler(nullptr);
     }
-    virtual void reportServiceWorkerConsoleMessage(const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, const String&, unsigned long)
+    virtual void reportServiceWorkerConsoleMessage(const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, StringImpl*, unsigned long)
     {
     }
 
@@ -79,7 +79,7 @@ public:
         return false;
     }
 
-    virtual HashMap<WTF::String, bool> notificationPermissions()
+    virtual HashMap<RefPtr<StringImpl>, bool> notificationPermissions()
     {
         return { };
     }
@@ -106,7 +106,7 @@ public:
         completionHandler(false);
     }
 
-    virtual void notifyBackgroundFetchChange(const String&, BackgroundFetchChange)
+    virtual void notifyBackgroundFetchChange(StringImpl*, BackgroundFetchChange)
     {
     }
 
@@ -115,7 +115,7 @@ public:
     }
 
     enum class CanSuspend : bool { No, Yes };
-    virtual void didExceedMemoryFootprintThreshold(size_t, const String&, unsigned, Seconds, bool, WebCore::WasPrivateRelayed, CanSuspend)
+    virtual void didExceedMemoryFootprintThreshold(size_t, StringImpl*, unsigned, Seconds, bool, WebCore::WasPrivateRelayed, CanSuspend)
     {
     }
 

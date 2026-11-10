@@ -98,10 +98,10 @@ bool IDBKeyRangeData::isValid() const
 }
 
 #if !LOG_DISABLED
-String IDBKeyRangeData::loggingString() const
+RefPtr<StringImpl> IDBKeyRangeData::loggingString() const
 {
     auto result = makeString(lowerOpen ? "( "_s : "[ "_s, lowerKey.loggingString(), ", "_s, upperKey.loggingString(), upperOpen ? " )"_s : " ]"_s);
-    if (result.length() > 400)
+    if (length(result) > 400)
         result = makeString(StringView(result).left(397), "..."_s);
 
     return result;

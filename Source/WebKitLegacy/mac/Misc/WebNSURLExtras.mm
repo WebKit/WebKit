@@ -154,7 +154,7 @@
 
 - (NSString *)_webkit_suggestedFilenameWithMIMEType:(NSString *)MIMEType
 {
-    return suggestedFilenameWithMIMEType(self, MIMEType);
+    return suggestedFilenameWithMIMEType(self, StringImpl::create(MIMEType).get());
 }
 
 - (NSURL *)_webkit_URLFromURLOrSchemelessFileURL
@@ -185,7 +185,7 @@
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
 {
-    return PAL::decodeURLEscapeSequences(String(self)).createNSString().autorelease();
+    return createNSString(PAL::decodeURLEscapeSequences(StringImpl::create(self).get())).autorelease();
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL

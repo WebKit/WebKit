@@ -41,7 +41,7 @@ public:
     bool containsWasmFunction(uint32_t) const;
 
 private:
-    UncheckedKeyHashSet<String> m_entries;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> m_entries;
     bool m_hasActiveAllowlist { false };
 };
 

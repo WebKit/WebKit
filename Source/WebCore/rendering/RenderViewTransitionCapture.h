@@ -73,7 +73,7 @@ private:
 
     NaturalDimensions zoomedNaturalDimensions() const final;
 
-    String debugDescription() const override;
+    RefPtr<StringImpl> debugDescription() const override;
 
     void updateFromStyle() override;
 

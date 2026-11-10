@@ -99,9 +99,9 @@ public:
     NODELETE uint64_t interactionCount();
 
     Vector<Ref<PerformanceEntry>> getEntries() const;
-    Vector<Ref<PerformanceEntry>> getEntriesByType(const String& entryType) const;
-    Vector<Ref<PerformanceEntry>> getEntriesByName(const String& name, const String& entryType) const;
-    void appendBufferedEntriesByType(const String& entryType, Vector<Ref<PerformanceEntry>>&, PerformanceObserver&) const;
+    Vector<Ref<PerformanceEntry>> getEntriesByType(StringImpl* entryType) const;
+    Vector<Ref<PerformanceEntry>> getEntriesByName(StringImpl* name, StringImpl* entryType) const;
+    void appendBufferedEntriesByType(StringImpl* entryType, Vector<Ref<PerformanceEntry>>&, PerformanceObserver&) const;
 
     void countEvent(EventType);
     void processEventEntry(const PerformanceEventTimingCandidate&);
@@ -109,12 +109,12 @@ public:
     void clearResourceTimings();
     NODELETE void setResourceTimingBufferSize(unsigned);
 
-    ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, const String& markName, std::optional<PerformanceMarkOptions>&&);
-    void clearMarks(const String& markName);
+    ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, StringImpl* markName, std::optional<PerformanceMarkOptions>&&);
+    void clearMarks(StringImpl* markName);
 
-    using StartOrMeasureOptions = Variant<String, PerformanceMeasureOptions>;
-    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, StartOrMeasureOptions&&, const String& endMark);
-    void clearMeasures(const String& measureName);
+    using StartOrMeasureOptions = Variant<RefPtr<StringImpl>, PerformanceMeasureOptions>;
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, StringImpl* measureName, StartOrMeasureOptions&&, StringImpl* endMark);
+    void clearMeasures(StringImpl* measureName);
 
     void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&);
     void documentLoadFinished(const NetworkLoadMetrics&);
@@ -171,7 +171,7 @@ private:
 
     NODELETE void initializeEntryBufferMap();
     bool addToEntryBuffer(PerformanceEntry&);
-    void clearEntryBuffer(PerformanceEntry::Type, const String& name = { });
+    void clearEntryBuffer(PerformanceEntry::Type, StringImpl* name = nullptr);
 
     const std::unique_ptr<EventCounts> m_eventCounts;
     mutable RefPtr<PerformanceNavigation> m_navigation;

@@ -46,18 +46,18 @@ namespace ContentSearchUtilities {
 enum class SearchType { Regex, ExactString, ContainsString };
 enum class SearchCaseSensitive { No, Yes };
 
-using Searcher = Variant<String, JSC::Yarr::RegularExpression>;
-JS_EXPORT_PRIVATE Searcher createSearcherForString(const String&, SearchType, SearchCaseSensitive);
-JS_EXPORT_PRIVATE bool searcherMatchesText(const Searcher&, const String& text);
+using Searcher = Variant<RefPtr<StringImpl>, JSC::Yarr::RegularExpression>;
+JS_EXPORT_PRIVATE Searcher createSearcherForString(StringImpl*, SearchType, SearchCaseSensitive);
+JS_EXPORT_PRIVATE bool searcherMatchesText(const Searcher&, StringImpl* text);
 
-JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createRegularExpressionForString(const String&, SearchType, SearchCaseSensitive);
+JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createRegularExpressionForString(StringImpl*, SearchType, SearchCaseSensitive);
 
-JS_EXPORT_PRIVATE int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
-JS_EXPORT_PRIVATE Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
+JS_EXPORT_PRIVATE int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, StringImpl*);
+JS_EXPORT_PRIVATE Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(StringImpl* text, StringImpl* query, const bool caseSensitive, const bool isRegex);
 JS_EXPORT_PRIVATE TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
-JS_EXPORT_PRIVATE Vector<size_t> lineEndings(const String&);
+JS_EXPORT_PRIVATE Vector<size_t> lineEndings(StringImpl*);
 
-JS_EXPORT_PRIVATE String findStylesheetSourceMapURL(const String& content);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> findStylesheetSourceMapURL(StringImpl* content);
 
 } // namespace ContentSearchUtilities
 

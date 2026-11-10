@@ -38,14 +38,14 @@
 
 namespace WebCore {
 
-DictationCommandIOS::DictationCommandIOS(Ref<Document>&& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
+DictationCommandIOS::DictationCommandIOS(Ref<Document>&& document, Vector<Vector<RefPtr<StringImpl>>>&& dictationPhrases, id metadata)
     : CompositeEditCommand(WTF::move(document), EditAction::Dictation)
     , m_dictationPhrases(WTF::move(dictationPhrases))
     , m_metadata(metadata)
 {
 }
 
-Ref<DictationCommandIOS> DictationCommandIOS::create(Ref<Document>&& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
+Ref<DictationCommandIOS> DictationCommandIOS::create(Ref<Document>&& document, Vector<Vector<RefPtr<StringImpl>>>&& dictationPhrases, id metadata)
 {
     return adoptRef(*new DictationCommandIOS(WTF::move(document), WTF::move(dictationPhrases), metadata));
 }
@@ -54,8 +54,8 @@ void DictationCommandIOS::doApply()
 {
     uint64_t resultLength = 0;
     for (auto& interpretations : m_dictationPhrases) {
-        const String& firstInterpretation = interpretations[0];
-        resultLength += firstInterpretation.length();
+        const RefPtr<StringImpl>& firstInterpretation = interpretations[0];
+        resultLength += length(firstInterpretation);
         inputText(firstInterpretation, true);
 
         if (interpretations.size() > 1)

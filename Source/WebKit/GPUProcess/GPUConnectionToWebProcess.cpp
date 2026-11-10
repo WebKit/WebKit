@@ -246,7 +246,7 @@ private:
     bool setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
     {
         auto mediaPlaybackEnvironment = m_process.get()->mediaPlaybackEnvironment(pageIdentifier);
-        bool result = !mediaPlaybackEnvironment.isEmpty();
+        bool result = !isEmpty(mediaPlaybackEnvironment);
         WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(WTF::move(mediaPlaybackEnvironment));
         return result;
     }
@@ -282,12 +282,12 @@ private:
 
     RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process.get()->videoFrameObjectHeap(); }
 
-    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId) final
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, StringImpl* persistentId) final
     {
         m_process.get()->startMonitoringCaptureDeviceRotation(pageIdentifier, persistentId);
     }
 
-    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId) final
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, StringImpl* persistentId) final
     {
         m_process.get()->stopMonitoringCaptureDeviceRotation(pageIdentifier, persistentId);
     }
@@ -503,7 +503,7 @@ void GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPa
 }
 #endif
 
-void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+void GPUConnectionToWebProcess::configureLoggingChannel(StringImpl* channelName, WTFLogChannelState state, WTFLogLevel level)
 {
 #if !RELEASE_LOG_DISABLED
     if  (auto* channel = WebCore::getLogChannel(channelName)) {
@@ -875,7 +875,7 @@ void GPUConnectionToWebProcess::setNowPlayingInfoForPage(NowPlayingInfo&& nowPla
     }).iterator->value.get();
 
     // Content strips the artwork image from repeat pushes assuming the receiver cached it, so attach it here.
-    if (nowPlayingInfo.metadata.artwork && !nowPlayingInfo.metadata.artwork->image && candidate.info && candidate.info->metadata.artwork && candidate.info->metadata.artwork->src == nowPlayingInfo.metadata.artwork->src)
+    if (nowPlayingInfo.metadata.artwork && !nowPlayingInfo.metadata.artwork->image && candidate.info && candidate.info->metadata.artwork && equal(candidate.info->metadata.artwork->src, nowPlayingInfo.metadata.artwork->src))
         nowPlayingInfo.metadata.artwork->image = candidate.info->metadata.artwork->image;
     candidate.info = WTF::move(nowPlayingInfo);
 
@@ -1276,13 +1276,13 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-const String& GPUConnectionToWebProcess::mediaCacheDirectory() const
+const RefPtr<StringImpl>& GPUConnectionToWebProcess::mediaCacheDirectory() const
 {
     return m_gpuProcess->mediaCacheDirectory(m_sessionID);
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
+const RefPtr<StringImpl>& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
 {
     return m_gpuProcess->mediaKeysStorageDirectory(m_sessionID);
 }
@@ -1307,7 +1307,7 @@ void GPUConnectionToWebProcess::reapplyCaptureEnvironment(WebCore::PageIdentifie
 #endif
 }
 
-void GPUConnectionToWebProcess::startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId)
+void GPUConnectionToWebProcess::startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, StringImpl* persistentId)
 {
 #if PLATFORM(COCOA)
     protect(gpuProcess().parentProcessConnection())->send(Messages::GPUProcessProxy::StartMonitoringCaptureDeviceRotation(pageIdentifier, persistentId, RotationMonitoringReason::Capture), 0);
@@ -1317,7 +1317,7 @@ void GPUConnectionToWebProcess::startMonitoringCaptureDeviceRotation(WebCore::Pa
 #endif
 }
 
-void GPUConnectionToWebProcess::stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId)
+void GPUConnectionToWebProcess::stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, StringImpl* persistentId)
 {
 #if PLATFORM(COCOA)
     protect(gpuProcess().parentProcessConnection())->send(Messages::GPUProcessProxy::StopMonitoringCaptureDeviceRotation(pageIdentifier, persistentId, RotationMonitoringReason::Capture), 0);
@@ -1327,7 +1327,7 @@ void GPUConnectionToWebProcess::stopMonitoringCaptureDeviceRotation(WebCore::Pag
 #endif
 }
 
-void GPUConnectionToWebProcess::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+void GPUConnectionToWebProcess::rotationAngleForCaptureDeviceChanged(StringImpl* persistentId, WebCore::VideoFrameRotation rotation)
 {
 #if PLATFORM(COCOA)
     protect(userMediaCaptureManagerProxy())->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
@@ -1457,10 +1457,10 @@ void GPUConnectionToWebProcess::setPresentingApplicationAuditToken(WebCore::Page
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-void GPUConnectionToWebProcess::takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&& callback)
+void GPUConnectionToWebProcess::takeInvalidMessageStringForTesting(CompletionHandler<void(RefPtr<StringImpl>&&)>&& callback)
 {
-    String error = connection().takeErrorString();
-    if (error.isNull())
+    RefPtr<StringImpl> error = connection().takeErrorString();
+    if (!error)
         error = emptyString();
     callback(WTF::move(error));
 }

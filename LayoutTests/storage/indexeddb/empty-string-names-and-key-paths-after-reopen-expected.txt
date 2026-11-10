@@ -1,0 +1,39 @@
+Characterizes empty-string names, key paths and keys in IndexedDB after the metadata and records round-trip through the IndexedDB server: a null key path (no key path) must stay distinct from the empty key path (the value is the key), and empty-string object store names, index names, keys and values must be preserved.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+After creation:
+    objectStoreNames: ["","arrayKeyPath","emptyKeyPath","noKeyPath"]
+    store "": keyPath "id", autoIncrement false, indexNames ["name"]
+        index "name": keyPath "name", unique false, multiEntry false, primary keys ["","a"]
+        keys ["","a"], values [{"id":"","name":""},{"id":"a","name":"A"}]
+    store "arrayKeyPath": keyPath ["a","b"], autoIncrement false, indexNames []
+        keys [["",""]], values [{"a":"","b":""}]
+    store "emptyKeyPath": keyPath "", autoIncrement false, indexNames ["byValue"]
+        index "byValue": keyPath "", unique true, multiEntry false, primary keys ["","b"]
+        keys ["","b"]
+    store "noKeyPath": keyPath null, autoIncrement false, indexNames [""]
+        index "": keyPath "", unique false, multiEntry false, primary keys ["","key"]
+        keys ["","key","object"], values ["","value",{"":"x"}]
+After reopening:
+    objectStoreNames: ["","arrayKeyPath","emptyKeyPath","noKeyPath"]
+    store "": keyPath "id", autoIncrement false, indexNames ["name"]
+        index "name": keyPath "name", unique false, multiEntry false, primary keys ["","a"]
+        keys ["","a"], values [{"id":"","name":""},{"id":"a","name":"A"}]
+    store "arrayKeyPath": keyPath ["a","b"], autoIncrement false, indexNames []
+        keys [["",""]], values [{"a":"","b":""}]
+    store "emptyKeyPath": keyPath "", autoIncrement false, indexNames ["byValue"]
+        index "byValue": keyPath "", unique true, multiEntry false, primary keys ["","b"]
+        keys ["","b"]
+    store "noKeyPath": keyPath null, autoIncrement false, indexNames [""]
+        index "": keyPath "", unique false, multiEntry false, primary keys ["","key"]
+        keys ["","key","object"], values ["","value",{"":"x"}]
+PASS emptyKeyResult is ""
+PASS missingKeyResult is undefined.
+PASS emptyKeyPathStoreKeyPath is ""
+PASS noKeyPathStoreKeyPath is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

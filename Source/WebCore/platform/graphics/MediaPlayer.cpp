@@ -136,7 +136,7 @@ public:
 
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::Null; }
 
-    void load(const String&) final { }
+    void load(StringImpl*) final { }
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) final { }
 #endif
@@ -149,7 +149,7 @@ public:
     void play() final { }
     void pause() final { }
 
-    String engineDescription() const final { return "NullMediaPlayer"_s; }
+    RefPtr<StringImpl> engineDescription() const final { return "NullMediaPlayer"_si; }
 
     PlatformLayer* platformLayer() final { return nullptr; }
     FloatSize naturalSize() const final { return FloatSize(); }
@@ -197,9 +197,9 @@ NODELETE static const Vector<WebCore::ContentType>& nullContentTypeVector()
     return vector;
 }
 
-NODELETE static const std::optional<Vector<String>>& nullOptionalStringVector()
+NODELETE static const std::optional<Vector<RefPtr<StringImpl>>>& nullOptionalStringVector()
 {
-    static NeverDestroyed<std::optional<Vector<String>>> vector;
+    static NeverDestroyed<std::optional<Vector<RefPtr<StringImpl>>>> vector;
     return vector;
 }
 
@@ -214,12 +214,12 @@ const Vector<ContentType>& MediaPlayerClient::mediaContentTypesRequiringHardware
     return nullContentTypeVector();
 }
 
-const std::optional<Vector<String>>& MediaPlayerClient::allowedMediaContainerTypes() const
+const std::optional<Vector<RefPtr<StringImpl>>>& MediaPlayerClient::allowedMediaContainerTypes() const
 {
     return nullOptionalStringVector();
 }
 
-const std::optional<Vector<String>>& MediaPlayerClient::allowedMediaCodecTypes() const
+const std::optional<Vector<RefPtr<StringImpl>>>& MediaPlayerClient::allowedMediaCodecTypes() const
 {
     return nullOptionalStringVector();
 }
@@ -382,11 +382,11 @@ static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&& factory)
     mutableInstalledMediaEnginesVector().append(WTF::move(factory));
 }
 
-static String applicationOctetStream()
+static RefPtr<StringImpl> applicationOctetStream()
 {
     if (isMainThread())
         return applicationOctetStreamAtom();
-    return String { "application/octet-stream"_s };
+    return "application/octet-stream"_si;
 }
 
 const MediaPlayerPrivateInterface* MediaPlayer::playerPrivate() const
@@ -442,7 +442,7 @@ static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const Media
     // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream"
     // when used with parameters, e.g. "application/octet-stream;codecs=theora", is a type that the user agent knows
     // it cannot render.
-    if (parameters.type.containerType() == applicationOctetStream()) {
+    if (equal(parameters.type.containerType(), applicationOctetStream())) {
         if (!parameters.type.codecs().isEmpty())
             return nullptr;
     }
@@ -792,7 +792,7 @@ void MediaPlayer::setBufferingPolicy(BufferingPolicy policy)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-RefPtr<LegacyCDMSession> MediaPlayer::createSession(const String& keySystem, LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> MediaPlayer::createSession(StringImpl* keySystem, LegacyCDMSessionClient& client)
 {
     return protect(m_private)->createSession(keySystem, client);
 }
@@ -1011,9 +1011,9 @@ bool MediaPlayer::canShowWhileLocked() const
     return protect(client())->canShowWhileLocked();
 }
 
-void MediaPlayer::setSceneIdentifier(const String& identifier)
+void MediaPlayer::setSceneIdentifier(StringImpl* identifier)
 {
-    if (m_sceneIdentifier == identifier)
+    if (equal(m_sceneIdentifier, identifier))
         return;
     m_sceneIdentifier = identifier;
     protect(m_private)->sceneIdentifierDidChange();
@@ -1037,12 +1037,12 @@ NSArray* MediaPlayer::timedMetadata() const
     return protect(m_private)->timedMetadata();
 }
 
-String MediaPlayer::accessLog() const
+RefPtr<StringImpl> MediaPlayer::accessLog() const
 {
     return protect(m_private)->accessLog();
 }
 
-String MediaPlayer::errorLog() const
+RefPtr<StringImpl> MediaPlayer::errorLog() const
 {
     return protect(m_private)->errorLog();
 }
@@ -1277,8 +1277,8 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
 {
     // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the
     // user agent knows it cannot render or is the type "application/octet-stream"
-    AtomString containerType { parameters.type.containerType() };
-    if (containerType == applicationOctetStream())
+    RefPtr<AtomStringImpl> containerType { AtomStringImpl::add(parameters.type.containerType()) };
+    if (equal(containerType, applicationOctetStream()))
         return SupportsType::IsNotSupported;
 
     if (!startsWithLettersIgnoringASCIICase(containerType, "video/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "audio/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "application/"_s))
@@ -1291,10 +1291,10 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     return engine->supportsTypeAndCodecs(parameters);
 }
 
-void MediaPlayer::getSupportedTypes(HashSet<String>& types)
+void MediaPlayer::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     for (auto& engine : installedMediaEngines()) {
-        HashSet<String> engineTypes;
+        HashSet<RefPtr<StringImpl>> engineTypes;
         engine->getSupportedTypes(engineTypes);
         types.addAll(WTF::move(engineTypes));
     }
@@ -1321,12 +1321,12 @@ bool MediaPlayer::isCurrentPlaybackTargetWireless() const
     return protect(m_private)->isCurrentPlaybackTargetWireless();
 }
 
-String MediaPlayer::wirelessPlaybackTargetName() const
+RefPtr<StringImpl> MediaPlayer::wirelessPlaybackTargetName() const
 {
     return protect(m_private)->wirelessPlaybackTargetName();
 }
 
-String MediaPlayer::wirelessPlaybackRouteName() const
+RefPtr<StringImpl> MediaPlayer::wirelessPlaybackRouteName() const
 {
     return protect(m_private)->wirelessPlaybackRouteName();
 }
@@ -1537,7 +1537,7 @@ static void addToHash(HashSet<T>& toHash, HashSet<T>&& fromHash)
         toHash.addAll(WTF::move(fromHash));
 }
     
-HashSet<SecurityOriginData> MediaPlayer::originsInMediaCache(const String& path)
+HashSet<SecurityOriginData> MediaPlayer::originsInMediaCache(StringImpl* path)
 {
     HashSet<SecurityOriginData> origins;
     for (auto& engine : installedMediaEngines())
@@ -1546,19 +1546,19 @@ HashSet<SecurityOriginData> MediaPlayer::originsInMediaCache(const String& path)
     return origins;
 }
 
-void MediaPlayer::clearMediaCache(const String& path, WallTime modifiedSince)
+void MediaPlayer::clearMediaCache(StringImpl* path, WallTime modifiedSince)
 {
     for (auto& engine : installedMediaEngines())
         engine->clearMediaCache(path, modifiedSince);
 }
 
-void MediaPlayer::clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins)
+void MediaPlayer::clearMediaCacheForOrigins(StringImpl* path, const HashSet<SecurityOriginData>& origins)
 {
     for (auto& engine : installedMediaEngines())
         engine->clearMediaCacheForOrigins(path, origins);
 }
 
-bool MediaPlayer::supportsKeySystem(const String& keySystem, const String& mimeType)
+bool MediaPlayer::supportsKeySystem(StringImpl* keySystem, StringImpl* mimeType)
 {
     for (auto& engine : installedMediaEngines()) {
         if (engine->supportsKeySystem(keySystem, mimeType))
@@ -1683,7 +1683,7 @@ AudioSourceProvider* MediaPlayer::audioSourceProvider()
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-RefPtr<ArrayBuffer> MediaPlayer::cachedKeyForKeyId(const String& keyId) const
+RefPtr<ArrayBuffer> MediaPlayer::cachedKeyForKeyId(StringImpl* keyId) const
 {
     return protect(client())->mediaPlayerCachedKeyForKeyId(keyId);
 }
@@ -1693,7 +1693,7 @@ void MediaPlayer::keyNeeded(const SharedBuffer& initData)
     protect(client())->mediaPlayerKeyNeeded(initData);
 }
 
-String MediaPlayer::mediaKeysStorageDirectory() const
+RefPtr<StringImpl> MediaPlayer::mediaKeysStorageDirectory() const
 {
     return protect(client())->mediaPlayerMediaKeysStorageDirectory();
 }
@@ -1702,7 +1702,7 @@ String MediaPlayer::mediaKeysStorageDirectory() const
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-void MediaPlayer::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
+void MediaPlayer::initializationDataEncountered(StringImpl* initDataType, RefPtr<ArrayBuffer>&& initData)
 {
     protect(client())->mediaPlayerInitializationDataEncountered(initDataType, WTF::move(initData));
 }
@@ -1720,20 +1720,20 @@ bool MediaPlayer::waitingForKey() const
 }
 #endif
 
-String MediaPlayer::referrer() const
+RefPtr<StringImpl> MediaPlayer::referrer() const
 {
     return protect(client())->mediaPlayerReferrer();
 }
 
-String MediaPlayer::userAgent() const
+RefPtr<StringImpl> MediaPlayer::userAgent() const
 {
     return protect(client())->mediaPlayerUserAgent();
 }
 
-String MediaPlayer::engineDescription() const
+RefPtr<StringImpl> MediaPlayer::engineDescription() const
 {
     RefPtr playerPrivate = m_private;
-    return playerPrivate ? playerPrivate->engineDescription() : String();
+    return playerPrivate ? playerPrivate->engineDescription() : nullptr;
 }
 
 long MediaPlayer::platformErrorCode() const
@@ -1856,7 +1856,7 @@ RefPtr<CoordinatedPlatformLayerBufferProxy> MediaPlayer::platformLayerBufferProx
 #endif
 #endif
 
-String MediaPlayer::languageOfPrimaryAudioTrack() const
+RefPtr<StringImpl> MediaPlayer::languageOfPrimaryAudioTrack() const
 {
     RefPtr playerPrivate = m_private;
     return playerPrivate ? playerPrivate->languageOfPrimaryAudioTrack() : emptyString();
@@ -1904,12 +1904,12 @@ Ref<MediaPlayer::VideoPlaybackQualityMetricsPromise> MediaPlayer::asyncVideoPlay
     return playerPrivate->asyncVideoPlaybackQualityMetrics();
 }
 
-String MediaPlayer::sourceApplicationIdentifier() const
+RefPtr<StringImpl> MediaPlayer::sourceApplicationIdentifier() const
 {
     return protect(client())->mediaPlayerSourceApplicationIdentifier();
 }
 
-Vector<String> MediaPlayer::preferredAudioCharacteristics() const
+Vector<RefPtr<StringImpl>> MediaPlayer::preferredAudioCharacteristics() const
 {
     return protect(client())->mediaPlayerPreferredAudioCharacteristics();
 }
@@ -1919,13 +1919,13 @@ void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister regi
     registerMediaEngine(addMediaEngine);
 }
 
-bool MediaPlayer::doesHaveAttribute(const AtomString& attribute, AtomString* value) const
+bool MediaPlayer::doesHaveAttribute(AtomStringImpl* attribute, RefPtr<AtomStringImpl>* value) const
 {
     return protect(client())->doesHaveAttribute(attribute, value);
 }
 
 #if PLATFORM(IOS_FAMILY)
-String MediaPlayer::mediaPlayerNetworkInterfaceName() const
+RefPtr<StringImpl> MediaPlayer::mediaPlayerNetworkInterfaceName() const
 {
     return protect(client())->mediaPlayerNetworkInterfaceName();
 }
@@ -1947,12 +1947,12 @@ bool MediaPlayer::shouldDisableSleep() const
     return protect(client())->mediaPlayerShouldDisableSleep();
 }
 
-String MediaPlayer::contentMIMEType() const
+RefPtr<StringImpl> MediaPlayer::contentMIMEType() const
 {
     return contentType().containerType();
 }
 
-String MediaPlayer::contentTypeCodecs() const
+RefPtr<StringImpl> MediaPlayer::contentTypeCodecs() const
 {
     return contentType().parameter(ContentType::codecsParameter());
 }
@@ -1967,12 +1967,12 @@ const Vector<ContentType>& MediaPlayer::mediaContentTypesRequiringHardwareSuppor
     return protect(client())->mediaContentTypesRequiringHardwareSupport();
 }
 
-const std::optional<Vector<String>>& MediaPlayer::allowedMediaContainerTypes() const
+const std::optional<Vector<RefPtr<StringImpl>>>& MediaPlayer::allowedMediaContainerTypes() const
 {
     return protect(client())->allowedMediaContainerTypes();
 }
 
-const std::optional<Vector<String>>& MediaPlayer::allowedMediaCodecTypes() const
+const std::optional<Vector<RefPtr<StringImpl>>>& MediaPlayer::allowedMediaCodecTypes() const
 {
     return protect(client())->allowedMediaCodecTypes();
 }
@@ -2104,7 +2104,7 @@ void MediaPlayer::onNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainP
 }
 #endif
 
-String MediaPlayer::elementId() const
+RefPtr<StringImpl> MediaPlayer::elementId() const
 {
     return protect(client())->mediaPlayerElementId();
 }
@@ -2141,27 +2141,27 @@ void MediaPlayer::setShouldCheckHardwareSupport(bool value)
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String MediaPlayer::defaultSpatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayer::defaultSpatialTrackingLabel() const
 {
     return m_defaultSpatialTrackingLabel;
 }
 
-void MediaPlayer::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+void MediaPlayer::setDefaultSpatialTrackingLabel(StringImpl* defaultSpatialTrackingLabel)
 {
-    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+    if (equal(m_defaultSpatialTrackingLabel, defaultSpatialTrackingLabel))
         return;
     m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
     protect(m_private)->setDefaultSpatialTrackingLabel(defaultSpatialTrackingLabel);
 }
 
-String MediaPlayer::spatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayer::spatialTrackingLabel() const
 {
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayer::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void MediaPlayer::setSpatialTrackingLabel(StringImpl* spatialTrackingLabel)
 {
-    if (m_spatialTrackingLabel == spatialTrackingLabel)
+    if (equal(m_spatialTrackingLabel, spatialTrackingLabel))
         return;
     m_spatialTrackingLabel = spatialTrackingLabel;
     protect(m_private)->setSpatialTrackingLabel(spatialTrackingLabel);
@@ -2227,7 +2227,7 @@ MessageClientForTesting* MediaPlayer::messageClientForTesting() const
     return m_internalMessageClient.get();
 }
 
-void MediaPlayer::elementIdChanged(const String& id) const
+void MediaPlayer::elementIdChanged(StringImpl* id) const
 {
     if (RefPtr playerPrivate = m_private)
         playerPrivate->elementIdChanged(id);
@@ -2250,9 +2250,9 @@ void MediaPlayer::setScreenReserved(bool reserved)
 }
 #endif
 
-String convertEnumerationToString(MediaPlayer::ReadyState enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayer::ReadyState enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 5> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 5> values {
         MAKE_STATIC_STRING_IMPL("HaveNothing"),
         MAKE_STATIC_STRING_IMPL("HaveMetadata"),
         MAKE_STATIC_STRING_IMPL("HaveCurrentData"),
@@ -2268,9 +2268,9 @@ String convertEnumerationToString(MediaPlayer::ReadyState enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayer::NetworkState enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayer::NetworkState enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 7> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 7> values {
         MAKE_STATIC_STRING_IMPL("Empty"),
         MAKE_STATIC_STRING_IMPL("Idle"),
         MAKE_STATIC_STRING_IMPL("Loading"),
@@ -2290,9 +2290,9 @@ String convertEnumerationToString(MediaPlayer::NetworkState enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayer::Preload enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayer::Preload enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("MetaData"),
         MAKE_STATIC_STRING_IMPL("Auto"),
@@ -2304,9 +2304,9 @@ String convertEnumerationToString(MediaPlayer::Preload enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayer::SupportsType enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayer::SupportsType enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("IsNotSupported"),
         MAKE_STATIC_STRING_IMPL("IsSupported"),
         MAKE_STATIC_STRING_IMPL("MayBeSupported"),
@@ -2334,9 +2334,9 @@ WTF::TextStream& operator<<(TextStream& ts, MediaPlayerEnums::VideoGravity gravi
     return ts;
 }
 
-String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
         MAKE_STATIC_STRING_IMPL("Default"),
         MAKE_STATIC_STRING_IMPL("LimitReadAhead"),
         MAKE_STATIC_STRING_IMPL("MakeResourcesPurgeable"),
@@ -2350,9 +2350,9 @@ String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayer::ViewportVisibility enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayer::ViewportVisibility enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 5> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 5> values {
         MAKE_STATIC_STRING_IMPL("NotVisible"),
         MAKE_STATIC_STRING_IMPL("IntersectingViewport"),
         MAKE_STATIC_STRING_IMPL("VisibleInViewport"),
@@ -2368,21 +2368,21 @@ String convertEnumerationToString(MediaPlayer::ViewportVisibility enumerationVal
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String MediaPlayer::lastErrorMessage() const
+RefPtr<StringImpl> MediaPlayer::lastErrorMessage() const
 {
     return m_lastErrorMessage;
 }
 
-String SeekTarget::toString() const
+RefPtr<StringImpl> SeekTarget::toString() const
 {
     return makeString('[', WTF::LogArgument<MediaTime>::toString(time),
         WTF::LogArgument<MediaTime>::toString(negativeThreshold),
         WTF::LogArgument<MediaTime>::toString(positiveThreshold), ']');
 }
 
-String convertEnumerationToString(VideoProjectionMetadataKind kind)
+RefPtr<StringImpl> convertEnumerationToString(VideoProjectionMetadataKind kind)
 {
-    static const std::array<NeverDestroyed<String>, 8> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 8> values {
         MAKE_STATIC_STRING_IMPL("Unknown"),
         MAKE_STATIC_STRING_IMPL("Rectilinear"),
         MAKE_STATIC_STRING_IMPL("Equirectangular"),
@@ -2403,7 +2403,7 @@ String convertEnumerationToString(VideoProjectionMetadataKind kind)
     return values[static_cast<size_t>(kind)];
 }
 
-String convertImmersiveVideoMetadataToString(const ImmersiveVideoMetadata& metadata)
+RefPtr<StringImpl> convertImmersiveVideoMetadataToString(const ImmersiveVideoMetadata& metadata)
 {
     return makeString("ImmersiveVideoMetadata {"_s, convertEnumerationToString(metadata.kind), WTF::LogArgument<WebCore::IntSize>::toString(metadata.size),
         WTF::LogArgument<std::optional<int32_t>>::toString(metadata.horizontalFieldOfView),

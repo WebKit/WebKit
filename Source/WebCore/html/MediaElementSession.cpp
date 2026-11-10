@@ -98,7 +98,7 @@ static bool isElementLongEnoughForMainContent(const HTMLMediaElement&);
 
 #if !RELEASE_LOG_DISABLED
 
-static String restrictionNames(MediaElementSession::BehaviorRestrictions restriction)
+static RefPtr<StringImpl> restrictionNames(MediaElementSession::BehaviorRestrictions restriction)
 {
     StringBuilder restrictionBuilder;
 #define CASE(restrictionType) \
@@ -463,23 +463,23 @@ static ASCIILiteral mediaGestureReasonString(Document::MediaGestureReason reason
 std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state, ForAutoplay forAutoplay) const
 {
     RefPtr element = m_element.get();
-    auto makeUnexpectedDenial = [](MediaPlaybackDenialReason reason, const String& explanation) {
+    auto makeUnexpectedDenial = [](MediaPlaybackDenialReason reason, StringImpl* explanation) {
         return makeUnexpected<MediaPlaybackDenialExplanation>({ reason, explanation });
     };
 
     if (!element || element->isSuspended())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::InvalidState, "Element is suspended"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::InvalidState, "Element is suspended"_si);
 
     Ref document = element->document();
     RefPtr page = document->page();
     if (!page || page->mediaPlaybackIsSuspended())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::PageConsentRequired, "Playback is suspended"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::PageConsentRequired, "Playback is suspended"_si);
 
     if (document->isMediaDocument() && !document->ownerElement())
         return { };
 
     if (startingAudiblePlaybackWhileHiddenRequiresUserGesture(state, forAutoplay, *element, document))
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required to start audible playback when not visible"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required to start audible playback when not visible"_si);
 
     RefPtr mainFrameDocument = document->mainFrameDocument();
 
@@ -491,14 +491,14 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
         && document->mediaState().contains(MediaProducerMediaState::IsPlayingAudio)
         && document->mediaUserGestureReason() != Document::MediaGestureReason::ActiveToken) {
         ALWAYS_LOG(LOGIDENTIFIER, "denying audible playback while another element is playing audio; gesture reason = ", mediaGestureReasonString(document->mediaUserGestureReason()));
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Another audible media element is already playing"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Another audible media element is already playing"_si);
     }
 
     if (pageExplicitlyAllowsElementToAutoplayInline(*element))
         return { };
 
     if (requiresFullscreenForVideoPlayback() && !fullscreenPermitted())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::FullscreenRequired, "Fullscreen restriction"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::FullscreenRequired, "Fullscreen restriction"_si);
 
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
         return { };
@@ -522,7 +522,7 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
         && element->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture
         && !element->paused() && state == MediaPlaybackState::Paused
         && !document->processingUserGestureForMedia())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to pause in Picture-in-Picture"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to pause in Picture-in-Picture"_si);
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (document->quirks().requiresUserGestureToPauseInFullscreenAfterOrientationChange()
@@ -530,7 +530,7 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
         && !element->paused() && state == MediaPlaybackState::Paused
         && !UserGestureIndicator::processingUserGestureForMedia()
         && (MonotonicTime::now() - page->lastOrientationChangeTime()) < 500_ms)
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to pause in fullscreen after an orientation change"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to pause in fullscreen after an orientation change"_si);
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -538,7 +538,7 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
         auto lastPause = element->lastUserPauseTime();
         bool reboundFromRecentPause = lastPause.isFinite() && (MonotonicTime::now() - lastPause) < 500_ms;
         if (!document->processingUserGestureForMedia() || reboundFromRecentPause)
-            return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to play while in fullscreen"_s);
+            return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to play while in fullscreen"_si);
     }
 #endif
     if (mainFrameDocument
@@ -550,19 +550,19 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
         return { };
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && element->isVideo() && !document->processingUserGestureForMedia())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required for video rate change"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required for video rate change"_si);
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!element->isVideo() || element->hasAudio()) && !element->muted() && element->volume() && !document->processingUserGestureForMedia())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required for audio rate change"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required for audio rate change"_si);
 
     if (m_restrictions & RequirePageVisibilityToPlayAudio && (!element->isVideo() || element->hasAudio()) && !element->muted() && element->volume() && element->elementIsHidden())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Page visibility required for audio rate change"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Page visibility required for audio rate change"_si);
 
     if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && element->isVideo() && !document->processingUserGestureForMedia())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Video low power mode restriction"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Video low power mode restriction"_si);
 
     if (m_restrictions & RequireUserGestureForVideoDueToAggressiveThermalMitigation && element->isVideo() && !document->processingUserGestureForMedia())
-        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Video aggressive thermal mitigation"_s);
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Video aggressive thermal mitigation"_si);
 
     return { };
 }
@@ -1684,7 +1684,7 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
     // FIXME: Eventually, this should be moved into HTMLMediaElement, so all clients
     // will use the same bundle identifier (the presentingApplication, rather than the
     // sourceApplication).
-    if (!page->presentingApplicationBundleIdentifier().isNull())
+    if (page->presentingApplicationBundleIdentifier())
         sourceApplicationIdentifier = page->presentingApplicationBundleIdentifier();
 #endif
 
@@ -1806,9 +1806,9 @@ void MediaElementSession::updateMediaUsageIfChanged()
 #endif
 }
 
-String convertEnumerationToString(const MediaPlaybackDenialReason enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(const MediaPlaybackDenialReason enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 5> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 5> values {
         MAKE_STATIC_STRING_IMPL("Unknown"),
         MAKE_STATIC_STRING_IMPL("UserGestureRequired"),
         MAKE_STATIC_STRING_IMPL("FullscreenRequired"),
@@ -1888,19 +1888,19 @@ void MediaElementSession::clientCharacteristicsChanged(bool positionChanged)
 }
 
 #if !RELEASE_LOG_DISABLED
-String MediaElementSession::descriptionForTrack(const AudioTrack& track)
+RefPtr<StringImpl> MediaElementSession::descriptionForTrack(const AudioTrack& track)
 {
     if (track.configuration().isProtected())
         return makeString(track.configuration().codec(), " protected"_s);
     return track.configuration().codec();
 }
 
-String MediaElementSession::descriptionForTrack(const VideoTrack& track)
+RefPtr<StringImpl> MediaElementSession::descriptionForTrack(const VideoTrack& track)
 {
     StringBuilder builder;
 
     builder.append(track.configuration().width(), 'x', track.configuration().height());
-    if (!track.configuration().codec().isEmpty())
+    if (!isEmpty(track.configuration().codec()))
         builder.append(' ', track.configuration().codec());
     if (track.configuration().isProtected())
         builder.append(" protected"_s);
@@ -1913,11 +1913,11 @@ String MediaElementSession::descriptionForTrack(const VideoTrack& track)
     return builder.toString();
 }
 
-String MediaElementSession::description() const
+RefPtr<StringImpl> MediaElementSession::description() const
 {
     RefPtr element = m_element.get();
     if (!element)
-        return "null"_s;
+        return "null"_si;
 
     StringBuilder builder;
     builder.append(PlatformMediaSession::description());

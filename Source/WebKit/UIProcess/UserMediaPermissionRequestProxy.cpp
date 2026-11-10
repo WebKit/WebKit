@@ -96,23 +96,23 @@ static bool moveDeviceToFront(std::span<CaptureDevice> devices, NOESCAPE const P
     return true;
 }
 
-static auto hasPersistentID(const String& deviceID)
+static auto hasPersistentID(StringImpl* deviceID)
 {
-    return [&deviceID](const CaptureDevice& device) {
-        return !deviceID.isEmpty() && device.persistentId() == deviceID;
+    return [deviceID = RefPtr { deviceID }](const CaptureDevice& device) {
+        return !isEmpty(deviceID) && equal(device.persistentId(), deviceID);
     };
 }
 #endif
 
-void UserMediaPermissionRequestProxy::applyDeviceSelection(const String& audioDeviceUID, const String& videoDeviceUID)
+void UserMediaPermissionRequestProxy::applyDeviceSelection(StringImpl* audioDeviceUID, StringImpl* videoDeviceUID)
 {
 #if ENABLE(MEDIA_STREAM)
     m_selectedDeviceUIDs = { audioDeviceUID, videoDeviceUID };
     m_deviceSelectionWasExplicit = true;
 
-    if (!audioDeviceUID.isEmpty() && !moveDeviceToFront(m_eligibleAudioDevices.mutableSpan(), hasPersistentID(audioDeviceUID)))
+    if (!isEmpty(audioDeviceUID) && !moveDeviceToFront(m_eligibleAudioDevices.mutableSpan(), hasPersistentID(audioDeviceUID)))
         RELEASE_LOG(WebRTC, "UserMediaPermissionRequestProxy::applyDeviceSelection: the chosen microphone is not eligible");
-    if (!videoDeviceUID.isEmpty() && !moveDeviceToFront(m_eligibleVideoDevices.mutableSpan(), hasPersistentID(videoDeviceUID)))
+    if (!isEmpty(videoDeviceUID) && !moveDeviceToFront(m_eligibleVideoDevices.mutableSpan(), hasPersistentID(videoDeviceUID)))
         RELEASE_LOG(WebRTC, "UserMediaPermissionRequestProxy::applyDeviceSelection: the chosen camera is not eligible");
 #else
     UNUSED_PARAM(audioDeviceUID);
@@ -120,7 +120,7 @@ void UserMediaPermissionRequestProxy::applyDeviceSelection(const String& audioDe
 #endif
 }
 
-void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const String& videoDeviceUID)
+void UserMediaPermissionRequestProxy::allow(StringImpl* audioDeviceUID, StringImpl* videoDeviceUID)
 {
     applyDeviceSelection(audioDeviceUID, videoDeviceUID);
     allow();
@@ -223,23 +223,23 @@ bool UserMediaPermissionRequestProxy::isPending() const
     return !!m_manager;
 }
 
-Vector<String> UserMediaPermissionRequestProxy::videoDeviceUIDs() const
+Vector<RefPtr<StringImpl>> UserMediaPermissionRequestProxy::videoDeviceUIDs() const
 {
     return WTF::map(m_eligibleVideoDevices, [] (auto& device) {
         return device.persistentId();
     });
 }
 
-Vector<String> UserMediaPermissionRequestProxy::audioDeviceUIDs() const
+Vector<RefPtr<StringImpl>> UserMediaPermissionRequestProxy::audioDeviceUIDs() const
 {
     return WTF::map(m_eligibleAudioDevices, [] (auto& device) {
         return device.persistentId();
     });
 }
 
-String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 7> values = {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 7> values = {
         MAKE_STATIC_STRING_IMPL("NoConstraints"),
         MAKE_STATIC_STRING_IMPL("UserMediaDisabled"),
         MAKE_STATIC_STRING_IMPL("NoCaptureDevices"),

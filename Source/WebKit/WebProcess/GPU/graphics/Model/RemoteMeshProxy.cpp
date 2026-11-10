@@ -218,7 +218,7 @@ void RemoteMeshProxy::render(uint32_t textureIndex, Function<void(bool)>&& compl
 #endif
 }
 
-void RemoteMeshProxy::setLabelInternal(const String& label)
+void RemoteMeshProxy::setLabelInternal(StringImpl* label)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     auto sendResult = send(Messages::RemoteMesh::SetLabel(label));

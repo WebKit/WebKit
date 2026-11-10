@@ -80,11 +80,11 @@ static void processEntity(StringParsingBuffer<CharacterType>& source, StringBuil
     }
 }
 
-WebVTTTokenizer::WebVTTTokenizer(const String& input)
+WebVTTTokenizer::WebVTTTokenizer(StringImpl* input)
     : m_input(input)
-    , m_buffer(input.is8Bit()
-        ? decltype(m_buffer) { StringParsingBuffer { input.span8() } }
-        : decltype(m_buffer) { StringParsingBuffer { input.span16() } })
+    , m_buffer(is8Bit(input)
+        ? decltype(m_buffer) { StringParsingBuffer { span8(input) } }
+        : decltype(m_buffer) { StringParsingBuffer { span16(input) } })
 {
 }
 

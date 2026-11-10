@@ -332,8 +332,8 @@ TEST(ISOBox, WebVTTCue)
     EXPECT_EQ("cue-1"_s, cue.id());
     EXPECT_EQ("align:center"_s, cue.settings());
     EXPECT_EQ("Hello, world!"_s, cue.cueText());
-    EXPECT_TRUE(cue.sourceID().isEmpty());
-    EXPECT_TRUE(cue.originalStartTime().isEmpty());
+    EXPECT_TRUE(isEmpty(cue.sourceID()));
+    EXPECT_TRUE(isEmpty(cue.originalStartTime()));
 }
 
 // 'fkvl' carries 32-bit key versions. Storing them in a byte vector silently truncated any

@@ -60,15 +60,21 @@ enum class FetchOptionsDestination : uint8_t;
 struct CrossOriginEmbedderPolicy {
     CrossOriginEmbedderPolicyValue value { CrossOriginEmbedderPolicyValue::UnsafeNone };
     CrossOriginEmbedderPolicyValue reportOnlyValue { CrossOriginEmbedderPolicyValue::UnsafeNone };
-    String reportingEndpoint;
-    String reportOnlyReportingEndpoint;
+    RefPtr<StringImpl> reportingEndpoint;
+    RefPtr<StringImpl> reportOnlyReportingEndpoint;
 
     CrossOriginEmbedderPolicy isolatedCopy() const &;
     WEBCORE_EXPORT CrossOriginEmbedderPolicy isolatedCopy() &&;
     void encode(WTF::Persistence::Encoder&) const;
     static std::optional<CrossOriginEmbedderPolicy> decode(WTF::Persistence::Decoder &);
 
-    friend bool operator==(const CrossOriginEmbedderPolicy&, const CrossOriginEmbedderPolicy&) = default;
+    friend bool operator==(const CrossOriginEmbedderPolicy& a, const CrossOriginEmbedderPolicy& b)
+    {
+        return a.value == b.value
+            && a.reportOnlyValue == b.reportOnlyValue
+            && contentEquals(a.reportingEndpoint, b.reportingEndpoint)
+            && contentEquals(a.reportOnlyReportingEndpoint, b.reportOnlyReportingEndpoint);
+    }
 
     void addPolicyHeadersTo(ResourceResponse&) const;
 };
@@ -79,7 +85,7 @@ bool isRecognizedCrossOriginEmbedderPolicyToken(StringView);
 bool isUnsupportedCrossOriginEmbedderPolicyToken(StringView);
 
 WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, IsSecureContext, const ScriptExecutionContext*);
-WEBCORE_EXPORT void sendCOEPInheritenceViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, const String& type, const URL& blockedURL);
-void sendCOEPCORPViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
+WEBCORE_EXPORT void sendCOEPInheritenceViolation(ReportingClient&, const URL& embedderURL, StringImpl* endpoint, COEPDisposition, StringImpl* type, const URL& blockedURL);
+void sendCOEPCORPViolation(ReportingClient&, const URL& embedderURL, StringImpl* endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
 
 } // namespace WebCore

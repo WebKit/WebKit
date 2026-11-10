@@ -54,7 +54,7 @@ public:
     static Ref<ScrollTimeline> create(Document&, ScrollTimelineOptions&& = { });
     static Ref<ScrollTimeline> create(const Style::ScopedName&, ScrollAxis);
     NODELETE static Ref<ScrollTimeline> create(Scroller, ScrollAxis);
-    static Ref<ScrollTimeline> createInactiveStyleOriginatedTimeline(const AtomString& name);
+    static Ref<ScrollTimeline> createInactiveStyleOriginatedTimeline(AtomStringImpl* name);
 
     const WeakStyleable& sourceStyleable() const LIFETIME_BOUND { return m_source; }
     virtual RefPtr<Element> bindingsSource() const;

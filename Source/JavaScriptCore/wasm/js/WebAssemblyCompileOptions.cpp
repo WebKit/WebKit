@@ -51,7 +51,7 @@ std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JS
         RETURN_IF_EXCEPTION(scope, std::nullopt);
         options.m_importedStringConstants = makeString(StringView(importedStringConstants));
     } else if (!importedStringConstantsValue.isUndefined()) {
-        auto error = createTypeError(globalObject, "importedStringConstants option value must be a string"_s);
+        auto error = createTypeError(globalObject, "importedStringConstants option value must be a string"_si);
         throwException(globalObject, scope, error);
         return std::nullopt;
     }
@@ -65,14 +65,14 @@ std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JS
             if (nextValue.isString()) {
                 auto contents = asString(nextValue)->value(globalObject);
                 RETURN_IF_EXCEPTION(scope, void());
-                String qualifiedName = makeString("wasm:"_s, StringView(contents));
+                RefPtr<StringImpl> qualifiedName = makeString("wasm:"_s, StringView(contents));
                 options.m_qualifiedBuiltinSetNames.append(qualifiedName);
             } else
                 sawBadEntries = true;
         });
         RETURN_IF_EXCEPTION(scope, std::nullopt);
         if (sawBadEntries) {
-            auto error = createTypeError(globalObject, "builtins list option values must be strings"_s);
+            auto error = createTypeError(globalObject, "builtins list option values must be strings"_si);
             throwException(globalObject, scope, error);
             return std::nullopt;
         }
@@ -88,16 +88,16 @@ WebAssemblyCompileOptions WebAssemblyCompileOptions::esmIntegrationDefaults()
     return options;
 }
 
-NODELETE static bool namesInclude(const String& expected, const Vector<String>& names)
+NODELETE static bool namesInclude(StringImpl* expected, const Vector<RefPtr<StringImpl>>& names)
 {
     for (auto& name : names) {
-        if (name == expected)
+        if (equal(name, expected))
             return true;
     }
     return false;
 }
 
-static String makeQualifiedName(const Wasm::Import& import)
+static RefPtr<StringImpl> makeQualifiedName(const Wasm::Import& import)
 {
     return makeString(import.module, ":"_s, import.field);
 }
@@ -107,7 +107,7 @@ static String makeQualifiedName(const Wasm::Import& import)
  *
  * Informally: the import should be an immutable global of type externref.
  */
-static std::optional<String> validateImportedStringConstant(const Wasm::Import& import, const Wasm::ModuleInformation& moduleInformation)
+static std::optional<RefPtr<StringImpl>> validateImportedStringConstant(const Wasm::Import& import, const Wasm::ModuleInformation& moduleInformation)
 {
     if (import.kind != Wasm::ExternalKind::Global)
         return makeString("imported string constant "_s, makeQualifiedName(import), " is not a global"_s);
@@ -127,14 +127,14 @@ static std::optional<String> validateImportedStringConstant(const Wasm::Import& 
  *  - the builtin set contains a builtin matching the function name, and
  *  - the builtin type does not match the import type.
  */
-bool WebAssemblyCompileOptions::validateImportForBuiltinSetNames(const Wasm::Import& import, const String& importModuleName, const Wasm::ModuleInformation& moduleInfo) const
+bool WebAssemblyCompileOptions::validateImportForBuiltinSetNames(const Wasm::Import& import, StringImpl* importModuleName, const Wasm::ModuleInformation& moduleInfo) const
 {
     if (!namesInclude(importModuleName, m_qualifiedBuiltinSetNames))
         return true;
     const WebAssemblyBuiltinSet* builtinSet = WebAssemblyBuiltinRegistry::singleton().findByQualifiedName(importModuleName);
     if (!builtinSet)
         return true;
-    String importName = makeString(import.field);
+    RefPtr<StringImpl> importName = makeString(import.field);
     const WebAssemblyBuiltin* builtin = builtinSet->findBuiltin(importName);
     if (!builtin)
         return true;
@@ -156,14 +156,14 @@ bool WebAssemblyCompileOptions::validateImportForBuiltinSetNames(const Wasm::Imp
  *
  * Return nullopt to indicate success or an error message if validation failed.
  */
-std::optional<String> WebAssemblyCompileOptions::validateBuiltinsAndImportedStrings(const Wasm::Module& module) const
+std::optional<RefPtr<StringImpl>> WebAssemblyCompileOptions::validateBuiltinsAndImportedStrings(const Wasm::Module& module) const
 {
     if (!validateBuiltinSetNames())
-        return String::fromLatin1("the list of builtin set names contains duplicates");
+        return StringImpl::fromLatin1("the list of builtin set names contains duplicates");
     auto moduleInfo = Ref(module.moduleInformation());
     for (const auto& import : moduleInfo.get().imports) {
-        String importModuleName = makeString(import.module);
-        if (m_importedStringConstants && *m_importedStringConstants == importModuleName) {
+        RefPtr<StringImpl> importModuleName = makeString(import.module);
+        if (m_importedStringConstants && equal(*m_importedStringConstants, importModuleName)) {
             auto errorMessage = validateImportedStringConstant(import, moduleInfo.get());
             if (errorMessage)
                 return errorMessage;
@@ -182,7 +182,7 @@ std::optional<String> WebAssemblyCompileOptions::validateBuiltinsAndImportedStri
  */
 bool WebAssemblyCompileOptions::validateBuiltinSetNames() const
 {
-    UncheckedKeyHashSet<String> seen;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> seen;
     for (const auto& name : m_qualifiedBuiltinSetNames) {
         if (seen.contains(name))
             return false;

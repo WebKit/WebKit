@@ -46,7 +46,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebPreferences>(self, String(), "WebKit"_s, "WebKitDebug"_s);
+    API::Object::constructInWrapper<WebKit::WebPreferences>(self, nullptr, "WebKit"_si, "WebKitDebug"_si);
     return self;
 }
 
@@ -580,12 +580,12 @@ NODELETE static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy po
 
 - (NSString *)_fixedPitchFontFamily
 {
-    return protect(*_preferences)->fixedFontFamily().createNSString().autorelease();
+    return createNSString(protect(*_preferences)->fixedFontFamily()).autorelease();
 }
 
 - (void)_setFixedPitchFontFamily:(NSString *)fixedPitchFontFamily
 {
-    protect(*_preferences)->setFixedFontFamily(fixedPitchFontFamily);
+    protect(*_preferences)->setFixedFontFamily(StringImpl::create(fixedPitchFontFamily).get());
 }
 
 + (NSArray<_WKFeature *> *)_features
@@ -1089,12 +1089,12 @@ NODELETE static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditable
 
 - (void)_setStandardFontFamily:(NSString *)family
 {
-    protect(*_preferences)->setStandardFontFamily(family);
+    protect(*_preferences)->setStandardFontFamily(StringImpl::create(family).get());
 }
 
 - (NSString *)_standardFontFamily
 {
-    return protect(*_preferences)->standardFontFamily().createNSString().autorelease();
+    return createNSString(protect(*_preferences)->standardFontFamily()).autorelease();
 }
 
 #if PLATFORM(MAC)
@@ -1110,12 +1110,12 @@ NODELETE static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditable
 
 - (void)_setDefaultTextEncodingName:(NSString *)name
 {
-    protect(*_preferences)->setDefaultTextEncodingName(name);
+    protect(*_preferences)->setDefaultTextEncodingName(StringImpl::create(name).get());
 }
 
 - (NSString *)_defaultTextEncodingName
 {
-    return protect(*_preferences)->defaultTextEncodingName().createNSString().autorelease();
+    return createNSString(protect(*_preferences)->defaultTextEncodingName()).autorelease();
 }
 
 - (void)_setAuthorAndUserStylesEnabled:(BOOL)enabled

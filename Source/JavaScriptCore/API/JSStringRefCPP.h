@@ -53,26 +53,26 @@ inline UTF8CString utf8CString(JSStringRef string)
 // A JSString stores a String, so the characters are handed straight over rather than transcoded,
 // and an rvalue is moved into place. Reaching one from UTF-8 has to decode, which is the same
 // cost JSStringCreateWithUTF8CString() pays.
-inline RefPtr<OpaqueJSString> createJSString(String&& string)
+inline RefPtr<OpaqueJSString> createJSString(RefPtr<StringImpl>&& string)
 {
     if (RefPtr result = OpaqueJSString::tryCreate(WTF::move(string)))
         return result;
     return OpaqueJSString::create();
 }
 
-inline RefPtr<OpaqueJSString> createJSString(const String& string)
+inline RefPtr<OpaqueJSString> createJSString(StringImpl* string)
 {
-    return createJSString(String { string });
+    return createJSString(RefPtr<StringImpl> { string });
 }
 
 // Required rather than merely convenient: ASCIILiteral converts implicitly to both String and
 // UTF8CString, so without this overload the call would be ambiguous.
 inline RefPtr<OpaqueJSString> createJSString(ASCIILiteral literal)
 {
-    return createJSString(String { literal });
+    return createJSString(StringImpl::create(literal));
 }
 
 inline RefPtr<OpaqueJSString> createJSString(const UTF8CString& string)
 {
-    return createJSString(String { string });
+    return createJSString(StringImpl::create((string).span()));
 }

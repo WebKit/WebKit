@@ -46,9 +46,9 @@ auto VideoTrackConfiguration::updateState(const VideoTrackConfigurationInit& sta
     return StateChanged::Yes;
 }
 
-void VideoTrackConfiguration::setCodec(String codec)
+void VideoTrackConfiguration::setCodec(RefPtr<StringImpl> codec)
 {
-    if (m_state.codec == codec)
+    if (equal(m_state.codec, codec))
         return;
 
     m_state.codec = codec;
@@ -128,15 +128,15 @@ void VideoTrackConfiguration::notifyObservers()
 Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("codec"_s, codec());
-    json->setInteger("width"_s, width());
-    json->setInteger("height"_s, height());
-    json->setObject("colorSpace"_s, colorSpace()->toJSON());
-    json->setDouble("framerate"_s, framerate());
-    json->setInteger("bitrate"_s, bitrate());
-    json->setBoolean("isSpatial"_s, immersiveVideoMetadata() && immersiveVideoMetadata()->isSpatial());
-    json->setBoolean("isImmersive"_s, immersiveVideoMetadata() && immersiveVideoMetadata()->isImmersive());
-    json->setBoolean("isProtected"_s, isProtected());
+    json->setString("codec"_si, codec());
+    json->setInteger("width"_si, width());
+    json->setInteger("height"_si, height());
+    json->setObject("colorSpace"_si, colorSpace()->toJSON());
+    json->setDouble("framerate"_si, framerate());
+    json->setInteger("bitrate"_si, bitrate());
+    json->setBoolean("isSpatial"_si, immersiveVideoMetadata() && immersiveVideoMetadata()->isSpatial());
+    json->setBoolean("isImmersive"_si, immersiveVideoMetadata() && immersiveVideoMetadata()->isImmersive());
+    json->setBoolean("isProtected"_si, isProtected());
     return json;
 }
 

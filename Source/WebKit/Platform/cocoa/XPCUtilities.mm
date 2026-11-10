@@ -48,7 +48,7 @@ void terminateWithReason(xpc_connection_t connection, WebKitReasonCode reasonCod
         ASCIICString reasonWithMessageName;
         if (invalidMessageName) {
             code |= static_cast<uint64_t>(std::to_underlying(*invalidMessageName)) << 8;
-            reasonWithMessageName = makeString(unsafeSpan(reason), ": "_s, IPC::description(*invalidMessageName)).ascii();
+            reasonWithMessageName = ascii(makeString(unsafeSpan(reason), ": "_s, IPC::description(*invalidMessageName)));
             reason = reasonWithMessageName.data();
         }
         if (!terminate_with_reason(xpc_connection_get_pid(connection), OS_REASON_WEBKIT, code, reason, 0))

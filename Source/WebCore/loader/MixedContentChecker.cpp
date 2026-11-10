@@ -49,7 +49,7 @@ static bool isDocumentSecure(const Frame& frame)
     // sandboxed iframes have an opaque origin so we should perform the mixed content check considering the origin
     // the iframe would have had if it were not sandboxed.
     if (RefPtr origin = frame.frameDocumentSecurityOrigin())
-        return origin->protocol() == "https"_s || (origin->isOpaque() && frame.frameURLProtocol() == "https"_s);
+        return equal(origin->protocol(), "https"_s) || (origin->isOpaque() && equal(frame.frameURLProtocol(), "https"_s));
 
     return false;
 }
@@ -78,7 +78,7 @@ static bool isDataContextSecure(const Frame& frame)
 
 static bool isMixedContent(const Frame& frame, const URL& url)
 {
-    if (isDocumentSecure(frame) || (frame.frameURLProtocol() == "data"_s && isDataContextSecure(frame)))
+    if (isDocumentSecure(frame) || (equal(frame.frameURLProtocol(), "data"_s) && isDataContextSecure(frame)))
         return !SecurityOrigin::isSecure(url);
 
     return false;
@@ -172,7 +172,7 @@ bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpg
     return true;
 }
 
-String MixedContentChecker::mixedContentViolationMessage(bool shouldUpgradeLocalhostAndIPAddressInMixedContent, bool blocked, const URL& current, const URL& target)
+RefPtr<StringImpl> MixedContentChecker::mixedContentViolationMessage(bool shouldUpgradeLocalhostAndIPAddressInMixedContent, bool blocked, const URL& current, const URL& target)
 {
     auto isUpgradingLocalhostDisabled = !shouldUpgradeLocalhostAndIPAddressInMixedContent && shouldTreatAsPotentiallyTrustworthy(target);
 

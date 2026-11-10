@@ -90,12 +90,12 @@ TEST(BifurcatedGraphicsContextTests, Text)
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
 
-    String string = "Hello!"_s;
+    RefPtr<StringImpl> string = "Hello!"_si;
     TextRun run(string);
     ctx.drawText(font, run, { });
 

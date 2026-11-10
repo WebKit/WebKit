@@ -105,12 +105,12 @@ GPUDevice* GPURenderPipeline::device() const
     return m_device;
 }
 
-String GPURenderPipeline::label() const
+RefPtr<StringImpl> GPURenderPipeline::label() const
 {
     return m_descriptor.label;
 }
 
-void GPURenderPipeline::setLabel(String&& label)
+void GPURenderPipeline::setLabel(RefPtr<StringImpl>&& label)
 {
     m_descriptor.label = label;
     protect(backing())->setLabel(WTF::move(label));
@@ -123,12 +123,12 @@ Ref<GPUBindGroupLayout> GPURenderPipeline::getBindGroupLayout(uint32_t index)
     return GPUBindGroupLayout::create(protect(backing())->getBindGroupLayout(index), { }, m_uniqueId, protect(m_device));
 }
 
-void GPURenderPipeline::updateVertexShader(const String& source, CompletionHandler<void(bool)>&& completionHandler)
+void GPURenderPipeline::updateVertexShader(StringImpl* source, CompletionHandler<void(bool)>&& completionHandler)
 {
     updateShader(source, true, WTF::move(completionHandler));
 }
 
-void GPURenderPipeline::updateFragmentShader(const String& source, CompletionHandler<void(bool)>&& completionHandler)
+void GPURenderPipeline::updateFragmentShader(StringImpl* source, CompletionHandler<void(bool)>&& completionHandler)
 {
     updateShader(source, false, WTF::move(completionHandler));
 }
@@ -223,7 +223,7 @@ void GPURenderPipeline::createPipelineForInspectorHighlight(unsigned canvasColor
     });
 }
 
-void GPURenderPipeline::updateShader(const String& source, bool updateVertexShader, CompletionHandler<void(bool)>&& completionHandler)
+void GPURenderPipeline::updateShader(StringImpl* source, bool updateVertexShader, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr device = m_device.get();
     if (!device) {

@@ -37,12 +37,12 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
+NSString *suggestedFilenameWithMIMEType(NSURL *url, StringImpl* mimeType)
 {
     return suggestedFilenameWithMIMEType(url, mimeType, WebCore::copyImageUnknownFileLabel());
 }
 
-NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, const String& defaultValue)
+NSString *suggestedFilenameWithMIMEType(NSURL *url, StringImpl* mimeType, StringImpl* defaultValue)
 {
     // Get the filename from the URL. Try the lastPathComponent first.
     RetainPtr<NSString> lastPathComponent = [[url path] lastPathComponent];
@@ -55,7 +55,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, cons
         filename = filenameByFixingIllegalCharacters(host.get());
         if (![filename length]) {
             // Can't make a filename using this URL, use the default value.
-            filename = defaultValue.createNSString();
+            filename = createNSString(defaultValue);
         }
     } else {
         // Save the extension for later correction. Only correct the extension of the lastPathComponent.
@@ -68,20 +68,20 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, cons
 
     // Do not correct filenames that are reported with a mime type of tar, and
     // have a filename which has .tar in it or ends in .tgz
-    if ((mimeType == "application/tar"_s || mimeType == "application/x-tar"_s)
-        && (String(filename.get()).containsIgnoringASCIICase(".tar"_s)
-        || String(filename.get()).endsWithIgnoringASCIICase(".tgz"_s))) {
+    if ((equal(mimeType, "application/tar"_s) || equal(mimeType, "application/x-tar"_s))
+        && (containsIgnoringASCIICase(StringImpl::create(filename.get()), ".tar"_s)
+        || endsWithIgnoringASCIICase(StringImpl::create(filename.get()), ".tgz"_s))) {
         return filename.autorelease();
     }
 
     // I don't think we need to worry about this for the image case
     // If the type is known, check the extension and correct it if necessary.
-    if (mimeType != "application/octet-stream"_s && mimeType != "text/plain"_s) {
-        Vector<String> extensions = WebCore::MIMETypeRegistry::extensionsForMIMEType(mimeType);
+    if (!equal(mimeType, "application/octet-stream"_s) && !equal(mimeType, "text/plain"_s)) {
+        Vector<RefPtr<StringImpl>> extensions = WebCore::MIMETypeRegistry::extensionsForMIMEType(mimeType);
 
-        if (extensions.isEmpty() || !extensions.contains(String(extension.get()))) {
+        if (extensions.isEmpty() || !extensions.containsIf([&](auto& item) { return equal(item, StringImpl::create(extension.get()).get()); })) {
             // The extension doesn't match the MIME type. Correct this.
-            RetainPtr correctExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(mimeType).createNSString();
+            RetainPtr correctExtension = createNSString(WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(mimeType));
             if ([correctExtension length]) {
                 // Append the correct extension.
                 filename = [filename stringByAppendingPathExtension:correctExtension.get()];

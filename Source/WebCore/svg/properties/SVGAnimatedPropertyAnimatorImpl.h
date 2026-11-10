@@ -353,7 +353,7 @@ private:
 
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
-        String& animated = m_animated->animVal();
+        RefPtr<StringImpl>& animated = m_animated->animVal();
         m_function.animate(targetElement, progress, repeatCount, animated);
     }
     

@@ -103,7 +103,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     auto [shouldThrowError, readLength, writeLength] = fromBase64(view, std::span { uint8Array->typedVector(), uint8Array->length() }, alphabet, lastChunkHandling, WTF::OutputSizeIsMaxLength::Yes);
     ASSERT(readLength <= view.length());
     if (shouldThrowError == WTF::FromBase64ShouldThrowError::Yes) [[unlikely]]
-        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a valid base64 string"_s));
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a valid base64 string"_si));
 
     JSObject* resultObject = constructEmptyObject(globalObject);
     resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(readLength));
@@ -129,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
     if (!jsString) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string"_s);
     if (jsString->length() % 2) [[unlikely]]
-        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string of even length"_s));
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string of even length"_si));
 
     auto gcOwnedData = jsString->view(globalObject);
     StringView view = gcOwnedData;
@@ -147,7 +147,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
         success = decodeHex(view.span16().first(readCount), result) == WTF::notFound;
 
     if (!success) [[unlikely]]
-        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string containing only \"0123456789abcdefABCDEF\""_si));
 
     JSObject* resultObject = constructEmptyObject(globalObject);
     resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(readCount));
@@ -200,8 +200,8 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
     const uint8_t* data = uint8Array->typedVector();
     size_t length = uint8Array->length();
     auto result = base64EncodeToStringReturnNullIfOverflow({ data, length }, options);
-    if (result.isNull()) [[unlikely]] {
-        throwOutOfMemoryError(globalObject, scope, "generated stirng is too long"_s);
+    if (!result) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope, "generated stirng is too long"_si);
         return { };
     }
 
@@ -230,7 +230,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject
 
     auto resultLength = checkedProduct<size_t>(length, 2);
     if (resultLength.hasOverflowed() || !StringImpl::isValidLength<Latin1Character>(resultLength)) {
-        throwOutOfMemoryError(globalObject, scope, "generated string is too long"_s);
+        throwOutOfMemoryError(globalObject, scope, "generated string is too long"_si);
         return { };
     }
 

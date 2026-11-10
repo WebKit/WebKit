@@ -40,16 +40,16 @@ namespace WebCore {
 // https://w3c.github.io/webappsec-subresource-integrity/#report-violation
 static void reportViolation(const URL& requestURL, Document& document, bool block, bool reportBlock, const IntegrityPolicy* integrityPolicy, const IntegrityPolicy* integrityPolicyReportOnly)
 {
-    auto sendReport = [&document, &requestURL](bool reportOnly, const Vector<String>& endpoints) {
+    auto sendReport = [&document, &requestURL](bool reportOnly, const Vector<RefPtr<StringImpl>>& endpoints) {
         for (const auto& endpoint : endpoints) {
             const URL& documentURL = document.url();
 
-            auto reportBody = IntegrityPolicyViolationReportBody::create(documentURL.string(), requestURL.string(), "script"_s, reportOnly);
-            Ref reportFormData = Report::createReportFormDataForViolation("integrity-violation"_s, documentURL, document.httpUserAgent(), endpoint, [&](auto& body) {
-                body.setString("documentURL"_s, documentURL.string());
-                body.setString("blockedURL"_s, requestURL.string());
-                body.setString("destination"_s, "script"_s);
-                body.setBoolean("reportOnly"_s, reportOnly);
+            auto reportBody = IntegrityPolicyViolationReportBody::create(documentURL.string(), requestURL.string(), "script"_si, reportOnly);
+            Ref reportFormData = Report::createReportFormDataForViolation("integrity-violation"_si, documentURL, document.httpUserAgent(), endpoint, [&](auto& body) {
+                body.setString("documentURL"_si, documentURL.string());
+                body.setString("blockedURL"_si, requestURL.string());
+                body.setString("destination"_si, "script"_si);
+                body.setBoolean("reportOnly"_si, reportOnly);
             });
             document.sendReportToEndpoints(documentURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::IntegrityPolicy);
             document.notifyReportObservers(Report::create(reportBody->type(), reportBody->documentURL(), reportBody.copyRef()));
@@ -64,7 +64,7 @@ static void reportViolation(const URL& requestURL, Document& document, bool bloc
 // https://w3c.github.io/webappsec-subresource-integrity/#processing-an-integrity-policy
 std::unique_ptr<IntegrityPolicy> processIntegrityPolicy(const ResourceResponse& response, HTTPHeaderName headerName)
 {
-    auto parseInnerList = [](auto& innerList, auto& vector, std::optional<String> match) {
+    auto parseInnerList = [](auto& innerList, auto& vector, std::optional<RefPtr<StringImpl>> match) {
         for (auto& itemAndParameters : innerList) {
             auto& item = itemAndParameters.first;
             auto* token = std::get_if<RFC8941::Token>(&item);
@@ -72,7 +72,7 @@ std::unique_ptr<IntegrityPolicy> processIntegrityPolicy(const ResourceResponse& 
                 continue;
             auto value = token->string();
 
-            if ((!match || value == *match))
+            if ((!match || equal(value, *match)))
                 vector.append(value);
         }
     };
@@ -89,13 +89,13 @@ std::unique_ptr<IntegrityPolicy> processIntegrityPolicy(const ResourceResponse& 
             continue;
         // 4. If dictionary["blocked-destinations"] exists:
         // 4.1. If its value contains "script", append "script" to integrityPolicy’s blocked destinations.
-        if (name == "blocked-destinations"_s)
+        if (equal(name, "blocked-destinations"_s))
             parseInnerList(*innerList, policy->blockedDestinations, "script"_s);
         // 3. If dictionary["sources"] ... value contains "inline", append "inline" to integrityPolicy’s sources.
-        else if (name == "sources"_s) {
+        else if (equal(name, "sources"_s)) {
             sourcesExists = true;
             parseInnerList(*innerList, policy->sources, "inline"_s);
-        } else if (name == "endpoints"_s)
+        } else if (equal(name, "endpoints"_s))
             parseInnerList(*innerList, policy->endpoints, std::nullopt);
     }
     // 3. If dictionary["sources"] does not exist, append "inline" to integrityPolicy’s sources.
@@ -127,11 +127,16 @@ bool shouldRequestBeBlockedByIntegrityPolicy(ScriptExecutionContext& context, co
     bool block = false;
     // 11. Let reportBlock be a boolean, initially false.
     bool reportBlock = false;
+    auto contains = [](const Vector<RefPtr<StringImpl>>& list, ASCIILiteral string) {
+        return list.containsIf([&](auto& item) {
+            return equal(item, string);
+        });
+    };
     // 12. If policy’s sources contains "inline" and policy’s blocked destinations contains request’s destination, set block to true.
-    if (integrityPolicy && integrityPolicy->sources.contains("inline"_s) && integrityPolicy->blockedDestinations.contains("script"_s))
+    if (integrityPolicy && contains(integrityPolicy->sources, "inline"_s) && contains(integrityPolicy->blockedDestinations, "script"_s))
         block = true;
     // 13. If reportPolicy’s sources contains "inline" and reportPolicy’s blocked destinations contains request’s destination, set reportBlock to true.
-    if (integrityPolicyReportOnly && integrityPolicyReportOnly->sources.contains("inline"_s) && integrityPolicyReportOnly->blockedDestinations.contains("script"_s))
+    if (integrityPolicyReportOnly && contains(integrityPolicyReportOnly->sources, "inline"_s) && contains(integrityPolicyReportOnly->blockedDestinations, "script"_s))
         reportBlock = true;
 
     if (block || reportBlock) {

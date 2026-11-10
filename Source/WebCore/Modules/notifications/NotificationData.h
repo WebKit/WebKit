@@ -54,13 +54,13 @@ struct NotificationData {
     bool isPersistent() const { return !serviceWorkerRegistrationURL.isNull(); }
 
     URL navigateURL;
-    String title;
-    String body;
-    String iconURL;
-    String tag;
-    String language;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> body;
+    RefPtr<StringImpl> iconURL;
+    RefPtr<StringImpl> tag;
+    RefPtr<StringImpl> language;
     NotificationDirection direction { NotificationDirection::Auto };
-    String originString;
+    RefPtr<StringImpl> originString;
     URL serviceWorkerRegistrationURL;
     WTF::UUID notificationID { WTF::UUID::createVersion4() };
     std::optional<ScriptExecutionContextIdentifier> contextIdentifier;

@@ -66,7 +66,7 @@ public:
 
     static UserAgentQuirks quirksForURL(const URL&, UserAgentType = UserAgentType::Default);
 
-    static String stringForQuirk(UserAgentQuirk);
+    static RefPtr<StringImpl> stringForQuirk(UserAgentQuirk);
 
 private:
     uint32_t m_quirks;

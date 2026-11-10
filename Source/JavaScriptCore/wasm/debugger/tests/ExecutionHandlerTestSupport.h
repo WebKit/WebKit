@@ -62,10 +62,10 @@ extern std::atomic<unsigned> replyCount;
 
 bool waitForCondition(std::function<bool()> predicate, Seconds timeout = Seconds(defaultTimeoutSeconds));
 void setupTestEnvironment(DebugServer*&, ExecutionHandler*&);
-void workerThreadTask(const String&);
+void workerThreadTask(StringImpl*);
 
 inline unsigned getReplyCount() { return replyCount.load(); }
-String lastReply();
+RefPtr<StringImpl> lastReply();
 
 } // namespace ExecutionHandlerTestSupport
 

@@ -581,8 +581,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         break;
     case ConstructorKind::Naked:
         if (!isConstructor()) {
-            String constructorName = functionNode->ident().string();
-            if (!constructorName || constructorName.isEmpty())
+            RefPtr<StringImpl> constructorName = functionNode->ident().string();
+            if (!constructorName || isEmpty(constructorName))
                 emitThrowTypeError("Cannot call a constructor without |new|"_s);
             else {
                 auto errorMessageStr = tryMakeString("Cannot call a constructor "_s, constructorName, " without |new|"_s);
@@ -597,8 +597,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
         if (!isConstructor()) {
-            String constructorName = functionNode->ident().string();
-            if (!constructorName || constructorName.isEmpty())
+            RefPtr<StringImpl> constructorName = functionNode->ident().string();
+            if (!constructorName || isEmpty(constructorName))
                 emitThrowTypeError("Cannot call a class constructor without |new|"_s);
             else {
                 auto errorMessageStr = tryMakeString("Cannot call a class constructor "_s, constructorName, " without |new|"_s);
@@ -1780,8 +1780,8 @@ bool BytecodeGenerator::tryEmitTypeofIsUndefinedForStringComparison(RegisterID* 
         || !m_codeBlock->constantRegister(src2->virtualRegister()).get().isString())
         return false;
 
-    String value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
-    if (value != "u"_s)
+    RefPtr<StringImpl> value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
+    if (!equal(value, "u"_s))
         return false;
 
     rewind();
@@ -1863,8 +1863,8 @@ RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, 
                 return false;
             if (!m_codeBlock->constantRegister(src->virtualRegister()).get().isString())
                 return false;
-            String value = asString(m_codeBlock->constantRegister(src->virtualRegister()).get())->tryGetValue();
-            return value.isEmpty();
+            RefPtr<StringImpl> value = asString(m_codeBlock->constantRegister(src->virtualRegister()).get())->tryGetValue();
+            return isEmpty(value);
         };
 
         if (isConstantEmptyString(src1)) {
@@ -1948,43 +1948,43 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             && src1->isTemporary()
             && src2->virtualRegister().isConstant()
             && m_codeBlock->constantRegister(src2->virtualRegister()).get().isString()) {
-            String value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
-            if (value == "undefined"_s) {
+            RefPtr<StringImpl> value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
+            if (equal(value, "undefined"_s)) {
                 rewind();
                 OpTypeofIsUndefined::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "boolean"_s) {
+            if (equal(value, "boolean"_s)) {
                 rewind();
                 OpIsBoolean::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "number"_s) {
+            if (equal(value, "number"_s)) {
                 rewind();
                 OpIsNumber::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "string"_s) {
+            if (equal(value, "string"_s)) {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, StringType);
                 return true;
             }
-            if (value == "symbol"_s) {
+            if (equal(value, "symbol"_s)) {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, SymbolType);
                 return true;
             }
-            if (value == "bigint"_s) {
+            if (equal(value, "bigint"_s)) {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, HeapBigIntType);
                 return true;
             }
-            if (value == "object"_s) {
+            if (equal(value, "object"_s)) {
                 rewind();
                 OpTypeofIsObject::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "function"_s) {
+            if (equal(value, "function"_s)) {
                 rewind();
                 OpTypeofIsFunction::emit(this, dst, op.m_value);
                 return true;
@@ -4083,8 +4083,8 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
                 emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
 
                 ASSERT(m_scopeNode->isFunctionNode());
-                String className = static_cast<FunctionNode*>(m_scopeNode)->ident().string();
-                if (!className || className.isEmpty())
+                RefPtr<StringImpl> className = static_cast<FunctionNode*>(m_scopeNode)->ident().string();
+                if (!className || isEmpty(className))
                     emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class."_s);
                 else {
                     auto errorMessageStr = tryMakeString("Cannot return a non-object type in the constructor of a derived class "_s, className, "."_s);

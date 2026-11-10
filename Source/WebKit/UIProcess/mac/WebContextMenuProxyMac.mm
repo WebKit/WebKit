@@ -168,7 +168,7 @@
     }
 
     ASSERT(!sender || [sender isKindOfClass:NSMenuItem.class]);
-    WebKit::WebContextMenuItemData item(WebCore::ContextMenuItemType::Action, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [(NSMenuItem *)sender state] == NSControlStateValueOn);
+    WebKit::WebContextMenuItemData item(WebCore::ContextMenuItemType::Action, static_cast<WebCore::ContextMenuAction>([sender tag]), StringImpl::create([sender title]), [sender isEnabled], [(NSMenuItem *)sender state] == NSControlStateValueOn);
     if (representedObject)
         item.setUserData(protect([checked_objc_cast<WKUserDataWrapper>(representedObject.get()) userData]).get());
 
@@ -240,7 +240,7 @@
 
 - (void)captionStyleMenu:(PlatformMenu *)menu setPreviewProfileID:(NSString *)profileID
 {
-    protect(*_menuProxy)->captionStyleMenuSetPreviewProfileID(profileID);
+    protect(*_menuProxy)->captionStyleMenuSetPreviewProfileID(StringImpl::create(profileID).get());
 }
 
 @end
@@ -290,12 +290,12 @@ void WebContextMenuProxyMac::setupServicesMenu()
     bool isPDFAttachment = false;
     auto attachment = protect(page())->attachmentForIdentifier(m_context.controlledImageAttachmentID());
     if (attachment)
-        isPDFAttachment = attachment->utiType() == String(UTTypePDF.identifier);
+        isPDFAttachment = equal(attachment->utiType(), StringImpl::create(UTTypePDF.identifier).get());
     NSArray *items = nil;
     RetainPtr<NSItemProvider> itemProvider;
     if (hasControlledImage) {
         if (attachment)
-            itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData().get() typeIdentifier:attachment->utiType().createNSString().get()]);
+            itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData().get() typeIdentifier:createNSString(attachment->utiType()).get()]);
         else {
             RefPtr<ShareableBitmap> image = m_context.controlledImage();
             if (!image)
@@ -310,7 +310,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     } else if (RetainPtr selection = m_context.controlledSelection().nsAttributedString())
         items = @[ selection.get() ];
     else if (isPDFAttachment) {
-        itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData().get() typeIdentifier:attachment->utiType().createNSString().get()]);
+        itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData().get() typeIdentifier:createNSString(attachment->utiType()).get()]);
         items = @[ itemProvider.get() ];
     } else {
         LOG_ERROR("No service controlled item represented in the context");
@@ -401,8 +401,8 @@ void WebContextMenuProxyMac::appendRemoveBackgroundItemToControlledImageMenuIfNe
             if (!strongMenu)
                 return;
 
-            auto removeBackgroundItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleRemoveBackground().createNSString().get() action:@selector(removeBackground) keyEquivalent:@""]);
-            [removeBackgroundItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleRemoveBackground().createNSString().get()]];
+            auto removeBackgroundItem = adoptNS([[NSMenuItem alloc] initWithTitle:createNSString(contextMenuItemTitleRemoveBackground()).get() action:@selector(removeBackground) keyEquivalent:@""]);
+            [removeBackgroundItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:createNSString(contextMenuItemTitleRemoveBackground()).get()]];
             [removeBackgroundItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
             [removeBackgroundItem setAction:@selector(removeBackground)];
             [removeBackgroundItem setIndentationLevel:[strongMenu itemArray].lastObject.indentationLevel];
@@ -440,40 +440,40 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
     if (!elementContext)
         return;
 
-    auto [data, type] = imageDataForRemoveBackground(m_copySubjectResult.get(), m_context.controlledImageMIMEType().createCFString().get());
+    auto [data, type] = imageDataForRemoveBackground(m_copySubjectResult.get(), StringImpl::create(createCFString(m_context.controlledImageMIMEType()).get()).get());
     if (!data)
         return;
 
-    page->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, span(data.get()));
+    page->replaceImageForRemoveBackground(*elementContext, { StringImpl::create(type.get()) }, span(data.get()));
 #endif // ENABLE(IMAGE_ANALYSIS)
 }
 
 #if ENABLE(CONTEXT_MENU_IMAGES_ON_MAC)
-static void updateMenuItemImage(NSMenuItem *menuItem, const WebCore::ContextMenuAction& action, const String& title)
+static void updateMenuItemImage(NSMenuItem *menuItem, const WebCore::ContextMenuAction& action, StringImpl* title)
 {
     bool useAlternateImage = false;
 
     switch (action) {
     case ContextMenuItemTagMediaPlayPause:
-        useAlternateImage = title == contextMenuItemTagMediaPause();
+        useAlternateImage = equal(title, contextMenuItemTagMediaPause());
         break;
     case ContextMenuItemTagShowSpellingPanel:
-        useAlternateImage = title == contextMenuItemTagShowSpellingPanel(false);
+        useAlternateImage = equal(title, contextMenuItemTagShowSpellingPanel(false));
         break;
     case ContextMenuItemTagShowSubstitutions:
-        useAlternateImage = title == contextMenuItemTagShowSubstitutions(false);
+        useAlternateImage = equal(title, contextMenuItemTagShowSubstitutions(false));
         break;
     case ContextMenuItemTagToggleMediaControls:
-        useAlternateImage = title == contextMenuItemTagShowMediaControls();
+        useAlternateImage = equal(title, contextMenuItemTagShowMediaControls());
         break;
     case ContextMenuItemTagTogglePictureInPicture:
-        useAlternateImage = title == contextMenuItemTagExitPictureInPicture();
+        useAlternateImage = equal(title, contextMenuItemTagExitPictureInPicture());
         break;
     case ContextMenuItemTagToggleVideoFullscreen:
-        useAlternateImage = title == contextMenuItemTagExitVideoFullscreen();
+        useAlternateImage = equal(title, contextMenuItemTagExitVideoFullscreen());
         break;
     case ContextMenuItemTagToggleVideoViewer:
-        useAlternateImage = title == contextMenuItemTagExitVideoViewer();
+        useAlternateImage = equal(title, contextMenuItemTagExitVideoViewer());
         break;
     default:
         useAlternateImage = false;
@@ -491,7 +491,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
 
     auto items = adoptNS([[NSMutableArray alloc] init]);
 
-    if (!hitTestData.absoluteLinkURL.isEmpty()) {
+    if (!isEmpty(hitTestData.absoluteLinkURL)) {
         auto absoluteLinkURL = URL({ }, hitTestData.absoluteLinkURL);
         if (!absoluteLinkURL.isEmpty()) {
             if (RetainPtr url = absoluteLinkURL.createNSURL())
@@ -499,7 +499,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
         }
     }
 
-    if (hitTestData.isDownloadableMedia && !hitTestData.absoluteMediaURL.isEmpty()) {
+    if (hitTestData.isDownloadableMedia && !isEmpty(hitTestData.absoluteMediaURL)) {
         auto downloadableMediaURL = URL({ }, hitTestData.absoluteMediaURL);
         if (!downloadableMediaURL.isEmpty()) {
             if (RetainPtr url = downloadableMediaURL.createNSURL())
@@ -512,7 +512,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
         if (usePlaceholder)
             [items addObject:adoptNS([[NSImage alloc] init]).get()];
         else if (RetainPtr image = createCocoaImageRestrictedToSupportedTypes(protect(*hitTestData.imageSharedMemory)->toNSData().get())) {
-            RetainPtr title = hitTestData.imageText.createNSString();
+            RetainPtr title = createNSString(hitTestData.imageText);
             if (![title length])
                 title = WEB_UI_NSSTRING(@"Image", "Fallback title for images in the share sheet");
 
@@ -521,8 +521,8 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
         }
     }
 
-    if (!m_context.selectedText().isEmpty())
-        [items addObject:m_context.selectedText().createNSString().get()];
+    if (!isEmpty(m_context.selectedText()))
+        [items addObject:createNSString(m_context.selectedText()).get()];
 
     if (![items count])
         return nil;
@@ -575,13 +575,13 @@ bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
     ASSERT(m_context.webHitTestResultData());
     auto hitTestData = m_context.webHitTestResultData().value();
 
-    if (!hitTestData.absoluteLinkURL.isEmpty())
+    if (!isEmpty(hitTestData.absoluteLinkURL))
         return false;
 
     if (auto bitmap = hitTestData.imageBitmap) {
         RetainPtr image = bitmap->createPlatformImage(DontCopyBackingStore);
         requestPayloadForQRCode(image.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
-            m_context.setQRCodePayloadString(result);
+            m_context.setQRCodePayloadString(StringImpl::create(result).get());
             WebContextMenuProxy::show();
         });
 
@@ -593,14 +593,14 @@ bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
         requestPayloadForQRCode(image.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
             RefPtr potentialQRCodeViewportSnapshotImage = m_context.potentialQRCodeViewportSnapshotImage();
             if (!potentialQRCodeViewportSnapshotImage || result.length) {
-                m_context.setQRCodePayloadString(result);
+                m_context.setQRCodePayloadString(StringImpl::create(result).get());
                 WebContextMenuProxy::show();
                 return;
             }
 
             RetainPtr fallbackImage = potentialQRCodeViewportSnapshotImage->createPlatformImage(DontCopyBackingStore);
             requestPayloadForQRCode(fallbackImage.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
-                m_context.setQRCodePayloadString(result);
+                m_context.setQRCodePayloadString(StringImpl::create(result).get());
                 WebContextMenuProxy::show();
             });
         });
@@ -783,7 +783,7 @@ static RetainPtr<NSMenuItem> createMenuActionItem(const WebContextMenuItemData& 
     auto type = item.type();
     ASSERT_UNUSED(type, type == WebCore::ContextMenuItemType::Action || type == WebCore::ContextMenuItemType::CheckableAction);
 
-    RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title().createNSString().get() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
+    RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:createNSString(item.title()).get() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
     [menuItem setTag:item.action()];
     [menuItem setEnabled:item.enabled()];
@@ -982,7 +982,7 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
         return;
 
     case WebCore::ContextMenuItemType::Submenu: {
-        RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title().createNSString().get() action:nullptr keyEquivalent:@""]);
+        RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:createNSString(item.title()).get() action:nullptr keyEquivalent:@""]);
         [menuItem setEnabled:item.enabled()];
         [menuItem setIndentationLevel:item.indentationLevel()];
         [menuItem setIdentifier:menuItemIdentifier(item.action()).get()];
@@ -1179,7 +1179,7 @@ void WebContextMenuProxyMac::didDismissContextMenu(NSMenu *menu)
         captionStyleMenuDidClose();
 }
 
-void WebContextMenuProxyMac::captionStyleMenuSetPreviewProfileID(const String& profileID)
+void WebContextMenuProxyMac::captionStyleMenuSetPreviewProfileID(StringImpl* profileID)
 {
     RefPtr page = this->page();
     page->setCaptionDisplaySettingsPreviewProfileID(page->processContainingFrame(m_frameInfo.frameID), profileID);

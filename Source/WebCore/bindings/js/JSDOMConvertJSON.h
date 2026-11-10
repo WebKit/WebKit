@@ -52,7 +52,7 @@ template<> struct JSConverter<IDLJSON> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return JSC::JSONParse(&lexicalGlobalObject, value);
     }

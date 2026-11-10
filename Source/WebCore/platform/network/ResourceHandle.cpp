@@ -51,7 +51,7 @@ static bool shouldForceContentSniffing;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceHandleInternal);
 
-typedef HashMap<AtomString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
+typedef HashMap<RefPtr<AtomStringImpl>, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
 NODELETE static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -63,12 +63,12 @@ NODELETE static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstr
     return map;
 }
 
-void ResourceHandle::registerBuiltinConstructor(const AtomString& protocol, ResourceHandle::BuiltinConstructor constructor)
+void ResourceHandle::registerBuiltinConstructor(AtomStringImpl* protocol, ResourceHandle::BuiltinConstructor constructor)
 {
     builtinResourceHandleConstructorMap().add(protocol, constructor);
 }
 
-typedef HashMap<AtomString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
+typedef HashMap<RefPtr<AtomStringImpl>, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
 NODELETE static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
 {
     ASSERT(isMainThread());
@@ -76,7 +76,7 @@ NODELETE static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandle
     return map;
 }
 
-void ResourceHandle::registerBuiltinSynchronousLoader(const AtomString& protocol, ResourceHandle::BuiltinSynchronousLoader loader)
+void ResourceHandle::registerBuiltinSynchronousLoader(AtomStringImpl* protocol, ResourceHandle::BuiltinSynchronousLoader loader)
 {
     builtinResourceHandleSynchronousLoaderMap().add(protocol, loader);
 }
@@ -97,7 +97,7 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
 
 RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
 {
-    if (auto protocol = request.url().protocol().toExistingAtomString(); !protocol.isNull()) {
+    if (auto protocol = request.url().protocol().toExistingAtomString(); protocol) {
         if (auto constructor = builtinResourceHandleConstructorMap().get(protocol))
             return constructor(request, client);
     }
@@ -143,7 +143,7 @@ void ResourceHandle::failureTimerFired()
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin* sourceOrigin, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
-    if (auto protocol = request.url().protocol().toExistingAtomString(); !protocol.isNull()) {
+    if (auto protocol = request.url().protocol().toExistingAtomString(); protocol) {
         if (auto constructor = builtinResourceHandleSynchronousLoaderMap().get(protocol)) {
             constructor(context, request, storedCredentialsPolicy, error, response, data);
             return;
@@ -171,7 +171,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response, CompletionH
         if (port && !WTF::isDefaultPortForProtocol(port.value(), url.protocol())) {
             cancel();
             auto message = makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9."_s);
-            d->m_client->didFail(this, { String(), 0, url, message });
+            d->m_client->didFail(this, { nullString(), 0, url, message });
             completionHandler();
             return;
         }
@@ -194,7 +194,7 @@ NetworkingContext* ResourceHandle::context() const
     return d->m_context.get();
 }
 
-const String& ResourceHandle::lastHTTPMethod() const
+const RefPtr<StringImpl>& ResourceHandle::lastHTTPMethod() const
 {
     return d->m_lastHTTPMethod;
 }

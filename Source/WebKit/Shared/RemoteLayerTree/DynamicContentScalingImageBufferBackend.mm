@@ -174,7 +174,7 @@ void DynamicContentScalingImageBufferBackend::putPixelBuffer(const WebCore::Pixe
     ASSERT_NOT_REACHED();
 }
 
-String DynamicContentScalingImageBufferBackend::debugDescription() const
+RefPtr<StringImpl> DynamicContentScalingImageBufferBackend::debugDescription() const
 {
     TextStream stream;
     stream << "DynamicContentScalingImageBufferBackend " << this;

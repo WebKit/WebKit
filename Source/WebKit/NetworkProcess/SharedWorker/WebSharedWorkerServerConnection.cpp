@@ -101,14 +101,14 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
     // is nothing to compare against. Ordinary content reaches this, since a top-level document sandboxed by
     // CSP has an opaque origin and may name a data: worker script.
     WebCore::Site topSite { sharedWorkerKey.origin.topOrigin };
-    if (!topSite.protocol().isEmpty())
+    if (!isEmpty(topSite.protocol()))
         MESSAGE_CHECK(m_networkProcess->allowsFirstPartySite(m_webProcessIdentifier, topSite));
 
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     MESSAGE_CHECK(port.first.processIdentifier == m_webProcessIdentifier);
     MESSAGE_CHECK(port.second.processIdentifier == m_webProcessIdentifier);
-    MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
-    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    MESSAGE_CHECK(equal(sharedWorkerKey.name, workerOptions.name));
+    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, WTF::move(port), WTF::move(workerOptions));
 }
@@ -116,7 +116,7 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
 void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
-    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().sharedWorkerObjectIsGoingAway(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
@@ -124,7 +124,7 @@ void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::Sha
 void WebSharedWorkerServerConnection::suspendForBackForwardCache(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
-    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().suspendForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
@@ -132,26 +132,26 @@ void WebSharedWorkerServerConnection::suspendForBackForwardCache(WebCore::Shared
 void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
-    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().resumeForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
 void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
 {
-    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTF::move(completionHandler));
 }
 
 void WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::ResourceError& error)
 {
-    CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", success=%d", sharedWorkerObjectIdentifier.toString().utf8(), error.isNull());
+    CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", success=%d", utf8(sharedWorkerObjectIdentifier.toString()), error.isNull());
     send(Messages::WebSharedWorkerObjectConnection::NotifyWorkerObjectOfLoadCompletion { sharedWorkerObjectIdentifier, error });
 }
 
-void WebSharedWorkerServerConnection::postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
+void WebSharedWorkerServerConnection::postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent)
 {
-    CONNECTION_RELEASE_LOG_ERROR("postErrorToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONNECTION_RELEASE_LOG_ERROR("postErrorToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     send(Messages::WebSharedWorkerObjectConnection::PostErrorToWorkerObject { sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent });
 }
 
@@ -166,7 +166,7 @@ std::optional<SharedPreferencesForWebProcess> WebSharedWorkerServerConnection::s
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebSharedWorkerServerConnection::reportNetworkUsageToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, size_t bytesTransferredOverNetworkDelta)
 {
-    CONNECTION_RELEASE_LOG("reportNetworkUsageToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", bytesTransferredOverNetworkDelta=%zu", sharedWorkerObjectIdentifier.toString().utf8(), bytesTransferredOverNetworkDelta);
+    CONNECTION_RELEASE_LOG("reportNetworkUsageToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", bytesTransferredOverNetworkDelta=%zu", utf8(sharedWorkerObjectIdentifier.toString()), bytesTransferredOverNetworkDelta);
     send(Messages::WebSharedWorkerObjectConnection::ReportNetworkUsageToWorkerObject { sharedWorkerObjectIdentifier, bytesTransferredOverNetworkDelta });
 }
 #endif

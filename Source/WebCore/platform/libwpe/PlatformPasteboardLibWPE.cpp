@@ -40,7 +40,7 @@ static void initializePasteboardString(struct wpe_pasteboard_string* string, std
     wpe_pasteboard_string_initialize(string, byteCast<char>(characters).data(), characters.size());
 }
 
-PlatformPasteboard::PlatformPasteboard(const String&)
+PlatformPasteboard::PlatformPasteboard(StringImpl*)
     : m_pasteboard(wpe_pasteboard_get_singleton())
 {
     ASSERT(m_pasteboard);
@@ -62,27 +62,27 @@ int64_t PlatformPasteboard::changeCount() const
     return m_changeCount;
 }
 
-void PlatformPasteboard::getTypes(Vector<String>& types) const
+void PlatformPasteboard::getTypes(Vector<RefPtr<StringImpl>>& types) const
 {
     struct wpe_pasteboard_string_vector pasteboardTypes = { nullptr, 0 };
     wpe_pasteboard_get_types(m_pasteboard, &pasteboardTypes);
     for (auto& typeString : unsafeMakeSpan(pasteboardTypes.strings, pasteboardTypes.length)) {
         const auto length = std::min(static_cast<size_t>(typeString.length), std::numeric_limits<size_t>::max());
-        types.append(String::fromLatin1(unsafeMakeSpan(typeString.data, length)));
+        types.append(StringImpl::fromLatin1(unsafeMakeSpan(typeString.data, length)));
     }
 
     wpe_pasteboard_string_vector_free(&pasteboardTypes);
 }
 
-String PlatformPasteboard::readString(size_t, const String& type) const
+RefPtr<StringImpl> PlatformPasteboard::readString(size_t, StringImpl* type) const
 {
     struct wpe_pasteboard_string string = { nullptr, 0 };
-    wpe_pasteboard_get_string(m_pasteboard, type.utf8().legacyCStringPointer(), &string);
+    wpe_pasteboard_get_string(m_pasteboard, utf8(type).legacyCStringPointer(), &string);
     if (!string.length)
-        return String();
+        return nullptr;
 
     const auto length = std::min(static_cast<size_t>(string.length), std::numeric_limits<size_t>::max());
-    String returnValue = String::fromLatin1(unsafeMakeSpan(string.data, length));
+    RefPtr<StringImpl> returnValue = StringImpl::fromLatin1(unsafeMakeSpan(string.data, length));
 
     wpe_pasteboard_string_free(&string);
     return returnValue;
@@ -93,8 +93,8 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     static constexpr auto plainText = "text/plain;charset=utf-8"_s;
     static constexpr auto htmlText = "text/html"_s;
 
-    auto textString = content.text.utf8();
-    auto markupString = content.markup.utf8();
+    auto textString = utf8(content.text);
+    auto markupString = utf8(content.markup);
 
     IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     std::array<struct wpe_pasteboard_string_pair, 2> pairs = { {
@@ -117,14 +117,14 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     wpe_pasteboard_string_free(&pairs[1].string);
 }
 
-void PlatformPasteboard::write(const String& type, const String& string)
+void PlatformPasteboard::write(StringImpl* type, StringImpl* string)
 {
     struct wpe_pasteboard_string_pair pairs[] = {
         { { nullptr, 0 }, { nullptr, 0 } },
     };
 
-    auto typeUTF8 = type.utf8();
-    auto stringUTF8 = string.utf8();
+    auto typeUTF8 = utf8(type);
+    auto stringUTF8 = utf8(string);
     initializePasteboardString(&pairs[0].type, typeUTF8.span());
     initializePasteboardString(&pairs[0].string, stringUTF8.span());
     struct wpe_pasteboard_string_map map = { pairs, 1 };
@@ -136,7 +136,7 @@ void PlatformPasteboard::write(const String& type, const String& string)
     wpe_pasteboard_string_free(&pairs[0].string);
 }
 
-Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) const
+Vector<RefPtr<StringImpl>> PlatformPasteboard::typesSafeForDOMToReadAndWrite(StringImpl*) const
 {
     return { };
 }
@@ -144,15 +144,15 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
 int64_t PlatformPasteboard::write(const PasteboardCustomData& customData, PasteboardDataLifetime)
 {
     PasteboardWebContent contents;
-    customData.forEachPlatformStringOrBuffer([&contents] (auto& type, auto& stringOrBuffer) {
-        if (std::holds_alternative<String>(stringOrBuffer)) {
-            if (type.startsWith("text/plain"_s))
-                contents.text = std::get<String>(stringOrBuffer);
-            else if (type == "text/html"_s)
-                contents.markup = std::get<String>(stringOrBuffer);
+    customData.forEachPlatformStringOrBuffer([&contents] (auto* type, auto& stringOrBuffer) {
+        if (std::holds_alternative<RefPtr<StringImpl>>(stringOrBuffer)) {
+            if (startsWith(type, "text/plain"_s))
+                contents.text = std::get<RefPtr<StringImpl>>(stringOrBuffer);
+            else if (equal(type, "text/html"_s))
+                contents.markup = std::get<RefPtr<StringImpl>>(stringOrBuffer);
         }
     });
-    if (contents.text.isNull() && contents.markup.isNull())
+    if (!contents.text && !contents.markup)
         return m_changeCount;
 
     write(contents);

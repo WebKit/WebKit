@@ -45,16 +45,16 @@ public:
 
     void setAccentColor(const Color&);
 
-    String extraDefaultStyleSheet() final;
+    RefPtr<StringImpl> extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
-    Vector<String, 2> mediaControlsScripts() final;
-    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
+    Vector<RefPtr<StringImpl>, 2> mediaControlsScripts() final;
+    Vector<RefPtr<StringImpl>, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
 #endif
 
 #if ENABLE(VIDEO)
-    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) final;
-    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
-    String mediaControlsFormattedStringForDuration(double) final;
+    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(StringImpl*, StringImpl*) final;
+    RefPtr<StringImpl> mediaControlsBase64StringForIconNameAndType(StringImpl*, StringImpl*) final;
+    RefPtr<StringImpl> mediaControlsFormattedStringForDuration(double) final;
 #endif // ENABLE(VIDEO)
 
     bool supportsHover() const final { return true; }
@@ -105,7 +105,7 @@ public:
 
 private:
 #if ENABLE(VIDEO)
-    String m_mediaControlsStyleSheet;
+    RefPtr<StringImpl> m_mediaControlsStyleSheet;
 #endif
 };
 

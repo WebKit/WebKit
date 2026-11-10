@@ -58,9 +58,9 @@ public:
 
 private:
     // IPC Message handlers.
-    void requestLock(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, WebCore::WebLockMode, bool steal, bool ifAvailable);
-    void releaseLock(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name);
-    void abortLockRequest(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, CompletionHandler<void(bool)>&&);
+    void requestLock(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, RefPtr<StringImpl>&& name, WebCore::WebLockMode, bool steal, bool ifAvailable);
+    void releaseLock(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, RefPtr<StringImpl>&& name);
+    void abortLockRequest(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, RefPtr<StringImpl>&& name, CompletionHandler<void(bool)>&&);
     void snapshot(IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&);
     void clientIsGoingAway(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::ScriptExecutionContextIdentifier);
 

@@ -43,8 +43,8 @@ public:
 private:
     CSSFunctionDeclarations(StyleRuleFunctionDeclarations&, CSSStyleSheet*);
 
-    String cssText() const final;
-    String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
 
     void reattach(StyleRuleBase&) final;
     StyleRuleType styleRuleType() const final { return StyleRuleType::FunctionDeclarations; }

@@ -65,14 +65,14 @@ bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
     Ref element = *this->element();
     if (!element->checked())
         return false;
-    formData.append(element->name(), element->value());
+    formData.append(element->name(), protect(element->value().get()));
     return true;
 }
 
 auto BaseCheckableInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
-    const String& key = event.keyIdentifier();
-    if (key == "U+0020"_s) {
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (equal(key, "U+0020"_s)) {
         ASSERT(element());
         protect(element())->setActive(true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
@@ -102,9 +102,9 @@ bool BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
     return InputType::accessKeyAction(sendMouseEvents) || protect(element())->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
-ValueOrReference<String> BaseCheckableInputType::fallbackValue() const
+ValueOrReference<RefPtr<StringImpl>> BaseCheckableInputType::fallbackValue() const
 {
-    return onAtom().string();
+    return RefPtr<StringImpl> { onAtom() };
 }
 
 bool BaseCheckableInputType::storesValueSeparateFromAttribute()
@@ -112,10 +112,10 @@ bool BaseCheckableInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
+void BaseCheckableInputType::setValue(StringImpl* sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
-    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
+    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomStringImpl::add(sanitizedValue).get());
 }
 
 void BaseCheckableInputType::fireInputAndChangeEvents()
@@ -128,7 +128,7 @@ void BaseCheckableInputType::fireInputAndChangeEvents()
         return;
 
     Ref protectedThis { *this };
-    element->setTextAsOfLastFormControlChangeEvent(String());
+    element->setTextAsOfLastFormControlChangeEvent(nullptr);
     element->dispatchInputEvent();
     if (RefPtr element = this->element())
         element->dispatchFormControlChangeEvent();

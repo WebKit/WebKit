@@ -165,7 +165,7 @@ void IPIntPlan::didCompileFunctionInStreaming()
         moveToState(EntryPlan::State::Compiled);
 }
 
-void IPIntPlan::didFailInStreaming(String&& message)
+void IPIntPlan::didFailInStreaming(RefPtr<StringImpl>&& message)
 {
     Locker locker { m_lock };
     if (!m_errorMessage)

@@ -45,7 +45,7 @@
 
 namespace WebKit {
 
-void Download::resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, std::span<const uint8_t> activityAccessToken)
+void Download::resume(std::span<const uint8_t> resumeData, StringImpl* path, SandboxExtension::Handle&& sandboxExtensionHandle, std::span<const uint8_t> activityAccessToken)
 {
     m_sandboxExtension = SandboxExtension::create(WTF::move(sandboxExtensionHandle));
     if (RefPtr extension = m_sandboxExtension)
@@ -60,7 +60,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     RetainPtr nsData = toNSData(resumeData);
 
     RetainPtr dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
-    [dictionary setObject:path.createNSString().get() forKey:@"NSURLSessionResumeInfoLocalPath"];
+    [dictionary setObject:createNSString(path).get() forKey:@"NSURLSessionResumeInfoLocalPath"];
     RetainPtr updatedData = [NSPropertyListSerialization dataWithPropertyList:dictionary.get() format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
 
     // FIXME: Use nsData instead of updatedData once we've migrated from _WKDownload to WKDownload
@@ -77,7 +77,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     }
     ASSERT(!cocoaSession->sessionWrapperForDownloadResume().downloadMap.contains(taskIdentifier));
     cocoaSession->sessionWrapperForDownloadResume().downloadMap.add(taskIdentifier, m_downloadID);
-    m_downloadTask.get()._pathToDownloadTaskFile = path.createNSString().get();
+    m_downloadTask.get()._pathToDownloadTaskFile = createNSString(path).get();
 
     [m_downloadTask resume];
 
@@ -133,7 +133,7 @@ Vector<uint8_t> Download::resumeDataWithResumeInfo(std::span<const uint8_t> resu
     [dictionary setObject:@(info.advancedPrivacyProtections.toRaw()) forKey:advancedPrivacyProtectionsResumeKey];
     [dictionary setObject:@(info.wasPrivateRelayed) forKey:wasPrivateRelayedResumeKey];
     if (info.url.isValid())
-        [dictionary setObject:info.url.string().createNSString().get() forKey:downloadURLResumeKey];
+        [dictionary setObject:createNSString(info.url.string()).get() forKey:downloadURLResumeKey];
     RetainPtr updatedData = [NSPropertyListSerialization dataWithPropertyList:dictionary.get() format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
     if (!updatedData)
         return resumeData;
@@ -155,7 +155,7 @@ auto Download::resumeInfoFromResumeData(std::span<const uint8_t> resumeData) -> 
     return {
         OptionSet<WebCore::AdvancedPrivacyProtections>::fromRaw([protections unsignedShortValue]),
         static_cast<bool>([dynamic_objc_cast<NSNumber>([dictionary objectForKey:wasPrivateRelayedResumeKey]) boolValue]),
-        URL { String { urlString.get() } }
+        URL { StringImpl::create(urlString.get()) }
     };
 }
 
@@ -266,7 +266,7 @@ void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
     BOOL usingSecurityScopedURL = [placeholderURL startAccessingSecurityScopedResource];
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(String::fromUTF8(placeholderURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
+    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(StringImpl::fromUTF8(placeholderURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
         sandboxExtensionHandle = WTF::move(*handle);
 
     if (usingSecurityScopedURL)
@@ -293,7 +293,7 @@ void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
     BOOL usingSecurityScopedURL = [finalURL startAccessingSecurityScopedResource];
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(String::fromUTF8(finalURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
+    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(StringImpl::fromUTF8(finalURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
         sandboxExtensionHandle = WTF::move(*handle);
 
     if (usingSecurityScopedURL)

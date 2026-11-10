@@ -207,7 +207,7 @@ void JIT::privateCompileMainPass()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (m_bytecodeIndex >= startBytecodeIndex && Options::dumpBaselineJITSizeStatistics()) {
-            String id = makeString("Baseline_fast_"_s, opcodeNames[opcodeID]);
+            RefPtr<StringImpl> id = makeString("Baseline_fast_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
@@ -509,7 +509,7 @@ void JIT::privateCompileSlowCases()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (Options::dumpBaselineJITSizeStatistics()) [[unlikely]] {
-            String id = makeString("Baseline_slow_"_s, opcodeNames[opcodeID]);
+            RefPtr<StringImpl> id = makeString("Baseline_slow_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
@@ -760,7 +760,7 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
 
     std::optional<JITSizeStatistics::Marker> sizeMarker;
     if (Options::dumpBaselineJITSizeStatistics()) [[unlikely]]
-        sizeMarker = m_vm->jitSizeStatistics->markStart("Baseline_prologue"_s, *this);
+        sizeMarker = m_vm->jitSizeStatistics->markStart("Baseline_prologue"_si, *this);
 
     Label entryLabel(this);
     if (m_disassembler)
@@ -1055,7 +1055,7 @@ void JIT::doMainThreadPreparationBeforeCompile(VM& vm)
 {
     // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
     if (vm.typeProfiler())
-        vm.typeProfilerLog()->processLogEntries(vm, "Preparing for JIT compilation."_s);
+        vm.typeProfilerLog()->processLogEntries(vm, "Preparing for JIT compilation."_si);
 }
 
 unsigned JIT::frameRegisterCountFor(UnlinkedCodeBlock* codeBlock)

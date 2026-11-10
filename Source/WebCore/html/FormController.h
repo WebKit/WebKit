@@ -32,7 +32,7 @@ class FormListedElement;
 class HTMLFormElement;
 class ValidatedFormListedElement;
 
-using FormControlState = Vector<AtomString>;
+using FormControlState = Vector<RefPtr<AtomStringImpl>>;
 
 class FormController {
     WTF_MAKE_TZONE_ALLOCATED(FormController);
@@ -41,24 +41,24 @@ public:
     FormController();
     ~FormController();
 
-    WEBCORE_EXPORT Vector<AtomString> formElementsState(const Document&) const;
-    WEBCORE_EXPORT void setStateForNewFormElements(const Vector<AtomString>& stateVector);
+    WEBCORE_EXPORT Vector<RefPtr<AtomStringImpl>> formElementsState(const Document&) const;
+    WEBCORE_EXPORT void setStateForNewFormElements(const Vector<RefPtr<AtomStringImpl>>& stateVector);
 
     void willDeleteForm(HTMLFormElement&);
     void restoreControlStateFor(ValidatedFormListedElement&);
     void restoreControlStateIn(HTMLFormElement&);
     NODELETE bool hasFormStateToRestore() const;
 
-    WEBCORE_EXPORT static Vector<String> referencedFilePaths(const Vector<AtomString>& stateVector);
+    WEBCORE_EXPORT static Vector<RefPtr<StringImpl>> referencedFilePaths(const Vector<RefPtr<AtomStringImpl>>& stateVector);
     static HTMLFormElement* ownerForm(const FormListedElement&);
 
 private:
     class FormKeyGenerator;
     class SavedFormState;
-    using SavedFormStateMap = HashMap<String, SavedFormState>;
+    using SavedFormStateMap = HashMap<RefPtr<StringImpl>, SavedFormState>;
 
     FormControlState takeStateForFormElement(const ValidatedFormListedElement&);
-    static SavedFormStateMap parseStateVector(const Vector<AtomString>&);
+    static SavedFormStateMap parseStateVector(const Vector<RefPtr<AtomStringImpl>>&);
 
     SavedFormStateMap m_savedFormStateMap;
     const std::unique_ptr<FormKeyGenerator> m_formKeyGenerator;

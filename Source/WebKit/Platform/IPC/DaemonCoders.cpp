@@ -132,7 +132,7 @@ template<> struct Coder<WebCore::PCM::EphemeralNonce> {
     }
     static std::optional<WebCore::PCM::EphemeralNonce> decode(Decoder& decoder)
     {
-        std::optional<String> nonce;
+        std::optional<RefPtr<StringImpl>> nonce;
         decoder >> nonce;
         if (!nonce)
             return std::nullopt;
@@ -223,7 +223,7 @@ std::optional<WebCore::PrivateClickMeasurement> Coder<WebCore::PrivateClickMeasu
     if (!ephemeralSourceNonce)
         return std::nullopt;
 
-    std::optional<String> sourceApplicationBundleID;
+    std::optional<RefPtr<StringImpl>> sourceApplicationBundleID;
     decoder >> sourceApplicationBundleID;
     if (!sourceApplicationBundleID)
         return std::nullopt;
@@ -302,7 +302,7 @@ void Coder<WebCore::RegistrableDomain, void>::encode(Encoder& encoder, const Web
 
 std::optional<WebCore::RegistrableDomain> Coder<WebCore::RegistrableDomain, void>::decode(Decoder& decoder)
 {
-    std::optional<String> host;
+    std::optional<RefPtr<StringImpl>> host;
     decoder >> host;
     if (!host)
         return std::nullopt;

@@ -30,7 +30,7 @@
 
 G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkit_script_dialog_ref, webkit_script_dialog_unref)
 
-WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
+WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, StringImpl*)>&& completionHandler)
 {
     auto* dialog = static_cast<WebKitScriptDialog*>(fastMalloc(sizeof(WebKitScriptDialog)));
     new (dialog) WebKitScriptDialog(type, message, defaultText, WTF::move(completionHandler));
@@ -207,7 +207,7 @@ void webkit_script_dialog_close(WebKitScriptDialog* dialog)
         completionHandler(dialog->confirmed, emptyString());
         break;
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
-        completionHandler(false, String { dialog->text });
+        completionHandler(false, StringImpl::fromUTF8(dialog->text.span()).get());
         break;
     }
 }

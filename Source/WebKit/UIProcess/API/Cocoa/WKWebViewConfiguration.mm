@@ -231,7 +231,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
 
     if (auto& applicationNameForUserAgent = _pageConfiguration->applicationNameForUserAgent())
-        [coder encodeObject:applicationNameForUserAgent->createNSString().get() forKey:@"applicationNameForUserAgent"];
+        [coder encodeObject:createNSString(*applicationNameForUserAgent).get() forKey:@"applicationNameForUserAgent"];
 
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
 
@@ -540,17 +540,17 @@ NODELETE SUPPRESS_NODELETE static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_applicationNameForDesktopUserAgent
 {
-    return nsStringNilIfNull(_pageConfiguration->applicationNameForUserAgent().value_or(String())).autorelease();
+    return nsStringNilIfNull(_pageConfiguration->applicationNameForUserAgent().value_or(nullString())).autorelease();
 }
 
 - (NSString *)applicationNameForUserAgent
 {
-    return nsStringNilIfNull(_pageConfiguration->applicationNameForUserAgent().value_or(defaultApplicationNameForUserAgent())).autorelease();
+    return nsStringNilIfNull(_pageConfiguration->applicationNameForUserAgent().value_or(StringImpl::create(protect(defaultApplicationNameForUserAgent()).get()))).autorelease();
 }
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
-    protect(*_pageConfiguration)->setApplicationNameForUserAgent(applicationNameForUserAgent);
+    protect(*_pageConfiguration)->setApplicationNameForUserAgent(StringImpl::create(applicationNameForUserAgent));
 }
 
 - (_WKVisitedLinkStore *)_visitedLinkStore
@@ -568,7 +568,7 @@ NODELETE SUPPRESS_NODELETE static NSString *defaultApplicationNameForUserAgent()
     if ([WKWebView handlesURLScheme:urlScheme])
         [NSException raise:NSInvalidArgumentException format:@"'%@' is a URL scheme that WKWebView handles natively", urlScheme];
 
-    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(StringImpl::create(urlScheme).get());
     if (!canonicalScheme)
         [NSException raise:NSInvalidArgumentException format:@"'%@' is not a valid URL scheme", urlScheme];
 
@@ -580,7 +580,7 @@ NODELETE SUPPRESS_NODELETE static NSString *defaultApplicationNameForUserAgent()
 
 - (id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
 {
-    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(StringImpl::create(urlScheme).get());
     if (!canonicalScheme)
         return nil;
 
@@ -596,7 +596,7 @@ NODELETE SUPPRESS_NODELETE static NSString *defaultApplicationNameForUserAgent()
     if ([WKWebView handlesURLScheme:urlScheme])
         return NO;
 
-    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(StringImpl::create(urlScheme).get());
     if (!canonicalScheme)
         return NO;
 
@@ -723,7 +723,7 @@ NODELETE SUPPRESS_NODELETE static NSString *defaultApplicationNameForUserAgent()
 
 - (void)_setGroupIdentifier:(NSString *)groupIdentifier
 {
-    protect(*_pageConfiguration)->setGroupIdentifier(groupIdentifier);
+    protect(*_pageConfiguration)->setGroupIdentifier(StringImpl::create(groupIdentifier));
 }
 
 - (BOOL)_respectsImageOrientation
@@ -1082,7 +1082,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
 {
-    protect(*_pageConfiguration)->setCORSDisablingPatterns(makeVector<String>(patterns));
+    protect(*_pageConfiguration)->setCORSDisablingPatterns(makeVector<RefPtr<StringImpl>>(patterns));
 }
 
 - (NSSet<NSString *> *)_maskedURLSchemes
@@ -1090,22 +1090,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     const auto& schemes = protect(*_pageConfiguration)->maskedURLSchemes();
     NSMutableSet<NSString *> *set = [NSMutableSet setWithCapacity:schemes.size()];
     for (const auto& scheme : schemes)
-        [set addObject:scheme.createNSString().get()];
+        [set addObject:createNSString(scheme).get()];
     return set;
 }
 
 - (void)_setMaskedURLSchemes:(NSSet<NSString *> *)schemes
 {
-    HashSet<String> set;
+    HashSet<RefPtr<StringImpl>> set;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *scheme in schemes)
-        set.add(scheme);
+        set.add(StringImpl::create(scheme));
     protect(*_pageConfiguration)->setMaskedURLSchemes(WTF::move(set));
 }
 
 - (void)_setLoadsFromNetwork:(BOOL)loads
 {
-    protect(*_pageConfiguration)->setAllowedNetworkHosts(loads ? std::nullopt : std::optional { MemoryCompactLookupOnlyRobinHoodHashSet<String> { } });
+    protect(*_pageConfiguration)->setAllowedNetworkHosts(loads ? std::nullopt : std::optional { MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> { } });
 }
 
 - (BOOL)_loadsFromNetwork
@@ -1117,10 +1117,10 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 {
     if (!hosts)
         return protect(*_pageConfiguration)->setAllowedNetworkHosts(std::nullopt);
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *host in hosts)
-        set.add(host);
+        set.add(StringImpl::create(host));
     protect(*_pageConfiguration)->setAllowedNetworkHosts(WTF::move(set));
 }
 
@@ -1131,7 +1131,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
         return nil;
     NSMutableSet<NSString *> *set = [NSMutableSet setWithCapacity:hosts->size()];
     for (const auto& host : *hosts)
-        [set addObject:host.createNSString().get()];
+        [set addObject:createNSString(host).get()];
     return set;
 }
 
@@ -1361,22 +1361,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (NSString *)_overrideContentSecurityPolicy
 {
-    return _pageConfiguration->overrideContentSecurityPolicy().createNSString().autorelease();
+    return createNSString(_pageConfiguration->overrideContentSecurityPolicy()).autorelease();
 }
 
 - (void)_setOverrideContentSecurityPolicy:(NSString *)overrideContentSecurityPolicy
 {
-    protect(*_pageConfiguration)->setOverrideContentSecurityPolicy(overrideContentSecurityPolicy);
+    protect(*_pageConfiguration)->setOverrideContentSecurityPolicy(StringImpl::create(overrideContentSecurityPolicy).get());
 }
 
 - (NSString *)_mediaContentTypesRequiringHardwareSupport
 {
-    return _pageConfiguration->mediaContentTypesRequiringHardwareSupport().createNSString().autorelease();
+    return createNSString(_pageConfiguration->mediaContentTypesRequiringHardwareSupport()).autorelease();
 }
 
 - (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
 {
-    protect(*_pageConfiguration)->setMediaContentTypesRequiringHardwareSupport(mediaContentTypesRequiringHardwareSupport);
+    protect(*_pageConfiguration)->setMediaContentTypesRequiringHardwareSupport(StringImpl::create(mediaContentTypesRequiringHardwareSupport));
 }
 
 - (NSArray<NSString *> *)_additionalSupportedImageTypes
@@ -1390,7 +1390,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setAdditionalSupportedImageTypes:(NSArray<NSString *> *)additionalSupportedImageTypes
 {
     if (additionalSupportedImageTypes)
-        protect(*_pageConfiguration)->setAdditionalSupportedImageTypes(makeVector<String>(additionalSupportedImageTypes));
+        protect(*_pageConfiguration)->setAdditionalSupportedImageTypes(makeVector<RefPtr<StringImpl>>(additionalSupportedImageTypes));
     else
         protect(*_pageConfiguration)->setAdditionalSupportedImageTypes(std::nullopt);
 }
@@ -1478,7 +1478,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setShouldRelaxThirdPartyCookieBlocking:(BOOL)relax
 {
-    bool allowed = applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+    bool allowed = equal(applicationBundleIdentifier(), "com.apple.WebKit.TestWebKitAPI"_s);
 #if PLATFORM(MAC)
     allowed |= WTF::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
@@ -1496,12 +1496,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (NSString *)_processDisplayName
 {
-    return _pageConfiguration->processDisplayName().createNSString().autorelease();
+    return createNSString(_pageConfiguration->processDisplayName()).autorelease();
 }
 
 - (void)_setProcessDisplayName:(NSString *)lsDisplayName
 {
-    protect(*_pageConfiguration)->setProcessDisplayName(lsDisplayName);
+    protect(*_pageConfiguration)->setProcessDisplayName(StringImpl::create(lsDisplayName).get());
 }
 
 - (void)_setSampledPageTopColorMaxDifference:(double)value
@@ -1526,7 +1526,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setAttributedBundleIdentifier:(NSString *)identifier
 {
-    protect(*_pageConfiguration)->setAttributedBundleIdentifier(identifier);
+    protect(*_pageConfiguration)->setAttributedBundleIdentifier(StringImpl::create(identifier));
 }
 
 - (NSString *)_attributedBundleIdentifier
@@ -1534,7 +1534,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     auto& identifier = _pageConfiguration->attributedBundleIdentifier();
     if (!identifier)
         return nil;
-    return identifier.createNSString().autorelease();
+    return createNSString(identifier).autorelease();
 }
 
 - (void)_setContentSecurityPolicyModeForExtension:(_WKContentSecurityPolicyModeForExtension)mode

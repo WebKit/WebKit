@@ -72,7 +72,7 @@ enum class CachePolicy : uint8_t;
 enum class ImageLoading : uint8_t { Immediate, DeferredUntilVisible };
 enum class FetchMetadataSite : uint8_t { None, SameOrigin, SameSite, CrossSite };
 
-const String& convertEnumerationToString(FetchMetadataSite);
+const RefPtr<StringImpl>& convertEnumerationToString(FetchMetadataSite);
 
 // The CachedResourceLoader provides a per-context interface to the MemoryCache
 // and enforces a bunch of security checks and rules for resource revalidation.
@@ -124,10 +124,10 @@ public:
     // Logs an access denied message to the console for the specified URL.
     void printAccessDeniedMessage(const URL& url) const;
 
-    WEBCORE_EXPORT CachedResource* cachedResource(const String& url) const;
+    WEBCORE_EXPORT CachedResource* cachedResource(StringImpl* url) const;
     CachedResource* cachedResource(const URL& url) const;
 
-    typedef HashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;
+    typedef HashMap<RefPtr<StringImpl>, CachedResourceHandle<CachedResource>> DocumentResourceMap;
     const DocumentResourceMap& allCachedResources() const LIFETIME_BOUND { return m_documentResources; }
 
     URL urlWithRequestedFragmentIdentifier(const CachedResource&) const;
@@ -158,7 +158,7 @@ public:
     NODELETE void decrementRequestCount(const CachedResource&);
     int requestCount() const { return m_requestCount; }
 
-    WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;
+    WEBCORE_EXPORT bool isPreloaded(StringImpl* urlString) const;
     enum class ClearPreloadsMode { ClearSpeculativePreloads, ClearAllPreloads };
     void clearPreloads(ClearPreloadsMode);
     ResourceErrorOr<Ref<CachedResource>> preload(CachedResource::Type, CachedResourceRequest&&);
@@ -205,7 +205,7 @@ private:
     Ref<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&, PAL::SessionID, const CookieJar&, const Settings&);
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource&, ResourceError&);
-    void notifyInspectorOfFragmentIdentifier(CachedResource&, const String& fragmentIdentifier);
+    void notifyInspectorOfFragmentIdentifier(CachedResource&, StringImpl* fragmentIdentifier);
     bool checkInsecureContent(CachedResource::Type, const URL&, MixedContentChecker::IsUpgradable, IPAddressSpace targetAddressSpace) const;
 
     void performPostLoadActions();
@@ -219,7 +219,7 @@ private:
     MemoryCompactRobinHoodHashSet<URL> m_validatedURLs;
     WeakHashSet<CachedImage> m_imagesNeedingRenderingUpdate;
     mutable DocumentResourceMap m_documentResources;
-    HashMap<String, String> m_documentResourceFragmentIdentifiers;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_documentResourceFragmentIdentifiers;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     SingleThreadWeakPtr<DocumentLoader> m_documentLoader;
 

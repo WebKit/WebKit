@@ -79,7 +79,7 @@ public:
     bool supportsDropping() const final;
     bool supportsDragging() const final;
     bool isGrabbed() final;
-    Vector<String> determineDropEffects() const final;
+    Vector<RefPtr<StringImpl>> determineDropEffects() const final;
 
     bool canSetSelectedAttribute() const override;
     void setSelected(bool) final;
@@ -126,7 +126,7 @@ public:
 
     std::optional<unsigned> axColumnIndex() const override;
     std::optional<unsigned> axRowIndex() const override;
-    String axRowIndexText() const final;
+    RefPtr<StringImpl> axRowIndexText() const final;
 
     AccessibilityChildrenVector disclosedRows() final;
     AccessibilityObject* disclosedByRow() const final;
@@ -146,7 +146,7 @@ public:
     bool isRowHeader() const final;
     std::pair<unsigned, unsigned> rowIndexRange() const final;
     std::pair<unsigned, unsigned> columnIndexRange() const final;
-    String axColumnIndexText() const final;
+    RefPtr<StringImpl> axColumnIndexText() const final;
     unsigned colSpan() const;
     unsigned rowSpan() const;
     NODELETE void incrementEffectiveRowSpan();
@@ -165,7 +165,7 @@ public:
 
     bool canSetValueAttribute() const override;
 
-    String valueDescription() const override;
+    RefPtr<StringImpl> valueDescription() const override;
     float valueForRange() const override;
     float maxValueForRange() const override;
     float minValueForRange() const override;
@@ -181,16 +181,16 @@ public:
     AccessibilityButtonState checkboxOrRadioValue() const final;
 
     URL url() const override;
-    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
-    String accessibilityDescriptionForChildren() const;
-    String description() const override;
-    String helpText() const override;
-    String revealableText() const final;
+    RefPtr<StringImpl> textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
+    RefPtr<StringImpl> accessibilityDescriptionForChildren() const;
+    RefPtr<StringImpl> description() const override;
+    RefPtr<StringImpl> helpText() const override;
+    RefPtr<StringImpl> revealableText() const final;
     bool isHiddenUntilFoundContainer() const final;
-    String text() const final;
+    RefPtr<StringImpl> text() const final;
     virtual void alternativeText(Vector<AccessibilityText>&) const;
     void helpText(Vector<AccessibilityText>&) const;
-    String stringValue() const override;
+    RefPtr<StringImpl> stringValue() const override;
 
     bool isBlockFlow() const final;
     std::optional<AXStitchGroup> stitchGroup(IncludeGroupMembers = IncludeGroupMembers::Yes) const final;
@@ -198,7 +198,7 @@ public:
 
     WallTime dateTimeValue() const final;
     SRGBA<uint8_t> colorValue() const final;
-    String ariaLabeledByAttribute() const final;
+    RefPtr<StringImpl> ariaLabeledByAttribute() const final;
     bool hasAccNameAttribute() const;
     bool hasAttributesRequiredForInclusion() const final;
     bool hasClickHandler() const final;
@@ -244,7 +244,7 @@ public:
 
     bool usesAltForTextComputation() const;
     bool hasTextAlternative() const;
-    String ariaAccessibilityDescription() const;
+    RefPtr<StringImpl> ariaAccessibilityDescription() const;
 
 protected:
     explicit AccessibilityNodeObject(AXID, Node*, AXObjectCache&);
@@ -298,22 +298,22 @@ protected:
 
     bool elementAttributeValue(const QualifiedName&) const;
 
-    const String explicitLiveRegionStatus() const final { return getAttribute(HTMLNames::aria_liveAttr); }
-    const String explicitLiveRegionRelevant() const final { return getAttribute(HTMLNames::aria_relevantAttr); }
+    const RefPtr<StringImpl> explicitLiveRegionStatus() const final { return getAttribute(HTMLNames::aria_liveAttr); }
+    const RefPtr<StringImpl> explicitLiveRegionRelevant() const final { return getAttribute(HTMLNames::aria_relevantAttr); }
     bool liveRegionAtomic() const final;
 
-    String accessKey() const final;
+    RefPtr<StringImpl> accessKey() const final;
     bool isLabelable() const;
     AccessibilityObject* controlForLabelElement() const final;
-    String textAsLabelFor(const AccessibilityObject&) const;
-    String textForLabelElements(Vector<Ref<HTMLElement>>&&, DescendIntoContainers = DescendIntoContainers::No) const;
+    RefPtr<StringImpl> textAsLabelFor(const AccessibilityObject&) const;
+    RefPtr<StringImpl> textForLabelElements(Vector<Ref<HTMLElement>>&&, DescendIntoContainers = DescendIntoContainers::No) const;
     HTMLLabelElement* labelElementContainer() const;
 
     Vector<Ref<Element>> ariaLabeledByElements() const;
-    String descriptionForElements(const Vector<Ref<Element>>&) const;
+    RefPtr<StringImpl> descriptionForElements(const Vector<Ref<Element>>&) const;
     LayoutRect boundingBoxRect() const override;
     LayoutRect nonEmptyAncestorBoundingBox() const;
-    String ariaDescribedByAttribute() const final;
+    RefPtr<StringImpl> ariaDescribedByAttribute() const final;
 
     AccessibilityObject* captionForFigure() const;
     virtual void labelText(Vector<AccessibilityText>&) const;
@@ -333,7 +333,7 @@ private:
     bool isAccessibilityNodeObject() const final { return true; }
     void accessibilityText(Vector<AccessibilityText>&) const override;
     void visibleText(Vector<AccessibilityText>&) const;
-    String alternativeTextForWebArea() const;
+    RefPtr<StringImpl> alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
     bool roleIgnoresTitle() const;
     bool postKeyboardKeysForValueChange(StepAction);

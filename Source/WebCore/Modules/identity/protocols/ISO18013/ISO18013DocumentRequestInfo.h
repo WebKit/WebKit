@@ -35,7 +35,7 @@ namespace WebCore {
 
 using ISO18013IssuerIdentifiers = Vector<X509SubjectKeyIdentifier>;
 
-using ISO18013ElementReference = HashMap<String, String>;
+using ISO18013ElementReference = HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>;
 
 using ISO18013AlternativeDataElementSet = Vector<ISO18013ElementReference>;
 
@@ -47,8 +47,8 @@ struct ISO18013AlternativeDataElementsSet {
 };
 
 struct ISO18013ZkSystemSpec {
-    String zkSystemId;
-    String system;
+    RefPtr<StringImpl> zkSystemId;
+    RefPtr<StringImpl> system;
 };
 
 struct ISO18013ZkRequest {
@@ -61,13 +61,13 @@ struct ISO18013Any {
         std::monostate,
         int,
         bool,
-        String,
+        RefPtr<StringImpl>,
         Vector<Box<ISO18013Any>>,
-        HashMap<String, Box<ISO18013Any>>
+        HashMap<RefPtr<StringImpl>, Box<ISO18013Any>>
     > data;
 };
 
-using ISO18013DocumentRequestInfoExtension = HashMap<String, ISO18013Any>;
+using ISO18013DocumentRequestInfoExtension = HashMap<RefPtr<StringImpl>, ISO18013Any>;
 
 struct ISO18013DocumentRequestInfo {
     std::optional<ISO18013AlternativeDataElementsSet> alternativeDataElements;
@@ -75,7 +75,7 @@ struct ISO18013DocumentRequestInfo {
     std::optional<bool> uniqueDocSetRequired;
     std::optional<uint32_t> maximumResponseSize;
     std::optional<ISO18013ZkRequest> zkRequest;
-    std::optional<String> encryptionParameterBytes;
+    std::optional<RefPtr<StringImpl>> encryptionParameterBytes;
     ISO18013DocumentRequestInfoExtension extension;
 };
 

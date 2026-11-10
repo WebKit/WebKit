@@ -528,7 +528,7 @@ TEST(ScreenTime, URLIsPlayingVideo)
 
     RetainPtr contentHTML = @"<!DOCTYPE html><html><head></head><body><video src=\"video-with-audio.mp4\" webkit-playsinline></video></body></html>";
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { contentHTML.get() } },
+        { "/"_s, { StringImpl::create(contentHTML.get()) } },
         { "/favicon.ico"_s, { "Actual response is immaterial."_s } },
         { "/video-with-audio.mp4"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"mp4"]] },
     });
@@ -598,7 +598,7 @@ TEST(ScreenTime, URLIsPictureInPicture)
 
     RetainPtr contentHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"PictureInPictureDelegate" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { contentHTML.get() } },
+        { "/"_s, { StringImpl::create(contentHTML.get()) } },
         { "/favicon.ico"_s, { "Actual response is immaterial."_s } },
         { "/test.mp4"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]] },
     });

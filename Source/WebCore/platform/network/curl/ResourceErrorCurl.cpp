@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-static const String& curlErrorDomain()
+static const RefPtr<StringImpl>& curlErrorDomain()
 {
-    static NeverDestroyed<const String> errorDomain(MAKE_STATIC_STRING_IMPL("CurlErrorDomain"));
+    static NeverDestroyed<const RefPtr<StringImpl>> errorDomain(MAKE_STATIC_STRING_IMPL("CurlErrorDomain"));
     return errorDomain;
 }
 
@@ -75,7 +75,7 @@ auto ResourceError::ipcData() const -> std::optional<IPCData>
 
 bool ResourceError::isCertificationVerificationError() const
 {
-    return domain() == curlErrorDomain() && errorCode() == CURLE_PEER_FAILED_VERIFICATION;
+    return equal(domain(), curlErrorDomain()) && errorCode() == CURLE_PEER_FAILED_VERIFICATION;
 }
 
 void ResourceError::doPlatformIsolatedCopy(const ResourceError&)

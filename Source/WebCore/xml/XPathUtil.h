@@ -42,7 +42,7 @@ NODELETE bool isRootDomNode(Node*);
 NODELETE Node& treeRoot(Node&);
 
 /* @return the 'string-value' of the given node as specified by http://www.w3.org/TR/xpath */
-String stringValue(Node&);
+RefPtr<StringImpl> stringValue(Node&);
 
 /* @return whether the given node is a valid context node */
 NODELETE bool isValidContextNode(Node&);

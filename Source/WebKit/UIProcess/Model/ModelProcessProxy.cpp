@@ -137,7 +137,7 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
     auto createConnectionBlock = [this, &webProcessProxy](
         IPC::Connection::Handle&& connectionIdentifier,
         ModelProcessConnectionParameters&& parameters,
-        const std::optional<String>& attributionTaskID) {
+        const std::optional<RefPtr<StringImpl>>& attributionTaskID) {
         sendWithAsyncReply(
             Messages::ModelProcess::CreateModelConnectionToWebProcess {
                 webProcessProxy.coreProcessIdentifier(),
@@ -159,7 +159,7 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
     RELEASE_LOG(ProcessSuspension, "%p - ModelProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
 #if HAVE(TASK_IDENTITY_TOKEN)
-    webProcessProxy.createMemoryAttributionIDIfNeeded([weakThis = WeakPtr { *this }, createConnectionBlock = WTF::move(createConnectionBlock), connectionIdentifier = WTF::move(connectionIdentifier), parameters = WTF::move(parameters)](const std::optional<String>& attributionTaskID) mutable {
+    webProcessProxy.createMemoryAttributionIDIfNeeded([weakThis = WeakPtr { *this }, createConnectionBlock = WTF::move(createConnectionBlock), connectionIdentifier = WTF::move(connectionIdentifier), parameters = WTF::move(parameters)](const std::optional<RefPtr<StringImpl>>& attributionTaskID) mutable {
         if (!weakThis)
             return;
         createConnectionBlock(WTF::move(connectionIdentifier), WTF::move(parameters), attributionTaskID);

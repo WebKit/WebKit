@@ -33,14 +33,14 @@ namespace WebCore {
 // for caching.
 // Forces the use of the jsString() converter (rather than the normal jsStringWithCache()).
 struct UncachedString {
-    String string;
+    RefPtr<StringImpl> string;
 };
 
 // This exists to communicate to the bindings that this string is owned by another
 // object and therefore that collecting the JSString wrapper is unlikely to save memory.
 // Forces the use of the jsOwnedString() converter (rather than the normal jsStringWithCache()).
 struct OwnedString {
-    String string;
+    RefPtr<StringImpl> string;
 };
 
 }

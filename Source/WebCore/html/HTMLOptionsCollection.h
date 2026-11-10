@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT unsigned length() const final;
     WEBCORE_EXPORT HTMLOptionElement* item(unsigned offset) const final;
-    WEBCORE_EXPORT HTMLOptionElement* namedItem(const AtomString& name) const final;
+    WEBCORE_EXPORT HTMLOptionElement* namedItem(AtomStringImpl* name) const final;
     
     ExceptionOr<void> setItem(unsigned index, HTMLOptionElement*);
     

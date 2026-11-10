@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-String ITPThirdPartyData::toString() const
+RefPtr<StringImpl> ITPThirdPartyData::toString() const
 {
     StringBuilder stringBuilder;
     stringBuilder.append("Third Party Registrable Domain: "_s, thirdPartyDomain.string(), "\n    {"_s);

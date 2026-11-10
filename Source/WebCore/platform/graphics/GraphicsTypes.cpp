@@ -75,10 +75,10 @@ static constexpr std::array blendOperatorNames {
 const uint8_t numCompositeOperatorNames = std::size(compositeOperatorNames);
 const uint8_t numBlendOperatorNames = std::size(blendOperatorNames);
 
-bool parseBlendMode(const String& s, BlendMode& blendMode)
+bool parseBlendMode(StringImpl* s, BlendMode& blendMode)
 {
     for (unsigned i = 0; i < numBlendOperatorNames; i++) {
-        if (s == blendOperatorNames[i]) {
+        if (equal(s, blendOperatorNames[i])) {
             blendMode = static_cast<BlendMode>(i + static_cast<unsigned>(BlendMode::Normal));
             return true;
         }
@@ -87,13 +87,13 @@ bool parseBlendMode(const String& s, BlendMode& blendMode)
     return false;
 }
 
-bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, BlendMode& blendOp)
+bool parseCompositeAndBlendOperator(StringImpl* s, CompositeOperator& op, BlendMode& blendOp)
 {
     for (int i = 0; i < numCompositeOperatorNames; i++) {
         // "darker" is a legacy, non-standard name for PlusDarker and is not a valid <composite-mode>, so don't accept it.
         if (static_cast<CompositeOperator>(i) == CompositeOperator::PlusDarker)
             continue;
-        if (s == compositeOperatorNames[i]) {
+        if (equal(s, compositeOperatorNames[i])) {
             op = static_cast<CompositeOperator>(i);
             blendOp = BlendMode::Normal;
             return true;
@@ -111,7 +111,7 @@ bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, Blen
 
 // FIXME: when we support blend modes in combination with compositing other than source-over
 // this routine needs to be updated.
-String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
+RefPtr<StringImpl> compositeOperatorName(CompositeOperator op, BlendMode blendOp)
 {
     ASSERT(op >= CompositeOperator::Clear);
     ASSERT(static_cast<uint8_t>(op) < numCompositeOperatorNames);
@@ -122,7 +122,7 @@ String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
     return compositeOperatorNames[static_cast<unsigned>(op)];
 }
 
-String blendModeName(BlendMode blendOp)
+RefPtr<StringImpl> blendModeName(BlendMode blendOp)
 {
     ASSERT(blendOp >= BlendMode::Normal);
     ASSERT(blendOp <= BlendMode::PlusLighter);

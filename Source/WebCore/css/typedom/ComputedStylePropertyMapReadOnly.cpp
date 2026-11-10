@@ -58,12 +58,12 @@ RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::propertyValue(CSSPropertyID p
     return Style::Extractor { protect(m_element) }.propertyValue(propertyID, Style::Extractor::UpdateLayout::Yes, Style::ExtractorState::PropertyValueType::Computed);
 }
 
-String ComputedStylePropertyMapReadOnly::shorthandPropertySerialization(CSSPropertyID propertyID) const
+RefPtr<StringImpl> ComputedStylePropertyMapReadOnly::shorthandPropertySerialization(CSSPropertyID propertyID) const
 {
     return Style::Extractor { protect(m_element) }.propertyValueSerialization(propertyID, CSS::defaultSerializationContext(), Style::Extractor::UpdateLayout::Yes, Style::ExtractorState::PropertyValueType::Computed);
 }
 
-RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::customPropertyValue(const AtomString& property) const
+RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::customPropertyValue(AtomStringImpl* property) const
 {
     return Style::Extractor { protect(m_element) }.customPropertyValue(property);
 }
@@ -126,8 +126,8 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
                     it.key,
                     StylePropertyMapReadOnly::reifyValueToVector(
                         document,
-                        computedStyleExtractor.customPropertyValue(it.value->name()),
-                        AtomString { it.value->name() }
+                        computedStyleExtractor.customPropertyValue(RefPtr<AtomStringImpl> { it.value->name() }),
+                        RefPtr<AtomStringImpl> { it.value->name() }
                     )
                 )
             );
@@ -138,13 +138,13 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     std::ranges::sort(values, [](const auto& a, const auto& b) {
         const auto& nameA = a.key;
         const auto& nameB = b.key;
-        if (nameA.startsWith("--"_s))
-            return nameB.startsWith("--"_s) && codePointCompareLessThan(nameA, nameB);
+        if (startsWith(nameA, "--"_s))
+            return startsWith(nameB, "--"_s) && codePointCompareLessThan(nameA, nameB);
 
-        if (nameA.startsWith('-'))
-            return nameB.startsWith("--"_s) || (nameB.startsWith('-') && codePointCompareLessThan(nameA, nameB));
+        if (startsWith(nameA, '-'))
+            return startsWith(nameB, "--"_s) || (startsWith(nameB, '-') && codePointCompareLessThan(nameA, nameB));
 
-        return nameB.startsWith('-') || codePointCompareLessThan(nameA, nameB);
+        return startsWith(nameB, '-') || codePointCompareLessThan(nameA, nameB);
     });
 
     return values;

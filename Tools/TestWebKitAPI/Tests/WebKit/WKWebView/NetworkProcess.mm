@@ -82,7 +82,7 @@ TEST(WebKit, HTTPReferer)
             connection.receiveHTTPRequest([connection, expectedReferer, &done] (Vector<char>&& request) {
                 if (expectedReferer) {
                     auto expectedHeaderField = makeString("Referer: "_s, unsafeSpan(expectedReferer), "\r\n"_s);
-                    EXPECT_TRUE(contains(request.span(), byteCast<uint8_t>(expectedHeaderField.utf8().span())));
+                    EXPECT_TRUE(contains(request.span(), byteCast<uint8_t>(utf8(expectedHeaderField).span())));
                 } else
                     EXPECT_FALSE(contains(request.span(), "Referer:"_span));
                 done = true;
@@ -308,14 +308,14 @@ TEST(NetworkProcess, DistinctStoredCredentialsPolicyPartitionsConnections)
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/prime"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "prime"_s) },
-        { "/api"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "api"_s) },
+        { "/prime"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "prime"_si) },
+        { "/api"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "api"_si) },
     });
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@"<body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
-    RetainPtr origin = server.origin().createNSString();
+    RetainPtr origin = createNSString(server.origin());
     RetainPtr script = [NSString stringWithFormat:
         @"await fetch('%@/prime', { mode: 'no-cors', credentials: 'include' });"
         "const response = await fetch('%@/api', { mode: 'cors', credentials: 'omit' });"
@@ -330,14 +330,14 @@ TEST(NetworkProcess, SameStoredCredentialsPolicyReusesConnections)
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/one"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "one"_s) },
-        { "/two"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "two"_s) },
+        { "/one"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "one"_si) },
+        { "/two"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "two"_si) },
     });
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@"<body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
-    RetainPtr origin = server.origin().createNSString();
+    RetainPtr origin = createNSString(server.origin());
     RetainPtr script = [NSString stringWithFormat:
         @"await fetch('%@/one', { mode: 'cors', credentials: 'omit' });"
         "const response = await fetch('%@/two', { mode: 'cors', credentials: 'omit' });"
@@ -381,15 +381,15 @@ static void waitUntilNetworkProcessIsResponsive(WKWebView *webView1, WKWebView *
     // The first WebProcess tries setting a cookie until the second Webview is able to see it.
     auto expectedCookieString = makeString("TEST="_s, createVersion4UUIDString());
     auto setTestCookieString = makeString("setInterval(() => { document.cookie='"_s, expectedCookieString, "'; }, 100);"_s);
-    [webView1 evaluateJavaScript:setTestCookieString.createNSString().get() completionHandler: [&] (id result, NSError *error) {
+    [webView1 evaluateJavaScript:createNSString(setTestCookieString).get() completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
     }];
 
     bool canSecondWebViewSeeNewCookie = false;
     do {
         TestWebKitAPI::Util::spinRunLoop(10);
-        String cookieString = (NSString *)[webView2 objectByEvaluatingJavaScript:@"document.cookie"];
-        canSecondWebViewSeeNewCookie = cookieString.contains(expectedCookieString);
+        RefPtr<StringImpl> cookieString = StringImpl::create((NSString *)[webView2 objectByEvaluatingJavaScript:@"document.cookie"]);
+        canSecondWebViewSeeNewCookie = contains(cookieString, expectedCookieString);
     } while (!canSecondWebViewSeeNewCookie);
 }
 
@@ -568,11 +568,11 @@ TEST(_WKDataTask, Basic)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/initial_request"_s) {
+            if (equal(path, "/initial_request"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(html).serialize());
                 continue;
             }
-            if (path == "/second_request"_s) {
+            if (equal(path, "/second_request"_s)) {
                 secondRequest = WTF::move(request);
                 co_await connection.awaitableSend(HTTPResponse(secondResponse).serialize());
                 continue;
@@ -896,13 +896,13 @@ TEST(WKWebView, CrossOriginDoubleRedirectAuthentication)
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "http://example.com/original-target"_s) {
+            if (equal(path, "http://example.com/original-target"_s)) {
                 EXPECT_TRUE(hasAuthorizationHeaderField(request));
                 co_await connection.awaitableSend(HTTPResponse(302, { { "Location"_s, "http://not-example.com/first-redirect"_s } }, { }).serialize());
-            } else if (path == "http://not-example.com/first-redirect"_s) {
+            } else if (equal(path, "http://not-example.com/first-redirect"_s)) {
                 EXPECT_FALSE(hasAuthorizationHeaderField(request));
                 co_await connection.awaitableSend(HTTPResponse(302, { { "Location"_s, "http://not-example.com/second-redirect"_s } }, { }).serialize());
-            } else if (path == "http://not-example.com/second-redirect"_s) {
+            } else if (equal(path, "http://not-example.com/second-redirect"_s)) {
                 EXPECT_FALSE(hasAuthorizationHeaderField(request));
                 done = true;
             } else
@@ -1130,7 +1130,7 @@ TEST(NetworkProcess, BroadcastChannelOriginSpoof)
 
     HTTPServer server({
         { "/attacker.html"_s, { attackerHTML } },
-        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, String(coreIPCJS) } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(coreIPCJS) } },
     });
 
     auto configuration = createConfigurationWithIPCTestingAPI();

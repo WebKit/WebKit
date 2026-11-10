@@ -105,8 +105,8 @@ struct EditorState {
         bool insideFixedPosition { false };
 #endif
 #if PLATFORM(IOS_FAMILY)
-        String markedText;
-        String wordAtSelection;
+        RefPtr<StringImpl> markedText;
+        RefPtr<StringImpl> wordAtSelection;
         char32_t characterAfterSelection { 0 };
         char32_t characterBeforeSelection { 0 };
         char32_t twoCharacterBeforeSelection { 0 };
@@ -128,11 +128,11 @@ struct EditorState {
 #if PLATFORM(MAC)
         WebCore::IntRect selectionBoundingRect; // FIXME: Maybe this should be on VisualData?
         uint64_t candidateRequestStartPosition { 0 };
-        String paragraphContextForCandidateRequest;
-        String stringForCandidateRequest;
+        RefPtr<StringImpl> paragraphContextForCandidateRequest;
+        RefPtr<StringImpl> stringForCandidateRequest;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        String surroundingContext;
+        RefPtr<StringImpl> surroundingContext;
         uint64_t surroundingContextCursorPosition { 0 };
         uint64_t surroundingContextSelectionPosition { 0 };
 #endif

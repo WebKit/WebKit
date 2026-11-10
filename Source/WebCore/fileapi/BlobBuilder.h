@@ -50,7 +50,7 @@ public:
     void append(Ref<JSC::ArrayBuffer>&&);
     void append(Ref<JSC::ArrayBufferView>&&);
     void append(Ref<Blob>&&);
-    void append(const String& text);
+    void append(StringImpl* text);
     void append(Ref<FragmentedSharedBuffer>&&);
 
     Vector<BlobPart> finalize();

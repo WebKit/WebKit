@@ -384,7 +384,7 @@ inline TextRun LineBox::ellipsisText() const
 {
     ASSERT(hasEllipsis());
 
-    return TextRun { lineEllipsis().text.string(), 0, 0, ExpansionBehavior::defaultBehavior(),
+    return TextRun { lineEllipsis().text.get(), 0, 0, ExpansionBehavior::defaultBehavior(),
         line().isLeftToRightInlineDirection() ? TextDirection::LTR : TextDirection::RTL };
 }
 

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct AudioEncoderActiveConfiguration {
-    String codec { };
+    RefPtr<StringImpl> codec { };
     std::optional<size_t> sampleRate { };
     std::optional<size_t> numberOfChannels { };
     std::optional<uint64_t> bitrate { };

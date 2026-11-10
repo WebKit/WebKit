@@ -57,7 +57,7 @@ public:
 
     friend bool operator==(const ProcessQualified&, const ProcessQualified&) = default;
 
-    String toString() const { return m_object.toString(); }
+    RefPtr<StringImpl> toString() const { return m_object.toString(); }
 
     template<typename Encoder> void encode(Encoder& encoder) const { encoder << m_object << m_processIdentifier; }
     template<typename Decoder> static std::optional<ProcessQualified> decode(Decoder&);

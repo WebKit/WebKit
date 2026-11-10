@@ -122,16 +122,16 @@ void ReportingScope::appendQueuedReportsForRelevantType(ReportingObserver& obser
         observer.appendQueuedReportIfCorrectType(report);
 }
 
-void ReportingScope::parseReportingEndpoints(const String& headerValue, const URL& baseURL)
+void ReportingScope::parseReportingEndpoints(StringImpl* headerValue, const URL& baseURL)
 {
     m_reportingEndpoints = parseReportingEndpointsFromHeader(headerValue, baseURL);
 }
 
 // https://w3c.github.io/reporting/#process-header
 // FIXME: The value in the HashMap should probably be a URL, not a String.
-MemoryCompactRobinHoodHashMap<String, String> ReportingScope::parseReportingEndpointsFromHeader(const String& headerValue, const URL& baseURL)
+MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> ReportingScope::parseReportingEndpointsFromHeader(StringImpl* headerValue, const URL& baseURL)
 {
-    MemoryCompactRobinHoodHashMap<String, String> reportingEndpoints;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> reportingEndpoints;
     auto parsedHeader = RFC8941::parseDictionaryStructuredFieldValue(headerValue);
     if (!parsedHeader)
         return reportingEndpoints;
@@ -140,7 +140,7 @@ MemoryCompactRobinHoodHashMap<String, String> ReportingScope::parseReportingEndp
         auto* bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
         if (!bareItem)
             continue;
-        auto* endpointURLString = std::get_if<String>(bareItem);
+        auto* endpointURLString = std::get_if<RefPtr<StringImpl>>(bareItem);
         if (!endpointURLString)
             continue;
         URL endpointURL(baseURL, *endpointURLString);
@@ -153,15 +153,15 @@ MemoryCompactRobinHoodHashMap<String, String> ReportingScope::parseReportingEndp
     return reportingEndpoints;
 }
 
-String ReportingScope::endpointURIForToken(const String& reportTo) const
+RefPtr<StringImpl> ReportingScope::endpointURIForToken(StringImpl* reportTo) const
 {
     return m_reportingEndpoints.get(reportTo);
 }
 
-void ReportingScope::generateTestReport(String&& message, String&& group)
+void ReportingScope::generateTestReport(RefPtr<StringImpl>&& message, RefPtr<StringImpl>&& group)
 {
     URL testReportURL;
-    String reportURL { ""_s };
+    RefPtr<StringImpl> reportURL { ""_si };
 
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (document) {
@@ -174,11 +174,11 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
     // https://w3c.github.io/reporting/#generate-test-report-command, step 7.1.10.
     if (document) {
         auto reportFormData = Report::createReportFormDataForViolation(testReportBody->type(), testReportURL, document->httpUserAgent(), group, [&](auto& body) {
-            body.setString("body_message"_s, testReportBody->message());
+            body.setString("body_message"_si, testReportBody->message());
         });
 
-        if (group.isNull())
-            group = "default"_s;
+        if (!group)
+            group = "default"_si;
         
         document->sendReportToEndpoints(testReportURL, { }, singleElementSpan(group), WTF::move(reportFormData), ViolationReportType::Test);
     }

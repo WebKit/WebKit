@@ -46,7 +46,7 @@ public:
     size_t selectedIndex(CapturePreviewDeviceType type) const { return type == CapturePreviewDeviceType::Camera ? m_selectedVideoIndex : m_selectedAudioIndex; }
 
     std::optional<WebCore::CaptureDevice> selectedDevice(CapturePreviewDeviceType) const;
-    String selectedDeviceID(CapturePreviewDeviceType) const;
+    RefPtr<StringImpl> selectedDeviceID(CapturePreviewDeviceType) const;
     void select(CapturePreviewDeviceType, size_t index);
     bool canStillSatisfyRequest() const;
     bool hasSameDevices(const Vector<WebCore::CaptureDevice>& videoDevices, const Vector<WebCore::CaptureDevice>& audioDevices) const;

@@ -70,7 +70,7 @@ ImportMap::ImportMap(SpecifierMap&& imports, ScopesMap&& scopesMap, IntegrityMap
     });
 }
 
-std::expected<URL, String> ImportMap::resolveImportMatch(const AtomString& normalizedSpecifier, const URL& asURL, const SpecifierMap& specifierMap)
+std::expected<URL, RefPtr<StringImpl>> ImportMap::resolveImportMatch(AtomStringImpl* normalizedSpecifier, const URL& asURL, const SpecifierMap& specifierMap)
 {
     // https://html.spec.whatwg.org/C#resolving-an-imports-match
 
@@ -87,12 +87,12 @@ std::expected<URL, String> ImportMap::resolveImportMatch(const AtomString& norma
         int64_t length = -1;
         std::optional<URL> matched;
         for (auto& [key, value] : specifierMap) {
-            if (key.endsWith('/')) {
-                auto position = normalizedSpecifier.find(key);
+            if (endsWith(key, '/')) {
+                auto position = find(normalizedSpecifier, key);
                 if (position == 0) {
-                    if (key.length() > length) {
+                    if (WTF::length(key) > length) {
                         matched = value;
-                        length = key.length();
+                        length = WTF::length(key);
                     }
                 }
             }
@@ -101,12 +101,12 @@ std::expected<URL, String> ImportMap::resolveImportMatch(const AtomString& norma
         if (matched) {
             if (matched->isNull())
                 return makeUnexpected("specifier is blocked"_s);
-            auto afterPrefix = normalizedSpecifier.string().substring(length);
-            ASSERT(matched->string().endsWith('/'));
+            auto afterPrefix = substring(normalizedSpecifier, length);
+            ASSERT(endsWith(matched->string(), '/'));
             URL url { matched.value(), afterPrefix };
             if (!url.isValid())
                 return makeUnexpected("specifier is blocked"_s);
-            if (!url.string().startsWith(matched->string()))
+            if (!startsWith(url.string(), matched->string()))
                 return makeUnexpected("specifier is blocked"_s);
             return url;
         }
@@ -115,28 +115,29 @@ std::expected<URL, String> ImportMap::resolveImportMatch(const AtomString& norma
     return { };
 }
 
-static URL parseURLLikeModuleSpecifier(const String& specifier, const URL& baseURL)
+static URL parseURLLikeModuleSpecifier(StringImpl* specifier, const URL& baseURL)
 {
     // https://html.spec.whatwg.org/C#resolving-a-url-like-module-specifier
 
-    if (specifier.startsWith('/') || specifier.startsWith("./"_s) || specifier.startsWith("../"_s))
+    if (startsWith(specifier, '/') || startsWith(specifier, "./"_s) || startsWith(specifier, "../"_s))
         return URL(baseURL, specifier);
 
     return URL { specifier };
 }
 
-URL ImportMap::resolve(const String& specifier, const URL& baseURL)
+URL ImportMap::resolve(StringImpl* specifier, const URL& baseURL)
 {
     // https://html.spec.whatwg.org/C#resolve-a-module-specifier
 
     URL asURL = parseURLLikeModuleSpecifier(specifier, baseURL);
-    AtomString normalizedSpecifier = AtomString(asURL.isValid() ? asURL.string() : specifier);
+    RefPtr<AtomStringImpl> normalizedSpecifier = AtomStringImpl::add(asURL.isValid() ? asURL.string().get() : specifier);
+
     URL resolvedURL;
 
     dataLogLnIf(ImportMapInternal::verbose, "Resolve ", specifier, " with ", baseURL);
     for (auto& scope : m_scopesVector) {
         dataLogLnIf(ImportMapInternal::verbose, "    Scope ", scope);
-        if (scope == baseURL || (scope.string().endsWith('/') && baseURL.string().startsWith(scope.string()))) {
+        if (scope == baseURL || (endsWith(scope.string(), '/') && startsWith(baseURL.string(), scope.string()))) {
             dataLogLnIf(ImportMapInternal::verbose, "        Matching");
             auto result = resolveImportMatch(normalizedSpecifier, asURL, m_scopesMap.get(scope));
             if (!result)
@@ -165,12 +166,12 @@ URL ImportMap::resolve(const String& specifier, const URL& baseURL)
     return resolvedURL;
 }
 
-static String normalizeSpecifierKey(const String& specifierKey, const URL& baseURL, const ImportMap::Reporter& reporter)
+static RefPtr<StringImpl> normalizeSpecifierKey(StringImpl* specifierKey, const URL& baseURL, const ImportMap::Reporter& reporter)
 {
     // https://html.spec.whatwg.org/C#normalizing-a-specifier-key
 
-    if (specifierKey.isEmpty()) [[unlikely]] {
-        reporter.reportWarning("specifier key is empty"_s);
+    if (isEmpty(specifierKey)) [[unlikely]] {
+        reporter.reportWarning("specifier key is empty"_si);
         return nullString();
     }
     URL url = parseURLLikeModuleSpecifier(specifierKey, baseURL);
@@ -186,24 +187,24 @@ static ImportMap::SpecifierMap sortAndNormalizeSpecifierMap(Ref<JSON::Object> im
     ImportMap::SpecifierMap normalized;
     for (auto& key : importsMap->keys()) {
         auto value = importsMap->getValue(key);
-        AtomString normalizedSpecifierKey = AtomString(normalizeSpecifierKey(key, baseURL, reporter));
-        if (normalizedSpecifierKey.isNull())
+        RefPtr<AtomStringImpl> normalizedSpecifierKey = AtomStringImpl::add(normalizeSpecifierKey(key, baseURL, reporter));
+        if (!normalizedSpecifierKey)
             continue;
-        if (auto valueAsString = value->asString(); !valueAsString.isNull()) [[likely]] {
+        if (auto valueAsString = value->asString(); valueAsString) [[likely]] {
             URL addressURL = parseURLLikeModuleSpecifier(valueAsString, baseURL);
             if (!addressURL.isValid()) [[unlikely]] {
                 reporter.reportWarning(makeString("value in specifier map cannot be parsed as URL "_s, valueAsString));
                 normalized.set(normalizedSpecifierKey, URL { });
                 continue;
             }
-            if (key.endsWith('/') && !addressURL.string().endsWith('/')) [[unlikely]] {
+            if (endsWith(key, '/') && !endsWith(addressURL.string(), '/')) [[unlikely]] {
                 reporter.reportWarning(makeString("address "_s, addressURL.string(), " does not end with '/' while key "_s, key, " ends with '/'"_s));
                 normalized.set(normalizedSpecifierKey, URL { });
                 continue;
             }
             normalized.set(normalizedSpecifierKey, WTF::move(addressURL));
         } else {
-            reporter.reportWarning("value in specifier map needs to be a string"_s);
+            reporter.reportWarning("value in specifier map needs to be a string"_si);
             normalized.set(normalizedSpecifierKey, URL { });
             continue;
         }
@@ -217,21 +218,21 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
 
     auto result = JSON::Value::parseJSON(sourceCode.view());
     if (!result) {
-        reporter.reportError("ImportMap has invalid JSON"_s);
+        reporter.reportError("ImportMap has invalid JSON"_si);
         return std::nullopt;
     }
 
     auto rootMap = result->asObject();
     if (!rootMap) {
-        reporter.reportError("ImportMap is not a map"_s);
+        reporter.reportError("ImportMap is not a map"_si);
         return std::nullopt;
     }
 
     SpecifierMap normalizedImports;
-    if (auto importsMapValue = rootMap->getValue("imports"_s)) {
+    if (auto importsMapValue = rootMap->getValue("imports"_si)) {
         auto importsMap = importsMapValue->asObject();
         if (!importsMap) {
-            reporter.reportError("Imports is not a map"_s);
+            reporter.reportError("Imports is not a map"_si);
             return std::nullopt;
         }
 
@@ -239,10 +240,10 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
     }
 
     ScopesMap scopesMap;
-    if (auto scopesMapValue = rootMap->getValue("scopes"_s)) {
+    if (auto scopesMapValue = rootMap->getValue("scopes"_si)) {
         auto scopesMapObject = scopesMapValue->asObject();
         if (!scopesMapObject) {
-            reporter.reportError("scopes is not a map"_s);
+            reporter.reportError("scopes is not a map"_si);
             return std::nullopt;
         }
 
@@ -251,7 +252,7 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
             auto value = scopesMapObject->getValue(key);
             auto potentialSpecifierMap = value->asObject();
             if (!potentialSpecifierMap) {
-                reporter.reportError("scopes' value is not a map"_s);
+                reporter.reportError("scopes' value is not a map"_si);
                 return std::nullopt;
             }
             URL scopePrefixURL { baseURL, key }; // Do not use parseURLLikeModuleSpecifier since we should accept non relative path.
@@ -267,10 +268,10 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
 
     IntegrityMap integrity;
     StringBuilder errorMessage;
-    if (auto integrityValue = rootMap->getValue("integrity"_s)) {
+    if (auto integrityValue = rootMap->getValue("integrity"_si)) {
         auto integrityMap = integrityValue->asObject();
         if (!integrityMap) {
-            reporter.reportError("integrity is not a map"_s);
+            reporter.reportError("integrity is not a map"_si);
             return std::nullopt;
         }
 
@@ -286,7 +287,7 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
             }
 
             auto valueAsString = value->asString();
-            if (valueAsString.isNull()) [[unlikely]] {
+            if (!valueAsString) [[unlikely]] {
                 errorMessage.append("Integrity value of "_s);
                 errorMessage.append(key);
                 errorMessage.append(" is not a string\n"_s);
@@ -303,9 +304,9 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
     return adoptRef(*new ImportMap(WTF::move(normalizedImports), WTF::move(scopesMap), WTF::move(integrity)));
 }
 
-String ImportMap::integrityForURL(const URL& url) const
+RefPtr<StringImpl> ImportMap::integrityForURL(const URL& url) const
 {
-    return url.isNull() ? String() : m_integrity.get(url);
+    return url.isNull() ? nullptr : m_integrity.get(url);
 }
 
 // https://html.spec.whatwg.org/C/#merge-existing-and-new-import-maps
@@ -341,12 +342,13 @@ void ImportMap::mergeExistingAndNewImportMaps(Ref<ImportMap>&& newImportMap, con
         // the current scope and then iterate over the scope's imports, removing any
         // specifiers whose prefix is in the set.
 
-        auto iter = m_scopedResolvedModuleMap.find(AtomString(scope.key.string()));
+        auto iter = m_scopedResolvedModuleMap.find(AtomStringImpl::add(scope.key.string()).get());
         if (iter != m_scopedResolvedModuleMap.end()) {
             auto& currentResolvedSet = iter->value;
             scopeImports.removeIf([&](const auto& pair) {
                 if (currentResolvedSet.find(pair.key) != currentResolvedSet.end()) {
-                    reporter.reportWarning(makeString("An import map scope rule for specifier '"_s, pair.key, "' was removed, as it conflicted with already resolved module specifiers."_s));
+                    auto warning = makeString("An import map scope rule for specifier '"_s, pair.key, "' was removed, as it conflicted with already resolved module specifiers."_s);
+                    reporter.reportWarning(warning);
                     // 3.1.2.1.1. The user agent may report the removed rule as a warning to
                     // the developer console.
                     // 3.1.2.1.2. Remove scopeImports[specifier].
@@ -411,27 +413,27 @@ void ImportMap::mergeExistingAndNewImportMaps(Ref<ImportMap>&& newImportMap, con
     ImportMapInternal::mergeModuleSpecifierMaps(m_imports, newImportMapImports, reporter);
 }
 
-static Vector<AtomString> findURLPrefixes(String specifier)
+static Vector<RefPtr<AtomStringImpl>> findURLPrefixes(RefPtr<StringImpl> specifier)
 {
     constexpr size_t capacity = 6;
     Vector<size_t, capacity> positions;
     constexpr char slash = '/';
-    size_t position = specifier.find(slash);
+    size_t position = find(specifier, slash);
 
     while (position != notFound) {
         positions.append(++position);
-        position = specifier.find(slash, position);
+        position = find(specifier, slash, position);
     }
 
-    Vector<AtomString> result(ReserveCapacityTag { }, positions.size());
+    Vector<RefPtr<AtomStringImpl>> result(ReserveCapacityTag { }, positions.size());
     for (size_t& pos : positions)
-        result.append(AtomString(specifier.substring(0, pos)));
+        result.append(AtomStringImpl::add(substring(specifier, 0, pos)));
 
     return result;
 }
 
 // https://html.spec.whatwg.org/C#add-module-to-resolved-module-set
-void ImportMap::addModuleToResolvedModuleSet(String referringScriptURL, AtomString specifier)
+void ImportMap::addModuleToResolvedModuleSet(RefPtr<StringImpl> referringScriptURL, RefPtr<AtomStringImpl> specifier)
 {
     // 1. Let global be settingsObject's global object.
 
@@ -448,21 +450,21 @@ void ImportMap::addModuleToResolvedModuleSet(String referringScriptURL, AtomStri
     // prefixes to the sets of these referring prefixes in the
     // scoped_resolved_module_map.
     m_toplevelResolvedModuleSet.add(specifier);
-    Vector<AtomString> specifierPrefixes = findURLPrefixes(specifier);
+    Vector<RefPtr<AtomStringImpl>> specifierPrefixes = findURLPrefixes(specifier);
     for (auto& specifierPrefix : specifierPrefixes)
         m_toplevelResolvedModuleSet.add(specifierPrefix);
 
-    Vector<AtomString> referringScriptPrefixes = findURLPrefixes(referringScriptURL);
-    for (AtomString& referringScriptPrefix : referringScriptPrefixes) {
+    Vector<RefPtr<AtomStringImpl>> referringScriptPrefixes = findURLPrefixes(referringScriptURL);
+    for (RefPtr<AtomStringImpl>& referringScriptPrefix : referringScriptPrefixes) {
         const auto& currentSetIt = m_scopedResolvedModuleMap.find(referringScriptPrefix);
-        UncheckedKeyHashSet<AtomString>* currentSet = nullptr;
+        UncheckedKeyHashSet<RefPtr<AtomStringImpl>>* currentSet = nullptr;
         if (currentSetIt != m_scopedResolvedModuleMap.end())
             currentSet = &currentSetIt->value;
         else
-            currentSet = &(m_scopedResolvedModuleMap.set(referringScriptPrefix, UncheckedKeyHashSet<AtomString>()).iterator->value);
+            currentSet = &(m_scopedResolvedModuleMap.set(referringScriptPrefix, UncheckedKeyHashSet<RefPtr<AtomStringImpl>>()).iterator->value);
 
         currentSet->add(specifier);
-        for (AtomString& specifierPrefix : specifierPrefixes)
+        for (RefPtr<AtomStringImpl>& specifierPrefix : specifierPrefixes)
             currentSet->add(specifierPrefix);
     }
 }

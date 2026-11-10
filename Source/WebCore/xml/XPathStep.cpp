@@ -90,8 +90,8 @@ void optimizeStepPair(Step& first, Step& second, bool& dropSecondStep)
     if (!first.m_nodeTest.m_mergedPredicates.isEmpty())
         return;
 
-    ASSERT(first.m_nodeTest.m_data.isEmpty());
-    ASSERT(first.m_nodeTest.m_namespaceURI.isEmpty());
+    ASSERT(isEmpty(first.m_nodeTest.m_data));
+    ASSERT(isEmpty(first.m_nodeTest.m_namespaceURI));
 
     // Optimize the common case of "//" AKA /descendant-or-self::node()/child::NodeTest to /descendant::NodeTest.
     if (second.m_axis != Step::ChildAxis)
@@ -170,14 +170,14 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
         case Step::NodeTest::CommentNodeTest:
             return node.nodeType() == NodeType::Comment;
         case Step::NodeTest::ProcessingInstructionNodeTest: {
-            const AtomString& name = nodeTest.m_data;
-            return node.nodeType() == NodeType::ProcessingInstruction && (name.isEmpty() || node.nodeName() == name);
+            const RefPtr<AtomStringImpl>& name = nodeTest.m_data;
+            return node.nodeType() == NodeType::ProcessingInstruction && (isEmpty(name) || equal(node.nodeName(), name));
         }
         case Step::NodeTest::AnyNodeTest:
             return true;
         case Step::NodeTest::NameTest: {
-            const AtomString& name = nodeTest.m_data;
-            const AtomString& namespaceURI = nodeTest.m_namespaceURI;
+            const RefPtr<AtomStringImpl>& name = nodeTest.m_data;
+            const RefPtr<AtomStringImpl>& namespaceURI = nodeTest.m_namespaceURI;
 
             if (axis == Step::AttributeAxis) {
                 ASSERT(is<Attr>(node));
@@ -187,11 +187,11 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
                     return false;
 
                 if (name == starAtom())
-                    return namespaceURI.isEmpty() || node.namespaceURI() == namespaceURI;
+                    return isEmpty(namespaceURI) || node.namespaceURI() == namespaceURI;
 
                 auto& attr = downcast<Attr>(node);
                 if (attr.document().isHTMLDocument() && attr.ownerElement() && attr.ownerElement()->isHTMLElement()
-                    && namespaceURI.isNull() && attr.namespaceURI().isNull()) {
+                    && !namespaceURI && !attr.namespaceURI()) {
                     return equalIgnoringASCIICase(attr.localName(), name);
                 }
 
@@ -208,15 +208,15 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
                 return false;
 
             if (name == starAtom())
-                return namespaceURI.isEmpty() || namespaceURI == node.namespaceURI();
+                return isEmpty(namespaceURI) || namespaceURI == node.namespaceURI();
 
             if (node.document().isHTMLDocument()) {
                 if (is<HTMLElement>(*element)) {
                     // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
-                    return equalIgnoringASCIICase(element->localName(), name) && (namespaceURI.isNull() || namespaceURI == node.namespaceURI());
+                    return equalIgnoringASCIICase(element->localName(), name) && (!namespaceURI || namespaceURI == node.namespaceURI());
                 }
                 // An expression without any prefix shouldn't match no-namespace nodes (because HTML5 says so).
-                return element->hasLocalName(name) && namespaceURI == node.namespaceURI() && !namespaceURI.isNull();
+                return element->hasLocalName(name) && namespaceURI == node.namespaceURI() && !!namespaceURI;
             }
             return element->hasLocalName(name) && namespaceURI == node.namespaceURI();
         }
@@ -360,7 +360,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
                 RefPtr<Attr> attr;
                 // We need this branch because getAttributeNodeNS() doesn't do
                 // ignore-case matching even for an HTML element in an HTML document.
-                if (m_nodeTest.m_namespaceURI.isNull())
+                if (!m_nodeTest.m_namespaceURI)
                     attr = contextElement->getAttributeNode(m_nodeTest.m_data);
                 else
                     attr = contextElement->getAttributeNodeNS(m_nodeTest.m_namespaceURI, m_nodeTest.m_data);

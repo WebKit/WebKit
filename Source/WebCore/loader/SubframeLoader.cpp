@@ -104,7 +104,7 @@ bool FrameLoader::SubframeLoader::canCreateSubFrame() const
     return true;
 }
 
-void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& ownerElement, const AtomString& frameName)
+void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& ownerElement, AtomStringImpl* frameName)
 {
     if (ownerElement.contentFrame())
         return;
@@ -118,7 +118,7 @@ void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& 
         contentDocument->setReferrerPolicy(ownerElement.referrerPolicy());
 }
 
-bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const String& urlString, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
+bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, StringImpl* urlString, AtomStringImpl* frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
     // Support for <frame src="javascript:string">
     URL url = completeURL(urlString);
@@ -133,17 +133,17 @@ bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerEleme
     return loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
 }
     
-bool FrameLoader::SubframeLoader::resourceWillUsePlugin(const String& url, const String& mimeType)
+bool FrameLoader::SubframeLoader::resourceWillUsePlugin(StringImpl* url, StringImpl* mimeType)
 {
     URL completedURL;
-    if (!url.isEmpty())
+    if (!isEmpty(url))
         completedURL = completeURL(url);
 
     bool useFallback;
     return shouldUsePlugin(completedURL, mimeType, false, useFallback);
 }
 
-bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const HTMLPlugInElement& ownerElement, const String& mimeType) const
+bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const HTMLPlugInElement& ownerElement, StringImpl* mimeType) const
 {
     if (RefPtr document = m_frame->document()) {
         bool isFullMainFramePlugin = m_frame->isMainFrame() && is<PluginDocument>(m_frame->document());
@@ -168,7 +168,7 @@ bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const HTMLPlu
     return true;
 }
 
-static String findPluginMIMETypeFromURL(Page& page, const URL& url)
+static RefPtr<StringImpl> findPluginMIMETypeFromURL(Page& page, const URL& url)
 {
     auto lastPathComponent = url.lastPathComponent();
     size_t dotIndex = lastPathComponent.reverseFind('.');
@@ -187,10 +187,10 @@ static String findPluginMIMETypeFromURL(Page& page, const URL& url)
     return { };
 }
 
-bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInElement& ownerElement, const URL& url, const String& explicitMIMEType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback)
+bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInElement& ownerElement, const URL& url, StringImpl* explicitMIMEType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues, bool useFallback)
 {
-    String mimeType = explicitMIMEType;
-    if (mimeType.isEmpty()) {
+    RefPtr<StringImpl> mimeType = explicitMIMEType;
+    if (isEmpty(mimeType)) {
         if (RefPtr page = ownerElement.document().page())
             mimeType = findPluginMIMETypeFromURL(*page, url);
     }
@@ -208,12 +208,12 @@ bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInElement& ownerElement,
     return loadPlugin(ownerElement, url, explicitMIMEType, paramNames, paramValues, useFallback);
 }
 
-static void logPluginRequest(Page* page, const String& mimeType, const URL& url)
+static void logPluginRequest(Page* page, StringImpl* mimeType, const URL& url)
 {
     if (!page)
         return;
 
-    String newMIMEType = mimeType;
+    RefPtr<StringImpl> newMIMEType = mimeType;
     if (!newMIMEType) {
         // Try to figure out the MIME type from the URL extension.
         newMIMEType = findPluginMIMETypeFromURL(*page, url);
@@ -221,20 +221,20 @@ static void logPluginRequest(Page* page, const String& mimeType, const URL& url)
             return;
     }
 
-    String pluginFile = protect(page->pluginData())->pluginFileForWebVisibleMimeType(newMIMEType);
-    String description = !pluginFile ? newMIMEType : pluginFile;
+    RefPtr<StringImpl> pluginFile = protect(page->pluginData())->pluginFileForWebVisibleMimeType(newMIMEType);
+    RefPtr<StringImpl> description = !pluginFile ? newMIMEType : pluginFile;
     page->sawPlugin(description);
 }
 
-bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInElement& ownerElement, const String& url, const AtomString& frameName, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
+bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInElement& ownerElement, StringImpl* url, AtomStringImpl* frameName, StringImpl* mimeType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues)
 {
-    if (url.isEmpty() && mimeType.isEmpty())
+    if (isEmpty(url) && isEmpty(mimeType))
         return false;
 
     Ref document = ownerElement.document();
 
     URL completedURL;
-    if (!url.isEmpty())
+    if (!isEmpty(url))
         completedURL = completeURL(url);
 
     protect(document->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
@@ -261,7 +261,7 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInElement& ownerElement,
     return loadOrRedirectSubframe(ownerElement, completedURL, frameName, LockHistory::Yes, LockBackForwardList::Yes);
 }
 
-LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestURL, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
+LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestURL, AtomStringImpl* frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
     Ref initiatingDocument = ownerElement.document();
 
@@ -295,7 +295,7 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
     return dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
 }
 
-RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const URL& referrer)
+RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, AtomStringImpl* name, const URL& referrer)
 {
     Ref frame = m_frame;
     Ref document = ownerElement.document();
@@ -345,7 +345,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
 #if ENABLE(CONTENT_EXTENSIONS)
     RefPtr userContentProvider = frame->userContentProvider();
     if ((url.isAboutBlank() || url.isAboutSrcDoc()) && userContentProvider) {
-        userContentProvider->userContentExtensionBackend().forEach([&] (const String& identifier, ContentExtensions::ContentExtension& extension) {
+        userContentProvider->userContentExtensionBackend().forEach([&] (StringImpl* identifier, ContentExtensions::ContentExtension& extension) {
             if (RefPtr styleSheetContents = extension.globalDisplayNoneStyleSheet())
                 protect(protect(subFrame->document())->extensionStyleSheets())->maybeAddContentExtensionSheet(identifier, *styleSheetContents);
         });
@@ -395,7 +395,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     return subFrame;
 }
 
-bool FrameLoader::SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, bool hasFallback, bool& useFallback)
+bool FrameLoader::SubframeLoader::shouldUsePlugin(const URL& url, StringImpl* mimeType, bool hasFallback, bool& useFallback)
 {
     Ref frame = m_frame;
 
@@ -407,7 +407,7 @@ bool FrameLoader::SubframeLoader::shouldUsePlugin(const URL& url, const String& 
     return objectType == ObjectContentType::None || objectType == ObjectContentType::PlugIn;
 }
 
-bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInElement& pluginElement, const URL& url, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback)
+bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInElement& pluginElement, const URL& url, StringImpl* mimeType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues, bool useFallback)
 {
     if (useFallback)
         return false;
@@ -442,7 +442,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInElement& pluginElement, c
     return true;
 }
 
-URL FrameLoader::SubframeLoader::completeURL(const String& url) const
+URL FrameLoader::SubframeLoader::completeURL(StringImpl* url) const
 {
     ASSERT(m_frame->document());
     return protect(m_frame->document())->encodingParseURL(url);

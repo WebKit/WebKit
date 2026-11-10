@@ -84,7 +84,7 @@ public:
         // Do not add new units here; this is deprecated and we shouldn't expose anything not in DOM Level 2 Style.
     };
 
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(Function<String(const CSS::SerializationContext&)>&&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(Function<RefPtr<StringImpl>(const CSS::SerializationContext&)>&&, CSSStyleDeclaration&);
     NODELETE static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::UnconstrainedPrimitiveNumericRaw&, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::UnevaluatedCalcBase&, CSSStyleDeclaration&);
     NODELETE static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ClipRect&, CSSStyleDeclaration&);
@@ -98,19 +98,19 @@ public:
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::URL&, CSSStyleDeclaration&);
     ~DeprecatedCSSOMPrimitiveValue();
 
-    String cssText() const override;
+    RefPtr<StringImpl> cssText() const override;
     NODELETE unsigned short cssValueType() const override;
     bool isPrimitiveValue() const override { return true; }
 
     WEBCORE_EXPORT unsigned short primitiveType() const;
     WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const;
-    WEBCORE_EXPORT ExceptionOr<String> getStringValue() const;
+    WEBCORE_EXPORT ExceptionOr<RefPtr<StringImpl>> getStringValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMCounter>> getCounterValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRect>> getRectValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> getRGBColorValue() const;
 
     static ExceptionOr<void> setFloatValue(unsigned short, double) { return Exception { ExceptionCode::NoModificationAllowedError }; }
-    static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { ExceptionCode::NoModificationAllowedError }; }
+    static ExceptionOr<void> setStringValue(unsigned short, StringImpl*) { return Exception { ExceptionCode::NoModificationAllowedError }; }
 
     bool isCSSWideKeyword() const;
 

@@ -53,11 +53,11 @@ using namespace HTMLNames;
 
 #if !LOG_DISABLED
 
-static String urlForLoggingTrack(const URL& url)
+static RefPtr<StringImpl> urlForLoggingTrack(const URL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
     
-    if (url.string().length() < maximumURLLengthForLogging)
+    if (length(url.string()) < maximumURLLengthForLogging)
         return url.string();
     return makeString(StringView(url.string()).left(maximumURLLengthForLogging), "..."_s);
 }
@@ -116,7 +116,7 @@ void HTMLTrackElement::didMoveToNewDocument(Document& oldDocument, Document& new
     ActiveDOMObject::didMoveToNewDocument(newDocument);
 }
 
-void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLTrackElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     // 4.8.10.12.3 Sourcing out-of-band text tracks
     // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
@@ -125,7 +125,7 @@ void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomStr
         scheduleLoad();
         break;
     case AttributeNames::kindAttr:
-        track().setKindKeywordIgnoringASCIICase(newValue.string());
+        track().setKindKeywordIgnoringASCIICase(newValue);
         break;
     case AttributeNames::labelAttr:
         track().setLabel(newValue);
@@ -140,7 +140,7 @@ void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomStr
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-const AtomString& HTMLTrackElement::kind()
+const RefPtr<AtomStringImpl>& HTMLTrackElement::kind()
 {
     return track().kindKeyword();
 }
@@ -283,7 +283,7 @@ HTMLTrackElement::ReadyState HTMLTrackElement::readyState() const
     return static_cast<ReadyState>(m_track->readinessState());
 }
 
-const AtomString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
+const RefPtr<AtomStringImpl>& HTMLTrackElement::mediaElementCrossOriginAttribute() const
 {
     if (auto parent = mediaElement())
         return parent->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);

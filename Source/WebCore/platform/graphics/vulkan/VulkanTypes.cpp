@@ -531,9 +531,9 @@ static VkBool32 debugUtilsMessengerHandleMessage(VkDebugUtilsMessageSeverityFlag
     messageTypeString.shrink(messageTypeString.length() - 2);
 
     if (data->pMessageIdName)
-        RELEASE_LOG_WITH_LEVEL(Vulkan, logLevel, "[%s: %s] %s", data->pMessageIdName, messageTypeString.toString().utf8(), data->pMessage);
+        RELEASE_LOG_WITH_LEVEL(Vulkan, logLevel, "[%s: %s] %s", data->pMessageIdName, utf8(messageTypeString.toString()), data->pMessage);
     else
-        RELEASE_LOG_WITH_LEVEL(Vulkan, logLevel, "[%s] %s", messageTypeString.toString().utf8(), data->pMessage);
+        RELEASE_LOG_WITH_LEVEL(Vulkan, logLevel, "[%s] %s", utf8(messageTypeString.toString()), data->pMessage);
 
     return VK_FALSE;
 }

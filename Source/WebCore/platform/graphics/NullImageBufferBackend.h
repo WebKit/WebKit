@@ -45,7 +45,7 @@ public:
     void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBufferSourceView&, const IntRect&, const IntPoint&, AlphaPremultiplication) final;
     bool canMapBackingStore() const final;
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
 private:
     using ImageBufferBackend::ImageBufferBackend;

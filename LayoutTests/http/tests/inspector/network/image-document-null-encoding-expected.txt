@@ -1,0 +1,14 @@
+Tests inspector access to an image document (a document without a text decoder, so with a null encoding).
+
+
+== Running test suite: ImageDocument.NullEncoding
+-- Running test case: ImageDocument.NullEncoding.MainResourceContent
+Loaded image document: white.png, type: resource-type-image, MIME type: image/png
+Network.getResponseBody: success, base64Encoded: true, has content: true
+Page.getResourceContent: success, base64Encoded: false, has content: false
+
+-- Running test case: ImageDocument.NullEncoding.RuntimeEvaluateDynamicImport
+PASS: Should have an execution context for the image document.
+Runtime.evaluate: wasThrown: false, result: object  Promise
+Promise settled with: resolved: 42
+

@@ -52,7 +52,7 @@ public:
 
     RefPtr<::WebGPU::Texture> colorTexture() final;
     RefPtr<::WebGPU::Texture> depthStencilTexture() final;
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final;
 
 private:

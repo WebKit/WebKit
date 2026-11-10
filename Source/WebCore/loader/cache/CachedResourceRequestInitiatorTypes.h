@@ -34,12 +34,12 @@ namespace WebCore {
 struct CachedResourceRequestInitiatorTypes {
     CachedResourceRequestInitiatorTypes();
 
-    const AtomString css;
-    const AtomString eventsource;
-    const AtomString fetch;
-    const AtomString icon;
-    const AtomString navigation;
-    const AtomString xmlhttprequest;
+    const RefPtr<AtomStringImpl> css;
+    const RefPtr<AtomStringImpl> eventsource;
+    const RefPtr<AtomStringImpl> fetch;
+    const RefPtr<AtomStringImpl> icon;
+    const RefPtr<AtomStringImpl> navigation;
+    const RefPtr<AtomStringImpl> xmlhttprequest;
     WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiatorTypes);
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceRequestInitiatorTypes, Loader);
 private:

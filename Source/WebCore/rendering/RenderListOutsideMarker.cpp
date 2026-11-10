@@ -486,12 +486,12 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
             return ListMarkerTextContent { .textWithSuffix = " "_s, .textWithoutSuffixLength = 0 };
         },
         [&](const Style::String& identifier) {
-            return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = identifier.value.length() };
+            return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = length(identifier.value) };
         },
         [&](const auto& counterStyle) {
             auto counter = listItem.document().counterStyleRegistry().resolvedCounterStyle(counterStyle);
             auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
-            return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
+            return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = length(text) };
         }
     );
 }
@@ -501,7 +501,7 @@ bool RenderListOutsideMarker::synthesizesGlyph() const
     return listMarkerSynthesizesGlyph(style(), protect(document()));
 }
 
-std::pair<float, float> RenderListOutsideMarker::layoutBoundForTextContent(String text) const
+std::pair<float, float> RenderListOutsideMarker::layoutBoundForTextContent(RefPtr<StringImpl> text) const
 {
     // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
     // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.

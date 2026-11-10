@@ -165,7 +165,7 @@ NODELETE static StringView singularUnit(StringView unit)
 }
 
 // For use in error messages where a string value is potentially unbounded
-WTF::String ellipsizeAt(unsigned maxLength, StringView string)
+RefPtr<StringImpl> ellipsizeAt(unsigned maxLength, StringView string)
 {
     if (string.length() <= maxLength)
         return string.toString();
@@ -235,7 +235,7 @@ Variant<TemporalAuto, std::optional<TemporalUnit>> temporalUnitValued(JSGlobalOb
     // Steps 1-3: Build allowedStrings (all singular + plural unit names + "auto") and call GetOption.
     // NOTE: intlStringOption with empty allowed list accepts any string; validation against
     // the unit table is deferred to temporalUnitType() below, preserving the same observable behavior.
-    String unit = intlStringOption(globalObject, options, key, { }, { }, { });
+    RefPtr<StringImpl> unit = intlStringOption(globalObject, options, key, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     // Step 4: If value is undefined:
@@ -249,13 +249,13 @@ Variant<TemporalAuto, std::optional<TemporalUnit>> temporalUnitValued(JSGlobalOb
     }
 
     // Step 5: If value is "auto", return ~auto~.
-    if (unit == "auto"_s)
+    if (equal(unit, "auto"_s))
         return TemporalAuto::Auto;
 
     // Step 6: Return the Temporal unit for the string (singular or plural).
     auto unitType = temporalUnitType(unit);
     if (!unitType) [[unlikely]] {
-        throwRangeError(globalObject, scope, "invalid Temporal unit"_s);
+        throwRangeError(globalObject, scope, "invalid Temporal unit"_si);
         return std::nullopt;
     }
     return unitType;
@@ -346,7 +346,7 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
         auto largestUnitOptional = std::get<std::optional<TemporalUnit>>(largestUnitMaybeAuto);
         if (largestUnitOptional && disallowedUnitsList.size()
             && std::ranges::find(disallowedUnitsList, largestUnitOptional.value()) != disallowedUnitsList.end()) [[unlikely]] {
-            throwRangeError(globalObject, scope, "largestUnit is a disallowed unit"_s);
+            throwRangeError(globalObject, scope, "largestUnit is a disallowed unit"_si);
             return { };
         }
     }
@@ -359,7 +359,7 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
     auto smallestUnit = smallestUnitOptional.value_or(fallbackSmallestUnit);
     // Step 11: If disallowedUnits contains smallestUnit, throw a RangeError exception.
     if (disallowedUnitsList.size() && std::ranges::find(disallowedUnitsList, smallestUnit) != disallowedUnitsList.end()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_s);
+        throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_si);
         return { };
     }
 
@@ -375,7 +375,7 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
 
     // Step 14: If LargerOfTwoTemporalUnits(largestUnit, smallestUnit) is not largestUnit, throw a RangeError exception.
     if (smallestUnit < largestUnit) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
+        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_si);
         return { };
     }
 
@@ -419,10 +419,10 @@ std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject* globalObj
         return static_cast<unsigned>(doubleValue);
     }
 
-    String stringValue = value.toWTFString(globalObject);
+    RefPtr<StringImpl> stringValue = value.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
-    if (stringValue != "auto"_s) [[unlikely]]
+    if (!equal(stringValue, "auto"_s)) [[unlikely]]
         throwRangeError(globalObject, scope, makeString("fractionalSecondDigits must be 'auto' or 0 through 9, not "_s, ellipsizeAt(100, stringValue)));
 
     return std::nullopt;
@@ -483,10 +483,10 @@ void formatSecondsStringFraction(StringBuilder& builder, unsigned fraction, std:
     if ((precisionType == Precision::Auto && fraction) || (precisionType == Precision::Fixed && precisionValue)) {
         auto padded = makeString('.', pad('0', 9, fraction));
         if (precisionType == Precision::Fixed)
-            builder.append(StringView(padded).left(padded.length() - (9 - precisionValue)));
+            builder.append(StringView(padded).left(length(padded) - (9 - precisionValue)));
         else {
-            auto lengthWithoutTrailingZeroes = padded.length();
-            while (padded[lengthWithoutTrailingZeroes - 1] == '0')
+            auto lengthWithoutTrailingZeroes = length(padded);
+            while (codeUnitAt(padded, lengthWithoutTrailingZeroes - 1) == '0')
                 lengthWithoutTrailingZeroes--;
             builder.append(StringView(padded).left(lengthWithoutTrailingZeroes));
         }
@@ -544,7 +544,7 @@ double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options
 
     // Step 3: ToIntegerWithTruncation — if not finite, throw a RangeError.
     if (!std::isfinite(increment)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "roundingIncrement must be a finite integer"_s);
+        throwRangeError(globalObject, scope, "roundingIncrement must be a finite integer"_si);
         return 0;
     }
 
@@ -553,7 +553,7 @@ double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options
 
     // Step 4: If integerIncrement < 1 or integerIncrement > 10^9, throw a RangeError.
     if (integerIncrement < 1 || integerIncrement > 1e9) [[unlikely]] {
-        throwRangeError(globalObject, scope, "roundingIncrement must be in the range 1 to 10^9 inclusive"_s);
+        throwRangeError(globalObject, scope, "roundingIncrement must be in the range 1 to 10^9 inclusive"_si);
         return 0;
     }
 
@@ -580,11 +580,11 @@ TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSValue val)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporalshowcalendarnameoption
-String temporalShowCalendarName(JSGlobalObject* globalObject, JSObject* options)
+RefPtr<StringImpl> temporalShowCalendarName(JSGlobalObject* globalObject, JSObject* options)
 {
-    return intlOption<String>(globalObject, options, globalObject->vm().propertyNames->calendarName,
+    return intlOption<RefPtr<StringImpl>>(globalObject, options, globalObject->vm().propertyNames->calendarName,
         { { "auto"_s, "auto"_s }, { "always"_s, "always"_s }, { "never"_s, "never"_s }, { "critical"_s, "critical"_s } },
-        "calendarName must be \"auto\", \"always\", \"never\", or \"critical\""_s, "auto"_s);
+        "calendarName must be \"auto\", \"always\", \"never\", or \"critical\""_s, "auto"_si);
 }
 
 // ToTemporalCalendarIdentifier ( temporalCalendarLike )
@@ -737,7 +737,7 @@ std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject* globalObjec
         throwTypeError(globalObject, scope, "time zone must be a string or ZonedDateTime"_s);
         return std::nullopt;
     }
-    String tzString = asString(item)->value(globalObject);
+    RefPtr<StringImpl> tzString = asString(item)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     auto throwInvalidTimeZoneIdentifier = [&] {

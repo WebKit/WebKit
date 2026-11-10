@@ -30,17 +30,17 @@ namespace WTF {
 // Using pango_language_get_default() here is not an option, because
 // it doesn't support changing the locale in runtime, so it returns
 // always the same value.
-static String platformLanguage()
+static RefPtr<StringImpl> platformLanguage()
 {
-    auto localeDefault = String::fromLatin1(setlocale(LC_CTYPE, nullptr));
-    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C"_s) || equalIgnoringASCIICase(localeDefault, "POSIX"_s))
-        return "en-US"_s;
+    auto localeDefault = StringImpl::fromLatin1(setlocale(LC_CTYPE, nullptr));
+    if (isEmpty(localeDefault) || equalIgnoringASCIICase(localeDefault, "C"_s) || equalIgnoringASCIICase(localeDefault, "POSIX"_s))
+        return "en-US"_si;
 
     auto normalizedDefault = makeStringByReplacingAll(localeDefault, '_', '-');
-    return normalizedDefault.left(normalizedDefault.find('.'));
+    return left(normalizedDefault, find(normalizedDefault, '.'));
 }
 
-Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
+Vector<RefPtr<StringImpl>> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
     return { platformLanguage() };
 }

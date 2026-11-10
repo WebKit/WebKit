@@ -99,12 +99,12 @@ static GType videoEncoderLatencyModeGetType()
 
 static ASCIILiteral annexBStreamFormatCapsFieldValue(UTF8CStringView name)
 {
-    static HashMap<String, ASCIILiteral> map = {
+    static HashMap<RefPtr<StringImpl>, ASCIILiteral> map = {
         { "video/x-h264"_s, "byte-stream"_s },
         { "video/x-h265"_s, "byte-stream"_s },
         { "video/x-av1"_s, "annexb"_s }
     };
-    return map.get(name.span());
+    return map.get(StringImpl::create(name.span()));
 }
 
 using SetBitrateFunc = Function<void(GObject* encoder, ASCIILiteral propertyName, int bitrate)>;
@@ -407,7 +407,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     }
 
     gst_bin_sync_children_states(bin);
-    dumpBinToDotFile(bin, "configured-encoder"_s);
+    dumpBinToDotFile(bin, "configured-encoder"_si);
     videoEncoderSetBitrate(self, priv->bitrate);
     return true;
 }
@@ -439,7 +439,7 @@ EncoderId videoEncoderFindForFormat([[maybe_unused]] WebKitVideoEncoder* self, c
     return candidates[0].first;
 }
 
-bool videoEncoderSupportsCodec(WebKitVideoEncoder* self, const String& codecName)
+bool videoEncoderSupportsCodec(WebKitVideoEncoder* self, StringImpl* codecName)
 {
     auto [_, outputCaps] = GStreamerCodecUtilities::capsFromCodecString(codecName, { });
     return videoEncoderFindForFormat(self, outputCaps) != None;
@@ -459,7 +459,7 @@ bool videoEncoderSetCodec(WebKitVideoEncoder* self, const CodecConfig& config, c
     GST_DEBUG_OBJECT(self, "Output caps: %" GST_PTR_FORMAT, outputCaps.get());
     auto encoderId = videoEncoderFindForFormat(self, outputCaps);
     if (encoderId == None) {
-        GST_ERROR_OBJECT(self, "No encoder found for codec %s", config.name.ascii().data());
+        GST_ERROR_OBJECT(self, "No encoder found for codec %s", ascii(config.name).data());
         return false;
     }
 
@@ -957,7 +957,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 return;
             setBitrateKbitPerSec(object, propertyName, bitrate);
             auto bitrateMode = GPOINTER_TO_INT(g_object_get_qdata(object, x265BitrateQuark));
-            String options;
+            RefPtr<StringImpl> options;
             switch (bitrateMode) {
             case CONSTANT_BITRATE_MODE:
                 options = makeString("vbv-maxrate="_s, bitrate, ":vbv-bufsize="_s, bitrate / 2);
@@ -966,7 +966,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 options = "vbv-maxrate=0:vbv-bufsize=0"_s;
                 break;
             };
-            g_object_set(object, "option-string", options.ascii().data(), nullptr);
+            g_object_set(object, "option-string", ascii(options).data(), nullptr);
         }, "key-int-max"_s, [](GstElement* encoder, BitrateMode mode) {
             g_object_set_qdata(G_OBJECT(encoder), x265BitrateQuark, GINT_TO_POINTER(mode));
         }, [](GstElement* encoder, LatencyMode mode) {

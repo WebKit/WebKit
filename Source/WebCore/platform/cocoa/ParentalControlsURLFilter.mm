@@ -47,24 +47,24 @@ namespace WebCore {
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
 
-static bool wcrBrowserEngineClientEnabled(const String& path)
+static bool wcrBrowserEngineClientEnabled(StringImpl* path)
 {
-    if (!path.isEmpty())
-        return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLsForConfigurationAtPath:path.createNSString().get()];
+    if (!isEmpty(path))
+        return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLsForConfigurationAtPath:createNSString(path).get()];
 
     return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLs];
 }
 
-static HashMap<String, Ref<ParentalControlsURLFilter>>& allFiltersWithConfigurationPath()
+static HashMap<RefPtr<StringImpl>, Ref<ParentalControlsURLFilter>>& allFiltersWithConfigurationPath()
 {
-    static MainThreadNeverDestroyed<HashMap<String, Ref<ParentalControlsURLFilter>>> map;
+    static MainThreadNeverDestroyed<HashMap<RefPtr<StringImpl>, Ref<ParentalControlsURLFilter>>> map;
     return map;
 }
 
-ParentalControlsURLFilter& ParentalControlsURLFilter::filterWithConfigurationPath(const String& path)
+ParentalControlsURLFilter& ParentalControlsURLFilter::filterWithConfigurationPath(StringImpl* path)
 {
     // Coalesce null string into the empty string.
-    String key = path.isEmpty() ? emptyString() : path;
+    RefPtr<StringImpl> key = isEmpty(path) ? emptyString().get() : path;
 
     auto& map = allFiltersWithConfigurationPath();
     auto iterator = map.find(key);
@@ -74,7 +74,7 @@ ParentalControlsURLFilter& ParentalControlsURLFilter::filterWithConfigurationPat
     return map.set(key, adoptRef(*new ParentalControlsURLFilter(path))).iterator->value.get();
 }
 
-ParentalControlsURLFilter::ParentalControlsURLFilter(const String& configurationPath)
+ParentalControlsURLFilter::ParentalControlsURLFilter(StringImpl* configurationPath)
     : m_configurationPath(configurationPath)
 {
 }
@@ -317,8 +317,8 @@ WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClie
         return nullptr;
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    if (!m_wcrBrowserEngineClient && !m_configurationPath.isEmpty())
-        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
+    if (!m_wcrBrowserEngineClient && !isEmpty(m_configurationPath))
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:createNSString(m_configurationPath).get()]));
 #endif
 
     if (!m_wcrBrowserEngineClient)

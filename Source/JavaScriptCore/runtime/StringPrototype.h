@@ -53,10 +53,10 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringPrototype, StringObject);
 
-void substituteBackreferences(StringBuilder& result, const String& replacement, StringView source, const int* ovector, RegExp*);
+void substituteBackreferences(StringBuilder& result, StringImpl* replacement, StringView source, const int* ovector, RegExp*);
 void substituteBackreferencesSlow(StringBuilder& result, StringView replacement, StringView source, const int* ovector, RegExp*, size_t firstDollarSignPosition);
 
-JSString* replaceUsingRegExpSearch(VM&, JSGlobalObject*, JSString*, JSValue searchValue, const CallData&, const String& replacementString, JSValue replaceValue);
+JSString* replaceUsingRegExpSearch(VM&, JSGlobalObject*, JSString*, JSValue searchValue, const CallData&, StringImpl* replacementString, JSValue replaceValue);
 JSString* replaceUsingRegExpSearch(VM&, JSGlobalObject*, JSString*, JSValue searchValue, JSValue replaceValue);
 
 JSC_DECLARE_HOST_FUNCTION(stringProtoFuncRepeatCharacter);

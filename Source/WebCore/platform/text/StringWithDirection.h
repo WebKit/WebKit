@@ -46,15 +46,19 @@ namespace WebCore {
 // to the string.
 
 struct StringWithDirection {
-    String string;
+    RefPtr<StringImpl> string;
     TextDirection direction { TextDirection::LTR };
 
-    friend bool operator==(const StringWithDirection&, const StringWithDirection&) = default;
+    friend bool operator==(const StringWithDirection& a, const StringWithDirection& b)
+    {
+        return contentEquals(a.string, b.string)
+            && a.direction == b.direction;
+    }
 };
 
 inline StringWithDirection truncateFromEnd(const StringWithDirection& string, unsigned maxLength)
 {
-    return { string.string.left(maxLength), string.direction };
+    return { left(string.string, maxLength), string.direction };
 }
 
 }

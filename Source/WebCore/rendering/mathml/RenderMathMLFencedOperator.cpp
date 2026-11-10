@@ -41,7 +41,7 @@ using namespace MathMLOperatorDictionary;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLFencedOperator);
 
-RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, Style::ComputedStyle&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
+RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, Style::ComputedStyle&& style, StringImpl* operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
     : RenderMathMLOperator(Type::MathMLFencedOperator, document, WTF::move(style))
     , m_operatorForm(form)
     , m_operatorFlags(flags)
@@ -52,7 +52,7 @@ RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, Style
 
 RenderMathMLFencedOperator::~RenderMathMLFencedOperator() = default;
 
-void RenderMathMLFencedOperator::updateOperatorContent(const String& operatorString)
+void RenderMathMLFencedOperator::updateOperatorContent(StringImpl* operatorString)
 {
     m_operatorChar = MathMLOperatorElement::parseOperatorChar(operatorString);
 

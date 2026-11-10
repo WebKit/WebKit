@@ -157,7 +157,7 @@ bool HTMLCanvasElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLCanvasElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLCanvasElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
@@ -167,7 +167,7 @@ void HTMLCanvasElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLCanvasElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == widthAttr || name == heightAttr) {
         if (!isControlledByOffscreen())
@@ -210,7 +210,7 @@ ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
 {
     if (isControlledByOffscreen())
         return Exception { ExceptionCode::InvalidStateError };
-    setAttributeWithoutSynchronization(heightAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
+    setAttributeWithoutSynchronization(heightAttr, AtomStringImpl::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
     return { };
 }
 
@@ -218,11 +218,11 @@ ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
 {
     if (isControlledByOffscreen())
         return Exception { ExceptionCode::InvalidStateError };
-    setAttributeWithoutSynchronization(widthAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
+    setAttributeWithoutSynchronization(widthAttr, AtomStringImpl::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
     return { };
 }
 
-const AtomString& HTMLCanvasElement::canvasContentForBindings() const
+const RefPtr<AtomStringImpl>& HTMLCanvasElement::canvasContentForBindings() const
 {
     return attributeWithoutSynchronization(contentAttr);
 }
@@ -302,13 +302,13 @@ void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)
     if (newSize == size())
         return;
     m_ignoreDidUpdateSizeProperties = true;
-    setAttributeWithoutSynchronization(widthAttr, AtomString::number(limitToOnlyHTMLNonNegative(newSize.width(), defaultWidth)));
-    setAttributeWithoutSynchronization(heightAttr, AtomString::number(limitToOnlyHTMLNonNegative(newSize.height(), defaultHeight)));
+    setAttributeWithoutSynchronization(widthAttr, AtomStringImpl::number(limitToOnlyHTMLNonNegative(newSize.width(), defaultWidth)));
+    setAttributeWithoutSynchronization(heightAttr, AtomStringImpl::number(limitToOnlyHTMLNonNegative(newSize.height(), defaultHeight)));
     m_ignoreDidUpdateSizeProperties = false;
     didUpdateSizeProperties();
 }
 
-ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlobalObject& state, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlobalObject& state, StringImpl* contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     auto getExistingContext = [&]() -> ExceptionOr<std::optional<RenderingContext>> {
         ASSERT(m_context);
@@ -428,7 +428,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     return std::optional<RenderingContext> { std::nullopt };
 }
 
-RefPtr<CanvasRenderingContext> HTMLCanvasElement::getContext(const String& type)
+RefPtr<CanvasRenderingContext> HTMLCanvasElement::getContext(StringImpl* type)
 {
     if (HTMLCanvasElement::is2dType(type))
         return getContext2d(type, { });
@@ -451,12 +451,12 @@ RefPtr<CanvasRenderingContext> HTMLCanvasElement::getContext(const String& type)
     return nullptr;
 }
 
-bool HTMLCanvasElement::is2dType(const String& type)
+bool HTMLCanvasElement::is2dType(StringImpl* type)
 {
-    return type == "2d"_s;
+    return equal(type, "2d"_s);
 }
 
-CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
+CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(StringImpl* type, CanvasRenderingContext2DSettings&& settings)
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
     ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
@@ -482,7 +482,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
     return downcast<CanvasRenderingContext2D>(m_context);
 }
 
-CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
+CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(StringImpl* type, CanvasRenderingContext2DSettings&& settings)
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
 
@@ -493,18 +493,18 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, Ca
 
 #if ENABLE(WEBGL)
 
-bool HTMLCanvasElement::isWebGLType(const String& type)
+bool HTMLCanvasElement::isWebGLType(StringImpl* type)
 {
     // Retain support for the legacy "webkit-3d" name.
-    return type == "webgl"_s || type == "experimental-webgl"_s
-        || type == "webgl2"_s
-        || type == "webkit-3d"_s;
+    return equal(type, "webgl"_s) || equal(type, "experimental-webgl"_s)
+        || equal(type, "webgl2"_s)
+        || equal(type, "webkit-3d"_s);
 }
 
-WebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
+WebGLVersion HTMLCanvasElement::toWebGLVersion(StringImpl* type)
 {
     ASSERT(isWebGLType(type));
-    if (type == "webgl2"_s)
+    if (equal(type, "webgl2"_s))
         return WebGLVersion::WebGL2;
     return WebGLVersion::WebGL1;
 }
@@ -560,12 +560,12 @@ RefPtr<WebGLRenderingContextBase> HTMLCanvasElement::getContextWebGL(WebGLVersio
 
 #endif // ENABLE(WEBGL)
 
-bool HTMLCanvasElement::isBitmapRendererType(const String& type)
+bool HTMLCanvasElement::isBitmapRendererType(StringImpl* type)
 {
-    return type == "bitmaprenderer"_s;
+    return equal(type, "bitmaprenderer"_s);
 }
 
-ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)
+ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(StringImpl* type, ImageBitmapRenderingContextSettings&& settings)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
     ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
@@ -583,7 +583,7 @@ ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(cons
     return weakContext.get();
 }
 
-ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)
+ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(StringImpl* type, ImageBitmapRenderingContextSettings&& settings)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
 
@@ -592,12 +592,12 @@ ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const S
     return dynamicDowncast<ImageBitmapRenderingContext>(m_context);
 }
 
-bool HTMLCanvasElement::isWebGPUType(const String& type)
+bool HTMLCanvasElement::isWebGPUType(StringImpl* type)
 {
-    return type == "webgpu"_s;
+    return equal(type, "webgpu"_s);
 }
 
-GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU* gpu)
+GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(StringImpl* type, GPU* gpu)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
     ASSERT_WITH_SECURITY_IMPLICATION(!m_context);
@@ -619,7 +619,7 @@ GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU
     return downcast<GPUCanvasContext>(m_context);
 }
 
-GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* gpu)
+GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(StringImpl* type, GPU* gpu)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
 
@@ -742,11 +742,11 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
         InspectorInstrumentation::didFinishRecordingCanvasFrame(*renderingContext);
 }
 
-static String toEncodingMimeType(const String& mimeType)
+static RefPtr<StringImpl> toEncodingMimeType(StringImpl* mimeType)
 {
     if (!MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
-        return "image/png"_s;
-    return mimeType.convertToASCIILowercase();
+        return "image/png"_si;
+    return convertToASCIILowercase(mimeType);
 }
 
 // https://html.spec.whatwg.org/multipage/canvas.html#a-serialisation-of-the-bitmap-as-a-file
@@ -762,7 +762,7 @@ NODELETE static std::optional<double> qualityFromJSValue(JSC::JSValue qualityVal
     return qualityNumber;
 }
 
-ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType, JSC::JSValue qualityValue)
+ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(StringImpl* mimeType, JSC::JSValue qualityValue)
 {
     if (!originClean())
         return Exception { ExceptionCode::SecurityError };
@@ -785,21 +785,21 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
         return UncachedString { encodeDataURL(imageData->byteArrayPixelBuffer().get(), encodingMIMEType, quality) };
 #endif
 
-    if (auto url = document->quirks().advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(lastFillText(), width(), height()); !url.isNull()) {
+    if (auto url = document->quirks().advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(lastFillText(), width(), height()); url) {
         RELEASE_LOG_INFO(FingerprintingMitigation, "HTMLCanvasElement::toDataURL: Quirking returned URL for identified fingerprinting script");
         auto consoleMessage = "Detected fingerprinting script. Quirking value returned from HTMLCanvasElement.toDataURL()"_s;
-        protect(canvasBaseScriptExecutionContext())->addConsoleMessage(MessageSource::Rendering, MessageLevel::Info, consoleMessage);
+        protect(canvasBaseScriptExecutionContext())->addConsoleMessage(MessageSource::Rendering, MessageLevel::Info, StringImpl::create(consoleMessage).ptr());
         return UncachedString { url };
     }
     return UncachedString { encodeDataURL(makeRenderingResultsAvailable(), encodingMIMEType, quality) };
 }
 
-ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
+ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(StringImpl* mimeType)
 {
     return toDataURL(mimeType, { });
 }
 
-ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
+ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, StringImpl* mimeType, JSC::JSValue qualityValue)
 {
     if (!originClean())
         return Exception { ExceptionCode::SecurityError };
@@ -910,13 +910,13 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(std::optional<double>&& frameRequestRate)
 {
     if (!originClean())
-        return Exception(ExceptionCode::SecurityError, "Canvas is tainted"_s);
+        return Exception(ExceptionCode::SecurityError, "Canvas is tainted"_si);
     Ref document = this->document();
     if (document->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::singleton().logCanvasRead(document.get());
 
     if (frameRequestRate && frameRequestRate.value() < 0)
-        return Exception(ExceptionCode::NotSupportedError, "frameRequestRate is negative"_s);
+        return Exception(ExceptionCode::NotSupportedError, "frameRequestRate is negative"_si);
 
     auto track = CanvasCaptureMediaStreamTrack::create(document.get(), *this, WTF::move(frameRequestRate));
     auto stream = MediaStream::create(document.get());

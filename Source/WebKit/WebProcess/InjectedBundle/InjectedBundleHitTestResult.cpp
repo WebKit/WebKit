@@ -79,22 +79,22 @@ RefPtr<WebFrame> InjectedBundleHitTestResult::targetFrame() const
     return frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 }
 
-String InjectedBundleHitTestResult::absoluteImageURL() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::absoluteImageURL() const
 {
     return m_hitTestResult.absoluteImageURL().string();
 }
 
-String InjectedBundleHitTestResult::absolutePDFURL() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::absolutePDFURL() const
 {
     return m_hitTestResult.absolutePDFURL().string();
 }
 
-String InjectedBundleHitTestResult::absoluteLinkURL() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::absoluteLinkURL() const
 {
     return m_hitTestResult.absoluteLinkURL().string();
 }
 
-String InjectedBundleHitTestResult::absoluteMediaURL() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::absoluteMediaURL() const
 {
     return m_hitTestResult.absoluteMediaURL().string();
 }
@@ -125,17 +125,17 @@ BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
 #endif
 }
 
-String InjectedBundleHitTestResult::linkLabel() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::linkLabel() const
 {
     return m_hitTestResult.textContent();
 }
 
-String InjectedBundleHitTestResult::linkTitle() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::linkTitle() const
 {
     return m_hitTestResult.titleDisplayString();
 }
 
-String InjectedBundleHitTestResult::linkSuggestedFilename() const
+RefPtr<StringImpl> InjectedBundleHitTestResult::linkSuggestedFilename() const
 {
     return m_hitTestResult.linkSuggestedFilename();
 }

@@ -35,9 +35,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUBlendComponent::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("operation"_s, convertEnumerationToString(operation));
-    json->setString("srcFactor"_s, convertEnumerationToString(srcFactor));
-    json->setString("dstFactor"_s, convertEnumerationToString(dstFactor));
+    json->setString("operation"_si, convertEnumerationToString(operation));
+    json->setString("srcFactor"_si, convertEnumerationToString(srcFactor));
+    json->setString("dstFactor"_si, convertEnumerationToString(dstFactor));
     return json;
 }
 

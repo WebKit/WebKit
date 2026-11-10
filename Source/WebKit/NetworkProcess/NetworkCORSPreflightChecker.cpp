@@ -73,7 +73,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     NetworkLoadParameters loadParameters;
     loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, protect(m_parameters.sourceOrigin), m_parameters.referrer, m_parameters.includeFetchMetadata);
     loadParameters.advancedPrivacyProtections = m_parameters.advancedPrivacyProtections;
-    if (!m_parameters.userAgent.isNull())
+    if (m_parameters.userAgent)
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
 
     if (m_shouldCaptureExtraNetworkLoadMetrics)
@@ -98,7 +98,7 @@ void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceRe
 
     CORS_CHECKER_RELEASE_LOG("willPerformHTTPRedirection");
     completionHandler({ });
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), makeString("Preflight response is not successful. Status code: "_s, httpStatusCode), ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, m_parameters.originalRequest.url(), makeString("Preflight response is not successful. Status code: "_s, httpStatusCode), ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
@@ -170,8 +170,8 @@ void NetworkCORSPreflightChecker::completePreflight(ResourceError&& preflightErr
 
     auto result = validatePreflightResponse(m_parameters.sessionID, m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, protect(m_parameters.topOrigin), protect(m_parameters.sourceOrigin), m_networkResourceLoader);
     if (!result) {
-        CORS_CHECKER_RELEASE_LOG("didComplete, AccessControl error: %s", result.error().utf8());
-        m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), result.error(), ResourceError::Type::AccessControl });
+        CORS_CHECKER_RELEASE_LOG("didComplete, AccessControl error: %s", utf8(result.error()));
+        m_completionCallback(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, m_parameters.originalRequest.url(), result.error(), ResourceError::Type::AccessControl });
         return;
     }
     m_completionCallback(ResourceError { });
@@ -184,19 +184,19 @@ void NetworkCORSPreflightChecker::didSendData(uint64_t totalBytesSent, uint64_t 
 void NetworkCORSPreflightChecker::wasBlocked()
 {
     CORS_CHECKER_RELEASE_LOG("wasBlocked");
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "CORS-preflight request was blocked"_s, ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, m_parameters.originalRequest.url(), "CORS-preflight request was blocked"_si, ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::cannotShowURL()
 {
     CORS_CHECKER_RELEASE_LOG("cannotShowURL");
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_s, ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_si, ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::wasBlockedByRestrictions()
 {
     CORS_CHECKER_RELEASE_LOG("wasBlockedByRestrictions");
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_s, ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_si, ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::wasBlockedByDisabledFTP()

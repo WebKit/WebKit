@@ -117,7 +117,7 @@ Style::ComputedStyle* ComputedStyleBase::addPseudoElementStyle(std::unique_ptr<S
 
 // MARK: - Custom properties
 
-const CustomProperty* ComputedStyleBase::customPropertyValue(const AtomString& name) const
+const CustomProperty* ComputedStyleBase::customPropertyValue(AtomStringImpl* name) const
 {
     for (RefPtr map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
         if (auto* value = map->get(name))
@@ -138,7 +138,7 @@ void ComputedStyleBase::setCustomPropertyValue(Ref<const CustomProperty>&& value
     }
 }
 
-bool ComputedStyleBase::customPropertyValueEqual(const ComputedStyleBase& other, const AtomString& name) const
+bool ComputedStyleBase::customPropertyValueEqual(const ComputedStyleBase& other, AtomStringImpl* name) const
 {
     if (&nonInheritedCustomProperties() == &other.nonInheritedCustomProperties() && &inheritedCustomProperties() == &other.inheritedCustomProperties())
         return true;
@@ -174,7 +174,7 @@ void ComputedStyleBase::deduplicateCustomProperties(const ComputedStyleBase& oth
 
 // MARK: - Custom paint
 
-void ComputedStyleBase::addCustomPaintWatchProperty(const AtomString& name)
+void ComputedStyleBase::addCustomPaintWatchProperty(AtomStringImpl* name)
 {
     Ref data = m_nonInheritedData.access().rareData.access();
     data->customPaintWatchedProperties.add(name);

@@ -65,7 +65,7 @@ void StorageAreaBase::notifyListenersAboutClear()
         IPC::Connection::send(connection, Messages::StorageAreaMap::ClearCache(StorageAreaBase::nextMessageIdentifier()), identifier.toUInt64());
 }
 
-void StorageAreaBase::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier sourceImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
+void StorageAreaBase::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier sourceImplIdentifier, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString) const
 {
     for (auto& [connection, identifier] : m_listeners) {
         std::optional<StorageAreaImplIdentifier> implIdentifier;

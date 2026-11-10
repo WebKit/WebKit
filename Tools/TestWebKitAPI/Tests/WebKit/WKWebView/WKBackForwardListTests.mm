@@ -618,21 +618,21 @@ static SkipItemsBackForwardListFixture setupBackForwardListWithItemsWithoutUserG
     [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
     EXPECT_FALSE([lastNavigation _isUserInitiated]);
     EXPECT_TRUE(webView.get().backForwardList.currentItem._wasCreatedByJSWithoutUserInteraction);
-    RetainPtr expectedURLString = makeString(String([url2 absoluteString]), "#a"_s).createNSString();
+    RetainPtr expectedURLString = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#a"_s));
     EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.get().UTF8String);
 
     navigate(webView.get(), "location.pathname + '#b'"_s);
     [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
     EXPECT_FALSE([lastNavigation _isUserInitiated]);
     EXPECT_TRUE(webView.get().backForwardList.currentItem._wasCreatedByJSWithoutUserInteraction);
-    expectedURLString = makeString(String([url2 absoluteString]), "#b"_s).createNSString();
+    expectedURLString = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#b"_s));
     EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.get().UTF8String);
 
     navigate(webView.get(), "location.pathname + '#c'"_s);
     [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
     EXPECT_FALSE([lastNavigation _isUserInitiated]);
     EXPECT_TRUE(webView.get().backForwardList.currentItem._wasCreatedByJSWithoutUserInteraction);
-    expectedURLString = makeString(String([url2 absoluteString]), "#c"_s).createNSString();
+    expectedURLString = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#c"_s));
     EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.get().UTF8String);
 
     [webView loadRequest:[NSURLRequest requestWithURL:url3.get()]];
@@ -660,7 +660,7 @@ static void runBackForwardNavigationSkipsItemsWithoutUserGestureCheck(const Skip
     [fixture.navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
 
     // url1 -> url2 -> url2#a (no user gesture) -> url2#b (no user gesture) -> url2#c (no user gesture) ** -> url3
-    RetainPtr expectedURLString = makeString(String([fixture.url2 absoluteString]), "#c"_s).createNSString();
+    RetainPtr expectedURLString = createNSString(makeString(StringImpl::create([fixture.url2 absoluteString]), "#c"_s));
     EXPECT_STREQ([fixture.webView URL].absoluteString.UTF8String, expectedURLString.get().UTF8String);
     EXPECT_EQ([fixture.webView backForwardList].backList.count, 1U);
     EXPECT_EQ([fixture.webView backForwardList].forwardList.count, 1U);
@@ -683,7 +683,7 @@ static void runBackForwardNavigationSkipsItemsWithoutUserGestureCheck(const Skip
 
     // We should get to the latest url2 URL, that is url2#c.
     // url1 -> url2 -> url2#a (no user gesture) -> url2#b (no user gesture) -> url2#c (no user gesture) ** -> url3
-    expectedURLString = makeString(String([fixture.url2 absoluteString]), "#c"_s).createNSString();
+    expectedURLString = createNSString(makeString(StringImpl::create([fixture.url2 absoluteString]), "#c"_s));
     EXPECT_STREQ([fixture.webView URL].absoluteString.UTF8String, expectedURLString.get().UTF8String);
     EXPECT_EQ([fixture.webView backForwardList].backList.count, 1U);
     EXPECT_EQ([fixture.webView backForwardList].forwardList.count, 1U);
@@ -708,7 +708,7 @@ static void runJSHistoryBackDoesNotSkipItemsWithoutUserGestureCheck(const SkipIt
     [fixture.webView _evaluateJavaScriptWithoutUserGesture:@"history.back();" completionHandler:^(id, NSError *) { }];
     [fixture.navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
 
-    RetainPtr expectedURLString = makeString(String([fixture.url2 absoluteString]), "#c"_s).createNSString();
+    RetainPtr expectedURLString = createNSString(makeString(StringImpl::create([fixture.url2 absoluteString]), "#c"_s));
     EXPECT_STREQ([fixture.webView URL].absoluteString.UTF8String, expectedURLString.get().UTF8String);
     EXPECT_EQ([fixture.webView backForwardList].backList.count, 1U);
     EXPECT_EQ([fixture.webView backForwardList].forwardList.count, 1U);
@@ -716,7 +716,7 @@ static void runJSHistoryBackDoesNotSkipItemsWithoutUserGestureCheck(const SkipIt
 
     [fixture.webView _evaluateJavaScriptWithoutUserGesture:@"history.back();" completionHandler:^(id, NSError *) { }];
     [fixture.navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
-    expectedURLString = makeString(String([fixture.url2 absoluteString]), "#b"_s).createNSString();
+    expectedURLString = createNSString(makeString(StringImpl::create([fixture.url2 absoluteString]), "#b"_s));
     EXPECT_STREQ([fixture.webView URL].absoluteString.UTF8String, expectedURLString.get().UTF8String);
     EXPECT_EQ([fixture.webView backForwardList].backList.count, 1U);
     EXPECT_EQ([fixture.webView backForwardList].forwardList.count, 1U);
@@ -730,12 +730,12 @@ static void runJSHistoryBackDoesNotSkipItemsWithoutUserGestureCheck(const SkipIt
 
 static void pushStateNavigate(WKWebView *webView, ASCIILiteral destination)
 {
-    [webView _evaluateJavaScriptWithoutUserGesture:makeString("history.pushState(null, document.title, "_s, destination, ");"_s).createNSString().get() completionHandler:nil];
+    [webView _evaluateJavaScriptWithoutUserGesture:createNSString(makeString("history.pushState(null, document.title, "_s, destination, ");"_s)).get() completionHandler:nil];
 }
 
 static void fragmentNavigate(WKWebView *webView, ASCIILiteral destination)
 {
-    [webView _evaluateJavaScriptWithoutUserGesture:makeString("location.href = "_s, destination, ";"_s).createNSString().get() completionHandler:nil];
+    [webView _evaluateJavaScriptWithoutUserGesture:createNSString(makeString("location.href = "_s, destination, ";"_s)).get() completionHandler:nil];
 }
 
 static void pushStateAfterEvaluateJSNavigate(WKWebView *webView, ASCIILiteral destination)
@@ -1073,7 +1073,7 @@ static void runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest(Function
     // Add back/forward list items without user gestures.
     navigate(webView.get(), "#a"_s);
     [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
-    RetainPtr expectedURLString = makeString(String([url2 absoluteString]), "#a"_s).createNSString();
+    RetainPtr expectedURLString = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#a"_s));
     EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.get().UTF8String);
 
     RetainPtr lastURL = [webView URL];
@@ -1099,7 +1099,7 @@ static void runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest(Function
 
     [webView goForward];
     [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
-    expectedURLString = makeString(String([url2 absoluteString]), "#a"_s).createNSString();
+    expectedURLString = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#a"_s));
     EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.get().UTF8String);
 
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, [lastURL absoluteString].UTF8String);
@@ -1108,22 +1108,22 @@ static void runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest(Function
 TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithUserGesturePushState)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
-        [webView evaluateJavaScript:makeString("history.pushState(null, document.title, location.pathname + '"_s, fragment, "');"_s).createNSString().get() completionHandler:nil];
+        [webView evaluateJavaScript:createNSString(makeString("history.pushState(null, document.title, location.pathname + '"_s, fragment, "');"_s)).get() completionHandler:nil];
     });
 }
 
 TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithUserGestureFragment)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
-        [webView evaluateJavaScript:makeString("location.href = location.pathname + '"_s, fragment, "';"_s).createNSString().get() completionHandler:nil];
+        [webView evaluateJavaScript:createNSString(makeString("location.href = location.pathname + '"_s, fragment, "';"_s)).get() completionHandler:nil];
     });
 }
 
 TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsFromLoadRequest)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
-        auto newURLString = makeString(String([webView URL].absoluteString), fragment);
-        [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:newURLString.createNSString().get()]).get()]).get()];
+        auto newURLString = makeString(StringImpl::create([webView URL].absoluteString), fragment);
+        [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(newURLString).get()]).get()]).get()];
     });
 }
 
@@ -1131,7 +1131,7 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGestu
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         // Call pushState() in a setTimeout() so that it has a recent user gesture but not a current one.
-        [webView evaluateJavaScript:makeString("setTimeout(() => { history.pushState(null, document.title, location.pathname + '"_s, fragment, "'); }, 0);"_s).createNSString().get() completionHandler:nil];
+        [webView evaluateJavaScript:createNSString(makeString("setTimeout(() => { history.pushState(null, document.title, location.pathname + '"_s, fragment, "'); }, 0);"_s)).get() completionHandler:nil];
     });
 }
 
@@ -1139,7 +1139,7 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGestu
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         // Do fragment navigation in a setTimeout() so that it has a recent user gesture but not a current one.
-        [webView evaluateJavaScript:makeString("setTimeout(() => { location.href = location.pathname + '"_s, fragment, "'; }, 0);"_s).createNSString().get() completionHandler:nil];
+        [webView evaluateJavaScript:createNSString(makeString("setTimeout(() => { location.href = location.pathname + '"_s, fragment, "'; }, 0);"_s)).get() completionHandler:nil];
     });
 }
 
@@ -1160,7 +1160,7 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipUpdatedItemWithRecentUse
     [navigationDelegate waitForDidFinishNavigation];
 
     // Page navigated to #fragment before the load event.
-    RetainPtr expectedURLString = makeString(String([url2 absoluteString]), "#fragment"_s).createNSString();
+    RetainPtr expectedURLString = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#fragment"_s));
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, expectedURLString.get().UTF8String);
 
     // Navigate with a user gesture.
@@ -1616,7 +1616,7 @@ TEST(WKBackForwardList, BackwardSkipIteratesThroughConsecutiveJSItems)
     [webView goForward];
     [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
 
-    RetainPtr expectedURL = makeString(String([url2 absoluteString]), "#b"_s).createNSString();
+    RetainPtr expectedURL = createNSString(makeString(StringImpl::create([url2 absoluteString]), "#b"_s));
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, expectedURL.get().UTF8String);
     EXPECT_EQ([webView backForwardList].backList.count, 1U);
     EXPECT_EQ([webView backForwardList].forwardList.count, 0U);

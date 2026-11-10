@@ -428,9 +428,9 @@ void webkit_dom_dom_selection_modify(WebKitDOMDOMSelection* self, const gchar* a
     g_return_if_fail(direction);
     g_return_if_fail(granularity);
     WebCore::DOMSelection* item = WebKit::core(self);
-    WTF::String convertedAlter = WTF::String::fromUTF8(alter);
-    WTF::String convertedDirection = WTF::String::fromUTF8(direction);
-    WTF::String convertedGranularity = WTF::String::fromUTF8(granularity);
+    RefPtr<StringImpl> convertedAlter = StringImpl::fromUTF8(alter);
+    RefPtr<StringImpl> convertedDirection = StringImpl::fromUTF8(direction);
+    RefPtr<StringImpl> convertedGranularity = StringImpl::fromUTF8(granularity);
     item->modify(convertedAlter, convertedDirection, convertedGranularity);
 }
 

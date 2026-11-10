@@ -47,12 +47,12 @@ Ref<CSSPropertyRule> CSSPropertyRule::create(StyleRuleProperty& rule, CSSStyleSh
 
 CSSPropertyRule::~CSSPropertyRule() = default;
 
-String CSSPropertyRule::name() const
+RefPtr<StringImpl> CSSPropertyRule::name() const
 {
     return m_propertyRule->descriptor().name;
 }
 
-String CSSPropertyRule::syntax() const
+RefPtr<StringImpl> CSSPropertyRule::syntax() const
 {
     return m_propertyRule->descriptor().syntax;
 }
@@ -62,7 +62,7 @@ bool CSSPropertyRule::inherits() const
     return m_propertyRule->descriptor().inherits.value_or(false);
 }
 
-String CSSPropertyRule::initialValue() const
+RefPtr<StringImpl> CSSPropertyRule::initialValue() const
 {
     if (!m_propertyRule->descriptor().initialValue)
         return nullString();
@@ -70,7 +70,7 @@ String CSSPropertyRule::initialValue() const
     return protect(m_propertyRule->descriptor().initialValue)->serialize();
 }
 
-String CSSPropertyRule::cssText() const
+RefPtr<StringImpl> CSSPropertyRule::cssText() const
 {
     StringBuilder builder;
 
@@ -80,7 +80,7 @@ String CSSPropertyRule::cssText() const
     serializeIdentifier(builder, descriptor.name);
     builder.append(" { "_s);
 
-    if (!descriptor.syntax.isNull()) {
+    if (descriptor.syntax) {
         builder.append("syntax: "_s);
         serializeString(builder, syntax());
         builder.append("; "_s);

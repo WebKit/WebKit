@@ -9039,7 +9039,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 clearCaches();
                 keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
 
-                LazyJSValue errorString = LazyJSValue::newString(m_graph, "Right hand side of instanceof is not an object"_s);
+                LazyJSValue errorString = LazyJSValue::newString(m_graph, "Right hand side of instanceof is not an object"_si);
                 OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
                 Node* errorMessage = addToGraph(LazyJSConstant, info);
                 addToGraph(ThrowStaticError, OpInfo(ErrorType::TypeError), errorMessage);
@@ -12622,7 +12622,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             m_currentBlock = notObjectBlock;
             clearCaches();
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
-            LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_s);
+            LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_si);
             OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
             Node* errorMessage = addToGraph(LazyJSConstant, info);
             addToGraph(ThrowStaticError, OpInfo(ErrorType::TypeError), errorMessage);
@@ -13295,7 +13295,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_currentBlock = notObjectBlock;
             clearCaches();
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
-            LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_s);
+            LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_si);
             OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
             Node* errorMessage = addToGraph(LazyJSConstant, info);
             addToGraph(ThrowStaticError, OpInfo(ErrorType::TypeError), errorMessage);
@@ -13636,7 +13636,7 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
             clearCaches();
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
             emitExitOK();
-            LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_s);
+            LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_si);
             OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
             Node* errorMessage = addToGraph(LazyJSConstant, info);
             addToGraph(ThrowStaticError, OpInfo(ErrorType::TypeError), errorMessage);

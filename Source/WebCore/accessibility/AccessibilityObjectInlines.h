@@ -220,12 +220,12 @@ inline bool AccessibilityObject::supportsRowCountChange() const
     }
 }
 
-inline String AccessibilityObject::datetimeAttributeValue() const
+inline RefPtr<StringImpl> AccessibilityObject::datetimeAttributeValue() const
 {
     return getAttribute(HTMLNames::datetimeAttr);
 }
 
-inline String AccessibilityObject::linkRelValue() const
+inline RefPtr<StringImpl> AccessibilityObject::linkRelValue() const
 {
     return getAttribute(HTMLNames::relAttr);
 }
@@ -235,7 +235,7 @@ inline bool AccessibilityObject::supportsKeyShortcuts() const
     return hasAttribute(HTMLNames::aria_keyshortcutsAttr);
 }
 
-inline String AccessibilityObject::keyShortcuts() const
+inline RefPtr<StringImpl> AccessibilityObject::keyShortcuts() const
 {
     return getAttribute(HTMLNames::aria_keyshortcutsAttr);
 }

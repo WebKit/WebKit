@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -43,7 +44,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class SendString {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamBatched_SendString; }
     static constexpr bool isSync = false;
@@ -53,7 +54,7 @@ public:
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = true;
 
-    explicit SendString(const String& url)
+    explicit SendString(StringView url)
         : m_url(url)
     {
     }
@@ -65,7 +66,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 } // namespace TestWithStreamBatched

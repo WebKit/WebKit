@@ -47,7 +47,7 @@ void AudioParamMap::initializeMapLike(DOMMapAdapter& map)
         map.set<IDLDOMString, IDLInterface<AudioParam>>(keyValue.key, keyValue.value);
 }
 
-void AudioParamMap::add(const String& name, Ref<AudioParam>&& param)
+void AudioParamMap::add(StringImpl* name, Ref<AudioParam>&& param)
 {
     m_map.add(name, WTF::move(param));
 }

@@ -35,5 +35,5 @@ void webkitDownloadNotifyProgress(WebKitDownload*, guint64 bytesReceived);
 void webkitDownloadFailed(WebKitDownload*, const WebCore::ResourceError&);
 void webkitDownloadCancelled(WebKitDownload*);
 void webkitDownloadFinished(WebKitDownload*);
-void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, UTF8CString&& suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&&);
-void webkitDownloadDestinationCreated(WebKitDownload*, const String& destinationPath);
+void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, UTF8CString&& suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, RefPtr<StringImpl>)>&&);
+void webkitDownloadDestinationCreated(WebKitDownload*, StringImpl* destinationPath);

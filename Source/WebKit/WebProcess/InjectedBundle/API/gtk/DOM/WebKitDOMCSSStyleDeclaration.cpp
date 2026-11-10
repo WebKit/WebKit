@@ -185,7 +185,7 @@ gchar* webkit_dom_css_style_declaration_get_property_value(WebKitDOMCSSStyleDecl
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_STYLE_DECLARATION(self), 0);
     g_return_val_if_fail(propertyName, 0);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedPropertyName = WTF::String::fromUTF8(propertyName);
+    RefPtr<StringImpl> convertedPropertyName = StringImpl::fromUTF8(propertyName);
     gchar* result = convertToUTF8String(item->getPropertyValue(convertedPropertyName));
     return result;
 }
@@ -197,7 +197,7 @@ gchar* webkit_dom_css_style_declaration_remove_property(WebKitDOMCSSStyleDeclara
     g_return_val_if_fail(propertyName, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedPropertyName = WTF::String::fromUTF8(propertyName);
+    RefPtr<StringImpl> convertedPropertyName = StringImpl::fromUTF8(propertyName);
     auto result = item->removeProperty(convertedPropertyName);
     if (result.hasException())
         return nullptr;
@@ -210,7 +210,7 @@ gchar* webkit_dom_css_style_declaration_get_property_priority(WebKitDOMCSSStyleD
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_STYLE_DECLARATION(self), 0);
     g_return_val_if_fail(propertyName, 0);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedPropertyName = WTF::String::fromUTF8(propertyName);
+    RefPtr<StringImpl> convertedPropertyName = StringImpl::fromUTF8(propertyName);
     gchar* result = convertToUTF8String(item->getPropertyPriority(convertedPropertyName));
     return result;
 }
@@ -224,9 +224,9 @@ void webkit_dom_css_style_declaration_set_property(WebKitDOMCSSStyleDeclaration*
     g_return_if_fail(priority);
     g_return_if_fail(!error || !*error);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedPropertyName = WTF::String::fromUTF8(propertyName);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WTF::String convertedPriority = WTF::String::fromUTF8(priority);
+    RefPtr<StringImpl> convertedPropertyName = StringImpl::fromUTF8(propertyName);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
+    RefPtr<StringImpl> convertedPriority = StringImpl::fromUTF8(priority);
     auto result = item->setProperty(convertedPropertyName, convertedValue, convertedPriority);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -249,7 +249,7 @@ gchar* webkit_dom_css_style_declaration_get_property_shorthand(WebKitDOMCSSStyle
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_STYLE_DECLARATION(self), 0);
     g_return_val_if_fail(propertyName, 0);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedPropertyName = WTF::String::fromUTF8(propertyName);
+    RefPtr<StringImpl> convertedPropertyName = StringImpl::fromUTF8(propertyName);
     gchar* result = convertToUTF8String(item->getPropertyShorthand(convertedPropertyName));
     return result;
 }
@@ -260,7 +260,7 @@ gboolean webkit_dom_css_style_declaration_is_property_implicit(WebKitDOMCSSStyle
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_STYLE_DECLARATION(self), FALSE);
     g_return_val_if_fail(propertyName, FALSE);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedPropertyName = WTF::String::fromUTF8(propertyName);
+    RefPtr<StringImpl> convertedPropertyName = StringImpl::fromUTF8(propertyName);
     gboolean result = item->isPropertyImplicit(convertedPropertyName);
     return result;
 }
@@ -281,7 +281,7 @@ void webkit_dom_css_style_declaration_set_css_text(WebKitDOMCSSStyleDeclaration*
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::CSSStyleDeclaration* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     auto result = item->setCssText(convertedValue);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());

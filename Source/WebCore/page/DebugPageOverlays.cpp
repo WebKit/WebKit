@@ -191,7 +191,7 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     return regionChanged;
 }
 
-static void drawRightAlignedText(const String& text, GraphicsContext& context, const FontCascade& font, const FloatPoint& boxLocation)
+static void drawRightAlignedText(StringImpl* text, GraphicsContext& context, const FontCascade& font, const FloatPoint& boxLocation)
 {
     float textGap = 10;
     float textBaselineFromTop = 14;
@@ -223,7 +223,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     FloatRect legendRect = { bounds.maxX() - 30.0f, 10, 20, 20 };
     
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica"_s);
+    fontDescription.setOneFamily("Helvetica"_atom);
     fontDescription.setComputedSize(12);
     fontDescription.setUsedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
@@ -233,7 +233,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     auto drawLegend = [&] (const Color& color, ASCIILiteral text) {
         context.setFillColor(color);
         context.fillRect(legendRect);
-        drawRightAlignedText(text, context, font, legendRect.location());
+        drawRightAlignedText(StringImpl::create(text).ptr(), context, font, legendRect.location());
         legendRect.move(0, 30);
     };
 
@@ -436,7 +436,7 @@ NODELETE std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion
 #endif
 }
 
-static void drawCheckbox(const String& text, GraphicsContext& context, const FontCascade& font, const FloatRect& box, bool state)
+static void drawCheckbox(StringImpl* text, GraphicsContext& context, const FontCascade& font, const FloatRect& box, bool state)
 {
     static constexpr float lineHeight = 14;
     static constexpr float checkboxVerticalPadding = 2;
@@ -504,7 +504,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     }
 
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica"_s);
+    fontDescription.setOneFamily("Helvetica"_atom);
     fontDescription.setComputedSize(12);
     fontDescription.setUsedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
@@ -513,7 +513,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
 
     for (unsigned i = 0; i < m_settings.size(); i++) {
         const auto& setting = m_settings[i];
-        drawCheckbox(setting.name, context, font, rectForSettingAtIndex(i), setting.value);
+        drawCheckbox(StringImpl::create(setting.name).ptr(), context, font, rectForSettingAtIndex(i), setting.value);
     }
 }
 
@@ -619,7 +619,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
 
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily("Helvetica"_s);
+        fontDescription.setOneFamily("Helvetica"_atom);
         fontDescription.setComputedSize(10);
         fontDescription.setUsedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));

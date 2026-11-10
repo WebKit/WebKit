@@ -49,18 +49,18 @@
 namespace WebCore {
 
 template<std::size_t size>
-static MemoryCompactLookupOnlyRobinHoodHashSet<String> filterSupportedImageTypes(const std::array<ASCIILiteral, size>& imageTypes)
+static MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> filterSupportedImageTypes(const std::array<ASCIILiteral, size>& imageTypes)
 {
     auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(systemSupportedCFImageTypes.get());
 
-    HashSet<String> systemSupportedImageTypes;
+    HashSet<RefPtr<StringImpl>> systemSupportedImageTypes;
     CFArrayApplyFunction(systemSupportedCFImageTypes.get(), CFRangeMake(0, count), [](const void *value, void *context) {
-        String imageType = static_cast<CFStringRef>(value);
-        static_cast<HashSet<String>*>(context)->add(imageType);
+        RefPtr<StringImpl> imageType = StringImpl::create(static_cast<CFStringRef>(value));
+        static_cast<HashSet<RefPtr<StringImpl>>*>(context)->add(imageType);
     }, &systemSupportedImageTypes);
 
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> filtered;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> filtered;
     for (auto& imageType : imageTypes) {
         if (systemSupportedImageTypes.contains(imageType))
             filtered.add(imageType);
@@ -69,7 +69,7 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<String> filterSupportedImageTypes
     return filtered;
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& defaultSupportedImageTypes()
 {
     static NeverDestroyed defaultSupportedImageTypes = [] {
         // Changes to supported formats may require updates in Info.plist
@@ -109,7 +109,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedIm
 }
 
 #if ENABLE(LOCKDOWN_MODE_API)
-static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& lockdownSupportedImageTypes()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& lockdownSupportedImageTypes()
 {
     static NeverDestroyed lockdownSupportedImageTypes = [] {
         // Keep this list in sync with process-entitlements.sh.
@@ -127,7 +127,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& lockdownSupportedI
 }
 #endif
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes()
+const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& supportedImageTypes()
 {
 #if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
@@ -136,13 +136,13 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes()
     return defaultSupportedImageTypes();
 }
 
-MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
+MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>& additionalSupportedImageTypes()
 {
-    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> additionalSupportedImageTypes;
+    static NeverDestroyed<MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>> additionalSupportedImageTypes;
     return additionalSupportedImageTypes;
 }
 
-void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
+void setAdditionalSupportedImageTypes(const Vector<RefPtr<StringImpl>>& imageTypes)
 {
 #if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
@@ -155,14 +155,14 @@ void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
     }
 }
 
-void setAdditionalSupportedImageTypesForTesting(const String& imageTypes)
+void setAdditionalSupportedImageTypesForTesting(StringImpl* imageTypes)
 {
-    setAdditionalSupportedImageTypes(imageTypes.split(';'));
+    setAdditionalSupportedImageTypes(split(imageTypes, ';'));
 }
 
-bool isSupportedImageType(const String& imageType)
+bool isSupportedImageType(StringImpl* imageType)
 {
-    if (imageType.isEmpty())
+    if (isEmpty(imageType))
         return false;
     return supportedImageTypes().contains(imageType) || additionalSupportedImageTypes().contains(imageType);
 }
@@ -172,17 +172,17 @@ bool isGIFImageType(StringView imageType)
     return imageType == "com.compuserve.gif"_s;
 }
 
-String MIMETypeForImageType(const String& uti)
+RefPtr<StringImpl> MIMETypeForImageType(StringImpl* uti)
 {
     return MIMETypeFromUTI(uti);
 }
 
-String preferredExtensionForImageType(const String& uti)
+RefPtr<StringImpl> preferredExtensionForImageType(StringImpl* uti)
 {
-    return [[UTType typeWithIdentifier:uti.createNSString().get()] preferredFilenameExtension];
+    return StringImpl::create([[UTType typeWithIdentifier:createNSString(uti).get()] preferredFilenameExtension]);
 }
 
-static Vector<String> allowableDefaultSupportedImageTypes()
+static Vector<RefPtr<StringImpl>> allowableDefaultSupportedImageTypes()
 {
     auto allowableDefaultSupportedImageTypes = copyToVector(defaultSupportedImageTypes());
 #if HAVE(AVIF)
@@ -202,13 +202,13 @@ static Vector<String> allowableDefaultSupportedImageTypes()
 }
 
 #if ENABLE(LOCKDOWN_MODE_API)
-static Vector<String> allowableLockdownSupportedImageTypes()
+static Vector<RefPtr<StringImpl>> allowableLockdownSupportedImageTypes()
 {
     return copyToVector(lockdownSupportedImageTypes());
 }
 #endif
 
-static Vector<String> allowableSupportedImageTypes()
+static Vector<RefPtr<StringImpl>> allowableSupportedImageTypes()
 {
 #if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
@@ -217,12 +217,12 @@ static Vector<String> allowableSupportedImageTypes()
     return allowableDefaultSupportedImageTypes();
 }
 
-static Vector<String> allowableAdditionalSupportedImageTypes()
+static Vector<RefPtr<StringImpl>> allowableAdditionalSupportedImageTypes()
 {
     return copyToVector(additionalSupportedImageTypes());
 }
 
-Vector<String> allowableImageTypes()
+Vector<RefPtr<StringImpl>> allowableImageTypes()
 {
     auto allowableImageTypes = allowableSupportedImageTypes();
     auto additionalImageTypes = allowableAdditionalSupportedImageTypes();

@@ -34,12 +34,12 @@
 
 namespace WTF {
 
-String logLevelString()
+RefPtr<StringImpl> logLevelString()
 {
 #if !LOG_DISABLED
-    return [[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"];
+    return StringImpl::create([[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"]);
 #else
-    return String();
+    return nullptr;
 #endif
 }
 

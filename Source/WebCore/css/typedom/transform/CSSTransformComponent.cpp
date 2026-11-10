@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-String CSSTransformComponent::toString() const
+RefPtr<StringImpl> CSSTransformComponent::toString() const
 {
     StringBuilder builder;
     serialize(builder);

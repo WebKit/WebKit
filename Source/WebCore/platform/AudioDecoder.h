@@ -52,22 +52,22 @@ public:
         Ref<PlatformRawAudioData> data;
     };
 
-    using OutputCallback = Function<void(std::expected<DecodedData, String>&&)>;
-    using CreateResult = std::expected<Ref<AudioDecoder>, String>;
-    using CreatePromise = NativePromise<Ref<AudioDecoder>, String>;
+    using OutputCallback = Function<void(std::expected<DecodedData, RefPtr<StringImpl>>&&)>;
+    using CreateResult = std::expected<Ref<AudioDecoder>, RefPtr<StringImpl>>;
+    using CreatePromise = NativePromise<Ref<AudioDecoder>, RefPtr<StringImpl>>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&);
+    using CreatorFunction = void(*)(StringImpl*, const Config&, CreateCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
     // FIXME: combine with the AudioInfo variant into a single create()
-    static Ref<CreatePromise> create(const String&, const Config&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl*, const Config&, OutputCallback&&);
 
     // The codec's pre-skip isn't applied, trimming is left to the caller.
     static bool canDecode(const AudioInfo&);
     static Ref<CreatePromise> create(const AudioInfo&, OutputCallback&&);
 
-    using DecodePromise = NativePromise<void, String>;
+    using DecodePromise = NativePromise<void, RefPtr<StringImpl>>;
     virtual Ref<DecodePromise> decode(AudioEncodedData&&) = 0;
 
     virtual Ref<GenericPromise> flush() = 0;

@@ -56,7 +56,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     if (request->signal().aborted()) {
         auto reason = request->signal().reason().getValue();
         if (reason.isUndefined())
-            promise.reject(Exception { ExceptionCode::AbortError, "Request signal is aborted"_s });
+            promise.reject(Exception { ExceptionCode::AbortError, "Request signal is aborted"_si });
         else
             promise.rejectType<IDLAny>(reason);
 
@@ -78,7 +78,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
 void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr document = window.documentIfLocal(); document && document->quirks().shouldBlockFetchWithNewlineAndLessThan()) {
-        if (auto* string = std::get_if<String>(&input); string && string->contains('\n') && string->contains('<'))
+        if (auto* string = std::get_if<RefPtr<StringImpl>>(&input); string && contains(*string, '\n') && contains(*string, '<'))
             return promise->reject(ExceptionCode::InvalidStateError);
     }
 

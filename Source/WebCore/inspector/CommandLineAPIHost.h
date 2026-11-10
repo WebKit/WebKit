@@ -59,7 +59,7 @@ public:
     NODELETE static Ref<CommandLineAPIHost> create();
     ~CommandLineAPIHost() = default;
 
-    void copyText(const String& text);
+    void copyText(StringImpl* text);
 
     class InspectableObject {
         WTF_MAKE_TZONE_ALLOCATED(InspectableObject);
@@ -79,14 +79,14 @@ public:
         bool once;
     };
 
-    using EventListenersRecord = Vector<KeyValuePair<String, Vector<ListenerEntry>>>;
+    using EventListenersRecord = Vector<KeyValuePair<RefPtr<StringImpl>, Vector<ListenerEntry>>>;
     EventListenersRecord getEventListeners(JSC::JSGlobalObject&, EventTarget&);
 
 #if ENABLE(WEB_RTC)
     void gatherRTCLogs(JSC::JSGlobalObject&, RefPtr<RTCLogsCallback>&&);
 #endif
 
-    String storageId(Storage&);
+    RefPtr<StringImpl> storageId(Storage&);
 
     JSC::JSValue wrapper(JSC::JSGlobalObject*, JSDOMGlobalObject*);
     void clearAllWrappers();

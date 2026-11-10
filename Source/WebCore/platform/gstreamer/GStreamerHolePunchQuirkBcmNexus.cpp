@@ -34,7 +34,7 @@ bool GStreamerHolePunchQuirkBcmNexus::setHolePunchVideoRectangle(GstElement* vid
         return false;
 
     auto rectString = makeString(rect.x(), ',', rect.y(), ',', rect.width(), ',', rect.height());
-    g_object_set(videoSink, "rectangle", rectString.ascii().data(), nullptr);
+    g_object_set(videoSink, "rectangle", ascii(rectString).data(), nullptr);
     return true;
 }
 

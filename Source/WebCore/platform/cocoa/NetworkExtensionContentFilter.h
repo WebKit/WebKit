@@ -50,7 +50,7 @@ public:
 
     bool isEnabled() const final { return enabled(); }
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override;
-    void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(String&&)>&&) final;
+    void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&) final;
     void responseReceived(const ResourceResponse&) override;
     void addData(const SharedBuffer&) override;
     void finishedAddingData() override;

@@ -43,9 +43,9 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCStringSet>;
 
-    CoreIPCStringSet(Vector<String>&&);
+    CoreIPCStringSet(Vector<RefPtr<StringImpl>>&&);
 
-    Vector<String> m_stringSet;
+    Vector<RefPtr<StringImpl>> m_stringSet;
 };
 
 } // namespace WebKit

@@ -506,7 +506,7 @@ void WebResourceLoader::didReceiveResource(ShareableResource::Handle&& handle)
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-void WebResourceLoader::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&& unblockHandler, String&& unblockRequestDeniedScript, const ResourceError& error, const URL& blockedPageURL,  WebCore::SubstituteData&& substituteData)
+void WebResourceLoader::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&& unblockHandler, RefPtr<StringImpl>&& unblockRequestDeniedScript, const ResourceError& error, const URL& blockedPageURL,  WebCore::SubstituteData&& substituteData)
 {
     RefPtr coreLoader = m_coreLoader;
     if (!m_coreLoader || !coreLoader->documentLoader())

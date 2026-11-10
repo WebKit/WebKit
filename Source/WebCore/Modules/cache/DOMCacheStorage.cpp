@@ -127,8 +127,8 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, MultiCacheQueryOptions
             return;
         }
 
-        if (!options.cacheName.isNull()) {
-            auto position = m_caches.findIf([&](auto& item) { return item->name() == options.cacheName; });
+        if (options.cacheName) {
+            auto position = m_caches.findIf([&](auto& item) { return equal(item->name(), options.cacheName); });
             if (position != notFound) {
                 Ref { m_caches[position] }->match(WTF::move(info), WTF::move(options), WTF::move(promise));
                 return;
@@ -141,16 +141,16 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, MultiCacheQueryOptions
     });
 }
 
-void DOMCacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
+void DOMCacheStorage::has(StringImpl* name, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    retrieveCaches([this, protectedThis = Ref { *this }, name, promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
+    retrieveCaches([this, protectedThis = Ref { *this }, name = RefPtr { name }, promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTF::move(promise), exception = WTF::move(exception.value())](auto&) mutable {
                 promise.reject(WTF::move(exception));
             });
             return;
         }
-        promise.resolve(m_caches.findIf([&](auto& item) { return item->name() == name; }) != notFound);
+        promise.resolve(m_caches.findIf([&](auto& item) { return equal(item->name(), name); }) != notFound);
     });
 }
 
@@ -223,7 +223,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(std::optional<Except
     });
 }
 
-static void logConsolePersistencyError(ScriptExecutionContext* context, const String& cacheName)
+static void logConsolePersistencyError(ScriptExecutionContext* context, StringImpl* cacheName)
 {
     if (!context)
         return;
@@ -231,9 +231,9 @@ static void logConsolePersistencyError(ScriptExecutionContext* context, const St
     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("There was an error making "_s, cacheName, " persistent on the filesystem"_s));
 }
 
-void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
+void DOMCacheStorage::open(StringImpl* name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
 {
-    retrieveCaches([this, protectedThis = Ref { *this }, name, promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
+    retrieveCaches([this, protectedThis = Ref { *this }, name = RefPtr { name }, promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTF::move(promise), exception = WTF::move(exception.value())](auto&) mutable {
                 promise.reject(WTF::move(exception));
@@ -244,7 +244,7 @@ void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<D
     });
 }
 
-void DOMCacheStorage::doOpen(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
+void DOMCacheStorage::doOpen(StringImpl* name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
@@ -252,14 +252,14 @@ void DOMCacheStorage::doOpen(const String& name, DOMPromiseDeferred<IDLInterface
         return;
     }
 
-    auto position = m_caches.findIf([&](auto& item) { return item->name() == name; });
+    auto position = m_caches.findIf([&](auto& item) { return equal(item->name(), name); });
     if (position != notFound) {
-        promise.resolve(DOMCache::create(*context, String { m_caches[position]->name() }, m_caches[position]->identifier(), m_connection.copyRef()));
+        promise.resolve(DOMCache::create(*context, RefPtr<StringImpl> { m_caches[position]->name() }, m_caches[position]->identifier(), m_connection.copyRef()));
         return;
     }
 
     auto openPromise = m_connection->open(*origin(), name);
-    context->enqueueTaskWhenSettled(WTF::move(openPromise), TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }, name, promise = WTF::move(promise), pendingActivity = makePendingActivity(*this), connectionStorageLock = makeUnique<ConnectionStorageLock>(m_connection.copyRef(), *origin())] (auto&& result) mutable {
+    context->enqueueTaskWhenSettled(WTF::move(openPromise), TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }, name = RefPtr { name }, promise = WTF::move(promise), pendingActivity = makePendingActivity(*this), connectionStorageLock = makeUnique<ConnectionStorageLock>(m_connection.copyRef(), *origin())] (auto&& result) mutable {
         RefPtr context = scriptExecutionContext();
         if (!result) {
             promise.reject(DOMCacheEngine::convertToExceptionAndLog(context.get(), result.error()));
@@ -271,15 +271,15 @@ void DOMCacheStorage::doOpen(const String& name, DOMPromiseDeferred<IDLInterface
         }
         if (result.value().hadStorageError)
             logConsolePersistencyError(context.get(), name);
-        auto cache = DOMCache::create(*context, String { name }, result.value().identifier, m_connection.copyRef());
+        auto cache = DOMCache::create(*context, RefPtr<StringImpl> { name }, result.value().identifier, m_connection.copyRef());
         promise.resolve(cache);
         m_caches.append(WTF::move(cache));
     });
 }
 
-void DOMCacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
+void DOMCacheStorage::remove(StringImpl* name, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    retrieveCaches([this, protectedThis = Ref { *this }, name, promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
+    retrieveCaches([this, protectedThis = Ref { *this }, name = RefPtr { name }, promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTF::move(promise), exception = WTF::move(exception.value())](auto&) mutable {
                 promise.reject(WTF::move(exception));
@@ -290,9 +290,9 @@ void DOMCacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&
     });
 }
 
-void DOMCacheStorage::doRemove(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
+void DOMCacheStorage::doRemove(StringImpl* name, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto position = m_caches.findIf([&](auto& item) { return item->name() == name; });
+    auto position = m_caches.findIf([&](auto& item) { return equal(item->name(), name); });
     if (position == notFound) {
         promise.resolve(false);
         return;

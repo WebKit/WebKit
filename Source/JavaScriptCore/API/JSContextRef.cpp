@@ -231,8 +231,8 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    String name = globalObject->name();
-    if (name.isNull())
+    RefPtr<StringImpl> name = globalObject->name();
+    if (!name)
         return nullptr;
 
     return OpaqueJSString::tryCreate(name).leakRef();
@@ -249,7 +249,7 @@ void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    globalObject->setName(name ? name->string() : String());
+    globalObject->setName(name ? name->string() : nullptr);
 }
 
 bool JSGlobalContextIsInspectable(JSGlobalContextRef ctx)
@@ -311,7 +311,7 @@ void JSGlobalContextSetEvalEnabled(JSGlobalContextRef ctx, bool enabled, JSStrin
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    globalObject->setEvalEnabled(enabled, message ? message->string() : String());
+    globalObject->setEvalEnabled(enabled, message ? message->string() : nullptr);
 }
 
 class BacktraceFunctor {
@@ -513,7 +513,7 @@ JSStringRef JSContextGroupTakeSamplesFromSamplingProfiler(JSContextGroupRef grou
         return nullptr;
 
     auto jsonData = json->toJSONString();
-    if (jsonData.isNull()) [[unlikely]]
+    if (!jsonData) [[unlikely]]
         return nullptr;
 
     return OpaqueJSString::tryCreate(WTF::move(jsonData)).leakRef();

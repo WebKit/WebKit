@@ -130,9 +130,9 @@ public:
 
     void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) final;
     void setWrappedObjectForCell(JSCell*, void*) final;
-    void setLabelForCell(JSCell*, const String&) final;
+    void setLabelForCell(JSCell*, StringImpl*) final;
 
-    String json();
+    RefPtr<StringImpl> json();
     void dumpToStream(PrintStream&);
 
     bool hasOverflowed() const { return m_hasOverflowed; }
@@ -144,7 +144,7 @@ public:
         virtual ~Client() = default;
 
         virtual bool heapSnapshotBuilderIgnoreNode(const HeapSnapshotBuilder&, JSCell*) { return false; }
-        virtual String heapSnapshotBuilderOverrideClassName(const HeapSnapshotBuilder&, JSCell*, const String& currentClassName) { return currentClassName; }
+        virtual RefPtr<StringImpl> heapSnapshotBuilderOverrideClassName(const HeapSnapshotBuilder&, JSCell*, StringImpl* currentClassName) { return currentClassName; }
         virtual bool heapSnapshotBuilderIsElement(const HeapSnapshotBuilder&, JSCell*) { return false; }
     };
     void setClient(Client* client) { m_client = client; }
@@ -157,7 +157,7 @@ private:
     // for an existing node can be done concurrently without a lock.
     NODELETE bool previousSnapshotHasNodeForCell(JSCell*, NodeIdentifier&);
 
-    String descriptionForNode(const HeapSnapshotNode&);
+    RefPtr<StringImpl> descriptionForNode(const HeapSnapshotNode&);
 
     struct RootData {
         ASCIILiteral reachabilityFromOpaqueRootReasons;
@@ -176,7 +176,7 @@ private:
     Vector<HeapSnapshotEdge> m_edges;
     UncheckedKeyHashMap<JSCell*, RootData> m_rootData;
     UncheckedKeyHashMap<JSCell*, void*> m_wrappedObjectPointers;
-    UncheckedKeyHashMap<JSCell*, String> m_cellLabels;
+    UncheckedKeyHashMap<JSCell*, RefPtr<StringImpl>> m_cellLabels;
     UncheckedKeyHashSet<JSCell*> m_appendedCells WTF_GUARDED_BY_LOCK(m_buildingNodeMutex);
     SnapshotType m_snapshotType;
 };

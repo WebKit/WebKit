@@ -379,14 +379,14 @@ bool isAmbiguousBoundaryCharacter(char16_t character)
     return character == '\'' || character == '@' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
 }
 
-String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd)
+RefPtr<StringImpl> stringWithRebalancedWhitespace(StringImpl* string, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd)
 {
     StringBuilder rebalancedString;
 
     bool previousCharacterWasSpace = false;
-    unsigned length = string.length();
+    unsigned length = WTF::length(string);
     for (unsigned i = 0; i < length; ++i) {
-        auto character = string[i];
+        auto character = codeUnitAt(string, i);
         if (!deprecatedIsEditingWhitespace(character)) {
             previousCharacterWasSpace = false;
             continue;
@@ -421,9 +421,9 @@ bool isTableStructureNode(const Node& node)
     return renderer && (renderer->isRenderTableCell() || renderer->isRenderTableRow() || renderer->isRenderTableSection() || renderer->isRenderTableCol());
 }
 
-const String& nonBreakingSpaceString()
+const RefPtr<StringImpl>& nonBreakingSpaceString()
 {
-    static NeverDestroyed<String> nonBreakingSpaceString(span(noBreakSpace));
+    static NeverDestroyed<RefPtr<StringImpl>> nonBreakingSpaceString(StringImpl::create(span(noBreakSpace)));
     return nonBreakingSpaceString;
 }
 
@@ -796,14 +796,14 @@ Ref<HTMLElement> createHTMLElement(Document& document, const QualifiedName& name
     return HTMLElementFactory::createElement(name, document);
 }
 
-Ref<HTMLElement> createHTMLElement(Document& document, const AtomString& tagName)
+Ref<HTMLElement> createHTMLElement(Document& document, AtomStringImpl* tagName)
 {
     return createHTMLElement(document, QualifiedName(nullAtom(), tagName, xhtmlNamespaceURI));
 }
 
 HTMLSpanElement* tabSpanNode(Node* node)
 {
-    if (auto* span = dynamicDowncast<HTMLSpanElement>(node); span && span->attributeWithoutSynchronization(classAttr) == AppleTabSpanClass)
+    if (auto* span = dynamicDowncast<HTMLSpanElement>(node); span && equal(span->attributeWithoutSynchronization(classAttr), AppleTabSpanClass))
         return span;
     return nullptr;
 }
@@ -817,22 +817,22 @@ static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)
 {
     auto spanElement = HTMLSpanElement::create(document);
 
-    spanElement->setAttributeWithoutSynchronization(classAttr, AppleTabSpanClass);
-    spanElement->setAttribute(styleAttr, "white-space:pre"_s);
+    spanElement->setAttributeWithoutSynchronization(classAttr, AtomStringImpl::add(AppleTabSpanClass).ptr());
+    spanElement->setAttribute(styleAttr, "white-space:pre"_atom);
 
     spanElement->appendChild(tabTextNode);
 
     return spanElement;
 }
 
-Ref<Element> createTabSpanElement(Document& document, String&& tabText)
+Ref<Element> createTabSpanElement(Document& document, RefPtr<StringImpl>&& tabText)
 {
     return createTabSpanElement(document, document.createTextNode(WTF::move(tabText)));
 }
 
 Ref<Element> createTabSpanElement(Document& document)
 {
-    return createTabSpanElement(document, document.createEditingTextNode("\t"_s));
+    return createTabSpanElement(document, document.createEditingTextNode("\t"_si));
 }
 
 unsigned numEnclosingMailBlockquotes(const Position& position)
@@ -880,7 +880,7 @@ bool isMailBlockquote(const Node& node)
     auto* htmlElement = dynamicDowncast<HTMLElement>(node);
     if (!htmlElement || !htmlElement->hasTagName(blockquoteTag))
         return false;
-    return htmlElement->attributeWithoutSynchronization(typeAttr) == "cite"_s;
+    return equal(htmlElement->attributeWithoutSynchronization(typeAttr), "cite"_s);
 }
 
 int caretMinOffset(const Node& node)
@@ -946,7 +946,7 @@ bool lineBreakExistsAtPosition(const Position& position)
         return false;
 
     unsigned offset = position.offsetInContainerNode();
-    return offset < textNode->length() && textNode->data()[offset] == '\n';
+    return offset < textNode->length() && codeUnitAt(textNode->data(), offset) == '\n';
 }
 
 // Modifies selections that have an end point at the edge of a table

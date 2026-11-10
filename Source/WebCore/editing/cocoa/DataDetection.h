@@ -81,7 +81,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static bool canBePresentedByDataDetectors(const URL&);
     WEBCORE_EXPORT static bool isDataDetectorLink(Element&);
-    WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);
+    WEBCORE_EXPORT static RefPtr<StringImpl> dataDetectorIdentifier(Element&);
     WEBCORE_EXPORT static bool canPresentDataDetectorsUIForElement(Element&);
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
 #endif
@@ -92,7 +92,7 @@ public:
     static Ref<HTMLDivElement> createElementForImageOverlay(Document&, const TextRecognitionDataDetector&);
 #endif
 
-    static const String& dataDetectorURLProtocol();
+    static const RefPtr<StringImpl>& dataDetectorURLProtocol();
     static bool isDataDetectorURL(const URL&);
     NODELETE static bool isDataDetectorAttribute(const QualifiedName&);
     static bool isDataDetectorElement(const Element&);

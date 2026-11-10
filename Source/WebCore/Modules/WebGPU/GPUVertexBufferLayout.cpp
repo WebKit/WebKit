@@ -34,13 +34,13 @@ namespace WebCore {
 Ref<JSON::Object> GPUVertexBufferLayout::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("arrayStride"_s, arrayStride);
-    json->setString("stepMode"_s, convertEnumerationToString(stepMode));
+    json->setDouble("arrayStride"_si, arrayStride);
+    json->setString("stepMode"_si, convertEnumerationToString(stepMode));
 
     Ref attributesJSON = JSON::Array::create();
     for (auto& attribute : attributes)
         attributesJSON->pushObject(attribute.toJSON());
-    json->setArray("attributes"_s, WTF::move(attributesJSON));
+    json->setArray("attributes"_si, WTF::move(attributesJSON));
     return json;
 }
 

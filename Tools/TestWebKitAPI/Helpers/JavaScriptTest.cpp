@@ -61,7 +61,7 @@ static void javaScriptCallback(WKTypeRef result, WKErrorRef error, void* ctx)
         context->actualString = adoptRef(WKStringCopyJSString((WKStringRef)result));
     else if (WKDoubleGetTypeID() == WKGetTypeID(result)) {
         double value = WKDoubleGetValue((WKDoubleRef)result);
-        String s = makeString(value);
+        RefPtr<StringImpl> s = makeString(value);
         context->actualString = createJSString(s);
     } else
         WTFLogAlways("Unexpected type %d", WKGetTypeID(result));

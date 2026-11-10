@@ -49,13 +49,13 @@ public:
         Actions actions;
     };
     struct ResumeSlot {
-        String url;
+        RefPtr<StringImpl> url;
         ResourceFlags flags { 0 };
         Vector<DFACheckpoint> perDFA;
     };
     using ResumeSlots = Vector<ResumeSlot, 4>;
 
-    WEBCORE_EXPORT Actions interpret(const String&, ResourceFlags);
+    WEBCORE_EXPORT Actions interpret(StringImpl*, ResourceFlags);
     WEBCORE_EXPORT Actions actionsMatchingEverything();
 
 private:

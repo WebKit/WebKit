@@ -35,7 +35,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayCancelEvent);
 
-ApplePayCancelEvent::ApplePayCancelEvent(const AtomString& type, PaymentSessionError&& sessionError)
+ApplePayCancelEvent::ApplePayCancelEvent(AtomStringImpl* type, PaymentSessionError&& sessionError)
     : Event { EventInterfaceType::ApplePayCancelEvent, type, CanBubble::No, IsCancelable::No }
     , m_sessionError { WTF::move(sessionError) }
 {

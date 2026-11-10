@@ -55,13 +55,13 @@ OptionSet<Axis> requiredAxesForFeature(const MQ::Feature& feature)
     return { };
 }
 
-void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>& names)
+void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<RefPtr<AtomStringImpl>>& names)
 {
     auto collectFromCustomPropertyValue = [&](const CSSCustomPropertyValue& value) {
         auto& tokens = value.tokens();
 
         // A bare <custom-property-name> operand is evaluated as var(--name).
-        if (auto name = MQ::bareCustomPropertyName(tokens.span()); !name.isNull())
+        if (auto name = MQ::bareCustomPropertyName(tokens.span()); name)
             names.add(name);
 
         // var() references, at any nesting depth.
@@ -108,7 +108,7 @@ void serialize(StringBuilder& builder, const ContainerCondition& condition)
     serialize(conditionString, condition.condition);
 
     // If the name and condition are both non-empty, put a space in-between to separate them.
-    if (!name.isEmpty() && !conditionString.isEmpty())
+    if (!isEmpty(name) && !conditionString.isEmpty())
         builder.append(' ');
 
     // No-op if empty.

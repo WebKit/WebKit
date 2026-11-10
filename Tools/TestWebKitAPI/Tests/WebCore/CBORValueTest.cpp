@@ -62,7 +62,7 @@ TEST(CBORValueTest, ConstructStringFromConstCharPtr)
 
 TEST(CBORValueTest, ConstructStringFromWTFStringConstRef)
 {
-    String str = "foobar"_s;
+    RefPtr<StringImpl> str = "foobar"_si;
     CBORValue value(str);
     ASSERT_TRUE(CBORValue::Type::String == value.type());
     EXPECT_TRUE("foobar"_s == value.getString());
@@ -70,7 +70,7 @@ TEST(CBORValueTest, ConstructStringFromWTFStringConstRef)
 
 TEST(CBORValueTest, ConstructStringFromWTFStringRefRef)
 {
-    String str = "foobar"_s;
+    RefPtr<StringImpl> str = "foobar"_si;
     CBORValue value(WTF::move(str));
     ASSERT_TRUE(CBORValue::Type::String == value.type());
     EXPECT_TRUE("foobar"_s == value.getString());
@@ -192,13 +192,13 @@ TEST(CBORValueTest, CopyString)
     CBORValue value("foobar");
     CBORValue copiedValue(value.clone());
     ASSERT_TRUE(value.type() == copiedValue.type());
-    EXPECT_TRUE(value.getString() == copiedValue.getString());
+    EXPECT_TRUE(equal(value.getString(), copiedValue.getString()));
 
     CBORValue blank;
 
     blank = value.clone();
     ASSERT_TRUE(value.type() == blank.type());
-    EXPECT_TRUE(value.getString() == blank.getString());
+    EXPECT_TRUE(equal(value.getString(), blank.getString()));
 }
 
 TEST(CBORValueTest, CopyBytestring)

@@ -34,7 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-String VisibleContentRectUpdateInfo::dump() const
+RefPtr<StringImpl> VisibleContentRectUpdateInfo::dump() const
 {
     TextStream stream;
     stream << *this;

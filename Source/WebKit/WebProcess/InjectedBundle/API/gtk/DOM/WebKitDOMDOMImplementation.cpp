@@ -125,9 +125,9 @@ WebKitDOMDocumentType* webkit_dom_dom_implementation_create_document_type(WebKit
     g_return_val_if_fail(systemId, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::DOMImplementation* item = WebKit::core(self);
-    auto convertedQualifiedName = WTF::AtomString::fromUTF8(qualifiedName);
-    auto convertedPublicId = WTF::String::fromUTF8(publicId);
-    auto convertedSystemId = WTF::String::fromUTF8(systemId);
+    auto convertedQualifiedName = AtomStringImpl::fromUTF8(qualifiedName);
+    auto convertedPublicId = StringImpl::fromUTF8(publicId);
+    auto convertedSystemId = StringImpl::fromUTF8(systemId);
     auto result = item->createDocumentType(convertedQualifiedName, convertedPublicId, convertedSystemId);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -145,8 +145,8 @@ WebKitDOMDocument* webkit_dom_dom_implementation_create_document(WebKitDOMDOMImp
     g_return_val_if_fail(!doctype || WEBKIT_DOM_IS_DOCUMENT_TYPE(doctype), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::DOMImplementation* item = WebKit::core(self);
-    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
-    auto convertedQualifiedName = WTF::AtomString::fromUTF8(qualifiedName);
+    auto convertedNamespaceURI = AtomStringImpl::fromUTF8(namespaceURI);
+    auto convertedQualifiedName = AtomStringImpl::fromUTF8(qualifiedName);
     WebCore::DocumentType* convertedDoctype = WebKit::core(doctype);
     auto result = item->createDocument(convertedNamespaceURI, convertedQualifiedName, convertedDoctype);
     if (result.hasException()) {
@@ -169,7 +169,7 @@ WebKitDOMHTMLDocument* webkit_dom_dom_implementation_create_html_document(WebKit
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_IMPLEMENTATION(self), 0);
     g_return_val_if_fail(title, 0);
     WebCore::DOMImplementation* item = WebKit::core(self);
-    WTF::String convertedTitle = WTF::String::fromUTF8(title);
+    RefPtr<StringImpl> convertedTitle = StringImpl::fromUTF8(title);
     RefPtr<WebCore::HTMLDocument> gobjectResult = WTF::getPtr(item->createHTMLDocument(WTF::move(convertedTitle)));
     return WebKit::kit(gobjectResult.get());
 }

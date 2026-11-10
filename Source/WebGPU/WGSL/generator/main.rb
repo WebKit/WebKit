@@ -353,7 +353,7 @@ module DSL
         out = []
 
         @aliases.each do |name, type|
-            out << "CHECK(introduceType(AST::Identifier::make(\"#{name}\"_s), #{type.concrete_type}));"
+            out << "CHECK(introduceType(AST::Identifier::make(\"#{name}\"_si), #{type.concrete_type}));"
         end
 
         out << "" # xcode compilation fails if there's not newline at the end of the file
@@ -386,7 +386,7 @@ module DSL
             visibility = stages.map { |s| "ShaderStage::#{s.to_s.capitalize}" }.join ", "
 
             out << "{"
-            out << "auto result = m_overloadedOperations.add(\"#{name}\"_s, OverloadedDeclaration {"
+            out << "auto result = m_overloadedOperations.add(\"#{name}\"_si, OverloadedDeclaration {"
             out << "    .kind = OverloadedDeclaration::#{entry[:kind].to_s.capitalize},"
             out << "    .mustUse = #{entry[:must_use]},"
             out << "    .constantFunction = #{constant_function},"

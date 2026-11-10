@@ -102,23 +102,23 @@ static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
 #endif
 
-static std::optional<bool> optionalExperimentalFeatureEnabled(const String& key, std::optional<bool> defaultValue = false)
+static std::optional<bool> optionalExperimentalFeatureEnabled(StringImpl* key, std::optional<bool> defaultValue = false)
 {
-    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", key.createNSString().get()]);
+    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", createNSString(key).get()]);
     if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
         return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 
     return defaultValue;
 }
 
-bool experimentalFeatureEnabled(const String& key, bool defaultValue)
+bool experimentalFeatureEnabled(StringImpl* key, bool defaultValue)
 {
     return *optionalExperimentalFeatureEnabled(key, defaultValue);
 }
 
-static bool internalDebugFeatureEnabled(const String& key)
+static bool internalDebugFeatureEnabled(StringImpl* key)
 {
-    RetainPtr defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", key.createNSString().get()]);
+    RetainPtr defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", createNSString(key).get()]);
     return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 }
 
@@ -150,7 +150,7 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
 }
 
 #if PLATFORM(MAC)
-static String libraryRootDirectory()
+static RefPtr<StringImpl> libraryRootDirectory()
 {
     static NeverDestroyed<RetainPtr<NSURL>> libraryDirectory = [] {
         RetainPtr libraryDirectory = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -158,7 +158,7 @@ static String libraryRootDirectory()
         return libraryDirectory;
     }();
 
-    return libraryDirectory.get().get().absoluteURL.path;
+    return StringImpl::create(libraryDirectory.get().get().absoluteURL.path);
 }
 #endif // PLATFORM(MAC)
 
@@ -177,16 +177,16 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     if (experimentalFeatureEnabled(WebPreferencesKey::isFirstPartyWebsiteDataRemovalDisabledKey()))
         firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::None;
     else {
-        if ([defaults boolForKey:adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", WebPreferencesKey::isFirstPartyWebsiteDataRemovalReproTestingEnabledKey().createCFString().get()]).get()])
+        if ([defaults boolForKey:adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", createCFString(WebPreferencesKey::isFirstPartyWebsiteDataRemovalReproTestingEnabledKey()).get()]).get()])
             firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout;
-        else if ([defaults boolForKey:adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", WebPreferencesKey::isFirstPartyWebsiteDataRemovalLiveOnTestingEnabledKey().createCFString().get()]).get()])
+        else if ([defaults boolForKey:adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", createCFString(WebPreferencesKey::isFirstPartyWebsiteDataRemovalLiveOnTestingEnabledKey()).get()]).get()])
             firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout;
         else
             firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     }
 
     if (RetainPtr manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"]) {
-        URL url { { }, manualPrevalentResource.get() };
+        URL url { { }, StringImpl::create(manualPrevalentResource.get()).get() };
         if (!url.isValid())
             url = { { }, makeString("http://"_s, manualPrevalentResource.get()) };
         if (url.isValid())
@@ -211,14 +211,14 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 #endif
     // FIXME: Remove these once Safari adopts _WKWebsiteDataStoreConfiguration.httpProxy and .httpsProxy.
     if (!httpProxy.isValid() && (isSafari || isMiniBrowser))
-        httpProxy = URL { [defaults stringForKey:WebKit2HTTPProxyDefaultsKey] };
+        httpProxy = URL { StringImpl::create([defaults stringForKey:WebKit2HTTPProxyDefaultsKey]) };
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
-        httpsProxy = URL { [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey] };
+        httpsProxy = URL { StringImpl::create([defaults stringForKey:WebKit2HTTPSProxyDefaultsKey]) };
 
     auto& directories = resolvedDirectories();
 #if HAVE(ALTERNATIVE_SERVICE)
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
-    String alternativeServiceStorageDirectory = directories.alternativeServicesDirectory;
+    RefPtr<StringImpl> alternativeServiceStorageDirectory = directories.alternativeServicesDirectory;
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
 #endif
 
@@ -243,7 +243,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
     auto cookieFile = directories.cookieStorageFile;
 #if PLATFORM(MAC)
-    if (cookieFile.isEmpty())
+    if (isEmpty(cookieFile))
         parameters.cookieStoragePath = FileSystem::parentPath(defaultCookieStorageFile(libraryRootDirectory()));
     else
         parameters.cookieStoragePath = FileSystem::parentPath(cookieFile);
@@ -254,7 +254,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
-        auto utf8File = cookieFile.utf8();
+        auto utf8File = utf8(cookieFile);
         RetainPtr url = adoptCF(CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, byteCast<UInt8>(utf8File.span()).data(), static_cast<CFIndex>(utf8File.length()), true));
         RetainPtr cfCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromFile(kCFAllocatorDefault, url.get(), nullptr));
         m_uiProcessCookieStorageIdentifier = identifyingDataFromCookieStorage(cfCookieStorage.get());
@@ -279,7 +279,7 @@ void WebsiteDataStore::platformDestroy()
 {
 }
 
-static String defaultWebsiteDataStoreRootDirectory()
+static RefPtr<StringImpl> defaultWebsiteDataStoreRootDirectory()
 {
     static NeverDestroyed<RetainPtr<NSURL>> websiteDataStoreDirectory = [] {
         RetainPtr libraryDirectory = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -291,14 +291,14 @@ static String defaultWebsiteDataStoreRootDirectory()
         return [webkitDirectory URLByAppendingPathComponent:@"WebsiteDataStore" isDirectory:YES];
     }();
 
-    return websiteDataStoreDirectory.get().get().absoluteURL.path;
+    return StringImpl::create(websiteDataStoreDirectory.get().get().absoluteURL.path);
 }
 
 void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<WTF::UUID>&&)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
-    websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
+    websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), directory = isolatedCopy(defaultWebsiteDataStoreRootDirectory())]() mutable {
         auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
             return WTF::UUID::parse(identifierString);
         });
@@ -308,10 +308,10 @@ void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vecto
     });
 }
 
-void WebsiteDataStore::removeDataStoreWithIdentifierImpl(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
+void WebsiteDataStore::removeDataStoreWithIdentifierImpl(const WTF::UUID& identifier, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
-    websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), identifier, directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
-        RetainPtr nsCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:identifier.toString().createNSString().get() private:NO]);
+    websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), identifier, directory = isolatedCopy(defaultWebsiteDataStoreDirectory(identifier))]() mutable {
+        RetainPtr nsCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:createNSString(identifier.toString()).get() private:NO]);
         RetainPtr credentials = [nsCredentialStorage allCredentials];
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSURLProtectionSpace *space in credentials.get()) {
@@ -323,32 +323,32 @@ void WebsiteDataStore::removeDataStoreWithIdentifierImpl(const WTF::UUID& identi
         bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
         RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), deleted]() mutable {
             if (!deleted)
-                return completionHandler("Failed to delete files on disk"_s);
+                return completionHandler("Failed to delete files on disk"_si);
 
-            completionHandler({ });
+            completionHandler(nullptr);
         });
     });
 }
 
-void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&& callback)
+void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(StringImpl*)>&& callback)
 {
     ASSERT(isMainRunLoop());
 
-    auto completionHandler = [identifier, callback = WTF::move(callback)](const String& error) mutable {
-        RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal completed for identifier %" PUBLIC_LOG_STRING " (error '%" PUBLIC_LOG_STRING "')", identifier.toString().utf8(), error.isEmpty() ? "null"_s : error.utf8());
+    auto completionHandler = [identifier, callback = WTF::move(callback)](StringImpl* error) mutable {
+        RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal completed for identifier %" PUBLIC_LOG_STRING " (error '%" PUBLIC_LOG_STRING "')", utf8(identifier.toString()), isEmpty(error) ? "null"_s : utf8(error));
         callback(error);
     };
-    RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal started for identifier %" PUBLIC_LOG_STRING, identifier.toString().utf8());
+    RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal started for identifier %" PUBLIC_LOG_STRING, utf8(identifier.toString()));
     if (!identifier.isValid())
-        return completionHandler("Identifier is invalid"_s);
+        return completionHandler("Identifier is invalid"_si);
 
     if (RefPtr existingDataStore = existingDataStoreForIdentifier(identifier)) {
         if (existingDataStore->hasActivePages())
-            return completionHandler("Data store is in use"_s);
+            return completionHandler("Data store is in use"_si);
 
         // FIXME: Try removing session from network process instead of returning error.
         if (existingDataStore->networkProcessIfExists())
-            return completionHandler("Data store is in use (by network process)"_s);
+            return completionHandler("Data store is in use (by network process)"_si);
     }
 
     if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess().get()) {
@@ -361,45 +361,45 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier
     removeDataStoreWithIdentifierImpl(identifier, WTF::move(completionHandler));
 }
 
-String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier)
+RefPtr<StringImpl> WebsiteDataStore::defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier)
 {
     return FileSystem::pathByAppendingComponent(defaultWebsiteDataStoreRootDirectory(), identifier.toString());
 }
 
-String WebsiteDataStore::defaultCookieStorageFile(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultCookieStorageFile(StringImpl* baseDirectory)
 {
-    if (baseDirectory.isEmpty())
+    if (isEmpty(baseDirectory))
         return { };
 
     return FileSystem::pathByAppendingComponents(baseDirectory, std::initializer_list<StringView>({ "Cookies"_s, "Cookies.binarycookies"_s }));
 }
 
-String WebsiteDataStore::defaultSearchFieldHistoryDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultSearchFieldHistoryDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "SearchHistory"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("SearchHistory"_s);
+    return websiteDataDirectoryFileSystemRepresentation("SearchHistory"_si);
 }
 
-String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultCacheStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "CacheStorage"_s);
 
-    return cacheDirectoryFileSystemRepresentation("CacheStorage"_s);
+    return cacheDirectoryFileSystemRepresentation("CacheStorage"_si);
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultGeneralStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "Origins"_s);
 
-    auto directory = websiteDataDirectoryFileSystemRepresentation("Default"_s);
+    auto directory = websiteDataDirectoryFileSystemRepresentation("Default"_si);
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // This is the old storage directory, and there might be files left here.
-        RetainPtr oldDirectory = cacheDirectoryFileSystemRepresentation("Storage"_s, { }, ShouldCreateDirectory::No).createNSString();
+        RetainPtr oldDirectory = createNSString(cacheDirectoryFileSystemRepresentation("Storage"_si, nullptr, ShouldCreateDirectory::No));
         RetainPtr fileManager = [NSFileManager defaultManager];
         RetainPtr<NSArray> files = [fileManager contentsOfDirectoryAtPath:oldDirectory.get() error:0];
         if (files) {
@@ -408,7 +408,7 @@ String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDirect
                 if (![fileName length])
                     continue;
 
-                RetainPtr path = [directory.createNSString() stringByAppendingPathComponent:fileName];
+                RetainPtr path = [createNSString(directory) stringByAppendingPathComponent:fileName];
                 RetainPtr oldPath = [oldDirectory stringByAppendingPathComponent:fileName];
                 [fileManager moveItemAtPath:oldPath.get() toPath:path.get() error:nil];
             }
@@ -419,140 +419,140 @@ String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDirect
     return directory;
 }
 
-String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultNetworkCacheDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "NetworkCache"_s);
 
-    return cacheDirectoryFileSystemRepresentation("NetworkCache"_s);
+    return cacheDirectoryFileSystemRepresentation("NetworkCache"_si);
 }
 
-String WebsiteDataStore::defaultAlternativeServicesDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultAlternativeServicesDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "AlternativeServices"_s);
 
-    return cacheDirectoryFileSystemRepresentation("AlternativeServices"_s, { }, ShouldCreateDirectory::No);
+    return cacheDirectoryFileSystemRepresentation("AlternativeServices"_si, nullptr, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultHSTSStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultHSTSStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "HSTS"_s);
 
-    return cacheDirectoryFileSystemRepresentation("HSTS"_s);
+    return cacheDirectoryFileSystemRepresentation("HSTS"_si);
 }
 
-String WebsiteDataStore::defaultMediaCacheDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultMediaCacheDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "MediaCache"_s);
 
-    return tempDirectoryFileSystemRepresentation("MediaCache"_s);
+    return tempDirectoryFileSystemRepresentation("MediaCache"_si);
 }
 
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultIndexedDBDatabaseDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "IndexedDB"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s);
+    return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_si);
 }
 
-String WebsiteDataStore::defaultIsolatedSitesDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultIsolatedSitesDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "IsolatedSites"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("IsolatedSites"_s, { }, ShouldCreateDirectory::No);
+    return websiteDataDirectoryFileSystemRepresentation("IsolatedSites"_si, nullptr, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "ServiceWorkers"_s);
 
-    return cacheDirectoryFileSystemRepresentation("ServiceWorkers"_s);
+    return cacheDirectoryFileSystemRepresentation("ServiceWorkers"_si);
 }
 
-String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultLocalStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "LocalStorage"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_s);
+    return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_si);
 }
 
-String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultMediaKeysStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "MediaKeys"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("MediaKeys"_s);
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeys"_si);
 }
 
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "DeviceIdHashSalts"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts"_s);
+    return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts"_si);
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-String WebsiteDataStore::defaultMediaKeysHashSaltsStorageDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultMediaKeysHashSaltsStorageDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "MediaKeysHashSalts"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("MediaKeysHashSalts"_s);
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeysHashSalts"_si);
 }
 #endif
 
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultWebSQLDatabaseDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "WebSQL"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, { }, ShouldCreateDirectory::No);
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_si, nullptr, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultResourceLoadStatisticsDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "ResourceLoadStatistics"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_s);
+    return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_si);
 }
 
-String WebsiteDataStore::defaultJavaScriptConfigurationDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultJavaScriptConfigurationDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "JavaScriptCoreDebug"_s);
 
-    return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug"_s, ShouldCreateDirectory::No);
+    return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug"_si, ShouldCreateDirectory::No);
 }
 
 
 #if ENABLE(CONTENT_EXTENSIONS)
-String WebsiteDataStore::defaultResourceMonitorThrottlerDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultResourceMonitorThrottlerDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "ResourceMonitorThrottler"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("ResourceMonitorThrottler"_s, { }, ShouldCreateDirectory::No);
+    return websiteDataDirectoryFileSystemRepresentation("ResourceMonitorThrottler"_si, nullptr, ShouldCreateDirectory::No);
 }
 #endif
 
-String WebsiteDataStore::defaultEnhancedSecurityDirectory(const String& baseDirectory)
+RefPtr<StringImpl> WebsiteDataStore::defaultEnhancedSecurityDirectory(StringImpl* baseDirectory)
 {
-    if (!baseDirectory.isEmpty())
+    if (!isEmpty(baseDirectory))
         return FileSystem::pathByAppendingComponent(baseDirectory, "EnhancedSecurity"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("EnhancedSecurity"_s, { }, ShouldCreateDirectory::No);
+    return websiteDataDirectoryFileSystemRepresentation("EnhancedSecurity"_si, nullptr, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::tempDirectoryFileSystemRepresentation(StringImpl* directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static NeverDestroyed<RetainPtr<NSURL>> tempURL = [] {
         RetainPtr url = [NSURL fileURLWithPath:RetainPtr { NSTemporaryDirectory() }.get() isDirectory:YES];
@@ -565,16 +565,16 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
         return [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
     }();
     
-    RetainPtr url = [tempURL.get() URLByAppendingPathComponent:directoryName.createNSString().get() isDirectory:YES];
+    RetainPtr url = [tempURL.get() URLByAppendingPathComponent:createNSString(directoryName).get() isDirectory:YES];
 
     if (shouldCreateDirectory == ShouldCreateDirectory::Yes
         && (![[NSFileManager defaultManager] createDirectoryAtURL:url.get() withIntermediateDirectories:YES attributes:nil error:nullptr]))
         LOG_ERROR("Failed to create directory %@", url.get());
     
-    return url.get().absoluteURL.path;
+    return StringImpl::create(url.get().absoluteURL.path);
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String&, ShouldCreateDirectory shouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::cacheDirectoryFileSystemRepresentation(StringImpl* directoryName, StringImpl*, ShouldCreateDirectory shouldCreateDirectory)
 {
     static NeverDestroyed<RetainPtr<NSURL>> cacheURL = [] {
         RetainPtr url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -587,15 +587,15 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
         return [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
     }();
 
-    RetainPtr url = [cacheURL.get() URLByAppendingPathComponent:directoryName.createNSString().get() isDirectory:YES];
+    RetainPtr url = [cacheURL.get() URLByAppendingPathComponent:createNSString(directoryName).get() isDirectory:YES];
     if (shouldCreateDirectory == ShouldCreateDirectory::Yes
         && ![[NSFileManager defaultManager] createDirectoryAtURL:url.get() withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", url.get());
 
-    return url.get().absoluteURL.path;
+    return StringImpl::create(url.get().absoluteURL.path);
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String&, ShouldCreateDirectory shouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(StringImpl* directoryName, StringImpl*, ShouldCreateDirectory shouldCreateDirectory)
 {
     static NeverDestroyed<RetainPtr<NSURL>> websiteDataURL = [] {
         RetainPtr url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -609,14 +609,14 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
         return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
     }();
 
-    RetainPtr url = [websiteDataURL.get() URLByAppendingPathComponent:directoryName.createNSString().get() isDirectory:YES];
+    RetainPtr url = [websiteDataURL.get() URLByAppendingPathComponent:createNSString(directoryName).get() isDirectory:YES];
 
     if (shouldCreateDirectory == ShouldCreateDirectory::Yes) {
         if (![[NSFileManager defaultManager] createDirectoryAtURL:url.get() withIntermediateDirectories:YES attributes:nil error:nullptr])
             LOG_ERROR("Failed to create directory %@", url.get());
     }
 
-    return url.get().absoluteURL.path;
+    return StringImpl::create(url.get().absoluteURL.path);
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -627,10 +627,10 @@ static HashSet<WebCore::RegistrableDomain>& appBoundDomains()
     return appBoundDomains;
 }
 
-static HashSet<String>& appBoundSchemes()
+static HashSet<RefPtr<StringImpl>>& appBoundSchemes()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashSet<String>> appBoundSchemes;
+    static NeverDestroyed<HashSet<RefPtr<StringImpl>>> appBoundSchemes;
     return appBoundSchemes;
 }
 
@@ -661,14 +661,14 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 if (appBoundDomains().size() + appBoundSchemes().size() >= maxAppBoundDomainCount)
                     break;
                 if ([data hasSuffix:@":"]) {
-                    auto appBoundScheme = String([data substringToIndex:[data length] - 1]);
-                    if (!appBoundScheme.isEmpty()) {
+                    auto appBoundScheme = StringImpl::create([data substringToIndex:[data length] - 1]);
+                    if (!isEmpty(appBoundScheme)) {
                         appBoundSchemes().add(appBoundScheme);
                         continue;
                     }
                 }
 
-                URL url { data };
+                URL url { StringImpl::create(data) };
                 if (url.protocol().isEmpty())
                     url.setProtocol("https"_s);
                 if (!url.isValid())
@@ -693,7 +693,7 @@ void WebsiteDataStore::addTestDomains() const
     }
 }
 
-void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&& completionHandler) const
+void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<RefPtr<StringImpl>>&)>&& completionHandler) const
 {
     if (hasInitializedAppBoundDomains) {
         if (m_configuration->enableInAppBrowserPrivacyForTesting())
@@ -714,18 +714,18 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
     });
 }
 
-static NavigatingToAppBoundDomain schemeOrDomainIsAppBound(const String& host, const String& protocol, const HashSet<WebCore::RegistrableDomain>& domains, const HashSet<String>& schemes)
+static NavigatingToAppBoundDomain schemeOrDomainIsAppBound(StringImpl* host, StringImpl* protocol, const HashSet<WebCore::RegistrableDomain>& domains, const HashSet<RefPtr<StringImpl>>& schemes)
 {
-    auto schemeIsAppBound = !protocol.isNull() && schemes.contains(protocol);
+    auto schemeIsAppBound = !!protocol && schemes.contains(protocol);
     auto domainIsAppBound = domains.contains(WebCore::RegistrableDomain::uncheckedCreateFromHost(host));
     return schemeIsAppBound || domainIsAppBound ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No;
 }
 
-void WebsiteDataStore::beginAppBoundDomainCheck(const String& host, const String& protocol, WebFramePolicyListenerProxy& listener)
+void WebsiteDataStore::beginAppBoundDomainCheck(StringImpl* host, StringImpl* protocol, WebFramePolicyListenerProxy& listener)
 {
     ASSERT(RunLoop::isMain());
 
-    ensureAppBoundDomains([host, protocol, listener = Ref { listener }] (auto& domains, auto& schemes) mutable {
+    ensureAppBoundDomains([host = RefPtr { host }, protocol = RefPtr { protocol }, listener = Ref { listener }] (auto& domains, auto& schemes) mutable {
         // Must check for both an empty app bound domains list and an empty key before returning nullopt
         // because test cases may have app bound domains but no key.
         bool hasAppBoundDomains = keyExists || !domains.isEmpty();
@@ -746,7 +746,7 @@ void WebsiteDataStore::getAppBoundDomains(CompletionHandler<void(const HashSet<W
     });
 }
 
-void WebsiteDataStore::getAppBoundSchemes(CompletionHandler<void(const HashSet<String>&)>&& completionHandler) const
+void WebsiteDataStore::getAppBoundSchemes(CompletionHandler<void(const HashSet<RefPtr<StringImpl>>&)>&& completionHandler) const
 {
     ASSERT(RunLoop::isMain());
 
@@ -846,7 +846,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         managedKeyExists = !!crossSiteTrackingPreventionRelaxedDomains;
     
         RetainPtr<NSString> bundleID = [[NSBundle mainBundle] bundleIdentifier];
-        bool shouldUseRelaxedDomainsIfAvailable = isSafari || isRunningTest(bundleID.get()) || [crossSiteTrackingPreventionRelaxedApps containsObject:bundleID.get()];
+        bool shouldUseRelaxedDomainsIfAvailable = isSafari || isRunningTest(StringImpl::create(bundleID.get()).get()) || [crossSiteTrackingPreventionRelaxedApps containsObject:bundleID.get()];
         if (!shouldUseRelaxedDomainsIfAvailable)
             return;
 
@@ -862,7 +862,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
                 if (managedDomains().size() >= maxManagedDomainCount)
                     break;
 
-                URL url { data };
+                URL url { StringImpl::create(data) };
                 if (url.protocol().isEmpty())
                     url.setProtocol("https"_s);
                 if (!url.isValid())
@@ -929,7 +929,7 @@ void WebsiteDataStore::reinitializeManagedDomains()
 }
 #endif
 
-bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
+bool WebsiteDataStore::networkProcessHasEntitlementForTesting(StringImpl* entitlement)
 {
     return WTF::hasEntitlement(protect(protect(networkProcess().connection())->xpcConnection()).get(), entitlement);
 }
@@ -951,30 +951,30 @@ UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 
 #if PLATFORM(IOS_FAMILY)
 
-String WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(const String& subpath)
+RefPtr<StringImpl> WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(StringImpl* subpath)
 {
-    String path = pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
+    RefPtr<StringImpl> path = pathForProcessContainer();
+    if (isEmpty(path))
+        path = StringImpl::create(protect(NSHomeDirectory()).get());
 
     return makeString(path, subpath);
 }
 
-String WebsiteDataStore::parentBundleDirectory() const
+RefPtr<StringImpl> WebsiteDataStore::parentBundleDirectory() const
 {
     if (!isPersistent())
         return emptyString();
 
-    return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
+    return StringImpl::create([[[NSBundle mainBundle] bundlePath] stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::resolvedCookieStorageDirectory()
+RefPtr<StringImpl> WebsiteDataStore::resolvedCookieStorageDirectory()
 {
-    if (m_resolvedCookieStorageDirectory.isNull()) {
+    if (!m_resolvedCookieStorageDirectory) {
         if (!isPersistent())
             m_resolvedCookieStorageDirectory = emptyString();
         else {
-            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
+            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_si);
             m_resolvedCookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
         }
     }
@@ -982,13 +982,13 @@ String WebsiteDataStore::resolvedCookieStorageDirectory()
     return m_resolvedCookieStorageDirectory;
 }
 
-String WebsiteDataStore::resolvedContainerCachesNetworkingDirectory()
+RefPtr<StringImpl> WebsiteDataStore::resolvedContainerCachesNetworkingDirectory()
 {
-    if (m_resolvedContainerCachesNetworkingDirectory.isNull()) {
+    if (!m_resolvedContainerCachesNetworkingDirectory) {
         if (!isPersistent())
             m_resolvedContainerCachesNetworkingDirectory = emptyString();
         else {
-            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
+            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_si);
             m_resolvedContainerCachesNetworkingDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
         }
     }
@@ -996,17 +996,17 @@ String WebsiteDataStore::resolvedContainerCachesNetworkingDirectory()
     return m_resolvedContainerCachesNetworkingDirectory;
 }
 
-String WebsiteDataStore::resolvedContainerTemporaryDirectory()
+RefPtr<StringImpl> WebsiteDataStore::resolvedContainerTemporaryDirectory()
 {
-    if (m_resolvedContainerTemporaryDirectory.isNull())
+    if (!m_resolvedContainerTemporaryDirectory)
         m_resolvedContainerTemporaryDirectory = defaultResolvedContainerTemporaryDirectory();
 
     return m_resolvedContainerTemporaryDirectory;
 }
 
-String WebsiteDataStore::defaultResolvedContainerTemporaryDirectory()
+RefPtr<StringImpl> WebsiteDataStore::defaultResolvedContainerTemporaryDirectory()
 {
-    static NeverDestroyed<String> resolvedTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(String(NSTemporaryDirectory()));
+    static NeverDestroyed<RefPtr<StringImpl>> resolvedTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(StringImpl::create(protect(NSTemporaryDirectory()).get()).get());
     return resolvedTemporaryDirectory;
 }
 
@@ -1017,16 +1017,16 @@ void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, Comple
 
 #endif
 
-void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+void WebsiteDataStore::saveRecentSearches(StringImpl* name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()] {
+    m_queue->dispatch([name = isolatedCopy(name), searchItems = crossThreadCopy(searchItems), directory = isolatedCopy(resolvedDirectories().searchFieldHistoryDirectory)] {
         WebCore::saveRecentSearchesToFile(name, searchItems, directory);
     });
 }
 
-void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+void WebsiteDataStore::loadRecentSearches(StringImpl* name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
-    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTF::move(completionHandler), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()]() mutable {
+    m_queue->dispatch([name = isolatedCopy(name), completionHandler = WTF::move(completionHandler), directory = isolatedCopy(resolvedDirectories().searchFieldHistoryDirectory)]() mutable {
         auto result = WebCore::loadRecentSearchesFromFile(name, directory);
         RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), result = crossThreadCopy(result)]() mutable {
             completionHandler(WTF::move(result));
@@ -1036,7 +1036,7 @@ void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<
 
 void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, CompletionHandler<void()>&& completionHandler)
 {
-    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = isolatedCopy(resolvedDirectories().searchFieldHistoryDirectory), completionHandler = WTF::move(completionHandler)]() mutable {
         WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
     });
@@ -1045,8 +1045,8 @@ void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, Complet
 HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsWithUserInteraction() const
 {
     RetainPtr<id> arrayOrCommaDelimitedString;
-    if (!m_configuration->additionalDomainsWithUserInteractionForTesting().isEmpty())
-        arrayOrCommaDelimitedString = m_configuration->additionalDomainsWithUserInteractionForTesting().createNSString();
+    if (!isEmpty(m_configuration->additionalDomainsWithUserInteractionForTesting()))
+        arrayOrCommaDelimitedString = createNSString(m_configuration->additionalDomainsWithUserInteractionForTesting());
     else
         arrayOrCommaDelimitedString = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitDebugAdditionalDomainsWithUserInteraction"];
 
@@ -1054,8 +1054,8 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
         return { };
 
     HashSet<WebCore::RegistrableDomain> result { };
-    auto addHost = [&result](String host) {
-        WebCore::SecurityOriginData origin { "https"_s, host, std::nullopt };
+    auto addHost = [&result](RefPtr<StringImpl> host) {
+        WebCore::SecurityOriginData origin { "https"_si, host, std::nullopt };
         WebCore::RegistrableDomain domain { origin };
         if (!domain.isEmpty())
             result.add(domain);
@@ -1065,12 +1065,12 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id host in arrayOrCommaDelimitedString.get()) {
             if ([host isKindOfClass:[NSString class]])
-                addHost((NSString *)host);
+                addHost(StringImpl::create((NSString *)host));
         }
     } else if ([arrayOrCommaDelimitedString isKindOfClass:[NSString class]]) {
-        String commaDelimitedString = (NSString *)arrayOrCommaDelimitedString;
-        for (String host : commaDelimitedString.split(","_s))
-            addHost(host.trim(isASCIIWhitespace<char16_t>));
+        RefPtr<StringImpl> commaDelimitedString = StringImpl::create((NSString *)arrayOrCommaDelimitedString);
+        for (RefPtr<StringImpl> host : split(commaDelimitedString, ","_s))
+            addHost(trim(host, isASCIIWhitespace<char16_t>));
     }
 
     return result;

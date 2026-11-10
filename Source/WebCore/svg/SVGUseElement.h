@@ -71,7 +71,7 @@ private:
     void removingSteps(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
@@ -84,7 +84,7 @@ private:
 
     FloatRect getBBox(StyleUpdateStrategy = StyleUpdateStrategy::Allow) final;
 
-    RefPtr<SVGElement> findTarget(AtomString* targetID = nullptr) const;
+    RefPtr<SVGElement> findTarget(RefPtr<AtomStringImpl>* targetID = nullptr) const;
 
     void cloneTarget(ContainerNode&, SVGElement& target) const;
     NODELETE RefPtr<SVGElement> targetClone() const;

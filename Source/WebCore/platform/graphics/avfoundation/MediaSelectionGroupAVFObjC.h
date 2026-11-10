@@ -70,13 +70,13 @@ private:
 
 class MediaSelectionGroupAVFObjC : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSelectionGroupAVFObjC, WTF::DestructionThread::Main> {
 public:
-    static Ref<MediaSelectionGroupAVFObjC> create(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<String>& characteristics);
+    static Ref<MediaSelectionGroupAVFObjC> create(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<RefPtr<StringImpl>>& characteristics);
     ~MediaSelectionGroupAVFObjC();
 
     void setSelectedOption(MediaSelectionOptionAVFObjC*);
     RefPtr<MediaSelectionOptionAVFObjC> selectedOption() const { return m_selectedOption.get(); }
 
-    void updateOptions(const Vector<String>& characteristics);
+    void updateOptions(const Vector<RefPtr<StringImpl>>& characteristics);
 
     using OptionContainer = HashMap<CFTypeRef, Ref<MediaSelectionOptionAVFObjC>>;
     typename OptionContainer::ValuesIteratorRange options() { return m_options.values(); }
@@ -85,7 +85,7 @@ public:
     AVPlayerItem *playerItem() const { return m_playerItem.get(); }
 
 private:
-    MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<String>& characteristics);
+    MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<RefPtr<StringImpl>>& characteristics);
 
     void selectionTimerFired();
 

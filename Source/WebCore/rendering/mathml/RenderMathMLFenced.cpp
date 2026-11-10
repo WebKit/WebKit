@@ -63,20 +63,20 @@ void RenderMathMLFenced::updateFromElement()
 
     // The open operator defaults to a left parenthesis.
     auto& open = fenced->attributeWithoutSynchronization(MathMLNames::openAttr);
-    m_open = open.isNull() ? gOpeningBraceChar : open;
+    m_open = !open ? AtomStringImpl::add(gOpeningBraceChar) : open;
 
     // The close operator defaults to a right parenthesis.
     auto& close = fenced->attributeWithoutSynchronization(MathMLNames::closeAttr);
-    m_close = close.isNull() ? gClosingBraceChar : close;
+    m_close = !close ? AtomStringImpl::add(gClosingBraceChar) : close;
 
     auto& separators = fenced->attributeWithoutSynchronization(MathMLNames::separatorsAttr);
-    if (!separators.isNull()) {
+    if (separators) {
         StringBuilder characters;
-        for (unsigned i = 0; i < separators.length(); i++) {
-            if (!deprecatedIsSpaceOrNewline(separators[i]))
-                characters.append(separators[i]);
+        for (unsigned i = 0; i < length(separators); i++) {
+            if (!deprecatedIsSpaceOrNewline(codeUnitAt(separators, i)))
+                characters.append(codeUnitAt(separators, i));
         }
-        m_separators = !characters.length() ? 0 : characters.toString().impl();
+        m_separators = !characters.length() ? 0 : characters.toString().get();
     } else {
         // The separator defaults to a single comma.
         m_separators = StringImpl::create(","_s);

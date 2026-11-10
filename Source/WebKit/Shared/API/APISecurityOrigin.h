@@ -33,12 +33,12 @@ namespace API {
 
 class SecurityOrigin : public API::ObjectImpl<API::Object::Type::SecurityOrigin> {
 public:
-    static Ref<SecurityOrigin> createFromString(const WTF::String& string)
+    static Ref<SecurityOrigin> createFromString(StringImpl* string)
     {
         return adoptRef(*new SecurityOrigin(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(WTF::URL { string })));
     }
 
-    static Ref<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, std::optional<uint16_t> port)
+    static Ref<SecurityOrigin> create(StringImpl* protocol, StringImpl* host, std::optional<uint16_t> port)
     {
         return adoptRef(*new SecurityOrigin({ protocol, host, port }));
     }

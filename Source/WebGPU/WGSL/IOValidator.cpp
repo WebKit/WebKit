@@ -123,7 +123,7 @@ void IOValidator::collectGlobals()
             resource,
             globalVar
         });
-        introduceVariable(globalVar->name(), global);
+        introduceVariable(protect(globalVar->name().id()), global);
     }
 }
 
@@ -158,20 +158,20 @@ void IOValidator::visit(AST::Function& function)
 void IOValidator::visit(AST::VariableStatement& statement)
 {
     AST::Visitor::visit(statement);
-    introduceVariable(statement.variable().name(), nullptr);
+    introduceVariable(protect(statement.variable().name().id()), nullptr);
 }
 
 void IOValidator::visit(AST::Parameter& parameter)
 {
     AST::Visitor::visit(parameter);
-    introduceVariable(parameter.name(), nullptr);
+    introduceVariable(protect(parameter.name().id()), nullptr);
 }
 
 void IOValidator::visit(AST::IdentifierExpression& identifier)
 {
     AST::Visitor::visit(identifier);
 
-    auto* variable = readVariable(identifier.identifier());
+    auto* variable = readVariable(protect(identifier.identifier().id()));
     if (!variable || !*variable)
         return;
 
@@ -216,17 +216,17 @@ static bool isSamplerBinding(const Type* type)
     return primitive && (primitive->kind == Types::Primitive::Sampler || primitive->kind == Types::Primitive::SamplerComparison);
 }
 
-static bool takesTextureAndSampler(const String& builtin)
+static bool takesTextureAndSampler(StringImpl* builtin)
 {
-    return builtin == "textureGather"_s
-        || builtin == "textureGatherCompare"_s
-        || builtin == "textureSample"_s
-        || builtin == "textureSampleBaseClampToEdge"_s
-        || builtin == "textureSampleBias"_s
-        || builtin == "textureSampleCompare"_s
-        || builtin == "textureSampleCompareLevel"_s
-        || builtin == "textureSampleGrad"_s
-        || builtin == "textureSampleLevel"_s;
+    return equal(builtin, "textureGather"_s)
+        || equal(builtin, "textureGatherCompare"_s)
+        || equal(builtin, "textureSample"_s)
+        || equal(builtin, "textureSampleBaseClampToEdge"_s)
+        || equal(builtin, "textureSampleBias"_s)
+        || equal(builtin, "textureSampleCompare"_s)
+        || equal(builtin, "textureSampleCompareLevel"_s)
+        || equal(builtin, "textureSampleGrad"_s)
+        || equal(builtin, "textureSampleLevel"_s);
 }
 
 void IOValidator::visit(AST::CallExpression& call)
@@ -244,7 +244,7 @@ void IOValidator::visit(AST::CallExpression& call)
         auto* identifier = dynamicDowncast<AST::IdentifierExpression>(argument);
         if (!identifier)
             continue;
-        auto* global = readVariable(identifier->identifier());
+        auto* global = readVariable(protect(identifier->identifier().id()));
         // FIXME: a texture or a sampler reaching the builtin through a function parameter
         // resolves to no global, so the pair goes unrecorded. Tracking those needs the pair
         // analysis to run over the call graph rather than over each function in isolation.

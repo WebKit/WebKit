@@ -38,15 +38,15 @@ struct WebPopupItem {
 
     WebPopupItem();
     WebPopupItem(Type);
-    WebPopupItem(Type, const String& text, const String& language, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
+    WebPopupItem(Type, StringImpl* text, StringImpl* language, WebCore::TextDirection, bool hasTextDirectionOverride, StringImpl* toolTip, StringImpl* accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
 
     Type m_type;
-    String m_text;
-    String m_language;
+    RefPtr<StringImpl> m_text;
+    RefPtr<StringImpl> m_language;
     WebCore::TextDirection m_textDirection;
     bool m_hasTextDirectionOverride;
-    String m_toolTip;
-    String m_accessibilityText;
+    RefPtr<StringImpl> m_toolTip;
+    RefPtr<StringImpl> m_accessibilityText;
     bool m_isEnabled;
     bool m_isLabel;
     bool m_isSelected;

@@ -140,13 +140,13 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBK
     result = { currentRecord.record.key, currentRecord.record.primaryKey, IDBValue(currentRecord.record.value), keyPath, WTF::move(prefetchedRecords) };
 }
 
-static String buildPreIndexStatement(bool isDirectionNext)
+static RefPtr<StringImpl> buildPreIndexStatement(bool isDirectionNext)
 {
     return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT) AND value "_s,
         isDirectionNext ? '>' : '<', " CAST(? AS TEXT) ORDER BY value"_s, isDirectionNext ? ""_s : " DESC"_s, ';');
 }
 
-static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
+static RefPtr<StringImpl> buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
     return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key "_s,
         !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">="_s : ">"_s,
@@ -159,7 +159,7 @@ static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::Cu
         ';');
 }
 
-static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
+static RefPtr<StringImpl> buildObjectStoreStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
     return makeString("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key "_s,
         !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">="_s : ">"_s,
@@ -173,7 +173,7 @@ static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, Indexed
 bool SQLiteIDBCursor::establishStatement()
 {
     ASSERT(!m_statement);
-    String sql;
+    RefPtr<StringImpl> sql;
 
     if (m_indexID) {
         sql = buildIndexStatement(m_keyRange, m_cursorDirection);
@@ -531,7 +531,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
     if (!m_indexID) {
         record.record.primaryKey = record.record.key;
 
-        Vector<String> blobURLs, blobFilePaths;
+        Vector<RefPtr<StringImpl>> blobURLs, blobFilePaths;
         auto error = protect(m_transaction->backingStore())->getBlobRecordsForObjectStoreRecord(record.rowID, blobURLs, blobFilePaths);
         if (!error.isNull()) {
             LOG_ERROR("Unable to fetch blob records from database while advancing cursor");
@@ -573,7 +573,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
         if (result == SQLITE_ROW) {
             auto recordsRowID = cachedObjectStoreStatement->columnInt64(0);
-            Vector<String> blobURLs, blobFilePaths;
+            Vector<RefPtr<StringImpl>> blobURLs, blobFilePaths;
             auto error = protect(m_transaction->backingStore())->getBlobRecordsForObjectStoreRecord(recordsRowID, blobURLs, blobFilePaths);
             if (!error.isNull()) {
                 LOG_ERROR("Unable to fetch blob records from database while advancing cursor");

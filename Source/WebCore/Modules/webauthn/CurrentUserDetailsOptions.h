@@ -30,10 +30,10 @@
 namespace WebCore {
 
 struct CurrentUserDetailsOptions {
-    String rpId;
-    String userId;
-    String name;
-    String displayName;
+    RefPtr<StringImpl> rpId;
+    RefPtr<StringImpl> userId;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> displayName;
 };
 
 } // namespace WebCore

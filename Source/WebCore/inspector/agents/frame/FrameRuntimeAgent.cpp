@@ -95,7 +95,7 @@ CommandResult<void> FrameRuntimeAgent::disable()
     return InspectorRuntimeAgent::disable();
 }
 
-CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */> FrameRuntimeAgent::evaluate(const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
+CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */> FrameRuntimeAgent::evaluate(StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -111,17 +111,17 @@ CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<b
     return InspectorRuntimeAgent::evaluate(injectedScript, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 
-void FrameRuntimeAgent::callFunctionOn(const Inspector::Protocol::Runtime::RemoteObjectId& objectId, const String& expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
+void FrameRuntimeAgent::callFunctionOn(StringImpl* objectId, StringImpl* expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        callback->sendFailure("Missing injected script for given objectId"_s);
+        callback->sendFailure("Missing injected script for given objectId"_si);
         return;
     }
 
     RefPtr page = protect(m_inspectedFrame)->page();
     if (!page) {
-        callback->sendFailure("Frame or page not available"_s);
+        callback->sendFailure("Frame or page not available"_si);
         return;
     }
 
@@ -140,13 +140,13 @@ InjectedScript FrameRuntimeAgent::injectedScriptForEval(Inspector::Protocol::Err
 
         auto result = injectedScriptManager().injectedScriptFor(globalObject);
         if (result.hasNoValue())
-            errorString = "Internal error: main world execution context not found"_s;
+            errorString = "Internal error: main world execution context not found"_si;
         return result;
     }
 
     auto injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        errorString = "Missing injected script for given executionContextId"_s;
+        errorString = "Missing injected script for given executionContextId"_si;
     return injectedScript;
 }
 
@@ -160,7 +160,7 @@ void FrameRuntimeAgent::unmuteConsole()
     FrameConsoleClient::unmute();
 }
 
-String FrameRuntimeAgent::frameIdForProtocol() const
+RefPtr<StringImpl> FrameRuntimeAgent::frameIdForProtocol() const
 {
     return IdentifierRegistry::protocolFrameId(m_frameIdentifier, Process::identifier());
 }
@@ -209,7 +209,7 @@ void FrameRuntimeAgent::notifyContextCreated(JSC::JSGlobalObject* globalObject, 
         return;
 
     auto name = world.name();
-    if (name.isEmpty()) {
+    if (isEmpty(name)) {
         if (securityOrigin)
             name = securityOrigin->toRawString();
         else if (RefPtr document = protect(m_inspectedFrame)->document())

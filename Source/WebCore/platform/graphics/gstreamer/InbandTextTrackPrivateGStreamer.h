@@ -54,9 +54,9 @@ public:
 
     Kind kind() const final { return m_kind; }
     TrackID id() const final;
-    std::optional<String> trackUID() const final { return std::nullopt; }
-    String label() const final;
-    String language() const final;
+    std::optional<RefPtr<StringImpl>> trackUID() const final { return std::nullopt; }
+    RefPtr<StringImpl> label() const final;
+    RefPtr<StringImpl> language() const final;
     int trackIndex() const final;
 
     void handleSample(GRefPtr<GstSample>&&);

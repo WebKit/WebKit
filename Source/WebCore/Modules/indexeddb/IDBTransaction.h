@@ -85,7 +85,7 @@ public:
     IDBTransactionDurability durability() const { return m_info.durability(); }
     NODELETE IDBDatabase& db();
     NODELETE DOMException* error() const;
-    ExceptionOr<Ref<IDBObjectStore>> objectStore(const String& name);
+    ExceptionOr<Ref<IDBObjectStore>> objectStore(StringImpl* name);
     ExceptionOr<void> abort();
     ExceptionOr<void> commit();
 
@@ -110,9 +110,9 @@ public:
     bool isActive() const;
 
     Ref<IDBObjectStore> createObjectStore(const IDBObjectStoreInfo&);
-    void renameObjectStore(IDBObjectStore&, const String& newName);
+    void renameObjectStore(IDBObjectStore&, StringImpl* newName);
     std::unique_ptr<IDBIndex> createIndex(IDBObjectStore&, const IDBIndexInfo&);
-    void renameIndex(IDBIndex&, const String& newName);
+    void renameIndex(IDBIndex&, StringImpl* newName);
 
     Ref<IDBRequest> requestPutOrAdd(IDBObjectStore&, RefPtr<IDBKey>&&, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(IDBObjectStore&, const IDBGetRecordData&);
@@ -128,8 +128,8 @@ public:
     Ref<IDBRequest> requestOpenCursor(IDBIndex&, const IDBCursorInfo&);
     void iterateCursor(IDBCursor&, const IDBIterateCursorData&);
 
-    void deleteObjectStore(const String& objectStoreName);
-    void deleteIndex(IDBObjectStoreIdentifier, const String& indexName);
+    void deleteObjectStore(StringImpl* objectStoreName);
+    void deleteIndex(IDBObjectStoreIdentifier, StringImpl* indexName);
 
     void addRequest(IDBRequest&);
     void removeRequest(IDBRequest&);
@@ -191,13 +191,13 @@ private:
     void createObjectStoreOnServer(IDBClient::TransactionOperation&, const IDBObjectStoreInfo&);
     NODELETE void didCreateObjectStoreOnServer(const IDBResultData&);
 
-    void renameObjectStoreOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, const String& newName);
+    void renameObjectStoreOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, StringImpl* newName);
     NODELETE void didRenameObjectStoreOnServer(const IDBResultData&);
 
     void createIndexOnServer(IDBClient::TransactionOperation&, const IDBIndexInfo&);
     void didCreateIndexOnServer(const IDBResultData&);
 
-    void renameIndexOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName);
+    void renameIndexOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName);
     NODELETE void didRenameIndexOnServer(const IDBResultData&);
 
     void clearObjectStoreOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier);
@@ -218,10 +218,10 @@ private:
     void deleteRecordOnServer(IDBClient::TransactionOperation&, const IDBKeyRangeData&);
     void didDeleteRecordOnServer(IDBRequest&, const IDBResultData&);
 
-    void deleteObjectStoreOnServer(IDBClient::TransactionOperation&, const String& objectStoreName);
+    void deleteObjectStoreOnServer(IDBClient::TransactionOperation&, StringImpl* objectStoreName);
     NODELETE void didDeleteObjectStoreOnServer(const IDBResultData&);
 
-    void deleteIndexOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, const String& indexName);
+    void deleteIndexOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, StringImpl* indexName);
     NODELETE void didDeleteIndexOnServer(const IDBResultData&);
 
     Ref<IDBRequest> doRequestOpenCursor(Ref<IDBCursor>&&);
@@ -262,7 +262,7 @@ private:
     HashMap<IDBResourceIdentifier, Ref<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
     mutable Lock m_objectStoresLock;
-    HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_objectStoresLock);
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_objectStoresLock);
     HashMap<IDBObjectStoreIdentifier, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores WTF_GUARDED_BY_LOCK(m_objectStoresLock);;
 
     HashSet<Ref<IDBRequest>> m_openRequests;

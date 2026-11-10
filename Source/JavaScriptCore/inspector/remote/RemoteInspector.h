@@ -84,22 +84,22 @@ public:
     public:
         struct Capabilities {
             bool remoteAutomationAllowed : 1;
-            String browserName;
-            String browserVersion;
+            RefPtr<StringImpl> browserName;
+            RefPtr<StringImpl> browserVersion;
         };
 
         struct SessionCapabilities {
             bool acceptInsecureCertificates { false };
 #if USE(GLIB) || USE(INSPECTOR_SOCKET_SERVER)
-            Vector<std::pair<String, String>> certificates;
+            Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> certificates;
             struct Proxy {
-                String type;
-                std::optional<String> autoconfigURL;
-                std::optional<String> ftpURL;
-                std::optional<String> httpURL;
-                std::optional<String> httpsURL;
-                std::optional<String> socksURL;
-                Vector<String> ignoreAddressList;
+                RefPtr<StringImpl> type;
+                std::optional<RefPtr<StringImpl>> autoconfigURL;
+                std::optional<RefPtr<StringImpl>> ftpURL;
+                std::optional<RefPtr<StringImpl>> httpURL;
+                std::optional<RefPtr<StringImpl>> httpsURL;
+                std::optional<RefPtr<StringImpl>> socksURL;
+                Vector<RefPtr<StringImpl>> ignoreAddressList;
             };
             std::optional<Proxy> proxy;
 #endif
@@ -115,9 +115,9 @@ public:
         JS_EXPORT_PRIVATE Client();
         JS_EXPORT_PRIVATE virtual ~Client();
         virtual bool remoteAutomationAllowed() const = 0;
-        virtual String browserName() const { return { }; }
-        virtual String browserVersion() const { return { }; }
-        virtual void requestAutomationSession(const String& sessionIdentifier, const SessionCapabilities&) = 0;
+        virtual RefPtr<StringImpl> browserName() const { return { }; }
+        virtual RefPtr<StringImpl> browserVersion() const { return { }; }
+        virtual void requestAutomationSession(StringImpl* sessionIdentifier, const SessionCapabilities&) = 0;
         virtual void requestedDebuggablesToWakeUp() { };
 #if USE(INSPECTOR_SOCKET_SERVER) || USE(GLIB)
         virtual void closeAutomationSession() = 0;
@@ -140,7 +140,7 @@ public:
     void registerTarget(RemoteControllableTarget*);
     void unregisterTarget(RemoteControllableTarget*);
     void updateTarget(RemoteControllableTarget*);
-    JS_EXPORT_PRIVATE void sendMessageToRemote(TargetID, const String& message);
+    JS_EXPORT_PRIVATE void sendMessageToRemote(TargetID, StringImpl* message);
 
     RemoteInspector::Client* client() const { return m_client; }
     JS_EXPORT_PRIVATE void setClient(RemoteInspector::Client*);
@@ -181,12 +181,12 @@ public:
     void sendMessageToTarget(TargetID, const char* message);
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
-    void requestAutomationSession(String&& sessionID, const Client::SessionCapabilities&);
+    void requestAutomationSession(RefPtr<StringImpl>&& sessionID, const Client::SessionCapabilities&);
 
     bool isConnected() const { return !!m_clientConnection; }
     void connect(ConnectionID);
 
-    void setBackendCommandsPath(const String& backendCommandsPath) { m_backendCommandsPath = backendCommandsPath; }
+    void setBackendCommandsPath(StringImpl* backendCommandsPath) { m_backendCommandsPath = backendCommandsPath; }
 #endif
 
 private:
@@ -249,10 +249,10 @@ private:
     NODELETE void receivedPingSuccessMessage() WTF_REQUIRES_LOCK(m_mutex);
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
-    HashMap<String, CallHandler>& dispatchMap() final;
+    HashMap<RefPtr<StringImpl>, CallHandler>& dispatchMap() final;
     void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
 
-    void sendWebInspectorEvent(const String&);
+    void sendWebInspectorEvent(StringImpl*);
 
     void setupInspectorClient(const Event&);
     void setupTarget(const Event&);
@@ -262,7 +262,7 @@ private:
 
     void receivedAutomationSessionRequestMessage(const Event&);
 
-    String backendCommands() const;
+    RefPtr<StringImpl> backendCommands() const;
 #endif
     static bool startEnabled;
 #if PLATFORM(COCOA)
@@ -297,7 +297,7 @@ private:
     std::optional<ConnectionID> m_clientConnection;
     bool m_readyToPushListings { false };
 
-    String m_backendCommandsPath;
+    RefPtr<StringImpl> m_backendCommandsPath;
 #endif
 
     RemoteInspector::Client* m_client { nullptr };

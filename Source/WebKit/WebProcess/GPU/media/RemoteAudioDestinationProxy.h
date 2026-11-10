@@ -84,7 +84,7 @@ private:
     NODELETE uint32_t totalFrameCount() const;
 
 #if PLATFORM(IOS_FAMILY)
-    void setSceneIdentifier(const String&) final;
+    void setSceneIdentifier(StringImpl*) final;
 #endif
 
     Markable<RemoteAudioDestinationIdentifier> m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
@@ -100,12 +100,12 @@ private:
 #endif
     IPC::Semaphore m_renderSemaphore;
 
-    String m_inputDeviceId;
+    RefPtr<StringImpl> m_inputDeviceId;
     unsigned m_numberOfInputChannels;
     float m_remoteSampleRate;
     size_t m_audioUnitLatency;
 #if PLATFORM(IOS_FAMILY)
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
 #endif
 
     RefPtr<WTF::Thread> m_renderThread;

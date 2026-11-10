@@ -62,7 +62,7 @@ public:
     virtual ~RealtimeMediaSourceCenterObserver();
 
     virtual void devicesChanged() = 0;
-    virtual void deviceWillBeRemoved(const String& persistentId) = 0;
+    virtual void deviceWillBeRemoved(StringImpl* persistentId) = 0;
 };
 
 class WEBCORE_EXPORT RealtimeMediaSourceCenter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeMediaSourceCenter, WTF::DestructionThread::MainRunLoop> {
@@ -99,13 +99,13 @@ public:
     NODELETE WEBCORE_EXPORT void setDisplayCaptureFactory(DisplayCaptureFactory&);
     NODELETE WEBCORE_EXPORT void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
 
-    WEBCORE_EXPORT static String hashStringWithSalt(const String& id, const String& hashSalt);
+    WEBCORE_EXPORT static RefPtr<StringImpl> hashStringWithSalt(StringImpl* id, StringImpl* hashSalt);
 
     WEBCORE_EXPORT void addDevicesChangedObserver(RealtimeMediaSourceCenterObserver&);
     WEBCORE_EXPORT void removeDevicesChangedObserver(RealtimeMediaSourceCenterObserver&);
 
     void captureDevicesChanged();
-    void captureDeviceWillBeRemoved(const String& persistentId);
+    void captureDeviceWillBeRemoved(StringImpl* persistentId);
 
     WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
 
@@ -116,8 +116,8 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    const String& currentMediaEnvironment() const;
-    void setCurrentMediaEnvironment(String&&);
+    const RefPtr<StringImpl>& currentMediaEnvironment() const;
+    void setCurrentMediaEnvironment(RefPtr<StringImpl>&&);
 #endif
 
     std::expected<ValidDevices, MediaConstraintType> validateRequestConstraintsAfterEnumeration(const MediaStreamRequest&, const MediaDeviceHashSalts&);
@@ -154,7 +154,7 @@ private:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    String m_currentMediaEnvironment;
+    RefPtr<StringImpl> m_currentMediaEnvironment;
 #endif
 
     bool m_useMockCaptureDevices { false };

@@ -56,8 +56,8 @@ public:
     void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() LIFETIME_BOUND final { return m_gamepadVector; }
     bool isMockGamepadProvider() const { return false; }
-    void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
-    void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
+    void playEffect(unsigned gamepadIndex, StringImpl* gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(unsigned gamepadIndex, StringImpl* gamepadID, CompletionHandler<void()>&&) final;
 
     // GamepadProviderClient
     void platformGamepadConnected(PlatformGamepad&, EventMakesGamepadsVisible) final;

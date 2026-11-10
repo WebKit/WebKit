@@ -68,7 +68,7 @@ public:
     void removeAllUserContent();
 
     bool hasBuffersForWorld(const WebCore::DOMWrapperWorld&) const final;
-    WebCore::WebKitBuffer* buffer(const WebCore::DOMWrapperWorld&, const String&) const final;
+    WebCore::WebKitBuffer* buffer(const WebCore::DOMWrapperWorld&, StringImpl*) const final;
 
     InjectedBundleScriptWorld* worldForIdentifier(ContentWorldIdentifier);
 
@@ -109,10 +109,10 @@ private:
     void removeAllUserScriptMessageHandlers();
 
     void addJSBuffer(WebJSBufferData&&);
-    void removeJSBuffer(ContentWorldIdentifier, const String&);
+    void removeJSBuffer(ContentWorldIdentifier, StringImpl*);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void removeContentRuleList(const String& name);
+    void removeContentRuleList(StringImpl* name);
     void removeAllContentRuleLists();
 #endif
 
@@ -121,7 +121,7 @@ private:
     void addUserStyleSheetInternal(InjectedBundleScriptWorld&, const std::optional<UserStyleSheetIdentifier>&, WebCore::UserStyleSheet&&);
     void removeUserStyleSheetInternal(InjectedBundleScriptWorld&, UserStyleSheetIdentifier);
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, ScriptMessageHandlerIdentifier, const AtomString& name);
+    void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, ScriptMessageHandlerIdentifier, AtomStringImpl* name);
     void removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, ScriptMessageHandlerIdentifier);
 #endif
 
@@ -140,7 +140,7 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ContentExtensions::ContentExtensionsBackend m_contentExtensionBackend;
 #endif
-    HashMap<ContentWorldIdentifier, HashMap<String, Ref<WebCore::WebKitBuffer>>> m_buffers;
+    HashMap<ContentWorldIdentifier, HashMap<RefPtr<StringImpl>, Ref<WebCore::WebKitBuffer>>> m_buffers;
 };
 
 } // namespace WebKit

@@ -141,7 +141,7 @@ static float estimateMaximumWidthForWeek(const MeasureTextClient& measurer)
 
     std::array<float, 10> numeralLengths;
     for (auto [i, numLength] : indexedRange(numeralLengths)) {
-        numLength = measurer.measureText(String([localizedDigits substringWithRange:NSMakeRange(9 - i, 1)]));
+        numLength = measurer.measureText(StringImpl::create([localizedDigits substringWithRange:NSMakeRange(9 - i, 1)]).get());
         ASSERT(numeralLengths[i] == numLength);
     }
 
@@ -157,7 +157,7 @@ static float estimateMaximumWidthForWeek(const MeasureTextClient& measurer)
     else
         weekString = [NSString stringWithFormat:@"%d%d%d%d-W%d%d", widestNumNonZero, widestNum, widestNum, widestNum, widestNumOneThroughFour, widestNum];
 
-    if (auto components = DateComponents::fromParsingWeek((String)weekString.get()))
+    if (auto components = DateComponents::fromParsingWeek((RefPtr<StringImpl>)StringImpl::create(weekString.get())))
         return measurer.measureText(inputWeekLabel(components.value()));
 
     ASSERT_NOT_REACHED();
@@ -212,7 +212,7 @@ float LocalizedDateCache::estimateMaximumWidth(DateComponentsType type, const Me
     std::array<float, 10> numeralLengths;
     std::span numeralLengthsSpan { numeralLengths };
     for (auto [i, numLength] : indexedRange(numeralLengths)) {
-        numLength = measurer.measureText(String([localizedDigits substringWithRange:NSMakeRange(9 - i, 1)]));
+        numLength = measurer.measureText(StringImpl::create([localizedDigits substringWithRange:NSMakeRange(9 - i, 1)]).get());
         ASSERT(numeralLengths[i] == numLength);
     }
 
@@ -237,7 +237,7 @@ float LocalizedDateCache::estimateMaximumWidth(DateComponentsType type, const Me
                 hourCandidate = widestNumNonZero;
 
             // If the symbols used for PM are wider than AM, shift the hour forward by 12.
-            if (measurer.measureText(String([dateFormatter AMSymbol])) < measurer.measureText(String([dateFormatter PMSymbol])))
+            if (measurer.measureText(StringImpl::create([dateFormatter AMSymbol]).get()) < measurer.measureText(StringImpl::create([dateFormatter PMSymbol]).get()))
                 hourCandidate += 12;
         } else if ([timeFormat containsString:@"HH"]) {
             // Using 24 hour time with leading zero for single-digit hours.
@@ -282,7 +282,7 @@ float LocalizedDateCache::estimateMaximumWidth(DateComponentsType type, const Me
             }
 
             RetainPtr tempFormattedDate = [dateFormatter stringFromDate:tempDate.get()];
-            float currentLength = measurer.measureText(String(tempFormattedDate.get()));
+            float currentLength = measurer.measureText(StringImpl::create(tempFormattedDate.get()).get());
 
             if (currentLength == widestDateWidthForMonthCalculation) {
                 // Month i has the same width as the current widest month. We only need to
@@ -360,7 +360,7 @@ float LocalizedDateCache::estimateMaximumWidth(DateComponentsType type, const Me
     }
 
     if (RetainPtr date = [gregorian dateFromComponents:components.get()])
-        return measurer.measureText(String([dateFormatter stringFromDate:date.get()]));
+        return measurer.measureText(StringImpl::create([dateFormatter stringFromDate:date.get()]).get());
 
     ASSERT_NOT_REACHED();
     return 0.f;

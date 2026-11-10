@@ -69,8 +69,8 @@ void PageOverlayController::createRootLayersIfNeeded()
 
     lazyInitialize(m_documentOverlayRootLayer, GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this));
     lazyInitialize(m_viewOverlayRootLayer, GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this));
-    protect(documentOverlayRootLayer())->setName(MAKE_STATIC_STRING_IMPL("Document overlay Container"));
-    protect(viewOverlayRootLayer())->setName(MAKE_STATIC_STRING_IMPL("View overlay container"));
+    protect(documentOverlayRootLayer())->setName("Document overlay Container"_si);
+    protect(viewOverlayRootLayer())->setName("View overlay container"_si);
 }
 
 void PageOverlayController::installedPageOverlaysChanged()
@@ -152,7 +152,7 @@ GraphicsLayer& PageOverlayController::documentOverlayRootLayerForFrame(LocalFram
 
     auto& layer = m_frameDocumentOverlayRootLayers.ensure(*rootFrame, [&] {
         Ref newLayer = GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this);
-        newLayer->setName(MAKE_STATIC_STRING_IMPL("Document overlay Container (frame)"));
+        newLayer->setName("Document overlay Container (frame)"_si);
         return newLayer;
     }).iterator->value;
     return layer.get();
@@ -256,7 +256,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     Ref layer = GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this, layerType);
     layer->setAnchorPoint({ });
     layer->setBackgroundColor(overlay.backgroundColor());
-    layer->setName(MAKE_STATIC_STRING_IMPL("Overlay content"));
+    layer->setName("Overlay content"_si);
 
     updateSettingsForLayer(layer.get());
 
@@ -440,7 +440,7 @@ bool PageOverlayController::handleMouseEvent(const PlatformMouseEvent& mouseEven
     return false;
 }
 
-bool PageOverlayController::copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint parameter, String& value)
+bool PageOverlayController::copyAccessibilityAttributeStringValueForPoint(RefPtr<StringImpl> attribute, FloatPoint parameter, RefPtr<StringImpl>& value)
 {
     if (m_pageOverlays.isEmpty())
         return false;
@@ -453,7 +453,7 @@ bool PageOverlayController::copyAccessibilityAttributeStringValueForPoint(String
     return false;
 }
 
-bool PageOverlayController::copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint parameter, bool& value)
+bool PageOverlayController::copyAccessibilityAttributeBoolValueForPoint(RefPtr<StringImpl> attribute, FloatPoint parameter, bool& value)
 {
     if (m_pageOverlays.isEmpty())
         return false;
@@ -466,7 +466,7 @@ bool PageOverlayController::copyAccessibilityAttributeBoolValueForPoint(String a
     return false;
 }
 
-Vector<String> PageOverlayController::copyAccessibilityAttributesNames(bool parameterizedNames)
+Vector<RefPtr<StringImpl>> PageOverlayController::copyAccessibilityAttributesNames(bool parameterizedNames)
 {
     if (m_pageOverlays.isEmpty())
         return { };

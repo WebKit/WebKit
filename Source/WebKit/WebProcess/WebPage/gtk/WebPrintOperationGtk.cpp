@@ -286,7 +286,7 @@ void WebPrintOperationGtk::endPrint()
     metadata.jpegEncoder = SkPDF::JPEG::Encode;
     if (m_printContext) {
         if (auto* document = m_printContext->frame()->document()) {
-            auto title = document->title().utf8();
+            auto title = utf8(document->title());
             auto titleCharacters = byteCast<char>(title.span());
             metadata.fTitle = SkString(titleCharacters.data(), titleCharacters.size());
         }

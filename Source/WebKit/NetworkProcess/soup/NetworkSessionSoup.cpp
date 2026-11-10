@@ -57,12 +57,12 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, const Net
     if (parameters.proxySettings.mode != SoupNetworkProxySettings::Mode::Default)
         setProxySettings(parameters.proxySettings);
 
-    if (!parameters.cookiePersistentStoragePath.isEmpty())
+    if (!isEmpty(parameters.cookiePersistentStoragePath))
         setCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     else
         m_networkSession->setCookieJar(storageSession->cookieStorage());
 
-    if (!parameters.hstsStorageDirectory.isEmpty())
+    if (!isEmpty(parameters.hstsStorageDirectory))
         m_networkSession->setHSTSPersistentStorage(parameters.hstsStorageDirectory);
 }
 
@@ -73,7 +73,7 @@ SoupSession* NetworkSessionSoup::soupSession() const
     return m_networkSession->soupSession();
 }
 
-void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, SoupCookiePersistentStorageType storageType)
+void NetworkSessionSoup::setCookiePersistentStorage(StringImpl* storagePath, SoupCookiePersistentStorageType storageType)
 {
     CheckedPtr storageSession = networkStorageSession();
     if (!storageSession)
@@ -82,10 +82,10 @@ void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, S
     GRefPtr<SoupCookieJar> jar;
     switch (storageType) {
     case SoupCookiePersistentStorageType::Text:
-        jar = adoptGRef(soup_cookie_jar_text_new(storagePath.utf8().legacyCStringPointer(), FALSE));
+        jar = adoptGRef(soup_cookie_jar_text_new(utf8(storagePath).legacyCStringPointer(), FALSE));
         break;
     case SoupCookiePersistentStorageType::SQLite:
-        jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().legacyCStringPointer(), FALSE));
+        jar = adoptGRef(soup_cookie_jar_db_new(utf8(storagePath).legacyCStringPointer(), FALSE));
         break;
     }
     storageSession->setCookieStorage(WTF::move(jar));
@@ -98,7 +98,7 @@ void NetworkSessionSoup::clearCredentials(WallTime)
     soup_auth_manager_clear_cached_credentials(SOUP_AUTH_MANAGER(soup_session_get_feature(soupSession(), SOUP_TYPE_AUTH_MANAGER)));
 }
 
-RefPtr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol, const ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
+RefPtr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, NetworkSocketChannel& channel, const ResourceRequest& request, StringImpl* protocol, const ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
 {
     GRefPtr<SoupMessage> soupMessage = request.createSoupMessage(blobRegistry());
     if (!soupMessage)
@@ -125,7 +125,7 @@ void NetworkSessionSoup::setIgnoreTLSErrors(bool ignoreTLSErrors)
     m_networkSession->setIgnoreTLSErrors(ignoreTLSErrors);
 }
 
-void NetworkSessionSoup::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void NetworkSessionSoup::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, StringImpl* host)
 {
     m_networkSession->allowSpecificHTTPSCertificateForHost(certificateInfo, host);
 }

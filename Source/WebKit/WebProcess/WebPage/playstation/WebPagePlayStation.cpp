@@ -53,7 +53,7 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
     return false;
 }
 
-String WebPage::platformUserAgent(const URL& url) const
+RefPtr<StringImpl> WebPage::platformUserAgent(const URL& url) const
 {
     if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
         return emptyString();

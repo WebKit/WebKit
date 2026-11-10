@@ -66,14 +66,14 @@ public:
     };
 
     AllowUserInstalledFonts allowUserInstalledFonts() const { return m_allowUserInstalledFonts; }
-    const InstalledFontFamily& collectionForFamily(const String& familyName);
-    const InstalledFont& fontForPostScriptName(const AtomString& postScriptName);
+    const InstalledFontFamily& collectionForFamily(StringImpl* familyName);
+    const InstalledFont& fontForPostScriptName(AtomStringImpl* postScriptName);
     void clear();
 
 private:
     Lock m_familyNameToFontDescriptorsLock;
-    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<InstalledFontFamily>> m_familyNameToFontDescriptors WTF_GUARDED_BY_LOCK(m_familyNameToFontDescriptorsLock);
-    MemoryCompactRobinHoodHashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<InstalledFontFamily>> m_familyNameToFontDescriptors WTF_GUARDED_BY_LOCK(m_familyNameToFontDescriptorsLock);
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, InstalledFont> m_postScriptNameToFontDescriptors;
     AllowUserInstalledFonts m_allowUserInstalledFonts;
 };
 

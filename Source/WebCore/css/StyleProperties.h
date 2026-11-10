@@ -59,8 +59,8 @@ public:
         bool isImportant() const { return m_metadata.m_important; }
         bool isImplicit() const { return m_metadata.m_implicit; }
 
-        const AtomString& cssName() const LIFETIME_BOUND;
-        String cssText(const CSS::SerializationContext&) const;
+        const RefPtr<AtomStringImpl>& cssName() const LIFETIME_BOUND;
+        RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const;
 
         const CSSValue* value() const { return m_value; }
         // FIXME: We should try to remove this mutable overload.
@@ -107,18 +107,18 @@ public:
     inline unsigned size() const;
 
     WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
-    WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> getPropertyValue(CSSPropertyID) const;
 
     WEBCORE_EXPORT std::optional<Color> propertyAsColor(CSSPropertyID) const;
     WEBCORE_EXPORT std::optional<CSSValueID> propertyAsValueID(CSSPropertyID) const;
 
     bool propertyIsImportant(CSSPropertyID) const;
-    String getPropertyShorthand(CSSPropertyID) const;
+    RefPtr<StringImpl> getPropertyShorthand(CSSPropertyID) const;
     NODELETE bool isPropertyImplicit(CSSPropertyID) const;
 
-    RefPtr<CSSValue> getCustomPropertyCSSValue(const String& propertyName) const;
-    String getCustomPropertyValue(const String& propertyName) const;
-    bool customPropertyIsImportant(const String& propertyName) const;
+    RefPtr<CSSValue> getCustomPropertyCSSValue(StringImpl* propertyName) const;
+    RefPtr<StringImpl> getCustomPropertyValue(StringImpl* propertyName) const;
+    bool customPropertyIsImportant(StringImpl* propertyName) const;
 
     Ref<MutableStyleProperties> copyBlockProperties() const;
 
@@ -129,8 +129,8 @@ public:
 
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
     
-    String asText(const CSS::SerializationContext&) const;
-    AtomString asTextAtom(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> asText(const CSS::SerializationContext&) const;
+    RefPtr<AtomStringImpl> asTextAtom(const CSS::SerializationContext&) const;
 
     NODELETE bool hasCSSOMWrapper() const;
     bool isMutable() const { return m_isMutable; }
@@ -160,12 +160,12 @@ protected:
 
 private:
     StringBuilder asTextInternal(const CSS::SerializationContext&) const;
-    String serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID) const;
-    String serializeShorthandValue(const CSS::SerializationContext&, CSSPropertyID) const;
+    RefPtr<StringImpl> serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID) const;
+    RefPtr<StringImpl> serializeShorthandValue(const CSS::SerializationContext&, CSSPropertyID) const;
 };
 
-String serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID, const CSSValue&);
-inline String serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID, const CSSValue*);
+RefPtr<StringImpl> serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID, const CSSValue&);
+inline RefPtr<StringImpl> serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID, const CSSValue*);
 
 inline CSSValueID longhandValueID(CSSPropertyID, const CSSValue&);
 inline std::optional<CSSValueID> longhandValueID(CSSPropertyID, const CSSValue*);

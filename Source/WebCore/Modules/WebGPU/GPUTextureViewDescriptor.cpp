@@ -37,18 +37,18 @@ Ref<JSON::Object> GPUTextureViewDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
     if (format)
-        json->setString("format"_s, convertEnumerationToString(*format));
+        json->setString("format"_si, convertEnumerationToString(*format));
     if (dimension)
-        json->setString("dimension"_s, convertEnumerationToString(*dimension));
-    json->setDouble("usage"_s, usage);
-    json->setString("aspect"_s, convertEnumerationToString(aspect));
-    json->setDouble("baseMipLevel"_s, baseMipLevel);
+        json->setString("dimension"_si, convertEnumerationToString(*dimension));
+    json->setDouble("usage"_si, usage);
+    json->setString("aspect"_si, convertEnumerationToString(aspect));
+    json->setDouble("baseMipLevel"_si, baseMipLevel);
     if (mipLevelCount)
-        json->setDouble("mipLevelCount"_s, *mipLevelCount);
-    json->setDouble("baseArrayLayer"_s, baseArrayLayer);
+        json->setDouble("mipLevelCount"_si, *mipLevelCount);
+    json->setDouble("baseArrayLayer"_si, baseArrayLayer);
     if (arrayLayerCount)
-        json->setDouble("arrayLayerCount"_s, *arrayLayerCount);
-    json->setString("swizzle"_s, swizzle);
+        json->setDouble("arrayLayerCount"_si, *arrayLayerCount);
+    json->setString("swizzle"_si, swizzle);
     return json;
 }
 

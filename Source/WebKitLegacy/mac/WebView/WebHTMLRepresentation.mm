@@ -119,13 +119,17 @@ using JSC::Yarr::RegularExpression;
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = createNSArray(WebCore::MIMETypeRegistry::supportedImageMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = createNSArray(WebCore::MIMETypeRegistry::supportedImageMIMETypes(), [](ASCIILiteral type) {
+        return type.createNSString();
+    });
     return staticSupportedImageMIMETypes.get().get();
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = createNSArray(WebCore::MIMETypeRegistry::unsupportedTextMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = createNSArray(WebCore::MIMETypeRegistry::unsupportedTextMIMETypes(), [](ASCIILiteral type) {
+        return type.createNSString();
+    });
     return staticUnsupportedTextMIMETypes.get().get();
 }
 
@@ -249,7 +253,7 @@ using JSC::Yarr::RegularExpression;
     NSData *data = [dataSource data];
     if (!data)
         return nil;
-    return decoder->encoding().decode(span(data)).createNSString().autorelease();
+    return createNSString(decoder->encoding().decode(span(data))).autorelease();
 }
 
 - (NSString *)title
@@ -291,7 +295,7 @@ static RefPtr<WebCore::HTMLFormElement> formElementFromDOMElement(DOMElement *el
         return nil;
 
     WebCore::ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    AtomString targetName = name;
+    RefPtr<AtomStringImpl> targetName = AtomStringImpl::add((__bridge CFStringRef)name);
     for (auto& weakElement : formElement->unsafeListedElements()) {
         RefPtr element { weakElement.get() };
         if (element && protect(element->asFormListedElement())->name() == targetName)
@@ -372,11 +376,11 @@ static RegularExpression* regExpForLabels(NSArray *labels)
         unsigned numLabels = [labels count];
         unsigned i;
         for (i = 0; i < numLabels; i++) {
-            String label = dynamic_objc_cast<NSString>([labels objectAtIndex:i]);
+            RefPtr<StringImpl> label = StringImpl::create(dynamic_objc_cast<NSString>([labels objectAtIndex:i]));
 
             bool startsWithWordCharacter = false;
             bool endsWithWordCharacter = false;
-            if (label.length()) {
+            if (length(label)) {
                 StringView labelView { label };
                 startsWithWordCharacter = wordRegExp.get().match(labelView.left(1)) >= 0;
                 endsWithWordCharacter = wordRegExp.get().match(labelView.right(1)) >= 0;
@@ -441,7 +445,7 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(WebCore::LocalFrame* fra
         if (n->hasTagName(tdTag) && !startingTableCell) {
             startingTableCell = downcast<WebCore::HTMLTableCellElement>(n.get());
         } else if (n->hasTagName(trTag) && startingTableCell) {
-            RetainPtr result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance).createNSString();
+            RetainPtr result = createNSString(frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance));
             if ([result length]) {
                 if (resultIsInCellAbove)
                     *resultIsInCellAbove = true;
@@ -450,24 +454,24 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(WebCore::LocalFrame* fra
             searchedCellAbove = true;
         } else if (CheckedPtr renderText = dynamicDowncast<WebCore::RenderText>(n->renderer()); renderText && renderText->usedStyle().visibility() == WebCore::UsedVisibility::Visible) {
             // For each text chunk, run the regexp
-            String nodeString = n->nodeValue();
+            RefPtr<StringImpl> nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes
-            if (lengthSearched + nodeString.length() > maxCharsSearched)
-                nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
+            if (lengthSearched + length(nodeString) > maxCharsSearched)
+                nodeString = right(nodeString, charsSearchedThreshold - lengthSearched);
             int pos = regExp->searchRev(nodeString);
             if (pos >= 0) {
                 if (resultDistance)
                     *resultDistance = lengthSearched;
-                return nodeString.substring(pos, regExp->matchedLength()).createNSString();
+                return createNSString(substring(nodeString, pos, regExp->matchedLength()));
             }
-            lengthSearched += nodeString.length();
+            lengthSearched += length(nodeString);
         }
     }
 
     // If we started in a cell, but bailed because we found the start of the form or the
     // previous element, we still might need to search the row above us for a label.
     if (startingTableCell && !searchedCellAbove) {
-        RetainPtr result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance).createNSString();
+        RetainPtr result = createNSString(frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance));
         if ([result length]) {
             if (resultIsInCellAbove)
                 *resultIsInCellAbove = true;
@@ -478,12 +482,12 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(WebCore::LocalFrame* fra
     return nil;
 }
 
-static RetainPtr<NSString> matchLabelsAgainstString(NSArray *labels, const String& stringToMatch)
+static RetainPtr<NSString> matchLabelsAgainstString(NSArray *labels, StringImpl* stringToMatch)
 {
-    if (stringToMatch.isEmpty())
+    if (isEmpty(stringToMatch))
         return nil;
     
-    String mutableStringToMatch = stringToMatch;
+    RefPtr<StringImpl> mutableStringToMatch = stringToMatch;
     
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     replace(mutableStringToMatch, RegularExpression("\\d"_s), " "_s);
@@ -509,7 +513,7 @@ static RetainPtr<NSString> matchLabelsAgainstString(NSArray *labels, const Strin
     } while (pos != -1);
     
     if (bestPos != -1)
-        return mutableStringToMatch.substring(bestPos, bestLength).createNSString();
+        return createNSString(substring(mutableStringToMatch, bestPos, bestLength));
     return nil;
 }
 

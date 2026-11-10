@@ -55,14 +55,14 @@ public:
     virtual void logSubresourceLoading(const LocalFrame*, const ResourceRequest& /* newRequest */, const ResourceResponse& /* redirectResponse */, FetchDestinationIsScriptLike) { }
     virtual void logWebSocketLoading(const URL& /* targetURL */, const URL& /* mainFrameURL */) { }
     virtual void logUserInteractionWithReducedTimeResolution(const Document&) { }
-    virtual void logFontLoad(const Document&, const String& /* familyName */, bool /* loadStatus */) { }
+    virtual void logFontLoad(const Document&, StringImpl* /* familyName */, bool /* loadStatus */) { }
     virtual void logCanvasRead(const Document&) { }
-    virtual void logCanvasWriteOrMeasure(const Document&, const String& /* textWritten */) { }
+    virtual void logCanvasWriteOrMeasure(const Document&, StringImpl* /* textWritten */) { }
     virtual void logNavigatorAPIAccessed(const Document&, const NavigatorAPIsAccessed) { }
     virtual void logScreenAPIAccessed(const Document&, const ScreenAPIsAccessed) { }
     virtual void logSubresourceLoadingForTesting(const RegistrableDomain& /* firstPartyDomain */, const RegistrableDomain& /* thirdPartyDomain */, bool /* shouldScheduleNotification */) { }
 
-    virtual String statisticsForURL(const URL&) { return { }; }
+    virtual RefPtr<StringImpl> statisticsForURL(const URL&) { return { }; }
     virtual void updateCentralStatisticsStore(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void clearState() { }
     

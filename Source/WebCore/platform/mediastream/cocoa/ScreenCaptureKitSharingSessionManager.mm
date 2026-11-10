@@ -198,7 +198,7 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
             return;
 
         RetainPtr window = retainPtr(windows.get()[0]);
-        device = CaptureDevice(String::number([window windowID]), CaptureDevice::DeviceType::Window, [window title], emptyString(), true);
+        device = CaptureDevice(makeString([window windowID]), CaptureDevice::DeviceType::Window, StringImpl::create([window title]).get(), emptyString(), true);
         break;
     }
     case SCShareableContentStyleDisplay: {
@@ -207,7 +207,7 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
         if (![displays count])
             return;
 
-        device = CaptureDevice(String::number(displays.get()[0].displayID), CaptureDevice::DeviceType::Screen, "Screen "_str, emptyString(), true);
+        device = CaptureDevice(makeString(displays.get()[0].displayID), CaptureDevice::DeviceType::Screen, "Screen "_str, emptyString(), true);
         break;
     }
     case SCShareableContentStyleNone:

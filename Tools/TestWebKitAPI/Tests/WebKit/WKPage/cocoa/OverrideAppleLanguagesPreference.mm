@@ -86,7 +86,7 @@ public:
         auto fileHandle = [pipe fileHandleForReading];
         [task launch];
         NSData *data = [fileHandle readDataToEndOfFile];
-        m_savedAppleLanguages = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        m_savedAppleLanguages = StringImpl::create([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
         m_savedAppleLanguages = makeStringByReplacingAll(m_savedAppleLanguages, '\n', ""_s);
         m_savedAppleLanguages = makeStringByReplacingAll(m_savedAppleLanguages, ' ', ""_s);
     }
@@ -94,11 +94,11 @@ public:
     ~AppleLanguagesTest()
     {
         // Restore previous system language.
-        system(adoptNS([[NSString alloc] initWithFormat:@"defaults write NSGlobalDomain AppleLanguages '%@'", m_savedAppleLanguages.createNSString().get()]).get().UTF8String);
+        system(adoptNS([[NSString alloc] initWithFormat:@"defaults write NSGlobalDomain AppleLanguages '%@'", createNSString(m_savedAppleLanguages).get()]).get().UTF8String);
     }
 
 private:
-    String m_savedAppleLanguages;
+    RefPtr<StringImpl> m_savedAppleLanguages;
 };
 
 static IMP sharedInstanceMethodOriginal = nil;
@@ -139,11 +139,11 @@ TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
     system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-GB\")'"].UTF8String);
 
     auto getLanguageFromNSUserDefaults = [] {
-        auto languages = makeVector<String>([[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"]);
+        auto languages = makeVector<RefPtr<StringImpl>>([[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"]);
         return languages.isEmpty() ? emptyString() : languages[0];
     };
     unsigned timeout = 0;
-    while (getLanguageFromNSUserDefaults() != "en-GB"_s && ++timeout < 100)
+    while (!equal(getLanguageFromNSUserDefaults(), "en-GB"_s) && ++timeout < 100)
         TestWebKitAPI::Util::runFor(0.1_s);
     EXPECT_WK_STREQ(@"en-GB", getLanguageFromNSUserDefaults());
 

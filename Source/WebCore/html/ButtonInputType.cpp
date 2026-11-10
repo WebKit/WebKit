@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ButtonInputType);
 
-const AtomString& ButtonInputType::formControlType() const
+const RefPtr<AtomStringImpl>& ButtonInputType::formControlType() const
 {
     return InputTypeNames::button();
 }

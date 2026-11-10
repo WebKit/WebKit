@@ -38,23 +38,23 @@ void appendContents(const ContainerNode& root, StringBuilder& result)
         result.append(text->data());
 }
 
-String contentsAsString(const ContainerNode& root)
+RefPtr<StringImpl> contentsAsString(const ContainerNode& root)
 {
     StringBuilder result;
     appendContents(root, result);
     return result.toString();
 }
 
-String contentsAsString(const Node& root)
+RefPtr<StringImpl> contentsAsString(const Node& root)
 {
     if (auto text = dynamicDowncast<Text>(root))
         return text->data();
     if (auto containerNode = dynamicDowncast<ContainerNode>(root))
         return contentsAsString(*containerNode);
-    return String();
+    return nullptr;
 }
 
-String childTextContent(const ContainerNode& root)
+RefPtr<StringImpl> childTextContent(const ContainerNode& root)
 {
     StringBuilder result;
     for (RefPtr text = TextNodeTraversal::firstChild(root); text; text = TextNodeTraversal::nextSibling(*text))

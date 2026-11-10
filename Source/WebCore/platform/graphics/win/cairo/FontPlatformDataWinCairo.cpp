@@ -143,13 +143,13 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 }
 
 #if !LOG_DISABLED
-String FontPlatformData::description() const
+RefPtr<StringImpl> FontPlatformData::description() const
 {
-    return String();
+    return nullptr;
 }
 #endif
 
-String FontPlatformData::familyName() const
+RefPtr<StringImpl> FontPlatformData::familyName() const
 {
     HWndDC hdc(0);
     HGDIOBJ oldFont = SelectObject(hdc, m_hfont.get());

@@ -54,7 +54,7 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
     }
 }
 
-void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::xAttr:

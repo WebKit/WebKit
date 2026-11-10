@@ -99,8 +99,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
 #if ENABLE(VARIATION_FONTS)
     auto variants = buildVariationSettings(freeTypeFace, description, fontCreationContext);
-    if (!variants.isEmpty())
-        FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().legacyCStringPointer()));
+    if (!isEmpty(variants))
+        FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(utf8(variants).legacyCStringPointer()));
     auto defaultValues = defaultVariationValues(freeTypeFace, ShouldLocalizeAxisNames::No);
     bool hasWeightVariationAxis = defaultValues.contains(FontVariationAxisTag::wght);
     bool hasSlopeVariationAxis = defaultValues.contains(FontVariationAxisTag::slnt) || defaultValues.contains(FontVariationAxisTag::ital);
@@ -147,7 +147,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, StringImpl* itemInCollection)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -163,12 +163,12 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     return adoptRef(new FontCustomPlatformData(freeTypeFace, WTF::move(creationData)));
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, StringImpl*)
 {
     return nullptr;
 }
 
-bool FontCustomPlatformData::supportsFormat(const String& format)
+bool FontCustomPlatformData::supportsFormat(StringImpl* format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype"_s)
         || equalLettersIgnoringASCIICase(format, "opentype"_s)

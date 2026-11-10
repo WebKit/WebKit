@@ -193,7 +193,7 @@ public:
 
     void activeTexture(GCGLenum texture);
     void attachShader(WebGLProgram&, WebGLShader&);
-    void bindAttribLocation(WebGLProgram&, GCGLuint index, const String& name);
+    void bindAttribLocation(WebGLProgram&, GCGLuint index, StringImpl* name);
     void bindBuffer(GCGLenum target, WebGLBuffer*);
     virtual void bindFramebuffer(GCGLenum target, WebGLFramebuffer*);
     void bindRenderbuffer(GCGLenum target, WebGLRenderbuffer*);
@@ -259,30 +259,30 @@ public:
     RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram&, GCGLuint index);
     RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram&, GCGLuint index);
     std::optional<Vector<Ref<WebGLShader>>> getAttachedShaders(WebGLProgram&);
-    GCGLint getAttribLocation(WebGLProgram&, const String& name);
+    GCGLint getAttribLocation(WebGLProgram&, StringImpl* name);
     WebGLAny getBufferParameter(GCGLenum target, GCGLenum pname);
     NODELETE WEBCORE_EXPORT std::optional<WebGLContextAttributes> getContextAttributes();
     WebGLContextAttributes creationAttributes() const { return m_creationAttributes; }
     const WebGLContextAttributes& attributes() const { return m_attributes; }
     GCGLenum getError();
-    virtual std::optional<WebGLExtensionAny> getExtension(const String& name) = 0;
+    virtual std::optional<WebGLExtensionAny> getExtension(StringImpl* name) = 0;
     virtual WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
     virtual WebGLAny getParameter(GCGLenum pname);
     WebGLAny getProgramParameter(WebGLProgram&, GCGLenum pname);
-    String getProgramInfoLog(WebGLProgram&);
+    RefPtr<StringImpl> getProgramInfoLog(WebGLProgram&);
     WebGLAny getRenderbufferParameter(GCGLenum target, GCGLenum pname);
     WebGLAny getShaderParameter(WebGLShader&, GCGLenum pname);
-    String getShaderInfoLog(WebGLShader&);
+    RefPtr<StringImpl> getShaderInfoLog(WebGLShader&);
     RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType);
-    String getShaderSource(WebGLShader&);
-    virtual std::optional<Vector<String>> getSupportedExtensions() = 0;
+    RefPtr<StringImpl> getShaderSource(WebGLShader&);
+    virtual std::optional<Vector<RefPtr<StringImpl>>> getSupportedExtensions() = 0;
     virtual WebGLAny getTexParameter(GCGLenum target, GCGLenum pname);
     WebGLAny getUniform(WebGLProgram&, WebGLUniformLocation&);
-    RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram&, const String&);
+    RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram&, StringImpl*);
     WebGLAny getVertexAttrib(GCGLuint index, GCGLenum pname);
     long long getVertexAttribOffset(GCGLuint index, GCGLenum pname);
 
-    bool extensionIsEnabled(const String&);
+    bool extensionIsEnabled(StringImpl*);
 
     bool isPreservingDrawingBuffer() const { return m_attributes.preserveDrawingBuffer; }
 
@@ -312,7 +312,7 @@ public:
     virtual void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, ASCIILiteral functionName);
     void sampleCoverage(GCGLfloat value, GCGLboolean invert);
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height);
-    void shaderSource(WebGLShader&, const String&);
+    void shaderSource(WebGLShader&, StringImpl*);
     void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask);
     void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask);
     void stencilMask(GCGLuint);
@@ -937,7 +937,7 @@ protected:
     NODELETE PixelStoreParameters computeUnpackPixelStoreParameters(TexImageDimension) const;
 
     // Helper function to verify limits on the length of uniform and attribute locations.
-    bool validateLocationLength(ASCIILiteral functionName, const String&);
+    bool validateLocationLength(ASCIILiteral functionName, StringImpl*);
 
     // Helper function to check if size is non-negative.
     // Generate GL error and return false for negative inputs; otherwise, return true.
@@ -945,7 +945,7 @@ protected:
 
     // Helper function to check if all characters in the string belong to the
     // ASCII subset as defined in GLSL ES 1.0 spec section 3.1.
-    bool validateString(ASCIILiteral functionName, const String&);
+    bool validateString(ASCIILiteral functionName, StringImpl*);
 
     // Helper function to check target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
@@ -1022,7 +1022,7 @@ protected:
 
     // Helper function to print errors and warnings to console.
     NODELETE bool shouldPrintToConsole() const;
-    void printToConsole(MessageLevel, String&&);
+    void printToConsole(MessageLevel, RefPtr<StringImpl>&&);
 
     // Helper function to validate the target for checkFramebufferStatus and
     // validateFramebufferFuncParameters.

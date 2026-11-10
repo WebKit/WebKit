@@ -137,7 +137,7 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
     // For that reason we have to override what the system thinks.
     if (writingDirection == NSWritingDirectionRightToLeft)
         self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-    [self setTitle:stringWithWritingDirection([_contentView.get() focusedElementInformation].title.createNSString().get(), writingDirection, override).get()];
+    [self setTitle:stringWithWritingDirection(createNSString([_contentView.get() focusedElementInformation].title).get(), writingDirection, override).get()];
 
     return self;
 }
@@ -199,7 +199,7 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
             continue;
         groupCount++;
         if (item.isGroup && groupCount == section)
-            return item.text.createNSString().autorelease();
+            return createNSString(item.text).autorelease();
     }
     return nil;
 }
@@ -208,7 +208,7 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: <rdar://131638865> UITableViewCell.textLabel is deprecated.
-    [cell.textLabel setText:item.text.createNSString().get()];
+    [cell.textLabel setText:createNSString(item.text).get()];
     [cell.textLabel setEnabled:!item.disabled];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [cell setSelectionStyle:item.disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleBlue];
@@ -268,7 +268,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr contentView = _contentView.get();
     if ([contentView focusedElementInformation].selectOptions.isEmpty()) {
         [cell textLabel].enabled = NO;
-        [cell textLabel].text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get();
+        [cell textLabel].text = createNSString(WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list")).get();
         [cell setAccessoryType:UITableViewCellAccessoryNone];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         return cell.autorelease();
@@ -404,7 +404,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _tableViewController = adoptNS([[WKSelectTableViewController alloc] initWithView:view hasGroups:hasGroups]);
     [_tableViewController setPopover:self];
     RetainPtr<UIViewController> popoverViewController = _tableViewController.get();
-    BOOL needsNavigationController = !view.focusedElementInformation.title.isEmpty();
+    BOOL needsNavigationController = !isEmpty(view.focusedElementInformation.title);
     if (needsNavigationController)
         popoverViewController = adoptNS([[UINavigationController alloc] initWithRootViewController:_tableViewController.get()]);
     

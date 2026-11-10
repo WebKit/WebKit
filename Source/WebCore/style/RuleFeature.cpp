@@ -468,7 +468,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
     };
 }
 
-PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
+PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, InvalidationKeyType keyType, AtomStringImpl* keyString)
 {
     ASSERT(keyType != InvalidationKeyType::Universal || keyString == starAtom());
     return {
@@ -478,21 +478,21 @@ PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoCla
     };
 };
 
-bool unlikelyToHaveSelectorForAttribute(const AtomString& name)
+bool unlikelyToHaveSelectorForAttribute(AtomStringImpl* name)
 {
     return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
 }
 
 static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, const CSSSelector& selector)
 {
-    AtomString attributeName;
-    AtomString className;
-    AtomString tagName;
+    RefPtr<AtomStringImpl> attributeName;
+    RefPtr<AtomStringImpl> className;
+    RefPtr<AtomStringImpl> tagName;
     for (auto* simpleSelector = selector.leftmostInCompound(); simpleSelector; simpleSelector = simpleSelector->followingInCompound()) {
         if (simpleSelector->match() == CSSSelector::Match::Id)
             return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Id, simpleSelector->value());
 
-        if ((simpleSelector->match() == CSSSelector::Match::Class || simpleSelector->isEquivalentToClassSelector()) && className.isNull())
+        if ((simpleSelector->match() == CSSSelector::Match::Class || simpleSelector->isEquivalentToClassSelector()) && !className)
             className = simpleSelector->value();
 
         if (simpleSelector->match() == CSSSelector::Match::Tag)
@@ -501,13 +501,13 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::Ps
         if (simpleSelector->isAttributeSelector() && !simpleSelector->isEquivalentToClassSelector() && !unlikelyToHaveSelectorForAttribute(simpleSelector->attribute().localNameLowercase()))
             attributeName = simpleSelector->attribute().localNameLowercase();
     }
-    if (!attributeName.isEmpty())
+    if (!isEmpty(attributeName))
         return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Attribute, attributeName);
 
-    if (!className.isEmpty())
+    if (!isEmpty(className))
         return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Class, className);
 
-    if (!tagName.isEmpty() && tagName != starAtom())
+    if (!isEmpty(tagName) && tagName != starAtom())
         return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Tag, tagName);
 
     return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Universal);

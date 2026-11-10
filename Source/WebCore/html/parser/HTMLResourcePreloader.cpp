@@ -53,7 +53,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     ASSERT(isMainThread());
 
     bool skipContentSecurityPolicyCheck = false;
-    if (!m_nonceAttribute.isEmpty()) {
+    if (!isEmpty(m_nonceAttribute)) {
         if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON || m_resourceType == CachedResource::Type::Text)
             skipContentSecurityPolicyCheck = protect(document.contentSecurityPolicy())->allowScriptWithNonce(m_nonceAttribute);
         else if (m_resourceType == CachedResource::Type::CSSStyleSheet)
@@ -64,9 +64,9 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     if (skipContentSecurityPolicyCheck)
         options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
-    String crossOriginMode = m_crossOriginMode;
+    RefPtr<StringImpl> crossOriginMode = m_crossOriginMode;
     if (m_scriptType == ScriptType::Module) {
-        if (crossOriginMode.isNull())
+        if (!crossOriginMode)
             crossOriginMode = CachedScriptFetcher::defaultCrossOriginModeForModule;
     }
     if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON || m_resourceType == CachedResource::Type::Text || m_resourceType == CachedResource::Type::ImageResource)
@@ -75,7 +75,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     options.nonce = m_nonceAttribute;
     options.integrity = m_integrityAttribute;
     auto request = createPotentialAccessControlRequest(completeURL(document), WTF::move(options), document, crossOriginMode);
-    request.setInitiatorType(m_initiatorType);
+    request.setInitiatorType(AtomStringImpl::add(m_initiatorType).ptr());
 
     if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic)
         request.setPriority(DefaultResourceLoadPriority::asyncScript);

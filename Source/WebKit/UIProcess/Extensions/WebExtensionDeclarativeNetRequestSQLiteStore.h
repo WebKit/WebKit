@@ -38,13 +38,13 @@ enum class WebExtensionDeclarativeNetRequestStorageType : uint8_t {
     Session
 };
 
-inline String toString(WebExtensionDeclarativeNetRequestStorageType ruleType)
+inline RefPtr<StringImpl> toString(WebExtensionDeclarativeNetRequestStorageType ruleType)
 {
     switch (ruleType) {
     case WebExtensionDeclarativeNetRequestStorageType::Dynamic:
-        return "dynamic"_s;
+        return "dynamic"_si;
     case WebExtensionDeclarativeNetRequestStorageType::Session:
-        return "session"_s;
+        return "session"_si;
     default:
         ASSERT_NOT_REACHED();
         return emptyString();
@@ -67,11 +67,11 @@ public:
         Yes = true,
     };
 
-    void getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, const String& errorMessage)>&&);
-    void updateRulesByRemovingIDs(Vector<double> ruleIDs, Ref<JSON::Array> rules, CompletionHandler<void(const String& errorMessage)>&&);
+    void getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, StringImpl* errorMessage)>&&);
+    void updateRulesByRemovingIDs(Vector<double> ruleIDs, Ref<JSON::Array> rules, CompletionHandler<void(StringImpl* errorMessage)>&&);
 
-    void addRules(Ref<JSON::Array> rules, CompletionHandler<void(const String& errorMessage)>&&);
-    void deleteRules(Vector<double> ruleIDs, CompletionHandler<void(const String& errorMessage)>&&);
+    void addRules(Ref<JSON::Array> rules, CompletionHandler<void(StringImpl* errorMessage)>&&);
+    void deleteRules(Vector<double> ruleIDs, CompletionHandler<void(StringImpl* errorMessage)>&&);
 
 protected:
     SchemaVersion migrateToCurrentSchemaVersionIfNeeded() override;
@@ -83,14 +83,14 @@ protected:
     URL databaseURL() override;
 
 private:
-    WebExtensionDeclarativeNetRequestSQLiteStore(const String& uniqueIdentifier, WebExtensionDeclarativeNetRequestStorageType, const String& directory, UsesInMemoryDatabase useInMemoryDatabase);
+    WebExtensionDeclarativeNetRequestSQLiteStore(StringImpl* uniqueIdentifier, WebExtensionDeclarativeNetRequestStorageType, StringImpl* directory, UsesInMemoryDatabase useInMemoryDatabase);
 
-    RefPtr<JSON::Array> getRulesWithRuleIDsInternal(Vector<double> ruleIDs, String& errorMessage);
+    RefPtr<JSON::Array> getRulesWithRuleIDsInternal(Vector<double> ruleIDs, RefPtr<StringImpl>& errorMessage);
     Ref<JSON::Array> getKeysAndValuesFromRowIterator(Ref<WebExtensionSQLiteRowEnumerator> rows);
-    String insertRule(double ruleID, const String& ruleData, Ref<WebExtensionSQLiteDatabase>);
+    RefPtr<StringImpl> insertRule(double ruleID, StringImpl* ruleData, Ref<WebExtensionSQLiteDatabase>);
 
     WebExtensionDeclarativeNetRequestStorageType m_storageType;
-    String m_tableName;
+    RefPtr<StringImpl> m_tableName;
 
     void migrateData();
 };

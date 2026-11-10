@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IntegrityPolicyViolationReportBody);
 
-IntegrityPolicyViolationReportBody::IntegrityPolicyViolationReportBody(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly)
+IntegrityPolicyViolationReportBody::IntegrityPolicyViolationReportBody(StringImpl* documentURL, StringImpl* blockedURL, RefPtr<StringImpl>&& destination, bool reportOnly)
     : m_documentURL(documentURL)
     , m_blockedURL(blockedURL)
     , m_destination(WTF::move(destination))
@@ -42,14 +42,14 @@ IntegrityPolicyViolationReportBody::IntegrityPolicyViolationReportBody(const Str
 {
 }
 
-Ref<IntegrityPolicyViolationReportBody> IntegrityPolicyViolationReportBody::create(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly)
+Ref<IntegrityPolicyViolationReportBody> IntegrityPolicyViolationReportBody::create(StringImpl* documentURL, StringImpl* blockedURL, RefPtr<StringImpl>&& destination, bool reportOnly)
 {
     return adoptRef(*new IntegrityPolicyViolationReportBody(documentURL, blockedURL, WTF::move(destination), reportOnly));
 }
 
-const String& IntegrityPolicyViolationReportBody::type() const
+const RefPtr<StringImpl>& IntegrityPolicyViolationReportBody::type() const
 {
-    static NeverDestroyed<const String> integrityPolicyReportType(MAKE_STATIC_STRING_IMPL("integrity-violation"));
+    static NeverDestroyed<const RefPtr<StringImpl>> integrityPolicyReportType(MAKE_STATIC_STRING_IMPL("integrity-violation"));
     return integrityPolicyReportType;
 }
 

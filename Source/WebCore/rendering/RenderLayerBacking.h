@@ -210,8 +210,8 @@ public:
 
     // Interface to start and finish animations.
     bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&, const IntOutsets& filterAnimationOutsets);
-    void animationPaused(double timeOffset, const String& name);
-    void animationFinished(const String& name);
+    void animationPaused(double timeOffset, StringImpl* name);
+    void animationFinished(StringImpl* name);
     void transformRelatedPropertyDidChange();
 
     const IntOutsets& filterAnimationOutsets() const { return m_filterAnimationOutsets; }
@@ -258,7 +258,7 @@ public:
 
     // GraphicsLayerClient interface
     void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
-    void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, MonotonicTime startTime) override;
+    void notifyAnimationStarted(const GraphicsLayer*, StringImpl* animationKey, MonotonicTime startTime) override;
     void notifyFlushRequired(const GraphicsLayer*) override;
     void notifySubsequentFlushRequired(const GraphicsLayer*) override;
 
@@ -337,10 +337,10 @@ public:
     
     // For testing only.
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
-    WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> displayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool);
-    WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
 
     bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
 
@@ -361,7 +361,7 @@ private:
 
     LayoutRect compositedBoundsIncludingMargin() const;
     
-    Ref<GraphicsLayer> createGraphicsLayer(const String&, GraphicsLayerType = GraphicsLayerType::Normal);
+    Ref<GraphicsLayer> createGraphicsLayer(StringImpl*, GraphicsLayerType = GraphicsLayerType::Normal);
 
     RenderLayerModelObject& renderer() const { return m_owningLayer.renderer(); }
     RenderBox* renderBox() const { return m_owningLayer.renderBox(); }
@@ -557,7 +557,7 @@ private:
     LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.
     LayoutSize m_compositedBoundsOffsetFromGraphicsLayer; // This is the subpixel distance between the primary graphics layer and the render layer bounds.
 
-    HashMap<String, IntOutsets> m_filterAnimationOutsetsByName;
+    HashMap<RefPtr<StringImpl>, IntOutsets> m_filterAnimationOutsetsByName;
 #if ENABLE(THREADED_ANIMATIONS)
     IntOutsets m_filterAnimationOutsetsFromAcceleratedEffects;
 #endif

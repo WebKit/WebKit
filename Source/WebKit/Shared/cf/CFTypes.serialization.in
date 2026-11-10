@@ -28,7 +28,7 @@
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->data()] CFDataRef wrapped by WebKit::CoreIPCData {
 }
 
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=StringImpl::create, ToCFMethod=createCFString(*result)] CFStringRef wrapped by WTF::String {
 }
 
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFDictionary()] CFDictionaryRef wrapped by WebKit::CoreIPCCFDictionary {

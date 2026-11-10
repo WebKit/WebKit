@@ -59,7 +59,7 @@ static JSObject* getCustomElementCallback(JSGlobalObject& lexicalGlobalObject, J
     return callback.getObject();
 }
 
-static bool validateCustomElementNameAndThrowIfNeeded(JSGlobalObject& lexicalGlobalObject, const AtomString& name)
+static bool validateCustomElementNameAndThrowIfNeeded(JSGlobalObject& lexicalGlobalObject, AtomStringImpl* name)
 {
     auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     switch (Document::validateCustomElementName(name)) {
@@ -94,7 +94,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     if (callFrame.argumentCount() < 2) [[unlikely]]
         return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    AtomString localName(callFrame.uncheckedArgument(0).toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
+    RefPtr<AtomStringImpl> localName(callFrame.uncheckedArgument(0).toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue constructorValue = callFrame.uncheckedArgument(1);
@@ -176,9 +176,9 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         if (disabledFeatures.hasException(scope)) [[unlikely]]
             return { };
 
-        if (disabledFeatures.returnValue().contains("internals"_s))
+        if (disabledFeatures.returnValue().containsIf([&](auto& item) { return equal(item, "internals"_s); }))
             elementInterface->disableElementInternals();
-        if (disabledFeatures.returnValue().contains("shadow"_s))
+        if (disabledFeatures.returnValue().containsIf([&](auto& item) { return equal(item, "shadow"_s); }))
             elementInterface->disableShadow();
     }
 
@@ -222,7 +222,7 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
     if (callFrame.argumentCount() < 1) [[unlikely]]
         return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    AtomString localName(callFrame.uncheckedArgument(0).toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
+    RefPtr<AtomStringImpl> localName(callFrame.uncheckedArgument(0).toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!validateCustomElementNameAndThrowIfNeeded(lexicalGlobalObject, localName)) {

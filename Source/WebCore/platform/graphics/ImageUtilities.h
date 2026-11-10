@@ -44,15 +44,15 @@ class PixelBuffer;
 class ShareableBitmap;
 class SharedBuffer;
 
-Vector<uint8_t> encodeData(const PixelBuffer&, const String& mimeType, std::optional<double> quality = std::nullopt);
-Vector<uint8_t> encodeData(const NativeImage&, const String& mimeType, std::optional<double> quality = std::nullopt);
-Vector<uint8_t> encodeData(const RefPtr<NativeImage>&, const String& mimeType, std::optional<double> quality = std::nullopt);
-WEBCORE_EXPORT Vector<uint8_t> encodeData(RefPtr<ImageBuffer>&&, const String& mimeType, std::optional<double> quality = std::nullopt);
+Vector<uint8_t> encodeData(const PixelBuffer&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+Vector<uint8_t> encodeData(const NativeImage&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+Vector<uint8_t> encodeData(const RefPtr<NativeImage>&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT Vector<uint8_t> encodeData(RefPtr<ImageBuffer>&&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
 
-String encodeDataURL(const PixelBuffer&, const String& mimeType, std::optional<double> quality = std::nullopt);
-String encodeDataURL(const NativeImage&, const String& mimeType, std::optional<double> quality = std::nullopt);
-WEBCORE_EXPORT String encodeDataURL(const RefPtr<NativeImage>&, const String& mimeType, std::optional<double> quality = std::nullopt);
-WEBCORE_EXPORT String encodeDataURL(RefPtr<ImageBuffer>&&, const String& mimeType, std::optional<double> quality = std::nullopt);
+RefPtr<StringImpl> encodeDataURL(const PixelBuffer&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+RefPtr<StringImpl> encodeDataURL(const NativeImage&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT RefPtr<StringImpl> encodeDataURL(const RefPtr<NativeImage>&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT RefPtr<StringImpl> encodeDataURL(RefPtr<ImageBuffer>&&, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
 
 #if USE(CG)
 WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueueSingleton();
@@ -60,37 +60,37 @@ WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueueSingleton();
 // Given a list of files' 'paths' and 'allowedMIMETypes', the function returns a list
 // of strings whose size is the same as the size of 'paths' and its entries are all
 // null strings except the ones whose MIME types are not in 'allowedMIMETypes'.
-WEBCORE_EXPORT Vector<String> findImagesForTranscoding(const Vector<String>& paths, const Vector<String>& allowedMIMETypes);
+WEBCORE_EXPORT Vector<RefPtr<StringImpl>> findImagesForTranscoding(const Vector<RefPtr<StringImpl>>& paths, const Vector<RefPtr<StringImpl>>& allowedMIMETypes);
 
 // Given a list of images' 'paths', this function transcodes these images to a new
 // format whose UTI is destinationUTI. The result of the transcoding will be written
 // to temporary files whose extensions are 'destinationExtension'. It returns a list
 // of paths to the result temporary files. If an entry in 'paths' is null or an error
 // happens while transcoding, a null string will be added to the returned list.
-WEBCORE_EXPORT Vector<String> transcodeImages(const Vector<String>& paths, const String& destinationUTI, const String& destinationExtension);
+WEBCORE_EXPORT Vector<RefPtr<StringImpl>> transcodeImages(const Vector<RefPtr<StringImpl>>& paths, StringImpl* destinationUTI, StringImpl* destinationExtension);
 
 // Same as transcodeImages, but performs the work on a background queue and invokes the completion handler on the main thread with the transcoded paths.
-WEBCORE_EXPORT void transcodeImagesInBackgroundQueue(Vector<String>&& paths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&);
+WEBCORE_EXPORT void transcodeImagesInBackgroundQueue(Vector<RefPtr<StringImpl>>&& paths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
 
 enum class ImageDecodingError : uint8_t {
     Internal,
     BadData,
     UnsupportedType
 };
-WEBCORE_EXPORT String descriptionString(ImageDecodingError);
-WEBCORE_EXPORT std::expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t>);
-WEBCORE_EXPORT std::expected<Vector<std::pair<String, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t>);
+WEBCORE_EXPORT RefPtr<StringImpl> descriptionString(ImageDecodingError);
+WEBCORE_EXPORT std::expected<std::pair<RefPtr<StringImpl>, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t>);
+WEBCORE_EXPORT std::expected<Vector<std::pair<RefPtr<StringImpl>, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t>);
 WEBCORE_EXPORT RefPtr<SharedBuffer> createIconDataFromBitmaps(Vector<Ref<ShareableBitmap>>&&);
 
-Vector<uint8_t> encodeData(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
-WEBCORE_EXPORT String encodeDataURL(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
+Vector<uint8_t> encodeData(CGImageRef, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT RefPtr<StringImpl> encodeDataURL(CGImageRef, StringImpl* mimeType, std::optional<double> quality = std::nullopt);
 NODELETE WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
-RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType);
+RetainPtr<CFStringRef> utiFromImageBufferMIMEType(StringImpl* mimeType);
 NODELETE CFStringRef jpegUTI();
 #endif
 
 // For the implementations, not to be called directly.
-Vector<uint8_t> platformEncodeData(const NativeImage&, const String& mimeType, std::optional<double> quality);
+Vector<uint8_t> platformEncodeData(const NativeImage&, StringImpl* mimeType, std::optional<double> quality);
 
 } // namespace WebCore
 

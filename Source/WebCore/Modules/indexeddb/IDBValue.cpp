@@ -50,7 +50,7 @@ IDBValue::IDBValue(const ThreadSafeDataBuffer& value)
 {
 }
 
-IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths)
+IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>>& blobFilePaths)
     : m_data(ThreadSafeDataBuffer::copyData(scriptValue.wireBytes()))
     , m_blobURLs(blobURLs)
     , m_blobFilePaths(blobFilePaths)
@@ -59,7 +59,7 @@ IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<String
     ASSERT(m_data.data());
 }
 
-IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths, Vector<FileSystemHandleGlobalIdentifier>&& fileSystemHandleGlobalIdentifiers)
+IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<RefPtr<StringImpl>>&& blobURLs, Vector<RefPtr<StringImpl>>&& blobFilePaths, Vector<FileSystemHandleGlobalIdentifier>&& fileSystemHandleGlobalIdentifiers)
     : m_data(value)
     , m_blobURLs(WTF::move(blobURLs))
     , m_blobFilePaths(WTF::move(blobFilePaths))
@@ -67,7 +67,7 @@ IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<String>&& blobURLs,
 {
 }
 
-IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers)
+IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>>& blobFilePaths, const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers)
     : m_data(value)
     , m_blobURLs(blobURLs)
     , m_blobFilePaths(blobFilePaths)
@@ -121,10 +121,10 @@ size_t IDBValue::size() const
     size_t totalSize = 0;
 
     for (auto& url : m_blobURLs)
-        totalSize += url.sizeInBytes();
+        totalSize += sizeInBytes(url);
 
     for (auto& path : m_blobFilePaths)
-        totalSize += path.sizeInBytes();
+        totalSize += sizeInBytes(path);
 
     totalSize += m_fileSystemHandleGlobalIdentifiers.size() * sizeof(FileSystemHandleGlobalIdentifier);
 

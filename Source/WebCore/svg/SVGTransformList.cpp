@@ -206,7 +206,7 @@ bool SVGTransformList::parse(StringParsingBuffer<char16_t>& buffer)
     return parseGeneric(buffer, ListReplacement::Append);
 }
 
-String SVGTransformList::valueAsString() const
+RefPtr<StringImpl> SVGTransformList::valueAsString() const
 {
     StringBuilder builder;
     for (const auto& transform : m_items) {

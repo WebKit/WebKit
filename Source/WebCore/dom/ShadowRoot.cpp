@@ -65,8 +65,8 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     void* styleSheetList;
     void* styleScope;
     void* slotAssignment;
-    std::optional<HashMap<AtomString, AtomString>> partMappings;
-    AtomString referenceTarget;
+    std::optional<HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> partMappings;
+    RefPtr<AtomStringImpl> referenceTarget;
 };
 
 static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot should stay small");
@@ -74,7 +74,7 @@ static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot sh
 static_assert(sizeof(WeakPtr<Element, WeakPtrImplWithEventTargetData>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
-ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, ShadowRootDelegatesFocus delegatesFocus, Clonable clonable, ShadowRootSerializable serializable, ShadowRootAvailableToElementInternals availableToElementInternals, RefPtr<CustomElementRegistry>&& registry, ShadowRootScopedCustomElementRegistry scopedRegistry, const AtomString& referenceTarget)
+ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, ShadowRootDelegatesFocus delegatesFocus, Clonable clonable, ShadowRootSerializable serializable, ShadowRootAvailableToElementInternals availableToElementInternals, RefPtr<CustomElementRegistry>&& registry, ShadowRootScopedCustomElementRegistry scopedRegistry, AtomStringImpl* referenceTarget)
     : DocumentFragment(document, TypeFlag::IsShadowRootOrFormControlElement)
     , TreeScope(*this, document, WTF::move(registry))
     , m_delegatesFocus(delegatesFocus == ShadowRootDelegatesFocus::Yes)
@@ -228,11 +228,11 @@ CustomElementRegistry* ShadowRoot::registryForBindings() const
     return registry;
 }
 
-ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(StringImpl* markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
 
-    if (markup.isEmpty()) {
+    if (isEmpty(markup)) {
         ChildListMutationScope mutation(*this);
         removeChildren();
         return { };
@@ -248,9 +248,9 @@ ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, Op
     return result;
 }
 
-ExceptionOr<void> ShadowRoot::setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<void> ShadowRoot::setHTMLUnsafe(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "ShadowRoot setHTMLUnsafe"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "ShadowRoot setHTMLUnsafe"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -258,19 +258,19 @@ ExceptionOr<void> ShadowRoot::setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& 
     return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
 }
 
-String ShadowRoot::getHTML(GetHTMLOptions&& options) const
+RefPtr<StringImpl> ShadowRoot::getHTML(GetHTMLOptions&& options) const
 {
     return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy, SerializationSyntax::HTML, options.serializableShadowRoots ? SerializeShadowRoots::Serializable : SerializeShadowRoots::Explicit, WTF::move(options.shadowRoots));
 }
 
-String ShadowRoot::innerHTML() const
+RefPtr<StringImpl> ShadowRoot::innerHTML() const
 {
     return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
 }
 
-ExceptionOr<void> ShadowRoot::setInnerHTML(Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<void> ShadowRoot::setInnerHTML(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "ShadowRoot innerHTML"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "ShadowRoot innerHTML"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -328,13 +328,13 @@ void ShadowRoot::removeAllEventListeners()
         node->removeAllEventListeners();
 }
 
-void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, const AtomString& oldName, const AtomString& newName)
+void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, AtomStringImpl* oldName, AtomStringImpl* newName)
 {
     ASSERT(m_slotAssignment);
     return m_slotAssignment->renameSlotElement(slot, oldName, newName, *this);
 }
 
-void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& slot)
+void ShadowRoot::addSlotElementByName(AtomStringImpl* name, HTMLSlotElement& slot)
 {
     ASSERT(&slot.rootNode() == this);
     if (!m_slotAssignment) {
@@ -347,7 +347,7 @@ void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& s
     return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }
 
-void ShadowRoot::removeSlotElementByName(const AtomString& name, HTMLSlotElement& slot, ContainerNode& oldParentOfRemovedTree)
+void ShadowRoot::removeSlotElementByName(AtomStringImpl* name, HTMLSlotElement& slot, ContainerNode& oldParentOfRemovedTree)
 {
     ASSERT(m_slotAssignment);
     return m_slotAssignment->removeSlotElementByName(name, slot, &oldParentOfRemovedTree, *this);
@@ -376,7 +376,7 @@ const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* ShadowRoot::assigne
     return m_slotAssignment ? m_slotAssignment->assignedNodesForSlot(slot, *this) : nullptr;
 }
 
-static std::optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView mappingString)
+static std::optional<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> parsePartMapping(StringView mappingString)
 {
     const auto end = mappingString.length();
 
@@ -437,7 +437,7 @@ static ShadowRoot::PartMappings parsePartMappingsList(StringView mappingsListStr
 
         auto result = parsePartMapping(mappingsListString.substring(begin, mappingEnd - begin));
         if (result)
-            mappings.add(result->first, Vector<AtomString, 1>()).iterator->value.append(result->second);
+            mappings.add(result->first, Vector<RefPtr<AtomStringImpl>, 1>()).iterator->value.append(result->second);
 
         if (mappingEnd == end)
             break;
@@ -480,7 +480,7 @@ Vector<Ref<WebAnimation>> ShadowRoot::getAnimations()
     });
 }
 
-void ShadowRoot::setReferenceTarget(const AtomString& referenceTarget)
+void ShadowRoot::setReferenceTarget(AtomStringImpl* referenceTarget)
 {
     if (!document().settings().shadowRootReferenceTargetEnabled())
         return;

@@ -55,7 +55,7 @@ inline TimeZoneID utcTimeZoneID()
 // aliases this returns the alias's own identifier (e.g. "Asia/Calcutta"); the primary's
 // identifier can be reached by chaining through intlPrimaryTimeZoneID. id must have been
 // produced by intlResolveTimeZoneID() or utcTimeZoneID(), and must not be offsetTimeZoneID.
-JS_EXPORT_PRIVATE const String& intlTimeZoneIDToString(TimeZoneID);
+JS_EXPORT_PRIVATE const RefPtr<StringImpl>& intlTimeZoneIDToString(TimeZoneID);
 
 // Map an alias's TimeZoneID to its primary's TimeZoneID (returns the input id unchanged
 // if it is already a primary).
@@ -79,10 +79,10 @@ public:
 
     // As-stored, case-normalized IANA identifier for named zones (alias-preserving),
     // or formatted "+HH:MM[:SS[.fff...]]" for UTC offsets.
-    JS_EXPORT_PRIVATE String toString() const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
 
     // ICU accepts named identifiers as-is, and offsets only in "GMT+HHMM" form.
-    JS_EXPORT_PRIVATE String toICUString() const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> toICUString() const;
 
     friend bool operator==(const TimeZone&, const TimeZone&) = default;
 

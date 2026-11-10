@@ -93,7 +93,7 @@ TextStream& FEBlend::externalRepresentation(TextStream& ts, FilterRepresentation
     ts << indent << "[feBlend"_s;
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal"_s : compositeOperatorName(CompositeOperator::SourceOver, m_mode));
+    ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal"_si : compositeOperatorName(CompositeOperator::SourceOver, m_mode));
 
     ts << "\"]\n"_s;
     return ts;

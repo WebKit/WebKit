@@ -45,7 +45,7 @@ public:
 
     bool equals(const CSSCrossfadeValue&) const;
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 

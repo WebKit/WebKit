@@ -75,18 +75,18 @@ HTMLFormControlElement::~HTMLFormControlElement()
     clearForm();
 }
 
-String HTMLFormControlElement::formEnctype() const
+RefPtr<StringImpl> HTMLFormControlElement::formEnctype() const
 {
-    const AtomString& formEnctypeAttr = attributeWithoutSynchronization(formenctypeAttr);
-    if (formEnctypeAttr.isNull())
+    const RefPtr<AtomStringImpl>& formEnctypeAttr = attributeWithoutSynchronization(formenctypeAttr);
+    if (!formEnctypeAttr)
         return emptyString();
     return FormSubmission::Attributes::parseEncodingType(formEnctypeAttr);
 }
 
-String HTMLFormControlElement::formMethod() const
+RefPtr<StringImpl> HTMLFormControlElement::formMethod() const
 {
     auto& formMethodAttr = attributeWithoutSynchronization(formmethodAttr);
-    if (formMethodAttr.isNull())
+    if (!formMethodAttr)
         return emptyString();
     return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr));
 }
@@ -96,11 +96,11 @@ bool HTMLFormControlElement::formNoValidate() const
     return hasAttributeWithoutSynchronization(formnovalidateAttr);
 }
 
-String HTMLFormControlElement::formAction() const
+RefPtr<StringImpl> HTMLFormControlElement::formAction() const
 {
-    const AtomString& value = attributeWithoutSynchronization(formactionAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(formactionAttr);
     Ref document = this->document();
-    if (value.isEmpty())
+    if (isEmpty(value))
         return document->url().string();
     return document->encodingParseURL(value).string();
 }
@@ -133,10 +133,10 @@ void HTMLFormControlElement::removingSteps(RemovalType removalType, ContainerNod
     ValidatedFormListedElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
-void HTMLFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLFormControlElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == requiredAttr) {
-        bool newRequired = !newValue.isNull();
+        bool newRequired = !!newValue;
         if (m_isRequired != newRequired) {
             Style::PseudoClassChangeInvalidation requiredInvalidation(*this, { { CSSSelector::PseudoClass::Required, newRequired }, { CSSSelector::PseudoClass::Optional, !newRequired } });
             m_isRequired = newRequired;
@@ -258,8 +258,8 @@ bool HTMLFormControlElement::shouldAutocorrect() const
         && (input->isPasswordField() || input->isEmailField() || input->isURLField())) {
         return false;
     }
-    const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
-    if (!autocorrectValue.isNull())
+    const RefPtr<AtomStringImpl>& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
+    if (autocorrectValue)
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
     if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();
@@ -282,7 +282,7 @@ AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 
 #endif
 
-String HTMLFormControlElement::autocomplete() const
+RefPtr<StringImpl> HTMLFormControlElement::autocomplete() const
 {
     return autofillData().idlExposedValue;
 }
@@ -302,26 +302,26 @@ AutofillData HTMLFormControlElement::autofillData() const
     return AutofillData::createFromHTMLFormControlElement(*this);
 }
 
-String HTMLFormControlElement::resultForDialogSubmit() const
+RefPtr<StringImpl> HTMLFormControlElement::resultForDialogSubmit() const
 {
     return attributeWithoutSynchronization(HTMLNames::valueAttr);
 }
 
-static const AtomString& toggleAtom()
+static const RefPtr<AtomStringImpl>& toggleAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("toggle"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("toggle"_s);
     return identifier;
 }
 
-static const AtomString& showAtom()
+static const RefPtr<AtomStringImpl>& showAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("show"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("show"_s);
     return identifier;
 }
 
-static const AtomString& hideAtom()
+static const RefPtr<AtomStringImpl>& hideAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("hide"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("hide"_s);
     return identifier;
 }
 
@@ -351,7 +351,7 @@ RefPtr<HTMLElement> HTMLFormControlElement::popoverTargetElement() const
     return nullptr;
 }
 
-const AtomString& HTMLFormControlElement::popoverTargetAction() const
+const RefPtr<AtomStringImpl>& HTMLFormControlElement::popoverTargetAction() const
 {
     auto value = attributeWithoutSynchronization(HTMLNames::popovertargetactionAttr);
 

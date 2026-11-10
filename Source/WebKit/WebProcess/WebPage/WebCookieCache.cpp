@@ -49,11 +49,11 @@ bool WebCookieCache::isSupported()
 #endif
 }
 
-static String cookiesToString(const Vector<WebCore::Cookie>& cookies)
+static RefPtr<StringImpl> cookiesToString(const Vector<WebCore::Cookie>& cookies)
 {
     StringBuilder cookiesBuilder;
     for (auto& cookie : borrow(cookies)) {
-        if (cookie.name.isEmpty())
+        if (isEmpty(cookie.name))
             continue;
         ASSERT(!cookie.httpOnly);
         if (cookie.httpOnly)
@@ -67,7 +67,7 @@ static String cookiesToString(const Vector<WebCore::Cookie>& cookies)
     return cookiesBuilder.toString();
 }
 
-String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, IncludeSecureCookies includeSecureCookies)
+RefPtr<StringImpl> WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, IncludeSecureCookies includeSecureCookies)
 {
     bool hasCacheForHost = m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host());
     if (!hasCacheForHost || cacheMayBeOutOfSync()) {
@@ -98,7 +98,7 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
     return protect(inMemoryStorageSession())->cookiesForDOM(firstParty, sameSiteInfo, url, frameID, webPageProxyID, includeSecureCookies, ApplyTrackingPrevention::No, ShouldRelaxThirdPartyCookieBlocking::No, IsKnownCrossSiteTracker::No).first;
 }
 
-void WebCookieCache::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
+void WebCookieCache::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, StringImpl* cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
 {
     if (m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host()))
         protect(inMemoryStorageSession())->setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, webPageProxyID, ApplyTrackingPrevention::No, RequiresScriptTrackingPrivacy::No, cookieString, shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker::No);
@@ -115,7 +115,7 @@ void WebCookieCache::didSetCookieFromDOM(PendingCookieUpdateCounter::Token, cons
         protect(inMemoryStorageSession())->setCookieFromDOM(firstParty, sameSiteInfo, url, frameID, webPageProxyID, ApplyTrackingPrevention::No, RequiresScriptTrackingPrivacy::No, cookie, shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker::No);
 }
 
-void WebCookieCache::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
+void WebCookieCache::cookiesAdded(StringImpl* host, const Vector<WebCore::Cookie>& cookies)
 {
     if (!m_hostsWithInMemoryStorage.contains(host))
         return;
@@ -125,7 +125,7 @@ void WebCookieCache::cookiesAdded(const String& host, const Vector<WebCore::Cook
         inMemoryStorageSession->setCookie(cookie);
 }
 
-void WebCookieCache::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
+void WebCookieCache::cookiesDeleted(StringImpl* host, const Vector<WebCore::Cookie>& cookies)
 {
     if (!m_hostsWithInMemoryStorage.contains(host))
         return;
@@ -150,10 +150,10 @@ void WebCookieCache::clear()
     m_inMemoryStorageSession = nullptr;
 }
 
-void WebCookieCache::clearForHost(const String& host)
+void WebCookieCache::clearForHost(StringImpl* host)
 {
-    String removedHost = m_hostsWithInMemoryStorage.take(host);
-    if (removedHost.isNull())
+    RefPtr<StringImpl> removedHost = m_hostsWithInMemoryStorage.take(host);
+    if (!removedHost)
         return;
 
     protect(inMemoryStorageSession())->deleteCookiesForHostnames(singleElementSpan(removedHost), [] { });

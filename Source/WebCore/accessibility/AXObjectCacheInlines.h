@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-inline String CharacterOffset::debugDescription()
+inline RefPtr<StringImpl> CharacterOffset::debugDescription()
 {
-    auto nodeDescription = node ? CheckedPtr { node.get() }->debugDescription() : "null"_s;
+    auto nodeDescription = node ? CheckedPtr { node.get() }->debugDescription() : "null"_si;
     return makeString("CharacterOffset {node: "_s, nodeDescription, ", startIndex: "_s, startIndex, ", offset: "_s, offset, ", remainingOffset: "_s, remainingOffset, '}');
 }
 

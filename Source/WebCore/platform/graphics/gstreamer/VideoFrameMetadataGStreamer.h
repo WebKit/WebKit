@@ -40,7 +40,7 @@ std::pair<WebCore::VideoFrame::Rotation, bool> webkitGstBufferGetVideoRotation(G
 
 // The value of the image orientation tag for a frame that is rotated clockwise, then mirrored horizontally.
 // The tag follows EXIF, where the mirroring is applied before the rotation.
-String webkitGstImageOrientationTag(WebCore::VideoFrame::Rotation, bool isMirrored);
+RefPtr<StringImpl> webkitGstImageOrientationTag(WebCore::VideoFrame::Rotation, bool isMirrored);
 
 WebCore::VideoFrameContentHint webkitGstBufferGetContentHint(GstBuffer*);
 WebCore::PlatformVideoColorSpace webkitGstBufferGetNativeColorSpace(GstBuffer*);

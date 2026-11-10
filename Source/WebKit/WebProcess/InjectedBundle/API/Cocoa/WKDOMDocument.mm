@@ -56,7 +56,7 @@
 - (WKDOMElement *)createElement:(NSString *)tagName
 {
     // FIXME: Do something about the exception.
-    auto result = protect(downcast<WebCore::Document>(*_impl))->createElementForBindings(tagName);
+    auto result = protect(downcast<WebCore::Document>(*_impl))->createElementForBindings(AtomStringImpl::add((__bridge CFStringRef)tagName).get());
     if (result.hasException())
         return nil;
     return WebKit::toWKDOMElement(result.releaseReturnValue().ptr());
@@ -64,7 +64,7 @@
 
 - (WKDOMText *)createTextNode:(NSString *)data
 {
-    return WebKit::toWKDOMText(protect(downcast<WebCore::Document>(*_impl))->createTextNode(data).ptr());
+    return WebKit::toWKDOMText(protect(downcast<WebCore::Document>(*_impl))->createTextNode(StringImpl::create(data)).ptr());
 }
 
 - (WKDOMElement *)body
@@ -74,12 +74,12 @@
 
 - (WKDOMNode *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
 {
-    return WebKit::toWKDOMNode(createFragmentFromMarkup(protect(downcast<WebCore::Document>(*_impl)), markupString, baseURL.absoluteString).ptr());
+    return WebKit::toWKDOMNode(createFragmentFromMarkup(protect(downcast<WebCore::Document>(*_impl)), StringImpl::create(markupString).get(), StringImpl::create(baseURL.absoluteString).get()).ptr());
 }
 
 - (WKDOMNode *)createDocumentFragmentWithText:(NSString *)text
 {
-    return WebKit::toWKDOMNode(createFragmentFromText(makeRangeSelectingNodeContents(protect(downcast<WebCore::Document>(*_impl))), text).ptr());
+    return WebKit::toWKDOMNode(createFragmentFromText(makeRangeSelectingNodeContents(protect(downcast<WebCore::Document>(*_impl))), StringImpl::create(text).get()).ptr());
 }
 
 - (id)parserYieldToken

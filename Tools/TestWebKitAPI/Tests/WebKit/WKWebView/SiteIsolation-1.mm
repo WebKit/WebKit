@@ -691,7 +691,7 @@ TEST(SiteIsolation, PauseAllAnimationsAfterCrossOriginIframeLoads)
 {
     RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"test-mse" ofType:@"mp4"] options:0 error:NULL];
     HTTPResponse videoResponse { videoData.get() };
-    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+    videoResponse.setHeaderField("Content-Type"_si, "video/mp4"_si);
 
     HTTPServer server({
         { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
@@ -876,7 +876,7 @@ TEST(SiteIsolation, CopyLinkWithHighlightInCrossOriginIframe)
 
     RetainPtr menuBuilder = adoptNS([TestUIMenuBuilder new]);
     [webView buildMenuWithBuilder:menuBuilder];
-    RetainPtr<UIAction> copyLinkWithHighlightAction = [menuBuilder actionWithTitle:WebCore::contextMenuItemTagCopyLinkWithHighlight().createNSString()];
+    RetainPtr<UIAction> copyLinkWithHighlightAction = [menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTagCopyLinkWithHighlight())];
     ASSERT_NOT_NULL(copyLinkWithHighlightAction.get());
 
     clearPasteboard();
@@ -1710,7 +1710,7 @@ TEST(SiteIsolation, AutocorrectionContextInCrossOriginIframe)
     // process that got the request. Otherwise the wait times out and the context comes back empty.
     auto context = [webView autocorrectionContext];
     EXPECT_WK_STREQ("world", context.selectedText);
-    EXPECT_TRUE(context.contextBeforeSelection.startsWith("hello"_s));
+    EXPECT_TRUE(startsWith(context.contextBeforeSelection, "hello"_s));
 }
 
 TEST(SiteIsolation, AutocorrectionRectsInCrossOriginIframe)
@@ -3334,7 +3334,7 @@ static NSPoint loadAndCaptureCaptionDisplaySettingsMenuLocation(TestWKWebView *w
     return capturedCaptionDisplaySettingsMenuLocation;
 }
 
-static void checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, NSPoint expectedLocation, CaptionDisplaySettingsTestBlock showCaptionDisplaySettings, CaptionDisplaySettingsTestBlock prepare = nil)
+static void checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, NSPoint expectedLocation, CaptionDisplaySettingsTestBlock showCaptionDisplaySettings, CaptionDisplaySettingsTestBlock prepare = nil)
 {
     HTTPServer server({
         { "/control"_s, { makeStringByReplacingAll(mainframeHTML, "domain2.com"_s, "domain1.com"_s) } },
@@ -3383,7 +3383,7 @@ static constexpr NSPoint captionDisplaySettingsMousePointInWebView { 300, 250 };
 
 TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInCrossOriginIframe)
 {
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:@"video.showCaptionDisplaySettings({ anchorNode: target, positionArea: 'bottom right' }); true" inFrame:childFrame];
     });
 }
@@ -3391,8 +3391,8 @@ TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInCrossOriginIframe)
 TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        "<body style='margin: 0; height: 2000px'><div id='target' style='position: absolute; left: 10px; top: 520px; width: 30px; height: 40px;'></div><video id='video'></video></body>"_s,
+        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        "<body style='margin: 0; height: 2000px'><div id='target' style='position: absolute; left: 10px; top: 520px; width: 30px; height: 40px;'></div><video id='video'></video></body>"_si,
         captionDisplaySettingsTargetBottomRightInWebView,
         ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
             [webView objectByEvaluatingJavaScript:@"video.showCaptionDisplaySettings({ anchorNode: target, positionArea: 'bottom right' }); true" inFrame:childFrame];
@@ -3414,7 +3414,7 @@ TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInScrolledCrossOriginIframeW
 TEST(SiteIsolation, CaptionDisplaySettingsEventTargetInCrossOriginIframe)
 {
     // Without an anchor node, the target of the current non-mouse event is used as the anchor.
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"target.addEventListener('custom', () => { %@ }); target.dispatchEvent(new Event('custom')); true", showCaptionDisplaySettingsScript] inFrame:childFrame];
     });
 }
@@ -3422,7 +3422,7 @@ TEST(SiteIsolation, CaptionDisplaySettingsEventTargetInCrossOriginIframe)
 TEST(SiteIsolation, CaptionDisplaySettingsMouseEventLocationInCrossOriginIframe)
 {
     // Without an anchor node, the location of the current mouse event is used as the anchor.
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"addEventListener('mousedown', () => { %@ }); true", showCaptionDisplaySettingsScript] inFrame:childFrame];
         [webView mouseDownAtPoint:captionDisplaySettingsMousePointInWindow simulatePressure:NO];
         [webView mouseUpAtPoint:captionDisplaySettingsMousePointInWindow];
@@ -3432,7 +3432,7 @@ TEST(SiteIsolation, CaptionDisplaySettingsMouseEventLocationInCrossOriginIframe)
 TEST(SiteIsolation, CaptionDisplaySettingsLastKnownMousePositionInCrossOriginIframe)
 {
     // Without an anchor node or a current event, the last known mouse position is used as the anchor.
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:@"window.didReceiveMouseMove = false; addEventListener('mousemove', () => { didReceiveMouseMove = true; }); true" inFrame:childFrame];
         [webView mouseMoveToPoint:NSMakePoint(10, 10) withFlags:0];
         [webView mouseMoveToPoint:captionDisplaySettingsMousePointInWindow withFlags:0];
@@ -3677,18 +3677,18 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWhoseResponseHasDocumentIsolationPo
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/plain"_s) {
-                co_await connection.awaitableSend(HTTPResponse(speculationRules).serialize());
+            if (equal(path, "/plain"_s)) {
+                co_await connection.awaitableSend(HTTPResponse(StringImpl::create(speculationRules).ptr()).serialize());
                 continue;
             }
-            if (path == "/destination"_s) {
+            if (equal(path, "/destination"_s)) {
                 // Hold the prefetch, so the navigation finds it still loading.
                 if (contains(request.span(), "Sec-Purpose: prefetch"_span)) {
                     prefetchConnection = connection;
                     co_return;
                 }
                 navigationRequests++;
-                co_await connection.awaitableSend(documentIsolationPolicyResponse("destination"_s).serialize());
+                co_await connection.awaitableSend(documentIsolationPolicyResponse("destination"_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -3716,7 +3716,7 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWhoseResponseHasDocumentIsolationPo
     // The navigation joins the prefetch in the same task that reports its start, so the prefetch's response reaches it.
     [webView evaluateJavaScript:@"location.href = '/destination'" completionHandler:nil];
     [navigationDelegate waitForDidStartProvisionalNavigation];
-    prefetchConnection->send(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Connection"_s, "close"_s } }, "prefetch"_s).serialize());
+    prefetchConnection->send(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Connection"_s, "close"_s } }, "prefetch"_si).serialize());
     [navigationDelegate waitForDidFinishNavigation];
 
     // The prefetch can't serve the navigation, so the navigation makes its own request, whose response moves it to a

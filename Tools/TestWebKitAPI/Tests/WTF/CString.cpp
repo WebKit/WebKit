@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Helpers/Test.h"
 #include <array>
 #include <concepts>
 #include <wtf/HashMap.h>
@@ -381,9 +382,9 @@ static_assert(!IsEqualityComparable<ASCIICString, Latin1CString>);
 static_assert(!IsLessThanComparable<ASCIICString, UTF8CString>);
 static_assert(!IsLessThanComparable<ASCIICString, Latin1CString>);
 // The conversions that have been migrated report their encoding in the type.
-static_assert(std::same_as<decltype(std::declval<const String&>().ascii()), ASCIICString>);
-static_assert(std::same_as<decltype(std::declval<const String&>().latin1()), Latin1CString>);
-static_assert(std::same_as<decltype(std::declval<const String&>().tryGetUTF8()), std::expected<UTF8CString, UTF8ConversionError>>);
+static_assert(std::same_as<decltype(ascii(std::declval<const RefPtr<StringImpl>&>())), ASCIICString>);
+static_assert(std::same_as<decltype(latin1(std::declval<const RefPtr<StringImpl>&>())), Latin1CString>);
+static_assert(std::same_as<decltype(tryGetUTF8(std::declval<const RefPtr<StringImpl>&>())), std::expected<UTF8CString, UTF8ConversionError>>);
 static_assert(std::same_as<decltype(std::declval<const StringView&>().tryGetUTF8()), std::expected<UTF8CString, UTF8ConversionError>>);
 static_assert(std::same_as<decltype(WTF::convertToASCIILowercase(u8""_span)), UTF8CString>);
 // A CStringBase could only have been sliced from a typed string, so comparing one would ignore its encoding.
@@ -474,13 +475,13 @@ TEST(WTF, CStringMakeString)
     static_assert(!AdaptableToString<CStringBase>);
 
     UTF8CString utf8String { u8"Water🍉Melon"_span };
-    EXPECT_EQ(makeString(utf8String), String::fromUTF8(u8"Water🍉Melon"_span));
-    EXPECT_EQ(makeString(utf8String).length(), 12U);
+    EXPECT_EQ(makeString(utf8String), StringImpl::fromUTF8(u8"Water🍉Melon"_span));
+    EXPECT_EQ(length(makeString(utf8String)), 12U);
 
     constexpr auto latin1Cafe = WTF::toArray<Latin1Character>({ 'c', 'a', 'f', 0xE9 });
     Latin1CString latin1String { std::span<const Latin1Character> { latin1Cafe } };
-    EXPECT_EQ(makeString(latin1String), String::fromUTF8(u8"café"_span));
-    EXPECT_EQ(makeString(latin1String).length(), 4U);
+    EXPECT_EQ(makeString(latin1String), StringImpl::fromUTF8(u8"café"_span));
+    EXPECT_EQ(length(makeString(latin1String)), 4U);
 }
 
 template<typename StringType> concept PrintableToStream = requires(StringPrintStream& out, const StringType& string) {
@@ -503,11 +504,11 @@ TEST(WTF, CStringPrintStream)
     };
 
     UTF8CString utf8String { u8"Water🍉Melon"_span };
-    EXPECT_EQ(print(utf8String), String::fromUTF8(u8"Water🍉Melon"_span));
+    EXPECT_EQ(print(utf8String), StringImpl::fromUTF8(u8"Water🍉Melon"_span));
 
     constexpr auto latin1Cafe = WTF::toArray<Latin1Character>({ 'c', 'a', 'f', 0xE9 });
     Latin1CString latin1String { std::span<const Latin1Character> { latin1Cafe } };
-    EXPECT_EQ(print(latin1String), String::fromUTF8(u8"café"_span));
+    EXPECT_EQ(print(latin1String), StringImpl::fromUTF8(u8"café"_span));
 
     ASCIICString asciiString { "cafe"_s };
     EXPECT_EQ(print(asciiString), "cafe"_s);

@@ -57,7 +57,7 @@ class NetworkRTCUDPSocketCocoaConnections;
 class NetworkRTCUDPSocketCocoa final : public NetworkRTCProvider::Socket {
     WTF_MAKE_TZONE_ALLOCATED(NetworkRTCUDPSocketCocoa);
 public:
-    NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const webrtc::SocketAddress&, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
+    NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const webrtc::SocketAddress&, Ref<IPC::Connection>&&, RefPtr<StringImpl>&& attributedBundleIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
     ~NetworkRTCUDPSocketCocoa();
 
 private:

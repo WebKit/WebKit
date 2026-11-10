@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-static String lockFileNameForPath(const String& originPath)
+static RefPtr<StringImpl> lockFileNameForPath(StringImpl* originPath)
 {
     return FileSystem::pathByAppendingComponent(originPath, ".lock"_s);
 }
 
-OriginLock::OriginLock(const String& originPath)
-    : m_lockFileName(lockFileNameForPath(originPath).isolatedCopy())
+OriginLock::OriginLock(StringImpl* originPath)
+    : m_lockFileName(isolatedCopy(lockFileNameForPath(originPath)))
 {
 }
 
@@ -74,7 +74,7 @@ void OriginLock::unlock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_mutex.unlock();
 }
 
-void OriginLock::deleteLockFile(const String& originPath)
+void OriginLock::deleteLockFile(StringImpl* originPath)
 {
 #if USE(FILE_LOCK)
     FileSystem::deleteFile(lockFileNameForPath(originPath));

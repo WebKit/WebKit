@@ -53,7 +53,7 @@ public:
 
     ~WebExtensionSQLiteStatement();
 
-    void bind(const String&, int parameterIndex);
+    void bind(StringImpl*, int parameterIndex);
     void bind(const int&, int parameterIndex);
     void bind(const int64_t&, int parameterIndex);
     void bind(const double&, int parameterIndex);
@@ -73,17 +73,17 @@ public:
     sqlite3_stmt* handle() LIFETIME_BOUND { return m_handle; };
     bool isValid() { return !!m_handle; };
 
-    Vector<String> columnNames();
-    HashMap<String, int> columnNamesToIndicies();
+    Vector<RefPtr<StringImpl>> columnNames();
+    HashMap<RefPtr<StringImpl>, int> columnNamesToIndicies();
 
 private:
-    explicit WebExtensionSQLiteStatement(Ref<WebExtensionSQLiteDatabase>, const String& query, RefPtr<API::Error>&);
+    explicit WebExtensionSQLiteStatement(Ref<WebExtensionSQLiteDatabase>, StringImpl* query, RefPtr<API::Error>&);
 
     sqlite3_stmt* m_handle;
     const Ref<WebExtensionSQLiteDatabase> m_db;
 
-    Vector<String> m_columnNames;
-    HashMap<String, int> m_columnNamesToIndicies;
+    Vector<RefPtr<StringImpl>> m_columnNames;
+    HashMap<RefPtr<StringImpl>, int> m_columnNamesToIndicies;
 };
 
 }; // namespace WebKit

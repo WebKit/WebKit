@@ -141,32 +141,32 @@ void AutomationSessionClient::requestMaximizeWindowOfPage(WebAutomationSession& 
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
-void AutomationSessionClient::loadWebExtensionWithOptions(WebKit::WebAutomationSession& session, API::AutomationSessionWebExtensionResourceOptions options, const String& resource, CompletionHandler<void(const String&)>&& completionHandler)
+void AutomationSessionClient::loadWebExtensionWithOptions(WebKit::WebAutomationSession& session, API::AutomationSessionWebExtensionResourceOptions options, StringImpl* resource, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (!m_delegateMethods.loadWebExtensionWithOptions) {
         completionHandler(nullString());
         return;
     }
 
-    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() loadWebExtensionWithOptions:toAPI(options) resource:resource.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *extensionId) mutable {
-        completionHandler(extensionId);
+    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() loadWebExtensionWithOptions:toAPI(options) resource:createNSString(resource).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *extensionId) mutable {
+        completionHandler(StringImpl::create(extensionId));
     }).get()];
 }
 
-void AutomationSessionClient::unloadWebExtension(WebKit::WebAutomationSession& session, const String& identifier, CompletionHandler<void(bool)>&& completionHandler)
+void AutomationSessionClient::unloadWebExtension(WebKit::WebAutomationSession& session, StringImpl* identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_delegateMethods.unloadWebExtension) {
         completionHandler(false);
         return;
     }
 
-    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() unloadWebExtensionWithIdentifier:identifier.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL success) mutable {
+    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() unloadWebExtensionWithIdentifier:createNSString(identifier).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL success) mutable {
         completionHandler(success);
     }).get()];
 }
 #endif
 
-void AutomationSessionClient::performApplicationCommand(WebAutomationSession& session, WebPageProxy& page, const String& commandName, const String& arguments, CompletionHandler<void(const String&)>&& completionHandler)
+void AutomationSessionClient::performApplicationCommand(WebAutomationSession& session, WebPageProxy& page, StringImpl* commandName, StringImpl* arguments, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (!m_delegateMethods.performApplicationCommand) {
         completionHandler(nullString());
@@ -174,8 +174,8 @@ void AutomationSessionClient::performApplicationCommand(WebAutomationSession& se
     }
 
     if (auto webView = page.cocoaView()) {
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() performCommandForWebView:webView.get() commandName:commandName.createNSString().get() arguments:arguments.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *result) mutable {
-            completionHandler(result);
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() performCommandForWebView:webView.get() commandName:createNSString(commandName).get() arguments:createNSString(arguments).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *result) mutable {
+            completionHandler(StringImpl::create(result));
         }).get()];
     } else
         completionHandler(nullString());
@@ -208,34 +208,34 @@ void AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage(WebAutomationS
         [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() acceptCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
-std::optional<String> AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
+std::optional<RefPtr<StringImpl>> AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.messageOfCurrentJavaScriptDialogForWebView)
-        return [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() messageOfCurrentJavaScriptDialogForWebView:webView.get()];
+        return StringImpl::create([m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() messageOfCurrentJavaScriptDialogForWebView:webView.get()]);
 
     return std::nullopt;
 }
 
-std::optional<String> AutomationSessionClient::defaultTextOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
+std::optional<RefPtr<StringImpl>> AutomationSessionClient::defaultTextOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.defaultTextOfCurrentJavaScriptDialogForWebView)
-        return [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() defaultTextOfCurrentJavaScriptDialogForWebView:webView.get()];
+        return StringImpl::create([m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() defaultTextOfCurrentJavaScriptDialogForWebView:webView.get()]);
 
     return std::nullopt;
 }
 
-std::optional<String> AutomationSessionClient::userInputOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
+std::optional<RefPtr<StringImpl>> AutomationSessionClient::userInputOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.userInputOfCurrentJavaScriptDialogForWebView)
-        return [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() userInputOfCurrentJavaScriptDialogForWebView:webView.get()];
+        return StringImpl::create([m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() userInputOfCurrentJavaScriptDialogForWebView:webView.get()]);
 
     return std::nullopt;
 }
 
-void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession& session, WebPageProxy& page, const String& value)
+void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession& session, WebPageProxy& page, StringImpl* value)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.setUserInputForCurrentJavaScriptPromptForWebView)
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() setUserInput:value.createNSString().get() forCurrentJavaScriptDialogForWebView:webView.get()];
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() setUserInput:createNSString(value).get() forCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
 NODELETE static std::optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAutomationSessionJavaScriptDialogType type)

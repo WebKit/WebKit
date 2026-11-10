@@ -35,14 +35,14 @@
 
 namespace WebCore {
 
-void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomString& attributeName, VARIANT* result)
+void AccessibilityObjectWrapper::accessibilityAttributeValue(AtomStringImpl* attributeName, VARIANT* result)
 {
     // FIXME: This should be fleshed out to match the Mac version
 
     m_object->updateBackingStore();
 
     // Not a real concept on Windows, but used heavily in WebKit accessibility testing.
-    if (attributeName == "AXTitleUIElementAttribute"_s) {
+    if (equal(attributeName, "AXTitleUIElementAttribute"_s)) {
         if (auto* object = m_object->titleUIElement()) {
             ASSERT(V_VT(result) == VT_EMPTY);
             V_VT(result) = VT_UNKNOWN;
@@ -55,7 +55,7 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomString& a
     }
 
     // Used to find an accessible node by its element id.
-    if (attributeName == "AXDOMIdentifier"_s) {
+    if (equal(attributeName, "AXDOMIdentifier"_s)) {
         ASSERT(V_VT(result) == VT_EMPTY);
 
         V_VT(result) = VT_BSTR;
@@ -63,11 +63,11 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomString& a
         return;
     }
 
-    if (attributeName == "AXSelectedTextRangeAttribute"_s) {
+    if (equal(attributeName, "AXSelectedTextRangeAttribute"_s)) {
         ASSERT(V_VT(result) == VT_EMPTY);
         V_VT(result) = VT_BSTR;
         CharacterRange textRange = m_object->selectedTextRange();
-        String range = makeString('{', textRange.location, ", "_s, textRange.length, '}');
+        RefPtr<StringImpl> range = makeString('{', textRange.location, ", "_s, textRange.length, '}');
         V_BSTR(result) = WebCore::BString(range).release();
         return;
     }

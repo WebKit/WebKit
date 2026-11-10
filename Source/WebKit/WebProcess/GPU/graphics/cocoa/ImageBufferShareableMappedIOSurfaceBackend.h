@@ -52,7 +52,7 @@ private:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 };
 
 } // namespace WebKit

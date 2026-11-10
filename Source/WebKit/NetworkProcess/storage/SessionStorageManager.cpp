@@ -130,7 +130,7 @@ void SessionStorageManager::cloneStorageArea(StorageNamespaceIdentifier sourceNa
         addStorageArea(storageArea->clone(), targetNamespaceIdentifier);
 }
 
-HashMap<String, String> SessionStorageManager::fetchStorageMap(StorageNamespaceIdentifier namespaceIdentifier)
+HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> SessionStorageManager::fetchStorageMap(StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
     if (!identifier)
@@ -143,7 +143,7 @@ HashMap<String, String> SessionStorageManager::fetchStorageMap(StorageNamespaceI
     return storageArea->allItems();
 }
 
-bool SessionStorageManager::setStorageMap(StorageNamespaceIdentifier storageNamespaceIdentifier, WebCore::ClientOrigin clientOrigin, HashMap<String, String>&& storageMap)
+bool SessionStorageManager::setStorageMap(StorageNamespaceIdentifier storageNamespaceIdentifier, WebCore::ClientOrigin clientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& storageMap)
 {
     auto identifier = m_storageAreasByNamespace.getOptional(storageNamespaceIdentifier);
     if (!identifier)
@@ -155,7 +155,7 @@ bool SessionStorageManager::setStorageMap(StorageNamespaceIdentifier storageName
 
     bool succeeded = true;
     for (auto& [key, value] : storageMap) {
-        if (!storageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), { }))
+        if (!storageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), nullptr))
             succeeded = false;
     }
 

@@ -49,7 +49,7 @@ private:
     AccessibilityRole determineAccessibilityRole() final;
     bool isEnabled() const final;
     bool isSelectedOptionActive() const final;
-    String stringValue() const final;
+    RefPtr<StringImpl> stringValue() const final;
     Element* actionElement() const final;
     bool canSetSelectedAttribute() const final;
 

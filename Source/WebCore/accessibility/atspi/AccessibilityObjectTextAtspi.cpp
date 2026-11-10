@@ -126,14 +126,14 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             const char* name;
             g_variant_get(parameters, "(i&s)", &offset, &name);
             auto attributes = atspiObject->textAttributesWithUTF8Offset(offset);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", attributes.attributes.get(String::fromUTF8(name)).utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", utf8(attributes.attributes.get(StringImpl::fromUTF8(name)))));
         } else if (!g_strcmp0(methodName, "GetAttributes")) {
             int offset;
             g_variant_get(parameters, "(i)", &offset);
             auto attributes = atspiObject->textAttributesWithUTF8Offset(offset);
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a{ss}"));
             for (const auto& it : attributes.attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", utf8(it.key), utf8(it.value));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(a{ss}ii)", &builder, attributes.startOffset, attributes.endOffset));
         } else if (!g_strcmp0(methodName, "GetAttributeRun")) {
             int offset;
@@ -142,13 +142,13 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             auto attributes = atspiObject->textAttributesWithUTF8Offset(offset, includeDefaults);
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a{ss}"));
             for (const auto& it : attributes.attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", utf8(it.key), utf8(it.value));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(a{ss}ii)", &builder, attributes.startOffset, attributes.endOffset));
         } else if (!g_strcmp0(methodName, "GetDefaultAttributes") || !g_strcmp0(methodName, "GetDefaultAttributeSet")) {
             auto attributes = atspiObject->textAttributesWithUTF8Offset();
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a{ss}"));
             for (const auto& it : attributes.attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", utf8(it.key), utf8(it.value));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(a{ss})", &builder));
         } else if (!g_strcmp0(methodName, "GetCharacterExtents")) {
             int offset;
@@ -236,13 +236,13 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
     { nullptr }
 };
 
-static Vector<unsigned, 128> offsetMapping(const String& text)
+static Vector<unsigned, 128> offsetMapping(StringImpl* text)
 {
-    if (text.is8Bit())
+    if (is8Bit(text))
         return { };
 
     Vector<unsigned, 128> offsets;
-    SurrogatePairAwareTextIterator iterator(text.span16(), 0, text.length());
+    SurrogatePairAwareTextIterator iterator(span16(text), 0, length(text));
     char32_t character;
     unsigned clusterLength = 0;
     unsigned i;
@@ -271,7 +271,7 @@ static inline unsigned UTF8OffsetToUTF16(const Vector<unsigned, 128>& mapping, u
     return mapping.size();
 }
 
-String AccessibilityObjectAtspi::text() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::text() const
 {
     if (!m_coreObject)
         return { };
@@ -281,14 +281,14 @@ String AccessibilityObjectAtspi::text() const
     if (m_coreObject->role() == AccessibilityRole::ColorWell) {
         auto color = convertColor<SRGBA<float>>(m_coreObject->colorValue()).resolved();
         GUniquePtr<char> colorString(color.alpha == 1 ? g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue) : g_strdup_printf("rgb %7.5f %7.5f %7.5f %7.5f", color.red, color.green, color.blue, color.alpha));
-        return String::fromUTF8(colorString.get());
+        return StringImpl::fromUTF8(colorString.get());
     }
 
     if (m_coreObject->isTextControl())
-        return m_coreObject->doAXStringForRange({ 0, String::MaxLength });
+        return m_coreObject->doAXStringForRange({ 0, StringImpl::MaxLength });
 
     auto value = m_coreObject->stringValue();
-    if (!value.isNull())
+    if (value)
         return value;
 
     auto text = m_coreObject->textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeAllChildren));
@@ -307,17 +307,17 @@ String AccessibilityObjectAtspi::text() const
 unsigned AccessibilityObject::getLengthForTextRange() const
 {
     // FIXME: this should probably be in sync with AccessibilityObjectAtspi::text().
-    unsigned textLength = text().length();
+    unsigned textLength = length(text());
     if (textLength)
         return textLength;
 
     Node* node = this->node();
     RenderObject* renderer = node ? node->renderer() : nullptr;
     if (is<RenderText>(renderer))
-        textLength = downcast<RenderText>(*renderer).text().length();
+        textLength = length(downcast<RenderText>(*renderer).text());
 
     if (!textLength && allowsTextRanges())
-        textLength = textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeAllChildren)).length();
+        textLength = length(textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeAllChildren)));
 
     return textLength;
 }
@@ -330,7 +330,7 @@ bool AccessibilityObject::allowsTextRanges() const
 UTF8CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
+    auto utf8Text = utf8(utf16Text);
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (endOffset == -1)
@@ -359,23 +359,23 @@ static inline int adjustOutputOffset(unsigned utf16Offset, bool hasListMarkerAtS
     return hasListMarkerAtStart ? utf16Offset + 1 : utf16Offset;
 }
 
-void AccessibilityObjectAtspi::textInserted(const String& insertedText, const VisiblePosition& position)
+void AccessibilityObjectAtspi::textInserted(StringImpl* insertedText, const VisiblePosition& position)
 {
     if (!m_interfaces.contains(Interface::Text))
         return;
 
     auto utf16Text = text();
     auto utf16Offset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(position), m_hasListMarkerAtStart);
-    String maskedText = m_coreObject->isSecureField() ? utf16Text.substring(utf16Offset - insertedText.length(), insertedText.length()) : String();
+    RefPtr<StringImpl> maskedText = m_coreObject->isSecureField() ? substring(utf16Text, utf16Offset - length(insertedText), length(insertedText)) : nullptr;
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
-    auto& reportedText = maskedText.isNull() ? insertedText : maskedText;
+    StringImpl* reportedText = !maskedText ? insertedText : maskedText.get();
     auto insertedTextLength = StringView(reportedText).codePointCount();
-    auto utf8InsertedText = reportedText.utf8();
+    auto utf8InsertedText = utf8(reportedText);
     AccessibilityAtspi::singleton().textChanged(*this, "insert", WTF::move(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
 }
 
-void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const VisiblePosition& position)
+void AccessibilityObjectAtspi::textDeleted(StringImpl* deletedText, const VisiblePosition& position)
 {
     if (!m_interfaces.contains(Interface::Text))
         return;
@@ -384,7 +384,7 @@ void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const Visi
     auto utf16Offset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(position), m_hasListMarkerAtStart);
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
-    auto utf8DeletedText = deletedText.utf8();
+    auto utf8DeletedText = utf8(deletedText);
     auto deletedTextLength = StringView(deletedText).codePointCount();
     AccessibilityAtspi::singleton().textChanged(*this, "delete", WTF::move(utf8DeletedText), offset, deletedTextLength);
 }
@@ -463,7 +463,7 @@ IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGran
 UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity granularity, int& startOffset, int& endOffset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
+    auto utf8Text = utf8(utf16Text);
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset > length)
@@ -477,7 +477,7 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
         auto utf16Offset = UTF8OffsetToUTF16(mapping, offset);
         auto boundaryOffset = this->boundaryOffset(utf16Offset, granularity);
         startOffset = UTF16OffsetToUTF8(mapping, std::max<int>(boundaryOffset.x(), 0));
-        endOffset = UTF16OffsetToUTF8(mapping, std::min<int>(boundaryOffset.y(), utf16Text.length()));
+        endOffset = UTF16OffsetToUTF8(mapping, std::min<int>(boundaryOffset.y(), WTF::length(utf16Text)));
     }
 
     GUniquePtr<char> substring(g_utf8_substring(utf8Text.legacyCStringPointer(), startOffset, endOffset));
@@ -487,7 +487,7 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
 int AccessibilityObjectAtspi::characterAtOffset(int offset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
+    auto utf8Text = utf8(utf16Text);
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset >= length)
@@ -501,7 +501,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(char16_t chara
     auto utf16Text = text();
     unsigned start = 0;
     size_t offset;
-    while ((offset = utf16Text.find(character, start)) != notFound) {
+    while ((offset = find(utf16Text, character, start)) != notFound) {
         start = offset + 1;
         if (!index)
             break;
@@ -524,13 +524,13 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(char16_t charac
 
     auto mapping = offsetMapping(utf16Text);
     auto utf16Offset = UTF8OffsetToUTF16(mapping, offset);
-    if (utf16Text[utf16Offset] != character)
+    if (codeUnitAt(utf16Text, utf16Offset) != character)
         return std::nullopt;
 
     unsigned start = 0;
     int index = -1;
     size_t position;
-    while ((position = utf16Text.find(character, start)) != notFound) {
+    while ((position = find(utf16Text, character, start)) != notFound) {
         index++;
         if (static_cast<unsigned>(position) == utf16Offset)
             break;
@@ -735,39 +735,39 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     if (!m_coreObject || !m_coreObject->renderer())
         return { };
 
-    auto accessibilityTextAttributes = [this](AXCoreObject& axObject, const HashMap<String, String>& defaultAttributes) -> HashMap<String, String> {
-        HashMap<String, String> attributes;
+    auto accessibilityTextAttributes = [this](AXCoreObject& axObject, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& defaultAttributes) -> HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> {
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> attributes;
         // Non-inherited properties like the background color come from the parent of text.
         CheckedRef renderer = *axObject.renderer();
         auto& style = is<RenderText>(renderer) && renderer->parent() ? renderer->parent()->style() : renderer->style();
 
-        auto addAttributeIfNeeded = [&](const String& name, const String& value) {
-            if (defaultAttributes.isEmpty() || defaultAttributes.get(name) != value)
+        auto addAttributeIfNeeded = [&](StringImpl* name, StringImpl* value) {
+            if (defaultAttributes.isEmpty() || !equal(defaultAttributes.get(name), value))
                 attributes.add(name, value);
         };
 
         auto bgColor = style.visitedDependentBackgroundColor();
         if (bgColor.isValid() && bgColor.isVisible()) {
             auto [r, g, b, a] = bgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-            addAttributeIfNeeded("bg-color"_s, makeString(r, ',', g, ',', b));
+            addAttributeIfNeeded("bg-color"_si, makeString(r, ',', g, ',', b));
         }
 
         auto fgColor = style.visitedDependentColor();
         if (fgColor.isValid() && fgColor.isVisible()) {
             auto [r, g, b, a] = fgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-            addAttributeIfNeeded("fg-color"_s, makeString(r, ',', g, ',', b));
+            addAttributeIfNeeded("fg-color"_si, makeString(r, ',', g, ',', b));
         }
 
-        addAttributeIfNeeded("family-name"_s, style.fontCascade().firstFamily().name);
-        addAttributeIfNeeded("size"_s, makeString(std::round(style.usedFontSize() * 72 / WebCore::fontDPI()), "pt"_s));
-        addAttributeIfNeeded("weight"_s, makeString(static_cast<float>(style.fontCascade().weight())));
-        addAttributeIfNeeded("style"_s, style.fontCascade().fontStyleSlope() ? "italic"_s : "normal"_s);
-        addAttributeIfNeeded("strikethrough"_s, style.textDecorationLine().hasLineThrough() ? "true"_s : "false"_s);
-        addAttributeIfNeeded("underline"_s, style.textDecorationLine().hasUnderline() ? "single"_s : "none"_s);
-        addAttributeIfNeeded("invisible"_s, style.visibility() == Visibility::Hidden ? "true"_s : "false"_s);
-        addAttributeIfNeeded("editable"_s, m_coreObject->canSetValueAttribute() ? "true"_s : "false"_s);
-        addAttributeIfNeeded("direction"_s, style.writingMode().isBidiLTR() ? "ltr"_s : "rtl"_s);
-        addAttributeIfNeeded("indent"_s, makeString(Style::evaluate<float>(style.textIndent().amount, m_coreObject->size().width(), style.usedZoomForLength())));
+        addAttributeIfNeeded("family-name"_si, style.fontCascade().firstFamily().name);
+        addAttributeIfNeeded("size"_si, makeString(std::round(style.usedFontSize() * 72 / WebCore::fontDPI()), "pt"_s));
+        addAttributeIfNeeded("weight"_si, makeString(static_cast<float>(style.fontCascade().weight())));
+        addAttributeIfNeeded("style"_si, style.fontCascade().fontStyleSlope() ? "italic"_si : "normal"_si);
+        addAttributeIfNeeded("strikethrough"_si, style.textDecorationLine().hasLineThrough() ? "true"_si : "false"_si);
+        addAttributeIfNeeded("underline"_si, style.textDecorationLine().hasUnderline() ? "single"_si : "none"_si);
+        addAttributeIfNeeded("invisible"_si, style.visibility() == Visibility::Hidden ? "true"_si : "false"_si);
+        addAttributeIfNeeded("editable"_si, m_coreObject->canSetValueAttribute() ? "true"_si : "false"_si);
+        addAttributeIfNeeded("direction"_si, style.writingMode().isBidiLTR() ? "ltr"_si : "rtl"_si);
+        addAttributeIfNeeded("indent"_si, makeString(Style::evaluate<float>(style.textIndent().amount, m_coreObject->size().width(), style.usedZoomForLength())));
 
         switch (style.textAlign()) {
         case Style::TextAlign::Start:
@@ -775,28 +775,28 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
             break;
         case Style::TextAlign::Left:
         case Style::TextAlign::WebKitLeft:
-            addAttributeIfNeeded("justification"_s, "left"_s);
+            addAttributeIfNeeded("justification"_si, "left"_si);
             break;
         case Style::TextAlign::Right:
         case Style::TextAlign::WebKitRight:
-            addAttributeIfNeeded("justification"_s, "right"_s);
+            addAttributeIfNeeded("justification"_si, "right"_si);
             break;
         case Style::TextAlign::Center:
         case Style::TextAlign::WebKitCenter:
-            addAttributeIfNeeded("justification"_s, "center"_s);
+            addAttributeIfNeeded("justification"_si, "center"_si);
             break;
         case Style::TextAlign::Justify:
-            addAttributeIfNeeded("justification"_s, "fill"_s);
+            addAttributeIfNeeded("justification"_si, "fill"_si);
             break;
         }
 
-        String invalidStatus = m_coreObject->invalidStatusIncludingInferred();
-        if (invalidStatus != "false"_s)
-            addAttributeIfNeeded("invalid"_s, invalidStatus);
+        RefPtr<StringImpl> invalidStatus = m_coreObject->invalidStatusIncludingInferred();
+        if (!equal(invalidStatus, "false"_s))
+            addAttributeIfNeeded("invalid"_si, invalidStatus);
 
-        String language = m_coreObject->languageIncludingAncestors();
-        if (!language.isEmpty())
-            addAttributeIfNeeded("language"_s, language);
+        RefPtr<StringImpl> language = m_coreObject->languageIncludingAncestors();
+        if (!isEmpty(language))
+            addAttributeIfNeeded("language"_si, language);
 
         return attributes;
     };
@@ -806,7 +806,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         return { WTF::move(defaultAttributes), -1, -1 };
 
     if (is<RenderListOutsideMarker>(*m_coreObject->renderer()))
-        return { WTF::move(defaultAttributes), 0, static_cast<int>(m_coreObject->stringValue().length()) };
+        return { WTF::move(defaultAttributes), 0, static_cast<int>(length(m_coreObject->stringValue())) };
 
     if (!m_coreObject->node())
         return { WTF::move(defaultAttributes), -1, -1 };
@@ -857,7 +857,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
             continue;
 
         auto childAttributes = accessibilityTextAttributes(*axObject, defaultAttributes);
-        if (childAttributes != attributes)
+        if (!contentEquals(childAttributes, attributes))
             break;
 
         startRenderer = r;
@@ -875,7 +875,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
             continue;
 
         auto childAttributes = accessibilityTextAttributes(*axObject, defaultAttributes);
-        if (childAttributes != attributes)
+        if (!contentEquals(childAttributes, attributes))
             break;
 
         endRenderer = r;

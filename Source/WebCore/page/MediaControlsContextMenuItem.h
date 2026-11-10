@@ -38,8 +38,8 @@ struct MediaControlsContextMenuItem {
     static constexpr ID invalidID = 0;
 
     ID id { invalidID };
-    String title;
-    String icon;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> icon;
     bool checked { false };
     Vector<MediaControlsContextMenuItem> children;
 };

@@ -38,14 +38,14 @@ struct DebugInfo;
 
 class PersistentStore : public Store {
 public:
-    static Ref<Store> create(const String& databaseDirectory)
+    static Ref<Store> create(StringImpl* databaseDirectory)
     {
         return adoptRef(*new PersistentStore(databaseDirectory));
     }
 
     ~PersistentStore();
 
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     static void prepareForProcessToSuspend(CompletionHandler<void()>&&);
     static void processDidResume();
@@ -53,7 +53,7 @@ public:
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&) final;
     void attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&, WebCore::PCM::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&) final;
 
-    void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const final;
+    void privateClickMeasurementToStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&&) const final;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() final;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
 
@@ -68,7 +68,7 @@ public:
     void close(CompletionHandler<void()>&&) final;
 
 private:
-    PersistentStore(const String& databaseDirectory);
+    PersistentStore(StringImpl* databaseDirectory);
 
     void postTask(Function<void()>&&) const;
     void postTaskReply(Function<void()>&&) const;

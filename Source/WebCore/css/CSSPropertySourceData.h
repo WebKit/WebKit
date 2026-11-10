@@ -52,15 +52,15 @@ struct SourceRange {
 };
 
 struct CSSPropertySourceData {
-    NODELETE CSSPropertySourceData(const String& name, const String& value, bool important, bool disabled, bool parsedOk, const SourceRange&);
+    NODELETE CSSPropertySourceData(StringImpl* name, StringImpl* value, bool important, bool disabled, bool parsedOk, const SourceRange&);
     NODELETE CSSPropertySourceData(const CSSPropertySourceData& other);
     NODELETE CSSPropertySourceData();
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     unsigned hash() const;
 
-    String name;
-    String value;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> value;
     bool important { false };
     bool disabled { false };
     bool parsedOk { false };

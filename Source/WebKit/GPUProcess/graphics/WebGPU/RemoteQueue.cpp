@@ -279,7 +279,7 @@ void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
 }
 #endif
 
-void RemoteQueue::setLabel(String&& label)
+void RemoteQueue::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

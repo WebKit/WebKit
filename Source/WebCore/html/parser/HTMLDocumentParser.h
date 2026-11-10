@@ -63,7 +63,7 @@ public:
 
     HTMLDocumentParser* asHTMLDocumentParser() final { return this; }
 
-    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
+    static void parseDocumentFragment(StringImpl*, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
 
     // For HTMLParserScheduler.
     void resumeParsingAfterYield();

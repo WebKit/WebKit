@@ -25,10 +25,10 @@
 
 namespace WebCore {
 
-String convertEnumerationToString(TestDefaultToJSONEnum);
+RefPtr<StringImpl> convertEnumerationToString(TestDefaultToJSONEnum);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestDefaultToJSONEnum);
 
-template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String&);
+template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(StringImpl*);
 template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJSONEnum>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestDefaultToJSONEnum>();
 

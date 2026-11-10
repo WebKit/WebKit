@@ -201,7 +201,7 @@ private:
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
         
-    String engineDescription() const final;
+    RefPtr<StringImpl> engineDescription() const final;
     MediaPlayer::MovieLoadType movieLoadType() const final { return MediaPlayer::MovieLoadType::Download; }
 
     bool didPassCORSAccessCheck() const final { return m_didPassCORSAccessCheck; }
@@ -237,7 +237,7 @@ private:
 
     using InitializationSegment = SourceBufferParserWebM::InitializationSegment;
     void didParseInitializationData(InitializationSegment&&);
-    void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, TrackID, const String& mediaType);
+    void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, TrackID, StringImpl* mediaType);
     void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, TrackID);
 
     void flushTrack(TrackID);
@@ -261,10 +261,10 @@ private:
     bool m_shouldMaintainAspectRatio WTF_GUARDED_BY_CAPABILITY(mainThread) { true };
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String defaultSpatialTrackingLabel() const final;
-    void setDefaultSpatialTrackingLabel(const String&) final;
-    String spatialTrackingLabel() const final;
-    void setSpatialTrackingLabel(const String&) final;
+    RefPtr<StringImpl> defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(StringImpl*) final;
+    RefPtr<StringImpl> spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(StringImpl*) final;
     void updateSpatialTrackingLabel();
 #endif
 
@@ -305,7 +305,7 @@ private:
 
     friend class MediaPlayerFactoryWebM;
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String>&);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void maybeFinishLoading();
@@ -403,8 +403,8 @@ private:
     std::atomic<bool> m_seeking { false };
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String m_defaultSpatialTrackingLabel WTF_GUARDED_BY_CAPABILITY(mainThread);
-    String m_spatialTrackingLabel WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_spatialTrackingLabel WTF_GUARDED_BY_CAPABILITY(mainThread);
 #endif
     const MediaPlayerIdentifier m_playerIdentifier;
     const Ref<AudioVideoRenderer> m_renderer;

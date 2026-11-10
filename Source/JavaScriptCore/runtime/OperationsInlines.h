@@ -72,12 +72,12 @@ ALWAYS_INLINE bool jsTypeofIsFunction(JSGlobalObject* globalObject, JSValue valu
     return result == TriState::True;
 }
 
-ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, JSString* s2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, StringImpl* u1, JSString* s2)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length1 = u1.length();
+    unsigned length1 = length(u1);
     if (!length1)
         return s2;
     unsigned length2 = s2->length();
@@ -98,15 +98,15 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1,
     ASSERT(!s2->isRope());
     auto u2 = s2->value(globalObject);
     scope.assertNoException();
-    String newString = tryMakeString(u1, u2.data);
+    RefPtr<StringImpl> newString = tryMakeString(u1, u2.data);
     if (!newString) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
-    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
+    return JSString::create(vm, WTF::move(newString).releaseNonNull());
 }
 
-ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, const String& u2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, StringImpl* u2)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -114,7 +114,7 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, con
     unsigned length1 = s1->length();
     if (!length1)
         return jsString(vm, u2);
-    unsigned length2 = u2.length();
+    unsigned length2 = length(u2);
     if (!length2)
         return s1;
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max());
@@ -129,12 +129,12 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, con
     ASSERT(!s1->isRope());
     auto u1 = s1->value(globalObject);
     scope.assertNoException();
-    String newString = tryMakeString(u1.data, u2);
+    RefPtr<StringImpl> newString = tryMakeString(u1.data, u2);
     if (!newString) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
-    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
+    return JSString::create(vm, WTF::move(newString).releaseNonNull());
 }
 
 ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, JSString* s2)
@@ -183,15 +183,15 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, JSS
     return JSRopeString::create(vm, s1, s2, s3);
 }
 
-ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, const String& u2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, StringImpl* u1, StringImpl* u2)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length1 = u1.length();
+    unsigned length1 = length(u1);
     if (!length1)
         return jsString(vm, u2);
-    unsigned length2 = u2.length();
+    unsigned length2 = length(u2);
     if (!length2)
         return jsString(vm, u1);
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max());
@@ -203,22 +203,22 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1,
     if (shouldMakeRope(static_cast<size_t>(length1) + length2, /* newFiberCount */ 2))
         return JSRopeString::create(vm, jsString(vm, u1), jsString(vm, u2));
 
-    String newString = tryMakeString(u1, u2);
+    RefPtr<StringImpl> newString = tryMakeString(u1, u2);
     if (!newString) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
-    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
+    return JSString::create(vm, WTF::move(newString).releaseNonNull());
 }
 
-ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, const String& u2, const String& u3)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, StringImpl* u1, StringImpl* u2, StringImpl* u3)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length1 = u1.length();
-    unsigned length2 = u2.length();
-    unsigned length3 = u3.length();
+    unsigned length1 = length(u1);
+    unsigned length2 = length(u2);
+    unsigned length3 = length(u3);
     ASSERT(length1 <= JSString::MaxLength);
     ASSERT(length2 <= JSString::MaxLength);
     ASSERT(length3 <= JSString::MaxLength);
@@ -241,12 +241,12 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1,
     if (shouldMakeRope(static_cast<size_t>(length1) + length2 + length3, /* newFiberCount */ 3))
         return JSRopeString::create(vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
 
-    String newString = tryMakeString(u1, u2, u3);
+    RefPtr<StringImpl> newString = tryMakeString(u1, u2, u3);
     if (!newString) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
-    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
+    return JSString::create(vm, WTF::move(newString).releaseNonNull());
 }
 
 ALWAYS_INLINE JSValue jsStringFromRegisterArray(JSGlobalObject* globalObject, Register* strings, unsigned count)
@@ -465,7 +465,7 @@ ALWAYS_INLINE JSValue jsAddNonNumber(JSGlobalObject* globalObject, JSValue v1, J
     if (v1.isString() && !v2.isObject()) [[likely]] {
         if (v2.isString())
             RELEASE_AND_RETURN(scope, jsString(globalObject, asString(v1), asString(v2)));
-        String s2 = v2.toWTFString(globalObject);
+        RefPtr<StringImpl> s2 = v2.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         RELEASE_AND_RETURN(scope, jsString(globalObject, asString(v1), s2));
     }

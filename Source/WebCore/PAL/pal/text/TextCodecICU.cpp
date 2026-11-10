@@ -219,7 +219,7 @@ private:
     UConverterToUCallback m_savedAction { nullptr };
 };
 
-String TextCodecICU::decode(std::span<const uint8_t> source, bool flush, bool stopOnError, bool& sawError)
+RefPtr<StringImpl> TextCodecICU::decode(std::span<const uint8_t> source, bool flush, bool stopOnError, bool& sawError)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converter) {
@@ -253,7 +253,7 @@ String TextCodecICU::decode(std::span<const uint8_t> source, bool flush, bool st
         sawError = true;
     }
 
-    String resultString = result.toString();
+    RefPtr<StringImpl> resultString = result.toString();
 
     return resultString;
 }
@@ -286,7 +286,7 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
     // FIXME: We should see if there is "force ASCII range" mode in ICU;
     // until then, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
-    String copy;
+    RefPtr<StringImpl> copy;
     if (shouldShowBackslashAsCurrencySymbolIn(m_encodingName)) {
         copy = makeStringByReplacingAll(string, '\\', yenSign);
         string = copy;

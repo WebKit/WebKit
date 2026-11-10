@@ -27,12 +27,12 @@
 
 namespace WebCore {
 
-Ref<WebLock> WebLock::create(WebLockIdentifier identifier, const String& name, WebLockMode mode)
+Ref<WebLock> WebLock::create(WebLockIdentifier identifier, StringImpl* name, WebLockMode mode)
 {
     return adoptRef(*new WebLock(identifier, name, mode));
 }
 
-WebLock::WebLock(WebLockIdentifier identifier, const String& name, WebLockMode mode)
+WebLock::WebLock(WebLockIdentifier identifier, StringImpl* name, WebLockMode mode)
     : m_identifier(identifier)
     , m_name(name)
     , m_mode(mode)

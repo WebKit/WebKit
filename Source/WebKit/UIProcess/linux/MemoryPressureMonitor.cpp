@@ -172,7 +172,7 @@ FILE* getCgroupFile(ASCIILiteral cgroupControllerName, const UTF8CString& cgroup
 {
     // cgroups.7: The usual place for such mounts is under a tmpfs(5)
     // filesystem mounted at /sys/fs/cgroup.
-    auto cgroupPath = makeString("/sys/fs/cgroup/"_s, cgroupControllerName, '/', cgroupControllerPath.span(), '/', cgroupFileName).utf8();
+    auto cgroupPath = utf8(makeString("/sys/fs/cgroup/"_s, cgroupControllerName, '/', cgroupControllerPath.span(), '/', cgroupFileName));
     LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath);
     FILE* file = posixFopen(cgroupPath, "r"_s);
     if (file)

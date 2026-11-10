@@ -80,8 +80,8 @@ class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<
     WTF_MAKE_TZONE_ALLOCATED(ProcessAssertion);
 public:
     enum class Mode : bool { Sync, Async };
-    static Ref<ProcessAssertion> create(ProcessID, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
-    static Ref<ProcessAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+    static Ref<ProcessAssertion> create(ProcessID, StringImpl* reason, ProcessAssertionType, Mode = Mode::Async, StringImpl* environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
+    static Ref<ProcessAssertion> create(AuxiliaryProcessProxy&, StringImpl* reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
 
     static double remainingRunTimeInSeconds(ProcessID);
     virtual ~ProcessAssertion();
@@ -100,12 +100,12 @@ public:
 
 protected:
 #if !USE(EXTENSIONKIT)
-    ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
+    ProcessAssertion(ProcessID, StringImpl* reason, ProcessAssertionType, StringImpl* environmentIdentifier);
 #else
-    ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&&);
+    ProcessAssertion(ProcessID, StringImpl* reason, ProcessAssertionType, StringImpl* environmentIdentifier, std::optional<ExtensionProcess>&&);
 #endif
 
-    void init(const String& environmentIdentifier);
+    void init(StringImpl* environmentIdentifier);
 
     void acquireAssertion(Mode, CompletionHandler<void()>&&);
 
@@ -120,7 +120,7 @@ protected:
 private:
     const ProcessAssertionType m_assertionType;
     const ProcessID m_pid;
-    const String m_reason;
+    const RefPtr<StringImpl> m_reason;
 #if USE(RUNNINGBOARD)
     const RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
@@ -139,11 +139,11 @@ private:
 class ProcessAndUIAssertion final : public ProcessAssertion {
     WTF_MAKE_TZONE_ALLOCATED(ProcessAndUIAssertion);
 public:
-    static Ref<ProcessAndUIAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+    static Ref<ProcessAndUIAssertion> create(AuxiliaryProcessProxy&, StringImpl* reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
 #if !USE(EXTENSIONKIT)
-    static Ref<ProcessAndUIAssertion> create(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+    static Ref<ProcessAndUIAssertion> create(ProcessID, StringImpl* reason, ProcessAssertionType, StringImpl* environmentIdentifier, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
 #else
-    static Ref<ProcessAndUIAssertion> create(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&&, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+    static Ref<ProcessAndUIAssertion> create(ProcessID, StringImpl* reason, ProcessAssertionType, StringImpl* environmentIdentifier, std::optional<ExtensionProcess>&&, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
 #endif
 
     ~ProcessAndUIAssertion();
@@ -157,9 +157,9 @@ public:
 
 private:
 #if !USE(EXTENSIONKIT)
-    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
+    ProcessAndUIAssertion(ProcessID, StringImpl* reason, ProcessAssertionType, StringImpl* environmentIdentifier);
 #else
-    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&&);
+    ProcessAndUIAssertion(ProcessID, StringImpl* reason, ProcessAssertionType, StringImpl* environmentIdentifier, std::optional<ExtensionProcess>&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

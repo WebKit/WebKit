@@ -46,7 +46,7 @@ NEVER_INLINE void formatNonfiniteCSSNumberValue(StringBuilder& builder, const Se
     return builder.append(formatNonfiniteCSSNumberValuePrefix(number.value), number.suffix.isEmpty() ? ""_s : " * 1"_s, number.suffix);
 }
 
-NEVER_INLINE WTF::String formatNonfiniteCSSNumberValue(const SerializableNumber& number)
+NEVER_INLINE RefPtr<StringImpl> formatNonfiniteCSSNumberValue(const SerializableNumber& number)
 {
     return makeString(formatNonfiniteCSSNumberValuePrefix(number.value), number.suffix.isEmpty() ? ""_s : " * 1"_s, number.suffix);
 }
@@ -58,7 +58,7 @@ NEVER_INLINE void formatCSSNumberValue(StringBuilder& builder, const Serializabl
     return builder.append(FormattedCSSNumber::create(number.value), number.suffix);
 }
 
-NEVER_INLINE WTF::String formatCSSNumberValue(const SerializableNumber& number)
+NEVER_INLINE RefPtr<StringImpl> formatCSSNumberValue(const SerializableNumber& number)
 {
     if (!std::isfinite(number.value))
         return formatNonfiniteCSSNumberValue(number);

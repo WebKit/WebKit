@@ -1719,9 +1719,9 @@ uint32_t BindGroup::dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*
     return 0u;
 }
 
-void BindGroup::setLabel(String&& label)
+void BindGroup::setLabel(RefPtr<StringImpl>&& label)
 {
-    RetainPtr labelString = label.createNSString();
+    RetainPtr labelString = createNSString(label);
     m_vertexArgumentBuffer.label = labelString.get();
     m_fragmentArgumentBuffer.label = labelString.get();
     m_computeArgumentBuffer.label = labelString.get();

@@ -77,7 +77,7 @@ IDBResourceIdentifier IDBResourceIdentifier::isolatedCopy() const
     return IDBResourceIdentifier(m_idbConnectionIdentifier, m_resourceNumber);
 }
 
-String IDBResourceIdentifier::loggingString() const
+RefPtr<StringImpl> IDBResourceIdentifier::loggingString() const
 {
     uint64_t resourceNumber = m_resourceNumber ? m_resourceNumber->toUInt64() : 0;
     return makeString('<', m_idbConnectionIdentifier ? m_idbConnectionIdentifier->toUInt64() : 0, ", "_s, resourceNumber, '>');

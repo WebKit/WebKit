@@ -99,7 +99,7 @@ private:
     void connectionIsNoLongerNeeded();
 
     // IPC messages.
-    void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
+    void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent);
     void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier);
 
     // IPC::MessageSender.

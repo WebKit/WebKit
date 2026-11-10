@@ -55,7 +55,7 @@ void MediaQueryMatcher::documentDestroyed()
     }
 }
 
-AtomString MediaQueryMatcher::mediaType() const
+RefPtr<AtomStringImpl> MediaQueryMatcher::mediaType() const
 {
     if (!m_document || !m_document->frame() || !m_document->frame()->view())
         return nullAtom();
@@ -81,7 +81,7 @@ void MediaQueryMatcher::removeMediaQueryList(MediaQueryList& list)
     m_mediaQueryLists.removeFirst(&list);
 }
 
-RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
+RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(StringImpl* query)
 {
     if (!m_document)
         return nullptr;

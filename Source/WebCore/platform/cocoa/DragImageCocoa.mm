@@ -108,12 +108,12 @@ DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float de
     return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
 }
     
-static RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
+static RetainPtr<NSImage> createDragImageIconForCachedImageFilename(StringImpl* filename)
 {
     RetainPtr<NSString> extension;
-    size_t dotIndex = filename.reverseFind('.');
+    size_t dotIndex = reverseFind(filename, '.');
     
-    if (dotIndex != notFound && dotIndex < (filename.length() - 1)) // require that a . exists after the first character and before the last
+    if (dotIndex != notFound && dotIndex < (length(filename) - 1)) // require that a . exists after the first character and before the last
         extension = StringView(filename).substring(dotIndex + 1).createNSString();
     else {
         // It might be worth doing a further lookup to pull the extension from the MIME type.
@@ -125,7 +125,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+DragImage DragImage::createIconForCachedImageFilename(StringImpl* filename)
 {
     return DragImage { createDragImageIconForCachedImageFilename(filename) };
 }

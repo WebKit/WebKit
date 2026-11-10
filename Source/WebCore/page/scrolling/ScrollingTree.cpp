@@ -1223,7 +1223,7 @@ std::optional<FrameIdentifier> ScrollingTree::frameIDForScrollingNodeID(Scrollin
     return std::nullopt;
 }
 
-String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior)
+RefPtr<StringImpl> ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior)
 {
     TextStream ts(TextStream::LineMode::MultipleLine);
 

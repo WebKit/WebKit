@@ -1788,13 +1788,13 @@ CursiveFontFamily:
   webKitLegacyPreferenceKey: WebKitCursiveFont
   webcoreImplementation: custom
   defaultValue:
-    "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"Snell Roundhand"_str'
-    "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Chancery"_str'
-    default: '"Comic Sans MS"_str'
+    "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"Snell Roundhand"_si'
+    "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Chancery"_si'
+    default: '"Comic Sans MS"_si'
     WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": '"Snell Roundhand"_str'
-      default: '"Apple Chancery"_str'
-    WebCore: '""_str'
+      "PLATFORM(IOS_FAMILY)": '"Snell Roundhand"_si'
+      default: '"Apple Chancery"_si'
+    WebCore: '""_si'
 
 CustomPasteboardDataEnabled:
   type: bool
@@ -1948,7 +1948,7 @@ DefaultTextEncodingName:
   status: embedder
   defaultValue:
     default: PAL::defaultTextEncodingNameForSystemLanguage()
-    WebKitLegacy: '"ISO-8859-1"_str'
+    WebKitLegacy: '"ISO-8859-1"_si'
     WebCore: '{ }'
 
 DeprecationReportingEnabled:
@@ -2426,10 +2426,10 @@ FantasyFontFamily:
   webKitLegacyPreferenceKey: WebKitFantasyFont
   webcoreImplementation: custom
   defaultValue:
-    "PLATFORM(COCOA)": '"Papyrus"_str'
-    default: '"Impact"_str'
-    WebKitLegacy: '"Papyrus"_str'
-    WebCore: '""_str'
+    "PLATFORM(COCOA)": '"Papyrus"_si'
+    default: '"Impact"_si'
+    WebKitLegacy: '"Papyrus"_si'
+    WebCore: '""_si'
 
 FasterClicksEnabled:
   type: bool
@@ -2524,10 +2524,10 @@ FixedFontFamily:
   webKitLegacyPreferenceKey: WebKitFixedFont
   webcoreImplementation: custom
   defaultValue:
-    "PLATFORM(COCOA)": '"Courier"_str'
-    default: '"Courier New"_str'
-    WebKitLegacy: '"Courier"_str'
-    WebCore: '""_str'
+    "PLATFORM(COCOA)": '"Courier"_si'
+    default: '"Courier New"_si'
+    WebKitLegacy: '"Courier"_si'
+    WebCore: '""_si'
 
 FontFaceSetConstructorEnabled:
   type: bool
@@ -3297,7 +3297,7 @@ InspectorWindowFrame:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '""_str'
+  defaultValue: '""_si'
 
 InteractionRegionInlinePadding:
   type: double
@@ -3945,7 +3945,7 @@ MathFontFamily:
   status: embedder
   webKitLegacyPreferenceKey: WebKitMathFont
   webcoreImplementation: custom
-  defaultValue: '""_str'
+  defaultValue: '""_si'
 
 MathMLAnchorElementEnabled:
   type: bool
@@ -3989,7 +3989,7 @@ MediaAudioCodecIDsAllowedInLockdownMode:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '"aac ,zaac,qaac,caac,.mp3,mp4a"_str'
+  defaultValue: '"aac ,zaac,qaac,caac,.mp3,mp4a"_si'
 
 MediaCapabilitiesEnabled:
   type: bool
@@ -4025,7 +4025,7 @@ MediaCaptionFormatTypesAllowedInLockdownMode:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '"c608,wvtt"_str'
+  defaultValue: '"c608,wvtt"_si'
 
 MediaCaptureRequiresSecureConnection:
   type: bool
@@ -4041,20 +4041,20 @@ MediaCodecTypesAllowedInLockdownMode:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '"mp4a.40,avc1"_str'
+  defaultValue: '"mp4a.40,avc1"_si'
 
 MediaContainerTypesAllowedInLockdownMode:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '"video/mp4,audio/mp4,video/x-m4v,audio/x-m4a,audio/mp3,application/x-mpegURL,application/vnd.apple.mpegURL,video/mp2t,video/iso.segment,audio/aac,audio/mpeg,audio/ac3,audio/eac3,video/mpeg2,text/vtt"_str'
+  defaultValue: '"video/mp4,audio/mp4,video/x-m4v,audio/x-m4a,audio/mp3,application/x-mpegURL,application/vnd.apple.mpegURL,video/mp2t,video/iso.segment,audio/aac,audio/mpeg,audio/ac3,audio/eac3,video/mpeg2,text/vtt"_si'
 
 MediaContentTypesRequiringHardwareSupport:
   type: String
   status: embedder
   webcoreExcludeFromInternalSettings: true
   webcoreImplementation: custom
-  defaultValue: '""_str'
+  defaultValue: '""_si'
 
 MediaControlsContextMenusEnabled:
   type: bool
@@ -4310,7 +4310,7 @@ MediaVideoCodecIDsAllowedInLockdownMode:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '"avc1,zavc,qavc,cavc"_str'
+  defaultValue: '"avc1,zavc,qavc,cavc"_si'
 
 MetaViewportInteractiveWidgetEnabled:
   type: bool
@@ -4926,13 +4926,13 @@ PictographFontFamily:
   webKitLegacyPreferenceKey: WebKitPictographFont
   webcoreImplementation: custom
   defaultValue:
-    "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"_str'
-    "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Color Emoji"_str'
-    default: '"Times"_str'
+    "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"_si'
+    "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Color Emoji"_si'
+    default: '"Times"_si'
     WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"_str'
-      default: '"Apple Color Emoji"_str'
-    WebCore: '""_str'
+      "PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"_si'
+      default: '"Apple Color Emoji"_si'
+    WebCore: '""_si'
 
 PictureInPictureAPIEnabled:
   type: bool
@@ -5422,8 +5422,8 @@ SansSerifFontFamily:
   webKitLegacyPreferenceKey: WebKitSansSerifFont
   webcoreImplementation: custom
   defaultValue:
-    default: '"Helvetica"_str'
-    WebCore: '""_str'
+    default: '"Helvetica"_si'
+    WebCore: '""_si'
 
 ScopedCustomElementRegistryEnabled:
   type: bool
@@ -5659,8 +5659,8 @@ SerifFontFamily:
   webKitLegacyPreferenceKey: WebKitSerifFont
   webcoreImplementation: custom
   defaultValue:
-    default: '"Times"_str'
-    WebCore: '""_str'
+    default: '"Times"_si'
+    WebCore: '""_si'
 
 ServiceControlsEnabled:
   type: bool
@@ -6138,10 +6138,10 @@ StandardFontFamily:
   webKitLegacyPreferenceKey: WebKitStandardFont
   webcoreImplementation: custom
   defaultValue:
-    "PLATFORM(WATCHOS)": '"system-ui"_str'
-    default: '"Times"_str'
-    WebKitLegacy: '"Times"_str'
-    WebCore: '""_str'
+    "PLATFORM(WATCHOS)": '"system-ui"_si'
+    default: '"Times"_si'
+    WebKitLegacy: '"Times"_si'
+    WebCore: '""_si'
 
 StorageAPIEnabled:
   type: bool
@@ -7632,7 +7632,7 @@ WebRTCUDPPortRange:
   humanReadableName: "WebRTC UDP Port Range"
   humanReadableDescription: "Set a UDP port range for WebRTC. If set to 0:0, the port range is determined by the OS"
   condition: ENABLE(WEB_RTC)
-  defaultValue: '"0:0"_str'
+  defaultValue: '"0:0"_si'
 
 WebRTCVP9Profile0CodecEnabled:
   type: bool

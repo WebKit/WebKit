@@ -44,7 +44,7 @@ public:
 private:
     explicit WebDatabaseProvider();
 
-    static String indexedDatabaseDirectoryPath();
+    static RefPtr<StringImpl> indexedDatabaseDirectoryPath();
 
     HashMap<PAL::SessionID, RefPtr<InProcessIDBServer>> m_idbServerMap;
 };

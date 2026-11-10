@@ -57,25 +57,25 @@ enum class ImageType {
     SVG,
 };
 
-static ImageType cocoaTypeToImageType(const String& cocoaType)
+static ImageType cocoaTypeToImageType(StringImpl* cocoaType)
 {
 #if PLATFORM(MAC)
-    if (cocoaType == String(legacyTIFFPasteboardTypeSingleton()))
+    if (equal(cocoaType, StringImpl::create(legacyTIFFPasteboardTypeSingleton()).get()))
         return ImageType::TIFF;
 #endif
-    if (cocoaType == String(UTTypeTIFF.identifier))
+    if (equal(cocoaType, StringImpl::create(UTTypeTIFF.identifier).get()))
         return ImageType::TIFF;
 #if PLATFORM(MAC)
-    if (cocoaType == String(legacyPNGPasteboardTypeSingleton())) // NSPNGPboardType
+    if (equal(cocoaType, StringImpl::create(legacyPNGPasteboardTypeSingleton()).get())) // NSPNGPboardType
         return ImageType::PNG;
 #endif
-    if (cocoaType == String(UTTypePNG.identifier))
+    if (equal(cocoaType, StringImpl::create(UTTypePNG.identifier).get()))
         return ImageType::PNG;
-    if (cocoaType == String(UTTypeJPEG.identifier))
+    if (equal(cocoaType, StringImpl::create(UTTypeJPEG.identifier).get()))
         return ImageType::JPEG;
-    if (cocoaType == String(UTTypeGIF.identifier))
+    if (equal(cocoaType, StringImpl::create(UTTypeGIF.identifier).get()))
         return ImageType::GIF;
-    if (cocoaType == String(UTTypeSVG.identifier))
+    if (equal(cocoaType, StringImpl::create(UTTypeSVG.identifier).get()))
         return ImageType::SVG;
 
     return ImageType::Invalid;
@@ -129,7 +129,7 @@ static ASCIILiteral imageTypeToFakeFilename(ImageType type)
     }
 }
 
-bool Pasteboard::shouldTreatCocoaTypeAsFile(const String& cocoaType)
+bool Pasteboard::shouldTreatCocoaTypeAsFile(StringImpl* cocoaType)
 {
     return cocoaTypeToImageType(cocoaType) != ImageType::Invalid;
 }
@@ -159,17 +159,17 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 #endif
 
     if (!mayContainFilePaths) {
-        Vector<String> cocoaTypes;
+        Vector<RefPtr<StringImpl>> cocoaTypes;
         platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName, context());
-        if (cocoaTypes.findIf([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
+        if (cocoaTypes.findIf([](StringImpl* cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
             return FileContentState::NoFileOrImageData;
 
         auto indexOfURL = cocoaTypes.findIf([](auto& cocoaType) {
 #if PLATFORM(MAC)
-            if (cocoaType == String(legacyURLPasteboardTypeSingleton()))
+            if (equal(cocoaType, StringImpl::create(legacyURLPasteboardTypeSingleton()).get()))
                 return true;
 #endif
-            return cocoaType == String(UTTypeURL.identifier);
+            return equal(cocoaType, StringImpl::create(UTTypeURL.identifier).get());
         });
         mayContainFilePaths = indexOfURL != notFound && !platformStrategies()->pasteboardStrategy()->containsStringSafeForDOMToReadForType(cocoaTypes[indexOfURL], m_pasteboardName, context());
     }
@@ -186,9 +186,9 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
     return mayContainFilePaths ? FileContentState::MayContainFilePaths : FileContentState::InMemoryImage;
 }
 
-Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
+Vector<RefPtr<StringImpl>> Pasteboard::typesSafeForBindings(StringImpl* origin)
 {
-    Vector<String> types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName, origin, context());
+    Vector<RefPtr<StringImpl>> types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName, origin, context());
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
@@ -198,13 +198,13 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
     return types;
 }
 
-Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
+Vector<RefPtr<StringImpl>> Pasteboard::typesForLegacyUnsafeBindings()
 {
     auto cocoaTypes = readTypesWithSecurityCheck();
     if (cocoaTypes.isEmpty())
         return cocoaTypes;
 
-    OrderedHashSet<String> result;
+    OrderedHashSet<RefPtr<StringImpl>> result;
     for (auto& cocoaType : cocoaTypes)
         addHTMLClipboardTypesForCocoaType(result, cocoaType);
 
@@ -235,7 +235,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
         for (auto cocoaType : info.platformTypesByFidelity) {
             auto imageType = cocoaTypeToImageType(cocoaType);
             auto mimeType = imageTypeToMIMEType(imageType);
-            if (mimeType.isNull() || !reader.shouldReadBuffer(mimeType))
+            if (mimeType.isNull() || !reader.shouldReadBuffer(StringImpl::create(mimeType).ptr()))
                 continue;
             auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
@@ -243,7 +243,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
                 buffer = convertTIFFToPNG(buffer.releaseNonNull());
 #endif
             if (buffer) {
-                reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
+                reader.readBuffer(StringImpl::create(imageTypeToFakeFilename(imageType)).ptr(), StringImpl::create(mimeType).ptr(), buffer.releaseNonNull());
                 break;
             }
         }
@@ -261,23 +261,23 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
     }
 }
 
-Vector<String> Pasteboard::readAllStrings(const String& type)
+Vector<RefPtr<StringImpl>> Pasteboard::readAllStrings(StringImpl* type)
 {
     return readPlatformValuesAsStrings(type, m_changeCount, m_pasteboardName);
 }
 
-String Pasteboard::readString(const String& type)
+RefPtr<StringImpl> Pasteboard::readString(StringImpl* type)
 {
     auto values = readPlatformValuesAsStrings(type, m_changeCount, m_pasteboardName);
-    return values.isEmpty() ? String() : values.first();
+    return values.isEmpty() ? nullptr : values.first();
 }
 
-String Pasteboard::readStringInCustomData(const String& type)
+RefPtr<StringImpl> Pasteboard::readStringInCustomData(StringImpl* type)
 {
     return readCustomData().readStringInCustomData(type);
 }
 
-String Pasteboard::readOrigin()
+RefPtr<StringImpl> Pasteboard::readOrigin()
 {
     return readCustomData().origin();
 }
@@ -287,7 +287,7 @@ const PasteboardCustomData& Pasteboard::readCustomData()
     if (m_customDataCache)
         return *m_customDataCache;
 
-    if (auto buffer = readBufferForTypeWithSecurityCheck(PasteboardCustomData::cocoaType()))
+    if (auto buffer = readBufferForTypeWithSecurityCheck(StringImpl::create(PasteboardCustomData::cocoaType()).ptr()))
         m_customDataCache = PasteboardCustomData::fromSharedBuffer(*buffer);
     else
         m_customDataCache = PasteboardCustomData { };
@@ -304,9 +304,9 @@ int64_t Pasteboard::changeCount() const
     return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context());
 }
 
-Vector<String> Pasteboard::readTypesWithSecurityCheck()
+Vector<RefPtr<StringImpl>> Pasteboard::readTypesWithSecurityCheck()
 {
-    Vector<String> cocoaTypes;
+    Vector<RefPtr<StringImpl>> cocoaTypes;
     platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName, context());
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
@@ -317,7 +317,7 @@ Vector<String> Pasteboard::readTypesWithSecurityCheck()
     return cocoaTypes;
 }
 
-RefPtr<SharedBuffer> Pasteboard::readBufferForTypeWithSecurityCheck(const String& type)
+RefPtr<SharedBuffer> Pasteboard::readBufferForTypeWithSecurityCheck(StringImpl* type)
 {
     auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(type, m_pasteboardName, context());
 

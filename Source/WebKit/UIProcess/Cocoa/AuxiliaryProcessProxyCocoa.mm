@@ -82,9 +82,9 @@ RefPtr<WebCore::SharedBuffer> AuxiliaryProcessProxy::fetchAudioComponentServerRe
 }
 #endif
 
-Vector<String> AuxiliaryProcessProxy::platformOverrideLanguages() const
+Vector<RefPtr<StringImpl>> AuxiliaryProcessProxy::platformOverrideLanguages() const
 {
-    static const NeverDestroyed<Vector<String>> overrideLanguages = makeVector<String>(retainPtr([[NSUserDefaults standardUserDefaults] stringArrayForKey:@"AppleLanguages"]).get());
+    static const NeverDestroyed<Vector<RefPtr<StringImpl>>> overrideLanguages = makeVector<RefPtr<StringImpl>>(retainPtr([[NSUserDefaults standardUserDefaults] stringArrayForKey:@"AppleLanguages"]).get());
     return overrideLanguages;
 }
 
@@ -107,7 +107,7 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
     if (!maybeExtensionProcess)
         return;
 
-    Ref assertion = ProcessAndUIAssertion::create(processID(), reason, ProcessAssertionType::Background, environmentIdentifier(), extensionProcess());
+    Ref assertion = ProcessAndUIAssertion::create(processID(), StringImpl::create(reason).ptr(), ProcessAssertionType::Background, environmentIdentifier(), extensionProcess());
     auto terminationHandler = [assertion = WTF::move(assertion), extensionProcess = WTF::move(*maybeExtensionProcess)] {
         extensionProcess.invalidate();
     };
@@ -119,7 +119,7 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
     if (!xpcConnection)
         return;
 
-    Ref assertion = ProcessAndUIAssertion::create(processID(), reason, ProcessAssertionType::Background, environmentIdentifier());
+    Ref assertion = ProcessAndUIAssertion::create(processID(), StringImpl::create(reason).ptr(), ProcessAssertionType::Background, environmentIdentifier());
     auto terminationHandler = [assertion = WTF::move(assertion), xpcConnection = WTF::move(xpcConnection)]() {
         terminateWithReason(xpcConnection.get(), WebKitReasonCode::WatchdogTimerFired, reason);
     };
@@ -197,7 +197,7 @@ std::optional<AuxiliaryProcessProxy::TaskInfo> AuxiliaryProcessProxy::taskInfo()
 }
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-void AuxiliaryProcessProxy::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+void AuxiliaryProcessProxy::notifyPreferencesChanged(StringImpl* domain, StringImpl* key, const std::optional<RefPtr<StringImpl>>& encodedValue)
 {
     send(Messages::AuxiliaryProcess::PreferenceDidUpdate(domain, key, encodedValue), 0);
 }
@@ -212,7 +212,7 @@ AuxiliaryProcessProxy::LogXPCEventHandler::LogXPCEventHandler(const AuxiliaryPro
 bool AuxiliaryProcessProxy::LogXPCEventHandler::handleXPCEvent(xpc_object_t event)
 {
     auto messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
-    if (messageName == logMessageName) {
+    if (equal(messageName, logMessageName)) {
         RefPtr process = m_process.get();
         if (!process)
             return true;
@@ -226,13 +226,13 @@ bool AuxiliaryProcessProxy::LogXPCEventHandler::handleXPCEvent(xpc_object_t even
         auto pid = xpc_connection_get_pid(protect(xpc_dictionary_get_remote_connection(event)));
 
         OSObjectPtr<os_log_t> osLog;
-        if (!subsystem.isEmpty() && !category.isEmpty())
-            osLog = adoptOSObject(osLogCreate(subsystem.utf8(), category.utf8()));
+        if (!isEmpty(subsystem) && !isEmpty(category))
+            osLog = adoptOSObject(osLogCreate(utf8(subsystem), utf8(category)));
 
         process->didReceiveLogsDuringLaunchForTesting();
-        auto message = messageString.utf8();
+        auto message = utf8(messageString);
         logWithProcessNamePrefix(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), process->processName(), static_cast<int>(pid), UTF8CStringView::fromUTF8(message.spanIncludingNullTerminator()));
-    } else if (messageName == disableLogMessageName) {
+    } else if (equal(messageName, disableLogMessageName)) {
         RefPtr process = m_process.get();
         if (!process)
             return true;

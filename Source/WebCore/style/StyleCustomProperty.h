@@ -83,12 +83,12 @@ public:
         ValueList
     >;
 
-    static Ref<const CustomProperty> createForGuaranteedInvalid(const AtomString& name);
-    static Ref<const CustomProperty> createForVariableData(const AtomString& name, Ref<CSSVariableData>&&);
-    static Ref<const CustomProperty> createForValue(const AtomString& name, Value&&, IsAttrTainted = IsAttrTainted::No);
-    static Ref<const CustomProperty> createForValueList(const AtomString& name, ValueList&&, IsAttrTainted = IsAttrTainted::No);
+    static Ref<const CustomProperty> createForGuaranteedInvalid(AtomStringImpl* name);
+    static Ref<const CustomProperty> createForVariableData(AtomStringImpl* name, Ref<CSSVariableData>&&);
+    static Ref<const CustomProperty> createForValue(AtomStringImpl* name, Value&&, IsAttrTainted = IsAttrTainted::No);
+    static Ref<const CustomProperty> createForValueList(AtomStringImpl* name, ValueList&&, IsAttrTainted = IsAttrTainted::No);
 
-    const AtomString& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_name; }
     const Kind& value() const LIFETIME_BOUND { return m_value; }
 
     const Vector<CSSParserToken>& tokens() const;
@@ -107,43 +107,43 @@ public:
 
     Ref<CSSValue> propertyValue(CSSValuePool&, const Style::ComputedStyle&) const;
     Ref<DeprecatedCSSOMValue> propertyValueDeprecatedCSSOMWrapper(CSSValuePool&, CSSStyleDeclaration&, const Style::ComputedStyle&) const;
-    WTF::String propertyValueSerialization(const CSS::SerializationContext&, const Style::ComputedStyle&) const;
+    RefPtr<StringImpl> propertyValueSerialization(const CSS::SerializationContext&, const Style::ComputedStyle&) const;
     void propertyValueSerialization(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&) const;
 
 private:
-    CustomProperty(const AtomString& name, Kind&& value, IsAttrTainted isAttrTainted = IsAttrTainted::No)
+    CustomProperty(AtomStringImpl* name, Kind&& value, IsAttrTainted isAttrTainted = IsAttrTainted::No)
         : m_name(name)
         , m_value(WTF::move(value))
         , m_isAttrTainted(isAttrTainted)
     {
     }
 
-    WTF::String propertyValueSerializationForTokenization(const CSS::SerializationContext&, const Style::ComputedStyle&) const;
+    RefPtr<StringImpl> propertyValueSerializationForTokenization(const CSS::SerializationContext&, const Style::ComputedStyle&) const;
     void propertyValueSerializationForTokenization(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&) const;
 
-    const AtomString m_name;
+    const RefPtr<AtomStringImpl> m_name;
     const Kind m_value;
     const IsAttrTainted m_isAttrTainted { IsAttrTainted::No };
     mutable RefPtr<CSSVariableData> m_cachedTokens;
 };
 
-inline Ref<const CustomProperty> CustomProperty::createForGuaranteedInvalid(const AtomString& name)
+inline Ref<const CustomProperty> CustomProperty::createForGuaranteedInvalid(AtomStringImpl* name)
 {
     return adoptRef(*new CustomProperty(name, Kind { GuaranteedInvalid { } }));
 }
 
-inline Ref<const CustomProperty> CustomProperty::createForVariableData(const AtomString& name, Ref<CSSVariableData>&& value)
+inline Ref<const CustomProperty> CustomProperty::createForVariableData(AtomStringImpl* name, Ref<CSSVariableData>&& value)
 {
     auto isAttrTainted = value->isAttrTainted();
     return adoptRef(*new CustomProperty(name, Kind { WTF::InPlaceType<Ref<CSSVariableData>>, WTF::move(value) }, isAttrTainted));
 }
 
-inline Ref<const CustomProperty> CustomProperty::createForValue(const AtomString& name, Value&& value, IsAttrTainted isAttrTainted)
+inline Ref<const CustomProperty> CustomProperty::createForValue(AtomStringImpl* name, Value&& value, IsAttrTainted isAttrTainted)
 {
     return adoptRef(*new CustomProperty(name, Kind { WTF::move(value) }, isAttrTainted));
 }
 
-inline Ref<const CustomProperty> CustomProperty::createForValueList(const AtomString& name, ValueList&& valueList, IsAttrTainted isAttrTainted)
+inline Ref<const CustomProperty> CustomProperty::createForValueList(AtomStringImpl* name, ValueList&& valueList, IsAttrTainted isAttrTainted)
 {
     return adoptRef(*new CustomProperty(name, Kind { WTF::move(valueList) }, isAttrTainted));
 }

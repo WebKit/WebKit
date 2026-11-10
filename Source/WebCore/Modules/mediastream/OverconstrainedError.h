@@ -38,22 +38,22 @@ namespace WebCore {
 
 class OverconstrainedError final : public DOMException {
 public:
-    static Ref<OverconstrainedError> create(const String& constraint, const String& message)
+    static Ref<OverconstrainedError> create(StringImpl* constraint, StringImpl* message)
     {
         return adoptRef(*new OverconstrainedError(constraint, message));
     }
-    static Ref<OverconstrainedError> create(MediaConstraintType invalidConstraint, const String& message)
+    static Ref<OverconstrainedError> create(MediaConstraintType invalidConstraint, StringImpl* message)
     {
         return adoptRef(*new OverconstrainedError(invalidConstraint, message));
     }
 
-    String constraint() const;
+    RefPtr<StringImpl> constraint() const;
 
 private:
-    OverconstrainedError(const String& constraint, const String& message);
-    OverconstrainedError(MediaConstraintType invalidConstraint, const String& message);
+    OverconstrainedError(StringImpl* constraint, StringImpl* message);
+    OverconstrainedError(MediaConstraintType invalidConstraint, StringImpl* message);
 
-    mutable String m_constraint;
+    mutable RefPtr<StringImpl> m_constraint;
     MediaConstraintType m_invalidConstraint { MediaConstraintType::Unknown };
 };
 

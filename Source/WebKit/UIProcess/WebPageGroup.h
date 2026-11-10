@@ -41,8 +41,8 @@ class WebPageProxy;
 
 class WebPageGroup : public API::ObjectImpl<API::Object::Type::PageGroup>, public CanMakeWeakPtr<WebPageGroup> {
 public:
-    explicit WebPageGroup(const String& identifier = { });
-    static Ref<WebPageGroup> create(const String& identifier = { });
+    explicit WebPageGroup(StringImpl* identifier = nullptr);
+    static Ref<WebPageGroup> create(StringImpl* identifier = nullptr);
 
     virtual ~WebPageGroup();
 

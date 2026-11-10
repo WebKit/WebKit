@@ -77,12 +77,12 @@ public:
     static constexpr int nestedFrameTop = 40;
     static constexpr NSPoint nestedFrameContentOrigin { iframeLeft + iframeBorderAndPadding + nestedFrameLeft, iframeTop + iframeBorderAndPadding + nestedFrameTop };
 
-    static String iframe(int left, const String& url);
-    static String mainHTML(const String& iframes);
-    static String nestedFrameHTML(const String& url, int width, int height);
-    static HTTPResponse html(const String& body);
+    static RefPtr<StringImpl> iframe(int left, StringImpl* url);
+    static RefPtr<StringImpl> mainHTML(StringImpl* iframes);
+    static RefPtr<StringImpl> nestedFrameHTML(StringImpl* url, int width, int height);
+    static HTTPResponse html(StringImpl* body);
 
-    void setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure = [](WKWebViewConfiguration *) { });
+    void setUpWebView(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure = [](WKWebViewConfiguration *) { });
     void load(NSString *path);
     RetainPtr<WKFrameInfo> nestedFrame();
     static CGRect rectInWebView(NSArray *rectInFrame, CGPoint frameContentOrigin);

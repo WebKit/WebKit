@@ -79,8 +79,8 @@ protected:
     ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(StringView, const Decimal&) const override;
-    String serialize(const Decimal&) const final;
-    String serializeWithComponents(const DateComponents&) const;
+    RefPtr<StringImpl> serialize(const Decimal&) const final;
+    RefPtr<StringImpl> serializeWithComponents(const DateComponents&) const;
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
@@ -91,9 +91,9 @@ private:
         DateTimeFormatValidator() { }
 
         NODELETE void visitField(DateTimeFormat::FieldType, int);
-        void visitLiteral(const String&) { }
+        void visitLiteral(StringImpl*) { }
 
-        bool validateFormat(const String& format, const BaseDateAndTimeInputType&);
+        bool validateFormat(StringImpl* format, const BaseDateAndTimeInputType&);
 
     private:
         OptionSet<DateTimeFormatValidationResults> m_results;
@@ -103,19 +103,19 @@ private:
     virtual std::optional<DateComponents> setMillisecondToDateComponents(double) const = 0;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
     virtual bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const = 0;
-    virtual String serializeWithMilliseconds(double) const;
+    virtual RefPtr<StringImpl> serializeWithMilliseconds(double) const;
 
     // InputType functions:
-    String visibleValue() const final;
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const override;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    RefPtr<StringImpl> visibleValue() const final;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const override;
+    void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     WallTime valueAsDate() const override;
     ExceptionOr<void> setValueAsDate(WallTime) const override;
     WallTime accessibilityValueAsDate() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     Decimal defaultValueForStepUp() const override;
-    String localizeValue(const String&) const final;
+    RefPtr<StringImpl> localizeValue(StringImpl*) const final;
     bool supportsReadOnly() const final { return true; }
     bool shouldRespectListAttribute() final { return false; }
     bool isKeyboardFocusable(const FocusEventData&) const final;
@@ -146,7 +146,7 @@ private:
     bool isEditControlOwnerReadOnly() const final;
     bool didEditControlOwnerTransferFocusToPicker() final { return m_didTransferFocusToPicker; }
     void didSuppressBlurDueToPickerFocusTransfer() final { m_didTransferFocusToPicker = false; }
-    AtomString localeIdentifier() const final;
+    RefPtr<AtomStringImpl> localeIdentifier() const final;
 
     // DateTimeChooserClient functions:
     void didChooseValue(StringView) final;

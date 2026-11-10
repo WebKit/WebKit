@@ -233,7 +233,7 @@ void Builder::applyCustomProperties()
     }
 }
 
-void Builder::applyCustomProperty(const AtomString& name)
+void Builder::applyCustomProperty(AtomStringImpl* name)
 {
     if (m_state->m_appliedCustomProperties.contains(name))
         return;
@@ -253,7 +253,7 @@ void Builder::applyCustomProperty(const AtomString& name)
 // local: it shadows inheritance and resolves to its registered value) or one inherited from the calling
 // context (resolved lazily). An enclosing function's parameter is registered here but not declared here,
 // so it inherits. https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
-void Builder::applyCustomPropertyFromCallingContext(const AtomString& name)
+void Builder::applyCustomPropertyFromCallingContext(AtomStringImpl* name)
 {
     auto* callingContextBuilder = m_state->callingContextBuilder();
     ASSERT(callingContextBuilder);
@@ -269,7 +269,7 @@ void Builder::applyCustomPropertyFromCallingContext(const AtomString& name)
     m_state->m_appliedCustomProperties.add(name);
 }
 
-void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCascade::Property& property)
+void Builder::applyCustomPropertyImpl(AtomStringImpl* name, const PropertyCascade::Property& property)
 {
     if (!property.cssValue[SelectorChecker::MatchDefault])
         return;
@@ -359,7 +359,7 @@ bool Builder::applyRollbackCascadeProperty(const PropertyCascade& rollbackCascad
     return true;
 }
 
-bool Builder::applyRollbackCascadeCustomProperty(const PropertyCascade& rollbackCascade, const AtomString& name)
+bool Builder::applyRollbackCascadeCustomProperty(const PropertyCascade& rollbackCascade, AtomStringImpl* name)
 {
     auto iterator = rollbackCascade.customProperties().find(name);
     if (iterator == rollbackCascade.customProperties().end())
@@ -500,7 +500,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 }
 
-void Builder::applyCustomProperty(const AtomString& name, CustomPropertyOrKeyword&& parsedCustomProperty)
+void Builder::applyCustomProperty(AtomStringImpl* name, CustomPropertyOrKeyword&& parsedCustomProperty)
 {
     auto& style = m_state->style();
 
@@ -784,7 +784,7 @@ std::optional<Builder::CustomPropertyOrKeyword> Builder::resolveCustomPropertyVa
 
 // Parses an already-substituted value against a syntax and computes it on this builder's element.
 // Shared by registered custom properties and by custom function parameters.
-std::optional<Builder::CustomPropertyOrKeyword> Builder::computeCustomPropertyValueForSyntax(const AtomString& name, const CSSCustomPropertySyntax& syntax, const CSSVariableData& resolvedData)
+std::optional<Builder::CustomPropertyOrKeyword> Builder::computeCustomPropertyValueForSyntax(AtomStringImpl* name, const CSSCustomPropertySyntax& syntax, const CSSVariableData& resolvedData)
 {
     auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, resolvedData.tokens(), resolvedData.context());
 

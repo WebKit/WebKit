@@ -45,20 +45,20 @@ public:
     static Ref<BackgroundFetchManager> create(ServiceWorkerRegistration& registration) { return adoptRef(*new BackgroundFetchManager(registration)); }
     ~BackgroundFetchManager();
 
-    using RequestInfo = Variant<Ref<FetchRequest>, String>;
-    using Requests = Variant<Ref<FetchRequest>, String, Vector<RequestInfo>>;
-    void fetch(ScriptExecutionContext&, const String&, Requests&&, BackgroundFetchOptions&&, DOMPromiseDeferred<IDLInterface<BackgroundFetchRegistration>>&&);
-    void get(ScriptExecutionContext&, const String&, DOMPromiseDeferred<IDLNullable<IDLInterface<BackgroundFetchRegistration>>>&&);
+    using RequestInfo = Variant<Ref<FetchRequest>, RefPtr<StringImpl>>;
+    using Requests = Variant<Ref<FetchRequest>, RefPtr<StringImpl>, Vector<RequestInfo>>;
+    void fetch(ScriptExecutionContext&, StringImpl*, Requests&&, BackgroundFetchOptions&&, DOMPromiseDeferred<IDLInterface<BackgroundFetchRegistration>>&&);
+    void get(ScriptExecutionContext&, StringImpl*, DOMPromiseDeferred<IDLNullable<IDLInterface<BackgroundFetchRegistration>>>&&);
     void getIds(ScriptExecutionContext&, DOMPromiseDeferred<IDLSequence<IDLDOMString>>&&);
 
-    RefPtr<BackgroundFetchRegistration> existingBackgroundFetchRegistration(const String& identifier) { return m_backgroundFetchRegistrations.get(identifier); }
+    RefPtr<BackgroundFetchRegistration> existingBackgroundFetchRegistration(StringImpl* identifier) { return m_backgroundFetchRegistrations.get(identifier); }
     Ref<BackgroundFetchRegistration> backgroundFetchRegistrationInstance(ScriptExecutionContext&, BackgroundFetchInformation&&);
 
 private:
     explicit BackgroundFetchManager(ServiceWorkerRegistration&);
 
     ServiceWorkerRegistrationIdentifier m_identifier;
-    HashMap<String, Ref<BackgroundFetchRegistration>> m_backgroundFetchRegistrations;
+    HashMap<RefPtr<StringImpl>, Ref<BackgroundFetchRegistration>> m_backgroundFetchRegistrations;
 };
 
 } // namespace WebCore

@@ -270,14 +270,14 @@ void AVVideoCaptureSource::setUseAVCaptureDeviceRotationCoordinatorAPI(bool valu
 
 CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
-    RetainPtr avDevice = [PAL::getAVCaptureDeviceClassSingleton() deviceWithUniqueID:device.persistentId().createNSString().get()];
+    RetainPtr avDevice = [PAL::getAVCaptureDeviceClassSingleton() deviceWithUniqueID:createNSString(device.persistentId()).get()];
     if (!avDevice)
-        return CaptureSourceOrError({ "No AVVideoCaptureSource device"_s , MediaAccessDenialReason::PermissionDenied });
+        return CaptureSourceOrError({ "No AVVideoCaptureSource device"_si , MediaAccessDenialReason::PermissionDenied });
 
     Ref<RealtimeMediaSource> source = adoptRef(*new AVVideoCaptureSource(avDevice.get(), device, WTF::move(hashSalts), pageIdentifier));
 
     if (!source->capabilities().width().max() || !source->capabilities().height().max() || !source->capabilities().frameRate().max())
-        return CaptureSourceOrError({ "AVVideoCaptureSource device has invalid width, height or frameRate capabilities"_s , MediaAccessDenialReason::PermissionDenied });
+        return CaptureSourceOrError({ "AVVideoCaptureSource device has invalid width, height or frameRate capabilities"_si , MediaAccessDenialReason::PermissionDenied });
 
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
@@ -381,7 +381,7 @@ void AVVideoCaptureSource::clearSession()
     if (m_pendingPhotoSettings) {
         m_pendingPhotoSettings = nullptr;
         m_pendingCaptureWatchdog = nullptr;
-        rejectPendingPhotoRequest("Session cleared"_s);
+        rejectPendingPhotoRequest("Session cleared"_si);
     }
 #endif
 }
@@ -439,7 +439,7 @@ void AVVideoCaptureSource::stopSession()
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "error calling -stopRunning ", [[exception name] UTF8String], ", reason : ", exception.reason);
     }
 
-    rejectPendingPhotoRequest("Track stopped"_s);
+    rejectPendingPhotoRequest("Track stopped"_si);
 }
 
 void AVVideoCaptureSource::startApplyingConstraints()
@@ -703,7 +703,7 @@ AVCapturePhotoOutput* AVVideoCaptureSource::photoOutput()
     return m_photoOutput.get();
 }
 
-void AVVideoCaptureSource::resolvePendingPhotoRequest(Vector<uint8_t>&& data, const String& mimeType)
+void AVVideoCaptureSource::resolvePendingPhotoRequest(Vector<uint8_t>&& data, StringImpl* mimeType)
 {
     Locker lock { m_photoLock };
 
@@ -712,11 +712,11 @@ void AVVideoCaptureSource::resolvePendingPhotoRequest(Vector<uint8_t>&& data, co
         return;
     }
 
-    m_photoProducer->resolve(std::make_pair(WTF::move(data), mimeType));
+    m_photoProducer->resolve(std::make_pair(WTF::move(data), RefPtr { mimeType }));
     m_photoProducer = nullptr;
 }
 
-void AVVideoCaptureSource::rejectPendingPhotoRequest(const String& error)
+void AVVideoCaptureSource::rejectPendingPhotoRequest(StringImpl* error)
 {
     Locker lock { m_photoLock };
 
@@ -818,7 +818,7 @@ auto AVVideoCaptureSource::takePhotoInternal(PhotoSettings&& photoSettings) -> R
                     [photoOutput setMaxPhotoDimensions:toCMVideoDimensions(requestedDims)];
                 } @catch (NSException *exception) {
                     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "error calling setMaxPhotoDimensions: ", [[exception name] UTF8String], ", reason: ", [exception reason]);
-                    rejectPendingPhotoRequest("setMaxPhotoDimensions failed"_s);
+                    rejectPendingPhotoRequest("setMaxPhotoDimensions failed"_si);
                     return promise.releaseNonNull();
                 }
             }
@@ -835,7 +835,7 @@ auto AVVideoCaptureSource::takePhotoInternal(PhotoSettings&& photoSettings) -> R
 
             ERROR_LOG_IF_POSSIBLE(identifier, "photo pipeline readiness timeout");
             m_pendingPhotoSettings = nullptr;
-            rejectPendingPhotoRequest("Photo capture timed out waiting for pipeline readiness"_s);
+            rejectPendingPhotoRequest("Photo capture timed out waiting for pipeline readiness"_si);
         });
         m_pendingCaptureWatchdog->startOneShot(photoCapturePipelineReadinessTimeout);
         return promise.releaseNonNull();
@@ -858,7 +858,7 @@ void AVVideoCaptureSource::dispatchCaptureOnPhotoQueue(RetainPtr<AVCapturePhotoO
         } @catch (NSException *exception) {
             RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), identifier, exception = RetainPtr { exception }] mutable {
                 ERROR_LOG_WITH_THIS_IF_POSSIBLE(protectedThis, identifier, "error taking photo ", [[exception name] UTF8String], ", reason: ", [exception reason]);
-                protectedThis->rejectPendingPhotoRequest("capturePhotoWithSettings failed"_s);
+                protectedThis->rejectPendingPhotoRequest("capturePhotoWithSettings failed"_si);
             });
         }
     });
@@ -875,7 +875,7 @@ void AVVideoCaptureSource::captureReadinessDidChange()
     if (readiness == AVCapturePhotoOutputCaptureReadinessSessionNotRunning) {
         m_pendingPhotoSettings = nullptr;
         m_pendingCaptureWatchdog = nullptr;
-        rejectPendingPhotoRequest("Session not running"_s);
+        rejectPendingPhotoRequest("Session not running"_si);
         return;
     }
     if (readiness != AVCapturePhotoOutputCaptureReadinessReady)
@@ -1241,11 +1241,11 @@ bool AVVideoCaptureSource::setupSession()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    String mediaEnvironment = RealtimeMediaSourceCenter::singleton().currentMediaEnvironment();
-    WARNING_LOG_IF(loggerPtr() && mediaEnvironment.isEmpty(), "Media environment is empty");
+    RefPtr<StringImpl> mediaEnvironment = RealtimeMediaSourceCenter::singleton().currentMediaEnvironment();
+    WARNING_LOG_IF(loggerPtr() && isEmpty(mediaEnvironment), "Media environment is empty");
     // FIXME (119325252): Remove staging code for -[AVCaptureSession initWithMediaEnvironment:]
-    if (!mediaEnvironment.isEmpty() && [PAL::getAVCaptureSessionClassSingleton() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])
-        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithMediaEnvironment:mediaEnvironment.createNSString().get()]);
+    if (!isEmpty(mediaEnvironment) && [PAL::getAVCaptureSessionClassSingleton() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithMediaEnvironment:createNSString(mediaEnvironment).get()]);
 #endif
 
 #if ENABLE(APP_PRIVACY_REPORT)
@@ -1384,9 +1384,9 @@ void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
     computeVideoFrameRotation();
 }
 
-void AVVideoCaptureSource::rotationAngleForHorizonLevelDisplayChanged(const String& devicePersistentId, VideoFrameRotation videoFrameRotation)
+void AVVideoCaptureSource::rotationAngleForHorizonLevelDisplayChanged(StringImpl* devicePersistentId, VideoFrameRotation videoFrameRotation)
 {
-    if (captureDevice().persistentId() != devicePersistentId)
+    if (!equal(captureDevice().persistentId(), devicePersistentId))
         return;
 
     m_useSensorAndDeviceOrientation = false;
@@ -1450,7 +1450,7 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
 void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCapturePhotoOutput>, RetainPtr<AVCapturePhoto> photo, RetainPtr<NSError> error)
 {
     if (error) {
-        rejectPendingPhotoRequest("AVCapturePhotoOutput failed"_s);
+        rejectPendingPhotoRequest("AVCapturePhotoOutput failed"_si);
         RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, logIdentifier = LOGIDENTIFIER, error = WTF::move(error)] {
             ASSERT(isMainThread());
             ALWAYS_LOG_WITH_THIS_IF_POSSIBLE(protectedThis, logIdentifier, "failed: ", [error code], ", ", error.get());
@@ -1459,7 +1459,7 @@ void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCap
     }
 
     NSData* data = [photo fileDataRepresentation];
-    resolvePendingPhotoRequest(makeVector(data), "image/jpeg"_s);
+    resolvePendingPhotoRequest(makeVector(data), "image/jpeg"_si);
 }
 
 void AVVideoCaptureSource::reconfigureIfNeeded()

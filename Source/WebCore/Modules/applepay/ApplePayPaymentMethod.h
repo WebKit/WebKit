@@ -37,13 +37,13 @@ enum class ApplePayPaymentMethodType;
 struct ApplePayPaymentMethod {    
     using Type = ApplePayPaymentMethodType;
 
-    String displayName;
-    String network;
-    String issuingRegionCode;
+    RefPtr<StringImpl> displayName;
+    RefPtr<StringImpl> network;
+    RefPtr<StringImpl> issuingRegionCode;
     std::optional<Type> type;
     std::optional<ApplePayPaymentPass> paymentPass;
     std::optional<ApplePayPaymentContact> billingContact;
-    String bindToken;
+    RefPtr<StringImpl> bindToken;
 };
 
 }

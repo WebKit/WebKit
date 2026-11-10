@@ -102,17 +102,17 @@ public:
 
     JSCustomElementInterface* findInterface(const Element&) const;
     JSCustomElementInterface* findInterface(const QualifiedName&) const;
-    JSCustomElementInterface* findInterface(const AtomString&) const;
+    JSCustomElementInterface* findInterface(AtomStringImpl*) const;
     RefPtr<JSCustomElementInterface> findInterface(const JSC::JSObject*) const;
     bool containsConstructor(const JSC::JSObject*) const;
 
-    JSC::JSValue get(const AtomString&);
-    String getName(JSC::JSValue);
+    JSC::JSValue get(AtomStringImpl*);
+    RefPtr<StringImpl> getName(JSC::JSValue);
     void upgrade(Node& root);
     ExceptionOr<void> initialize(Node& root);
 
-    MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>>& promiseMap() LIFETIME_BOUND { return m_promiseMap; }
-    bool isShadowDisabled(const AtomString& name) const { return m_disabledShadowSet.contains(name); }
+    MemoryCompactRobinHoodHashMap<RefPtr<AtomStringImpl>, Ref<DeferredPromise>>& promiseMap() LIFETIME_BOUND { return m_promiseMap; }
+    bool isShadowDisabled(AtomStringImpl* name) const { return m_disabledShadowSet.contains(name); }
 
     template<typename Visitor> void visitJSCustomElementInterfacesInGCThread(Visitor&) const;
 
@@ -123,10 +123,10 @@ private:
     NODELETE static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& scopedCustomElementRegistryMap();
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
-    HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
+    HashMap<RefPtr<AtomStringImpl>, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
-    MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
-    MemoryCompactRobinHoodHashSet<AtomString> m_disabledShadowSet;
+    MemoryCompactRobinHoodHashMap<RefPtr<AtomStringImpl>, Ref<DeferredPromise>> m_promiseMap;
+    MemoryCompactRobinHoodHashSet<RefPtr<AtomStringImpl>> m_disabledShadowSet;
     WeakListHashSet<Document, WeakPtrImplWithEventTargetData> m_associatedDocuments;
 
     bool m_elementDefinitionIsRunning { false };

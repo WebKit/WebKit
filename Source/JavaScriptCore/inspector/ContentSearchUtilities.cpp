@@ -47,12 +47,12 @@ namespace ContentSearchUtilities {
 
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
 
-static String escapeStringForRegularExpressionSource(const String& text)
+static RefPtr<StringImpl> escapeStringForRegularExpressionSource(StringImpl* text)
 {
     StringBuilder result;
 
-    for (unsigned i = 0; i < text.length(); i++) {
-        char16_t character = text[i];
+    for (unsigned i = 0; i < length(text); i++) {
+        char16_t character = codeUnitAt(text, i);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (isASCII(character) && strchr(regexSpecialCharacters, character))
             result.append('\\');
@@ -79,10 +79,10 @@ TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEnd
     return TextPosition(OrdinalNumber::fromZeroBasedInt(lineIndex), OrdinalNumber::fromZeroBasedInt(column));
 }
 
-static Vector<std::pair<size_t, String>> getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
+static Vector<std::pair<size_t, RefPtr<StringImpl>>> getRegularExpressionMatchesByLines(const RegularExpression& regex, StringImpl* text)
 {
-    Vector<std::pair<size_t, String>> result;
-    if (text.isEmpty())
+    Vector<std::pair<size_t, RefPtr<StringImpl>>> result;
+    if (isEmpty(text))
         return result;
 
     auto endings = lineEndings(text);
@@ -103,15 +103,15 @@ static Vector<std::pair<size_t, String>> getRegularExpressionMatchesByLines(cons
     return result;
 }
 
-Vector<size_t> lineEndings(const String& text)
+Vector<size_t> lineEndings(StringImpl* text)
 {
     Vector<size_t> result;
 
     size_t start = 0;
-    while (start < text.length()) {
-        size_t nextStart = text.find('\n', start);
-        if (nextStart == notFound || nextStart == (text.length() - 1)) {
-            result.append(text.length());
+    while (start < length(text)) {
+        size_t nextStart = find(text, '\n', start);
+        if (nextStart == notFound || nextStart == (length(text) - 1)) {
+            result.append(length(text));
             break;
         }
 
@@ -120,12 +120,12 @@ Vector<size_t> lineEndings(const String& text)
         start = nextStart;
     }
 
-    result.append(text.length());
+    result.append(length(text));
 
     return result;
 }
 
-static Ref<Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t lineNumber, const String& lineContent)
+static Ref<Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t lineNumber, StringImpl* lineContent)
 {
     return Protocol::GenericTypes::SearchMatch::create()
         .setLineNumber(lineNumber)
@@ -133,27 +133,27 @@ static Ref<Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t
         .release();
 }
 
-Searcher createSearcherForString(const String& string, SearchType type, SearchCaseSensitive caseSensitive)
+Searcher createSearcherForString(StringImpl* string, SearchType type, SearchCaseSensitive caseSensitive)
 {
     if (type == SearchType::ExactString && caseSensitive == SearchCaseSensitive::Yes)
         return string;
     return createRegularExpressionForString(string, type, caseSensitive);
 }
 
-bool searcherMatchesText(const Searcher& searcher, const String& text)
+bool searcherMatchesText(const Searcher& searcher, StringImpl* text)
 {
     return WTF::switchOn(searcher,
-        [&] (const String& string) {
-            return string == text;
+        [&] (StringImpl* string) {
+            return equal(string, text);
         },
         [&] (const RegularExpression& regex) {
             return regex.match(text) != -1;
         });
 }
 
-RegularExpression createRegularExpressionForString(const String& string, SearchType type, SearchCaseSensitive caseSensitive)
+RegularExpression createRegularExpressionForString(StringImpl* string, SearchType type, SearchCaseSensitive caseSensitive)
 {
-    String pattern;
+    RefPtr<StringImpl> pattern;
     switch (type) {
     case SearchType::Regex:
         pattern = string;
@@ -173,9 +173,9 @@ RegularExpression createRegularExpressionForString(const String& string, SearchT
     return RegularExpression(pattern, flags);
 }
 
-int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
+int countRegularExpressionMatches(const RegularExpression& regex, StringImpl* content)
 {
-    if (content.isEmpty())
+    if (isEmpty(content))
         return 0;
 
     int result = 0;
@@ -183,7 +183,7 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     unsigned start = 0;
     int matchLength;
     while ((position = regex.match(content, start, &matchLength)) != -1) {
-        if (start >= content.length())
+        if (start >= length(content))
             break;
         if (matchLength > 0)
             ++result;
@@ -192,7 +192,7 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     return result;
 }
 
-Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(StringImpl* text, StringImpl* query, const bool caseSensitive, const bool isRegex)
 {
     auto result = JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>::create();
     auto searchType = isRegex ? ContentSearchUtilities::SearchType::Regex : ContentSearchUtilities::SearchType::ContainsString;
@@ -203,10 +203,10 @@ Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(cons
     return result;
 }
 
-static String findMagicComment(const String& content, ASCIILiteral patternString)
+static RefPtr<StringImpl> findMagicComment(StringImpl* content, ASCIILiteral patternString)
 {
-    if (content.isEmpty())
-        return String();
+    if (isEmpty(content))
+        return nullptr;
 
     JSC::Yarr::ErrorCode error { JSC::Yarr::ErrorCode::NoError };
     YarrPattern pattern(patternString, JSC::Yarr::Flags::Multiline, error);
@@ -220,13 +220,13 @@ static String findMagicComment(const String& content, ASCIILiteral patternString
     std::array<unsigned, 4> matches;
     unsigned result = interpret(bytecodePattern.get(), content, 0, matches.data());
     if (result == offsetNoMatch)
-        return String();
+        return nullptr;
 
     ASSERT(matches[2] > 0 && matches[3] >= matches[2]);
-    return content.substring(matches[2], matches[3] - matches[2]);
+    return substring(content, matches[2], matches[3] - matches[2]);
 }
 
-String findStylesheetSourceMapURL(const String& content)
+RefPtr<StringImpl> findStylesheetSourceMapURL(StringImpl* content)
 {
     // "/*# <name>=<value> */" and deprecated "/*@"
     return findMagicComment(content, "/\\*[#@][\040\t]sourceMappingURL=[\040\t]*([^\\s\'\"]*)[\040\t]*\\*/"_s);

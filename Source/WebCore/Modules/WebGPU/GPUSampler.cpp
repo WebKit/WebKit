@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-GPUSampler::GPUSampler(Ref<WebGPU::Sampler>&& backing, String&& label, GPUDevice& device)
+GPUSampler::GPUSampler(Ref<WebGPU::Sampler>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_device(device)
@@ -48,12 +48,12 @@ GPUDevice* GPUSampler::device() const
     return m_device;
 }
 
-String GPUSampler::label() const
+RefPtr<StringImpl> GPUSampler::label() const
 {
     return m_label;
 }
 
-void GPUSampler::setLabel(String&& label)
+void GPUSampler::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));

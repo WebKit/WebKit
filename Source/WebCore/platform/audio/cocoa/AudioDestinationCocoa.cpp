@@ -135,9 +135,9 @@ MediaTime AudioDestinationCocoa::outputLatency() const
 }
 
 #if PLATFORM(IOS_FAMILY)
-void AudioDestinationCocoa::setSceneIdentifier(const String& identifier)
+void AudioDestinationCocoa::setSceneIdentifier(StringImpl* identifier)
 {
-    if (m_sceneIdentifier == identifier)
+    if (equal(m_sceneIdentifier, identifier))
         return;
 
     m_sceneIdentifier = identifier;

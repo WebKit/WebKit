@@ -30,20 +30,20 @@
 
 namespace WebCore {
 
-IDBError::IDBError(std::optional<ExceptionCode> code, const String& message)
+IDBError::IDBError(std::optional<ExceptionCode> code, StringImpl* message)
     : m_code(code)
     , m_message(message)
 {
 }
 
-String IDBError::name() const
+RefPtr<StringImpl> IDBError::name() const
 {
     if (!m_code)
         return { };
     return DOMException::name(m_code.value());
 }
 
-String IDBError::message() const
+RefPtr<StringImpl> IDBError::message() const
 {
     if (!m_code)
         return { };

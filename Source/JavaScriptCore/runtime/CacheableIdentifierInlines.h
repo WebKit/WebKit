@@ -162,7 +162,7 @@ inline void CacheableIdentifier::ensureIsCell(VM& vm)
         if (uid()->isSymbol())
             setCellBits(Symbol::create(vm, static_cast<SymbolImpl&>(*uid())));
         else
-            setCellBits(jsString(vm, String(static_cast<AtomStringImpl*>(uid()))));
+            setCellBits(jsString(vm, RefPtr<StringImpl> { uid() }));
     }
     ASSERT(isCell());
 }

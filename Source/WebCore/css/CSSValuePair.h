@@ -42,7 +42,7 @@ public:
     const CSSValue& second() const { return m_second; }
     CSSValue& second() { return m_second; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSValuePair&) const;
     bool canBeCoalesced() const;
 

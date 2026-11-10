@@ -47,13 +47,13 @@ namespace WebKit::Automation {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiInputActionsQueue);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiInputState);
 
-const Source* BidiInputState::find(const String& id) const
+const Source* BidiInputState::find(StringImpl* id) const
 {
     auto it = m_inputStateMap.find(id);
     return it == m_inputStateMap.end() ? nullptr : &it->value;
 }
 
-void BidiInputState::add(const String& id, Source source)
+void BidiInputState::add(StringImpl* id, Source source)
 {
     m_inputStateMap.set(id, source);
 }
@@ -182,9 +182,9 @@ static std::optional<double> integerValue(const JSON::Value& value, double min, 
 }
 
 // Returns: nullopt = property absent; error string = invalid; value otherwise.
-template<typename T> using PropertyResult = std::expected<std::optional<T>, String>;
+template<typename T> using PropertyResult = std::expected<std::optional<T>, RefPtr<StringImpl>>;
 
-static PropertyResult<uint64_t> optionalUnsigned(const JSON::Object& object, const String& name, double max = maxSafeInteger)
+static PropertyResult<uint64_t> optionalUnsigned(const JSON::Object& object, StringImpl* name, double max = maxSafeInteger)
 {
     RefPtr value = object.getValue(name);
     if (!value)
@@ -197,7 +197,7 @@ static PropertyResult<uint64_t> optionalUnsigned(const JSON::Object& object, con
     return std::optional<uint64_t> { static_cast<uint64_t>(*integer) };
 }
 
-static PropertyResult<double> optionalNumberInRange(const JSON::Object& object, const String& name, double min, double max)
+static PropertyResult<double> optionalNumberInRange(const JSON::Object& object, StringImpl* name, double min, double max)
 {
     RefPtr value = object.getValue(name);
     if (!value)
@@ -210,7 +210,7 @@ static PropertyResult<double> optionalNumberInRange(const JSON::Object& object, 
     return std::optional<double> { *number };
 }
 
-static PropertyResult<int> optionalIntegerInRange(const JSON::Object& object, const String& name, int min, int max)
+static PropertyResult<int> optionalIntegerInRange(const JSON::Object& object, StringImpl* name, int min, int max)
 {
     RefPtr value = object.getValue(name);
     if (!value)
@@ -224,9 +224,9 @@ static PropertyResult<int> optionalIntegerInRange(const JSON::Object& object, co
 }
 
 // https://w3c.github.io/webdriver/#dfn-process-a-pause-action
-static std::expected<void, String> processPauseAction(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processPauseAction(const JSON::Object& item, Action& action)
 {
-    auto duration = optionalUnsigned(item, "duration"_s);
+    auto duration = optionalUnsigned(item, "duration"_si);
     if (!duration)
         return makeUnexpected(duration.error());
 
@@ -234,38 +234,38 @@ static std::expected<void, String> processPauseAction(const JSON::Object& item, 
     return { };
 }
 
-static bool isSingleGraphemeCluster(const String& string)
+static bool isSingleGraphemeCluster(StringImpl* string)
 {
-    if (string.isEmpty())
+    if (isEmpty(string))
         return false;
     return WTF::numGraphemeClusters(string) == 1;
 }
 
 // is input.ElementOrigin (BiDi §7.9.2.1): { type: "element", element: script.SharedReference }.
-static std::optional<String> elementOriginSharedId(const JSON::Value& origin)
+static std::optional<RefPtr<StringImpl>> elementOriginSharedId(const JSON::Value& origin)
 {
     RefPtr object = origin.asObject();
-    if (!object || object->getString("type"_s) != "element"_s)
+    if (!object || !equal(object->getString("type"_si), "element"_s))
         return std::nullopt;
 
-    RefPtr element = object->getObject("element"_s);
+    RefPtr element = object->getObject("element"_si);
     if (!element)
         return std::nullopt;
 
-    RefPtr sharedId = element->getValue("sharedId"_s);
+    RefPtr sharedId = element->getValue("sharedId"_si);
     if (!sharedId || sharedId->type() != JSON::Value::Type::String)
         return std::nullopt;
 
-    RefPtr handle = element->getValue("handle"_s);
+    RefPtr handle = element->getValue("handle"_si);
     if (handle && handle->type() != JSON::Value::Type::String)
         return std::nullopt;
 
     return sharedId->asString();
 }
 
-static std::expected<void, String> processOrigin(const JSON::Object& item, Action& action, bool allowPointerOrigin)
+static std::expected<void, RefPtr<StringImpl>> processOrigin(const JSON::Object& item, Action& action, bool allowPointerOrigin)
 {
-    RefPtr origin = item.getValue("origin"_s);
+    RefPtr origin = item.getValue("origin"_si);
     if (!origin) {
         action.origin = OriginType::Viewport;
         return { };
@@ -273,12 +273,12 @@ static std::expected<void, String> processOrigin(const JSON::Object& item, Actio
 
     if (origin->type() == JSON::Value::Type::String) {
         auto string = origin->asString();
-        if (string == "viewport"_s) {
+        if (equal(string, "viewport"_s)) {
             action.origin = OriginType::Viewport;
             return { };
         }
 
-        if (string == "pointer"_s && allowPointerOrigin) {
+        if (equal(string, "pointer"_s) && allowPointerOrigin) {
             action.origin = OriginType::Pointer;
             return { };
         }
@@ -297,51 +297,51 @@ static std::expected<void, String> processOrigin(const JSON::Object& item, Actio
 
 // https://w3c.github.io/webdriver/#dfn-process-a-pointer-move-action
 // The classic spec validates each property independently.
-static std::expected<void, String> processPointerProperties(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processPointerProperties(const JSON::Object& item, Action& action)
 {
     auto& p = action.properties;
 
-    auto width = optionalUnsigned(item, "width"_s);
+    auto width = optionalUnsigned(item, "width"_si);
     if (!width)
         return makeUnexpected(width.error());
     p.width = *width;
 
-    auto height = optionalUnsigned(item, "height"_s);
+    auto height = optionalUnsigned(item, "height"_si);
     if (!height)
         return makeUnexpected(height.error());
     p.height = *height;
 
-    auto pressure = optionalNumberInRange(item, "pressure"_s, 0, 1);
+    auto pressure = optionalNumberInRange(item, "pressure"_si, 0, 1);
     if (!pressure)
         return makeUnexpected(pressure.error());
     p.pressure = *pressure;
 
-    auto tangentialPressure = optionalNumberInRange(item, "tangentialPressure"_s, -1, 1);
+    auto tangentialPressure = optionalNumberInRange(item, "tangentialPressure"_si, -1, 1);
     if (!tangentialPressure)
         return makeUnexpected(tangentialPressure.error());
     p.tangentialPressure = *tangentialPressure;
 
-    auto tiltX = optionalIntegerInRange(item, "tiltX"_s, -90, 90);
+    auto tiltX = optionalIntegerInRange(item, "tiltX"_si, -90, 90);
     if (!tiltX)
         return makeUnexpected(tiltX.error());
     p.tiltX = *tiltX;
 
-    auto tiltY = optionalIntegerInRange(item, "tiltY"_s, -90, 90);
+    auto tiltY = optionalIntegerInRange(item, "tiltY"_si, -90, 90);
     if (!tiltY)
         return makeUnexpected(tiltY.error());
     p.tiltY = *tiltY;
 
-    auto twist = optionalIntegerInRange(item, "twist"_s, 0, 359);
+    auto twist = optionalIntegerInRange(item, "twist"_si, 0, 359);
     if (!twist)
         return makeUnexpected(twist.error());
     p.twist = *twist;
 
-    auto altitudeAngle = optionalNumberInRange(item, "altitudeAngle"_s, 0, std::numbers::pi / 2);
+    auto altitudeAngle = optionalNumberInRange(item, "altitudeAngle"_si, 0, std::numbers::pi / 2);
     if (!altitudeAngle)
         return makeUnexpected(altitudeAngle.error());
     p.altitudeAngle = *altitudeAngle;
 
-    auto azimuthAngle = optionalNumberInRange(item, "azimuthAngle"_s, 0, 2 * std::numbers::pi);
+    auto azimuthAngle = optionalNumberInRange(item, "azimuthAngle"_si, 0, 2 * std::numbers::pi);
     if (!azimuthAngle)
         return makeUnexpected(azimuthAngle.error());
     p.azimuthAngle = *azimuthAngle;
@@ -349,9 +349,9 @@ static std::expected<void, String> processPointerProperties(const JSON::Object& 
     return { };
 }
 
-static std::expected<void, String> processButton(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processButton(const JSON::Object& item, Action& action)
 {
-    RefPtr value = item.getValue("button"_s);
+    RefPtr value = item.getValue("button"_si);
     auto button = value ? integerValue(*value, 0, maxSafeInteger) : std::nullopt;
     if (!button)
         return makeUnexpected("'button' must be an integer between 0 and 2^53-1"_s);
@@ -360,25 +360,25 @@ static std::expected<void, String> processButton(const JSON::Object& item, Actio
     return { };
 }
 
-static std::expected<void, String> processPointerAction(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processPointerAction(const JSON::Object& item, Action& action)
 {
-    auto subtype = item.getString("type"_s);
-    if (subtype == "pause"_s) {
+    auto subtype = item.getString("type"_si);
+    if (equal(subtype, "pause"_s)) {
         action.type = ActionType::Pause;
         return processPauseAction(item, action);
     }
 
-    if (subtype == "pointerDown"_s || subtype == "pointerUp"_s) {
-        action.type = subtype == "pointerDown"_s ? ActionType::PointerDown : ActionType::PointerUp;
+    if (equal(subtype, "pointerDown"_s) || equal(subtype, "pointerUp"_s)) {
+        action.type = equal(subtype, "pointerDown"_s) ? ActionType::PointerDown : ActionType::PointerUp;
         if (auto result = processButton(item, action); !result)
             return result;
         return processPointerProperties(item, action);
     }
 
-    if (subtype == "pointerMove"_s) {
+    if (equal(subtype, "pointerMove"_s)) {
         action.type = ActionType::PointerMove;
 
-        auto duration = optionalUnsigned(item, "duration"_s);
+        auto duration = optionalUnsigned(item, "duration"_si);
         if (!duration)
             return makeUnexpected(duration.error());
         action.duration = *duration;
@@ -386,8 +386,8 @@ static std::expected<void, String> processPointerAction(const JSON::Object& item
         if (auto result = processOrigin(item, action, /* allowPointerOrigin */ true); !result)
             return result;
 
-        RefPtr x = item.getValue("x"_s);
-        RefPtr y = item.getValue("y"_s);
+        RefPtr x = item.getValue("x"_si);
+        RefPtr y = item.getValue("y"_si);
         auto xNumber = x ? numberValue(*x) : std::nullopt;
         auto yNumber = y ? numberValue(*y) : std::nullopt;
         if (!xNumber || !yNumber)
@@ -398,7 +398,7 @@ static std::expected<void, String> processPointerAction(const JSON::Object& item
         return processPointerProperties(item, action);
     }
 
-    if (subtype == "pointerCancel"_s) {
+    if (equal(subtype, "pointerCancel"_s)) {
         action.type = ActionType::PointerCancel;
         return { };
     }
@@ -406,20 +406,20 @@ static std::expected<void, String> processPointerAction(const JSON::Object& item
     return makeUnexpected("Unknown pointer action type"_s);
 }
 
-static std::expected<void, String> processWheelAction(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processWheelAction(const JSON::Object& item, Action& action)
 {
-    auto subtype = item.getString("type"_s);
-    if (subtype == "pause"_s) {
+    auto subtype = item.getString("type"_si);
+    if (equal(subtype, "pause"_s)) {
         action.type = ActionType::Pause;
         return processPauseAction(item, action);
     }
 
-    if (subtype != "scroll"_s)
+    if (!equal(subtype, "scroll"_s))
         return makeUnexpected("Unknown wheel action type"_s);
 
     action.type = ActionType::Scroll;
 
-    auto duration = optionalUnsigned(item, "duration"_s);
+    auto duration = optionalUnsigned(item, "duration"_si);
     if (!duration)
         return makeUnexpected(duration.error());
     action.duration = *duration;
@@ -429,7 +429,7 @@ static std::expected<void, String> processWheelAction(const JSON::Object& item, 
         return result;
 
     auto integerProperty = [&](ASCIILiteral name) -> std::optional<int64_t> {
-        RefPtr value = item.getValue(String { name });
+        RefPtr value = item.getValue(StringImpl::create(name).ptr());
         auto integer = value ? integerValue(*value, -maxSafeInteger, maxSafeInteger) : std::nullopt;
         return integer ? std::optional<int64_t> { static_cast<int64_t>(*integer) } : std::nullopt;
     };
@@ -448,20 +448,20 @@ static std::expected<void, String> processWheelAction(const JSON::Object& item, 
     return { };
 }
 
-static std::expected<void, String> processKeyAction(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processKeyAction(const JSON::Object& item, Action& action)
 {
-    auto subtype = item.getString("type"_s);
-    if (subtype == "pause"_s) {
+    auto subtype = item.getString("type"_si);
+    if (equal(subtype, "pause"_s)) {
         action.type = ActionType::Pause;
         return processPauseAction(item, action);
     }
 
-    if (subtype != "keyDown"_s && subtype != "keyUp"_s)
+    if (!equal(subtype, "keyDown"_s) && !equal(subtype, "keyUp"_s))
         return makeUnexpected("Unknown key action type"_s);
 
-    action.type = subtype == "keyDown"_s ? ActionType::KeyDown : ActionType::KeyUp;
+    action.type = equal(subtype, "keyDown"_s) ? ActionType::KeyDown : ActionType::KeyUp;
 
-    RefPtr value = item.getValue("value"_s);
+    RefPtr value = item.getValue("value"_si);
     // The spec currently leaves open whether "value" must be a single Unicode code point or a
     // single grapheme cluster (open editorial issue on dfn-process-a-key-action). We follow the
     // grapheme-cluster interpretation already used for classic Automation (see
@@ -473,9 +473,9 @@ static std::expected<void, String> processKeyAction(const JSON::Object& item, Ac
     return { };
 }
 
-static std::expected<void, String> processNullAction(const JSON::Object& item, Action& action)
+static std::expected<void, RefPtr<StringImpl>> processNullAction(const JSON::Object& item, Action& action)
 {
-    if (item.getString("type"_s) != "pause"_s)
+    if (!equal(item.getString("type"_si), "pause"_s))
         return makeUnexpected("Null input sources only support 'pause'"_s);
 
     action.type = ActionType::Pause;
@@ -483,29 +483,29 @@ static std::expected<void, String> processNullAction(const JSON::Object& item, A
 }
 
 // https://w3c.github.io/webdriver/#dfn-process-an-input-source-action-sequence
-static std::expected<Vector<Action>, String> processInputSourceActionSequence(BidiInputState& state, const JSON::Value& sequenceValue)
+static std::expected<Vector<Action>, RefPtr<StringImpl>> processInputSourceActionSequence(BidiInputState& state, const JSON::Value& sequenceValue)
 {
     RefPtr sequence = sequenceValue.asObject();
     if (!sequence)
         return makeUnexpected("Each input source must be an object"_s);
 
-    RefPtr typeValue = sequence->getValue("type"_s);
+    RefPtr typeValue = sequence->getValue("type"_si);
     if (!typeValue || typeValue->type() != JSON::Value::Type::String)
         return makeUnexpected("'type' must be a string"_s);
     auto typeString = typeValue->asString();
     SourceType type;
-    if (typeString == "none"_s)
+    if (equal(typeString, "none"_s))
         type = SourceType::None;
-    else if (typeString == "key"_s)
+    else if (equal(typeString, "key"_s))
         type = SourceType::Key;
-    else if (typeString == "pointer"_s)
+    else if (equal(typeString, "pointer"_s))
         type = SourceType::Pointer;
-    else if (typeString == "wheel"_s)
+    else if (equal(typeString, "wheel"_s))
         type = SourceType::Wheel;
     else
         return makeUnexpected("'type' must be one of 'none', 'key', 'pointer', 'wheel'"_s);
 
-    RefPtr idValue = sequence->getValue("id"_s);
+    RefPtr idValue = sequence->getValue("id"_si);
     if (!idValue || idValue->type() != JSON::Value::Type::String)
         return makeUnexpected("'id' must be a string"_s);
     auto id = idValue->asString();
@@ -513,21 +513,21 @@ static std::expected<Vector<Action>, String> processInputSourceActionSequence(Bi
     PointerType pointerType = PointerType::Mouse;
     if (type == SourceType::Pointer) {
         // https://w3c.github.io/webdriver/#dfn-process-pointer-parameters
-        if (RefPtr parameters = sequence->getValue("parameters"_s)) {
+        if (RefPtr parameters = sequence->getValue("parameters"_si)) {
             RefPtr parametersObject = parameters->asObject();
             if (!parametersObject)
                 return makeUnexpected("'parameters' must be an object"_s);
 
-            if (RefPtr pointerTypeValue = parametersObject->getValue("pointerType"_s)) {
+            if (RefPtr pointerTypeValue = parametersObject->getValue("pointerType"_si)) {
                 if (pointerTypeValue->type() != JSON::Value::Type::String)
                     return makeUnexpected("'pointerType' must be a string"_s);
 
                 auto value = pointerTypeValue->asString();
-                if (value == "mouse"_s)
+                if (equal(value, "mouse"_s))
                     pointerType = PointerType::Mouse;
-                else if (value == "pen"_s)
+                else if (equal(value, "pen"_s))
                     pointerType = PointerType::Pen;
-                else if (value == "touch"_s)
+                else if (equal(value, "touch"_s))
                     pointerType = PointerType::Touch;
                 else
                     return makeUnexpected("'pointerType' must be 'mouse', 'pen' or 'touch'"_s);
@@ -545,7 +545,7 @@ static std::expected<Vector<Action>, String> processInputSourceActionSequence(Bi
     } else
         state.add(id, { type, pointerType });
 
-    RefPtr actionsValue = sequence->getValue("actions"_s);
+    RefPtr actionsValue = sequence->getValue("actions"_si);
     RefPtr actionItems = actionsValue ? actionsValue->asArray() : nullptr;
     if (!actionItems)
         return makeUnexpected("'actions' must be an array"_s);
@@ -561,7 +561,7 @@ static std::expected<Vector<Action>, String> processInputSourceActionSequence(Bi
         action.sourceType = type;
         action.pointerType = pointerType;
 
-        std::expected<void, String> result;
+        std::expected<void, RefPtr<StringImpl>> result;
         switch (type) {
         case SourceType::None: result = processNullAction(*actionItem, action); break;
         case SourceType::Key: result = processKeyAction(*actionItem, action); break;
@@ -577,7 +577,7 @@ static std::expected<Vector<Action>, String> processInputSourceActionSequence(Bi
     return actions;
 }
 
-static std::expected<ActionsByTick, String> extractActionSequence(BidiInputState& state, const JSON::Array& actions)
+static std::expected<ActionsByTick, RefPtr<StringImpl>> extractActionSequence(BidiInputState& state, const JSON::Array& actions)
 {
     ActionsByTick actionsByTick;
     for (auto& sequence : actions) {
@@ -599,12 +599,12 @@ static std::expected<ActionsByTick, String> extractActionSequence(BidiInputState
 #if ENABLE(WEBDRIVER_ACTIONS_API)
 
 // https://w3c.github.io/webdriver/#keyboard-actions
-static std::optional<VirtualKey> virtualKeyForKeyValue(const String& value)
+static std::optional<VirtualKey> virtualKeyForKeyValue(StringImpl* value)
 {
-    if (value.length() != 1)
+    if (length(value) != 1)
         return std::nullopt;
 
-    switch (value[0]) {
+    switch (codeUnitAt(value, 0)) {
     case 0xE001: return VirtualKey::Cancel;
     case 0xE002: return VirtualKey::Help;
     case 0xE003: return VirtualKey::Backspace;
@@ -696,7 +696,7 @@ static std::optional<MouseButton> mouseButtonForW3CButton(uint64_t button)
 // https://w3c.github.io/webdriver/#dfn-dispatch-tick-actions
 static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksToKeyFrames(BidiInputState& state, const ActionsByTick& actionsByTick, Vector<Action>* cancelEntries)
 {
-    HashMap<String, SimulatedInputSourceState> projectedSourceStates;
+    HashMap<RefPtr<StringImpl>, SimulatedInputSourceState> projectedSourceStates;
     auto currentState = [&](const Action& action) -> SimulatedInputSourceState& {
         return projectedSourceStates.ensure(action.id, [&] {
             return state.simulatedSource(action).state;
@@ -862,20 +862,20 @@ BidiInputAgent::BidiInputAgent(WebAutomationSession& session, BackendDispatcher&
 
 BidiInputAgent::~BidiInputAgent() = default;
 
-Automation::BidiInputState& BidiInputAgent::inputStateForTopLevelContext(const String& pageHandle)
+Automation::BidiInputState& BidiInputAgent::inputStateForTopLevelContext(StringImpl* pageHandle)
 {
     return m_inputStates.ensure(pageHandle, [] {
         return Automation::BidiInputState::create();
     }).iterator->value.get();
 }
 
-void BidiInputAgent::willClosePage(const String& pageHandle)
+void BidiInputAgent::willClosePage(StringImpl* pageHandle)
 {
     m_inputStates.remove(pageHandle);
 }
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
-static void dispatchKeyFrames(WebAutomationSession& session, Automation::BidiInputState& state, const String& pageHandle, const String& frameHandle, CommandResult<Vector<SimulatedInputKeyFrame>>&& keyFrames, Function<void()>&& beforeReply, CommandCallback<void>&& callback, CompletionHandler<void()>&& done)
+static void dispatchKeyFrames(WebAutomationSession& session, Automation::BidiInputState& state, StringImpl* pageHandle, StringImpl* frameHandle, CommandResult<Vector<SimulatedInputKeyFrame>>&& keyFrames, Function<void()>&& beforeReply, CommandCallback<void>&& callback, CompletionHandler<void()>&& done)
 {
     if (!keyFrames) {
         callback(makeUnexpected(keyFrames.error()));
@@ -883,7 +883,7 @@ static void dispatchKeyFrames(WebAutomationSession& session, Automation::BidiInp
     }
 
     // The keyframes reference SimulatedInputSources owned by the state.
-    auto reply = [protectedSession = Ref { session }, inputState = Ref { state }, pageHandle, beforeReply = WTF::move(beforeReply), callback = WTF::move(callback), done = WTF::move(done)](std::optional<AutomationCommandError> error) mutable {
+    auto reply = [protectedSession = Ref { session }, inputState = Ref { state }, pageHandle = RefPtr { pageHandle }, beforeReply = WTF::move(beforeReply), callback = WTF::move(callback), done = WTF::move(done)](std::optional<AutomationCommandError> error) mutable {
         // https://w3c.github.io/webdriver-bidi/#get-a-navigable
         RefPtr page = protectedSession->webPageProxyForHandle(pageHandle);
         if (!page || page->isClosed())
@@ -912,7 +912,7 @@ static void dispatchKeyFrames(WebAutomationSession& session, Automation::BidiInp
 }
 #endif
 
-void BidiInputAgent::performActions(const String& context, Ref<JSON::Array>&& actions, CommandCallback<void>&& callback)
+void BidiInputAgent::performActions(StringImpl* context, Ref<JSON::Array>&& actions, CommandCallback<void>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
@@ -944,7 +944,7 @@ void BidiInputAgent::performActions(const String& context, Ref<JSON::Array>&& ac
 #endif
 }
 
-void BidiInputAgent::releaseActions(const String& context, CommandCallback<void>&& callback)
+void BidiInputAgent::releaseActions(StringImpl* context, CommandCallback<void>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
@@ -980,7 +980,7 @@ void BidiInputAgent::releaseActions(const String& context, CommandCallback<void>
 #endif
 }
 
-void BidiInputAgent::setFiles(const String&, Ref<JSON::Object>&&, Ref<JSON::Array>&&, CommandCallback<void>&& callback)
+void BidiInputAgent::setFiles(StringImpl*, Ref<JSON::Object>&&, Ref<JSON::Array>&&, CommandCallback<void>&& callback)
 {
     // FIXME: Implement input.setFiles (https://webkit.org/b/287926).
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);

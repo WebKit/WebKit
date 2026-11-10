@@ -1892,7 +1892,7 @@ TEST(WKWebExtensionAPIScripting, MatchOriginAsFallbackWithBlob)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } }
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(pageScript) } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *contentScriptsManifest = @{

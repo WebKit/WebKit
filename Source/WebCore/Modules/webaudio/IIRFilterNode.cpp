@@ -89,21 +89,21 @@ static bool isFilterStable(const Vector<double>& feedback)
 ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& scriptExecutionContext, BaseAudioContext& context, IIRFilterOptions&& options)
 {
     if (!options.feedforward.size() || options.feedforward.size() > IIRFilter::maxOrder)
-        return Exception { ExceptionCode::NotSupportedError, "feedforward array must have a length between 1 and 20"_s };
+        return Exception { ExceptionCode::NotSupportedError, "feedforward array must have a length between 1 and 20"_si };
 
     auto nonZeroValueIndex = options.feedforward.findIf([](auto& value) { return !!value; });
     if (nonZeroValueIndex == notFound)
-        return Exception { ExceptionCode::InvalidStateError, "feedforward array must contain a non-zero value"_s };
+        return Exception { ExceptionCode::InvalidStateError, "feedforward array must contain a non-zero value"_si };
 
     if (!options.feedback.size() || options.feedback.size() > IIRFilter::maxOrder)
-        return Exception { ExceptionCode::NotSupportedError, "feedback array must have a length between 1 and 20"_s };
+        return Exception { ExceptionCode::NotSupportedError, "feedback array must have a length between 1 and 20"_si };
 
     if (!options.feedback[0])
-        return Exception { ExceptionCode::InvalidStateError, "first value of feedback array cannot be zero"_s };
+        return Exception { ExceptionCode::InvalidStateError, "first value of feedback array cannot be zero"_si };
 
     bool isFilterStable = WebCore::isFilterStable(options.feedback);
     if (!isFilterStable)
-        scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "IIRFilter is unstable with provided feedback coefficients"_s);
+        scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "IIRFilter is unstable with provided feedback coefficients"_si);
 
     auto node = adoptRef(*new IIRFilterNode(context, options.feedforward, options.feedback, isFilterStable));
 
@@ -126,7 +126,7 @@ ExceptionOr<void> IIRFilterNode::getFrequencyResponse(Float32Array& frequencyHz,
 {
     auto expectedLength = frequencyHz.length();
     if (magResponse.length() != expectedLength || phaseResponse.length() != expectedLength)
-        return Exception { ExceptionCode::InvalidAccessError, "Arrays must have the same length"_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Arrays must have the same length"_si };
 
     // Nothing to do if the length is 0.
     if (expectedLength > 0)

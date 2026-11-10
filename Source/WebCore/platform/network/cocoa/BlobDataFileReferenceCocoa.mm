@@ -35,17 +35,17 @@ namespace WebCore {
 
 void BlobDataFileReference::generateReplacementFile()
 {
-    ASSERT(m_replacementPath.isNull());
+    ASSERT(!m_replacementPath);
     ASSERT(m_replacementShouldBeGenerated);
 
     prepareForFileAccess();
 
     auto generatedFile = FileSystem::createTemporaryZipArchive(m_path);
-    if (!generatedFile.isNull())
+    if (generatedFile)
         m_replacementPath = WTF::move(generatedFile);
 
     m_replacementShouldBeGenerated = false;
-    if (!m_replacementPath.isNull()) {
+    if (m_replacementPath) {
         if (auto fileSize = FileSystem::fileSize(m_replacementPath))
             m_size = *fileSize;
     }

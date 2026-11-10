@@ -117,7 +117,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
         ASSERT(existingSharedProcess->isSharedProcess());
         RELEASE_ASSERT(!existingSharedProcess->process().isInProcessCache());
         existingSharedProcess->process().addSharedProcessDomain(site.domain());
-        BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", site.loggingString().utf8(), existingSharedProcess->process().processID(), m_sharedProcessSites.size());
+        BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", utf8(site.loggingString()), existingSharedProcess->process().processID(), m_sharedProcessSites.size());
         return completionHandler(existingSharedProcess.get());
     }
 
@@ -128,7 +128,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     ASSERT(frameProcess->process().isSharedProcess());
     frameProcess->process().addSharedProcessDomain(site.domain());
     m_sharedProcess = frameProcess.ptr();
-    BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: created shared process %d for site %" SENSITIVE_LOG_STRING, process->processID(), site.loggingString().utf8());
+    BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: created shared process %d for site %" SENSITIVE_LOG_STRING, process->processID(), utf8(site.loggingString()));
     completionHandler(frameProcess.ptr());
 }
 
@@ -150,7 +150,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
             ASSERT(&sharedProcess->process() == &process);
             if (m_sharedProcessSites.add(site).isNewEntry) {
                 process.addSharedProcessDomain(site.domain());
-                BROWSINGCONTEXTGROUP_RELEASE_LOG("ensureProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", site.loggingString().utf8(), process.processID(), m_sharedProcessSites.size());
+                BROWSINGCONTEXTGROUP_RELEASE_LOG("ensureProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", utf8(site.loggingString()), process.processID(), m_sharedProcessSites.size());
             }
             return sharedProcess.releaseNonNull();
         }

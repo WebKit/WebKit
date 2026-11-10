@@ -64,15 +64,15 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item>>> getDOMStorageItems(Ref<JSON::Object>&& storageId);
-    Inspector::Protocol::ErrorStringOr<void> setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value);
-    Inspector::Protocol::ErrorStringOr<void> removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key);
+    Inspector::Protocol::ErrorStringOr<void> setDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key, StringImpl* value);
+    Inspector::Protocol::ErrorStringOr<void> removeDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key);
     Inspector::Protocol::ErrorStringOr<void> clearDOMStorageItems(Ref<JSON::Object>&& storageId);
 
     // InspectorInstrumentation
-    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
+    void didDispatchDOMStorageEvent(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StorageType, const SecurityOrigin&);
 
     // CommandLineAPI
-    static String storageId(Storage&);
+    static RefPtr<StringImpl> storageId(Storage&);
     static Ref<Inspector::Protocol::DOMStorage::StorageId> storageId(const SecurityOrigin&, bool isLocalStorage);
 
 private:

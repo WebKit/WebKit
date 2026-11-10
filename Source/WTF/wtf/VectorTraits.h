@@ -28,8 +28,6 @@
 
 namespace WTF {
 
-    class AtomString;
-
     template<bool isPod, typename T>
     struct VectorTraitsBase;
 
@@ -75,7 +73,6 @@ namespace WTF {
     template<typename P> struct VectorTraits<UniqueRef<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<std::reference_wrapper<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
-    template<> struct VectorTraits<AtomString> : SimpleClassVectorTraits { };
 
     template<> struct VectorTraits<ASCIILiteral> : VectorTraitsBase<false, void> {
         static constexpr bool canInitializeWithMemset = true;

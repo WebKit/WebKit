@@ -254,9 +254,9 @@ CachedResourceLoader::~CachedResourceLoader()
     m_unusedPreloadsTimer.stop();
 }
 
-CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const
+CachedResource* CachedResourceLoader::cachedResource(StringImpl* resourceURL) const
 {
-    ASSERT(!resourceURL.isNull());
+    ASSERT(resourceURL);
     RefPtr document = m_document;
     ASSERT(document);
     return document ? cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(document->encodingParseURL(resourceURL))) : nullptr;
@@ -271,7 +271,7 @@ CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
 URL CachedResourceLoader::urlWithRequestedFragmentIdentifier(const CachedResource& resource) const
 {
     URL url = resource.url();
-    if (auto fragmentIdentifier = m_documentResourceFragmentIdentifiers.get(url.string()); !fragmentIdentifier.isNull())
+    if (auto fragmentIdentifier = m_documentResourceFragmentIdentifiers.get(url.string()); fragmentIdentifier)
         url.setFragmentIdentifier(fragmentIdentifier);
     return url;
 }
@@ -636,7 +636,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
             ASSERT(type != CachedResource::Type::MainResource);
             if (RefPtr frame = this->frame()) {
                 if (RefPtr frameDocument = frame->document())
-                    frameDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "No-Cors mode requires follow redirect mode"_s);
+                    frameDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "No-Cors mode requires follow redirect mode"_si);
             }
             return false;
         }
@@ -704,15 +704,15 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 }
 
 // Created by binding generator.
-String convertEnumerationToString(FetchOptions::Destination);
-String convertEnumerationToString(FetchOptions::Mode);
+RefPtr<StringImpl> convertEnumerationToString(FetchOptions::Destination);
+RefPtr<StringImpl> convertEnumerationToString(FetchOptions::Mode);
 
-const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
+const RefPtr<StringImpl>& convertEnumerationToString(FetchMetadataSite enumerationValue)
 {
-    static NeverDestroyed<const String> none(MAKE_STATIC_STRING_IMPL("none"));
-    static NeverDestroyed<const String> sameOrigin(MAKE_STATIC_STRING_IMPL("same-origin"));
-    static NeverDestroyed<const String> sameSite(MAKE_STATIC_STRING_IMPL("same-site"));
-    static NeverDestroyed<const String> crossSite(MAKE_STATIC_STRING_IMPL("cross-site"));
+    static NeverDestroyed<const RefPtr<StringImpl>> none(MAKE_STATIC_STRING_IMPL("none"));
+    static NeverDestroyed<const RefPtr<StringImpl>> sameOrigin(MAKE_STATIC_STRING_IMPL("same-origin"));
+    static NeverDestroyed<const RefPtr<StringImpl>> sameSite(MAKE_STATIC_STRING_IMPL("same-site"));
+    static NeverDestroyed<const RefPtr<StringImpl>> crossSite(MAKE_STATIC_STRING_IMPL("cross-site"));
 
     switch (enumerationValue) {
     case FetchMetadataSite::None:
@@ -737,10 +737,10 @@ static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const Re
     if (!requestOrigin->isPotentiallyTrustworthy())
         return;
 
-    String destinationString;
+    RefPtr<StringImpl> destinationString;
     // The Fetch IDL documents this as "" while FetchMetadata expects "empty".
     if (options.destination == FetchOptions::Destination::EmptyString || options.loadedFromFetch == LoadedFromFetch::Yes)
-        destinationString = "empty"_s;
+        destinationString = "empty"_si;
     else
         destinationString = convertEnumerationToString(options.destination);
 
@@ -903,7 +903,7 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
         return true;
 
     URL url = resource.url();
-    if (auto& fragmentIdentifier = request.fragmentIdentifier(); !fragmentIdentifier.isNull())
+    if (auto& fragmentIdentifier = request.fragmentIdentifier(); fragmentIdentifier)
         url.setFragmentIdentifier(fragmentIdentifier);
 
     ResourceRequest newRequest = ResourceRequest(WTF::move(url));
@@ -920,7 +920,7 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
     return !newRequest.isNull();
 }
 
-void CachedResourceLoader::notifyInspectorOfFragmentIdentifier(CachedResource& resource, const String& fragmentIdentifier)
+void CachedResourceLoader::notifyInspectorOfFragmentIdentifier(CachedResource& resource, StringImpl* fragmentIdentifier)
 {
     if (!InspectorInstrumentation::hasFrontends()) [[likely]]
         return;
@@ -1164,9 +1164,9 @@ NODELETE static bool computeMayAddToMemoryCache(const CachedResourceRequest& new
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static Vector<String> blockingContentRuleListIdentifiers(const ContentRuleListResults& results)
+static Vector<RefPtr<StringImpl>> blockingContentRuleListIdentifiers(const ContentRuleListResults& results)
 {
-    Vector<String> identifiers;
+    Vector<RefPtr<StringImpl>> identifiers;
     for (auto& pair : results.results) {
         if (pair.second.blockedLoad)
             identifiers.append(pair.first);
@@ -1181,23 +1181,23 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     RefPtr framePtr = this->frame();
     if (!framePtr) {
         CACHEDRESOURCELOADER_RELEASE_LOG("requestResource: failed because no frame");
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Invalid loader state"_s });
+        return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Invalid loader state"_si });
     }
     Ref frame = framePtr.releaseNonNull();
 
     RefPtr pagePtr = frame->page();
     if (!pagePtr) {
         CACHEDRESOURCELOADER_RELEASE_LOG("requestResource: failed because no page");
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Invalid loader state"_s });
+        return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Invalid loader state"_si });
     }
     Ref page = pagePtr.releaseNonNull();
 
     if (!url.isValid()) {
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: URL is invalid", frame.get());
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
+        return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "URL is invalid"_si });
     }
 
-    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().utf8(), request.charset().utf8(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
+    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", utf8(url.stringCenterEllipsizedToLength()), utf8(request.charset()), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
 
     request.setDestinationIfNotSet(destinationForType(type, frame));
 
@@ -1214,7 +1214,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     if (request.options().destination == FetchOptions::Destination::Document || request.options().destination == FetchOptions::Destination::Iframe) {
         // FIXME: Identify HSTS cases and avoid adding the header. <https://bugs.webkit.org/show_bug.cgi?id=157885>
         if (!url.protocolIs("https"_s))
-            request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, "1"_s);
+            request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, "1"_si);
     }
 
     bool isRequestUpgradable { false };
@@ -1238,7 +1238,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     // We are passing url as well as request, as request url may contain a fragment identifier.
     if (!canRequest(type, url, request.options(), forPreload, isRequestUpgradable ? MixedContentChecker::IsUpgradable::Yes : MixedContentChecker::IsUpgradable::No, request.isLinkPreload(), request.resourceRequest().targetAddressSpace())) {
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Not allowed to request resource", frame.get());
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
+        return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Not allowed to request resource"_si, ResourceError::Type::AccessControl });
     }
 
     if (!ResourceLoader::isPortAllowed(url)) {
@@ -1271,8 +1271,8 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
             auto results = userContentProvider->processContentRuleListsForLoad(page, resourceRequest.url(), resourceType, *documentLoader, redirectFromURL);
             madeHTTPS = results.summary.madeHTTPS;
             bool shouldBlock = results.shouldBlock();
-            Vector<String> blockingIdentifiers = shouldBlock ? blockingContentRuleListIdentifiers(results) : Vector<String> { };
-            std::optional<String> consoleMessage;
+            Vector<RefPtr<StringImpl>> blockingIdentifiers = shouldBlock ? blockingContentRuleListIdentifiers(results) : Vector<RefPtr<StringImpl>> { };
+            std::optional<RefPtr<StringImpl>> consoleMessage;
             if (shouldBlock && document)
                 consoleMessage = ContentExtensions::customTrackerBlockingMessageForConsole(results, resourceRequest.url());
             request.applyResults(WTF::move(results), page.ptr());
@@ -1282,18 +1282,18 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
                 if (type == CachedResource::Type::MainResource) {
                     auto resource = createResource(type, WTF::move(request), page->sessionID(), protect(page->cookieJar()).ptr(), page->settings(), document.get());
                     resource->error(CachedResource::Status::LoadError);
-                    resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
+                    resource->setResourceError(ResourceError(StringImpl::create(ContentExtensions::WebKitContentBlockerDomain).ptr(), 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
                     return WTF::move(resource);
                 }
                 if (document && consoleMessage)
                     document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTF::move(*consoleMessage));
-                return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
+                return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Resource blocked by content blocker"_si, ResourceError::Type::AccessControl });
             }
             if (type == CachedResource::Type::MainResource && RegistrableDomain { resourceRequest.url() } != originalDomain) {
                 FrameLoadRequest frameLoadRequest(frame, ResourceRequest(URL { resourceRequest.url() }));
                 frameLoadRequest.setIsContentRuleListRedirect(true);
                 frame->loader().load(WTF::move(frameLoadRequest));
-                return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Loading in a new process"_s, ResourceError::Type::Cancellation });
+                return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Loading in a new process"_si, ResourceError::Type::Cancellation });
             }
         }
 #endif
@@ -1369,7 +1369,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), document.get());
 
     bool ignoreForRequestCount = request.ignoreForRequestCount();
-    String fragmentIdentifier = request.fragmentIdentifier();
+    RefPtr<StringImpl> fragmentIdentifier = request.fragmentIdentifier();
     bool hiddenFromInspector = request.resourceRequest().hiddenFromInspector();
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
@@ -1481,7 +1481,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
             auto resourceError = resource->resourceError();
             // Synchronous cancellations are likely due to access control.
             if (resourceError.isNull() || resourceError.isCancellation())
-                return makeUnexpected(ResourceError { String(), 0, url, String(), ResourceError::Type::AccessControl });
+                return makeUnexpected(ResourceError { nullString(), 0, url, nullString(), ResourceError::Type::AccessControl });
             return makeUnexpected(resourceError);
         }
     } else if (policy == Use && !ignoreForRequestCount && resource->isLoading() && resource->loader()) {
@@ -1500,9 +1500,9 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     if (document && !document->loadEventFinished() && !resource->resourceRequest().url().protocolIsData())
         m_validatedURLs.add(resource->resourceRequest().url());
 
-    ASSERT(resource->url() == url.string());
+    ASSERT(equal(resource->url().string(), url.string()));
     bool isNewDocumentResource = m_documentResources.set(resource->url().string(), CachedResourceHandle { *resource }).isNewEntry;
-    if (!fragmentIdentifier.isEmpty()) {
+    if (!isEmpty(fragmentIdentifier)) {
         bool isFirstFragmentIdentifier = m_documentResourceFragmentIdentifiers.add(resource->url().string(), fragmentIdentifier).isNewEntry;
         if (isFirstFragmentIdentifier && !isNewDocumentResource && policy == Use && !hiddenFromInspector)
             notifyInspectorOfFragmentIdentifier(*resource, fragmentIdentifier);
@@ -1773,7 +1773,7 @@ void CachedResourceLoader::printAccessDeniedMessage(const URL& url) const
     if (!frame)
         return;
 
-    String message;
+    RefPtr<StringImpl> message;
     RefPtr document = m_document;
     if (!document || document->url().isNull())
         message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), '.');
@@ -1952,12 +1952,12 @@ void CachedResourceLoader::updateRenderingOfImages()
 ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request)
 {
     if (InspectorInstrumentation::willIntercept(protect(frame()).get(), request.resourceRequest()))
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, request.resourceRequest().url(), "Inspector intercept"_s });
+        return makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, request.resourceRequest().url(), "Inspector intercept"_si });
 
     RefPtr document = m_document;
     ASSERT(document);
-    if (request.charset().isEmpty() && document && (type == CachedResource::Type::Script || type == CachedResource::Type::JSON || type == CachedResource::Type::Text || type == CachedResource::Type::CSSStyleSheet))
-        request.setCharset(document->charset());
+    if (isEmpty(request.charset()) && document && (type == CachedResource::Type::Script || type == CachedResource::Type::JSON || type == CachedResource::Type::Text || type == CachedResource::Type::CSSStyleSheet))
+        request.setCharset(StringImpl::createOrNull(document->charset()).get());
 
     auto resource = requestResource(type, WTF::move(request), ForPreload::Yes);
     if (resource && (!m_preloads || !m_preloads->contains(resource.value().ptr()))) {
@@ -1992,7 +1992,7 @@ void CachedResourceLoader::warnUnusedPreloads()
     }
 }
 
-bool CachedResourceLoader::isPreloaded(const String& urlString) const
+bool CachedResourceLoader::isPreloaded(StringImpl* urlString) const
 {
     RefPtr document = m_document;
     ASSERT(document);

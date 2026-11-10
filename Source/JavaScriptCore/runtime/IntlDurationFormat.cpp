@@ -149,7 +149,7 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
 
     if (prevStyleIsNumeric) {
         if (style != IntlDurationFormat::UnitStyle::Numeric && style != IntlDurationFormat::UnitStyle::TwoDigit) {
-            throwRangeError(globalObject, scope, "style option is inconsistent"_s);
+            throwRangeError(globalObject, scope, "style option is inconsistent"_si);
             return { };
         }
 
@@ -214,17 +214,17 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    RefPtr<StringImpl> numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!numberingSystem.isNull()) {
+    if (numberingSystem) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
-            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
+            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_si);
             return;
         }
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
     }
 
-    auto localeData = [](const String& locale, RelevantExtensionKey key) -> Vector<String> {
+    auto localeData = [](StringImpl* locale, RelevantExtensionKey key) -> Vector<RefPtr<StringImpl>> {
         ASSERT_UNUSED(key, key == RelevantExtensionKey::Nu);
         return numberingSystemsForLocale(locale);
     };
@@ -233,14 +233,14 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
 
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize DurationFormat due to invalid locale"_s);
         return;
     }
 
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
-    m_dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.ascii() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).ascii();
+    m_dataLocaleWithExtensions = !m_numberingSystem ? ascii(m_dataLocale) : ascii(makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem));
 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow }, { "digital"_s, Style::Digital } }, "style must be either \"long\", \"short\", \"narrow\", or \"digital\""_s, Style::Short);
     RETURN_IF_EXCEPTION(scope, void());
@@ -287,7 +287,7 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
 
         // 5. Perform ! CreateDataPropertyOrThrow(lfOpts, "type", "unit").
         UErrorCode status = U_ZERO_ERROR;
-        m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(m_locale.ascii().data(), ULISTFMT_TYPE_UNITS, toUListFormatterWidth(m_style), &status));
+        m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(ascii(m_locale).data(), ULISTFMT_TYPE_UNITS, toUListFormatterWidth(m_style), &status));
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to initialize DurationFormat"_s);
             return;
@@ -295,14 +295,14 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
     }
 }
 
-const String& IntlDurationFormat::numberingSystem() const
+const RefPtr<StringImpl>& IntlDurationFormat::numberingSystem() const
 {
-    if (m_numberingSystem.isNull())
+    if (!m_numberingSystem)
         m_numberingSystem = defaultNumberingSystemForLocale(m_dataLocale);
     return m_numberingSystem;
 }
 
-static String retrieveSeparator(const ASCIICString& locale, const String& numberingSystem)
+static RefPtr<StringImpl> retrieveSeparator(const ASCIICString& locale, StringImpl* numberingSystem)
 {
     ASCIILiteral fallbackTimeSeparator = ":"_s;
     UErrorCode status = U_ZERO_ERROR;
@@ -315,7 +315,7 @@ static String retrieveSeparator(const ASCIICString& locale, const String& number
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
-    auto numberingSystemBundle = std::unique_ptr<UResourceBundle, ICUDeleter<ures_close>>(ures_getByKey(numberElementsBundle.get(), numberingSystem.ascii().data(), nullptr, &status));
+    auto numberingSystemBundle = std::unique_ptr<UResourceBundle, ICUDeleter<ures_close>>(ures_getByKey(numberElementsBundle.get(), ascii(numberingSystem).data(), nullptr, &status));
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
@@ -328,12 +328,12 @@ static String retrieveSeparator(const ASCIICString& locale, const String& number
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
-    return String({ data, static_cast<size_t>(length) });
+    return StringImpl::create({ data, static_cast<size_t>(length) });
 }
 
-const String& IntlDurationFormat::timeSeparator() const
+const RefPtr<StringImpl>& IntlDurationFormat::timeSeparator() const
 {
-    if (m_timeSeparator.isNull())
+    if (!m_timeSeparator)
         m_timeSeparator = retrieveSeparator(m_dataLocaleWithExtensions, numberingSystem());
     return m_timeSeparator;
 }
@@ -347,7 +347,7 @@ struct Element {
     ElementType m_type;
     bool m_valueSignBit;
     TemporalUnit m_unit;
-    String m_string;
+    RefPtr<StringImpl> m_string;
     std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter> m_fieldIterator;
 };
 
@@ -370,7 +370,7 @@ NODELETE static DurationSignType getDurationSign(ISO8601::Duration duration)
     return DurationSignType::Zero;
 }
 
-static String int128ToString(Int128 value)
+static RefPtr<StringImpl> int128ToString(Int128 value)
 {
     Vector<Latin1Character> resultString;
     bool isNegative = value < 0;
@@ -391,7 +391,7 @@ static String int128ToString(Int128 value)
     return StringImpl::adopt(WTF::move(resultString));
 }
 
-static String buildDecimalFormat(TemporalUnit unit, Int128 ns)
+static RefPtr<StringImpl> buildDecimalFormat(TemporalUnit unit, Int128 ns)
 {
     ASSERT(unit == TemporalUnit::Second || unit == TemporalUnit::Millisecond || unit == TemporalUnit::Microsecond);
 
@@ -404,7 +404,7 @@ static String buildDecimalFormat(TemporalUnit unit, Int128 ns)
     return makeString(int128ToString(ns), exponent);
 }
 
-static void partitionDurationFormatPattern(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration, NOESCAPE const Invocable<void(bool, TemporalUnit, StringView, UFormattedNumber*)> auto& elementFunctor, NOESCAPE const Invocable<void(bool, TemporalUnit, const String&)> auto& literalFunctor)
+static void partitionDurationFormatPattern(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration, NOESCAPE const Invocable<void(bool, TemporalUnit, StringView, UFormattedNumber*)> auto& elementFunctor, NOESCAPE const Invocable<void(bool, TemporalUnit, StringImpl*)> auto& literalFunctor)
 {
     // https://tc39.es/proposal-intl-duration-format/#sec-partitiondurationformatpattern
 
@@ -517,7 +517,7 @@ static void partitionDurationFormatPattern(JSGlobalObject* globalObject, const I
                     decimalValue = -decimalValue;
                 // We need to keep string alive while strSpan is in use.
                 auto string = buildDecimalFormat(unit, decimalValue);
-                auto strSpan = string.impl()->span8();
+                auto strSpan = string.get()->span8();
                 unumf_formatDecimal(numberFormatter, reinterpret_cast<const char*>(strSpan.data()), strSpan.size(), formattedNumber.get(), &status);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
@@ -634,7 +634,7 @@ UNumberFormatter* IntlDurationFormat::createNumberFormatterIfNecessary(JSGlobalO
         skeletonBuilder.append(" group-off"_s);
     else {
         skeletonBuilder.append(" measure-unit/duration-"_s);
-        skeletonBuilder.append(String(temporalUnitSingularPropertyName(vm, unit).uid()));
+        skeletonBuilder.append(RefPtr<StringImpl>(temporalUnitSingularPropertyName(vm, unit).uid()));
         if (style == UnitStyle::Long)
             skeletonBuilder.append(" unit-width-full-name"_s);
         else if (style == UnitStyle::Short)
@@ -676,9 +676,9 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
             stringLengths.append(string.length());
         followsLiteral = false;
     };
-    auto appendLiteral = [&](bool, TemporalUnit, const String& separator) {
+    auto appendLiteral = [&](bool, TemporalUnit, StringImpl* separator) {
         append(buffer, separator);
-        stringLengths.last() += separator.length();
+        stringLengths.last() += length(separator);
         followsLiteral = true;
     };
     partitionDurationFormatPattern(globalObject, this, WTF::move(duration), appendElement, appendLiteral);
@@ -729,14 +729,14 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
         groupedElements.last().append({ ElementType::Element, valueSignBit, unit, string.toString(), WTF::move(fieldIterator) });
         followsLiteral = false;
     };
-    auto appendLiteral = [&](bool valueSignBit, TemporalUnit unit, const String& separator) {
+    auto appendLiteral = [&](bool valueSignBit, TemporalUnit unit, StringImpl* separator) {
         groupedElements.last().append({ ElementType::Literal, valueSignBit, unit, separator, nullptr });
         followsLiteral = true;
     };
     partitionDurationFormatPattern(globalObject, this, WTF::move(duration), appendElement, appendLiteral);
     RETURN_IF_EXCEPTION(scope, { });
 
-    Vector<String, 4> stringList;
+    Vector<RefPtr<StringImpl>, 4> stringList;
     for (auto& group : groupedElements) {
         if (group.size() == 1)
             stringList.append(group[0].m_string);
@@ -784,7 +784,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    auto literalString = jsNontrivialString(vm, "literal"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_si);
 
     auto createPart = [&](JSString* type, JSString* value) {
         return createIntlPartObject(globalObject, type, value);
@@ -798,7 +798,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
                 switch (element.m_type) {
                 case ElementType::Element: {
                     IntlFieldIterator iterator(*element.m_fieldIterator);
-                    JSString* type = jsString(vm, String(temporalUnitSingularPropertyName(vm, element.m_unit).uid()));
+                    JSString* type = jsString(vm, RefPtr<StringImpl>(temporalUnitSingularPropertyName(vm, element.m_unit).uid()));
                     IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Unit, element.m_valueSignBit, IntlMathematicalValue::NumberType::Integer, element.m_string, iterator, parts, nullptr, type);
                     RETURN_IF_EXCEPTION(scope, void());
                     break;

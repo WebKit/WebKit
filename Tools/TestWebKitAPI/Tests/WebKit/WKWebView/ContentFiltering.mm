@@ -83,7 +83,7 @@ static void loadAlternateTestMac(Decision decision, DecisionPoint decisionPoint)
         settings.setEnabled(true);
         settings.setDecision(decision);
         settings.setDecisionPoint(decisionPoint);
-        settings.setBlockedString("blocked"_s);
+        settings.setBlockedString("blocked"_si);
         [TestProtocol registerWithScheme:@"http"];
 
         RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect]);

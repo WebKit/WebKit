@@ -42,18 +42,18 @@ bool WebExtensionContext::isAlarmsMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::alarms());
 }
 
-void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::alarmsCreate(StringImpl* name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static constexpr auto apiName = "alarms.create()"_s;
 
-    if (name.utf8().length() > webExtensionMaximumAlarmNameLength) {
-        completionHandler(toWebExtensionError(apiName, nullString(), makeString("the alarm name exceeds the limit of "_s, webExtensionMaximumAlarmNameLength, " bytes"_s)));
+    if (utf8(name).length() > webExtensionMaximumAlarmNameLength) {
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).ptr(), nullString(), makeString("the alarm name exceeds the limit of "_s, webExtensionMaximumAlarmNameLength, " bytes"_s)));
         return;
     }
 
     // Replacing an existing alarm does not add to the count.
     if (!m_alarmMap.contains(name) && m_alarmMap.size() >= webExtensionMaximumNumberOfAlarms) {
-        completionHandler(toWebExtensionError(apiName, nullString(), makeString("an extension cannot have more than "_s, webExtensionMaximumNumberOfAlarms, " active alarms"_s)));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).ptr(), nullString(), makeString("an extension cannot have more than "_s, webExtensionMaximumNumberOfAlarms, " active alarms"_s)));
         return;
     }
 
@@ -67,7 +67,7 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
     completionHandler({ });
 }
 
-void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
+void WebExtensionContext::alarmsGet(StringImpl* name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
 {
     if (RefPtr alarm = m_alarmMap.get(name))
         completionHandler(alarm->parameters());
@@ -75,7 +75,7 @@ void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(s
         completionHandler(std::nullopt);
 }
 
-void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void(bool)>&& completionHandler)
+void WebExtensionContext::alarmsClear(StringImpl* name, CompletionHandler<void(bool)>&& completionHandler)
 {
     bool success = m_alarmMap.remove(name);
 

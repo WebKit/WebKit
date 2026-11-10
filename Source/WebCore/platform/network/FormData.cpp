@@ -202,13 +202,13 @@ void FormData::appendData(std::span<const uint8_t> data)
     m_elements.append(Vector(data));
 }
 
-void FormData::appendFile(const String& filename)
+void FormData::appendFile(StringImpl* filename)
 {
     m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, std::nullopt));
     m_lengthInBytes = std::nullopt;
 }
 
-void FormData::appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime)
+void FormData::appendFileRange(StringImpl* filename, long long start, long long length, std::optional<WallTime> expectedModificationTime)
 {
     m_elements.append(FormDataElement(filename, start, length, expectedModificationTime));
     m_lengthInBytes = std::nullopt;
@@ -220,7 +220,7 @@ void FormData::appendBlob(const URL& blobURL)
     m_lengthInBytes = std::nullopt;
 }
 
-static Vector<uint8_t> normalizeStringData(PAL::TextEncoding& encoding, const String& value)
+static Vector<uint8_t> normalizeStringData(PAL::TextEncoding& encoding, StringImpl* value)
 {
     return normalizeLineEndingsToCRLF(encoding.encode(value, PAL::UnencodableHandling::Entities, PAL::NFCNormalize::No));
 }
@@ -234,22 +234,22 @@ void FormData::appendMultiPartFileValue(const File& file, Vector<uint8_t>& heade
 
     // Add the content type if available, or "application/octet-stream" otherwise (RFC 1867).
     auto contentType = file.type();
-    if (contentType.isEmpty())
-        contentType = "application/octet-stream"_s;
+    if (WTF::isEmpty(contentType))
+        contentType = "application/octet-stream"_si;
     ASSERT(Blob::isNormalizedContentType(contentType));
 
-    FormDataBuilder::addContentTypeToMultiPartHeader(header, contentType.ascii());
+    FormDataBuilder::addContentTypeToMultiPartHeader(header, ascii(contentType));
 
     FormDataBuilder::finishMultiPartHeader(header);
     appendData(header.span());
 
     if (file.size())
         appendBlob(file.url());
-    else if (!file.path().isEmpty())
+    else if (!WTF::isEmpty(file.path()))
         appendFile(file.path());
 }
 
-void FormData::appendMultiPartStringValue(const String& string, Vector<uint8_t>& header, PAL::TextEncoding& encoding)
+void FormData::appendMultiPartStringValue(StringImpl* string, Vector<uint8_t>& header, PAL::TextEncoding& encoding)
 {
     FormDataBuilder::finishMultiPartHeader(header);
     appendData(header.span());
@@ -275,7 +275,7 @@ void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData)
             [&](const Ref<File>& file) {
                 appendMultiPartFileValue(file, header, encoding);
             },
-            [&](const String& string) {
+            [&](StringImpl* string) {
                 appendMultiPartStringValue(string, header, encoding);
             }
         );
@@ -295,11 +295,11 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
 
     Vector<uint8_t> encodedData;
     for (auto& item : formData.items()) {
-        String stringValue = WTF::switchOn(item.data,
-            [](const String& string) {
+        RefPtr<StringImpl> stringValue = WTF::switchOn(item.data,
+            [](StringImpl* string) -> RefPtr<StringImpl> {
                 return string;
             },
-            [](const Ref<File>& file) {
+            [](const Ref<File>& file) -> RefPtr<StringImpl> {
                 return file->name();
             }
         );
@@ -323,7 +323,7 @@ Vector<uint8_t> FormData::flatten() const
     return data;
 }
 
-String FormData::flattenToString() const
+RefPtr<StringImpl> FormData::flattenToString() const
 {
     return PAL::Latin1Encoding().decode(flatten().span());
 }
@@ -398,7 +398,7 @@ Ref<FormData> FormData::resolveBlobReferences(BlobRegistryImpl* blobRegistryImpl
 
 FormDataForUpload FormData::prepareForUpload()
 {
-    Vector<String> generatedFiles;
+    Vector<RefPtr<StringImpl>> generatedFiles;
     for (auto& element : m_elements) {
         auto* fileData = std::get_if<FormDataElement::EncodedFileData>(&element.data);
         if (!fileData)
@@ -420,7 +420,7 @@ FormDataForUpload FormData::prepareForUpload()
     return { *this, WTF::move(generatedFiles) };
 }
 
-FormDataForUpload::FormDataForUpload(FormData& data, Vector<String>&& temporaryZipFiles)
+FormDataForUpload::FormDataForUpload(FormData& data, Vector<RefPtr<StringImpl>>&& temporaryZipFiles)
     : m_data(data)
     , m_temporaryZipFiles(WTF::move(temporaryZipFiles))
 {

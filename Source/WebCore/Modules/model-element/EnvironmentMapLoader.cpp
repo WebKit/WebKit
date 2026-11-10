@@ -62,16 +62,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EnvironmentMapLoader);
 std::optional<URL> resolvedEnvironmentMapURL(const Element& element, const Style::EnvironmentMap& environmentMap)
 {
     auto* name = environmentMap.tryName();
-    if (!name || name->value.isEmpty())
+    if (!name || isEmpty(name->value))
         return std::nullopt;
 
-    AtomString ruleName { name->value };
+    RefPtr<AtomStringImpl> ruleName = AtomStringImpl::add(name->value.get());
 
     auto ruleForName = [&](const Style::Scope& scope) -> RefPtr<const StyleRuleEnvironmentMap> {
         RefPtr resolver = scope.resolverIfExists();
         if (!resolver)
             return nullptr;
-        return resolver->ruleSets().authorStyle().environmentMapRuleForName(ruleName);
+        return resolver->ruleSets().authorStyle().environmentMapRuleForName(ruleName.get());
     };
 
     const Style::Scope& elementScope = Style::Scope::forNode(element);
@@ -100,10 +100,10 @@ static CachedResourceRequest createEnvironmentMapResourceRequest(Element& elemen
 
     auto crossOriginAttribute = parseCORSSettingsAttribute(element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr));
     Ref document = element.document();
-    if (crossOriginAttribute.isNull()) {
+    if (!crossOriginAttribute) {
         Ref documentOrigin = document->securityOrigin();
         if (LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(documentOrigin->protocol()) || documentOrigin->protocol() != resourceURL.protocol())
-            crossOriginAttribute = "anonymous"_s;
+            crossOriginAttribute = "anonymous"_si;
     }
     auto request = createPotentialAccessControlRequest(ResourceRequest { URL { resourceURL } }, WTF::move(options), document, crossOriginAttribute);
     request.setInitiator(element);

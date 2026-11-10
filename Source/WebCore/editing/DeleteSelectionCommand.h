@@ -71,7 +71,7 @@ private:
     void smartDeleteParagraphSpacers();
 
     // This function provides access to original string after the correction has been deleted.
-    String originalStringForAutocorrectionAtBeginningOfSelection();
+    RefPtr<StringImpl> originalStringForAutocorrectionAtBeginningOfSelection();
 
     void removeNodeUpdatingStates(Node&, ShouldAssumeContentIsAlwaysEditable);
     void insertBlockPlaceholderForTableCellIfNeeded(Element&);

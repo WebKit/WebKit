@@ -55,14 +55,14 @@ extension WebKit.VectorBackForwardListItemState: CxxVector {
 }
 
 extension WebKit.WebBackForwardListItem {
-    private borrowing func getUrlCopy() -> WTF.String {
-        // Safety: we immediately make a copy of the string before
+    private borrowing func getUrlCopy() -> WTF.StringImpl? {
+        // Safety: we immediately take a reference to the string before
         // it could be freed or mutated. FIXME(rdar://145054011): remove
         // this.
-        unsafe __urlUnsafe().pointee
+        unsafe __urlUnsafe().pointee.get()
     }
 
-    var url: WTF.String {
+    var url: WTF.StringImpl? {
         getUrlCopy()
     }
 }
@@ -289,7 +289,7 @@ final class WebBackForwardList {
         guard var targetIndex else {
             WebKit.LogChannel.BackForward().debugLog
                 .log(
-                    "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) could not go to item \(item.identifier().toString().description, privacy: .public) \(item.url.description) because it was not found"
+                    "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) could not go to item \(String(item.identifier().toString().get()), privacy: .public) \(String(item.url)) because it was not found"
                 )
             return
         }
@@ -298,8 +298,8 @@ final class WebBackForwardList {
             let delta = entries.count - targetIndex - 1
             let deltaValue = if delta > 10 { "over10" } else { delta.description }
             page.logDiagnosticMessage(
-                WebCore.DiagnosticLoggingKeys.backNavigationDeltaKey(),
-                WTF.String(deltaValue),
+                WebCore.DiagnosticLoggingKeys.backNavigationDeltaKey().get(),
+                WTF.StringImpl.create(from: deltaValue),
                 WebCore.ShouldSample.No
             )
         }
@@ -325,7 +325,7 @@ final class WebBackForwardList {
 
         WebKit.LogChannel.BackForward().debugLog
             .log(
-                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) going to item \(item.identifier().toString().description, privacy: .public), is now at index \(targetIndex)"
+                "(Back/Forward) WebBackForwardList \(String(describing: ObjectIdentifier(self)), privacy: .public) going to item \(String(item.identifier().toString().get()), privacy: .public), is now at index \(targetIndex)"
             )
         page.didChangeBackForwardList(Optional.none, consuming: WebKit.BackForwardListItemVector(array: removedItems))
     }
@@ -971,7 +971,7 @@ final class WebBackForwardList {
         parentFrameID: WebCore.FrameIdentifier,
         childFrameID: WebCore.FrameIdentifier,
         childFrameIndex: UInt64,
-        childFrameName: WTF.String
+        childFrameName: WTF.StringImpl?
     ) -> WebKit.RefPtrFrameState {
         guard let targetItem = entryForID(itemID) else {
             return WebKit.RefPtrFrameState()
@@ -985,7 +985,7 @@ final class WebBackForwardList {
         var childFrameItem = parentFrameItem.childItemForFrameID(childFrameID)
         if childFrameItem == nil {
             // The identifier is absent after session restore or cross-site child-frame recreation
-            if childFrameName.isEmpty() {
+            if childFrameName?.isEmpty() ?? true {
                 childFrameItem = parentFrameItem.childItemAtIndex(childFrameIndex)
             } else {
                 childFrameItem = parentFrameItem.childItemForFrameName(childFrameName)
@@ -1011,7 +1011,7 @@ final class WebBackForwardList {
 
         for (i, entry) in entries.enumerated() {
             let prefix = (currentIndex == i) ? " * " : " - "
-            result += prefix + String(entry.loggingString().description)
+            result += prefix + String(entry.loggingString().get())
         }
 
         return result
@@ -1064,8 +1064,8 @@ final class WebBackForwardList {
 
         // 'nil' works around rdar://162310543
         // Safety: it's OK to pass a null pointer to these two functions; in fact it's the default
-        let itemURL = unsafe WTF.URL(frameState.ptr().urlString, nil)
-        let itemOriginalURL = unsafe WTF.URL(frameState.ptr().originalURLString, nil)
+        let itemURL = unsafe WTF.URL(frameState.ptr().urlString.get(), nil)
+        let itemOriginalURL = unsafe WTF.URL(frameState.ptr().originalURLString.get(), nil)
 
         #if WTF_PLATFORM_COCOA
         #if WTF_PLATFORM_MAC

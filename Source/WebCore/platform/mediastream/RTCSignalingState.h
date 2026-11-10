@@ -39,7 +39,7 @@ enum class RTCSignalingState {
     Closed,
 };
 
-String convertEnumerationToString(RTCSignalingState); // in JSCRTCSignalingState.cpp
+RefPtr<StringImpl> convertEnumerationToString(RTCSignalingState); // in JSCRTCSignalingState.cpp
 
 }; // namespace WebCore
 
@@ -50,7 +50,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::RTCSignalingState> {
-    static String toString(const WebCore::RTCSignalingState state)
+    static RefPtr<StringImpl> toString(const WebCore::RTCSignalingState state)
     {
         return convertEnumerationToString(state);
     }

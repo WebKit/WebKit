@@ -106,7 +106,7 @@ static UIBezierPath *pathWithRoundedRectInFrame(CGRect rect, CGFloat borderRadiu
 
     _dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [_dismissButton addTarget:self action:@selector(didDismiss) forControlEvents:UIControlEventTouchUpInside];
-    [_dismissButton setTitle:WebCore::formControlHideButtonTitle().createNSString().get() forState:UIControlStateNormal];
+    [_dismissButton setTitle:createNSString(WebCore::formControlHideButtonTitle()).get() forState:UIControlStateNormal];
     [_dismissButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 
     _tapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap)]);

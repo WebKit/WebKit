@@ -40,10 +40,10 @@ class ResourceMonitorPersistence;
 class ResourceMonitorThrottler final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResourceMonitorThrottler);
 public:
-    ResourceMonitorThrottler(String&& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts);
+    ResourceMonitorThrottler(RefPtr<StringImpl>&& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts);
     ~ResourceMonitorThrottler();
 
-    bool tryAccess(const String& host, ContinuousApproximateTime);
+    bool tryAccess(StringImpl* host, ContinuousApproximateTime);
     void clearAllData();
 
     NODELETE void setCountPerDuration(size_t count, Seconds duration);
@@ -74,12 +74,12 @@ private:
         ContinuousApproximateTime m_newestAccessTime { -ContinuousApproximateTime::infinity() };
     };
 
-    AccessThrottler& throttlerForHost(const String& host);
+    AccessThrottler& throttlerForHost(StringImpl* host);
     void removeOldestThrottler();
     void maintainHosts(ContinuousApproximateTime);
 
     Config m_config;
-    HashMap<String, AccessThrottler> m_throttlersByHost;
+    HashMap<RefPtr<StringImpl>, AccessThrottler> m_throttlersByHost;
     std::unique_ptr<ResourceMonitorPersistence> m_persistence;
 };
 

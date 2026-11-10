@@ -45,20 +45,20 @@ public:
     static std::optional<WebAssemblyCompileOptions> tryCreate(JSGlobalObject*, JSObject* optionsObject);
     static WebAssemblyCompileOptions esmIntegrationDefaults();
 
-    const std::optional<String>& importedStringConstants() const LIFETIME_BOUND { return m_importedStringConstants; }
-    const Vector<String>& qualifiedBuiltinSetNames() const LIFETIME_BOUND { return m_qualifiedBuiltinSetNames; }
+    const std::optional<RefPtr<StringImpl>>& importedStringConstants() const LIFETIME_BOUND { return m_importedStringConstants; }
+    const Vector<RefPtr<StringImpl>>& qualifiedBuiltinSetNames() const LIFETIME_BOUND { return m_qualifiedBuiltinSetNames; }
 
     // Validate the options in the context of the given module as specified in
     // https://webassembly.github.io/js-string-builtins/js-api/#validate-builtins-and-imported-string-for-a-webassembly-module.
     // Return an empty optional on success, or a String with the error message.
-    std::optional<String> validateBuiltinsAndImportedStrings(const Wasm::Module&) const;
+    std::optional<RefPtr<StringImpl>> validateBuiltinsAndImportedStrings(const Wasm::Module&) const;
 
 private:
     bool validateBuiltinSetNames() const;
-    bool validateImportForBuiltinSetNames(const Wasm::Import&, const String& importModuleName, const Wasm::ModuleInformation&) const;
+    bool validateImportForBuiltinSetNames(const Wasm::Import&, StringImpl* importModuleName, const Wasm::ModuleInformation&) const;
 
-    std::optional<String> m_importedStringConstants;
-    Vector<String> m_qualifiedBuiltinSetNames;
+    std::optional<RefPtr<StringImpl>> m_importedStringConstants;
+    Vector<RefPtr<StringImpl>> m_qualifiedBuiltinSetNames;
 };
 
 } // namespace JSC

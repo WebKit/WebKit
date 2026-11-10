@@ -55,9 +55,9 @@ class FrontendChannel final : public Inspector::FrontendChannel {
     WTF_MAKE_TZONE_ALLOCATED(FrontendChannel);
     WTF_MAKE_NONCOPYABLE(FrontendChannel);
 public:
-    using MessageHandler = Function<void(const String& targetID, const String& message)>;
+    using MessageHandler = Function<void(StringImpl* targetID, StringImpl* message)>;
 
-    FrontendChannel(String&& targetID, Inspector::FrontendChannel::ConnectionType connectionType, MessageHandler& handler)
+    FrontendChannel(RefPtr<StringImpl>&& targetID, Inspector::FrontendChannel::ConnectionType connectionType, MessageHandler& handler)
         : m_targetID(WTF::move(targetID))
         , m_connectionType(connectionType)
         , m_handler(handler)
@@ -68,13 +68,13 @@ public:
 
     ConnectionType connectionType() const override { return m_connectionType; }
 
-    void sendMessageToFrontend(const String& message) override
+    void sendMessageToFrontend(StringImpl* message) override
     {
         m_handler(m_targetID, message);
     }
 
 private:
-    String m_targetID;
+    RefPtr<StringImpl> m_targetID;
     Inspector::FrontendChannel::ConnectionType m_connectionType;
     MessageHandler& m_handler;
 };
@@ -84,7 +84,7 @@ class PageTarget final : public Inspector::InspectorTarget {
     WTF_MAKE_NONCOPYABLE(PageTarget);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageTarget);
 public:
-    static String identifier(const WebCore::Page& page)
+    static RefPtr<StringImpl> identifier(const WebCore::Page& page)
     {
         return makeString("page-"_s, page.identifier()->toUInt64());
     }
@@ -100,7 +100,7 @@ public:
         return Inspector::InspectorTargetType::Page;
     }
 
-    String identifier() const final
+    RefPtr<StringImpl> identifier() const final
     {
         return identifier(Ref { m_page.get() });
     }
@@ -123,7 +123,7 @@ public:
         m_channel = nullptr;
     }
 
-    void sendMessageToTargetBackend(const String& message) override
+    void sendMessageToTargetBackend(StringImpl* message) override
     {
         protect(m_page->inspectorController())->dispatchMessageFromFrontend(message);
     }
@@ -139,7 +139,7 @@ class FrameTarget final : public Inspector::InspectorTarget {
     WTF_MAKE_NONCOPYABLE(FrameTarget);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameTarget);
 public:
-    static String identifier(const WebCore::LocalFrame& frame)
+    static RefPtr<StringImpl> identifier(const WebCore::LocalFrame& frame)
     {
         return makeString("frame-"_s, frame.frameID().toUInt64());
     }
@@ -155,7 +155,7 @@ public:
         return Inspector::InspectorTargetType::Frame;
     }
 
-    String identifier() const final
+    RefPtr<StringImpl> identifier() const final
     {
         return identifier(Ref { m_frame.get() });
     }
@@ -178,7 +178,7 @@ public:
         m_channel = nullptr;
     }
 
-    void sendMessageToTargetBackend(const String& message) override
+    void sendMessageToTargetBackend(StringImpl* message) override
     {
         protect(m_frame->inspectorController())->dispatchMessageFromFrontend(message);
     }
@@ -197,7 +197,7 @@ public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
     explicit EmptyBrowserAgent(Inspector::BackendDispatcher& backendDispatcher)
-        : Inspector::InspectorAgentBase("Browser"_s)
+        : Inspector::InspectorAgentBase("Browser"_si)
         , m_backendDispatcher(Inspector::BrowserBackendDispatcher::create(backendDispatcher, this))
     {
     }
@@ -240,7 +240,7 @@ LegacyWebPageInspectorController::LegacyWebPageInspectorController(WebCore::Page
 
     // In WK1, the Page object persists for the entire lifetime of the WebView and is never recreated during navigation.
     // (Unlike WK2, there is no Process Swap On Navigation (PSON) that would require recreating the PageTarget.)
-    addTarget(makeUnique<PageTarget>(page, [weakThis = WeakPtr { *this }](const String& targetID, const String& message) {
+    addTarget(makeUnique<PageTarget>(page, [weakThis = WeakPtr { *this }](StringImpl* targetID, StringImpl* message) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendMessageToInspectorFrontend(targetID, message);
     }));
@@ -248,7 +248,7 @@ LegacyWebPageInspectorController::LegacyWebPageInspectorController(WebCore::Page
 
 void LegacyWebPageInspectorController::frameCreated(WebCore::LocalFrame& frame)
 {
-    addTarget(makeUnique<FrameTarget>(frame, [weakThis = WeakPtr { *this }](const String& targetID, const String& message) {
+    addTarget(makeUnique<FrameTarget>(frame, [weakThis = WeakPtr { *this }](StringImpl* targetID, StringImpl* message) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendMessageToInspectorFrontend(targetID, message);
     }));
@@ -273,7 +273,7 @@ void LegacyWebPageInspectorController::addTarget(std::unique_ptr<Inspector::Insp
     m_targets.set(target->identifier(), WTF::move(target));
 }
 
-void LegacyWebPageInspectorController::removeTarget(const String& targetID)
+void LegacyWebPageInspectorController::removeTarget(StringImpl* targetID)
 {
     auto it = m_targets.find(targetID);
     if (it == m_targets.end())
@@ -313,14 +313,14 @@ void LegacyWebPageInspectorController::disconnectAllFrontends()
     m_frontendRouter->disconnectAllFrontends();
 }
 
-void LegacyWebPageInspectorController::dispatchMessageFromFrontend(const String& message)
+void LegacyWebPageInspectorController::dispatchMessageFromFrontend(StringImpl* message)
 {
-    callOnMainThread([backendDispatcher = Ref { m_backendDispatcher }, message = message.isolatedCopy()] {
+    callOnMainThread([backendDispatcher = Ref { m_backendDispatcher }, message = isolatedCopy(message)] {
         backendDispatcher->dispatch(message);
     });
 }
 
-void LegacyWebPageInspectorController::sendMessageToInspectorFrontend(const String& targetID, const String& message)
+void LegacyWebPageInspectorController::sendMessageToInspectorFrontend(StringImpl* targetID, StringImpl* message)
 {
     protect(targetAgent())->sendMessageFromTargetToFrontend(targetID, message);
 }

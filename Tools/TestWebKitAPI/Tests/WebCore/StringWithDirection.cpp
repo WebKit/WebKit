@@ -73,7 +73,7 @@ TEST(StringWithDirection, TruncateAtEndWithLeftToRightString)
 
 TEST(StringWithDirection, TruncateAtEndWithRightToLeftString)
 {
-    StringWithDirection string { String::fromUTF8("קָפּוּצִ'ינוֹ"), TextDirection::RTL };
+    StringWithDirection string { StringImpl::fromUTF8("קָפּוּצִ'ינוֹ"), TextDirection::RTL };
     StringWithDirection result;
 
     result = truncateFromEnd(string, 0);
@@ -82,15 +82,15 @@ TEST(StringWithDirection, TruncateAtEndWithRightToLeftString)
 
     result = truncateFromEnd(string, 1);
     EXPECT_EQ(TextDirection::RTL, result.direction);
-    EXPECT_EQ(String::fromUTF8("ק"), result.string);
+    EXPECT_EQ(StringImpl::fromUTF8("ק"), result.string);
 
     result = truncateFromEnd(string, 2);
     EXPECT_EQ(TextDirection::RTL, result.direction);
-    EXPECT_EQ(String::fromUTF8("קָ"), result.string);
+    EXPECT_EQ(StringImpl::fromUTF8("קָ"), result.string);
 
     result = truncateFromEnd(string, 1000);
     EXPECT_EQ(TextDirection::RTL, result.direction);
-    EXPECT_EQ(String::fromUTF8("קָפּוּצִ'ינוֹ"), result.string);
+    EXPECT_EQ(StringImpl::fromUTF8("קָפּוּצִ'ינוֹ"), result.string);
 }
 
 } // namespace TestWebKitAPI

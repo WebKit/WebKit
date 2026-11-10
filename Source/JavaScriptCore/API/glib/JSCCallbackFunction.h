@@ -52,7 +52,7 @@ public:
         Constructor
     };
 
-    static JSCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, Type, JSCClass*, GRefPtr<GClosure>&&, GType, std::optional<Vector<GType>>&&);
+    static JSCCallbackFunction* create(VM&, JSGlobalObject*, StringImpl* name, Type, JSCClass*, GRefPtr<GClosure>&&, GType, std::optional<Vector<GType>>&&);
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 

@@ -58,36 +58,36 @@ public:
     virtual ~HTTPRequestHandler() = default;
 
     struct Request {
-        String method;
-        String path;
+        RefPtr<StringImpl> method;
+        RefPtr<StringImpl> path;
         const char* data { nullptr };
         size_t dataLength { 0 };
     };
     struct Response {
         unsigned statusCode { 0 };
         UTF8CString data;
-        String contentType;
+        RefPtr<StringImpl> contentType;
     };
     virtual void handleRequest(Request&&, Function<void (Response&&)>&& replyHandler) = 0;
 
-    void setAllowedHosts(Vector<String>&& hosts) { m_allowedHosts = WTF::move(hosts); }
+    void setAllowedHosts(Vector<RefPtr<StringImpl>>&& hosts) { m_allowedHosts = WTF::move(hosts); }
     void setAllowedOrigins(Vector<URL>&& origins) { m_allowedOrigins = WTF::move(origins); }
 
-    std::expected<void, String> validateRequestHeaders(const String& hostHeader, const String& originHeader, const String& method = { }, const String& contentTypeHeader = { }) const;
-    static Response rejectedRequestResponse(const String& reason);
+    std::expected<void, RefPtr<StringImpl>> validateRequestHeaders(StringImpl* hostHeader, StringImpl* originHeader, StringImpl* method = nullptr, StringImpl* contentTypeHeader = nullptr) const;
+    static Response rejectedRequestResponse(StringImpl* reason);
 
 #if USE(INSPECTOR_SOCKET_SERVER)
     void connect(ConnectionID);
 #endif
 
 private:
-    Vector<String> m_allowedHosts;
+    Vector<RefPtr<StringImpl>> m_allowedHosts;
     Vector<URL> m_allowedOrigins;
 
 #if USE(INSPECTOR_SOCKET_SERVER)
     void sendResponse(Response&&);
     void reset();
-    String packHTTPMessage(Response&&) const;
+    RefPtr<StringImpl> packHTTPMessage(Response&&) const;
 
     void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
     void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
@@ -106,10 +106,10 @@ public:
     explicit HTTPServer(HTTPRequestHandler&);
     ~HTTPServer() = default;
 
-    bool listen(const std::optional<String>& host, unsigned port);
+    bool listen(const std::optional<RefPtr<StringImpl>>& host, unsigned port);
     void disconnect();
 
-    const String& visibleHost() const LIFETIME_BOUND { return m_visibleHost; }
+    const RefPtr<StringImpl>& visibleHost() const LIFETIME_BOUND { return m_visibleHost; }
 
 private:
 #if USE(INSPECTOR_SOCKET_SERVER)
@@ -122,7 +122,7 @@ private:
 #endif
 
     HTTPRequestHandler& m_requestHandler;
-    String m_visibleHost;
+    RefPtr<StringImpl> m_visibleHost;
 
 #if USE(SOUP)
     GRefPtr<SoupServer> m_soupServer;

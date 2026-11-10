@@ -33,9 +33,9 @@
 namespace WebKit {
 
 CoreIPCPKContact::CoreIPCPKContact(PKContact *contact)
-    : m_emailAddress(contact.emailAddress)
+    : m_emailAddress(StringImpl::create(contact.emailAddress))
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    , m_supplementarySublocality(contact.supplementarySubLocality)
+    , m_supplementarySublocality(StringImpl::create(contact.supplementarySubLocality))
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (contact.name)

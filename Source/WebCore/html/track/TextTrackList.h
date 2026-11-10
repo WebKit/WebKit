@@ -55,7 +55,7 @@ public:
     bool contains(TrackBase&) const final;
 
     NODELETE TextTrack* item(unsigned index) const;
-    RefPtr<TextTrack> getTrackById(const AtomString&) const;
+    RefPtr<TextTrack> getTrackById(AtomStringImpl*) const;
     RefPtr<TextTrack> getTrackById(TrackID) const;
     TextTrack* lastItem() const { return item(length() - 1); }
 

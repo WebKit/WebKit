@@ -44,10 +44,10 @@ public:
     }
     virtual ~LegacyCDMPrivateClearKey() = default;
 
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+    static bool supportsKeySystem(StringImpl*);
+    static bool supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType);
 
-    bool supportsMIMEType(const String& mimeType) const override;
+    bool supportsMIMEType(StringImpl* mimeType) const override;
     RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
     NODELETE void ref() const final;

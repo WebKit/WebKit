@@ -123,7 +123,7 @@ void RemoteRenderBundleEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleEncoderProxy::pushDebugGroup(String&& groupLabel)
+void RemoteRenderBundleEncoderProxy::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::PushDebugGroup(WTF::move(groupLabel)));
     UNUSED_VARIABLE(sendResult);
@@ -135,7 +135,7 @@ void RemoteRenderBundleEncoderProxy::popDebugGroup()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleEncoderProxy::insertDebugMarker(String&& markerLabel)
+void RemoteRenderBundleEncoderProxy::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::InsertDebugMarker(WTF::move(markerLabel)));
     UNUSED_VARIABLE(sendResult);
@@ -152,7 +152,7 @@ RefPtr<::WebGPU::RenderBundle> RemoteRenderBundleEncoderProxy::finish(const ::We
     return RemoteRenderBundleProxy::create(m_parent, convertToBackingContext, identifier);
 }
 
-void RemoteRenderBundleEncoderProxy::setLabel(String&& label)
+void RemoteRenderBundleEncoderProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

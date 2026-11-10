@@ -55,7 +55,7 @@ public:
 
     void reset();
 
-    void setPermission(const String& origin, bool allowed);
+    void setPermission(StringImpl* origin, bool allowed);
 
 private:
     HashSet<WKRetainPtr<WKNotificationManagerRef>> m_knownManagers;

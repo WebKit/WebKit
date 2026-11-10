@@ -153,7 +153,7 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
 }
 
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
-    : InspectorAgentBase("Network"_s, context)
+    : InspectorAgentBase("Network"_si, context)
     , m_frontendDispatcher(makeUniqueRef<NetworkFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(NetworkBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
@@ -344,11 +344,11 @@ CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&
 // An empty error string on a reply is the AsyncReplyError synthesized on connection loss (the
 // target WebProcess is gone); report that explicitly instead of surfacing it to the frontend as a
 // spurious success. A non-empty error is a genuine backend failure and is forwarded verbatim.
-static String replyFailureString(const String& replyError)
+static RefPtr<StringImpl> replyFailureString(StringImpl* replyError)
 {
-    if (!replyError.isEmpty())
+    if (!isEmpty(replyError))
         return replyError;
-    return "Target WebProcess for requestId is no longer available"_s;
+    return "Target WebProcess for requestId is no longer available"_si;
 }
 
 // Resolve a requestId-routed command to the WebContent process that performed the load. The
@@ -356,7 +356,7 @@ static String replyFailureString(const String& replyError)
 // failure the returned string is the frontend-facing error. Shared by the requestId-routed
 // commands (getResponseBody, getSerializedCertificate), which then issue their own async IPC to the
 // resolved process.
-static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoaderIdentifier> resolveRequestProcess(WebKit::WebPageProxy& inspectedPage, const Protocol::Network::RequestId& requestId)
+static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoaderIdentifier> resolveRequestProcess(WebKit::WebPageProxy& inspectedPage, StringImpl* requestId)
 {
     auto parsed = IdentifierRegistry::parseProtocolRequestId(requestId);
     if (!parsed)
@@ -379,7 +379,7 @@ static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoa
     return { { targetProcess.releaseNonNull(), *targetPageID, resourceID } };
 }
 
-void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& requestId, Ref<GetResponseBodyCallback>&& callback)
+void ProxyingNetworkAgent::getResponseBody(StringImpl* requestId, Ref<GetResponseBodyCallback>&& callback)
 {
     auto resolved = resolveRequestProcess(protect(m_inspectedPage), requestId);
     if (!resolved) {
@@ -390,7 +390,7 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
     auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetResponseBody { resourceID },
-        [callback = WTF::move(callback)](std::expected<std::pair<String, bool>, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<std::pair<RefPtr<StringImpl>, bool>, RefPtr<StringImpl>>&& result) mutable {
             if (result) {
                 auto& [content, base64Encoded] = result.value();
                 callback->sendSuccess(content, base64Encoded);
@@ -400,7 +400,7 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
         targetPageID);
 }
 
-void ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::RequestId& requestId, Ref<GetSerializedCertificateCallback>&& callback)
+void ProxyingNetworkAgent::getSerializedCertificate(StringImpl* requestId, Ref<GetSerializedCertificateCallback>&& callback)
 {
     auto resolved = resolveRequestProcess(protect(m_inspectedPage), requestId);
     if (!resolved) {
@@ -411,7 +411,7 @@ void ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::Req
     auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetSerializedCertificate { resourceID },
-        [callback = WTF::move(callback)](std::expected<String, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>>&& result) mutable {
             if (result)
                 callback->sendSuccess(result.value());
             else
@@ -437,13 +437,13 @@ CommandResult<void> ProxyingNetworkAgent::setClearResourceDataOnNavigate(bool)
     return { };
 }
 
-void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameId, const String& url, Ref<LoadResourceCallback>&& callback)
+void ProxyingNetworkAgent::loadResource(StringImpl* frameId, StringImpl* url, Ref<LoadResourceCallback>&& callback)
 {
     // Routed by frame (frameId + URL), unlike getResponseBody which is routed by requestId: decode the
     // frame's hosting process from the frameId and forward the load to that process's WebInspectorBackend.
     auto parsed = IdentifierRegistry::parseProtocolFrameId(frameId);
     if (!parsed) {
-        callback->sendFailure("Invalid frameId format"_s);
+        callback->sendFailure("Invalid frameId format"_si);
         return;
     }
 
@@ -460,28 +460,28 @@ void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameI
     });
 
     if (!targetProcess || !targetPageID) {
-        callback->sendFailure("WebProcess not found for frameId"_s);
+        callback->sendFailure("WebProcess not found for frameId"_si);
         return;
     }
 
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::LoadResource { frameID, url },
-        [callback = WTF::move(callback)](std::expected<std::tuple<String, String, int>, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>, int>, RefPtr<StringImpl>>&& result) mutable {
             if (result) {
                 auto& [content, mimeType, status] = result.value();
                 callback->sendSuccess(content, mimeType, status);
-            } else if (!result.error().isEmpty())
+            } else if (!isEmpty(result.error()))
                 callback->sendFailure(result.error());
             else {
                 // Empty error string == AsyncReplyError synthesized on connection loss (target
                 // WebProcess is gone), matching getResponseBody.
-                callback->sendFailure("Target WebProcess for frameId is no longer available"_s);
+                callback->sendFailure("Target WebProcess for frameId is no longer available"_si);
             }
         },
         *targetPageID);
 }
 
-CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId&, const String&)
+CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolveWebSocket(StringImpl*, StringImpl*)
 {
     return makeUnexpected("Not yet implemented"_s);
 }
@@ -493,17 +493,17 @@ CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool)
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::addInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> ProxyingNetworkAgent::addInterception(StringImpl*, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::removeInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> ProxyingNetworkAgent::removeInterception(StringImpl*, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage networkStage)
+CommandResult<void> ProxyingNetworkAgent::interceptContinue(StringImpl*, Protocol::Network::NetworkStage networkStage)
 {
     switch (networkStage) {
     case Protocol::Network::NetworkStage::Request:
@@ -516,22 +516,22 @@ CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Netw
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
+CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(StringImpl*, StringImpl*, StringImpl*, RefPtr<JSON::Object>&&, StringImpl*)
 {
     return makeUnexpected("Missing pending intercept request for given requestId"_s);
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(StringImpl*, StringImpl*, bool, StringImpl*, std::optional<int>&&, StringImpl*, RefPtr<JSON::Object>&&)
 {
     return makeUnexpected("Missing pending intercept response for given requestId"_s);
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(StringImpl*, StringImpl*, bool, StringImpl*, int, StringImpl*, Ref<JSON::Object>&&)
 {
     return makeUnexpected("Missing pending intercept request for given requestId"_s);
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType)
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(StringImpl*, Protocol::Network::ResourceErrorType)
 {
     return makeUnexpected("Missing pending intercept request for given requestId"_s);
 }
@@ -558,7 +558,7 @@ CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<in
 
 // IPC message handlers from WebProcess FrameNetworkAgentProxy.
 
-void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& targetID, const String& documentURL, const ResourceRequest& request, const RequestExtras& requestExtras, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
+void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, StringImpl* loaderId, StringImpl* targetID, StringImpl* documentURL, const ResourceRequest& request, const RequestExtras& requestExtras, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
@@ -575,7 +575,7 @@ void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID fram
     m_frontendDispatcher->requestWillBeSent(requestId, frameIdString, loaderId, documentURL, WTF::move(requestObject), timestamp, walltime, WTF::move(initiatorObject), WTF::move(redirectResponseObject), toProtocolResourceType(resourceType), targetID);
 }
 
-void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frameID, const String& loaderId, const ResourceResponse& response, ResourceType resourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime)
+void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frameID, StringImpl* loaderId, const ResourceResponse& response, ResourceType resourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime)
 {
     if (!m_enabled)
         return;
@@ -597,7 +597,7 @@ void ProxyingNetworkAgent::dataReceived(ResourceID resourceID, int dataLength, i
     m_frontendDispatcher->dataReceived(requestId, timestamp, dataLength, encodedDataLength);
 }
 
-void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, const String& sourceMapURL, NetworkLoadMetrics&& metrics)
+void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, StringImpl* sourceMapURL, NetworkLoadMetrics&& metrics)
 {
     if (!m_enabled)
         return;
@@ -606,7 +606,7 @@ void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timesta
     m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics));
 }
 
-void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp, const String& errorText, bool canceled)
+void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp, StringImpl* errorText, bool canceled)
 {
     if (!m_enabled)
         return;
@@ -615,7 +615,7 @@ void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp
     m_frontendDispatcher->loadingFailed(requestId, timestamp, errorText, canceled);
 }
 
-void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& documentURL, const URL& url, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
+void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, StringImpl* loaderId, StringImpl* documentURL, const URL& url, const ResourceResponse& response, ResourceType resourceType, StringImpl* sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
@@ -632,7 +632,7 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
     if (auto responseObject = buildObjectForResourceResponse(response, std::nullopt))
         cachedResourceObject->setResponse(responseObject.releaseNonNull());
 
-    if (!sourceMapURL.isEmpty())
+    if (!isEmpty(sourceMapURL))
         cachedResourceObject->setSourceMapURL(sourceMapURL);
 
     m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameIdString, loaderId, documentURL, timestamp, ResourceUtilities::buildInitiatorObject(initiator), WTF::move(cachedResourceObject));

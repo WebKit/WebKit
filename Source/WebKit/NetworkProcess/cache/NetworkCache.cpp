@@ -75,15 +75,15 @@ using namespace FileSystem;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Cache::RetrieveInfo);
 
-const AtomString& recordTypeName(RecordType recordType)
+const RefPtr<AtomStringImpl>& recordTypeName(RecordType recordType)
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<const AtomString> resource("Resource"_s);
-    static NeverDestroyed<const AtomString> compressionDictionary("CompressionDictionary"_s);
+    static NeverDestroyed<const RefPtr<AtomStringImpl>> resource("Resource"_s);
+    static NeverDestroyed<const RefPtr<AtomStringImpl>> compressionDictionary("CompressionDictionary"_s);
     return recordType == RecordType::CompressionDictionary ? compressionDictionary : resource;
 }
 
-static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
+static size_t computeCapacity(CacheModel cacheModel, StringImpl* cachePath)
 {
     if (auto diskFreeSize = FileSystem::volumeFreeSpace(cachePath)) {
         // As a fudge factor, use 1000 instead of 1024, in case the reported byte
@@ -94,7 +94,7 @@ static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
     return 0;
 }
 
-RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
+RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, StringImpl* cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
 {
     if (!FileSystem::makeAllDirectories(cachePath))
         return nullptr;
@@ -123,7 +123,7 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
+Cache::Cache(NetworkProcess& networkProcess, StringImpl* storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
     : m_storage(WTF::move(storage))
     , m_networkProcess(networkProcess)
     , m_sessionID(sessionID)
@@ -179,7 +179,7 @@ Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& r
 {
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
-    String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
+    RefPtr<StringImpl> range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
     return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt() };
 }
 
@@ -287,7 +287,7 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     ASSERT(request.cachePolicy() != WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache);
 
     // FIXME: Support HEAD requests.
-    if (request.httpMethod() != "GET"_s)
+    if (!equal(request.httpMethod(), "GET"_s))
         return RetrieveDecision::NoDueToHTTPMethod;
     if (request.cachePolicy() == WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData && !request.isConditional())
         return RetrieveDecision::NoDueToReloadIgnoringCache;
@@ -295,7 +295,7 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     return RetrieveDecision::Yes;
 }
 
-static bool isMediaMIMEType(const String& type)
+static bool isMediaMIMEType(StringImpl* type)
 {
     return startsWithLettersIgnoringASCIICase(type, "video/"_s) || startsWithLettersIgnoringASCIICase(type, "audio/"_s);
 }
@@ -305,7 +305,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isInHTTPFamily())
         return StoreDecision::NoDueToProtocol;
 
-    if (originalRequest.httpMethod() != "GET"_s)
+    if (!equal(originalRequest.httpMethod(), "GET"_s))
         return StoreDecision::NoDueToHTTPMethod;
 
     auto requestDirectives = WebCore::parseCacheControlDirectives(originalRequest.httpHeaderFields());
@@ -431,7 +431,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().stringWithoutFragmentIdentifier().utf8(), static_cast<int>(request.priority()));
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", utf8(request.url().stringWithoutFragmentIdentifier()), static_cast<int>(request.priority()));
 
     Key storageKey = makeCacheKey(RecordType::Resource, request);
     auto priority = static_cast<unsigned>(request.priority());
@@ -527,10 +527,10 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
         auto useDecision = info.useDecision ? static_cast<int>(*info.useDecision) : -1;
 
         if (entry) {
-            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", utf8(info.url.string()), retrieveDecision, speculativeLoadDecision, useDecision);
             WTFEndSignpostAlways(&info, NetworkCacheHit);
         } else {
-            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", utf8(info.url.string()), retrieveDecision, speculativeLoadDecision, useDecision);
             WTFEndSignpostAlways(&info, NetworkCacheMiss);
         }
     }
@@ -627,7 +627,7 @@ void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, 
 
     auto key = makeCacheKey(RecordType::CompressionDictionary, request);
 
-    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", request.url().stringWithoutFragmentIdentifier().utf8(), key.partition().utf8());
+    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", utf8(request.url().stringWithoutFragmentIdentifier()), utf8(key.partition()));
 
     StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
@@ -664,7 +664,7 @@ void Cache::addToCompressionDictionaryIndex(const CompressionDictionaryEntry& en
         return;
     }
 
-    auto patternOrException = WebCore::URLPattern::createWithoutRegExpSupport(entry.info().match, String { entry.key().identifier() }, { });
+    auto patternOrException = WebCore::URLPattern::createWithoutRegExpSupport(entry.info().match, RefPtr<StringImpl> { entry.key().identifier() }, { });
     if (patternOrException.hasException())
         return;
 
@@ -674,7 +674,7 @@ void Cache::addToCompressionDictionaryIndex(const CompressionDictionaryEntry& en
         { entry.key(), entry.hash(), entry.info().id },
         patternOrException.releaseReturnValue().ptr(),
         entry.info().matchDest,
-        entry.info().match.length(),
+        length(entry.info().match),
         entry.info().expirationTime,
         entry.timeStamp()
     });
@@ -682,7 +682,7 @@ void Cache::addToCompressionDictionaryIndex(const CompressionDictionaryEntry& en
 
 bool Cache::removeFromCompressionDictionaryIndex(const Key& key, WallTime registeredNotAfter)
 {
-    if (key.type() != recordTypeName(RecordType::CompressionDictionary))
+    if (!equal(key.type(), recordTypeName(RecordType::CompressionDictionary)))
         return true;
 
     auto it = m_compressionDictionaryIndex.find(key.partition());
@@ -704,7 +704,7 @@ bool Cache::removeFromCompressionDictionaryIndex(const Key& key, WallTime regist
     return true;
 }
 
-Vector<Key> Cache::compressionDictionaryKeys(const String& partition) const
+Vector<Key> Cache::compressionDictionaryKeys(StringImpl* partition) const
 {
     auto it = m_compressionDictionaryIndex.find(partition);
     if (it == m_compressionDictionaryIndex.end())
@@ -715,7 +715,7 @@ Vector<Key> Cache::compressionDictionaryKeys(const String& partition) const
     });
 }
 
-Vector<Key> Cache::pendingKeys(OptionSet<RecordType> types, const std::optional<String>& partition) const
+Vector<Key> Cache::pendingKeys(OptionSet<RecordType> types, const std::optional<RefPtr<StringImpl>>& partition) const
 {
     Vector<Key> keys;
     for (auto type : types)
@@ -816,9 +816,9 @@ void Cache::retrieveCompressionDictionary(const Key& key, const CompressionDicti
 std::optional<RecordType> Cache::TraversalRecord::type() const
 {
     auto& typeName = record.key.type();
-    if (typeName == recordTypeName(RecordType::Resource))
+    if (equal(typeName, recordTypeName(RecordType::Resource)))
         return RecordType::Resource;
-    if (typeName == recordTypeName(RecordType::CompressionDictionary))
+    if (equal(typeName, recordTypeName(RecordType::CompressionDictionary)))
         return RecordType::CompressionDictionary;
     return std::nullopt;
 }
@@ -902,17 +902,17 @@ void Cache::traverseRecords(Function<void(const TraversalRecord*)>&& traverseHan
     });
 }
 
-void Cache::traverseRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
+void Cache::traverseRecords(StringImpl* partition, Function<void(const TraversalRecord*)>&& traverseHandler)
 {
     traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, partition, { }, WTF::move(traverseHandler));
 }
 
-void Cache::traverseCompressionDictionaryRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
+void Cache::traverseCompressionDictionaryRecords(StringImpl* partition, Function<void(const TraversalRecord*)>&& traverseHandler)
 {
     traverseRecordsOfTypes({ RecordType::CompressionDictionary }, partition, { }, WTF::move(traverseHandler));
 }
 
-void Cache::traverseRecordsOfTypes(OptionSet<RecordType> types, const std::optional<String>& partition, OptionSet<Storage::TraverseFlag> flags, Function<void(const TraversalRecord*)>&& traverseHandler)
+void Cache::traverseRecordsOfTypes(OptionSet<RecordType> types, const std::optional<RefPtr<StringImpl>>& partition, OptionSet<Storage::TraverseFlag> flags, Function<void(const TraversalRecord*)>&& traverseHandler)
 {
     ASSERT(!types.isEmpty());
 
@@ -937,7 +937,7 @@ void Cache::traverseRecordsOfTypes(OptionSet<RecordType> types, const std::optio
         m_storage->traverse(typeName, flags, WTF::move(recordHandler));
 }
 
-String Cache::dumpFilePath() const
+RefPtr<StringImpl> Cache::dumpFilePath() const
 {
     return pathByAppendingComponent(m_storage->versionPath(), "dump.json"_s);
 }
@@ -961,7 +961,7 @@ void Cache::dumpContentsToFile()
     size_t capacity = m_storage->capacity();
     traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, flags, [fileHandle = WTF::move(fileHandle), totals, capacity](const TraversalRecord* traversalRecord) mutable {
         if (!traversalRecord) {
-            auto writeData = makeString(
+            auto writeData = utf8(makeString(
                 "{}\n"
                 "],\n"
                 "\"totals\": {\n"
@@ -970,7 +970,7 @@ void Cache::dumpContentsToFile()
                 "\"bodySize\": "_s, totals.bodySize, ",\n"
                 "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
                 "}\n}\n"_s
-            ).utf8();
+            ));
             fileHandle.write(byteCast<uint8_t>(writeData.span()));
             fileHandle = { };
             return;
@@ -994,13 +994,13 @@ void Cache::dumpContentsToFile()
         totals.bodySize += info.bodySize;
 
         json.append(",\n"_s);
-        fileHandle.write(byteCast<uint8_t>(json.toString().utf8().span()));
+        fileHandle.write(byteCast<uint8_t>(utf8(json.toString()).span()));
     });
 }
 
 void Cache::deleteDumpFile()
 {
-    WorkQueue::create("com.apple.WebKit.Cache.delete"_s)->dispatch([path = dumpFilePath().isolatedCopy()] {
+    WorkQueue::create("com.apple.WebKit.Cache.delete"_s)->dispatch([path = isolatedCopy(dumpFilePath())] {
         deleteFile(path);
     });
 }
@@ -1018,7 +1018,7 @@ void Cache::clear(WallTime modifiedSince, Function<void()>&& completionHandler)
     if (m_compressionDictionaryIndexPopulation)
         m_compressionDictionaryIndexPopulation->clearedSince = std::min(m_compressionDictionaryIndexPopulation->clearedSince, modifiedSince);
 
-    String anyType;
+    RefPtr<StringImpl> anyType;
     m_storage->clear(WTF::move(anyType), modifiedSince, WTF::move(completionHandler));
 
     deleteDumpFile();
@@ -1029,7 +1029,7 @@ void Cache::clear()
     clear(-WallTime::infinity(), nullptr);
 }
 
-String Cache::recordsPathIsolatedCopy() const
+RefPtr<StringImpl> Cache::recordsPathIsolatedCopy() const
 {
     return m_storage->recordsPathIsolatedCopy();
 }
@@ -1070,7 +1070,7 @@ void Cache::fetchOriginAccessTimes(CompletionHandler<void(HashMap<WebCore::Regis
         }
 
         auto& partition = record->key.partition();
-        if (partition.isEmpty())
+        if (isEmpty(partition))
             return;
 
         auto domain = WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(partition);

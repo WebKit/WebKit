@@ -43,7 +43,7 @@ class Text;
 
 template<typename> class ExceptionOr;
 
-typedef String ErrorString;
+typedef RefPtr<StringImpl> ErrorString;
 
 class DOMEditor {
     WTF_MAKE_TZONE_ALLOCATED(DOMEditor);
@@ -54,21 +54,21 @@ public:
 
     ExceptionOr<void> insertBefore(ContainerNode& parentNode, Ref<Node>&&, Node* anchorNode);
     ExceptionOr<void> removeChild(ContainerNode& parentNode, Node&);
-    ExceptionOr<void> setAttribute(Element&, const AtomString& name, const AtomString& value);
-    ExceptionOr<void> removeAttribute(Element&, const AtomString& name);
-    ExceptionOr<void> setOuterHTML(Node&, const String& html, Node*& newNode);
-    ExceptionOr<void> replaceWholeText(Text&, const String& text);
+    ExceptionOr<void> setAttribute(Element&, AtomStringImpl* name, AtomStringImpl* value);
+    ExceptionOr<void> removeAttribute(Element&, AtomStringImpl* name);
+    ExceptionOr<void> setOuterHTML(Node&, StringImpl* html, Node*& newNode);
+    ExceptionOr<void> replaceWholeText(Text&, StringImpl* text);
     ExceptionOr<void> replaceChild(ContainerNode& parentNode, Ref<Node>&& newNode, Node& oldNode);
-    ExceptionOr<void> setNodeValue(Node&, const String& value);
-    ExceptionOr<void> insertAdjacentHTML(Element&, const String& where, const String& html);
+    ExceptionOr<void> setNodeValue(Node&, StringImpl* value);
+    ExceptionOr<void> insertAdjacentHTML(Element&, StringImpl* where, StringImpl* html);
 
     bool insertBefore(ContainerNode& parentNode, Ref<Node>&&, Node* anchorNode, ErrorString&);
     bool removeChild(ContainerNode& parentNode, Node&, ErrorString&);
-    bool setAttribute(Element&, const AtomString& name, const AtomString& value, ErrorString&);
-    bool removeAttribute(Element&, const AtomString& name, ErrorString&);
-    bool setOuterHTML(Node&, const String& html, Node*& newNode, ErrorString&);
-    bool replaceWholeText(Text&, const String& text, ErrorString&);
-    bool insertAdjacentHTML(Element&, const String& where, const String& html, ErrorString&);
+    bool setAttribute(Element&, AtomStringImpl* name, AtomStringImpl* value, ErrorString&);
+    bool removeAttribute(Element&, AtomStringImpl* name, ErrorString&);
+    bool setOuterHTML(Node&, StringImpl* html, Node*& newNode, ErrorString&);
+    bool replaceWholeText(Text&, StringImpl* text, ErrorString&);
+    bool insertAdjacentHTML(Element&, StringImpl* where, StringImpl* html, ErrorString&);
 
 private:
     class DOMAction;

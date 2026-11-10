@@ -107,7 +107,7 @@ void AudioSourceProviderGStreamer::initialize()
     initializeAudioSourceProviderDebugCategory();
 
     static Atomic<uint64_t> nProvider = 0;
-    m_providerId = makeString("webkit-audio-source-provider-"_s, nProvider.exchangeAdd(1)).ascii();
+    m_providerId = ascii(makeString("webkit-audio-source-provider-"_s, nProvider.exchangeAdd(1)));
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -125,7 +125,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
         pipelineNamePrefix = "incoming-"_s;
 
     auto pipelineName = makeString(pipelineNamePrefix, "WebAudioProvider_MediaStreamTrack_"_s, source.id());
-    m_pipeline = gst_element_factory_make("pipeline", pipelineName.utf8().legacyCStringPointer());
+    m_pipeline = gst_element_factory_make("pipeline", utf8(pipelineName).legacyCStringPointer());
     registerActivePipeline(m_pipeline);
     ASP_DEBUG("MediaStream WebAudio provider created");
 
@@ -221,7 +221,7 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
     GstElement* audioConvert2 = makeGStreamerElement("audioconvert"_s);
     GstElement* audioResample = makeGStreamerElement("audioresample"_s);
     GstElement* audioResample2 = makeGStreamerElement("audioresample"_s);
-    GstElement* volumeElement = makeGStreamerElement("volume"_s, "volume"_s);
+    GstElement* volumeElement = makeGStreamerElement("volume"_s, "volume"_si);
 
     gst_bin_add_many(GST_BIN_CAST(m_audioSinkBin.get()), audioTee, audioQueue, audioConvert, audioResample, volumeElement, audioConvert2, audioResample2, audioSink, nullptr);
 
@@ -381,10 +381,10 @@ void AudioSourceProviderGStreamer::setClient(WeakPtr<AudioSourceProviderClient>&
         // ensure deinterleave and the sinks downstream receive buffers in
         // the format specified by the capsfilter.
         auto* audioQueue = gst_element_factory_make("queue", "queue");
-        auto* audioConvert = makeGStreamerElement("audioconvert"_s, "audioconvert"_s);
-        auto* audioResample = makeGStreamerElement("audioresample"_s, "audioresample"_s);
+        auto* audioConvert = makeGStreamerElement("audioconvert"_s, "audioconvert"_si);
+        auto* audioResample = makeGStreamerElement("audioresample"_s, "audioresample"_si);
         auto* capsFilter = gst_element_factory_make("capsfilter", "capsfilter");
-        auto* deInterleave = makeGStreamerElement("deinterleave"_s, "deinterleave"_s);
+        auto* deInterleave = makeGStreamerElement("deinterleave"_s, "deinterleave"_si);
 
         ASP_DEBUG("Setting up audio deinterleave chain");
         g_object_set(deInterleave, "keep-positions", TRUE, nullptr);

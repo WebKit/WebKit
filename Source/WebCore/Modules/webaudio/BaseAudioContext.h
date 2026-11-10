@@ -113,7 +113,7 @@ public:
     virtual AudioDestinationNode& destination() = 0;
     virtual const AudioDestinationNode& destination() const = 0;
 #if PLATFORM(IOS_FAMILY)
-    virtual const String& sceneIdentifier() const { return nullString(); }
+    virtual const RefPtr<StringImpl>& sceneIdentifier() const { return nullString(); }
 #endif
 
     size_t currentSampleFrame() const { return destination().currentSampleFrame(); }
@@ -235,7 +235,7 @@ public:
     void postTask(Function<void()>&&);
     bool isStopped() const { return m_isStopScheduled; }
     const SecurityOrigin* origin() const;
-    void addConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
+    void addConsoleMessage(JSC::MessageSource, JSC::MessageLevel, StringImpl* message);
 
     virtual void lazyInitialize();
 
@@ -243,8 +243,8 @@ public:
 
     PeriodicWave& periodicWave(OscillatorType);
 
-    void addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&&);
-    const MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const LIFETIME_BOUND { return m_parameterDescriptorMap; }
+    void addAudioParamDescriptors(StringImpl* processorName, Vector<AudioParamDescriptor>&&);
+    const MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const LIFETIME_BOUND { return m_parameterDescriptorMap; }
 
     OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const { return m_noiseInjectionPolicies; }
 
@@ -378,7 +378,7 @@ private:
 
     AudioIOPosition m_outputPosition;
 
-    MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
 
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.

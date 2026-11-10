@@ -88,9 +88,9 @@ public:
     }
 
 private:
-    String sessionIdentifier() const override
+    RefPtr<StringImpl> sessionIdentifier() const override
     {
-        return String { m_session->priv->id };
+        return StringImpl::fromUTF8(m_session->priv->id.span());
     }
 
     void didDisconnectFromRemote(WebAutomationSession&) override
@@ -159,7 +159,7 @@ private:
         webkitWebViewAcceptCurrentScriptDialog(webView);
     }
 
-    std::optional<String> messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
+    std::optional<RefPtr<StringImpl>> messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
     {
         auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
         if (!webView)
@@ -167,7 +167,7 @@ private:
         return webkitWebViewGetCurrentScriptDialogMessage(webView);
     }
 
-    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy& page, const String& userInput) override
+    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy& page, StringImpl* userInput) override
     {
         auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
         if (!webView)
@@ -250,7 +250,7 @@ static void webkitAutomationSessionConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_automation_session_parent_class)->constructed(object);
 
     session->priv->session = adoptRef(new WebAutomationSession());
-    session->priv->session->setSessionIdentifier(String { session->priv->id });
+    session->priv->session->setSessionIdentifier(StringImpl::fromUTF8(session->priv->id.span()).get());
     session->priv->session->setClient(makeUnique<AutomationSessionClient>(session));
 }
 
@@ -347,15 +347,15 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
 #if ENABLE(REMOTE_INSPECTOR)
 static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInspector::Client::SessionCapabilities::Proxy& proxy, WebKitNetworkProxySettings** settings)
 {
-    if (proxy.type == "system"_s || proxy.type == "autodetect"_s)
+    if (equal(proxy.type, "system"_s) || equal(proxy.type, "autodetect"_s))
         return WEBKIT_NETWORK_PROXY_MODE_DEFAULT;
 
-    if (proxy.type == "direct"_s)
+    if (equal(proxy.type, "direct"_s))
         return WEBKIT_NETWORK_PROXY_MODE_NO_PROXY;
 
     if (!proxy.ignoreAddressList.isEmpty()) {
-        auto ignoreAddressListUTF8 = WTF::map(proxy.ignoreAddressList, [](const String& ignoreAddress) {
-            return ignoreAddress.utf8();
+        auto ignoreAddressListUTF8 = WTF::map(proxy.ignoreAddressList, [](StringImpl* ignoreAddress) {
+            return utf8(ignoreAddress);
         });
         Vector<const char*> ignoreAddressList(ReserveCapacityTag { }, ignoreAddressListUTF8.size() + 1);
         for (const auto& ignoreAddress : ignoreAddressListUTF8)
@@ -366,20 +366,20 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
         *settings = webkit_network_proxy_settings_new(nullptr, nullptr);
 
     if (proxy.ftpURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "ftp", proxy.ftpURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "ftp", utf8(*proxy.ftpURL).legacyCStringPointer());
     if (proxy.httpURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "http", proxy.httpURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "http", utf8(*proxy.httpURL).legacyCStringPointer());
     if (proxy.httpsURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "https", proxy.httpsURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "https", utf8(*proxy.httpsURL).legacyCStringPointer());
     if (proxy.socksURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "socks", proxy.socksURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "socks", utf8(*proxy.socksURL).legacyCStringPointer());
 
     return WEBKIT_NETWORK_PROXY_MODE_CUSTOM;
 }
 
-WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const String& sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, StringImpl* sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
-    auto* session = WEBKIT_AUTOMATION_SESSION(gObjectNew(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID.utf8()));
+    auto* session = WEBKIT_AUTOMATION_SESSION(gObjectNew(WEBKIT_TYPE_AUTOMATION_SESSION, "id", utf8(sessionID)));
     session->priv->webContext = webContext;
 #if ENABLE(2022_GLIB_API)
     WebKitNetworkSession* networkSession = webkit_web_context_get_network_session_for_automation(webContext);
@@ -394,21 +394,21 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     }
 
     for (auto& certificate : capabilities.certificates) {
-        GRefPtr<GTlsCertificate> tlsCertificate = adoptGRef(g_tls_certificate_new_from_file(certificate.second.utf8().legacyCStringPointer(), nullptr));
+        GRefPtr<GTlsCertificate> tlsCertificate = adoptGRef(g_tls_certificate_new_from_file(utf8(certificate.second).legacyCStringPointer(), nullptr));
         if (tlsCertificate) {
 #if ENABLE(2022_GLIB_API)
-            webkit_network_session_allow_tls_certificate_for_host(networkSession, tlsCertificate.get(), certificate.first.utf8().legacyCStringPointer());
+            webkit_network_session_allow_tls_certificate_for_host(networkSession, tlsCertificate.get(), utf8(certificate.first).legacyCStringPointer());
 #else
-            webkit_web_context_allow_tls_certificate_for_host(webContext, tlsCertificate.get(), certificate.first.utf8().legacyCStringPointer());
+            webkit_web_context_allow_tls_certificate_for_host(webContext, tlsCertificate.get(), utf8(certificate.first).legacyCStringPointer());
 #endif
         }
     }
     if (capabilities.proxy) {
-        if (capabilities.proxy->type == "pac"_s) {
+        if (equal(capabilities.proxy->type, "pac"_s)) {
             // FIXME: expose pac proxy in public API.
             auto settings = WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::Auto);
             if (capabilities.proxy->autoconfigURL)
-                settings.defaultProxyURL = capabilities.proxy->autoconfigURL->utf8();
+                settings.defaultProxyURL = utf8(*capabilities.proxy->autoconfigURL);
             if (!settings.isEmpty()) {
 #if ENABLE(2022_GLIB_API)
                 Ref dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));
@@ -438,15 +438,15 @@ WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession*
     return *session->priv->session;
 }
 
-String webkitAutomationSessionGetBrowserName(WebKitAutomationSession* session)
+RefPtr<StringImpl> webkitAutomationSessionGetBrowserName(WebKitAutomationSession* session)
 {
     if (session->priv->applicationInfo)
-        return String::fromUTF8(webkit_application_info_get_name(session->priv->applicationInfo));
+        return StringImpl::fromUTF8(webkit_application_info_get_name(session->priv->applicationInfo));
 
-    return String::fromUTF8(g_get_prgname());
+    return StringImpl::fromUTF8(g_get_prgname());
 }
 
-String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession* session)
+RefPtr<StringImpl> webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession* session)
 {
     if (!session->priv->applicationInfo)
         return { };
@@ -455,7 +455,7 @@ String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession* session
     webkit_application_info_get_version(session->priv->applicationInfo, &major, &minor, &micro);
 
     if (!micro && !minor)
-        return String::number(major);
+        return makeString(major);
 
     if (!micro)
         return makeString(major, '.', minor);

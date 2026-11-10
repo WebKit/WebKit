@@ -85,7 +85,7 @@ struct FontFamilies {
     {
     }
 
-    FontFamilies(AtomString family, FontFamilyKind firstFontKind)
+    FontFamilies(RefPtr<AtomStringImpl> family, FontFamilyKind firstFontKind)
         : FontFamilies { RefCountedFixedVector<WebCore::FontFamily>::create({ WebCore::FontFamily { WTF::move(family), firstFontKind } }), firstFontKind }
     {
     }

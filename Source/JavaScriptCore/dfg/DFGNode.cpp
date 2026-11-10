@@ -538,13 +538,13 @@ void Node::convertToInByIdMaybeMegamorphic(Graph& graph, CacheableIdentifier ide
     m_opInfo = identifier;
 }
 
-String Node::tryGetString(Graph& graph)
+RefPtr<StringImpl> Node::tryGetString(Graph& graph)
 {
     if (hasConstant())
         return constant()->tryGetString(graph);
     if (hasLazyJSValue())
         return lazyJSValue().tryGetString(graph);
-    return String();
+    return nullptr;
 }
 
 PromotedLocationDescriptor Node::promotedLocationDescriptor()

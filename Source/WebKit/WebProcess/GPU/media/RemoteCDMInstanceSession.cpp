@@ -60,7 +60,7 @@ void RemoteCDMInstanceSession::setLogIdentifier(uint64_t logIdentifier)
 }
 #endif
 
-void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     RefPtr factory = m_factory.get();
     if (!factory) {
@@ -68,7 +68,7 @@ void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrat
         return;
     }
 
-    protect(factory->gpuProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, keyGroupingStrategy, initDataType, WTF::move(initData)), [callback = WTF::move(callback)] (RefPtr<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
+    protect(factory->gpuProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, keyGroupingStrategy, initDataType, WTF::move(initData)), [callback = WTF::move(callback)] (RefPtr<SharedBuffer>&& message, StringImpl* sessionId, bool needsIndividualization, bool succeeded) mutable {
         if (!message) {
             callback(SharedBuffer::create(), emptyString(), false, Failed);
             return;
@@ -77,7 +77,7 @@ void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrat
     }, m_identifier);
 }
 
-void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseType type, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
+void RemoteCDMInstanceSession::updateLicense(StringImpl* sessionId, LicenseType type, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
 {
     RefPtr factory = m_factory.get();
     if (!factory) {
@@ -90,7 +90,7 @@ void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseTyp
     }, m_identifier);
 }
 
-void RemoteCDMInstanceSession::loadSession(LicenseType type, const String& sessionId, const String& origin, LoadSessionCallback&& callback)
+void RemoteCDMInstanceSession::loadSession(LicenseType type, StringImpl* sessionId, StringImpl* origin, LoadSessionCallback&& callback)
 {
     RefPtr factory = m_factory.get();
     if (!factory) {
@@ -103,7 +103,7 @@ void RemoteCDMInstanceSession::loadSession(LicenseType type, const String& sessi
     }, m_identifier);
 }
 
-void RemoteCDMInstanceSession::closeSession(const String& sessionId, CloseSessionCallback&& callback)
+void RemoteCDMInstanceSession::closeSession(StringImpl* sessionId, CloseSessionCallback&& callback)
 {
     RefPtr factory = m_factory.get();
     if (!factory) {
@@ -116,7 +116,7 @@ void RemoteCDMInstanceSession::closeSession(const String& sessionId, CloseSessio
     }, m_identifier);
 }
 
-void RemoteCDMInstanceSession::removeSessionData(const String& sessionId, LicenseType type, RemoveSessionDataCallback&& callback)
+void RemoteCDMInstanceSession::removeSessionData(StringImpl* sessionId, LicenseType type, RemoveSessionDataCallback&& callback)
 {
     RefPtr factory = m_factory.get();
     if (!factory) {
@@ -129,7 +129,7 @@ void RemoteCDMInstanceSession::removeSessionData(const String& sessionId, Licens
     }, m_identifier);
 }
 
-void RemoteCDMInstanceSession::storeRecordOfKeyUsage(const String& sessionId)
+void RemoteCDMInstanceSession::storeRecordOfKeyUsage(StringImpl* sessionId)
 {
     if (RefPtr factory = m_factory.get())
         protect(factory->gpuProcessConnection().connection())->send(Messages::RemoteCDMInstanceSessionProxy::StoreRecordOfKeyUsage(sessionId), m_identifier);
@@ -150,7 +150,7 @@ void RemoteCDMInstanceSession::sendMessage(WebCore::CDMMessageType type, RefPtr<
         client->sendMessage(type, message.releaseNonNull());
 }
 
-void RemoteCDMInstanceSession::sessionIdChanged(const String& sessionId)
+void RemoteCDMInstanceSession::sessionIdChanged(StringImpl* sessionId)
 {
     if (RefPtr client = m_client.get())
         client->sessionIdChanged(sessionId);

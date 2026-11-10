@@ -205,7 +205,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView co
     // The parameters sample entry 4CC, profile, level, tier, and bitDepth are all mandatory
     // fields. If any of these fields are empty, or not within their allowed range, the processing
     // device SHOULD treat it as an error.
-    if (configuration.codecName != "av01"_s)
+    if (!equal(configuration.codecName, "av01"_s))
         return std::nullopt;
 
     if (++nextElement == codecSplit.end())
@@ -331,7 +331,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView co
     return configuration;
 }
 
-String createAV1CodecParametersString(const AV1CodecConfigurationRecord& configuration)
+RefPtr<StringImpl> createAV1CodecParametersString(const AV1CodecConfigurationRecord& configuration)
 {
     // Ref: https://aomediacodec.github.io/av1-isobmff/#codecsparam
     // Section 5: Codecs Parameter String
@@ -643,7 +643,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(st
     // Initialize dimension fields to default values (decoder config doesn't contain dimensions)
     record.width = AV1CodecConfigurationRecord::defaultWidth;
     record.height = AV1CodecConfigurationRecord::defaultHeight;
-    record.codecName = "av01"_s;
+    record.codecName = "av01"_si;
 
     return record;
 }
@@ -651,7 +651,7 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(st
 std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t> data)
 {
     AV1CodecConfigurationRecord record;
-    record.codecName = "av01"_s;
+    record.codecName = "av01"_si;
 
     BitReader bitReader(data);
     std::optional<size_t> value;

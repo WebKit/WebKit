@@ -68,7 +68,7 @@ static double numericWindowProperty(WKBundleFrameRef frame, const char* name)
     return numericProperty(context, JSContextGetGlobalObject(context), name);
 }
 
-static WTF::String dumpPath(JSGlobalContextRef context, JSObjectRef nodeValue)
+static RefPtr<StringImpl> dumpPath(JSGlobalContextRef context, JSObjectRef nodeValue)
 {
     auto name = toWTFString(stringProperty(context, nodeValue, "nodeName"));
     if (auto parentNode = objectProperty(context, nodeValue, "parentNode"))
@@ -76,10 +76,10 @@ static WTF::String dumpPath(JSGlobalContextRef context, JSObjectRef nodeValue)
     return name;
 }
 
-static WTF::String dumpPath(WKBundleScriptWorldRef world, WKBundleNodeHandleRef node)
+static RefPtr<StringImpl> dumpPath(WKBundleScriptWorldRef world, WKBundleNodeHandleRef node)
 {
     if (!node)
-        return "(null)"_s;
+        return "(null)"_si;
 
     auto frame = adoptWK(WKBundleNodeHandleCopyOwningDocumentFrame(node));
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame.get(), world);
@@ -90,10 +90,10 @@ static WTF::String dumpPath(WKBundleScriptWorldRef world, WKBundleNodeHandleRef 
     return dumpPath(context, nodeObject);
 }
 
-static WTF::String string(WKBundleScriptWorldRef world, WKBundleRangeHandleRef rangeRef)
+static RefPtr<StringImpl> string(WKBundleScriptWorldRef world, WKBundleRangeHandleRef rangeRef)
 {
     if (!rangeRef)
-        return "(null)"_s;
+        return "(null)"_si;
 
     auto frame = adoptWK(WKBundleRangeHandleCopyDocumentFrame(rangeRef));
     auto context = WKBundleFrameGetJavaScriptContextForWorld(frame.get(), world);
@@ -112,15 +112,15 @@ static WTF::String string(WKBundleScriptWorldRef world, WKBundleRangeHandleRef r
     );
 }
 
-static WTF::String styleDecToStr(WKBundleCSSStyleDeclarationRef)
+static RefPtr<StringImpl> styleDecToStr(WKBundleCSSStyleDeclarationRef)
 {
     // DumpRenderTree calls -[DOMCSSStyleDeclaration description], which just dumps class name and object address.
     // No existing tests actually hit this code path at the time of this writing, because WebCore doesn't call
     // the editing client if the styling operation source is CommandFromDOM or CommandFromDOMWithUserInterface.
-    return "<DOMCSSStyleDeclaration ADDRESS>"_s;
+    return "<DOMCSSStyleDeclaration ADDRESS>"_si;
 }
 
-static WTF::String string(WKBundleFrameRef frame)
+static RefPtr<StringImpl> string(WKBundleFrameRef frame)
 {
     auto name = adoptWK(WKBundleFrameCopyName(frame));
     bool isMain = WKBundleFrameIsMainFrame(frame);
@@ -136,10 +136,10 @@ static inline bool isLocalFileScheme(WKStringRef scheme)
 
 static const char divider = '/';
 
-WTF::String pathSuitableForTestResult(WKURLRef fileURL)
+RefPtr<StringImpl> pathSuitableForTestResult(WKURLRef fileURL)
 {
     if (!fileURL)
-        return "(null)"_s;
+        return "(null)"_si;
 
     auto schemeString = adoptWK(WKURLCopyScheme(fileURL));
     if (!isLocalFileScheme(schemeString.get()))
@@ -152,12 +152,12 @@ WTF::String pathSuitableForTestResult(WKURLRef fileURL)
     if (!mainFrameURL)
         mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
 
-    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
-    String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
-    auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind(divider) + 1);
+    RefPtr<StringImpl> pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
+    RefPtr<StringImpl> mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_si;
+    auto basePath = StringView(mainFrameURLPathString).left(reverseFind(mainFrameURLPathString, divider) + 1);
     
-    if (!basePath.isEmpty() && pathString.startsWith(basePath))
-        return pathString.substring(basePath.length());
+    if (!basePath.isEmpty() && startsWith(pathString, basePath))
+        return substring(pathString, basePath.length());
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
@@ -553,9 +553,9 @@ void InjectedBundlePage::dump()
     auto urlRef = adoptWK(WKBundleFrameCopyURL(frame));
     if (!urlRef)
         return;
-    String url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
+    RefPtr<StringImpl> url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
     auto mimeType = adoptWK(WKBundleFrameCopyMIMETypeForResourceWithURL(frame, urlRef.get()));
-    if (url.find("dumpAsText/"_s) != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
+    if (find(url, "dumpAsText/"_s) != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
         testRunner->dumpAsText(false);
 
     StringBuilder stringBuilder;
@@ -797,16 +797,16 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
 
             auto blockedURL = sanitizeExternalURL(urlString.get());
             auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
-            RefPtr scriptRef = adoptRef(JSStringCreateWithUTF8CString(script.utf8().legacyCStringPointer()));
+            RefPtr scriptRef = adoptRef(JSStringCreateWithUTF8CString(utf8(script).legacyCStringPointer()));
             JSEvaluateScript(jsContext, scriptRef.get(), 0, 0, 0, 0);
             return nullptr;
         }
     }
     
     if (testRunner) {
-        String body = testRunner->willSendRequestHTTPBody();
-        if (!body.isEmpty()) {
-            auto cBody = body.utf8();
+        RefPtr<StringImpl> body = testRunner->willSendRequestHTTPBody();
+        if (!isEmpty(body)) {
+            auto cBody = utf8(body);
             auto body = adoptWK(WKDataCreate(reinterpret_cast<const unsigned char*>(cBody.data()), cBody.length()));
             return WKURLRequestCopySettingHTTPBody(request, body.get());
         }
@@ -1058,7 +1058,7 @@ void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
     injectedBundle.outputText(makeString("EDITING DELEGATE: webViewDidChangeSelection:"_s, notificationName, '\n'));
 }
 
-String InjectedBundlePage::dumpHistory()
+RefPtr<StringImpl> InjectedBundlePage::dumpHistory()
 {
     return makeString(
         "\n============== Back Forward List ==============\n"_s,

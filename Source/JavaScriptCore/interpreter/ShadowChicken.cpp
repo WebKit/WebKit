@@ -50,11 +50,11 @@ void ShadowChicken::Packet::dump(PrintStream& out) const
     }
     
     if (isPrologue()) {
-        String name = "?"_s;
+        RefPtr<StringImpl> name = "?"_si;
         if (auto* function = dynamicDowncast<JSFunction>(callee)) {
             name = function->name(callee->vm());
-            if (name.isEmpty())
-                name = "?"_s;
+            if (isEmpty(name))
+                name = "?"_si;
         }
 
         out.print(
@@ -74,11 +74,11 @@ void ShadowChicken::Packet::dump(PrintStream& out) const
 
 void ShadowChicken::Frame::dump(PrintStream& out) const
 {
-    String name = "?"_s;
+    RefPtr<StringImpl> name = "?"_si;
     if (auto* function = dynamicDowncast<JSFunction>(callee)) {
         name = function->name(callee->vm());
-        if (name.isEmpty())
-            name = "?"_s;
+        if (isEmpty(name))
+            name = "?"_si;
     }
 
     out.print(

@@ -48,7 +48,7 @@ template<typename> class ExceptionOr;
 class BroadcastChannel : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BroadcastChannel>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(BroadcastChannel);
 public:
-    static Ref<BroadcastChannel> create(ScriptExecutionContext& context, const String& name)
+    static Ref<BroadcastChannel> create(ScriptExecutionContext& context, StringImpl* name)
     {
         auto channel = adoptRef(*new BroadcastChannel(context, name));
         channel->suspendIfNeeded();
@@ -62,7 +62,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     NODELETE BroadcastChannelIdentifier identifier() const;
-    String name() const;
+    RefPtr<StringImpl> name() const;
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message);
     void close();
@@ -70,7 +70,7 @@ public:
     WEBCORE_EXPORT static void dispatchMessageTo(BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&);
 
 private:
-    BroadcastChannel(ScriptExecutionContext&, const String& name);
+    BroadcastChannel(ScriptExecutionContext&, StringImpl* name);
 
     void dispatchMessage(Ref<SerializedScriptValue>&&, CompletionHandlerCallingScope&&);
 

@@ -178,7 +178,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         [](float value) -> JSValue {
             return jsNumber(purifyNaN(value));
         },
-        [&](const String& value) -> JSValue {
+        [&](StringImpl* value) -> JSValue {
             return jsStringWithCache(lexicalGlobalObject.vm(), value);
         },
         [&](const Vector<bool>& values) -> JSValue {

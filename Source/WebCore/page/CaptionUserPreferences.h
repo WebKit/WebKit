@@ -66,7 +66,7 @@ public:
 
     virtual int textTrackSelectionScore(TextTrack&, CaptionDisplayMode, AudioTrack* enabledAudioTrack = nullptr) const;
     virtual int textTrackSelectionScore(TextTrack&, HTMLMediaElement&) const;
-    virtual int textTrackLanguageSelectionScore(TextTrack&, const Vector<String>&) const;
+    virtual int textTrackLanguageSelectionScore(TextTrack&, const Vector<RefPtr<StringImpl>>&) const;
 
     virtual bool userPrefersCaptions() const;
     virtual void setUserPrefersCaptions(bool);
@@ -79,44 +79,44 @@ public:
 
     virtual float captionFontSizeScaleAndImportance(bool& important) const { important = false; return 0.05f; }
 
-    virtual bool captionStrokeWidthForFont(float, const String&, float&, bool&) const { return false; }
+    virtual bool captionStrokeWidthForFont(float, StringImpl*, float&, bool&) const { return false; }
 
-    virtual String captionsStyleSheetOverride() const { return m_captionsStyleSheetOverride; }
-    virtual void setCaptionsStyleSheetOverride(const String&);
+    virtual RefPtr<StringImpl> captionsStyleSheetOverride() const { return m_captionsStyleSheetOverride; }
+    virtual void setCaptionsStyleSheetOverride(StringImpl*);
 
     virtual void setInterestedInCaptionPreferenceChanges() { }
 
     virtual void captionPreferencesChanged();
 
-    virtual void setPreferredLanguage(const String&);
-    virtual Vector<String> preferredLanguages() const;
+    virtual void setPreferredLanguage(StringImpl*);
+    virtual Vector<RefPtr<StringImpl>> preferredLanguages() const;
 
-    virtual void setPreferredAudioCharacteristic(const String&);
-    virtual Vector<String> preferredAudioCharacteristics() const;
+    virtual void setPreferredAudioCharacteristic(StringImpl*);
+    virtual Vector<RefPtr<StringImpl>> preferredAudioCharacteristics() const;
 
-    virtual String displayNameForTrack(const TextTrack&) const;
+    virtual RefPtr<StringImpl> displayNameForTrack(const TextTrack&) const;
     MediaSelectionOption mediaSelectionOptionForTrack(const TextTrack&) const;
     virtual Vector<Ref<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
     RefPtr<TextTrack> bestTextTrackToEnable(const TextTrackList&) const;
 
-    virtual String displayNameForTrack(const AudioTrack&) const;
+    virtual RefPtr<StringImpl> displayNameForTrack(const AudioTrack&) const;
     MediaSelectionOption mediaSelectionOptionForTrack(const AudioTrack&) const;
     virtual Vector<Ref<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
 
-    void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
-    String primaryAudioTrackLanguageOverride() const;
+    void setPrimaryAudioTrackLanguageOverride(StringImpl* language) { m_primaryAudioTrackLanguageOverride = language;  }
+    RefPtr<StringImpl> primaryAudioTrackLanguageOverride() const;
 
-    void setPreferredAudioCharacteristicsForTesting(const Vector<String>& characteristics) { m_preferredAudioCharacteristicsForTesting = characteristics; }
-    const Vector<String>& preferredAudioCharacteristicsForTesting() const LIFETIME_BOUND { return m_preferredAudioCharacteristicsForTesting; }
+    void setPreferredAudioCharacteristicsForTesting(const Vector<RefPtr<StringImpl>>& characteristics) { m_preferredAudioCharacteristicsForTesting = characteristics; }
+    const Vector<RefPtr<StringImpl>>& preferredAudioCharacteristicsForTesting() const LIFETIME_BOUND { return m_preferredAudioCharacteristicsForTesting; }
 
     virtual bool testingMode() const { return m_testingModeCount; }
 
     friend class CaptionUserPreferencesTestingModeToken;
     NODELETE WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> createTestingModeToken();
 
-    virtual String captionPreviewTitle() const;
-    virtual String captionPreviewProfileID() const { return emptyString(); }
-    virtual void setCaptionPreviewProfileID(const String&) { }
+    virtual RefPtr<StringImpl> captionPreviewTitle() const;
+    virtual RefPtr<StringImpl> captionPreviewProfileID() const { return emptyString(); }
+    virtual void setCaptionPreviewProfileID(StringImpl*) { }
 
     NODELETE PageGroup& pageGroup() const;
 
@@ -143,11 +143,11 @@ private:
     WeakRef<PageGroup> m_pageGroup;
     mutable CaptionDisplayMode m_displayMode;
     Timer m_timer;
-    String m_userPreferredLanguage;
-    String m_userPreferredAudioCharacteristic;
-    String m_captionsStyleSheetOverride;
-    String m_primaryAudioTrackLanguageOverride;
-    Vector<String> m_preferredAudioCharacteristicsForTesting;
+    RefPtr<StringImpl> m_userPreferredLanguage;
+    RefPtr<StringImpl> m_userPreferredAudioCharacteristic;
+    RefPtr<StringImpl> m_captionsStyleSheetOverride;
+    RefPtr<StringImpl> m_primaryAudioTrackLanguageOverride;
+    Vector<RefPtr<StringImpl>> m_preferredAudioCharacteristicsForTesting;
     unsigned m_blockNotificationsCounter { 0 };
     bool m_havePreferences { false };
     unsigned m_testingModeCount { 0 };
@@ -175,7 +175,7 @@ private:
 namespace WTF {
 
 template<> struct EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode> {
-    static std::optional<WebCore::CaptionUserPreferences::CaptionDisplayMode> fromString(const String& mode)
+    static std::optional<WebCore::CaptionUserPreferences::CaptionDisplayMode> fromString(StringImpl* mode)
     {
         if (equalLettersIgnoringASCIICase(mode, "forcedonly"_s))
             return WebCore::CaptionUserPreferences::CaptionDisplayMode::ForcedOnly;

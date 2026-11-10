@@ -42,37 +42,37 @@
 - (NSString *)color
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::colorAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::colorAttr)).autorelease();
 }
 
 - (void)setColor:(NSString *)newColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::colorAttr, newColor);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::colorAttr, AtomStringImpl::add((__bridge CFStringRef)newColor).get());
 }
 
 - (NSString *)face
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::faceAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::faceAttr)).autorelease();
 }
 
 - (void)setFace:(NSString *)newFace
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::faceAttr, newFace);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::faceAttr, AtomStringImpl::add((__bridge CFStringRef)newFace).get());
 }
 
 - (NSString *)size
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::sizeAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::sizeAttr)).autorelease();
 }
 
 - (void)setSize:(NSString *)newSize
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, newSize);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, AtomStringImpl::add((__bridge CFStringRef)newSize).get());
 }
 
 @end

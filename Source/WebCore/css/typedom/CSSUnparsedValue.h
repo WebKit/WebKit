@@ -33,7 +33,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 class CSSOMVariableReferenceValue;
 class CSSParserTokenRange;
-using CSSUnparsedSegment = Variant<String, Ref<CSSOMVariableReferenceValue>>;
+using CSSUnparsedSegment = Variant<RefPtr<StringImpl>, Ref<CSSOMVariableReferenceValue>>;
 
 class CSSUnparsedValue final : public CSSStyleValue {
     WTF_MAKE_TZONE_ALLOCATED(CSSUnparsedValue);

@@ -92,7 +92,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
             return;
         }
 
-        for (const auto& identifier : String(quirksString.span()).split(',')) {
+        for (const auto& identifier : split(StringImpl::create(quirksString.span()), ',')) {
             std::unique_ptr<GStreamerQuirk> quirk;
             if (WTF::equalLettersIgnoringASCIICase(identifier, "amlogic"_s))
                 quirk = WTF::makeUnique<GStreamerQuirkAmLogic>();
@@ -111,7 +111,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "westeros"_s))
                 quirk = WTF::makeUnique<GStreamerQuirkWesteros>();
             else {
-                GST_WARNING("Unknown quirk requested: %s. Skipping", identifier.ascii().data());
+                GST_WARNING("Unknown quirk requested: %s. Skipping", ascii(identifier).data());
                 continue;
             }
 
@@ -185,7 +185,7 @@ GstElement* GStreamerQuirksManager::createAudioSink()
     return nullptr;
 }
 
-GstElement* GStreamerQuirksManager::createWebAudioSink(const String& deviceId, const GRefPtr<GstDevice>& device)
+GstElement* GStreamerQuirksManager::createWebAudioSink(StringImpl* deviceId, const GRefPtr<GstDevice>& device)
 {
     for (const auto& quirk : m_quirks) {
         auto* sink = quirk->createWebAudioSink();
@@ -197,7 +197,7 @@ GstElement* GStreamerQuirksManager::createWebAudioSink(const String& deviceId, c
     }
 
     GST_DEBUG("Quirks didn't specify a WebAudioSink, falling back to default sink");
-    return createPlatformAudioSink("webaudio"_s, deviceId, device);
+    return createPlatformAudioSink("webaudio"_si, deviceId, device);
 }
 
 GstElement* GStreamerQuirksManager::createHolePunchVideoSink(bool isLegacyPlaybin, const MediaPlayer* player)
@@ -273,9 +273,9 @@ GstElementFactoryListType GStreamerQuirksManager::audioVideoDecoderFactoryListTy
     return GST_ELEMENT_FACTORY_TYPE_DECODER;
 }
 
-Vector<String> GStreamerQuirksManager::disallowedWebAudioDecoders() const
+Vector<RefPtr<StringImpl>> GStreamerQuirksManager::disallowedWebAudioDecoders() const
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     for (const auto& quirk : m_quirks)
         result.appendVector(quirk->disallowedWebAudioDecoders());
 

@@ -47,7 +47,7 @@ void MediaUsageManager::reset()
     notImplemented();
 }
 
-void MediaUsageManager::addMediaSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void MediaUsageManager::addMediaSession(WebCore::MediaSessionIdentifier identifier, StringImpl* bundleIdentifier, const URL& pageURL)
 {
     notImplemented();
 }

@@ -44,7 +44,7 @@ public:
     Gradient& gradient() { return m_gradient; }
     const Gradient& gradient() const { return m_gradient; }
 
-    ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, const String& color);
+    ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, StringImpl* color);
 
 private:
     CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);

@@ -63,9 +63,9 @@ class EnvironmentVariables {
 public:
     explicit EnvironmentVariables(Document&);
 
-    using Values = HashMap<AtomString, Ref<const CustomProperty>>;
+    using Values = HashMap<RefPtr<AtomStringImpl>, Ref<const CustomProperty>>;
 
-    RefPtr<const CustomProperty> valueForName(const AtomString&) const;
+    RefPtr<const CustomProperty> valueForName(AtomStringImpl*) const;
 
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
@@ -78,9 +78,9 @@ private:
     const Values& userAgentDefinedValues() const LIFETIME_BOUND;
     void buildValues();
 
-    const AtomString& nameForVariable(UADefinedVariable) const;
+    const RefPtr<AtomStringImpl>& nameForVariable(UADefinedVariable) const;
     void setValueForVariable(UADefinedVariable, Ref<CSSVariableData>&&);
-    void setValueForName(const AtomString&, Ref<CSSVariableData>&&);
+    void setValueForName(AtomStringImpl*, Ref<CSSVariableData>&&);
 
     void updateSafeAreaInsetVariables();
     void updateFullscreenVariables();

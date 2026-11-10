@@ -43,21 +43,21 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebContextMenuItemGlib);
 
-WebContextMenuItemGlib::WebContextMenuItemGlib(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
-    : WebContextMenuItemData(type, action, String { title }, enabled, checked)
+WebContextMenuItemGlib::WebContextMenuItemGlib(ContextMenuItemType type, ContextMenuAction action, StringImpl* title, bool enabled, bool checked)
+    : WebContextMenuItemData(type, action, RefPtr<StringImpl> { title }, enabled, checked)
 {
     ASSERT(type != ContextMenuItemType::Submenu);
     createActionIfNeeded();
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemData& data)
-    : WebContextMenuItemData(data.type() == ContextMenuItemType::Submenu ? ContextMenuItemType::Action : data.type(), data.action(), String { data.title() }, data.enabled(), data.checked())
+    : WebContextMenuItemData(data.type() == ContextMenuItemType::Submenu ? ContextMenuItemType::Action : data.type(), data.action(), RefPtr<StringImpl> { data.title() }, data.enabled(), data.checked())
 {
     createActionIfNeeded();
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemGlib& data, Vector<WebContextMenuItemGlib>&& submenu)
-    : WebContextMenuItemData(ContextMenuItemType::Action, data.action(), String { data.title() }, data.enabled(), false)
+    : WebContextMenuItemData(ContextMenuItemType::Action, data.action(), RefPtr<StringImpl> { data.title() }, data.enabled(), false)
 {
     m_gAction = data.gAction();
     m_submenuItems = WTF::move(submenu);
@@ -76,8 +76,8 @@ static bool isGActionChecked(GAction* action)
     return g_variant_get_boolean(state.get());
 }
 
-WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& title, GVariant* target)
-    : WebContextMenuItemData(g_action_get_state_type(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String { title }, g_action_get_enabled(action), isGActionChecked(action))
+WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, StringImpl* title, GVariant* target)
+    : WebContextMenuItemData(g_action_get_state_type(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, RefPtr<StringImpl> { title }, g_action_get_enabled(action), isGActionChecked(action))
     , m_gAction(action)
     , m_gActionTarget(target)
 {
@@ -87,7 +87,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& ti
 #if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WebContextMenuItemGlib::WebContextMenuItemGlib(GtkAction* action)
-    : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) && gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)))
+    : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, StringImpl::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) && gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)))
 {
     m_gtkAction = action;
     createActionIfNeeded();
@@ -118,10 +118,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Create the GtkAction for backwards compatibility only.
     if (!m_gtkAction) {
         if (type() == ContextMenuItemType::CheckableAction) {
-            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(g_action_get_name(m_gAction.get()), title().utf8().legacyCStringPointer(), nullptr, nullptr));
+            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(g_action_get_name(m_gAction.get()), utf8(title()).legacyCStringPointer(), nullptr, nullptr));
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(m_gtkAction), checked());
         } else
-            m_gtkAction = gtk_action_new(g_action_get_name(m_gAction.get()), title().utf8().legacyCStringPointer(), 0, nullptr);
+            m_gtkAction = gtk_action_new(g_action_get_name(m_gAction.get()), utf8(title()).legacyCStringPointer(), 0, nullptr);
         gtk_action_set_sensitive(m_gtkAction, enabled());
     }
 

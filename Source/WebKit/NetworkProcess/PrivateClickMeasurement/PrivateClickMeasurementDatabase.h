@@ -46,11 +46,11 @@ struct DebugInfo;
 class Database : public DatabaseUtilities, public RefCountedAndCanMakeWeakPtr<Database> {
     WTF_MAKE_TZONE_ALLOCATED(Database);
 public:
-    static Ref<Database> create(const String& storageDirectory);
+    static Ref<Database> create(StringImpl* storageDirectory);
 
     virtual ~Database();
 
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     static void interruptAllDatabases();
 
@@ -61,7 +61,7 @@ public:
     void clearExpiredPrivateClickMeasurement();
     void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PCM::AttributionReportEndpoint);
 
-    String privateClickMeasurementToStringForTesting() const;
+    RefPtr<StringImpl> privateClickMeasurementToStringForTesting() const;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
 
@@ -75,23 +75,23 @@ private:
     using SourceEarliestTimeToSend = double;
     using DestinationEarliestTimeToSend = double;
 
-    Database(const String& storageDirectory);
+    Database(StringImpl* storageDirectory);
     bool createSchema() final;
     void destroyStatements() final;
     std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PCM::SourceSite&, const WebCore::PCM::AttributionDestinationSite&, const ApplicationBundleIdentifier&);
     void removeUnattributed(WebCore::PrivateClickMeasurement&);
-    String attributionToStringForTesting(const WebCore::PrivateClickMeasurement&) const;
+    RefPtr<StringImpl> attributionToStringForTesting(const WebCore::PrivateClickMeasurement&) const;
     void markReportAsSentToDestination(SourceDomainID, DestinationDomainID, const ApplicationBundleIdentifier&);
     void markReportAsSentToSource(SourceDomainID, DestinationDomainID, const ApplicationBundleIdentifier&);
     std::pair<std::optional<SourceEarliestTimeToSend>, std::optional<DestinationEarliestTimeToSend>> earliestTimesToSend(const WebCore::PrivateClickMeasurement&);
     std::optional<DomainID> ensureDomainID(const WebCore::RegistrableDomain&);
     std::optional<DomainID> domainID(const WebCore::RegistrableDomain&);
-    String getDomainStringFromDomainID(DomainID) const final;
+    RefPtr<StringImpl> getDomainStringFromDomainID(DomainID) const final;
 
     void addDestinationTokenColumnsIfNecessary();
     bool needsUpdatedSchema() final { return false; };
     bool createUniqueIndices() final;
-    const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
+    const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     std::span<const ASCIILiteral> sortedTables() final;
 
     using Statement = std::unique_ptr<WebCore::SQLiteStatement>;

@@ -50,7 +50,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     bool shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;

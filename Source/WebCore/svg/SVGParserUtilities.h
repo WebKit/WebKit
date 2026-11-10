@@ -52,8 +52,8 @@ std::optional<FloatRect> parseRect(StringView);
 NODELETE std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<Latin1Character>&);
 NODELETE std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<char16_t>&);
 
-std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(StringView);
-std::optional<HashSet<String>> parseGlyphName(StringView);
+std::optional<std::pair<UnicodeRanges, HashSet<RefPtr<StringImpl>>>> parseKerningUnicodeString(StringView);
+std::optional<HashSet<RefPtr<StringImpl>>> parseGlyphName(StringView);
 
 template<typename CharacterType> constexpr bool isSVGSpaceOrComma(CharacterType c)
 {

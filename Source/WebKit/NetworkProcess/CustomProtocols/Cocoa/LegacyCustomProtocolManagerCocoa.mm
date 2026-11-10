@@ -81,7 +81,7 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 {
     // FIXME: This code runs in a dispatch queue so we can't ref NetworkProcess here.
     if (SUPPRESS_UNCOUNTED_LOCAL auto* customProtocolManager = protect(WebKit::firstNetworkProcess())->supplement<WebKit::LegacyCustomProtocolManager>())
-        SUPPRESS_UNCOUNTED_ARG return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
+        SUPPRESS_UNCOUNTED_ARG return customProtocolManager->supportsScheme(StringImpl::create([[[request URL] scheme] lowercaseString]).get());
     return NO;
 }
 
@@ -144,23 +144,23 @@ void LegacyCustomProtocolManager::registerProtocolClass(NSURLSessionConfiguratio
     configuration.protocolClasses = @[[WKCustomProtocol class]];
 }
 
-void LegacyCustomProtocolManager::registerScheme(const String& scheme)
+void LegacyCustomProtocolManager::registerScheme(StringImpl* scheme)
 {
-    ASSERT(!scheme.isNull());
+    ASSERT(scheme);
     Locker locker { m_registeredSchemesLock };
     m_registeredSchemes.add(scheme);
 }
 
-void LegacyCustomProtocolManager::unregisterScheme(const String& scheme)
+void LegacyCustomProtocolManager::unregisterScheme(StringImpl* scheme)
 {
-    ASSERT(!scheme.isNull());
+    ASSERT(scheme);
     Locker locker { m_registeredSchemesLock };
     m_registeredSchemes.remove(scheme);
 }
 
-bool LegacyCustomProtocolManager::supportsScheme(const String& scheme)
+bool LegacyCustomProtocolManager::supportsScheme(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return false;
 
     Locker locker { m_registeredSchemesLock };

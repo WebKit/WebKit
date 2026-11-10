@@ -94,7 +94,7 @@ void PublicKeyCredential::getClientCapabilities(Document& document, DOMPromiseDe
 PublicKeyCredentialJSON PublicKeyCredential::toJSON()
 {
     if (RefPtr attestationResponse = dynamicDowncast<AuthenticatorAttestationResponse>(m_response)) {
-        String encodedId;
+        RefPtr<StringImpl> encodedId;
         if (RefPtr decodedRawId = rawId())
             encodedId = base64URLEncodeToString(decodedRawId->span());
 
@@ -108,7 +108,7 @@ PublicKeyCredentialJSON PublicKeyCredential::toJSON()
         };
     }
     if (RefPtr assertionResponse = dynamicDowncast<AuthenticatorAssertionResponse>(m_response)) {
-        String encodedId;
+        RefPtr<StringImpl> encodedId;
         if (RefPtr decodedRawId = rawId())
             encodedId = base64URLEncodeToString(decodedRawId->span());
 
@@ -126,7 +126,7 @@ PublicKeyCredentialJSON PublicKeyCredential::toJSON()
     return AuthenticationResponseJSON { };
 }
 
-template<typename ErrorStringFunction> static ExceptionOr<BufferSource> fromJSONBase64(String&& value, ErrorStringFunction&& errorStringFunction)
+template<typename ErrorStringFunction> static ExceptionOr<BufferSource> fromJSONBase64(RefPtr<StringImpl>&& value, ErrorStringFunction&& errorStringFunction)
 {
     if (auto decodedValue = base64URLDecode(value))
         return toBufferSource(decodedValue->span());
@@ -191,7 +191,7 @@ static ExceptionOr<AuthenticationExtensionsClientInputs::PRFValues> fromJSON(Aut
         return first.releaseException();
 
     std::optional<BufferSource> second;
-    if (!jsonInputs.second.isNull()) {
+    if (jsonInputs.second) {
         auto decodedSecond = fromJSONBase64(WTF::move(jsonInputs.second), [&] { return makeString("Invalid encoding of prf.second: "_s, jsonInputs.second, " (It should be Base64URL encoded.)"_s); });
         if (decodedSecond.hasException())
             return decodedSecond.releaseException();
@@ -214,9 +214,9 @@ static ExceptionOr<AuthenticationExtensionsClientInputs::PRFInputs> fromJSON(Aut
         eval = decodedEval.releaseReturnValue();
     }
 
-    std::optional<Vector<KeyValuePair<String, AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
+    std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
     if (jsonInputs.evalByCredential) {
-        evalByCredential = Vector<KeyValuePair<String, AuthenticationExtensionsClientInputs::PRFValues>> { };
+        evalByCredential = Vector<KeyValuePair<RefPtr<StringImpl>, AuthenticationExtensionsClientInputs::PRFValues>> { };
         for (auto credentialEvalJSON : *jsonInputs.evalByCredential) {
             auto value = fromJSON(WTF::move(credentialEvalJSON.value));
             if (value.hasException())

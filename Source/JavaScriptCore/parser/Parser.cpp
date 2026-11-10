@@ -211,7 +211,7 @@ NODELETE static ALWAYS_INLINE bool isPrivateFieldName(UniquedStringImpl* uid)
 }
 
 template <typename LexerType>
-std::expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, ParsingContext parsingContext, std::optional<int> functionConstructorParametersEndPosition, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>* classElementDefinitions, const PrivateNameEnvironment* parentScopePrivateNames)
+std::expected<typename Parser<LexerType>::ParseInnerResult, RefPtr<StringImpl>> Parser<LexerType>::parseInner(const Identifier& calleeName, ParsingContext parsingContext, std::optional<int> functionConstructorParametersEndPosition, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>* classElementDefinitions, const PrivateNameEnvironment* parentScopePrivateNames)
 {
     ASTBuilder context(const_cast<VM&>(m_vm), m_parserArena, const_cast<SourceCode*>(m_source));
     SourceParseMode parseMode = sourceParseMode();
@@ -288,7 +288,7 @@ std::expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<Lexer
         return makeUnexpected(hasError() ? m_errorMessage : "Parser error"_s);
 
     if (!m_lexer->isReparsingFunction() && m_seenPrivateNameUse) {
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         scope->forEachUsedVariable([&] (UniquedStringImpl* impl) {
             if (!isPrivateFieldName(impl))
                 return IterationStatus::Continue;
@@ -299,7 +299,7 @@ std::expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<Lexer
             errorMessage = makeString("Cannot reference undeclared private names: \""_s, StringView(impl), '"');
             return IterationStatus::Done;
         });
-        if (!errorMessage.isNull())
+        if (errorMessage)
             return makeUnexpected(errorMessage);
     }
 
@@ -5343,7 +5343,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         TreeExpression re = context.createRegExp(location, *pattern, *flags, start, m_lexer->isReparsingFunction());
         if (!re) [[unlikely]] {
             Yarr::ErrorCode errorCode = Yarr::checkSyntax(pattern->string(), flags->string());
-            regexFail(String::fromLatin1(Yarr::errorMessage(errorCode)));
+            regexFail(StringImpl::fromLatin1(Yarr::errorMessage(errorCode)));
         }
         return re;
     }

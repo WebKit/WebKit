@@ -58,6 +58,35 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(VectorBuffer, WTF_EXPORT_PRIVA
 
 enum class NulloptBehavior : bool { Ignore, Abort };
 
+// How find(), contains(), reverseFind(), removeFirst(), removeLast(), removeAll() and appendIfNotContains() compare
+// items with values: with ==, or by raw pointer for smart pointer items and raw pointer values, unless a
+// vectorElementEquals(item, value) overload is found by argument-dependent lookup. StringImpl.h declares one so that
+// string pointer items (Vector<RefPtr<StringImpl>> etc.) compare contents, like Vector<String>.
+template<typename T, typename U> concept HasVectorElementEquals = requires(const T& item, const U& value)
+{
+    { vectorElementEquals(item, value) } -> std::same_as<bool>;
+};
+
+namespace Detail {
+
+template<typename T, typename U> ALWAYS_INLINE bool vectorItemEquals(const T& item, const U& value)
+{
+    if constexpr (HasVectorElementEquals<T, U>)
+        return vectorElementEquals(item, value);
+    else
+        return item == value;
+}
+
+template<typename T, typename V> ALWAYS_INLINE bool vectorItemEqualsPointer(const T& item, V* pointer)
+{
+    if constexpr (HasVectorElementEquals<T, V*>)
+        return vectorElementEquals(item, pointer);
+    else
+        return GetPtrHelper<T>::getPtr(item) == pointer;
+}
+
+} // namespace Detail
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 template<typename T>
@@ -1172,7 +1201,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::find(const auto& value) const
 {
     return findIf([&](auto& item) {
-        return item == value;
+        return Detail::vectorItemEquals(item, value);
     });
 }
 
@@ -1191,7 +1220,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFind(const auto& value) const
 {
     return reverseFindIf([&](auto& item) {
-        return item == value;
+        return Detail::vectorItemEquals(item, value);
     });
 }
 
@@ -1216,7 +1245,7 @@ template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_fro
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::find(V* ptr) const
 {
     return findIf([&](auto& item) {
-        return GetPtrHelper<U>::getPtr(item) == ptr;
+        return Detail::vectorItemEqualsPointer(item, ptr);
     });
 }
 
@@ -1225,7 +1254,7 @@ template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_fro
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFind(V* ptr) const
 {
     return reverseFindIf([&](auto& item) {
-        return GetPtrHelper<U>::getPtr(item) == ptr;
+        return Detail::vectorItemEqualsPointer(item, ptr);
     });
 }
 
@@ -1234,7 +1263,7 @@ template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_fro
 bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeFirst(V* ptr)
 {
     return removeFirstMatching([&](auto& item) {
-        return GetPtrHelper<U>::getPtr(item) == ptr;
+        return Detail::vectorItemEqualsPointer(item, ptr);
     });
 }
 
@@ -1808,7 +1837,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeFirst(const auto& value)
 {
     return removeFirstMatching([&value] (const T& current) {
-        return current == value;
+        return Detail::vectorItemEquals(current, value);
     });
 }
 
@@ -1828,7 +1857,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLast(const auto& value)
 {
     return removeLastMatching([&value] (const T& current) {
-        return current == value;
+        return Detail::vectorItemEquals(current, value);
     });
 }
 
@@ -1854,7 +1883,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeAll(const auto& value)
 {
     return removeAllMatching([&value] (const T& current) {
-        return current == value;
+        return Detail::vectorItemEquals(current, value);
     });
 }
 
@@ -1957,7 +1986,10 @@ inline void swap(Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>
     a.swap(b);
 }
 
+// Only for element types with == or that compare with memcmp() (plain data such as hb_feature_t): Vectors of StringImpl smart
+// pointers, whose comparisons are deleted and which are not trivially copyable, compare with contentEquals().
 template<typename T, size_t inlineCapacityA, typename OverflowHandlerA, size_t minCapacityA, typename MallocA, size_t inlineCapacityB, typename OverflowHandlerB, size_t minCapacityB, typename MallocB>
+    requires (requires(const T& element) { element == element; }) || (VectorTraits<T>::canCompareWithMemcmp && std::is_trivially_copyable_v<T>)
 bool operator==(const Vector<T, inlineCapacityA, OverflowHandlerA, minCapacityA, MallocA>& a, const Vector<T, inlineCapacityB, OverflowHandlerB, minCapacityB, MallocB>& b)
 {
     if (a.size() != b.size())

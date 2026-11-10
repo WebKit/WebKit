@@ -61,7 +61,7 @@ public:
     ProcessID processID() const { return m_stateSnapshot.processID; }
     bool isFocused() const { return m_data.isFocused; }
     bool errorOccurred() const { return m_data.errorOccurred; }
-    WTF::String title() const { return m_stateSnapshot.title; }
+    RefPtr<StringImpl> title() const { return m_stateSnapshot.title; }
     const WebCore::CertificateInfo& certificateInfo() const { return m_stateSnapshot.certificateInfo; }
 
     const WebKit::FrameInfoData& frameInfoData() const LIFETIME_BOUND { return m_data; }
@@ -72,7 +72,7 @@ private:
     struct StateSnapshot {
         const WebCore::CertificateInfo certificateInfo;
         Markable<WebCore::FrameIdentifier> parentFrameID;
-        WTF::String title;
+        RefPtr<StringImpl> title;
         bool isMainFrame { true };
         ProcessID processID { 0 };
         WeakPtr<WebKit::WebPageProxy> page;

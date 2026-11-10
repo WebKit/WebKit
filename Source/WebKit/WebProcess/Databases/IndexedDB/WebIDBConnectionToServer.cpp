@@ -110,12 +110,12 @@ void WebIDBConnectionToServer::createObjectStore(const IDBRequestData& requestDa
     send(Messages::NetworkStorageManager::CreateObjectStore(requestData, info));
 }
 
-void WebIDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
+void WebIDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, StringImpl* objectStoreName)
 {
     send(Messages::NetworkStorageManager::DeleteObjectStore(requestData, objectStoreName));
 }
 
-void WebIDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void WebIDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
     send(Messages::NetworkStorageManager::RenameObjectStore(requestData, objectStoreIdentifier, newName));
 }
@@ -130,12 +130,12 @@ void WebIDBConnectionToServer::createIndex(const IDBRequestData& requestData, co
     send(Messages::NetworkStorageManager::CreateIndex(requestData, info));
 }
 
-void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
     send(Messages::NetworkStorageManager::DeleteIndex(requestData, objectStoreIdentifier, indexName));
 }
 
-void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
+void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, StringImpl* newName)
 {
     send(Messages::NetworkStorageManager::RenameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName));
 }
@@ -363,7 +363,7 @@ void WebIDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResour
 
 void WebIDBConnectionToServer::connectionToServerLost()
 {
-    m_connectionToServer->connectionToServerLost(IDBError { ExceptionCode::UnknownError, "An internal error was encountered in the Indexed Database server"_s });
+    m_connectionToServer->connectionToServerLost(IDBError { ExceptionCode::UnknownError, "An internal error was encountered in the Indexed Database server"_si });
 }
 
 } // namespace WebKit

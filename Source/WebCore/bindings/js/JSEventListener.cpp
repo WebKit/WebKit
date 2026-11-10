@@ -99,7 +99,7 @@ void JSEventListener::replaceJSFunctionForAttributeListener(JSObject* function, 
     }
 }
 
-JSValue eventHandlerAttribute(EventTarget& eventTarget, const AtomString& eventType, DOMWrapperWorld& world)
+JSValue eventHandlerAttribute(EventTarget& eventTarget, AtomStringImpl* eventType, DOMWrapperWorld& world)
 {
     if (RefPtr jsListener = eventTarget.attributeEventListener(eventType, world)) {
         if (RefPtr context = eventTarget.scriptExecutionContext()) {
@@ -124,13 +124,13 @@ inline void JSEventListener::visitJSFunctionImplInGCThread(Visitor& visitor)
 void JSEventListener::visitJSFunctionInGCThread(AbstractSlotVisitor& visitor) { visitJSFunctionImplInGCThread(visitor); }
 void JSEventListener::visitJSFunctionInGCThread(SlotVisitor& visitor) { visitJSFunctionImplInGCThread(visitor); }
 
-static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, const String& returnValue)
+static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, StringImpl* returnValue)
 {
-    if (returnValue.isNull())
+    if (!returnValue)
         return;
 
     event.preventDefault();
-    if (event.returnValue().isEmpty())
+    if (isEmpty(event.returnValue()))
         event.setReturnValue(returnValue);
 }
 
@@ -225,7 +225,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         callData = JSC::getCallData(handleEventFunction);
         if (callData.type == CallData::Type::None) {
             protect(event.target())->uncaughtExceptionInEventHandler();
-            reportException(jsFunctionGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
+            reportException(jsFunctionGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_si));
             return;
         }
     }
@@ -300,7 +300,7 @@ bool JSEventListener::operator==(const EventListener& listener) const
     return other && m_jsFunction == other->m_jsFunction && m_isAttribute == other->m_isAttribute;
 }
 
-String JSEventListener::functionName() const
+RefPtr<StringImpl> JSEventListener::functionName() const
 {
     if (!m_wrapper || !m_jsFunction)
         return { };

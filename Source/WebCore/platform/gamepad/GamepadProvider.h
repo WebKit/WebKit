@@ -50,8 +50,8 @@ public:
     virtual const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() = 0;
     virtual bool isMockGamepadProvider() const { return false; }
 
-    virtual void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) = 0;
-    virtual void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) = 0;
+    virtual void playEffect(unsigned gamepadIndex, StringImpl* gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void stopEffects(unsigned gamepadIndex, StringImpl* gamepadID, CompletionHandler<void()>&&) = 0;
 
     virtual void clearGamepadsForTesting() { }
 

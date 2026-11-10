@@ -116,7 +116,7 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
         return;
     }
 
-    proxy->thread().start([](const String& /*exceptionMessage*/) { });
+    proxy->thread().start([](StringImpl* /*exceptionMessage*/) { });
 }
 
 void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)

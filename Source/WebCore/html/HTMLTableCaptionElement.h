@@ -38,7 +38,7 @@ public:
 private:
     HTMLTableCaptionElement(const QualifiedName&, Document&);
 
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 };
 
 } // namespace WebCore

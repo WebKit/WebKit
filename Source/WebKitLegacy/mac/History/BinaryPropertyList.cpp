@@ -115,7 +115,7 @@ public:
 
     NODELETE ObjectReference booleanTrueObjectReference() const;
     ObjectReference integerObjectReference(int) const;
-    ObjectReference stringObjectReference(const String&) const;
+    ObjectReference stringObjectReference(StringImpl*) const;
     ObjectReference integerArrayObjectReference(const int*, size_t) const;
 
     NODELETE ObjectReference objectCount() const { return m_currentObjectReference; }
@@ -126,9 +126,9 @@ public:
 private:
     virtual void writeBooleanTrue();
     virtual void writeInteger(int);
-    virtual void writeString(const String&);
+    virtual void writeString(StringImpl*);
     virtual void writeIntegerArray(const int*, size_t);
-    virtual void writeUniqueString(const String&);
+    virtual void writeUniqueString(StringImpl*);
     virtual void writeUniqueString(const char*);
     virtual size_t writeArrayStart();
     virtual void writeArrayEnd(size_t);
@@ -137,7 +137,7 @@ private:
 
     NODELETE void writeArrayObject(size_t);
     NODELETE void writeDictionaryObject(size_t);
-    NODELETE void writeStringObject(const String&);
+    NODELETE void writeStringObject(StringImpl*);
     void writeStringObject(const char*);
 
     NODELETE static ObjectReference invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
@@ -147,7 +147,7 @@ private:
     ObjectReference m_booleanTrueObjectReference;
     ObjectReference m_integerZeroObjectReference;
     HashMap<int, ObjectReference> m_integers;
-    HashMap<String, ObjectReference> m_strings;
+    HashMap<RefPtr<StringImpl>, ObjectReference> m_strings;
     IntegerArrayMap m_integerArrays;
 
     ObjectReference m_currentObjectReference;
@@ -210,7 +210,7 @@ void BinaryPropertyListPlan::writeInteger(int integer)
     m_byteCount += integerByteCount(integer);
 }
 
-void BinaryPropertyListPlan::writeString(const String& string)
+void BinaryPropertyListPlan::writeString(StringImpl* string)
 {
     ++m_currentAggregateSize;
     if (!m_strings.add(string, m_currentObjectReference).isNewEntry)
@@ -233,7 +233,7 @@ void BinaryPropertyListPlan::writeIntegerArray(const int* integers, size_t size)
     m_currentAggregateSize = savedAggregateSize;
 }
 
-void BinaryPropertyListPlan::writeUniqueString(const String& string)
+void BinaryPropertyListPlan::writeUniqueString(StringImpl* string)
 {
     ++m_currentAggregateSize;
     ++m_currentObjectReference;
@@ -282,11 +282,11 @@ NODELETE static size_t markerPlusLengthByteCount(size_t length)
     return 1 + integerByteCount(length);
 }
 
-void BinaryPropertyListPlan::writeStringObject(const String& string)
+void BinaryPropertyListPlan::writeStringObject(StringImpl* string)
 {
-    unsigned length = string.length();
+    unsigned length = WTF::length(string);
     m_byteCount += markerPlusLengthByteCount(length) + length;
-    if (!string.containsOnlyASCII())
+    if (!containsOnlyASCII(string))
         m_byteCount += length;
 }
 
@@ -328,7 +328,7 @@ ObjectReference BinaryPropertyListPlan::integerObjectReference(int integer) cons
     return m_integers.get(integer);
 }
 
-ObjectReference BinaryPropertyListPlan::stringObjectReference(const String& string) const
+ObjectReference BinaryPropertyListPlan::stringObjectReference(StringImpl* string) const
 {
     ASSERT(m_strings.contains(string));
     return m_strings.get(string);
@@ -347,9 +347,9 @@ public:
 private:
     virtual void writeBooleanTrue();
     virtual void writeInteger(int);
-    virtual void writeString(const String&);
+    virtual void writeString(StringImpl*);
     virtual void writeIntegerArray(const int*, size_t);
-    virtual void writeUniqueString(const String&);
+    virtual void writeUniqueString(StringImpl*);
     virtual void writeUniqueString(const char*);
     virtual size_t writeArrayStart();
     virtual void writeArrayEnd(size_t);
@@ -359,7 +359,7 @@ private:
     ObjectReference writeIntegerWithoutAddingAggregateObjectReference(int);
 
     void appendIntegerObject(int);
-    void appendStringObject(const String&);
+    void appendStringObject(StringImpl*);
     void appendStringObject(const char*);
     void appendIntegerArrayObject(const int*, size_t);
 
@@ -548,7 +548,7 @@ void BinaryPropertyListSerializer::writeInteger(int integer)
     addAggregateObjectReference(writeIntegerWithoutAddingAggregateObjectReference(integer));
 }
 
-void BinaryPropertyListSerializer::writeString(const String& string)
+void BinaryPropertyListSerializer::writeString(StringImpl* string)
 {
     ObjectReference reference = m_plan.stringObjectReference(string);
     if (m_currentObjectReference != reference)
@@ -576,7 +576,7 @@ void BinaryPropertyListSerializer::writeUniqueString(const char* string)
     appendStringObject(string);
 }
 
-void BinaryPropertyListSerializer::writeUniqueString(const String& string)
+void BinaryPropertyListSerializer::writeUniqueString(StringImpl* string)
 {
     addAggregateObjectReference(m_currentObjectReference);
     appendStringObject(string);
@@ -685,11 +685,11 @@ void BinaryPropertyListSerializer::appendInteger(size_t integer)
 #endif
 }
 
-void BinaryPropertyListSerializer::appendStringObject(const String& string)
+void BinaryPropertyListSerializer::appendStringObject(StringImpl* string)
 {
     startObject();
-    unsigned length = string.length();
-    if (string.containsOnlyASCII()) {
+    unsigned length = WTF::length(string);
+    if (containsOnlyASCII(string)) {
         if (length <= maxLengthInMarkerByte)
             appendByte(static_cast<unsigned char>(asciiStringMarkerByte | length));
         else {
@@ -697,7 +697,7 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
             appendInteger(length);
         }
         for (unsigned i = 0; i < length; ++i)
-            appendByte(string[i]);
+            appendByte(codeUnitAt(string, i));
     } else {
         if (length <= maxLengthInMarkerByte)
             appendByte(static_cast<unsigned char>(unicodeStringMarkerByte | length));
@@ -706,8 +706,8 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
             appendInteger(length);
         }
         for (unsigned i = 0; i < length; ++i) {
-            appendByte(string[i] >> 8);
-            appendByte(string[i]);
+            appendByte(codeUnitAt(string, i) >> 8);
+            appendByte(codeUnitAt(string, i));
         }
     }
 }

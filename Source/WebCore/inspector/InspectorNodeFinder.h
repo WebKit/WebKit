@@ -41,15 +41,15 @@ class Node;
 
 class InspectorNodeFinder {
 public:
-    InspectorNodeFinder(const String& query, bool caseSensitive);
+    InspectorNodeFinder(StringImpl* query, bool caseSensitive);
     void performSearch(Node*);
     const ListHashSet<Node*>& results() const LIFETIME_BOUND { return m_results; }
 
 private:
-    NODELETE bool checkEquals(const String&, const String&);
-    NODELETE bool checkContains(const String&, const String&);
-    NODELETE bool checkStartsWith(const String&, const String&);
-    NODELETE bool checkEndsWith(const String&, const String&);
+    NODELETE bool checkEquals(StringImpl*, StringImpl*);
+    NODELETE bool checkContains(StringImpl*, StringImpl*);
+    NODELETE bool checkStartsWith(StringImpl*, StringImpl*);
+    NODELETE bool checkEndsWith(StringImpl*, StringImpl*);
 
     bool matchesAttribute(const Attribute&);
     bool matchesElement(const Element&);
@@ -58,9 +58,9 @@ private:
     void searchUsingXPath(Node&);
     void searchUsingCSSSelectors(Node&);
 
-    String m_query;
-    String m_tagNameQuery;
-    String m_attributeQuery;
+    RefPtr<StringImpl> m_query;
+    RefPtr<StringImpl> m_tagNameQuery;
+    RefPtr<StringImpl> m_attributeQuery;
     bool m_caseSensitive;
 
     ListHashSet<Node*> m_results;

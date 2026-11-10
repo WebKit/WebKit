@@ -410,14 +410,14 @@ Element* AccessibilityRenderObject::anchorElement() const
 }
 
 // Null is distinct from empty: empty asks for the content to be ignored.
-NODELETE static const String& generatedContentAltText(const RenderText* renderText)
+NODELETE static const RefPtr<StringImpl>& generatedContentAltText(const RenderText* renderText)
 {
     if (!renderText)
         return nullString();
     return renderText->altText();
 }
 
-String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) const
+RefPtr<StringImpl> AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) const
 {
     // If we are within a hidden context, we don't want to add any text for this object, instead
     // just fanning out to nodes within our subtree to search for un-hidden nodes.
@@ -439,7 +439,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
         if (!listMarker->hasContentProperty()) {
             if (mode.includeListMarkers == IncludeListMarkerText::Yes) {
                 CheckedPtr listItem = listMarker->listItem();
-                return listItem ? listItem->markerText() : String();
+                return listItem ? listItem->markerText() : nullptr;
             }
             return { };
         }
@@ -447,7 +447,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
 
     // Reflect when a content author has explicitly marked a line break.
     if (m_renderer->isBR())
-        return "\n"_s;
+        return "\n"_si;
 
     if (shouldGetTextFromNode(mode))
         return AccessibilityNodeObject::textUnderElement(WTF::move(mode));
@@ -502,7 +502,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
 
         // Sometimes text fragments don't have Nodes associated with them (like when
         // CSS content is used to insert text or when a RenderCounter is used.)
-        if (auto& altText = generatedContentAltText(renderText.get()); !altText.isNull())
+        if (auto& altText = generatedContentAltText(renderText.get()); altText)
             return altText;
         if (WeakPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderText.get()))
             return renderTextFragment->contentString();
@@ -542,7 +542,7 @@ bool AccessibilityRenderObject::shouldGetTextFromNode(const TextUnderElementMode
     return false;
 }
 
-String AccessibilityRenderObject::stringValue() const
+RefPtr<StringImpl> AccessibilityRenderObject::stringValue() const
 {
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr element = mediaElement())
@@ -601,7 +601,7 @@ String AccessibilityRenderObject::stringValue() const
             return input->visibleValue();
 
         // As fallback, gather the static text under this.
-        String value;
+        RefPtr<StringImpl> value;
         Accessibility::enumerateUnignoredDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value](const auto& object) {
             if (object.isStaticText())
                 value = makeString(value, object.stringValue());
@@ -871,7 +871,7 @@ Path AccessibilityRenderObject::elementPath() const
 }
 
 #if ENABLE(APPLE_PAY)
-String AccessibilityRenderObject::applePayButtonDescription() const
+RefPtr<StringImpl> AccessibilityRenderObject::applePayButtonDescription() const
 {
     switch (applePayButtonType()) {
     case ApplePayButtonType::Plain:
@@ -994,15 +994,15 @@ AccessibilityObject* AccessibilityRenderObject::containingTree() const
     });
 }
 
-NODELETE static AccessibilityObjectInclusion objectInclusionFromAltText(const String& altText)
+NODELETE static AccessibilityObjectInclusion objectInclusionFromAltText(StringImpl* altText)
 {
     // Don't ignore an image that has alt text.
-    if (!altText.containsOnly<isASCIIWhitespace>())
+    if (!containsOnly<isASCIIWhitespace>(altText))
         return AccessibilityObjectInclusion::IncludeObject;
 
     // The informal standard is to ignore images with zero-length alt strings:
     // https://www.w3.org/WAI/tutorials/images/decorative/.
-    if (!altText.isNull())
+    if (altText)
         return AccessibilityObjectInclusion::IgnoreObject;
 
     return AccessibilityObjectInclusion::DefaultBehavior;
@@ -1129,7 +1129,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         if (!renderText->hasRenderedText()) {
             // Layout must be clean to make the right decision here (because hasRenderedText() can return false solely because layout is dirty).
             // FIXME: This is triggered when running accessibility/aria-liveregions-attributes.html with --accessibility-isolated-tree.
-            AX_BROKEN_ASSERT(!renderText->needsLayout() || !renderText->text().length());
+            AX_BROKEN_ASSERT(!renderText->needsLayout() || !length(renderText->text()));
             // If this is a RenderTextFragment with an associated first-letter, the entire text may have been
             // consumed by the first-letter pseudo-element. In this case, don't ignore the text node, as its
             // text content can still be retrieved from the associated DOM Text node.
@@ -1140,7 +1140,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
             return true;
         }
 
-        if (renderText->text().containsOnly<isASCIIWhitespace>())
+        if (containsOnly<isASCIIWhitespace>(renderText->text()))
             return true;
 
         // The alt text may be set on generated content through CSS, which should be honored.
@@ -1430,12 +1430,12 @@ CharacterRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
     return { static_cast<unsigned>(start), static_cast<unsigned>(end - start) };
 }
 
-String AccessibilityRenderObject::selectedText() const
+RefPtr<StringImpl> AccessibilityRenderObject::selectedText() const
 {
     AX_ASSERT(isTextControl());
 
     if (isSecureField())
-        return String(); // need to return something distinct from empty string
+        return nullptr; // need to return something distinct from empty string
 
     if (isNativeTextControl() && m_renderer) {
         Ref textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
@@ -1532,7 +1532,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         return AXTextRuns(
             box ? static_cast<void*>(renderLineBreak->containingBlock()) : renderLineBreak.get(),
             { AXTextRun(box ? box->lineIndex() : 0, /* startIndex */ 0, /* endIndex */ 1, { lengthOneDomOffsets }, { 0 }, 0, 0) },
-            makeString('\n').isolatedCopy()
+            isolatedCopy(makeString('\n'))
         );
     }
 
@@ -1566,7 +1566,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         return AXTextRuns(
             lineIDContainingBlock,
             { AXTextRun(lineIndex, /* startIndex */ 0, /* endIndex */ 1, { lengthOneDomOffsets }, { width }, height, 0) },
-            String(span(objectReplacementCharacter))
+            StringImpl::create(span(objectReplacementCharacter))
         );
     }
 
@@ -1633,7 +1633,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         if (textBoxStyle->textTransform().contains(Style::TextTransformValue::FullSizeKana)) {
             // We don't want to serve transformed kana text to AT since it is a visual affordance.
             // Using the original text from the renderer provides the untransformed string.
-            text = protect(textBox->renderer())->originalText().substring(textBox->start(), textBox->length());
+            text = substring(protect(textBox->renderer())->originalText(), textBox->start(), textBox->length());
         }
 
         bool collapseTabs = textBoxStyle->collapseWhiteSpace();
@@ -1770,14 +1770,14 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
         fullString.append(lineString.toString());
     }
-    return { renderText->containingBlock(), WTF::move(runs), fullString.toString().isolatedCopy(), containsOnlyASCII };
+    return { renderText->containingBlock(), WTF::move(runs), isolatedCopy(fullString.toString()), containsOnlyASCII };
 }
 
-String AccessibilityRenderObject::listMarkerText() const
+RefPtr<StringImpl> AccessibilityRenderObject::listMarkerText() const
 {
     CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(renderer());
     CheckedPtr listItem = marker ? marker->listItem() : nullptr;
-    return listItem ? listItem->markerText() : String();
+    return listItem ? listItem->markerText() : nullptr;
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -1867,7 +1867,7 @@ URL AccessibilityRenderObject::url() const
     return AccessibilityNodeObject::url();
 }
 
-bool AccessibilityRenderObject::setValue(const String& string)
+bool AccessibilityRenderObject::setValue(StringImpl* string)
 {
     if (!m_renderer)
         return false;
@@ -2011,7 +2011,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     if (m_renderer) {
         if (isNativeTextControl()) {
             Ref textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
-            return textControl->visiblePositionForIndex(std::clamp(index, 0, static_cast<int>(textControl->value()->length())));
+            return textControl->visiblePositionForIndex(std::clamp(index, 0, static_cast<int>(length(textControl->value().get()))));
         }
 
         if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
@@ -2114,13 +2114,13 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
                 auto innerRange = makeVisiblePositionRange(AXObjectCache::rangeForNodeContents(*innerText));
 
                 if (range.start.equals(textControlRange.end))
-                    start = textControl->value()->length();
+                    start = length(textControl->value().get());
                 else if (range.start <= innerRange.start)
                     start = 0;
 
                 if (range.end >= innerRange.end
                     || range.end.equals(textControlRange.end))
-                    end = textControl->value()->length();
+                    end = length(textControl->value().get());
             }
         }
 
@@ -2160,8 +2160,8 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(unsigned inde
         return VisiblePosition();
 
     // lastIndexOK specifies whether the position after the last character is acceptable
-    if (indexValue >= text().length()) {
-        if (!lastIndexOK || indexValue > text().length())
+    if (indexValue >= length(text())) {
+        if (!lastIndexOK || indexValue > length(text()))
             return VisiblePosition();
     }
     VisiblePosition position = visiblePositionForIndex(indexValue);
@@ -2235,8 +2235,8 @@ CharacterRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) 
         // end, rendered by a placeholder <br>. Report it as an empty range there so it reads as an
         // empty line, matching the isolated-tree path (AXTextMarker::characterRangeForLine).
         auto value = text();
-        bool endsWithLineBreak = value.length() && value[value.length() - 1] == '\n';
-        if (lineStartIndex >= 0 && lineStartIndex == lineEndIndex && static_cast<unsigned>(lineStartIndex) == value.length() && endsWithLineBreak)
+        bool endsWithLineBreak = length(value) && codeUnitAt(value, length(value) - 1) == '\n';
+        if (lineStartIndex >= 0 && lineStartIndex == lineEndIndex && static_cast<unsigned>(lineStartIndex) == length(value) && endsWithLineBreak)
             return { static_cast<unsigned>(lineStartIndex), 0 };
         return { };
     }
@@ -2252,19 +2252,19 @@ CharacterRange AccessibilityRenderObject::doAXRangeForIndex(unsigned index) cons
     if (!isTextControl())
         return { };
 
-    String elementText = text();
-    if (!elementText.length() || index > elementText.length() - 1)
+    RefPtr<StringImpl> elementText = text();
+    if (!length(elementText) || index > length(elementText) - 1)
         return { };
     return { index, 1 };
 }
 
 // A substring of the text associated with this accessibility object that is
 // specified by the given character range.
-String AccessibilityRenderObject::doAXStringForRange(const CharacterRange& range) const
+RefPtr<StringImpl> AccessibilityRenderObject::doAXStringForRange(const CharacterRange& range) const
 {
     if (!range.length || !isTextControl())
         return { };
-    return text().substring(range.location, range.length);
+    return substring(text(), range.location, range.length);
 }
 
 // The bounding rectangle of the text associated with this accessibility object that is
@@ -2603,7 +2603,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isInlineBox()
         && (hasAttributesRequiredForInclusion()
             || (node && node->hasEventListeners())
-            || (supportsDatetimeAttribute() && !getAttribute(datetimeAttr).isEmpty())))
+            || (supportsDatetimeAttribute() && !isEmpty(getAttribute(datetimeAttr)))))
         return AccessibilityRole::Inline;
 
     return AccessibilityRole::Unknown;
@@ -2623,7 +2623,7 @@ bool AccessibilityRenderObject::isInsideIgnoredImageOverlay() const
 
 std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityRenderObject::imageOverlayElements()
 {
-    AXTRACE("AccessibilityRenderObject::imageOverlayElements"_s);
+    AXTRACE("AccessibilityRenderObject::imageOverlayElements"_si);
 
     if (!m_renderer || !toSimpleImage(protect(*m_renderer)))
         return std::nullopt;
@@ -3121,7 +3121,7 @@ void AccessibilityRenderObject::addChildren()
 #endif
 }
 
-void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
+void AccessibilityRenderObject::setAccessibleName(AtomStringImpl* name)
 {
     // Setting the accessible name can store the value in the DOM
     if (!m_renderer)
@@ -3227,7 +3227,7 @@ bool AccessibilityRenderObject::hasUnderline() const
     return m_renderer->style().textDecorationLineInEffect().hasUnderline();
 }
 
-String AccessibilityRenderObject::secureFieldValue() const
+RefPtr<StringImpl> AccessibilityRenderObject::secureFieldValue() const
 {
     AX_ASSERT(isSecureField());
 
@@ -3238,7 +3238,7 @@ String AccessibilityRenderObject::secureFieldValue() const
 
     CheckedPtr renderText = dynamicDowncast<RenderText>(renderer.get());
     // Return the text that is actually being rendered in the input field.
-    return renderText ? renderText->textWithoutConvertingBackslashToYenSymbol() : String();
+    return renderText ? renderText->textWithoutConvertingBackslashToYenSymbol() : nullptr;
 }
 
 ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
@@ -3288,7 +3288,7 @@ bool AccessibilityRenderObject::isIgnoredElementWithinMathTree() const
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-String AccessibilityRenderObject::interactiveVideoDuration() const
+RefPtr<StringImpl> AccessibilityRenderObject::interactiveVideoDuration() const
 {
     return AccessibilityMediaHelpers::interactiveVideoDuration(protect(mediaElement()));
 }

@@ -56,7 +56,7 @@ struct ParamSpec {
     bool operator==(const ParamSpec&) const = default;
 
     // The link parameter's name, which for the keyword alternatives is the keyword itself.
-    const AtomString& name() const;
+    const RefPtr<AtomStringImpl>& name() const;
 };
 
 template<size_t I> const auto& get(const ParamSpec::Custom& custom)

@@ -44,30 +44,33 @@ namespace JSC {
 template<typename StringType>
 static constexpr uint32_t computeTwoCharacters16Code(const StringType& string)
 {
-    return static_cast<uint16_t>(string.codeUnitAt(0)) | (static_cast<uint32_t>(static_cast<uint16_t>(string.codeUnitAt(1))) << 16);
+    if constexpr (WTF::StringImplPointerLike<StringType>)
+        return static_cast<uint16_t>(codeUnitAt(string, 0)) | (static_cast<uint32_t>(static_cast<uint16_t>(codeUnitAt(string, 1))) << 16);
+    else
+        return static_cast<uint16_t>(string.codeUnitAt(0)) | (static_cast<uint32_t>(static_cast<uint16_t>(string.codeUnitAt(1))) << 16);
 }
 
-template<typename Predicate> String bestAvailableLocale(const String& locale, Predicate predicate)
+template<typename Predicate> RefPtr<StringImpl> bestAvailableLocale(StringImpl* locale, Predicate predicate)
 {
     // BestAvailableLocale (availableLocales, locale)
     // https://tc39.github.io/ecma402/#sec-bestavailablelocale
 
-    String candidate = locale;
-    while (!candidate.isEmpty()) {
+    RefPtr<StringImpl> candidate = locale;
+    while (!isEmpty(candidate)) {
         if (predicate(candidate))
             return candidate;
 
-        size_t pos = candidate.reverseFind('-');
+        size_t pos = reverseFind(candidate, '-');
         if (pos == notFound)
-            return String();
+            return nullptr;
 
-        if (pos >= 2 && candidate[pos - 2] == '-')
+        if (pos >= 2 && codeUnitAt(candidate, pos - 2) == '-')
             pos -= 2;
 
-        candidate = candidate.left(pos);
+        candidate = left(candidate, pos);
     }
 
-    return String();
+    return nullptr;
 }
 
 template<typename Constructor, typename Factory>
@@ -143,14 +146,14 @@ ResultType intlOption(JSGlobalObject* globalObject, JSObject* options, PropertyN
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!value.isUndefined()) {
-        String stringValue = value.toWTFString(globalObject);
+        RefPtr<StringImpl> stringValue = value.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& entry : values) {
             if (entry.first == stringValue)
                 return entry.second;
         }
-        throwException(globalObject, scope, createRangeError(globalObject, notFoundMessage));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(notFoundMessage).ptr()));
         return { };
     }
 
@@ -185,12 +188,12 @@ ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* opt
     if (!valueBoolean)
         return falsyValue;
 
-    String stringValue = value.toWTFString(globalObject);
+    RefPtr<StringImpl> stringValue = value.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: We need to know whether this fallback is actually correct.
     // https://github.com/tc39/proposal-intl-numberformat-v3/issues/111
-    if (stringValue == "true"_s || stringValue == "false"_s)
+    if (equal(stringValue, "true"_s) || equal(stringValue, "false"_s))
         return fallback;
 
     for (const auto& entry : values) {
@@ -198,7 +201,7 @@ ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* opt
             return entry.second;
     }
 
-    throwRangeError(globalObject, scope, notFoundMessage);
+    throwRangeError(globalObject, scope, StringImpl::create(notFoundMessage).ptr());
     return { };
 }
 
@@ -419,15 +422,15 @@ JSArray* createArrayFromIntVector(JSGlobalObject* globalObject, const Container&
 class ListFormatInput {
     WTF_MAKE_NONCOPYABLE(ListFormatInput);
 public:
-    ListFormatInput(Vector<String, 4>&& strings)
+    ListFormatInput(Vector<RefPtr<StringImpl>, 4>&& strings)
         : m_strings(WTF::move(strings))
     {
         m_stringPointers.reserveInitialCapacity(m_strings.size());
         m_stringLengths.reserveInitialCapacity(m_strings.size());
         for (auto& string : m_strings) {
-            string.convertTo16Bit();
-            m_stringPointers.append(string.span16().data());
-            m_stringLengths.append(string.length());
+            convertTo16Bit(string);
+            m_stringPointers.append(span16(string).data());
+            m_stringLengths.append(length(string));
         }
     }
 
@@ -436,7 +439,7 @@ public:
     const int32_t* stringLengths() const LIFETIME_BOUND { return m_stringLengths.span().data(); }
 
 private:
-    Vector<String, 4> m_strings;
+    Vector<RefPtr<StringImpl>, 4> m_strings;
     Vector<const char16_t*, 4> m_stringPointers;
     Vector<int32_t, 4> m_stringLengths;
 };

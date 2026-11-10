@@ -40,7 +40,7 @@ template<typename> class ExceptionOr;
 
 struct NotificationPayload {
     URL defaultActionURL;
-    String title;
+    RefPtr<StringImpl> title;
     std::optional<unsigned long long> appBadge;
     std::optional<NotificationOptionsPayload> options;
     bool isMutable { false };
@@ -49,7 +49,7 @@ struct NotificationPayload {
     {
         return NotificationPayload {
             WTF::move(defaultActionURL).isolatedCopy(),
-            WTF::move(title).isolatedCopy(),
+            WTF::isolatedCopy(WTF::move(title)),
             appBadge,
             crossThreadCopy(WTF::move(options)),
             isMutable
@@ -57,8 +57,8 @@ struct NotificationPayload {
     }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    WEBCORE_EXPORT static bool hasDeclarativeMessageHeader(const String& message);
-    WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(const String&);
+    WEBCORE_EXPORT static bool hasDeclarativeMessageHeader(StringImpl* message);
+    WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(StringImpl*);
     NotificationPayload static fromNotificationData(const NotificationData&);
 
     WEBCORE_EXPORT NotificationData toNotificationData() const;

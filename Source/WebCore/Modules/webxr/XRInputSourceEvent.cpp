@@ -37,12 +37,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(XRInputSourceEvent);
 
-Ref<XRInputSourceEvent> XRInputSourceEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<XRInputSourceEvent> XRInputSourceEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new XRInputSourceEvent(type, WTF::move(initializer), isTrusted));
 }
 
-XRInputSourceEvent::XRInputSourceEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+XRInputSourceEvent::XRInputSourceEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::XRInputSourceEvent, type, WTF::move(initializer), isTrusted)
     , m_frame(WTF::move(initializer.frame))
     , m_inputSource(WTF::move(initializer.inputSource))

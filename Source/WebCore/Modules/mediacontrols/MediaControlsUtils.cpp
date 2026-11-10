@@ -44,12 +44,12 @@ MediaControlsUtils::MediaControlsUtils(Document& document)
 {
 }
 
-String MediaControlsUtils::formattedStringForDuration(double durationInSeconds)
+RefPtr<StringImpl> MediaControlsUtils::formattedStringForDuration(double durationInSeconds)
 {
     return RenderTheme::singleton().mediaControlsFormattedStringForDuration(std::fabs(durationInSeconds));
 }
 
-RefPtr<HTMLImageElement> MediaControlsUtils::createImageForIconNameAndType(const String& iconName, const String& iconType)
+RefPtr<HTMLImageElement> MediaControlsUtils::createImageForIconNameAndType(StringImpl* iconName, StringImpl* iconType)
 {
     RefPtr protectedDocument = document();
     if (!protectedDocument)
@@ -63,10 +63,10 @@ RefPtr<HTMLImageElement> MediaControlsUtils::createImageForIconNameAndType(const
         return image;
 
     auto iconMIMEType = MIMETypeRegistry::mimeTypeForExtension(iconType);
-    if (iconMIMEType.isEmpty())
+    if (isEmpty(iconMIMEType))
         return image;
 
-    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(*protectedDocument, Blob::create(protectedDocument.get(), buffer->extractData(), iconMIMEType)) });
+    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomStringImpl::add(DOMURL::createObjectURL(*protectedDocument, Blob::create(protectedDocument.get(), buffer->extractData(), iconMIMEType))).get());
 
     return image;
 }

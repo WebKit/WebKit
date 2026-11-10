@@ -189,7 +189,7 @@ public:
     virtual void dispatchDidFailLoad(const ResourceError&) = 0;
     virtual void dispatchDidFinishDocumentLoad() = 0;
     virtual void dispatchDidFinishLoad() = 0;
-    virtual void dispatchDidExplicitOpen(const URL&, const String& /* mimeType */) { }
+    virtual void dispatchDidExplicitOpen(const URL&, StringImpl* /* mimeType */) { }
 #if ENABLE(DATA_DETECTION)
     virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) = 0;
 #endif
@@ -198,26 +198,26 @@ public:
     virtual void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) { }
     virtual void dispatchDidReachVisuallyNonEmptyState() { }
 
-    virtual LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String& openedMainFrameName) = 0;
+    virtual LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, StringImpl* openedMainFrameName) = 0;
     virtual void dispatchShow() = 0;
 
-    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String& downloadAttribute, FramePolicyFunction&&) = 0;
-    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, std::optional<HitTestResult>&&, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, StringImpl* downloadAttribute, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, StringImpl* frameName, std::optional<HitTestResult>&&, FramePolicyFunction&&) = 0;
     virtual void cancelPolicyCheck() = 0;
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
 
     virtual void dispatchWillSendSubmitEvent(Ref<FormState>&&) = 0;
-    virtual void dispatchWillSubmitForm(FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) = 0;
+    virtual void dispatchWillSubmitForm(FormState&, URL&& requestURL, RefPtr<StringImpl>&& method, CompletionHandler<void()>&&) = 0;
 
-    virtual void dispatchBackForwardItemLoading(const URL&, const String& referer, LocalFrame& childFrame);
+    virtual void dispatchBackForwardItemLoading(const URL&, StringImpl* referer, LocalFrame& childFrame);
 
     virtual void revertToProvisionalState(DocumentLoader*) = 0;
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
 
     virtual void setMainFrameDocumentReady(bool) = 0;
 
-    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String(), FromDownloadAttribute = FromDownloadAttribute::No) = 0;
+    virtual void startDownload(const ResourceRequest&, StringImpl* suggestedName = nullptr, FromDownloadAttribute = FromDownloadAttribute::No) = 0;
 
     virtual void willChangeTitle(DocumentLoader*) = 0;
     virtual void didChangeTitle(DocumentLoader*) = 0;
@@ -243,10 +243,10 @@ public:
     virtual void loadStorageAccessQuirksIfNeeded() = 0;
 
     virtual bool canHandleRequest(const ResourceRequest&) const = 0;
-    virtual bool canShowMIMEType(const String& MIMEType) const = 0;
-    virtual bool canShowMIMETypeAsHTML(const String& MIMEType) const = 0;
+    virtual bool canShowMIMEType(StringImpl* MIMEType) const = 0;
+    virtual bool canShowMIMETypeAsHTML(StringImpl* MIMEType) const = 0;
     virtual bool representationExistsForURLScheme(StringView URLScheme) const = 0;
-    virtual String generatedMIMETypeForURLScheme(StringView URLScheme) const = 0;
+    virtual RefPtr<StringImpl> generatedMIMETypeForURLScheme(StringView URLScheme) const = 0;
 
     virtual void frameLoadCompleted() = 0;
     virtual void saveViewStateToItem(HistoryItem&) = 0;
@@ -261,9 +261,9 @@ public:
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 
     virtual bool hasCustomUserAgent() const { return false; }
-    virtual String userAgent(const URL&) const = 0;
+    virtual RefPtr<StringImpl> userAgent(const URL&) const = 0;
 
-    virtual String overrideContentSecurityPolicy() const { return String(); }
+    virtual RefPtr<StringImpl> overrideContentSecurityPolicy() const { return nullptr; }
 
     virtual void savePlatformDataToCachedFrame(CachedFrame*) = 0;
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;
@@ -282,12 +282,12 @@ public:
     virtual bool canCachePage() const = 0;
     virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) = 0;
 
-    virtual RefPtr<LocalFrame> createFrame(const AtomString& name, HTMLFrameOwnerElement&) = 0;
-    virtual RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) = 0;
+    virtual RefPtr<LocalFrame> createFrame(AtomStringImpl* name, HTMLFrameOwnerElement&) = 0;
+    virtual RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<RefPtr<AtomStringImpl>>&, const Vector<RefPtr<AtomStringImpl>>&, StringImpl*, bool loadManually) = 0;
     virtual void redirectDataToPlugin(Widget&) = 0;
 
-    virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
-    virtual AtomString overrideMediaType() const = 0;
+    virtual ObjectContentType objectContentType(const URL&, StringImpl* mimeType) = 0;
+    virtual RefPtr<AtomStringImpl> overrideMediaType() const = 0;
 
     virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;
 
@@ -340,14 +340,14 @@ public:
     virtual bool isRemoteWorkerFrameLoaderClient() const { return false; }
 
 #if USE(QUICK_LOOK)
-    virtual RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;
+    virtual RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(StringImpl*, StringImpl*) = 0;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
     virtual void contentFilterDidBlockLoad(ContentFilterUnblockHandler&&) { }
 #endif
 
-    virtual void prefetchDNS(const String&) = 0;
+    virtual void prefetchDNS(StringImpl*) = 0;
     virtual void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&&) = 0;
 
     virtual void didRestoreScrollPosition() { }
@@ -377,7 +377,7 @@ public:
 #endif
 
 #if ENABLE(PDF_PLUGIN)
-    virtual bool shouldUsePDFPlugin(const String&, StringView) const { return false; }
+    virtual bool shouldUsePDFPlugin(StringImpl*, StringView) const { return false; }
 #endif
 
     virtual bool isParentProcessAFullWebBrowser() const { return false; }
@@ -386,7 +386,7 @@ public:
 
     virtual void documentLoaderDetached(NavigationIdentifier, LoadWillContinueInAnotherProcess) { }
 
-    virtual void frameNameChanged(const String&) { }
+    virtual void frameNameChanged(StringImpl*) { }
 
     virtual RefPtr<HistoryItem> createHistoryItemTree(bool clipAtTarget, BackForwardItemIdentifier) const = 0;
 

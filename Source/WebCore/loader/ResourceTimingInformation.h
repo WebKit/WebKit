@@ -43,12 +43,12 @@ public:
 
     void addResourceTiming(CachedResource&, Document&, ResourceTiming&&);
     void removeResourceTiming(CachedResource&);
-    void storeResourceTimingInitiatorInformation(CachedResource&, const AtomString&, LocalFrame*);
+    void storeResourceTimingInitiatorInformation(CachedResource&, AtomStringImpl*, LocalFrame*);
 
 private:
     enum AlreadyAdded { NotYetAdded, Added };
     struct InitiatorInfo {
-        AtomString type;
+        RefPtr<AtomStringImpl> type;
         AlreadyAdded added { NotYetAdded };
     };
     WeakHashMap<CachedResource, InitiatorInfo> m_initiatorMap;

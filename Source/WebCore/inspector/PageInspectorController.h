@@ -101,7 +101,7 @@ public:
     unsigned inspectionLevel() const;
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
-    WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
+    WEBCORE_EXPORT void dispatchMessageFromFrontend(StringImpl* message);
 
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
@@ -129,7 +129,7 @@ public:
     // Testing support.
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
-    WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
+    WEBCORE_EXPORT void evaluateForTestInFrontend(StringImpl* script);
     NODELETE WEBCORE_EXPORT unsigned gridOverlayCount() const;
     NODELETE WEBCORE_EXPORT unsigned flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;

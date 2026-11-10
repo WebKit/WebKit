@@ -71,7 +71,7 @@ public:
     const URL& webPageURL() const LIFETIME_BOUND { return m_webPageURL; }
 
     // ExtensionCapability
-    String environmentIdentifier() const final;
+    RefPtr<StringImpl> environmentIdentifier() const final;
 
     BEMediaEnvironment *platformMediaEnvironment() const { return m_mediaEnvironment.get(); }
 

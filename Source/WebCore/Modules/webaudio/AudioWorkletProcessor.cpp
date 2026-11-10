@@ -98,7 +98,7 @@ static JSFloat32Array* constructJSFloat32Array(VM& vm, JSGlobalObject& globalObj
     return jsArray;
 }
 
-static JSObject* constructFrozenKeyValueObject(VM& vm, JSGlobalObject& globalObject, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+static JSObject* constructFrozenKeyValueObject(VM& vm, JSGlobalObject& globalObject, const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* plainObjectStructure = JSFinalObject::createStructure(vm, &globalObject, globalObject.objectPrototype(), 0);
@@ -203,7 +203,7 @@ static bool copyDataFromBusesToJSArray(VM& vm, JSGlobalObject& globalObject, con
     return true;
 }
 
-static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObject, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject* jsObject)
+static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObject, const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject* jsObject)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -254,7 +254,7 @@ ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExec
     auto& globalScope = downcast<AudioWorkletGlobalScope>(context);
     auto constructionData = globalScope.takePendingProcessorConstructionData();
     if (!constructionData)
-        return Exception { ExceptionCode::TypeError, "No pending construction data for this worklet processor"_s };
+        return Exception { ExceptionCode::TypeError, "No pending construction data for this worklet processor"_si };
 
     return adoptRef(*new AudioWorkletProcessor(globalScope, *constructionData));
 }
@@ -269,7 +269,7 @@ AudioWorkletProcessor::AudioWorkletProcessor(AudioWorkletGlobalScope& globalScop
     ASSERT(!isMainThread());
 }
 
-void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBuffer& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBuffer& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
@@ -299,7 +299,7 @@ void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObjec
     args.append(m_jsParamValues.getValue());
 }
 
-bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, std::optional<ExceptionDetails>& exceptionDetails)
+bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>>& paramValuesMap, std::optional<ExceptionDetails>& exceptionDetails)
 {
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).

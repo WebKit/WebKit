@@ -47,8 +47,8 @@ public:
     void cancel(const WebNotification&);
     void clearNotifications(const Vector<WebNotificationIdentifier>&);
 
-    HashMap<WTF::String, bool> notificationPermissions();
-    void setNotificationPermissions(HashMap<String, bool>&&);
+    HashMap<RefPtr<StringImpl>, bool> notificationPermissions();
+    void setNotificationPermissions(HashMap<RefPtr<StringImpl>, bool>&&);
 
 private:
     void cancelNotificationByID(WebNotificationIdentifier);
@@ -69,7 +69,7 @@ private:
     void didCloseNotification(WebNotificationIdentifier) final;
 
     WebKitWebContext* m_webContext;
-    HashMap<WTF::String, bool> m_notificationPermissions;
+    HashMap<RefPtr<StringImpl>, bool> m_notificationPermissions;
     const RefPtr<WebNotificationManagerProxy> m_notificationManager;
     HashMap<WebNotificationIdentifier, GRefPtr<WebKitNotification>> m_apiNotifications;
     bool m_observerRegistered { false };

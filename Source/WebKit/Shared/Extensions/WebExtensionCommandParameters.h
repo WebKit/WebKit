@@ -32,9 +32,9 @@
 namespace WebKit {
 
 struct WebExtensionCommandParameters {
-    String identifier;
-    String description;
-    String shortcut;
+    RefPtr<StringImpl> identifier;
+    RefPtr<StringImpl> description;
+    RefPtr<StringImpl> shortcut;
 };
 
 } // namespace WebKit

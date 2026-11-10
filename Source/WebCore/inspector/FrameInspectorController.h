@@ -95,7 +95,7 @@ public:
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
-    WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
+    WEBCORE_EXPORT void dispatchMessageFromFrontend(StringImpl* message);
 
     WEBCORE_EXPORT void siteIsolationFirstEnabled();
     void inspectedFrameDestroyed(LocalFrame&);

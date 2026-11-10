@@ -56,16 +56,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGResources);
 
 SVGResources::SVGResources() = default;
 
-static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> tagSet(std::span<decltype(SVGNames::aTag)* const> tags)
+static MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> tagSet(std::span<decltype(SVGNames::aTag)* const> tags)
 {
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> set;
     set.reserveInitialCapacity(tags.size());
     for (auto& tag : tags)
         set.add(tag->get().localName());
     return set;
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterMaskerTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& clipperFilterMaskerTags()
 {
     static constexpr std::array tags {
         // "container elements": http://www.w3.org/TR/SVG11/intro.html#TermContainerElement
@@ -111,7 +111,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
     return set;
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& markerTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& markerTags()
 {
     static constexpr std::array tags {
         &SVGNames::lineTag,
@@ -123,7 +123,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& markerTags()
     return set;
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& fillAndStrokeTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& fillAndStrokeTags()
 {
     static constexpr std::array tags {
         &SVGNames::circleTag,
@@ -142,7 +142,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& fillAndStrokeT
     return set;
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& chainableResourceTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& chainableResourceTags()
 {
     static constexpr std::array tags {
         &SVGNames::linearGradientTag,
@@ -154,9 +154,9 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& chainableResou
     return set;
 }
 
-static inline String targetReferenceFromResource(SVGElement& element)
+static inline RefPtr<StringImpl> targetReferenceFromResource(SVGElement& element)
 {
-    String target;
+    RefPtr<StringImpl> target;
     if (auto* svgPattern = dynamicDowncast<SVGPatternElement>(element))
         target = svgPattern->href();
     else if (auto* svgGradient = dynamicDowncast<SVGGradientElement>(element))
@@ -184,7 +184,7 @@ NODELETE static inline bool isChainableResource(const SVGElement& element, const
     return false;
 }
 
-static CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromTreeScopeAndId(TreeScope& treeScope, const AtomString& id, bool* hasPendingResource)
+static CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromTreeScopeAndId(TreeScope& treeScope, AtomStringImpl* id, bool* hasPendingResource)
 {
     CheckedPtr container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
@@ -200,7 +200,7 @@ static CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromTreeScop
     return container;
 }
 
-static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromSVGPaint(TreeScope& treeScope, const Style::SVGPaint& paint, AtomString& id, bool& hasPendingResource)
+static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromSVGPaint(TreeScope& treeScope, const Style::SVGPaint& paint, RefPtr<AtomStringImpl>& id, bool& hasPendingResource)
 {
     auto paintURL = paint.tryAnyURL();
     if (!paintURL)
@@ -211,7 +211,7 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
     if (auto externalDocument = document->svgExtensions().externalResourceDocument(paintURL->resolved)) {
         id = paintURL->resolved.fragmentIdentifier().toAtomString();
         RefPtr resolvedDocument = *externalDocument;
-        if (id.isEmpty() || !resolvedDocument)
+        if (isEmpty(id) || !resolvedDocument)
             return nullptr;
 
         // The resource lives in the isolated document, which is realized separately and does not use
@@ -234,8 +234,8 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     Ref treeScope = element->treeScopeForSVGReferences();
     Ref document = treeScope->documentScope();
 
-    const AtomString& tagName = element->localName();
-    if (tagName.isNull())
+    const RefPtr<AtomStringImpl>& tagName = element->localName();
+    if (!tagName)
         return nullptr;
 
     auto ensureResources = [](std::unique_ptr<SVGResources>& resources) -> SVGResources& {
@@ -321,7 +321,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     if (fillAndStrokeTags().contains(tagName)) {
         if (!style.fill().isNone()) {
             bool hasPendingResource = false;
-            AtomString id;
+            RefPtr<AtomStringImpl> id;
             if (CheckedPtr fill = paintingResourceFromSVGPaint(treeScope, style.fill(), id, hasPendingResource))
                 ensureResources(foundResources).setFill(fill.get());
             else if (hasPendingResource)
@@ -330,7 +330,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
         if (!style.stroke().isNone()) {
             bool hasPendingResource = false;
-            AtomString id;
+            RefPtr<AtomStringImpl> id;
             if (CheckedPtr stroke = paintingResourceFromSVGPaint(treeScope, style.stroke(), id, hasPendingResource))
                 ensureResources(foundResources).setStroke(stroke.get());
             else if (hasPendingResource)
@@ -339,7 +339,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     }
 
     if (chainableResourceTags().contains(tagName)) {
-        AtomString id(targetReferenceFromResource(element));
+        RefPtr<AtomStringImpl> id(AtomStringImpl::add(targetReferenceFromResource(element)));
         auto* linkedResource = getRenderSVGResourceContainerById(document, id);
         if (!linkedResource)
             treeScope->addPendingSVGResource(id, element);

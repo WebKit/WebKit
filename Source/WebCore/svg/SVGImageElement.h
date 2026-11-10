@@ -51,7 +51,7 @@ public:
     NODELETE ImageOrientation orientationForSourceImage();
 
     bool renderingTaintsOrigin() const;
-    String imageSourceURL() const final;
+    RefPtr<StringImpl> imageSourceURL() const final;
 
     const SVGLengthValue& x() const LIFETIME_BOUND { return m_x->currentValue(); }
     const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }
@@ -59,8 +59,8 @@ public:
     const SVGLengthValue& height() const LIFETIME_BOUND { return m_height->currentValue(); }
     const SVGPreserveAspectRatioValue& preserveAspectRatio() const LIFETIME_BOUND { return m_preserveAspectRatio->currentValue(); }
 
-    void setCrossOrigin(const AtomString&);
-    String crossOrigin() const;
+    void setCrossOrigin(AtomStringImpl*);
+    RefPtr<StringImpl> crossOrigin() const;
 
     SVGAnimatedLength& xAnimated() { return m_x; }
     SVGAnimatedLength& yAnimated() { return m_y; }
@@ -75,7 +75,7 @@ public:
 private:
     SVGImageElement(const QualifiedName&, Document&);
     
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     void didAttachRenderers() final;

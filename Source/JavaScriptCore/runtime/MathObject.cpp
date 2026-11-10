@@ -469,7 +469,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSumPrecise, (JSGlobalObject* globalObject,
         forEachInIterable(globalObject, iterable, [&sum, &count](VM& vm, JSGlobalObject* globalObject, JSValue value) {
             auto scope = DECLARE_THROW_SCOPE(vm);
             if (count >= maxSafeIntegerAsUInt64()) [[unlikely]] {
-                throwRangeError(globalObject, scope, "Math.sumPrecise exceeded maximum iterations"_s);
+                throwRangeError(globalObject, scope, "Math.sumPrecise exceeded maximum iterations"_si);
                 return;
             }
             if (!value.isNumber()) [[unlikely]] {

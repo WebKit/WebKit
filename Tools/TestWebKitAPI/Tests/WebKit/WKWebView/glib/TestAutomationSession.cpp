@@ -85,7 +85,7 @@ public:
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
         m_message = UTF8CString::unsafeFromUTF8(message);
-        m_messages.append(String::fromUTF8(message));
+        m_messages.append(StringImpl::fromUTF8(message));
         g_main_loop_quit(m_mainLoop.get());
     }
 
@@ -112,16 +112,16 @@ public:
         for (auto& message : m_messages) {
             auto value = JSON::Value::parseJSON(message);
             auto object = value ? value->asObject() : nullptr;
-            if (object && object->getInteger("id"_s) == commandID)
+            if (object && object->getInteger("id"_si) == commandID)
                 return object;
         }
         return nullptr;
     }
 
-    long sendNavigateCommand(const String& pageHandle, const String& url, ASCIILiteral pageLoadStrategy = "Normal"_s)
+    long sendNavigateCommand(StringImpl* pageHandle, StringImpl* url, ASCIILiteral pageLoadStrategy = "Normal"_s)
     {
         // The page load timeout bounds the checks should a command never complete.
-        return sendCommandToBackend("navigateBrowsingContext"_s, makeString("{\"handle\":\""_s, pageHandle, "\",\"url\":\""_s, url, "\",\"pageLoadStrategy\":\""_s, pageLoadStrategy, "\",\"pageLoadTimeout\":10000}"_s));
+        return sendCommandToBackend("navigateBrowsingContext"_si, makeString("{\"handle\":\""_s, pageHandle, "\",\"url\":\""_s, url, "\",\"pageLoadStrategy\":\""_s, pageLoadStrategy, "\",\"pageLoadTimeout\":10000}"_s));
     }
 
     RefPtr<JSON::Object> waitForResponse(long commandID)
@@ -134,20 +134,20 @@ public:
         return response;
     }
 
-    RefPtr<JSON::Object> navigateAndWaitForResponse(const String& pageHandle, const UTF8CString& url)
+    RefPtr<JSON::Object> navigateAndWaitForResponse(StringImpl* pageHandle, const UTF8CString& url)
     {
-        return waitForResponse(sendNavigateCommand(pageHandle, String::fromUTF8(url.span())));
+        return waitForResponse(sendNavigateCommand(pageHandle, StringImpl::fromUTF8(url.span())));
     }
 
-    long sendCommandToBackend(const String& command, const String& parameters = String())
+    long sendCommandToBackend(StringImpl* command, StringImpl* parameters = nullptr)
     {
         static long sequenceID = 0;
         StringBuilder messageBuilder;
         messageBuilder.append("{\"id\":"_s, ++sequenceID, ",\"method\":\"Automation."_s, command, '"');
-        if (!parameters.isNull())
+        if (parameters)
             messageBuilder.append(",\"params\":"_s, parameters);
         messageBuilder.append('}');
-        m_connection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8()));
+        m_connection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, utf8(messageBuilder.toString())));
         return sequenceID;
     }
 
@@ -248,7 +248,7 @@ public:
         m_createWebViewWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view", G_CALLBACK(createWebViewCallback), this);
-        sendCommandToBackend("createBrowsingContext"_s);
+        sendCommandToBackend("createBrowsingContext"_si);
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewWasCalled);
@@ -268,7 +268,7 @@ public:
         m_createWebViewInWindowWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view::window", G_CALLBACK(createWebViewInWindowCallback), this);
-        sendCommandToBackend("createBrowsingContext"_s, "{\"presentationHint\":\"Window\"}"_s);
+        sendCommandToBackend("createBrowsingContext"_si, "{\"presentationHint\":\"Window\"}"_si);
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewInWindowWasCalled);
@@ -286,7 +286,7 @@ public:
         m_createWebViewInTabWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view::tab", G_CALLBACK(createWebViewInTabCallback), this);
-        sendCommandToBackend("createBrowsingContext"_s, "{\"presentationHint\":\"Tab\"}"_s);
+        sendCommandToBackend("createBrowsingContext"_si, "{\"presentationHint\":\"Tab\"}"_si);
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewInTabWasCalled);
@@ -309,7 +309,7 @@ public:
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
     UTF8CString m_message;
-    Vector<String> m_messages;
+    Vector<RefPtr<StringImpl>> m_messages;
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
@@ -405,17 +405,17 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
         return s_stalledLoadWasRequested;
     });
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
-    auto createResponse = JSON::Value::parseJSON(String::fromUTF8(test->m_message.span()));
+    auto createResponse = JSON::Value::parseJSON(StringImpl::fromUTF8(test->m_message.span()));
     g_assert_nonnull(createResponse.get());
-    auto createResult = createResponse->asObject()->getObject("result"_s);
+    auto createResult = createResponse->asObject()->getObject("result"_si);
     g_assert_nonnull(createResult.get());
-    String pageHandle = createResult->getString("handle"_s);
-    g_assert_false(pageHandle.isEmpty());
+    RefPtr<StringImpl> pageHandle = createResult->getString("handle"_si);
+    g_assert_false(isEmpty(pageHandle));
 
     // The command completes once the navigation it started has loaded, not when the earlier load ends.
     auto targetURI = kServer->getURIForPath("/target");
     auto response = test->navigateAndWaitForResponse(pageHandle, targetURI);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
     ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, targetURI);
 
@@ -423,23 +423,23 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     // either: it is reported without a navigation, and the load the command waits for is still in progress.
     auto fragmentURI = kServer->getURIForPath("/fragment-while-loading");
     response = test->navigateAndWaitForResponse(pageHandle, fragmentURI);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
-    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, makeString(String::fromUTF8(fragmentURI.span()), "#changed"_s).utf8());
+    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, utf8(makeString(StringImpl::fromUTF8(fragmentURI.span()), "#changed"_s)));
 
     // A navigation the page starts while the awaited one still awaits its policy decision cancels that
     // decision: the awaited navigation is destroyed without reporting anything. The command completes with the
     // load of the navigation that replaced it, not before.
     s_heldPolicyDecision = nullptr;
     auto policySignalID = g_signal_connect(webView.get(), "decide-policy", G_CALLBACK(holdPolicyDecisionForHeldRequest), nullptr);
-    auto heldCommandID = test->sendNavigateCommand(pageHandle, String::fromUTF8(kServer->getURIForPath("/held").span()));
+    auto heldCommandID = test->sendNavigateCommand(pageHandle, StringImpl::fromUTF8(kServer->getURIForPath("/held").span()));
     test->waitUntil([&] {
         return !!s_heldPolicyDecision;
     });
     auto replacementURI = kServer->getURIForPath("/replacement");
-    webkit_web_view_evaluate_javascript(webView.get(), makeString("location.href = '"_s, String::fromUTF8(replacementURI.span()), '\'').utf8().legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(webView.get(), utf8(makeString("location.href = '"_s, StringImpl::fromUTF8(replacementURI.span()), '\'')).legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     response = test->waitForResponse(heldCommandID);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
     ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, replacementURI);
 
@@ -448,12 +448,12 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     // request means the replacement has passed its policy check, which cancelled the held one.
     s_heldPolicyDecision = nullptr;
     s_slowReplacementWasServed = false;
-    heldCommandID = test->sendNavigateCommand(pageHandle, String::fromUTF8(kServer->getURIForPath("/held").span()));
+    heldCommandID = test->sendNavigateCommand(pageHandle, StringImpl::fromUTF8(kServer->getURIForPath("/held").span()));
     test->waitUntil([&] {
         return !!s_heldPolicyDecision;
     });
     auto slowReplacementURI = kServer->getURIForPath("/slow-replacement");
-    webkit_web_view_evaluate_javascript(webView.get(), makeString("location.href = '"_s, String::fromUTF8(slowReplacementURI.span()), '\'').utf8().legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(webView.get(), utf8(makeString("location.href = '"_s, StringImpl::fromUTF8(slowReplacementURI.span()), '\'')).legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     test->waitUntil([&] {
         return !!s_heldReplacementRequest;
     });
@@ -466,25 +466,25 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     test->waitUntil([&] {
         return historyChangeDone;
     });
-    auto barrierID = test->sendCommandToBackend("getBrowsingContexts"_s);
+    auto barrierID = test->sendCommandToBackend("getBrowsingContexts"_si);
     test->waitUntil([&] {
         return !!test->responseForCommand(barrierID);
     });
     g_assert_null(test->responseForCommand(heldCommandID).get());
     serveHeldReplacement();
     response = test->waitForResponse(heldCommandID);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
     ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, slowReplacementURI);
     g_signal_handler_disconnect(webView.get(), policySignalID);
     s_heldPolicyDecision = nullptr;
 
     // A navigate sent while the error page for a failed load is being loaded: that load may cancel the policy
     // check of the command's navigation, and has no navigation of its own. The command still completes.
-    auto unreachableURI = makeString("http://127.0.0.1:"_s, s_unreachablePort, '/').utf8();
+    auto unreachableURI = utf8(makeString("http://127.0.0.1:"_s, s_unreachablePort, '/'));
     response = test->navigateAndWaitForResponse(pageHandle, unreachableURI);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
     response = test->navigateAndWaitForResponse(pageHandle, targetURI);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
 
     // A wait with the eager strategy normally ends with the document load, which a navigation that failed before
     // committing never reaches: here the second command's navigation cancels the first one's provisional load.
@@ -492,48 +492,48 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
         return !webkit_web_view_is_loading(webView.get());
     });
     s_stalledLoadWasRequested = false;
-    auto eagerCommandID = test->sendNavigateCommand(pageHandle, String::fromUTF8(kServer->getURIForPath("/stall").span()), "Eager"_s);
+    auto eagerCommandID = test->sendNavigateCommand(pageHandle, StringImpl::fromUTF8(kServer->getURIForPath("/stall").span()), "Eager"_s);
     test->waitUntil([&] {
         return s_stalledLoadWasRequested;
     });
-    auto failingCommandID = test->sendNavigateCommand(pageHandle, String::fromUTF8(unreachableURI.span()));
-    g_assert_nonnull(test->waitForResponse(failingCommandID)->getObject("result"_s).get());
-    g_assert_nonnull(test->waitForResponse(eagerCommandID)->getObject("result"_s).get());
+    auto failingCommandID = test->sendNavigateCommand(pageHandle, StringImpl::fromUTF8(unreachableURI.span()));
+    g_assert_nonnull(test->waitForResponse(failingCommandID)->getObject("result"_si).get());
+    g_assert_nonnull(test->waitForResponse(eagerCommandID)->getObject("result"_si).get());
 
     // A wait that is not bound to a navigation (waitForNavigationToComplete, which WebDriver sends after Element
     // Click) ends with the notification its strategy specifies only: with the eager strategy, the document load
     // of the new page, not the end of the old page's load when the new navigation stops it.
-    response = test->waitForResponse(test->sendNavigateCommand(pageHandle, String::fromUTF8(kServer->getURIForPath("/slow-image-page").span()), "Eager"_s));
-    g_assert_nonnull(response->getObject("result"_s).get());
+    response = test->waitForResponse(test->sendNavigateCommand(pageHandle, StringImpl::fromUTF8(kServer->getURIForPath("/slow-image-page").span()), "Eager"_s));
+    g_assert_nonnull(response->getObject("result"_si).get());
     g_assert_true(webkit_web_view_is_loading(webView.get()));
     s_slowScriptWasServed = false;
-    webkit_web_view_evaluate_javascript(webView.get(), makeString("location.href = '"_s, String::fromUTF8(kServer->getURIForPath("/slow-script-page").span()), '\'').utf8().legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
-    auto waitCommandID = test->sendCommandToBackend("waitForNavigationToComplete"_s, makeString("{\"browsingContextHandle\":\""_s, pageHandle, "\",\"pageLoadStrategy\":\"Eager\",\"pageLoadTimeout\":10000}"_s));
-    g_assert_nonnull(test->waitForResponse(waitCommandID)->getObject("result"_s).get());
+    webkit_web_view_evaluate_javascript(webView.get(), utf8(makeString("location.href = '"_s, StringImpl::fromUTF8(kServer->getURIForPath("/slow-script-page").span()), '\'')).legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
+    auto waitCommandID = test->sendCommandToBackend("waitForNavigationToComplete"_si, makeString("{\"browsingContextHandle\":\""_s, pageHandle, "\",\"pageLoadStrategy\":\"Eager\",\"pageLoadTimeout\":10000}"_s));
+    g_assert_nonnull(test->waitForResponse(waitCommandID)->getObject("result"_si).get());
     g_assert_true(s_slowScriptWasServed);
 
     // A fragment change the loading document makes to itself is reported with that document's navigation. It
     // does not complete the command either: the load, or the document load for the eager strategy, is not done.
     auto anchorURI = kServer->getURIForPath("/anchor-while-parsing");
     response = test->navigateAndWaitForResponse(pageHandle, anchorURI);
-    g_assert_nonnull(response->getObject("result"_s).get());
+    g_assert_nonnull(response->getObject("result"_si).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
-    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, makeString(String::fromUTF8(anchorURI.span()), "#changed"_s).utf8());
+    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, utf8(makeString(StringImpl::fromUTF8(anchorURI.span()), "#changed"_s)));
     s_slowScriptWasServed = false;
-    response = test->waitForResponse(test->sendNavigateCommand(pageHandle, String::fromUTF8(anchorURI.span()), "Eager"_s));
-    g_assert_nonnull(response->getObject("result"_s).get());
+    response = test->waitForResponse(test->sendNavigateCommand(pageHandle, StringImpl::fromUTF8(anchorURI.span()), "Eager"_s));
+    g_assert_nonnull(response->getObject("result"_si).get());
     g_assert_true(s_slowScriptWasServed);
 }
 
-static bool browsingContextsResponseListsHandle(const JSON::Object& response, const String& handle)
+static bool browsingContextsResponseListsHandle(const JSON::Object& response, StringImpl* handle)
 {
-    auto result = response.getObject("result"_s);
+    auto result = response.getObject("result"_si);
     g_assert_nonnull(result.get());
-    auto contexts = result->getArray("contexts"_s);
+    auto contexts = result->getArray("contexts"_si);
     g_assert_nonnull(contexts.get());
     for (auto& context : *contexts) {
         auto object = context->asObject();
-        if (object && object->getString("handle"_s) == handle)
+        if (object && equal(object->getString("handle"_si), handle))
             return true;
     }
     return false;
@@ -548,30 +548,30 @@ static void checkCloseWindowWaitsForThePageToClose(AutomationTest* test)
     // before the page is gone.
     auto webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
-    auto createResponse = JSON::Value::parseJSON(String::fromUTF8(test->m_message.span()));
+    auto createResponse = JSON::Value::parseJSON(StringView { StringImpl::fromUTF8(test->m_message.span()).get() });
     g_assert_nonnull(createResponse.get());
-    auto createResult = createResponse->asObject()->getObject("result"_s);
+    auto createResult = createResponse->asObject()->getObject("result"_si);
     g_assert_nonnull(createResult.get());
-    String pageHandle = createResult->getString("handle"_s);
-    g_assert_false(pageHandle.isEmpty());
+    RefPtr<StringImpl> pageHandle = createResult->getString("handle"_si);
+    g_assert_false(isEmpty(pageHandle));
 
     unsigned closeRequests = 0;
     auto closeSignalID = g_signal_connect(webView.get(), "close", G_CALLBACK(+[](WebKitWebView*, unsigned* closeRequests) {
         ++*closeRequests;
     }), &closeRequests);
 
-    auto closeCommandID = test->sendCommandToBackend("closeBrowsingContext"_s, makeString("{\"handle\":\""_s, pageHandle, "\"}"_s));
+    auto closeCommandID = test->sendCommandToBackend("closeBrowsingContext"_si, makeString("{\"handle\":\""_s, pageHandle, "\"}"_s).get());
     test->waitUntil([&] {
         return closeRequests > 0;
     });
 
     // A second close while the first is pending gets the same reply, without asking the client again.
-    auto secondCloseCommandID = test->sendCommandToBackend("closeBrowsingContext"_s, makeString("{\"handle\":\""_s, pageHandle, "\"}"_s));
+    auto secondCloseCommandID = test->sendCommandToBackend("closeBrowsingContext"_si, makeString("{\"handle\":\""_s, pageHandle, "\"}"_s).get());
 
     // The client has not closed the view yet: commands sent after the close are answered, the close is not.
-    auto barrierID = test->sendCommandToBackend("getBrowsingContexts"_s);
+    auto barrierID = test->sendCommandToBackend("getBrowsingContexts"_si);
     auto barrierResponse = test->waitForResponse(barrierID);
-    g_assert_true(browsingContextsResponseListsHandle(*barrierResponse, pageHandle));
+    g_assert_true(browsingContextsResponseListsHandle(*barrierResponse, pageHandle.get()));
     g_assert_null(test->responseForCommand(closeCommandID).get());
     g_assert_null(test->responseForCommand(secondCloseCommandID).get());
     g_assert_cmpuint(closeRequests, ==, 1);
@@ -590,19 +590,19 @@ static void checkCloseWindowWaitsForThePageToClose(AutomationTest* test)
 
     // Disposing of the view replied to both closes, so the replies come before the reply to a command sent after it.
     // Had the closes been left to the fallback timeout instead, they would come after it.
-    auto contextsResponse = test->waitForResponse(test->sendCommandToBackend("getBrowsingContexts"_s));
+    auto contextsResponse = test->waitForResponse(test->sendCommandToBackend("getBrowsingContexts"_si));
     auto closeResponse = test->responseForCommand(closeCommandID);
     g_assert_nonnull(closeResponse.get());
-    g_assert_nonnull(closeResponse->getObject("result"_s).get());
+    g_assert_nonnull(closeResponse->getObject("result"_si).get());
     auto secondCloseResponse = test->responseForCommand(secondCloseCommandID);
     g_assert_nonnull(secondCloseResponse.get());
-    g_assert_nonnull(secondCloseResponse->getObject("result"_s).get());
-    g_assert_false(browsingContextsResponseListsHandle(*contextsResponse, pageHandle));
+    g_assert_nonnull(secondCloseResponse->getObject("result"_si).get());
+    g_assert_false(browsingContextsResponseListsHandle(*contextsResponse, pageHandle.get()));
 }
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
-    auto sessionID = createVersion4UUIDString().utf8();
+    auto sessionID = utf8(createVersion4UUIDString());
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
     g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
 #if ENABLE(2022_GLIB_API)

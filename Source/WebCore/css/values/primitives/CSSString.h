@@ -33,10 +33,13 @@ namespace CSS {
 
 // https://drafts.csswg.org/css-values-4/#strings
 struct String {
-    WTF::String value;
+    RefPtr<StringImpl> value;
 
-    bool operator==(const String&) const = default;
-    bool operator==(const WTF::String& other) const { return value == other; }
+    bool operator==(const String& other) const
+    {
+        return contentEquals(value, other.value);
+    }
+    bool operator==(StringImpl* other) const { return equal(value, other); }
 };
 
 template<> struct Serialize<String> { void operator()(StringBuilder&, const SerializationContext&, const String&); };
@@ -60,7 +63,7 @@ namespace WTF {
 
 template<>
 struct MarkableTraits<WebCore::CSS::String> {
-    static bool isEmptyValue(const WebCore::CSS::String& value) { return value.value.isNull(); }
+    static bool isEmptyValue(const WebCore::CSS::String& value) { return !value.value; }
     static WebCore::CSS::String emptyValue() { return WebCore::CSS::String { nullString() }; }
 };
 
@@ -69,10 +72,10 @@ struct HashTraits<WebCore::CSS::String> : GenericHashTraits<WebCore::CSS::String
     using EmptyValueType = WebCore::CSS::String;
     static constexpr bool emptyValueIsZero = true;
     static constexpr bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const WebCore::CSS::String& value) { return value.value.isNull(); }
+    static bool isEmptyValue(const WebCore::CSS::String& value) { return !value.value; }
     static EmptyValueType emptyValue() { return WebCore::CSS::String { nullString() }; }
 
-    static void constructDeletedValue(WebCore::CSS::String& value) { new (NotNull, std::addressof(value.value)) String { HashTableDeletedValue }; }
+    static void constructDeletedValue(WebCore::CSS::String& value) { new (NotNull, std::addressof(value.value)) RefPtr<StringImpl> { HashTableDeletedValue }; }
     static bool isDeletedValue(const WebCore::CSS::String& value) { return value.value.isHashTableDeletedValue(); }
 };
 

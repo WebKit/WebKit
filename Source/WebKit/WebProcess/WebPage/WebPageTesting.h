@@ -58,8 +58,8 @@ private:
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
     void preferredRenderingUpdateIntervalInMilliseconds(CompletionHandler<void(double)>&&);
-    void setPermissionLevel(const String& origin, bool allowed);
-    void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
+    void setPermissionLevel(StringImpl* origin, bool allowed);
+    void isEditingCommandEnabled(StringImpl* commandName, CompletionHandler<void(bool)>&&);
     void resetStateBetweenTests();
     void clearCachedBackForwardListCounts(CompletionHandler<void()>&&);
     void setTracksRepaints(bool, CompletionHandler<void()>&&);

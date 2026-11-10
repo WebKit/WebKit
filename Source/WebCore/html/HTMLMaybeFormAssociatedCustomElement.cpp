@@ -152,7 +152,7 @@ void HTMLMaybeFormAssociatedCustomElement::removingSteps(RemovalType removalType
         protect(formAssociatedCustomElementUnsafe())->removingSteps(removalType, oldParentOfRemovedTree);
 }
 
-void HTMLMaybeFormAssociatedCustomElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLMaybeFormAssociatedCustomElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (isFormAssociatedCustomElement())

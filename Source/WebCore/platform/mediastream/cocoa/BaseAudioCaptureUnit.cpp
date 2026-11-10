@@ -195,9 +195,9 @@ void BaseAudioCaptureUnit::prepareForNewCapture()
     captureFailed();
 }
 
-void BaseAudioCaptureUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID, bool isDefault)
+void BaseAudioCaptureUnit::setCaptureDevice(RefPtr<StringImpl>&& persistentID, uint32_t captureDeviceID, bool isDefault)
 {
-    bool hasChanged = this->persistentID() != persistentID || this->captureDeviceID() != captureDeviceID || m_isCapturingWithDefaultMicrophone != isDefault;
+    bool hasChanged = !equal(this->persistentID(), persistentID) || this->captureDeviceID() != captureDeviceID || m_isCapturingWithDefaultMicrophone != isDefault;
     if (hasChanged)
         willChangeCaptureDeviceTo(persistentID);
 
@@ -217,10 +217,10 @@ void BaseAudioCaptureUnit::devicesChanged()
 
     auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
     auto persistentID = this->persistentID();
-    if (persistentID.isEmpty())
+    if (isEmpty(persistentID))
         return;
 
-    if (std::ranges::any_of(devices, [&persistentID](auto& device) { return persistentID == device.persistentId(); })) {
+    if (std::ranges::any_of(devices, [&persistentID](auto& device) { return equal(persistentID, device.persistentId()); })) {
         validateOutputDevice(m_outputDeviceID);
         return;
     }

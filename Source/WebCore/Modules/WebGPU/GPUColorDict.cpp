@@ -33,10 +33,10 @@ namespace WebCore {
 Ref<JSON::Object> GPUColorDict::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("r"_s, r);
-    json->setDouble("g"_s, g);
-    json->setDouble("b"_s, b);
-    json->setDouble("a"_s, a);
+    json->setDouble("r"_si, r);
+    json->setDouble("g"_si, g);
+    json->setDouble("b"_si, b);
+    json->setDouble("a"_si, a);
     return json;
 }
 

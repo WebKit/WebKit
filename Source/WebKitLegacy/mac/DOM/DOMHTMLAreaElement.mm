@@ -46,25 +46,25 @@
 - (NSString *)alt
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::altAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::altAttr)).autorelease();
 }
 
 - (void)setAlt:(NSString *)newAlt
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, newAlt);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, AtomStringImpl::add((__bridge CFStringRef)newAlt).get());
 }
 
 - (NSString *)coords
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::coordsAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::coordsAttr)).autorelease();
 }
 
 - (void)setCoords:(NSString *)newCoords
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, newCoords);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, AtomStringImpl::add((__bridge CFStringRef)newCoords).get());
 }
 
 - (BOOL)noHref
@@ -82,61 +82,61 @@
 - (NSString *)ping
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::pingAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::pingAttr)).autorelease();
 }
 
 - (void)setPing:(NSString *)newPing
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::pingAttr, newPing);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::pingAttr, AtomStringImpl::add((__bridge CFStringRef)newPing).get());
 }
 
 - (NSString *)rel
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::relAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::relAttr)).autorelease();
 }
 
 - (void)setRel:(NSString *)newRel
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, newRel);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, AtomStringImpl::add((__bridge CFStringRef)newRel).get());
 }
 
 - (NSString *)shape
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::shapeAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::shapeAttr)).autorelease();
 }
 
 - (void)setShape:(NSString *)newShape
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::shapeAttr, newShape);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::shapeAttr, AtomStringImpl::add((__bridge CFStringRef)newShape).get());
 }
 
 - (NSString *)target
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::targetAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::targetAttr)).autorelease();
 }
 
 - (void)setTarget:(NSString *)newTarget
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, newTarget);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, AtomStringImpl::add((__bridge CFStringRef)newTarget).get());
 }
 
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr)).autorelease();
 }
 
 - (void)setAccessKey:(NSString *)newAccessKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, AtomStringImpl::add((__bridge CFStringRef)newAccessKey).get());
 }
 
 - (NSURL *)absoluteLinkURL
@@ -154,61 +154,61 @@
 - (NSString *)href
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::hrefAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::hrefAttr).string()).autorelease();
 }
 
 - (void)setHref:(NSString *)newHref
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, newHref);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, AtomStringImpl::add((__bridge CFStringRef)newHref).get());
 }
 
 - (NSString *)origin
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->origin().createNSString().autorelease();
+    return createNSString(IMPL->origin()).autorelease();
 }
 
 - (NSString *)protocol
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->protocol().createNSString().autorelease();
+    return createNSString(IMPL->protocol()).autorelease();
 }
 
 - (NSString *)host
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->host().createNSString().autorelease();
+    return createNSString(IMPL->host()).autorelease();
 }
 
 - (NSString *)hostname
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->hostname().createNSString().autorelease();
+    return createNSString(IMPL->hostname()).autorelease();
 }
 
 - (NSString *)port
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->port().createNSString().autorelease();
+    return createNSString(IMPL->port()).autorelease();
 }
 
 - (NSString *)pathname
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->pathname().createNSString().autorelease();
+    return createNSString(IMPL->pathname()).autorelease();
 }
 
 - (NSString *)search
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->search().createNSString().autorelease();
+    return createNSString(IMPL->search()).autorelease();
 }
 
 - (NSString *)hashName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->hash().createNSString().autorelease();
+    return createNSString(IMPL->hash()).autorelease();
 }
 
 @end

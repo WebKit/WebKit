@@ -78,7 +78,7 @@ void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
     context.setCTM(baseTransform());
 }
 
-String ImageBufferCGBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferCGBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferCGBackend " << this;

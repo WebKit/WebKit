@@ -39,13 +39,13 @@ public:
     static Ref<WebAuthenticationAssertionResponse> create(Ref<WebCore::AuthenticatorAssertionResponse>&&);
     ~WebAuthenticationAssertionResponse();
 
-    const WTF::String& name() const LIFETIME_BOUND { return m_response->name(); }
-    const WTF::String& displayName() const LIFETIME_BOUND { return m_response->displayName(); }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_response->name(); }
+    const RefPtr<StringImpl>& displayName() const LIFETIME_BOUND { return m_response->displayName(); }
     RefPtr<Data> userHandle() const;
     bool synchronizable() const { return m_response->synchronizable(); }
-    const WTF::String& group() const LIFETIME_BOUND { return m_response->group(); }
+    const RefPtr<StringImpl>& group() const LIFETIME_BOUND { return m_response->group(); }
     RefPtr<Data> credentialID() const;
-    const WTF::String& accessGroup() const LIFETIME_BOUND { return m_response->accessGroup(); }
+    const RefPtr<StringImpl>& accessGroup() const LIFETIME_BOUND { return m_response->accessGroup(); }
 
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
 

@@ -55,9 +55,9 @@ public:
     virtual bool canAbortSession() = 0;
     virtual void hide() = 0;
     virtual void canMakePayment(Document&, Function<void(bool)>&& completionHandler) = 0;
-    virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) = 0;
+    virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, RefPtr<StringImpl>&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) = 0;
     virtual ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) = 0;
-    virtual ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData) = 0;
+    virtual ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, RefPtr<StringImpl>&& serializedData) = 0;
     virtual ExceptionOr<void> retry(PaymentValidationErrors&&) = 0;
 };
 

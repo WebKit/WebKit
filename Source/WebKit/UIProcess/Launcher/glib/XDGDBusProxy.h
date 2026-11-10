@@ -46,7 +46,7 @@ public:
     enum class AllowPortals : bool { No, Yes };
     std::optional<UTF8CString> dbusSessionProxy(const char* baseDirectory, AllowPortals);
 #if USE(ATSPI)
-    std::optional<UTF8CString> accessibilityProxy(const char* baseDirectory, const String& sandboxedAccessibilityBusPath, const String& accessibilityBusName);
+    std::optional<UTF8CString> accessibilityProxy(const char* baseDirectory, StringImpl* sandboxedAccessibilityBusPath, StringImpl* accessibilityBusName);
 #endif
 
     void launch(const ProcessLaunchOptions&);

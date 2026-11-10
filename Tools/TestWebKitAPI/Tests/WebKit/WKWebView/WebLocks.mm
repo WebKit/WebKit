@@ -254,9 +254,9 @@ TEST(WebLocks, ServiceWorkerLockRequestAfterCrossSiteNavigationInSameProcess)
         "});"
         "</script>"_s);
 
-    server1.addResponse("/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, swScript });
-    server1.addResponse("/"_s, { page1HTML });
-    server2.addResponse("/"_s, { page2HTML });
+    server1.addResponse("/sw.js"_si, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(swScript).ptr() });
+    server1.addResponse("/"_si, { page1HTML });
+    server2.addResponse("/"_si, { StringImpl::create(page2HTML).ptr() });
 
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = NO;
@@ -310,9 +310,9 @@ TEST(WebLocks, CrossSiteIframeUsingLocksInServiceWorkerHostingProcess)
         "    });"
         "</script>"_s);
 
-    server1.addResponse("/"_s, { pageHTML });
-    server1.addResponse("/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, swScript });
-    server2.addResponse("/iframe"_s, { iframeHTML });
+    server1.addResponse("/"_si, { pageHTML });
+    server1.addResponse("/sw.js"_si, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(swScript).ptr() });
+    server2.addResponse("/iframe"_si, { StringImpl::create(iframeHTML).ptr() });
 
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = NO;
@@ -388,8 +388,8 @@ TEST(WebLocks, CrossSiteIframeUsingLocksInsideAboutBlankPopup)
         "  }"
         "</script>"_s);
 
-    server1.addResponse("/"_s, { openerHTML });
-    server2.addResponse("/iframe"_s, { iframeHTML });
+    server1.addResponse("/"_si, { openerHTML });
+    server2.addResponse("/iframe"_si, { StringImpl::create(iframeHTML).ptr() });
 
     // No process swap on navigation keeps the popup in the opener's process.
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

@@ -59,13 +59,13 @@ public:
     void applyHighlightInheritance();
 
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
-    void applyCustomProperty(const AtomString& name);
+    void applyCustomProperty(AtomStringImpl* name);
 
     using CustomPropertyOrKeyword = Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>;
 
     RefPtr<const CustomProperty> resolveCustomPropertyForContainerQueries(const CSSCustomPropertyValue&);
     std::optional<CustomPropertyOrKeyword> resolveFunctionResult();
-    std::optional<CustomPropertyOrKeyword> computeCustomPropertyValueForSyntax(const AtomString&, const CSSCustomPropertySyntax&, const CSSVariableData&);
+    std::optional<CustomPropertyOrKeyword> computeCustomPropertyValueForSyntax(AtomStringImpl*, const CSSCustomPropertySyntax&, const CSSVariableData&);
 
     BuilderState& state() { return m_state; }
     const MatchResult& matchResult() const { return m_cascade.matchResult(); }
@@ -76,17 +76,17 @@ private:
     void applyProperties(CSSPropertyID firstProperty, CSSPropertyID lastProperty);
     void applyLogicalGroupProperties();
     void applyCustomProperties();
-    void applyCustomPropertyImpl(const AtomString&, const PropertyCascade::Property&);
-    void applyCustomPropertyFromCallingContext(const AtomString&);
+    void applyCustomPropertyImpl(AtomStringImpl*, const PropertyCascade::Property&);
+    void applyCustomPropertyFromCallingContext(AtomStringImpl*);
 
     enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
     template<CustomPropertyCycleTracking trackCycles>
     void applyPropertiesImpl(CSSPropertyID firstProperty, CSSPropertyID lastProperty);
     void applyCascadeProperty(const PropertyCascade::Property&);
     bool applyRollbackCascadeProperty(const PropertyCascade&, CSSPropertyID, SelectorChecker::LinkMatchMask);
-    bool applyRollbackCascadeCustomProperty(const PropertyCascade&, const AtomString&);
+    bool applyRollbackCascadeCustomProperty(const PropertyCascade&, AtomStringImpl*);
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask, PropertyCascade::Origin);
-    void applyCustomProperty(const AtomString& name, CustomPropertyOrKeyword&&);
+    void applyCustomProperty(AtomStringImpl* name, CustomPropertyOrKeyword&&);
 
     Ref<CSSValue> resolveSubstitutionFunctions(CSSPropertyID, CSSValue&);
     std::optional<CustomPropertyOrKeyword> resolveCustomPropertyValue(CSSCustomPropertyValue&);

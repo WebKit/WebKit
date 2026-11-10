@@ -217,7 +217,7 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
         handleUncaughtException(scope, lexicalGlobalObject);
 }
 
-void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHandled rejectAsHandled)
+void DeferredPromise::reject(ExceptionCode ec, StringImpl* message, RejectAsHandled rejectAsHandled)
 {
     if (shouldIgnoreRequestToFulfill())
         return;
@@ -278,7 +278,7 @@ void rejectPromisesWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject& g
     }
 }
 
-JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const String& errorMessage, RejectedPromiseWithTypeErrorCause cause)
+JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* errorMessage, RejectedPromiseWithTypeErrorCause cause)
 {
     auto& globalObject = lexicalGlobalObject;
 
@@ -289,13 +289,13 @@ JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexi
     return JSValue::encode(JSPromise::rejectedPromise(&globalObject, rejectionValue));
 }
 
-static inline JSC::JSValue parseAsJSON(JSC::JSGlobalObject* lexicalGlobalObject, const String& data)
+static inline JSC::JSValue parseAsJSON(JSC::JSGlobalObject* lexicalGlobalObject, StringImpl* data)
 {
     JSC::JSLockHolder lock(lexicalGlobalObject);
     return JSC::JSONParse(lexicalGlobalObject, data);
 }
 
-void fulfillPromiseWithJSON(Ref<DeferredPromise>&& promise, const String& data)
+void fulfillPromiseWithJSON(Ref<DeferredPromise>&& promise, StringImpl* data)
 {
     JSC::JSValue value = parseAsJSON(promise->globalObject(), data);
     if (!value)

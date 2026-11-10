@@ -54,14 +54,14 @@ void MemoryStorageArea::clear()
     notifyListenersAboutClear();
 }
 
-HashMap<String, String> MemoryStorageArea::allItems()
+HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> MemoryStorageArea::allItems()
 {
     return m_map.items();
 }
 
-std::expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::Connection::UniqueID> connection, std::optional<StorageAreaImplIdentifier> storageAreaImplID, String&& key, String&& value, const String& urlString)
+std::expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::Connection::UniqueID> connection, std::optional<StorageAreaImplIdentifier> storageAreaImplID, RefPtr<StringImpl>&& key, RefPtr<StringImpl>&& value, StringImpl* urlString)
 {
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     bool hasQuotaError = false;
     m_map.setItem(key, value, oldValue, hasQuotaError);
     if (hasQuotaError)
@@ -73,22 +73,22 @@ std::expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::
     return { };
 }
 
-std::expected<void, StorageError> MemoryStorageArea::removeItem(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString)
+std::expected<void, StorageError> MemoryStorageArea::removeItem(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier storageAreaImplID, StringImpl* key, StringImpl* urlString)
 {
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     m_map.removeItem(key, oldValue);
-    dispatchEvents(connection, storageAreaImplID, key, oldValue, String(), urlString);
+    dispatchEvents(connection, storageAreaImplID, key, oldValue, nullString(), urlString);
 
     return { };
 }
 
-std::expected<void, StorageError> MemoryStorageArea::clear(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier implIdentifier, const String& urlString)
+std::expected<void, StorageError> MemoryStorageArea::clear(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier implIdentifier, StringImpl* urlString)
 {
     if (!m_map.length())
         return { };
 
     m_map.clear();
-    dispatchEvents(connection, implIdentifier, String(), String(), String(), urlString);
+    dispatchEvents(connection, implIdentifier, nullString(), nullString(), nullString(), urlString);
 
     return { };
 }

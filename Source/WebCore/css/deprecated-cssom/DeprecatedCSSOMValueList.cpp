@@ -48,7 +48,7 @@ DeprecatedCSSOMValueList::DeprecatedCSSOMValueList(DeprecatedCSSOMValueListBuild
 {
 }
 
-String DeprecatedCSSOMValueList::cssText() const
+RefPtr<StringImpl> DeprecatedCSSOMValueList::cssText() const
 {
     return makeString(interleave(m_values, [](auto& value) { return value.get().cssText(); }, CSSValueList::separatorCSSText(m_valueSeparator)));
 }

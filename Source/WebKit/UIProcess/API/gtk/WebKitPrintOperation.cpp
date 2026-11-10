@@ -360,8 +360,8 @@ static void webkitPrintOperationFailed(WebKitPrintOperation* printOperation, GUn
 
 static void webkitPrintOperationFailed(WebKitPrintOperation* printOperation, WebCore::ResourceError&& error)
 {
-    webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new_literal(gQuarkFromString(error.domain().utf8()),
-        toWebKitError(error.errorCode()), error.localizedDescription().utf8().legacyCStringPointer()) });
+    webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new_literal(gQuarkFromString(utf8(error.domain())),
+        toWebKitError(error.errorCode()), utf8(error.localizedDescription()).legacyCStringPointer()) });
     webkitPrintOperationFinished(printOperation);
 }
 
@@ -577,15 +577,15 @@ static void webkitPrintOperationPreparePrint(WebKitPrintOperation* printOperatio
     RELEASE_ASSERT(priv->portalProxy);
 
     auto* connection = g_dbus_proxy_get_connection(priv->portalProxy.get());
-    auto uniqueName = String::fromUTF8(g_dbus_connection_get_unique_name(connection));
-    auto senderName = makeStringByReplacingAll(uniqueName.substring(1), '.', '_');
+    auto uniqueName = StringImpl::fromUTF8(g_dbus_connection_get_unique_name(connection));
+    auto senderName = makeStringByReplacingAll(substring(uniqueName, 1), '.', '_');
     auto token = makeString("WebKitGTK"_s, weakRandomNumber<uint32_t>());
     auto requestPath = makeString("/org/freedesktop/portal/desktop/request/"_s, senderName, '/', token);
 
     RELEASE_ASSERT(!priv->signalId);
 
     priv->signalId = g_dbus_connection_signal_subscribe(connection, "org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request",
-        "Response", requestPath.ascii().data(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE,
+        "Response", ascii(requestPath).data(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE,
         [](GDBusConnection* connection, const char*, const char*, const char*, const char*, GVariant* parameters, gpointer userData) {
             GRefPtr<WebKitPrintOperation> printOperation(static_cast<WebKitPrintOperation*>(userData));
             auto* priv = printOperation->priv;
@@ -617,7 +617,7 @@ static void webkitPrintOperationPreparePrint(WebKitPrintOperation* printOperatio
 
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
+    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(ascii(token).data()));
 
     GRefPtr<GVariant> portalVersion = adoptGRef(g_dbus_proxy_get_cached_property(priv->portalProxy.get(), "version"));
     if (portalVersion && g_variant_get_uint32(portalVersion.get()) >= 3)

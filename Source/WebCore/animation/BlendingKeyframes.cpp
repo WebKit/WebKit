@@ -75,11 +75,11 @@ bool BlendingKeyframes::operator==(const BlendingKeyframes& o) const
     return true;
 }
 
-const String& BlendingKeyframes::acceleratedAnimationName() const
+const RefPtr<StringImpl>& BlendingKeyframes::acceleratedAnimationName() const
 {
-    if (m_acceleratedAnimationName.isEmpty()) {
-        m_acceleratedAnimationName = switchOn(m_identifier, [](const AtomString& name) {
-            return name.string();
+    if (WTF::isEmpty(m_acceleratedAnimationName)) {
+        m_acceleratedAnimationName = switchOn(m_identifier, [](AtomStringImpl* name) -> RefPtr<StringImpl> {
+            return name;
         }, [](uint64_t numericID) {
             return makeString("keyframe-effect-"_s, numericID);
         });

@@ -59,11 +59,11 @@ public:
     NODELETE unsigned size() const;
     NODELETE void setSize(unsigned);
 
-    NODELETE String id() const;
-    void setID(const String&);
+    NODELETE RefPtr<StringImpl> id() const;
+    void setID(StringImpl*);
 
-    NODELETE String url() const;
-    void setURLString(const String&);
+    NODELETE RefPtr<StringImpl> url() const;
+    void setURLString(StringImpl*);
 
     Element* element() const;
     NODELETE void setElement(Element*);
@@ -79,8 +79,8 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
     DOMHighResTimeStamp m_loadTime { 0 };
     DOMHighResTimeStamp m_renderTime { 0 };
-    String m_urlString;
-    String m_id;
+    RefPtr<StringImpl> m_urlString;
+    RefPtr<StringImpl> m_id;
     unsigned m_pixelArea { 0 };
 };
 

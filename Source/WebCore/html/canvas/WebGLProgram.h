@@ -65,10 +65,10 @@ public:
 
     bool linkStatus();
     std::span<const GCGLAttribActiveInfo> activeAttribs() LIFETIME_BOUND;
-    const HashMap<String, int>& attribLocations() LIFETIME_BOUND;
+    const HashMap<RefPtr<StringImpl>, int>& attribLocations() LIFETIME_BOUND;
     std::span<const GCGLUniformActiveInfo> activeUniforms() LIFETIME_BOUND;
-    const HashMap<String, int>& uniformLocations() LIFETIME_BOUND;
-    const HashMap<String, unsigned>& uniformIndices() LIFETIME_BOUND;
+    const HashMap<RefPtr<StringImpl>, int>& uniformLocations() LIFETIME_BOUND;
+    const HashMap<RefPtr<StringImpl>, unsigned>& uniformIndices() LIFETIME_BOUND;
     int requiredTransformFeedbackBufferCount();
 
     unsigned getLinkCount() const { return m_linkCount; }
@@ -109,10 +109,10 @@ private:
         Markable<int> linkStatus;
         Markable<int> requiredTransformFeedbackBufferCount;
         std::optional<Vector<GCGLAttribActiveInfo>> activeAttribs;
-        std::optional<HashMap<String, int>> attribLocations;
+        std::optional<HashMap<RefPtr<StringImpl>, int>> attribLocations;
         std::optional<Vector<GCGLUniformActiveInfo>> activeUniforms;
-        std::optional<HashMap<String, int>> uniformLocations;
-        std::optional<HashMap<String, unsigned>> uniformIndices;
+        std::optional<HashMap<RefPtr<StringImpl>, int>> uniformLocations;
+        std::optional<HashMap<RefPtr<StringImpl>, unsigned>> uniformIndices;
     } m_state;
 
     // This is used to track whether a WebGLUniformLocation belongs to this program or not.

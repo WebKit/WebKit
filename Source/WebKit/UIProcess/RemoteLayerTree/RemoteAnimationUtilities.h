@@ -40,7 +40,7 @@ class WebAnimationTime;
 
 namespace WebKit {
 
-String toStringForTesting(WebCore::AcceleratedEffectProperty);
+RefPtr<StringImpl> toStringForTesting(WebCore::AcceleratedEffectProperty);
 Ref<JSON::Value> toJSONForTesting(std::optional<WebCore::WebAnimationTime>);
 Ref<JSON::Value> toJSONForTesting(std::optional<WebCore::CompositeOperation>);
 Ref<JSON::Value> toJSONForTesting(const RefPtr<WebCore::TimingFunction>&);

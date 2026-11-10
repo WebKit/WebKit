@@ -44,7 +44,7 @@ void Serialize<URL>::operator()(StringBuilder& builder, const SerializationConte
     builder.append(nameLiteralForSerialization(CSSValueID::Url), '(');
 
     if (!value.resolved.isNull()) {
-        if (auto replacementURLString = context.replacementURLStrings.get(value.resolved.string()); !replacementURLString.isEmpty())
+        if (auto replacementURLString = context.replacementURLStrings.get(value.resolved.string()); !isEmpty(replacementURLString))
             serializeString(builder, replacementURLString);
         else if (context.shouldUseResolvedURLInCSSText)
             serializeString(builder, value.resolved.string());
@@ -87,18 +87,18 @@ Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<URL>::operator()(CSSValue
 
 // MARK: Operations
 
-static URL completeURL(const WTF::String& string, const WTF::URL& baseURL)
+static URL completeURL(StringImpl* string, const WTF::URL& baseURL)
 {
-    if (string.isEmpty() || string.startsWith('#'))
+    if (isEmpty(string) || startsWith(string, '#'))
         return URL { .specified = string, .resolved = WTF::URL { string }, .modifiers = { } };
     if (baseURL.isNull() || baseURL.isAboutBlank())
         return URL { .specified = string, .resolved = WTF::URL { }, .modifiers = { } };
     return URL { .specified = string, .resolved = WTF::URL { baseURL, string }, .modifiers = { } };
 }
 
-std::optional<URL> completeURL(const WTF::String& string, const CSSParserContext& context)
+std::optional<URL> completeURL(StringImpl* string, const CSSParserContext& context)
 {
-    if (string.isNull())
+    if (!string)
         return { };
 
     auto result = completeURL(string, context.baseURL);
@@ -110,9 +110,9 @@ std::optional<URL> completeURL(const WTF::String& string, const CSSParserContext
     return result;
 }
 
-std::optional<URL> completeURL(const WTF::String& string, const Document& document)
+std::optional<URL> completeURL(StringImpl* string, const Document& document)
 {
-    if (string.isNull())
+    if (!string)
         return { };
     return completeURL(string, document.baseURL());
 }
@@ -126,8 +126,8 @@ URL resolve(URL&& url)
 
 bool mayDependOnBaseURL(const URL& url)
 {
-    return !url.specified.isEmpty()
-        && !url.specified.startsWith('#')
+    return !isEmpty(url.specified)
+        && !startsWith(url.specified, '#')
         && !url.resolved.protocolIsData();
 }
 

@@ -32,7 +32,7 @@ class SVGFETileElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static Ref<SVGFETileElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
     SVGAnimatedString& in1Animated() { return m_in1; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFETileElement, SVGFilterPrimitiveStandardAttributes>;
@@ -40,10 +40,10 @@ public:
 private:
     SVGFETileElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()) }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

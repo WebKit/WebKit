@@ -48,17 +48,17 @@ void initializeLoggingIfNecessary()
 }
 
 #if !PLATFORM(COCOA)
-String wtfLogLevelString()
+RefPtr<StringImpl> wtfLogLevelString()
 {
     return WTF::logLevelString();
 }
 
-String webCoreLogLevelString()
+RefPtr<StringImpl> webCoreLogLevelString()
 {
     return WebCore::logLevelString();
 }
 
-String webKitLogLevelString()
+RefPtr<StringImpl> webKitLogLevelString()
 {
     return WebKit::logLevelString();
 }

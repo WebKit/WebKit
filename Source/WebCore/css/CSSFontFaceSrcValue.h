@@ -41,22 +41,22 @@ class WeakPtrImplWithEventTargetData;
 
 class CSSFontFaceSrcLocalValue final : public CSSValue {
 public:
-    static Ref<CSSFontFaceSrcLocalValue> create(AtomString fontFaceName);
+    static Ref<CSSFontFaceSrcLocalValue> create(RefPtr<AtomStringImpl> fontFaceName);
     ~CSSFontFaceSrcLocalValue();
 
-    bool isEmpty() const { return m_fontFaceName.isEmpty(); }
-    const AtomString& fontFaceName() const LIFETIME_BOUND { return m_fontFaceName; }
+    bool isEmpty() const { return WTF::isEmpty(m_fontFaceName); }
+    const RefPtr<AtomStringImpl>& fontFaceName() const LIFETIME_BOUND { return m_fontFaceName; }
 
     NODELETE SVGFontFaceElement* svgFontFaceElement() const;
     NODELETE void setSVGFontFaceElement(SVGFontFaceElement&);
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     NODELETE bool equals(const CSSFontFaceSrcLocalValue&) const;
 
 private:
-    NODELETE explicit CSSFontFaceSrcLocalValue(AtomString&&);
+    NODELETE explicit CSSFontFaceSrcLocalValue(RefPtr<AtomStringImpl>&&);
 
-    AtomString m_fontFaceName;
+    RefPtr<AtomStringImpl> m_fontFaceName;
     WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
@@ -108,21 +108,21 @@ inline ASCIILiteral cssTextFromFontTech(FontTechnology tech)
 
 class CSSFontFaceSrcResourceValue final : public CSSValue {
 public:
-    static Ref<CSSFontFaceSrcResourceValue> create(CSS::URL, String format, Vector<FontTechnology>&&);
+    static Ref<CSSFontFaceSrcResourceValue> create(CSS::URL, RefPtr<StringImpl> format, Vector<FontTechnology>&&);
 
-    bool isEmpty() const { return m_location.specified.isEmpty(); }
+    bool isEmpty() const { return WTF::isEmpty(m_location.specified); }
     RefPtr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
     bool customMayDependOnBaseURL() const;
     bool equals(const CSSFontFaceSrcResourceValue&) const;
 
 private:
-    explicit CSSFontFaceSrcResourceValue(CSS::URL&&, String&& format, Vector<FontTechnology>&&);
+    explicit CSSFontFaceSrcResourceValue(CSS::URL&&, RefPtr<StringImpl>&& format, Vector<FontTechnology>&&);
 
     CSS::URL m_location;
-    String m_format;
+    RefPtr<StringImpl> m_format;
     Vector<FontTechnology> m_technologies;
     CachedResourceHandle<CachedFont> m_cachedFont;
 };

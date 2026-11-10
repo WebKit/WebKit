@@ -41,7 +41,7 @@ static bool isOneLeftToRightRun(const TextRun& run)
     return true;
 }
 
-static void doDrawTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const FontCascade& font, const Color& color, int underlinedIndex)
+static void doDrawTextAtPoint(GraphicsContext& context, StringImpl* text, const IntPoint& point, const FontCascade& font, const Color& color, int underlinedIndex)
 {
     TextRun run(text);
 
@@ -52,7 +52,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
         context.drawBidiText(font, run, point);
 
     if (underlinedIndex >= 0) {
-        ASSERT_WITH_SECURITY_IMPLICATION(underlinedIndex < static_cast<int>(text.length()));
+        ASSERT_WITH_SECURITY_IMPLICATION(underlinedIndex < static_cast<int>(length(text)));
 
         int beforeWidth;
         if (underlinedIndex > 0) {
@@ -72,7 +72,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
     }
 }
 
-void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const FontCascade& font, const Color& topColor, const Color& bottomColor, int underlinedIndex)
+void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, StringImpl* text, const IntPoint& point, const FontCascade& font, const Color& topColor, const Color& bottomColor, int underlinedIndex)
 {
     context.save();
 

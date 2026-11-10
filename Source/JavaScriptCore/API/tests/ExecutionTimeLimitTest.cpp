@@ -531,7 +531,7 @@ int testExecutionTimeLimit()
 
         JSGlobalContextRelease(context);
 
-        Options::setOptions(savedOptionsBuilder.toString().ascii().data());
+        Options::setOptions(ascii(savedOptionsBuilder.toString()).data());
     }
     
     return failed;

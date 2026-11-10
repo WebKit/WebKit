@@ -1124,7 +1124,7 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
     for (auto& pair : renderState->transientInputHitTestSources) {
         Vector<PlatformXR::FrameData::TransientInputHitTestResult> results;
         for (const auto& inputSource : m_input->inputSources()) {
-            if (inputSource->profiles().contains(pair.value->profile)) {
+            if (inputSource->profiles().containsIf([&](auto& profile) { return equal(profile, pair.value->profile); })) {
                 PlatformXR::FrameData::TransientInputHitTestResult result = {
                     inputSource->handle(),
                     m_hitTestManager->requestHitTest(m_session, pair.value->offsetRay, inputSource->aimSpace(), renderState->frameState.predictedDisplayTime)

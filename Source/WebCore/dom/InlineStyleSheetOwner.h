@@ -35,8 +35,8 @@ public:
     InlineStyleSheetOwner(Document&, bool createdByParser);
     ~InlineStyleSheetOwner();
 
-    void setContentType(const AtomString& contentType) { m_contentType = contentType; }
-    void setMedia(const AtomString& media) { m_media = media; }
+    void setContentType(AtomStringImpl* contentType) { m_contentType = contentType; }
+    void setMedia(AtomStringImpl* media) { m_media = media; }
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
@@ -53,15 +53,15 @@ public:
     Style::Scope* styleScope() { return m_styleScope.get(); }
 
 private:
-    void createSheet(Element&, const String& text);
+    void createSheet(Element&, StringImpl* text);
     void createSheetFromTextContents(Element&);
     void clearSheet();
 
     bool m_isParsingChildren;
     bool m_loading;
     TextPosition m_startTextPosition;
-    AtomString m_contentType;
-    AtomString m_media;
+    RefPtr<AtomStringImpl> m_contentType;
+    RefPtr<AtomStringImpl> m_media;
     RefPtr<CSSStyleSheet> m_sheet;
     WeakPtr<Style::Scope> m_styleScope;
 };

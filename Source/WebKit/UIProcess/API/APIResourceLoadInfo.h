@@ -45,7 +45,7 @@ public:
     std::optional<WebCore::FrameIdentifier> parentFrameID() const { return m_info.parentFrameID; }
     Markable<WTF::UUID> documentID() const { return m_info.documentID; }
     const WTF::URL& originalURL() const LIFETIME_BOUND { return m_info.originalURL; }
-    const WTF::String& originalHTTPMethod() const LIFETIME_BOUND { return m_info.originalHTTPMethod; }
+    const RefPtr<StringImpl>& originalHTTPMethod() const LIFETIME_BOUND { return m_info.originalHTTPMethod; }
     WallTime eventTimestamp() const { return m_info.eventTimestamp; }
     bool loadedFromCache() const { return m_info.loadedFromCache; }
     WebKit::ResourceLoadInfo::Type resourceLoadType() const { return m_info.type; }

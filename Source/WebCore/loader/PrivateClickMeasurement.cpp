@@ -65,7 +65,7 @@ PCM::UnlinkableToken PCM::UnlinkableToken::isolatedCopy() const &
 #if PLATFORM(COCOA)
         blinder, waitingToken, readyToken,
 #endif
-        valueBase64URL.isolatedCopy()
+        WTF::isolatedCopy(valueBase64URL)
     };
 }
 
@@ -75,7 +75,7 @@ PCM::UnlinkableToken PCM::UnlinkableToken::isolatedCopy()&&
 #if PLATFORM(COCOA)
         blinder, waitingToken, readyToken,
 #endif
-        WTF::move(valueBase64URL).isolatedCopy()
+        WTF::isolatedCopy(WTF::move(valueBase64URL))
     };
 }
 
@@ -105,7 +105,7 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const &
         m_sourceID,
         m_sourceSite.isolatedCopy(),
         m_destinationSite.isolatedCopy(),
-        m_sourceApplicationBundleID.isolatedCopy(),
+        WTF::isolatedCopy(m_sourceApplicationBundleID),
         m_timeOfAdClick.isolatedCopy(),
         m_isEphemeral,
     };
@@ -123,7 +123,7 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() &&
         m_sourceID,
         WTF::move(m_sourceSite).isolatedCopy(),
         WTF::move(m_destinationSite).isolatedCopy(),
-        WTF::move(m_sourceApplicationBundleID).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(m_sourceApplicationBundleID)),
         WTF::move(m_timeOfAdClick).isolatedCopy(),
         m_isEphemeral,
     };
@@ -144,7 +144,7 @@ bool PrivateClickMeasurement::isNeitherSameSiteNorCrossSiteTriggeringEvent(const
     return !isCrossSiteTriggeringEvent;
 }
 
-std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequestQuery(const URL& redirectURL)
+std::expected<PCM::AttributionTriggerData, RefPtr<StringImpl>> PrivateClickMeasurement::parseAttributionRequestQuery(const URL& redirectURL)
 {
     if (!redirectURL.hasQuery())
         return PCM::AttributionTriggerData { };
@@ -159,8 +159,8 @@ std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::pars
     PCM::EphemeralNonce destinationNonce;
     RegistrableDomain sourceDomain;
     for (auto& parameter : parameters) {
-        if (parameter.key == "attributionSource"_s) {
-            if (parameter.value.isEmpty())
+        if (equal(parameter.key, "attributionSource"_s)) {
+            if (isEmpty(parameter.value))
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionSource query parameter had no value."_s);
             if (!sourceDomain.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL had multiple attributionSource query parameters."_s);
@@ -172,10 +172,10 @@ std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::pars
 
             if (sourceDomain.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionSource query parameter had no registrable domain."_s);
-        } else if (parameter.key == "attributionDestinationNonce"_s) {
-            if (parameter.value.isEmpty())
+        } else if (equal(parameter.key, "attributionDestinationNonce"_s)) {
+            if (isEmpty(parameter.value))
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionDestinationNonce query parameter had no value."_s);
-            if (!destinationNonce.nonce.isEmpty())
+            if (!isEmpty(destinationNonce.nonce))
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL had multiple attributionDestinationNonce query parameters."_s);
 
             destinationNonce.nonce = parameter.value;
@@ -187,13 +187,13 @@ std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::pars
     if (!sourceDomain.isEmpty())
         attributionTriggerData.sourceRegistrableDomain = WTF::move(sourceDomain);
 
-    if (!destinationNonce.nonce.isEmpty())
+    if (!isEmpty(destinationNonce.nonce))
         attributionTriggerData.ephemeralDestinationNonce = WTF::move(destinationNonce);
 
     return { WTF::move(attributionTriggerData) };
 }
 
-std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
+std::expected<PCM::AttributionTriggerData, RefPtr<StringImpl>> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
     if (path.isEmpty() || !path.startsWith(privateClickMeasurementTriggerAttributionPath))
@@ -204,7 +204,7 @@ std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::pars
 
     auto result = parseAttributionRequestQuery(redirectURL);
     if (!result) {
-        if (!result.error().isEmpty())
+        if (!isEmpty(result.error()))
             return result;
         return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's query string could not be parsed."_s);
     }
@@ -243,7 +243,7 @@ bool PrivateClickMeasurement::hasPreviouslyBeenReported()
     return !m_timesToSend.sourceEarliestTimeToSend || !m_timesToSend.destinationEarliestTimeToSend;
 }
 
-void PrivateClickMeasurement::setSourceApplicationBundleIDForTesting(const String& appBundleIDForTesting)
+void PrivateClickMeasurement::setSourceApplicationBundleIDForTesting(StringImpl* appBundleIDForTesting)
 {
     m_sourceApplicationBundleID = appBundleIDForTesting;
 }
@@ -312,23 +312,23 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     if (!m_attributionTriggerData || !isValid())
         return reportDetails;
 
-    reportDetails->setString("source_engagement_type"_s, "click"_s);
-    reportDetails->setString("source_site"_s, m_sourceSite.registrableDomain.string());
-    reportDetails->setInteger("source_id"_s, m_sourceID);
-    reportDetails->setString("attributed_on_site"_s, m_destinationSite.registrableDomain.string());
-    reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
-    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
+    reportDetails->setString("source_engagement_type"_si, "click"_si);
+    reportDetails->setString("source_site"_si, m_sourceSite.registrableDomain.string());
+    reportDetails->setInteger("source_id"_si, m_sourceID);
+    reportDetails->setString("attributed_on_site"_si, m_destinationSite.registrableDomain.string());
+    reportDetails->setInteger("trigger_data"_si, m_attributionTriggerData->data);
+    reportDetails->setInteger("version"_si, privateClickMeasurementVersion);
 
     // This token has been kept secret this far and cannot be linked to the unlinkable token.
     if (m_sourceSecretToken) {
-        reportDetails->setString("source_secret_token"_s, m_sourceSecretToken->tokenBase64URL);
-        reportDetails->setString("source_secret_token_signature"_s, m_sourceSecretToken->signatureBase64URL);
+        reportDetails->setString("source_secret_token"_si, m_sourceSecretToken->tokenBase64URL);
+        reportDetails->setString("source_secret_token_signature"_si, m_sourceSecretToken->signatureBase64URL);
     }
 
     // This token has been kept secret this far and cannot be linked to the unlinkable token.
     if (m_attributionTriggerData->destinationSecretToken) {
-        reportDetails->setString("destination_secret_token"_s, m_attributionTriggerData->destinationSecretToken->tokenBase64URL);
-        reportDetails->setString("destination_secret_token_signature"_s, m_attributionTriggerData->destinationSecretToken->signatureBase64URL);
+        reportDetails->setString("destination_secret_token"_si, m_attributionTriggerData->destinationSecretToken->tokenBase64URL);
+        reportDetails->setString("destination_secret_token_signature"_si, m_attributionTriggerData->destinationSecretToken->signatureBase64URL);
     }
 
     return reportDetails;
@@ -388,14 +388,14 @@ Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
     if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
         return reportDetails;
 
-    if (m_sourceUnlinkableToken.valueBase64URL.isEmpty())
+    if (isEmpty(m_sourceUnlinkableToken.valueBase64URL))
         return reportDetails;
 
-    reportDetails->setString("source_engagement_type"_s, "click"_s);
-    reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
+    reportDetails->setString("source_engagement_type"_si, "click"_si);
+    reportDetails->setString("source_nonce"_si, m_ephemeralSourceNonce->nonce);
     // This token can not be linked to the secret token.
-    reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken.valueBase64URL);
-    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
+    reportDetails->setString("source_unlinkable_token"_si, m_sourceUnlinkableToken.valueBase64URL);
+    reportDetails->setInteger("version"_si, privateClickMeasurementVersion);
     return reportDetails;
 }
 
@@ -405,20 +405,20 @@ Ref<JSON::Object> PCM::AttributionTriggerData::tokenSignatureJSON() const
     if (!ephemeralDestinationNonce || !ephemeralDestinationNonce->isValid())
         return reportDetails;
 
-    if (!destinationUnlinkableToken || destinationUnlinkableToken->valueBase64URL.isEmpty())
+    if (!destinationUnlinkableToken || isEmpty(destinationUnlinkableToken->valueBase64URL))
         return reportDetails;
 
-    reportDetails->setString("source_engagement_type"_s, "click"_s);
-    reportDetails->setString("destination_nonce"_s, ephemeralDestinationNonce->nonce);
+    reportDetails->setString("source_engagement_type"_si, "click"_si);
+    reportDetails->setString("destination_nonce"_si, ephemeralDestinationNonce->nonce);
     // This token can not be linked to the secret token.
-    reportDetails->setString("destination_unlinkable_token"_s, destinationUnlinkableToken->valueBase64URL);
-    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
+    reportDetails->setString("destination_unlinkable_token"_si, destinationUnlinkableToken->valueBase64URL);
+    reportDetails->setInteger("version"_si, privateClickMeasurementVersion);
     return reportDetails;
 }
 
 bool PCM::SecretToken::isValid() const
 {
-    return !(tokenBase64URL.isEmpty() || signatureBase64URL.isEmpty() || keyIDBase64URL.isEmpty());
+    return !(isEmpty(tokenBase64URL) || isEmpty(signatureBase64URL) || isEmpty(keyIDBase64URL));
 }
 
 void PrivateClickMeasurement::setSourceSecretToken(PCM::SourceSecretToken&& token)

@@ -57,7 +57,7 @@ void TextCheckingController::removeAnnotationRelativeToSelection(NSString *annot
     if (!m_page->hasRunningProcess())
         return;
 
-    m_page->legacyMainFrameProcess().send(Messages::TextCheckingControllerProxy::RemoveAnnotationRelativeToSelection(annotationName, selectionOffset, length), m_page->webPageIDInMainFrameProcess());
+    m_page->legacyMainFrameProcess().send(Messages::TextCheckingControllerProxy::RemoveAnnotationRelativeToSelection(StringImpl::create(annotationName).get(), selectionOffset, length), m_page->webPageIDInMainFrameProcess());
 }
 
 } // namespace WebKit

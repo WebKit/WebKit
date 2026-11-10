@@ -79,14 +79,14 @@ WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
         client->paymentCoordinatorRemoveMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName());
 }
 
-void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     if (!PAL::isPassKitCoreFrameworkAvailable())
         return completionHandler(false);
 #endif
 
-    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier.createNSString().get(), domainName.createNSString().get(), protect(m_client)->paymentCoordinatorSourceApplicationSecondaryIdentifier(*this).createNSString().get(), makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
+    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(createNSString(merchantIdentifier).get(), createNSString(domainName).get(), createNSString(protect(m_client)->paymentCoordinatorSourceApplicationSecondaryIdentifier(*this)).get(), makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -96,7 +96,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
     }).get());
 }
 
-void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     if (!PAL::isPassKitCoreFrameworkAvailable())
@@ -104,7 +104,7 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
 #endif
 
     auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
-    [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier.createNSString().get() domain:domainName.createNSString().get() completion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL result) mutable {
+    [passLibrary openPaymentSetupForMerchantIdentifier:createNSString(merchantIdentifier).get() domain:createNSString(domainName).get() completion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL result) mutable {
         RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), result] {
             completionHandler(result);
         });
@@ -194,9 +194,9 @@ static RetainPtr<PKDateComponentsRange> toPKDateComponentsRange(const WebCore::A
 
 RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePayShippingMethod& shippingMethod)
 {
-    RetainPtr result = [PAL::getPKShippingMethodClassSingleton() summaryItemWithLabel:shippingMethod.label.createNSString().get() amount:protect(WebCore::toDecimalNumber(shippingMethod.amount)).get()];
-    [result setIdentifier:shippingMethod.identifier.createNSString().get()];
-    [result setDetail:shippingMethod.detail.createNSString().get()];
+    RetainPtr result = [PAL::getPKShippingMethodClassSingleton() summaryItemWithLabel:createNSString(shippingMethod.label).get() amount:protect(WebCore::toDecimalNumber(shippingMethod.amount)).get()];
+    [result setIdentifier:createNSString(shippingMethod.identifier).get()];
+    [result setDetail:createNSString(shippingMethod.detail).get()];
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     if (auto& dateComponentsRange = shippingMethod.dateComponentsRange)
         [result setDateComponentsRange:toPKDateComponentsRange(*dateComponentsRange).get()];
@@ -259,21 +259,21 @@ NODELETE static PKApplePayLaterAvailability toPKApplePayLaterAvailability(WebCor
 
 #if HAVE(PASSKIT_MERCHANT_CATEGORY_CODE)
 
-static PKMerchantCategoryCode toPKMerchantCategoryCode(const String& merchantCategoryCode)
+static PKMerchantCategoryCode toPKMerchantCategoryCode(StringImpl* merchantCategoryCode)
 {
     return parseInteger<int16_t>(merchantCategoryCode).value_or(PKMerchantCategoryCodeNone);
 }
 
 #endif // HAVE(PASSKIT_MERCHANT_CATEGORY_CODE)
 
-static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
+static RetainPtr<NSSet> toNSSet(const Vector<RefPtr<StringImpl>>& strings)
 {
     if (strings.isEmpty())
         return nil;
 
     auto mutableSet = adoptNS([[NSMutableSet alloc] initWithCapacity:strings.size()]);
     for (auto& string : borrow(strings))
-        [mutableSet addObject:string.createNSString().get()];
+        [mutableSet addObject:createNSString(string).get()];
 
     return WTF::move(mutableSet);
 }
@@ -298,8 +298,8 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setAPIType:toAPIType(paymentRequest.requester())];
 
-    [result setCountryCode:paymentRequest.countryCode().createNSString().get()];
-    [result setCurrencyCode:paymentRequest.currencyCode().createNSString().get()];
+    [result setCountryCode:createNSString(paymentRequest.countryCode()).get()];
+    [result setCurrencyCode:createNSString(paymentRequest.currencyCode()).get()];
     [result setBillingContact:paymentRequest.billingContact().pkContact().get()];
     [result setShippingContact:paymentRequest.shippingContact().pkContact().get()];
     [result setRequiredBillingContactFields:toPKContactFields(paymentRequest.requiredBillingContactFields()).get()];
@@ -324,8 +324,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [result setExpectsMerchantSession:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    if (!paymentRequest.applicationData().isNull()) {
-        auto applicationData = adoptNS([[NSData alloc] initWithBase64EncodedString:paymentRequest.applicationData().createNSString().get() options:0]);
+    if (paymentRequest.applicationData()) {
+        auto applicationData = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(paymentRequest.applicationData()).get() options:0]);
         [result setApplicationData:applicationData.get()];
     }
 
@@ -333,22 +333,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     CheckedPtr client = m_client.get();
     auto& boundInterfaceIdentifier = client->paymentCoordinatorBoundInterfaceIdentifier(*this);
-    if (!boundInterfaceIdentifier.isEmpty())
-        [result setBoundInterfaceIdentifier:boundInterfaceIdentifier.createNSString().get()];
+    if (!isEmpty(boundInterfaceIdentifier))
+        [result setBoundInterfaceIdentifier:createNSString(boundInterfaceIdentifier).get()];
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
     auto& bundleIdentifier = client->paymentCoordinatorSourceApplicationBundleIdentifier(*this);
-    if (!bundleIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
-        [result setSourceApplicationBundleIdentifier:bundleIdentifier.createNSString().get()];
+    if (!isEmpty(bundleIdentifier) && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
+        [result setSourceApplicationBundleIdentifier:createNSString(bundleIdentifier).get()];
 
     auto& secondaryIdentifier = client->paymentCoordinatorSourceApplicationSecondaryIdentifier(*this);
-    if (!secondaryIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
-        [result setSourceApplicationSecondaryIdentifier:secondaryIdentifier.createNSString().get()];
+    if (!isEmpty(secondaryIdentifier) && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
+        [result setSourceApplicationSecondaryIdentifier:createNSString(secondaryIdentifier).get()];
 
 #if PLATFORM(IOS_FAMILY)
     auto& serviceType = client->paymentCoordinatorCTDataConnectionServiceType(*this);
-    if (!serviceType.isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
-        [result setCTDataConnectionServiceType:serviceType.createNSString().get()];
+    if (!isEmpty(serviceType) && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
+        [result setCTDataConnectionServiceType:createNSString(serviceType).get()];
 #endif
 
 #if HAVE(PASSKIT_INSTALLMENTS)
@@ -362,8 +362,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto supportsCouponCode = paymentRequest.supportsCouponCode())
         [result setSupportsCouponCode:*supportsCouponCode];
 
-    if (auto& couponCode = paymentRequest.couponCode(); !couponCode.isNull())
-        [result setCouponCode:couponCode.createNSString().get()];
+    if (auto& couponCode = paymentRequest.couponCode(); couponCode)
+        [result setCouponCode:createNSString(couponCode).get()];
 #endif
 
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
@@ -398,7 +398,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if HAVE(PASSKIT_MERCHANT_CATEGORY_CODE)
-    if (auto& merchantCategoryCode = paymentRequest.merchantCategoryCode(); !merchantCategoryCode.isNull())
+    if (auto& merchantCategoryCode = paymentRequest.merchantCategoryCode(); merchantCategoryCode)
         [result setMerchantCategoryCode:toPKMerchantCategoryCode(merchantCategoryCode)];
 #endif
 
@@ -410,10 +410,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return result;
 }
 
-void WebPaymentCoordinatorProxy::platformSetPaymentRequestUserAgent(PKPaymentRequest *paymentRequest, const String& userAgent)
+void WebPaymentCoordinatorProxy::platformSetPaymentRequestUserAgent(PKPaymentRequest *paymentRequest, StringImpl* userAgent)
 {
 #if HAVE(PKPAYMENTREQUEST_USERAGENT)
-    [paymentRequest setUserAgent:userAgent.createNSString().get()];
+    [paymentRequest setUserAgent:createNSString(userAgent).get()];
 #else
     UNUSED_PARAM(paymentRequest);
     UNUSED_PARAM(userAgent);

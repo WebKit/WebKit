@@ -61,11 +61,11 @@
 
 #define kSecAttrSharingGroup @"ggrp"
 
-static inline String groupForAttributes(NSDictionary *attributes)
+static inline RefPtr<StringImpl> groupForAttributes(NSDictionary *attributes)
 {
     if ([[attributes allKeys] containsObject:kSecAttrSharingGroup]) {
         if (auto *nsString = dynamic_objc_cast<NSString>(attributes[kSecAttrSharingGroup]))
-            return nsString;
+            return StringImpl::create(nsString);
     }
     return nullString();
 }
@@ -95,7 +95,7 @@ NODELETE static inline RefPtr<ArrayBuffer> alternateBlobIfNecessary(const WebKit
     auto& requestOptions = std::get<WebCore::PublicKeyCredentialRequestOptions>(requestData.options);
     if (![WebKit::getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(alternateLargeBlobIfNecessaryForRelyingParty:clientDataHash:)])
         return nullptr;
-    NSData *alternateBlob = [WebKit::getASCWebKitSPISupportClassSingleton() alternateLargeBlobIfNecessaryForRelyingParty:requestOptions.rpId.createNSString().autorelease() clientDataHash:nsClientDataHash.get()];
+    NSData *alternateBlob = [WebKit::getASCWebKitSPISupportClassSingleton() alternateLargeBlobIfNecessaryForRelyingParty:createNSString(requestOptions.rpId).autorelease() clientDataHash:nsClientDataHash.get()];
     if (!alternateBlob)
         return nullptr;
 
@@ -142,7 +142,7 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
     [dataToSign replaceBytesInRange:NSMakeRange(aaguidStartPosition, sizeof(enterpriseAAGUID)) withBytes:enterpriseAAGUID];
     [dataToSign appendBytes:borrow(clientDataHash)->span().data() length:clientDataHash.size()];
 
-    RetainPtr<NSData> persistentRef = [WebKit::getASCWebKitSPISupportClassSingleton() entepriseAttestationIdentityPersistentReferenceForRelyingParty:creationOptions.rp.id.createNSString().get()];
+    RetainPtr<NSData> persistentRef = [WebKit::getASCWebKitSPISupportClassSingleton() entepriseAttestationIdentityPersistentReferenceForRelyingParty:createNSString(creationOptions.rp.id).get()];
     if (!persistentRef) {
         completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't find attestation configuration."_s });
         return;
@@ -208,7 +208,7 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
         attestationStatementMap[cbor::CBORValue("sig")] = cbor::CBORValue(makeVector((NSData *)signature.get()));
     }
 
-    auto attestationObject = buildAttestationObject(WTF::move(authData), "packed"_s, WTF::move(attestationStatementMap), creationOptions.attestation);
+    auto attestationObject = buildAttestationObject(WTF::move(authData), "packed"_si, WTF::move(attestationStatementMap), creationOptions.attestation);
     completionHandler(WTF::move(attestationObject), std::nullopt);
 }
 
@@ -218,9 +218,9 @@ static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>
 }
 
 // A Base64 encoded string of the Credential ID is used as the key of the hash set.
-static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDescriptor>& credentialDescriptors)
+static inline HashSet<RefPtr<StringImpl>> produceHashSet(const Vector<PublicKeyCredentialDescriptor>& credentialDescriptors)
 {
-    HashSet<String> result;
+    HashSet<RefPtr<StringImpl>> result;
     for (auto& credentialDescriptor : borrow(credentialDescriptors)) {
         if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal) && credentialDescriptor.type == PublicKeyCredentialType::PublicKey)
             result.add(base64EncodeToString(BufferSource { credentialDescriptor.id }.span()));
@@ -293,7 +293,7 @@ LocalAuthenticator::LocalAuthenticator(Ref<LocalConnection>&& connection)
 {
 }
 
-std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::getExistingCredentials(const String& rpId)
+std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::getExistingCredentials(StringImpl* rpId)
 {
     RetainPtr sortedAttributesArray = m_connection->getExistingCredentials(rpId);
     Vector<Ref<AuthenticatorAssertionResponse>> result(ReserveCapacityTag { }, [sortedAttributesArray count]);
@@ -327,10 +327,10 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
             credentialID = attributes[(id)kSecAttrApplicationLabel];
 
         RetainPtr<SecAccessControlRef> secAccessControl = (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl];
-        auto response = AuthenticatorAssertionResponse::create(LocalAuthenticatorInternal::toArrayBuffer(checked_objc_cast<NSData>(credentialID.get())), WTF::move(userHandle), String(username), secAccessControl.get(), AuthenticatorAttachment::Platform);
+        auto response = AuthenticatorAssertionResponse::create(LocalAuthenticatorInternal::toArrayBuffer(checked_objc_cast<NSData>(credentialID.get())), WTF::move(userHandle), RefPtr<StringImpl>(username), secAccessControl.get(), AuthenticatorAttachment::Platform);
 
         auto group = groupForAttributes(attributes);
-        if (!group.isNull()) {
+        if (group) {
             response->setGroup(group);
             response->setSynchronizable(true);
         } else if ([retainPtr([attributes allKeys]) containsObject:bridge_cast(kSecAttrSynchronizable)])
@@ -343,7 +343,7 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
         if (it != responseMap.end() && it->second.isByteString())
             response->setLargeBlob(ArrayBuffer::create(borrow(it->second.getByteString())->span()));
 
-        response->setAccessGroup(checked_objc_cast<NSString>(attributes[(id)kSecAttrAccessGroup]));
+        response->setAccessGroup(StringImpl::create(checked_objc_cast<NSString>(attributes[(id)kSecAttrAccessGroup])).get());
 
         result.append(WTF::move(response));
     }
@@ -412,7 +412,7 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
         accessControl = adoptCF(SecAccessControlCreateWithFlags(NULL, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlPrivateKeyUsage | kSecAccessControlUserPresence, &rawError));
         // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
         SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr error = adoptCF(rawError)) {
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't create access control: "_s, String(bridge_cast(error.get()).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't create access control: "_s, StringImpl::create(bridge_cast(error.get()).localizedDescription)) });
             return;
         }
     }
@@ -454,7 +454,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
     AuthenticationExtensionsClientOutputs::LargeBlobOutputs largeBlobOutput;
 
     // Step 1.
-    if (!largeBlobInput->support.isNull())
+    if (largeBlobInput->support)
         return WebCore::ExceptionData { ExceptionCode::NotSupportedError, "Cannot use `support` with largeBlob during get."_s };
 
     // Step 2.
@@ -612,7 +612,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         publicKeyDataRef = adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &rawError));
         // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
         SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr error = adoptCF(rawError)) {
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't export the public key: "_s, String((bridge_cast(error.get())).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't export the public key: "_s, StringImpl::create((bridge_cast(error.get())).localizedDescription)) });
             return;
         }
         ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
@@ -631,7 +631,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         auto query = adoptNS([[NSMutableDictionary alloc] init]);
         [query setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrLabel: secAttrLabel.createNSString().get(),
+            (id)kSecAttrLabel: createNSString(secAttrLabel).get(),
             (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
             (id)kSecUseDataProtectionKeychain: @YES
         }];
@@ -675,7 +675,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         return;
     }
 
-    auto attestationObject = buildAttestationObject(WTF::move(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
+    auto attestationObject = buildAttestationObject(WTF::move(authData), RefPtr<StringImpl> { emptyString() }, { }, AttestationConveyancePreference::None);
 
     finishMakeCredential(WTF::move(credentialId), WTF::move(attestationObject), std::nullopt);
 }
@@ -836,7 +836,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
         SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr error = adoptCF(rawError)) {
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate signature: %@", bridge_cast(error.get()).localizedDescription);
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't generate the signature: "_s, String(bridge_cast(error.get()).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't generate the signature: "_s, StringImpl::create(bridge_cast(error.get()).localizedDescription)) });
             return;
         }
     }
@@ -879,7 +879,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
 
 void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenticationStatus status) const
 {
-    LOG_ERROR("%s", exception.message.utf8());
+    LOG_ERROR("%s", utf8(exception.message));
 
     // Roll back the just created credential.
     if (m_provisionalCredentialId) {

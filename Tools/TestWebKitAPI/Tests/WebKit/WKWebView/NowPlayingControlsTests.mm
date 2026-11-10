@@ -305,7 +305,7 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
             [webView requestActiveNowPlayingSessionInfo];
             hasActiveNowPlayingSession = [webView hasActiveNowPlayingSession];
             registeredAsNowPlayingApplication = [webView registeredAsNowPlayingApplication];
-            title = [webView lastUpdatedTitle];
+            title = StringImpl::create([webView lastUpdatedTitle]);
             duration = [webView lastUpdatedDuration];
             elapsedTime = [webView lastUpdatedElapsedTime];
             uniqueIdentifier = [webView lastUniqueIdentifier];
@@ -313,11 +313,20 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
         }
         NowPlayingState() = default;
 
-        bool operator==(const NowPlayingState&) const = default;
+        bool operator==(const NowPlayingState& other) const
+        {
+            return hasActiveNowPlayingSession == other.hasActiveNowPlayingSession
+                && registeredAsNowPlayingApplication == other.registeredAsNowPlayingApplication
+                && contentEquals(title, other.title)
+                && duration == other.duration
+                && elapsedTime == other.elapsedTime
+                && uniqueIdentifier == other.uniqueIdentifier
+                && updateTime == other.updateTime;
+        }
 
         bool hasActiveNowPlayingSession { false };
         bool registeredAsNowPlayingApplication { false };
-        String title;
+        RefPtr<StringImpl> title;
         double duration { 0 };
         double elapsedTime { 0 };
         long uniqueIdentifier { 0 };
@@ -397,7 +406,7 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
                 return true;
             if (initialState.registeredAsNowPlayingApplication != currentState.registeredAsNowPlayingApplication)
                 return true;
-            if (initialState.title != currentState.title)
+            if (!equal(initialState.title, currentState.title))
                 return true;
             if (initialState.duration != currentState.duration)
                 return true;

@@ -31,16 +31,16 @@
 namespace WebCore {
 
 // Do not change this without thinking about backwards compatibility. Topics are persisted in both PushDatabase and APS.
-String makePushTopic(const PushSubscriptionSetIdentifier& set, const String& scope)
+RefPtr<StringImpl> makePushTopic(const PushSubscriptionSetIdentifier& set, StringImpl* scope)
 {
     StringBuilder builder;
     builder.reserveCapacity(
-        set.bundleIdentifier.length() +
-        (!set.pushPartition.isEmpty() ? 6 + set.pushPartition.length() : 0) +
+        length(set.bundleIdentifier) +
+        (!isEmpty(set.pushPartition) ? 6 + length(set.pushPartition) : 0) +
         (set.dataStoreIdentifier ? 40 : 0) +
-        1 + scope.length());
+        1 + length(scope));
     builder.append(set.bundleIdentifier);
-    if (!set.pushPartition.isEmpty())
+    if (!isEmpty(set.pushPartition))
         builder.append(" part:"_s, set.pushPartition);
     if (set.dataStoreIdentifier)
         builder.append(" ds:"_s, set.dataStoreIdentifier->toString());
@@ -48,15 +48,15 @@ String makePushTopic(const PushSubscriptionSetIdentifier& set, const String& sco
     return builder.toString();
 }
 
-String PushSubscriptionSetIdentifier::debugDescription() const
+RefPtr<StringImpl> PushSubscriptionSetIdentifier::debugDescription() const
 {
     StringBuilder builder;
     builder.reserveCapacity(
-        1 + bundleIdentifier.length() +
-        (!pushPartition.isEmpty() ? 6 + pushPartition.length() : 0) +
+        1 + length(bundleIdentifier) +
+        (!isEmpty(pushPartition) ? 6 + length(pushPartition) : 0) +
         (dataStoreIdentifier ? 12 : 0) + 1);
     builder.append('[', bundleIdentifier);
-    if (!pushPartition.isEmpty())
+    if (!isEmpty(pushPartition))
         builder.append(" part:"_s, pushPartition);
     if (dataStoreIdentifier)
         builder.append(" ds:"_s, dataStoreIdentifier->toString(), 0, 8);

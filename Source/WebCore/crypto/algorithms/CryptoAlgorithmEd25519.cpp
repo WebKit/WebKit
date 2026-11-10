@@ -129,11 +129,11 @@ void CryptoAlgorithmEd25519::importKey(CryptoKeyFormat format, KeyData&& data, c
     switch (format) {
     case CryptoKeyFormat::Jwk: {
         JsonWebKey key = WTF::move(std::get<JsonWebKey>(data));
-        if (usages && ((!key.d.isNull() && (usages ^ CryptoKeyUsageSign)) || (key.d.isNull() && (usages ^ CryptoKeyUsageVerify)))) {
+        if (usages && ((!!key.d && (usages ^ CryptoKeyUsageSign)) || (!key.d && (usages ^ CryptoKeyUsageVerify)))) {
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig"_s) {
+        if (usages && !!key.use && !equal(key.use, "sig"_s)) {
             exceptionCallback(ExceptionCode::DataError);
             return;
         }

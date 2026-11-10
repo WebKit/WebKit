@@ -41,27 +41,34 @@ namespace WebCore {
 class ShareableBitmap;
 
 struct NowPlayingInfoArtwork {
-    String src;
-    String mimeType;
+    RefPtr<StringImpl> src;
+    RefPtr<StringImpl> mimeType;
     RefPtr<NativeImage> image;
 
     WEBCORE_EXPORT RefPtr<ShareableBitmap> shareableBitmap() const;
-    WEBCORE_EXPORT static NowPlayingInfoArtwork fromIPCData(String&& src, String&& mimeType, RefPtr<ShareableBitmap>&&);
+    WEBCORE_EXPORT static NowPlayingInfoArtwork fromIPCData(RefPtr<StringImpl>&& src, RefPtr<StringImpl>&& mimeType, RefPtr<ShareableBitmap>&&);
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {
-        return src == other.src && mimeType == other.mimeType;
+        return equal(src, other.src) && equal(mimeType, other.mimeType);
     }
 };
 
 struct NowPlayingMetadata {
-    String title;
-    String artist;
-    String album;
-    String sourceApplicationIdentifier;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> artist;
+    RefPtr<StringImpl> album;
+    RefPtr<StringImpl> sourceApplicationIdentifier;
     std::optional<NowPlayingInfoArtwork> artwork;
 
-    friend bool operator==(const NowPlayingMetadata&, const NowPlayingMetadata&) = default;
+    friend bool operator==(const NowPlayingMetadata& a, const NowPlayingMetadata& b)
+    {
+        return contentEquals(a.title, b.title)
+            && contentEquals(a.artist, b.artist)
+            && contentEquals(a.album, b.album)
+            && contentEquals(a.sourceApplicationIdentifier, b.sourceApplicationIdentifier)
+            && a.artwork == b.artwork;
+    }
 };
 
 struct NowPlayingInfo {

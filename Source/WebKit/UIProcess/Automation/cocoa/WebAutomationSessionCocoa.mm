@@ -42,7 +42,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>&& cgImage)
+static std::optional<RefPtr<StringImpl>> getBase64EncodedPNGData(const RetainPtr<CGImageRef>&& cgImage)
 {
     RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), bridge_cast(UTTypePNG.identifier), 1, 0));
@@ -52,11 +52,11 @@ static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>
     CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
     CGImageDestinationFinalize(destination.get());
 
-    return String([imageData base64EncodedStringWithOptions:0]);
+    return StringImpl::create([imageData base64EncodedStringWithOptions:0]);
 }
 
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& imageDataHandle)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& imageDataHandle)
 {
     auto bitmap = ShareableBitmap::create(WTF::move(imageDataHandle), SharedMemory::Protection::ReadOnly);
     if (!bitmap)
@@ -65,7 +65,7 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(Shar
     return getBase64EncodedPNGData(bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
 {
     auto* snapshotSurface = snapshot.surface();
     if (!snapshotSurface)
@@ -74,21 +74,21 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
     return getBase64EncodedPNGData(snapshotSurface->createImage(context.get()));
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(CGImageRef image)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGetBase64EncodedPNGData(CGImageRef image)
 {
     return getBase64EncodedPNGData(RetainPtr { image });
 }
 
-std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(StringImpl* remoteFilePath, StringImpl* base64EncodedFileContents)
 {
-    RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:base64EncodedFileContents.createNSString().get() options:0]);
+    RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(base64EncodedFileContents).get() options:0]);
     if (!fileContents) {
         LOG_ERROR("WebAutomationSession: unable to decode base64-encoded file contents.");
         return std::nullopt;
     }
 
     RetainPtr temporaryDirectory = FileSystem::createTemporaryDirectory(@"WebDriver");
-    RetainPtr remoteFile = adoptNS([[NSURL alloc] initFileURLWithPath:remoteFilePath.createNSString().get() isDirectory:NO]);
+    RetainPtr remoteFile = adoptNS([[NSURL alloc] initFileURLWithPath:createNSString(remoteFilePath).get() isDirectory:NO]);
     RetainPtr localFilePath = [temporaryDirectory stringByAppendingPathComponent:retainPtr(remoteFile.get().lastPathComponent).get()];
 
     NSError *fileWriteError = nil;
@@ -98,7 +98,7 @@ std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemo
         return std::nullopt;
     }
 
-    return String(localFilePath.get());
+    return StringImpl::create(localFilePath.get());
 }
 
 std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const

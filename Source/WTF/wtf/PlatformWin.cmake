@@ -1,7 +1,6 @@
 list(APPEND WTF_SOURCES
     generic/WorkQueueGeneric.cpp
 
-    text/win/StringWin.cpp
     text/win/TextBreakIteratorInternalICUWin.cpp
 
     win/CPUTimeWin.cpp

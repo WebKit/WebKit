@@ -110,7 +110,7 @@ template<typename CharacterType> static std::optional<EncodedResourceCryptograph
     if (buffer.position() == beginHashValue.data())
         return std::nullopt;
 
-    return EncodedResourceCryptographicDigest { *algorithm, beginHashValue.first(buffer.position() - beginHashValue.data()) };
+    return EncodedResourceCryptographicDigest { *algorithm, StringImpl::create(beginHashValue.first(buffer.position() - beginHashValue.data())) };
 }
 
 std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<char16_t>& buffer)

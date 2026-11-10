@@ -47,7 +47,7 @@ INSTANTIATE_TEST_SUITE_P(FindInPage, FindCAPI, testing::Values(SiteIsolation::Of
 
 TEST_P(FindCAPI, CountStringMatches)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     EXPECT_EQ(find.countStringMatches(@"hello", kWKFindOptionsCaseInsensitive), 3u);
@@ -56,7 +56,7 @@ TEST_P(FindCAPI, CountStringMatches)
 
 TEST_P(FindCAPI, FindStringMatchCount)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     auto withoutHighlight = find.findString(@"hello", caseInsensitiveWrap);
@@ -69,7 +69,7 @@ TEST_P(FindCAPI, FindStringMatchCount)
 
 TEST_P(FindCAPI, FindStringNoMatch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     EXPECT_FALSE(find.findString(@"goodbye", caseInsensitiveWrap).found);
@@ -77,7 +77,7 @@ TEST_P(FindCAPI, FindStringNoMatch)
 
 TEST_P(FindCAPI, FindStringMatches)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     auto result = find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive);
@@ -89,7 +89,7 @@ TEST_P(FindCAPI, FindStringMatches)
 
 TEST_P(FindCAPI, FindStringMatchesNoMatch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     auto result = find.findStringMatches(@"goodbye", kWKFindOptionsCaseInsensitive);
@@ -98,7 +98,7 @@ TEST_P(FindCAPI, FindStringMatchesNoMatch)
 
 TEST_P(FindCAPI, SelectFindMatch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>one hello two hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>one hello two hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive);
@@ -108,7 +108,7 @@ TEST_P(FindCAPI, SelectFindMatch)
 
 TEST_P(FindCAPI, HideFindUIRemovesIndicator)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindCAPITester find { page.webView() };
 
     find.findString(@"hello", caseInsensitiveWrap | kWKFindOptionsShowFindIndicator);

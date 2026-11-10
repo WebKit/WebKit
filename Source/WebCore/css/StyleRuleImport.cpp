@@ -36,12 +36,12 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
 
-Ref<StyleRuleImport> StyleRuleImport::create(const String& href, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
+Ref<StyleRuleImport> StyleRuleImport::create(StringImpl* href, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
 {
     return adoptRef(*new StyleRuleImport(href, WTF::move(mediaQueries), WTF::move(cascadeLayerName), WTF::move(supportsCondition)));
 }
 
-StyleRuleImport::StyleRuleImport(const String& href, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
+StyleRuleImport::StyleRuleImport(StringImpl* href, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
     : StyleRuleBase(StyleRuleType::Import)
     , m_styleSheetClient(*this)
     , m_strHref(href)
@@ -69,7 +69,7 @@ StyleRuleImport::~StyleRuleImport()
         protect(m_cachedSheet)->removeClient(protect(m_styleSheetClient));
 }
 
-void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
+void StyleRuleImport::setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
 {
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
@@ -133,7 +133,7 @@ void StyleRuleImport::requestStyleSheet()
 
     // FIXME: Skip Content Security Policy check when stylesheet is in a user agent shadow tree.
     // See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
-    CachedResourceRequest request(WTF::move(absURL), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, String(m_parentStyleSheet->charset()));
+    CachedResourceRequest request(WTF::move(absURL), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, StringImpl::createOrNull(m_parentStyleSheet->charset()));
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
     if (m_cachedSheet)
         protect(m_cachedSheet)->removeClient(protect(m_styleSheetClient));

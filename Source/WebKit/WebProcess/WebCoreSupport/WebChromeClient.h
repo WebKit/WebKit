@@ -66,10 +66,10 @@ public:
     WebPage* page() const { return m_page.get(); }
 
 #if PLATFORM(IOS_FAMILY)
-    void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final;
+    void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) const final;
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&) const final;
     void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&) const final;
-    void didDisplayCaptions(Vector<String>&&) const final;
+    void didDisplayCaptions(Vector<RefPtr<StringImpl>>&&) const final;
 #endif
 
 private:
@@ -94,7 +94,7 @@ private:
     // Frame wants to create the new Page.  Also, the newly created window
     // should not be shown to the user until the ChromeClient of the newly
     // created Page has its show method called.
-    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String& openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, StringImpl* openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
     
     bool canRunModal() const final;
@@ -106,19 +106,19 @@ private:
     
     void setResizable(bool) final;
     
-    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) final;
+    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, StringImpl* message, unsigned lineNumber, unsigned columnNumber, StringImpl* sourceID) final;
     
     bool canRunBeforeUnloadConfirmPanel() final;
-    bool runBeforeUnloadConfirmPanel(String&& message, WebCore::LocalFrame&) final;
+    bool runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, WebCore::LocalFrame&) final;
     
     void closeWindow() final;
 
     void rootFrameAdded(const WebCore::LocalFrame&) final;
     void rootFrameRemoved(const WebCore::LocalFrame&) final;
 
-    void runJavaScriptAlert(WebCore::LocalFrame&, const String&) final;
-    bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) final;
-    bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) final;
+    void runJavaScriptAlert(WebCore::LocalFrame&, StringImpl*) final;
+    bool runJavaScriptConfirm(WebCore::LocalFrame&, StringImpl*) final;
+    bool runJavaScriptPrompt(WebCore::LocalFrame&, StringImpl* message, StringImpl* defaultValue, RefPtr<StringImpl>& result) final;
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
@@ -142,7 +142,7 @@ private:
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
 
-    void translateAccessibilityAnnouncementStrings(const Vector<String>&, const String&, CompletionHandler<void(Vector<String>&&)>&&) final;
+    void translateAccessibilityAnnouncementStrings(const Vector<RefPtr<StringImpl>>&, StringImpl*, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&) final;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     void requestFrameScreenPosition(WebCore::FrameIdentifier) const final;
     void scheduleAccessibilityFrameGeometryUpdate() const final;
@@ -175,11 +175,11 @@ private:
     bool shouldUnavailablePluginMessageBeButton(WebCore::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::PluginUnavailabilityReason) const final;
 
-    void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, const String& toolTip, WebCore::TextDirection) final;
+    void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, StringImpl* toolTip, WebCore::TextDirection) final;
 
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
 
-    void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final { }
+    void exceededDatabaseQuota(WebCore::LocalFrame&, StringImpl* databaseName, WebCore::DatabaseDetails) final { }
 
     RefPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
 
@@ -210,7 +210,7 @@ private:
     void removeScrollingLayer(WebCore::Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) final;
 
     void webAppOrientationsUpdated() final;
-    void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
+    void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, StringImpl*) final;
 
     Seconds eventThrottlingDelay() final;
 
@@ -230,11 +230,11 @@ private:
     WebCore::DevicePostureType devicePostureType() const final;
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;
-    void transcodeChosenFiles(Vector<String>&&, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&) final;
+    void transcodeChosenFiles(Vector<RefPtr<StringImpl>>&&, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, WTF::CompletionHandler<void(bool)>&&) final;
     void showContactPicker(WebCore::ContactsRequestData&&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&) final;
 
-    void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
+    void loadIconForFiles(const Vector<RefPtr<StringImpl>>&, WebCore::FileIconLoader&) final;
 
     void setCursor(const WebCore::Cursor&) final;
     void setCursorHiddenUntilMouseMoves(bool) final;
@@ -263,7 +263,7 @@ private:
     void renderingUpdateFramesPerSecondChanged() final;
     void syncLocalFrameInfoToRemote() final;
     unsigned remoteImagesCountForTesting() const final;
-    void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&) final;
+    void registerBlobPathForTesting(StringImpl* path, CompletionHandler<void()>&&) final;
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
     void contentRuleListDidBlockLoad(const WebCore::ContentRuleListBlockedLoadInfo&) final;
@@ -278,7 +278,7 @@ private:
 
 #if PLATFORM(PLAYSTATION)
     void postAccessibilityNotification(WebCore::AccessibilityObject&, WebCore::AXNotification) final;
-    void postAccessibilityNodeTextChangeNotification(WebCore::AccessibilityObject*, WebCore::AXTextChange, unsigned, const String&) final;
+    void postAccessibilityNodeTextChangeNotification(WebCore::AccessibilityObject*, WebCore::AXTextChange, unsigned, StringImpl*) final;
     void postAccessibilityFrameLoadingEventNotification(WebCore::AccessibilityObject*, WebCore::AXLoadingEvent) final;
 #endif
 
@@ -355,7 +355,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_USAGE)
-    void addMediaUsageManagerSession(WebCore::MediaSessionIdentifier, const String&, const URL&) final;
+    void addMediaUsageManagerSession(WebCore::MediaSessionIdentifier, StringImpl*, const URL&) final;
     void updateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier, const WebCore::MediaUsageInfo&) final;
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier) final;
 #endif
@@ -448,7 +448,7 @@ private:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) final;
 #endif
-    void resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier, const WebCore::IntPoint&, CompletionHandler<void(String)>&&) final;
+    void resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier, const WebCore::IntPoint&, CompletionHandler<void(RefPtr<StringImpl>)>&&) final;
 #if PLATFORM(MAC)
     void performAccessibilitySearchInRemoteFrame(WebCore::FrameIdentifier, const WebCore::AccessibilitySearchCriteriaIPC&, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&) final;
     void continueAccessibilitySearchFromChildFrame(WebCore::FrameIdentifier childFrameID, const WebCore::AccessibilitySearchCriteriaIPC&, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&) final;
@@ -461,7 +461,7 @@ private:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&) const final;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
-    void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&, const WebCore::IntRect&) final;
+    void handleTelephoneNumberClick(StringImpl* number, const WebCore::IntPoint&, const WebCore::IntRect&) final;
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -469,7 +469,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    void handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&) final;
+    void handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection&, const Vector<RefPtr<StringImpl>>& telephoneNumbers, const WebCore::IntPoint&) final;
     bool hasRelevantSelectionServices(bool isTextOnly) const final;
     bool handleImageServiceClick(WebCore::FrameIdentifier, const WebCore::IntPoint&, WebCore::HTMLImageElement&) final;
     bool handlePDFServiceClick(WebCore::FrameIdentifier, const WebCore::IntPoint&, WebCore::HTMLAttachmentElement&) final;
@@ -492,14 +492,14 @@ private:
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::IntPoint& positionInMainFrameView, bool) final;
     void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags) final;
     void setMockMediaPlaybackTargetPickerEnabled(bool) final;
-    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetMockState) final;
+    void setMockMediaPlaybackTargetPickerState(StringImpl*, WebCore::MediaPlaybackTargetMockState) final;
     void mockMediaPlaybackTargetPickerDismissPopup() final;
     void mockMediaPlaybackTargetPickerRect(CompletionHandler<void(WebCore::FloatRect)>&&) final;
 #endif
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
 
-    RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
+    RefPtr<WebCore::Icon> createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames) final;
 
     void didInvalidateDocumentMarkerRects() final;
 
@@ -514,7 +514,7 @@ private:
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::LocalFrame&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&) final;
 #endif
 
-    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) final;
+    void configureLoggingChannel(StringImpl*, WTFLogChannelState, WTFLogLevel) final;
 
     bool userIsInteracting() const final;
     void setUserIsInteracting(bool) final;
@@ -579,7 +579,7 @@ private:
 
     WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const final;
 
-    void didAdjustVisibilityWithSelectors(Vector<String>&&) final;
+    void didAdjustVisibilityWithSelectors(Vector<RefPtr<StringImpl>>&&) final;
 
 #if ENABLE(GAMEPAD)
     void gamepadsRecentlyAccessed() final;
@@ -596,9 +596,9 @@ private:
 
     void addInitialTextAnimationForActiveWritingToolsSession() final;
 
-    void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
+    void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, StringImpl*, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
 
-    void addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, const String&) final;
+    void addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, StringImpl*) final;
 
     void saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
 

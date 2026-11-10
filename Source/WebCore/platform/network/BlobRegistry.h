@@ -54,30 +54,30 @@ class WEBCORE_EXPORT BlobRegistry : public CanMakeCheckedPtr<BlobRegistry> {
 public:
 
     // Registers a blob URL referring to the specified file.
-    virtual void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) = 0;
+    virtual void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, StringImpl* path, StringImpl* contentType) = 0;
 
     // Registers a blob URL referring to the specified blob data.
-    virtual void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) = 0;
+    virtual void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, StringImpl* contentType) = 0;
     
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
     virtual void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
     // Registers a new blob URL referring to the blob data identified by the specified srcURL or, if none found, referring to the file found at the given path.
-    virtual void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
+    virtual void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, StringImpl* contentType) = 0;
 
     // Negative start and end values select from the end.
-    virtual void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) = 0;
+    virtual void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, StringImpl* contentType) = 0;
 
     virtual void unregisterBlobURL(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
     virtual void registerBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
     virtual void unregisterBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
-    virtual String blobType(const URL&) = 0;
+    virtual RefPtr<StringImpl> blobType(const URL&) = 0;
 
     virtual unsigned long long blobSize(const URL&) = 0;
 
-    virtual void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;
+    virtual void writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&&) = 0;
 
     virtual BlobRegistryImpl* blobRegistryImpl() { return nullptr; }
 

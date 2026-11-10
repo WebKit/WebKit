@@ -50,7 +50,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
     bool shouldDecompress = true;
 
     if (!m_compressionStream.initializeIfNecessary(CompressionStream::Algorithm::Brotli, CompressionStream::Operation::Decompression))
-        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
+        return Exception { ExceptionCode::TypeError, "Initialization Failed."_si };
 
     m_compressionStream.getPlatformStream().src_ptr = input.data();
     m_compressionStream.getPlatformStream().src_size = input.size();
@@ -74,7 +74,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
         result = compression_stream_process(&m_compressionStream.getPlatformStream(), m_didFinish ? COMPRESSION_STREAM_FINALIZE : 0);
 
         if (result == COMPRESSION_STATUS_ERROR)
-            return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
+            return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_si };
 
         // Extra bytes: stream ended but there's unconsumed input
         if (result == COMPRESSION_STATUS_END && m_compressionStream.getPlatformStream().src_size) {

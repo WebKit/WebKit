@@ -719,7 +719,7 @@ TYPED_TEST_P(ArgumentCoderVectorTest, VectorTooBig)
 {
     std::array<uint8_t, 9> bytes { 255, 255, 255, 255, 255, 255, 255, 255, 255 };
     TestFixture::encoder() << std::span<uint8_t, 9>(bytes);
-    auto optionalVector = TestFixture::createDecoder()->template decode<Vector<String>>();
+    auto optionalVector = TestFixture::createDecoder()->template decode<Vector<RefPtr<StringImpl>>>();
     ASSERT_FALSE(optionalVector);
 }
 
@@ -901,21 +901,21 @@ TEST(ArgumentCoderQuirkTable, RoundTripsEveryField)
 {
     WebCore::QuirkBehavior behavior;
     behavior.id = WebCore::QuirkBehaviorID::NeedsYouTubeCaptionQuirk;
-    behavior.script = "script"_s;
-    behavior.userAgent = "userAgent"_s;
-    behavior.chromeCompatibilityVersion = "123"_s;
+    behavior.script = "script"_si;
+    behavior.userAgent = "userAgent"_si;
+    behavior.chromeCompatibilityVersion = "123"_si;
     behavior.cookieNames = { "a"_s, "b"_s };
-    behavior.styleSheet = "body { color: red; }"_s;
-    behavior.elementSelector = ".element"_s;
-    behavior.documentSelector = "#document"_s;
+    behavior.styleSheet = "body { color: red; }"_si;
+    behavior.elementSelector = ".element"_si;
+    behavior.documentSelector = "#document"_si;
     behavior.secondaryURL = { quirkMatchPattern("*://*.example.com/*"_s) };
 
     WebCore::Quirk quirk;
     quirk.matches = { quirkMatchPattern("*://*.theguardian.com/*"_s), quirkMatchPattern("*://*.theguardian.*/*"_s) };
     quirk.embeddedMatches = { quirkMatchPattern("*://*.youtube.com/*"_s) };
     quirk.excludeMatches = { quirkMatchPattern("https://www.theguardian.com/excluded/*"_s) };
-    quirk.queryContains = "query"_s;
-    quirk.fragmentContains = "fragment"_s;
+    quirk.queryContains = "query"_si;
+    quirk.fragmentContains = "fragment"_si;
     quirk.environment = WebCore::URLEnvironment::LensApp;
     quirk.behaviors = { WTF::move(behavior) };
 

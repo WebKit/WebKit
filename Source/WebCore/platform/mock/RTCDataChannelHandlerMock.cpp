@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelHandlerMock);
 
-RTCDataChannelHandlerMock::RTCDataChannelHandlerMock(const String& label, const RTCDataChannelInit& init)
+RTCDataChannelHandlerMock::RTCDataChannelHandlerMock(StringImpl* label, const RTCDataChannelInit& init)
     : m_label(label)
     , m_protocol(init.protocol)
 {
@@ -55,7 +55,7 @@ void RTCDataChannelHandlerMock::setClient(RTCDataChannelHandlerClient& client, s
 bool RTCDataChannelHandlerMock::sendStringData(const UTF8CString& string)
 {
     if (RefPtr client = m_client.get())
-        client->didReceiveStringData(String::fromUTF8(string.span()));
+        client->didReceiveStringData(StringImpl::fromUTF8(string.span()));
     return true;
 }
 

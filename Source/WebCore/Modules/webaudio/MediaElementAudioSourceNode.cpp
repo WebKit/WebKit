@@ -54,7 +54,7 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::creat
 {
     Ref mediaElement = WTF::move(options.mediaElement);
     if (mediaElement->audioSourceNode())
-        return Exception { ExceptionCode::InvalidStateError, "Media element is already associated with an audio source node"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Media element is already associated with an audio source node"_si };
 
     Ref node = adoptRef(*new MediaElementAudioSourceNode(context, mediaElement.get()));
 

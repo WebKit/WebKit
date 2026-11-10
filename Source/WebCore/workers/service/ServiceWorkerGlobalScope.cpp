@@ -262,10 +262,10 @@ bool ServiceWorkerGlobalScope::didFirePushEventRecently() const
     return MonotonicTime::now() <= m_lastPushEventTime + SWServer::defaultTerminationDelay;
 }
 
-void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message, unsigned long requestIdentifier)
 {
     if (m_consoleMessageReportingEnabled) {
-        callOnMainThread([threadIdentifier = thread()->identifier(), source, level, message = message.isolatedCopy(), requestIdentifier] {
+        callOnMainThread([threadIdentifier = thread()->identifier(), source, level, message = isolatedCopy(message), requestIdentifier] {
             if (RefPtr connection = SWContextManager::singleton().connection())
                 connection->reportConsoleMessage(threadIdentifier, source, level, message, requestIdentifier);
         });

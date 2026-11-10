@@ -45,22 +45,22 @@ enum class IsFirst : bool { No, Yes };
 
 struct Part {
     PartType type;
-    String value;
+    RefPtr<StringImpl> value;
     Modifier modifier;
-    String name { };
-    String prefix { };
-    String suffix { };
+    RefPtr<StringImpl> name { };
+    RefPtr<StringImpl> prefix { };
+    RefPtr<StringImpl> suffix { };
 };
 
 struct URLPatternStringOptions {
-    String delimiterCodepoint { };
-    String prefixCodepoint { };
+    RefPtr<StringImpl> delimiterCodepoint { };
+    RefPtr<StringImpl> prefixCodepoint { };
     bool ignoreCase { false };
 };
 
 class URLPatternParser {
 public:
-    NODELETE URLPatternParser(EncodingCallbackType, String&& segmentWildcardRegexp);
+    NODELETE URLPatternParser(EncodingCallbackType, RefPtr<StringImpl>&& segmentWildcardRegexp);
     ExceptionOr<void> performParse(const URLPatternStringOptions&);
 
     void setTokenList(Vector<Token>&& tokenList) { m_tokenList = WTF::move(tokenList); }
@@ -71,11 +71,11 @@ private:
     NODELETE Token tryToConsumeRegexOrWildcardToken(const Token&);
     NODELETE Token tryToConsumeModifierToken();
 
-    String consumeText();
+    RefPtr<StringImpl> consumeText();
     ExceptionOr<Token> consumeRequiredToken(TokenType);
 
     ExceptionOr<void> maybeAddPartFromPendingFixedValue();
-    ExceptionOr<void> addPart(String&& prefix, const Token& nameToken, const Token& regexpOrWildcardToken, String&& suffix, const Token& modifierToken);
+    ExceptionOr<void> addPart(RefPtr<StringImpl>&& prefix, const Token& nameToken, const Token& regexpOrWildcardToken, RefPtr<StringImpl>&& suffix, const Token& modifierToken);
 
     bool isDuplicateName(StringView) const;
 
@@ -84,19 +84,19 @@ private:
     Vector<Token> m_tokenList;
     Vector<Part> m_partList;
     EncodingCallbackType m_callbackType;
-    String m_segmentWildcardRegexp;
+    RefPtr<StringImpl> m_segmentWildcardRegexp;
     StringBuilder m_pendingFixedValue;
     size_t m_index { 0 };
     int m_nextNumericName { 0 };
 };
 
 // FIXME: Consider moving functions to somewhere generic, perhaps refactor Part to its own class.
-String generateSegmentWildcardRegexp(const URLPatternStringOptions&);
-String escapeRegexString(StringView);
+RefPtr<StringImpl> generateSegmentWildcardRegexp(const URLPatternStringOptions&);
+RefPtr<StringImpl> escapeRegexString(StringView);
 ASCIILiteral convertModifierToString(Modifier);
-std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& partList, const URLPatternStringOptions&);
-String generatePatternString(const Vector<Part>& partList, const URLPatternStringOptions&);
-String escapePatternString(StringView input);
+std::pair<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> generateRegexAndNameList(const Vector<Part>& partList, const URLPatternStringOptions&);
+RefPtr<StringImpl> generatePatternString(const Vector<Part>& partList, const URLPatternStringOptions&);
+RefPtr<StringImpl> escapePatternString(StringView input);
 bool isValidNameCodepoint(char32_t codepoint, URLPatternUtilities::IsFirst);
 
 

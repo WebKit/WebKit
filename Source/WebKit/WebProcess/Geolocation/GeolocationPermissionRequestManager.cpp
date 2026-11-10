@@ -60,7 +60,7 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
 
     ASSERT_WITH_MESSAGE(frame.get(), "It is not well understood in which cases the Geolocation is alive after its frame goes away. If you hit this assertion, please add a test covering this case.");
     if (!frame) {
-        geolocation.setIsAllowed(false, { });
+        geolocation.setIsAllowed(false, nullptr);
         return;
     }
 
@@ -75,7 +75,7 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
     protect(m_page)->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
 }
 
-void GeolocationPermissionRequestManager::revokeAuthorizationToken(const String& authorizationToken)
+void GeolocationPermissionRequestManager::revokeAuthorizationToken(StringImpl* authorizationToken)
 {
     protect(m_page)->send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
 }
@@ -86,14 +86,14 @@ void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocatio
         m_idToGeolocationMap.remove(*geolocationID);
 }
 
-void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geolocationID, const String& authorizationToken)
+void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geolocationID, StringImpl* authorizationToken)
 {
     RefPtr geolocation = m_idToGeolocationMap.take(geolocationID).get();
     if (!geolocation)
         return;
     m_geolocationToIDMap.remove(geolocation.get());
 
-    geolocation->setIsAllowed(!authorizationToken.isNull(), authorizationToken);
+    geolocation->setIsAllowed(!!authorizationToken, authorizationToken);
 }
 
 void GeolocationPermissionRequestManager::ref() const

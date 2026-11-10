@@ -102,8 +102,8 @@ public:
     uint32_t timeScale() const { return m_timeScale; }
 
     void dump(PrintStream& out) const;
-    String toString() const;
-    String toJSONString() const;
+    RefPtr<StringImpl> toString() const;
+    RefPtr<StringImpl> toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
 
     // Make the following casts errors:
@@ -176,7 +176,7 @@ NODELETE WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
 struct WTF_EXPORT_PRIVATE MediaTimeRange {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MediaTimeRange);
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
 
     const MediaTime start;
     const MediaTime end;
@@ -185,10 +185,10 @@ struct WTF_EXPORT_PRIVATE MediaTimeRange {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<MediaTime> {
-    static String toString(const MediaTime& time) { return time.toJSONString(); }
+    static RefPtr<StringImpl> toString(const MediaTime& time) { return time.toJSONString(); }
 };
 template<> struct LogArgument<MediaTimeRange> {
-    static String toString(const MediaTimeRange& range) { return range.toJSONString(); }
+    static RefPtr<StringImpl> toString(const MediaTimeRange& range) { return range.toJSONString(); }
 };
 
 }

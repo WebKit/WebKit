@@ -91,7 +91,7 @@ size_t CombinedURLFilters::memoryUsed() const
 #endif
     
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-static String prefixTreeVertexToString(const PrefixTreeVertex& vertex, const HashMap<const PrefixTreeVertex*, ActionList>& actions, unsigned depth)
+static RefPtr<StringImpl> prefixTreeVertexToString(const PrefixTreeVertex& vertex, const HashMap<const PrefixTreeVertex*, ActionList>& actions, unsigned depth)
 {
     StringBuilder builder;
     while (depth--)

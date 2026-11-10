@@ -106,7 +106,7 @@ public:
     ~CSSParser();
 
     static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, StringView, IsImportant, const CSSParserContext&);
-    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, StringView, IsImportant, const CSSParserContext&);
+    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, AtomStringImpl* propertyName, StringView, IsImportant, const CSSParserContext&);
     WEBCORE_EXPORT static bool parseDeclarationList(MutableStyleProperties&, StringView, const CSSParserContext&);
 
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(StringView, const Element&);
@@ -210,7 +210,7 @@ private:
     };
     ConsumeDeclarationResult consumeDeclaration(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, IsImportant, StyleRuleType);
-    void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, IsImportant);
+    void consumeCustomPropertyValue(CSSParserTokenRange, AtomStringImpl* propertyName, IsImportant);
 
     StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 

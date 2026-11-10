@@ -119,7 +119,7 @@ TEST(WKHTTPCookieStore, CookiePolicy)
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         requestHadCookie = contains(request.span(), "Cookie"_span);
-        co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "testCookie=42"_s } }, "hi"_s).serialize());
+        co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "testCookie=42"_s } }, "hi"_si).serialize());
     } });
 
     [webView loadRequest:server.request()];
@@ -150,7 +150,7 @@ TEST(WKHTTPCookieStore, CookiePolicyAllowIsOnlyFromMainDocumentDomain)
     TestWebKitAPI::HTTPServer server([connectionCount = 0] (TestWebKitAPI::Connection connection) mutable {
         ++connectionCount;
         connection.receiveHTTPRequest([connectionCount, connection] (Vector<char>&& request) {
-            String reply;
+            RefPtr<StringImpl> reply;
             if (connectionCount == 1) {
                 constexpr auto body =
                 "<script>"

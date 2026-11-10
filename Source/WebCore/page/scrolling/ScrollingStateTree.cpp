@@ -502,7 +502,7 @@ void ScrollingStateTree::reconcileViewportConstrainedLayerPositions(std::optiona
         reconcileLayerPositionsRecursive(*scrollingNode, layoutViewport, action);
 }
 
-String ScrollingStateTree::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
+RefPtr<StringImpl> ScrollingStateTree::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     if (!rootStateNode())
         return emptyString();
@@ -525,8 +525,8 @@ void showScrollingStateTree(const WebCore::ScrollingStateTree& tree)
         return;
     }
 
-    String output = rootNode->scrollingStateTreeAsText(WebCore::debugScrollingStateTreeAsTextBehaviors);
-    SAFE_WTFLOGALWAYS("%s\n", output.utf8());
+    RefPtr<StringImpl> output = rootNode->scrollingStateTreeAsText(WebCore::debugScrollingStateTreeAsTextBehaviors);
+    SAFE_WTFLOGALWAYS("%s\n", utf8(output));
 }
 
 void showScrollingStateTree(const WebCore::ScrollingStateNode& node)

@@ -122,11 +122,11 @@ void PageClientImpl::preferencesDidChange()
 {
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(StringImpl*, StringImpl*)
 {
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
+void PageClientImpl::didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider)
 {
     notImplemented();
 }
@@ -283,7 +283,7 @@ void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& initialFrame, c
 #endif
 
 // Custom representations.
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t>)
 {
 }
 
@@ -356,7 +356,7 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return WebCore::UserInterfaceLayoutDirection::LTR;
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl*, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }

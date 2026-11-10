@@ -54,7 +54,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDeviceProxy);
 
-static ::WebGPU::PipelineError invalidDescriptorError(String&& message)
+static ::WebGPU::PipelineError invalidDescriptorError(RefPtr<StringImpl>&& message)
 {
     return { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(message) };
 }
@@ -104,7 +104,7 @@ RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferD
         return nullptr;
 
     auto result = RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, descriptor.mappedAtCreation);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -132,7 +132,7 @@ RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const ::WebGPU::Sampl
         return nullptr;
 
     auto result = RemoteSamplerProxy::create(*this, m_convertToBackingContext, identifier);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -287,12 +287,12 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(makeUnexpected(invalidDescriptorError("GPUDevice.createComputePipelineAsync() descriptor is invalid"_s)));
+        callback(makeUnexpected(invalidDescriptorError("GPUDevice.createComputePipelineAsync() descriptor is invalid"_si)));
         return;
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, RefPtr<StringImpl>&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
             return;
@@ -309,10 +309,10 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor)
-        return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s)));
+        return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_si)));
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, RefPtr<StringImpl>&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
             return;
@@ -379,7 +379,7 @@ RefPtr<::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const :
         return nullptr;
 
     auto result = RemoteCommandEncoderProxy::create(protect(root()), m_convertToBackingContext, identifier);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -407,7 +407,7 @@ RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createQuerySet(const ::WebGPU::Que
         return nullptr;
 
     auto result = RemoteQuerySetProxy::create(*this, m_convertToBackingContext, identifier);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -433,7 +433,7 @@ void RemoteDeviceProxy::resolveUncapturedErrorEvent(CompletionHandler<void(bool,
     UNUSED_PARAM(sendResult);
 }
 
-void RemoteDeviceProxy::setLabel(String&& label)
+void RemoteDeviceProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteDevice::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
@@ -445,7 +445,7 @@ bool RemoteDeviceProxy::isValid() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&& callback)
+void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, RefPtr<StringImpl>&&)>&& callback)
 {
     // The GPU process does not send the message, so the device is lost with an empty one.
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::ResolveDeviceLostPromise(), [callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason) mutable {

@@ -62,7 +62,7 @@
     _exitWarning.get().editable = NO;
     _exitWarning.get().font = [NSFont systemFontOfSize:27];
     _exitWarning.get().selectable = NO;
-    _exitWarning.get().stringValue = WebCore::clickToExitFullScreenText().createNSString().get();
+    _exitWarning.get().stringValue = createNSString(WebCore::clickToExitFullScreenText()).get();
     _exitWarning.get().textColor = [NSColor tertiaryLabelColor];
     [_exitWarning sizeToFit];
 

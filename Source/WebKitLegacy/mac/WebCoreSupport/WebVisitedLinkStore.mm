@@ -97,7 +97,7 @@ void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
 
 void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
 {
-    auto linkHash = WebCore::computeSharedStringHash(urlString);
+    auto linkHash = WebCore::computeSharedStringHash(StringImpl::create(urlString).get());
 
     ASSERT(m_visitedLinkHashes.contains(linkHash));
     m_visitedLinkHashes.remove(linkHash);
@@ -105,7 +105,7 @@ void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
     invalidateStylesForLink(linkHash);
 }
 
-bool WebVisitedLinkStore::isLinkVisited(WebCore::Page& page, WebCore::SharedStringHash linkHash, const URL& baseURL, const AtomString& attributeURL)
+bool WebVisitedLinkStore::isLinkVisited(WebCore::Page& page, WebCore::SharedStringHash linkHash, const URL& baseURL, AtomStringImpl* attributeURL)
 {
     populateVisitedLinksIfNeeded(page);
 

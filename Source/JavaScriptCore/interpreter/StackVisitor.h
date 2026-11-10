@@ -101,10 +101,10 @@ public:
 
         NODELETE CallSiteIndex wasmCallSiteIndex() const;
 
-        JS_EXPORT_PRIVATE String functionName() const;
-        JS_EXPORT_PRIVATE String sourceURL() const;
-        JS_EXPORT_PRIVATE String preRedirectURL() const;
-        JS_EXPORT_PRIVATE String toString() const;
+        JS_EXPORT_PRIVATE RefPtr<StringImpl> functionName() const;
+        JS_EXPORT_PRIVATE RefPtr<StringImpl> sourceURL() const;
+        JS_EXPORT_PRIVATE RefPtr<StringImpl> preRedirectURL() const;
+        JS_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
 
         JS_EXPORT_PRIVATE SourceID sourceID();
 

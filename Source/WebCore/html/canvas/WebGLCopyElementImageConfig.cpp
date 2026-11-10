@@ -34,17 +34,17 @@ Ref<JSON::Object> WebGLCopyElementImageConfig::toJSON() const
 {
     Ref json = JSON::Object::create();
     if (sx)
-        json->setDouble("sx"_s, *sx);
+        json->setDouble("sx"_si, *sx);
     if (sy)
-        json->setDouble("sy"_s, *sy);
+        json->setDouble("sy"_si, *sy);
     if (swidth)
-        json->setDouble("swidth"_s, *swidth);
+        json->setDouble("swidth"_si, *swidth);
     if (sheight)
-        json->setDouble("sheight"_s, *sheight);
+        json->setDouble("sheight"_si, *sheight);
     if (width)
-        json->setInteger("width"_s, *width);
+        json->setInteger("width"_si, *width);
     if (height)
-        json->setInteger("height"_s, *height);
+        json->setInteger("height"_si, *height);
     return json;
 }
 

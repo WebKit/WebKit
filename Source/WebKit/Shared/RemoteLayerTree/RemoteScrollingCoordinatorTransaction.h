@@ -56,7 +56,7 @@ public:
     bool isFullCommit() const { return m_isFullCommit; }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    RefPtr<StringImpl> description() const;
     void dump() const;
 #endif
 

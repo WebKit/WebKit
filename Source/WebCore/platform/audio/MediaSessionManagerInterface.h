@@ -87,7 +87,7 @@ public:
 
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
     virtual bool hasActiveNowPlayingSession() const { return false; }
-    virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
+    virtual RefPtr<StringImpl> lastUpdatedNowPlayingTitle() const { return emptyString(); }
     virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
     virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
     virtual std::optional<MediaUniqueIdentifier> lastUpdatedNowPlayingInfoUniqueIdentifier() const { return std::nullopt; }

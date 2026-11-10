@@ -46,12 +46,12 @@ namespace WebCore {
 // This information is needed by spell checking service to update user specific data.
 class SpellingCorrectionRecordUndoCommand : public SimpleEditCommand {
 public:
-    static Ref<SpellingCorrectionRecordUndoCommand> create(Ref<Document>&& document, const String& corrected, const String& correction)
+    static Ref<SpellingCorrectionRecordUndoCommand> create(Ref<Document>&& document, StringImpl* corrected, StringImpl* correction)
     {
         return adoptRef(*new SpellingCorrectionRecordUndoCommand(WTF::move(document), corrected, correction));
     }
 private:
-    SpellingCorrectionRecordUndoCommand(Ref<Document>&& document, const String& corrected, const String& correction)
+    SpellingCorrectionRecordUndoCommand(Ref<Document>&& document, StringImpl* corrected, StringImpl* correction)
         : SimpleEditCommand(WTF::move(document))
         , m_corrected(corrected)
         , m_correction(correction)
@@ -78,13 +78,13 @@ private:
     }
 #endif
 
-    String m_corrected;
-    String m_correction;
+    RefPtr<StringImpl> m_corrected;
+    RefPtr<StringImpl> m_correction;
     bool m_hasBeenUndone;
 };
 #endif
 
-SpellingCorrectionCommand::SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, const String& correction)
+SpellingCorrectionCommand::SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, StringImpl* correction)
     : CompositeEditCommand(rangeToBeCorrected.start.document(), EditAction::InsertReplacement)
     , m_rangeToBeCorrected(rangeToBeCorrected)
     , m_selectionToBeCorrected(m_rangeToBeCorrected)
@@ -92,7 +92,7 @@ SpellingCorrectionCommand::SpellingCorrectionCommand(const SimpleRange& rangeToB
 {
 }
 
-Ref<SpellingCorrectionCommand> SpellingCorrectionCommand::create(const SimpleRange& rangeToBeCorrected, const String& correction)
+Ref<SpellingCorrectionCommand> SpellingCorrectionCommand::create(const SimpleRange& rangeToBeCorrected, StringImpl* correction)
 {
     return adoptRef(*new SpellingCorrectionCommand(rangeToBeCorrected, correction));
 }
@@ -106,7 +106,7 @@ bool SpellingCorrectionCommand::willApplyCommand()
 void SpellingCorrectionCommand::doApply()
 {
     m_corrected = plainText(m_rangeToBeCorrected);
-    if (!m_corrected.length())
+    if (!length(m_corrected))
         return;
 
     Ref document = this->document();
@@ -121,7 +121,7 @@ void SpellingCorrectionCommand::doApply()
     applyCommandToComposite(ReplaceSelectionCommand::create(WTF::move(document), protect(m_correctionFragment), ReplaceSelectionCommand::MatchStyle, EditAction::Paste));
 }
 
-String SpellingCorrectionCommand::inputEventData() const
+RefPtr<StringImpl> SpellingCorrectionCommand::inputEventData() const
 {
     if (isEditingTextAreaOrTextInput())
         return m_correction;

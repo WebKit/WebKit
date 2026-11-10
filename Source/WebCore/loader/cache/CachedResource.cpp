@@ -214,21 +214,21 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         RefPtr resourceToRevalidate = m_resourceToRevalidate;
         ASSERT(resourceToRevalidate->canUseCacheValidator());
         ASSERT(resourceToRevalidate->isLoaded());
-        const String& lastModified = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::LastModified);
-        const String& eTag = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::ETag);
-        if (!lastModified.isEmpty() || !eTag.isEmpty()) {
+        const RefPtr<StringImpl>& lastModified = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::LastModified);
+        const RefPtr<StringImpl>& eTag = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::ETag);
+        if (!isEmpty(lastModified) || !isEmpty(eTag)) {
             ASSERT(cachedResourceLoader.cachePolicy(type(), url()) != CachePolicy::Reload);
             if (cachedResourceLoader.cachePolicy(type(), url()) == CachePolicy::Revalidate)
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
-            if (!lastModified.isEmpty())
+            if (!isEmpty(lastModified))
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
-            if (!eTag.isEmpty())
+            if (!isEmpty(eTag))
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
         }
     }
 
     if (type() == Type::LinkPrefetch)
-        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_s);
+        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_si);
     m_resourceRequest.setPriority(loadPriority());
 
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
@@ -241,15 +241,15 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
     ResourceRequest request(m_resourceRequest);
-    if (!m_fragmentIdentifierForRequest.isNull()) {
+    if (m_fragmentIdentifierForRequest) {
         URL url = request.url();
         url.setFragmentIdentifier(m_fragmentIdentifierForRequest);
         request.setURL(WTF::move(url));
-        m_fragmentIdentifierForRequest = String();
+        m_fragmentIdentifierForRequest = nullptr;
     }
 
     if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
-        setResourceError({ errorDomainWebKitInternal, 0, request.url(), "Reached maximum amount of queued data of 64Kb for keepalive requests"_s, ResourceError::Type::AccessControl });
+        setResourceError({ StringImpl::create(errorDomainWebKitInternal).ptr(), 0, request.url(), "Reached maximum amount of queued data of 64Kb for keepalive requests"_si, ResourceError::Type::AccessControl });
         failBeforeStarting();
         return;
     }
@@ -275,7 +275,7 @@ void CachedResource::loadFrom(const CachedResource& resource)
         ASSERT(m_origin);
         auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_options.storedCredentialsPolicy, *m_origin, &CrossOriginAccessControlCheckDisabler::singleton());
         if (!accessControlCheckResult) {
-            setResourceError(ResourceError(String(), 0, url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
+            setResourceError(ResourceError(nullString(), 0, url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
             return;
         }
     }
@@ -467,7 +467,7 @@ void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceR
 #if ASSERT_ENABLED
 static bool isOpaqueRedirectResponseWithoutLocationHeader(const ResourceResponse& response)
 {
-    return response.type() == ResourceResponse::Type::Opaqueredirect && response.isRedirection() && response.httpHeaderField(HTTPHeaderName::Location).isNull();
+    return response.type() == ResourceResponse::Type::Opaqueredirect && response.isRedirection() && !response.httpHeaderField(HTTPHeaderName::Location);
 }
 #endif
 
@@ -488,10 +488,10 @@ void CachedResource::setResponse(ResourceResponse&& newResponse)
 
 void CachedResource::responseReceived(ResourceResponse&& response)
 {
-    String encoding = response.textEncodingName();
+    RefPtr<StringImpl> encoding = response.textEncodingName();
     setResponse(WTF::move(response));
     m_responseTimestamp = WallTime::now();
-    if (!encoding.isNull())
+    if (encoding)
         setEncoding(encoding);
 }
 
@@ -849,7 +849,7 @@ bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request)
 unsigned CachedResource::overheadSize() const
 {
     static const int kAverageClientsHashMapSize = 384;
-    return sizeof(CachedResource) + response().memoryUsage() + kAverageClientsHashMapSize + m_resourceRequest.url().string().length() * 2;
+    return sizeof(CachedResource) + response().memoryUsage() + kAverageClientsHashMapSize + length(m_resourceRequest.url().string()) * 2;
 }
 
 void CachedResource::setLoadPriority(const std::optional<ResourceLoadPriority>& loadPriority, RequestPriority fetchPriority)

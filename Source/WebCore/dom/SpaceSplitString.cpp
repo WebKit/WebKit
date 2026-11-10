@@ -75,7 +75,7 @@ bool SpaceSplitStringData::containsAll(const SpaceSplitStringData& other) const
     return true;
 }
 
-struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
+struct SpaceSplitStringTableKeyTraits : public HashTraits<RefPtr<AtomStringImpl>>
 {
     // The number 200 for typicalNumberOfSpaceSplitString was based on the typical number of unique class names
     // on typical websites on August 2013.
@@ -83,7 +83,7 @@ struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
     static const int minimumTableSize = WTF::HashTableCapacityForSize<typicalNumberOfSpaceSplitString>::value;
 };
 
-typedef HashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
+typedef HashMap<RefPtr<AtomStringImpl>, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
 
 NODELETE static SpaceSplitStringTable& spaceSplitStringTable()
 {
@@ -91,13 +91,13 @@ NODELETE static SpaceSplitStringTable& spaceSplitStringTable()
     return table;
 }
 
-void SpaceSplitString::set(const AtomString& inputString, ShouldFoldCase shouldFoldCase)
+void SpaceSplitString::set(AtomStringImpl* inputString, ShouldFoldCase shouldFoldCase)
 {
-    if (inputString.isNull()) {
+    if (!inputString) {
         clear();
         return;
     }
-    m_data = SpaceSplitStringData::create(shouldFoldCase == ShouldFoldCase::Yes ? inputString.convertToASCIILowercase() : inputString);
+    m_data = SpaceSplitStringData::create(shouldFoldCase == ShouldFoldCase::Yes ? convertToASCIILowercase(inputString) : RefPtr { inputString });
 }
 
 template<typename ReferenceCharacterType>
@@ -165,40 +165,40 @@ private:
 class TokenAtomStringInitializer {
     WTF_MAKE_NONCOPYABLE(TokenAtomStringInitializer);
 public:
-    TokenAtomStringInitializer(const AtomString& keyString, std::span<AtomString> memory)
+    TokenAtomStringInitializer(const RefPtr<AtomStringImpl>& keyString, std::span<RefPtr<AtomStringImpl>> memory)
         : m_keyString(keyString)
         , m_memoryBucket(memory)
     { }
 
     template<typename CharacterType> bool processToken(std::span<const CharacterType> characters)
     {
-        if (characters.size() == m_keyString.length())
-            new (NotNull, m_memoryBucket.data()) AtomString(m_keyString);
+        if (characters.size() == length(m_keyString))
+            new (NotNull, m_memoryBucket.data()) RefPtr<AtomStringImpl>(m_keyString);
         else
-            new (NotNull, m_memoryBucket.data()) AtomString(characters);
+            new (NotNull, m_memoryBucket.data()) RefPtr<AtomStringImpl>(AtomStringImpl::add(characters));
         skip(m_memoryBucket, 1);
         return true;
     }
 
-    NODELETE const AtomString* nextMemoryBucket() const { return m_memoryBucket.data(); }
+    NODELETE const RefPtr<AtomStringImpl>* nextMemoryBucket() const { return m_memoryBucket.data(); }
 
 private:
-    const AtomString& m_keyString;
-    std::span<AtomString> m_memoryBucket;
+    const RefPtr<AtomStringImpl>& m_keyString;
+    std::span<RefPtr<AtomStringImpl>> m_memoryBucket;
 };
 
-inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyString, unsigned tokenCount)
+inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(AtomStringImpl* keyString, unsigned tokenCount)
 {
     ASSERT(tokenCount);
 
-    RELEASE_ASSERT(tokenCount < (std::numeric_limits<unsigned>::max() - sizeof(SpaceSplitStringData)) / sizeof(AtomString));
-    size_t sizeToAllocate = sizeof(SpaceSplitStringData) + tokenCount * sizeof(AtomString);
+    RELEASE_ASSERT(tokenCount < (std::numeric_limits<unsigned>::max() - sizeof(SpaceSplitStringData)) / sizeof(RefPtr<AtomStringImpl>));
+    size_t sizeToAllocate = sizeof(SpaceSplitStringData) + tokenCount * sizeof(RefPtr<AtomStringImpl>);
     SUPPRESS_UNCOUNTED_LOCAL auto* rawPointer = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
 
     new (NotNull, rawPointer) SpaceSplitStringData(keyString, tokenCount);
     Ref spaceSplitStringData = adoptRef(*rawPointer);
     auto tokenArray = spaceSplitStringData->tokenArray();
-    TokenAtomStringInitializer tokenInitializer(keyString, tokenArray);
+    TokenAtomStringInitializer tokenInitializer(spaceSplitStringData->keyString(), tokenArray);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData.ptr()) == static_cast<ptrdiff_t>(sizeToAllocate));
@@ -206,10 +206,10 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
     return spaceSplitStringData;
 }
 
-RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyString)
+RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(AtomStringImpl* keyString)
 {
     ASSERT(isMainThread());
-    ASSERT(!keyString.isNull());
+    ASSERT(keyString);
 
     auto addResult = spaceSplitStringTable().add(keyString, nullptr);
     if (!addResult.isNewEntry)
@@ -241,7 +241,7 @@ void SpaceSplitStringData::destroy(SpaceSplitStringData* spaceSplitString)
     spaceSplitStringTable().remove(spaceSplitString->m_keyString);
 
     for (auto& data : spaceSplitString->tokenArray())
-        data.~AtomString();
+        data.~RefPtr();
 
     spaceSplitString->~SpaceSplitStringData();
 

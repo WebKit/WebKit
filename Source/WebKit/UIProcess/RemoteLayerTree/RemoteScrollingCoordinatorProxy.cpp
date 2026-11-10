@@ -429,12 +429,12 @@ bool RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsKeyboardScroll(Sc
     return false;
 }
 
-String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
+RefPtr<StringImpl> RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
 {
     return m_scrollingTree->scrollingTreeAsText();
 }
 
-String RemoteScrollingCoordinatorProxy::scrollingTreeIncludingNodeIDsAsText() const
+RefPtr<StringImpl> RemoteScrollingCoordinatorProxy::scrollingTreeIncludingNodeIDsAsText() const
 {
     return m_scrollingTree->scrollingTreeAsText(ScrollingStateTreeAsTextBehavior::IncludeNodeIDs);
 }
@@ -638,13 +638,13 @@ bool RemoteScrollingCoordinatorProxy::overlayScrollbarsEnabled()
     return m_scrollingTree->overlayScrollbarsEnabled();
 }
 
-String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID> scrollingNodeID, bool isVertical)
+RefPtr<StringImpl> RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID> scrollingNodeID, bool isVertical)
 {
     if (RefPtr node = m_scrollingTree->nodeForID(scrollingNodeID)) {
         if (RefPtr scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(node.releaseNonNull()))
             return scrollingNode->scrollbarStateForOrientation(isVertical ? ScrollbarOrientation::Vertical : ScrollbarOrientation::Horizontal);
     }
-    return ""_s;
+    return ""_si;
 }
 
 bool RemoteScrollingCoordinatorProxy::scrollingPerformanceTestingEnabled() const

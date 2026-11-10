@@ -190,129 +190,129 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::allSortedNonRootW
     return cache->sortedNonRootWebAreas();
 }
 
-String AccessibilityObject::subrolePlatformString() const
+RefPtr<StringImpl> AccessibilityObject::subrolePlatformString() const
 {
     if (isSecureField())
-        return NSAccessibilitySecureTextFieldSubrole;
+        return StringImpl::create(NSAccessibilitySecureTextFieldSubrole);
     if (isSearchField())
-        return NSAccessibilitySearchFieldSubrole;
+        return StringImpl::create(NSAccessibilitySearchFieldSubrole);
 
     if (isAttachment()) {
         RetainPtr<id> attachView = [protect(wrapper()) attachmentView];
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
-            return dynamic_objc_cast<NSString>([attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute]);
+            return StringImpl::create(dynamic_objc_cast<NSString>([attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute]));
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (isMeter())
-        return "AXMeter"_s;
+        return "AXMeter"_si;
 
 #if ENABLE(MODEL_ELEMENT)
     if (isModel())
-        return "AXModel"_s;
+        return "AXModel"_si;
 #endif
 
     auto role = this->role();
     if (role == AccessibilityRole::HorizontalRule)
-        return "AXContentSeparator"_s;
+        return "AXContentSeparator"_si;
     if (role == AccessibilityRole::ToggleButton)
-        return NSAccessibilityToggleSubrole;
+        return StringImpl::create(NSAccessibilityToggleSubrole);
     if (role == AccessibilityRole::SectionFooter)
-        return "AXSectionFooter"_s;
+        return "AXSectionFooter"_si;
     if (role == AccessibilityRole::SectionHeader)
-        return "AXSectionHeader"_s;
+        return "AXSectionHeader"_si;
     if (role == AccessibilityRole::SpinButtonPart) {
         if (isIncrementor())
-            return NSAccessibilityIncrementArrowSubrole;
-        return NSAccessibilityDecrementArrowSubrole;
+            return StringImpl::create(NSAccessibilityIncrementArrowSubrole);
+        return StringImpl::create(NSAccessibilityDecrementArrowSubrole);
     }
 
     if (isFileUploadButton())
-        return "AXFileUploadButton"_s;
+        return "AXFileUploadButton"_si;
 
     if (isTreeItem())
-        return NSAccessibilityOutlineRowSubrole;
+        return StringImpl::create(NSAccessibilityOutlineRowSubrole);
 
     if (isFieldset())
-        return "AXFieldset"_s;
+        return "AXFieldset"_si;
 
     if (isList()) {
         if (isUnorderedList() || isOrderedList())
-            return "AXContentList"_s;
+            return "AXContentList"_si;
         if (isDescriptionList())
-            return "AXDescriptionList"_s;
+            return "AXDescriptionList"_si;
     }
 
     if (listBoxInterpretation() == ListBoxInterpretation::ActuallyStaticList)
-        return "AXContentList"_s;
+        return "AXContentList"_si;
 
     // ARIA content subroles.
     switch (role) {
     case AccessibilityRole::Form:
-        return "AXLandmarkForm"_s;
+        return "AXLandmarkForm"_si;
     case AccessibilityRole::LandmarkBanner:
-        return "AXLandmarkBanner"_s;
+        return "AXLandmarkBanner"_si;
     case AccessibilityRole::LandmarkComplementary:
-        return "AXLandmarkComplementary"_s;
+        return "AXLandmarkComplementary"_si;
     case AccessibilityRole::LandmarkContentInfo:
-        return "AXLandmarkContentInfo"_s;
+        return "AXLandmarkContentInfo"_si;
     case AccessibilityRole::LandmarkMain:
-        return "AXLandmarkMain"_s;
+        return "AXLandmarkMain"_si;
     case AccessibilityRole::LandmarkNavigation:
-        return "AXLandmarkNavigation"_s;
+        return "AXLandmarkNavigation"_si;
     case AccessibilityRole::LandmarkDocRegion:
     case AccessibilityRole::LandmarkRegion:
-        return "AXLandmarkRegion"_s;
+        return "AXLandmarkRegion"_si;
     case AccessibilityRole::LandmarkSearch:
-        return "AXLandmarkSearch"_s;
+        return "AXLandmarkSearch"_si;
     case AccessibilityRole::SectionFooter:
-        return "AXSectionFooter"_s;
+        return "AXSectionFooter"_si;
     case AccessibilityRole::SectionHeader:
-        return "AXSectionHeader"_s;
+        return "AXSectionHeader"_si;
     case AccessibilityRole::ApplicationAlert:
-        return "AXApplicationAlert"_s;
+        return "AXApplicationAlert"_si;
     case AccessibilityRole::ApplicationAlertDialog:
-        return "AXApplicationAlertDialog"_s;
+        return "AXApplicationAlertDialog"_si;
     case AccessibilityRole::ApplicationDialog:
-        return "AXApplicationDialog"_s;
+        return "AXApplicationDialog"_si;
     case AccessibilityRole::Feed:
     case AccessibilityRole::Footnote:
     case AccessibilityRole::Group:
-        return "AXApplicationGroup"_s;
+        return "AXApplicationGroup"_si;
     case AccessibilityRole::ApplicationLog:
-        return "AXApplicationLog"_s;
+        return "AXApplicationLog"_si;
     case AccessibilityRole::ApplicationMarquee:
-        return "AXApplicationMarquee"_s;
+        return "AXApplicationMarquee"_si;
     case AccessibilityRole::ApplicationStatus:
-        return "AXApplicationStatus"_s;
+        return "AXApplicationStatus"_si;
     case AccessibilityRole::ApplicationTimer:
-        return "AXApplicationTimer"_s;
+        return "AXApplicationTimer"_si;
     case AccessibilityRole::Document:
     case AccessibilityRole::GraphicsDocument:
-        return "AXDocument"_s;
+        return "AXDocument"_si;
     case AccessibilityRole::DocumentArticle:
-        return "AXDocumentArticle"_s;
+        return "AXDocumentArticle"_si;
     case AccessibilityRole::DocumentMath:
-        return "AXDocumentMath"_s;
+        return "AXDocumentMath"_si;
     case AccessibilityRole::DocumentNote:
-        return "AXDocumentNote"_s;
+        return "AXDocumentNote"_si;
     case AccessibilityRole::UserInterfaceTooltip:
-        return "AXUserInterfaceTooltip"_s;
+        return "AXUserInterfaceTooltip"_si;
     case AccessibilityRole::TabPanel:
-        return "AXTabPanel"_s;
+        return "AXTabPanel"_si;
     case AccessibilityRole::Definition:
-        return "AXDefinition"_s;
+        return "AXDefinition"_si;
     case AccessibilityRole::DescriptionListTerm:
     case AccessibilityRole::Term:
-        return "AXTerm"_s;
+        return "AXTerm"_si;
     case AccessibilityRole::DescriptionListDetail:
-        return "AXDescription"_s;
+        return "AXDescription"_si;
     case AccessibilityRole::WebApplication:
-        return "AXWebApplication"_s;
+        return "AXWebApplication"_si;
     case AccessibilityRole::Suggestion:
-        return "AXSuggestion"_s;
+        return "AXSuggestion"_si;
         // Default doesn't return anything, so roles defined below can be chosen.
     default:
         break;
@@ -320,98 +320,98 @@ String AccessibilityObject::subrolePlatformString() const
 
     // Only return a subrole for explicitly defined (via ARIA) text groups.
     if (ariaRoleAttribute() == AccessibilityRole::TextGroup)
-        return "AXApplicationGroup"_s;
+        return "AXApplicationGroup"_si;
 
     if (role == AccessibilityRole::MathElement) {
         if (isMathFraction())
-            return "AXMathFraction"_s;
+            return "AXMathFraction"_si;
         if (isMathFenced())
-            return "AXMathFenced"_s;
+            return "AXMathFenced"_si;
         if (isMathSubscriptSuperscript())
-            return "AXMathSubscriptSuperscript"_s;
+            return "AXMathSubscriptSuperscript"_si;
         if (isMathRow())
-            return "AXMathRow"_s;
+            return "AXMathRow"_si;
         if (isMathUnderOver())
-            return "AXMathUnderOver"_s;
+            return "AXMathUnderOver"_si;
         if (isMathSquareRoot())
-            return "AXMathSquareRoot"_s;
+            return "AXMathSquareRoot"_si;
         if (isMathRoot())
-            return "AXMathRoot"_s;
+            return "AXMathRoot"_si;
         if (isMathText())
-            return "AXMathText"_s;
+            return "AXMathText"_si;
         if (isMathNumber())
-            return "AXMathNumber"_s;
+            return "AXMathNumber"_si;
         if (isMathIdentifier())
-            return "AXMathIdentifier"_s;
+            return "AXMathIdentifier"_si;
         if (isMathTable())
-            return "AXMathTable"_s;
+            return "AXMathTable"_si;
         if (isMathTableRow())
-            return "AXMathTableRow"_s;
+            return "AXMathTableRow"_si;
         if (isMathTableCell())
-            return "AXMathTableCell"_s;
+            return "AXMathTableCell"_si;
         if (isMathFenceOperator())
-            return "AXMathFenceOperator"_s;
+            return "AXMathFenceOperator"_si;
         if (isMathSeparatorOperator())
-            return "AXMathSeparatorOperator"_s;
+            return "AXMathSeparatorOperator"_si;
         if (isMathOperator())
-            return "AXMathOperator"_s;
+            return "AXMathOperator"_si;
         if (isMathMultiscript())
-            return "AXMathMultiscript"_s;
+            return "AXMathMultiscript"_si;
     }
 
     if (role == AccessibilityRole::Video)
-        return "AXVideo"_s;
+        return "AXVideo"_si;
     if (role == AccessibilityRole::Audio)
-        return "AXAudio"_s;
+        return "AXAudio"_si;
     if (role == AccessibilityRole::Details)
-        return "AXDetails"_s;
+        return "AXDetails"_si;
     if (role == AccessibilityRole::Summary)
-        return "AXSummary"_s;
+        return "AXSummary"_si;
     if (role == AccessibilityRole::Time)
-        return "AXTimeGroup"_s;
+        return "AXTimeGroup"_si;
 
     if (isMediaTimeline())
-        return NSAccessibilityTimelineSubrole;
+        return StringImpl::create(NSAccessibilityTimelineSubrole);
 
     if (isSwitch())
-        return NSAccessibilitySwitchSubrole;
+        return StringImpl::create(NSAccessibilitySwitchSubrole);
 
     if (role == AccessibilityRole::Insertion)
-        return "AXInsertStyleGroup"_s;
+        return "AXInsertStyleGroup"_si;
     if (role == AccessibilityRole::Deletion)
-        return "AXDeleteStyleGroup"_s;
+        return "AXDeleteStyleGroup"_si;
     if (role == AccessibilityRole::Superscript)
-        return "AXSuperscriptStyleGroup"_s;
+        return "AXSuperscriptStyleGroup"_si;
     if (role == AccessibilityRole::Subscript)
-        return "AXSubscriptStyleGroup"_s;
+        return "AXSubscriptStyleGroup"_si;
 
     switch (role) {
     case AccessibilityRole::RubyInline:
-        return "AXRubyInline"_s;
+        return "AXRubyInline"_si;
     case AccessibilityRole::RubyText:
-        return "AXRubyText"_s;
+        return "AXRubyText"_si;
     default:
         break;
     }
 
     if (isCode())
-        return "AXCodeStyleGroup"_s;
+        return "AXCodeStyleGroup"_si;
 
     using namespace HTMLNames;
     auto elementName = this->elementName();
     if (elementName == ElementName::HTML_kbd)
-        return "AXKeyboardInputStyleGroup"_s;
+        return "AXKeyboardInputStyleGroup"_si;
     if (elementName == ElementName::HTML_pre)
-        return "AXPreformattedStyleGroup"_s;
+        return "AXPreformattedStyleGroup"_si;
     if (elementName == ElementName::HTML_samp)
-        return "AXSampleStyleGroup"_s;
+        return "AXSampleStyleGroup"_si;
     if (elementName == ElementName::HTML_var)
-        return "AXVariableStyleGroup"_s;
+        return "AXVariableStyleGroup"_si;
     if (elementName == ElementName::HTML_cite)
-        return "AXCiteStyleGroup"_s;
+        return "AXCiteStyleGroup"_si;
     ASSERT_WITH_MESSAGE(!isStyleFormatGroup(), "Should've been able to compute a subrole for style format group object");
 
-    return String();
+    return nullptr;
 }
 
 // NSAttributedString support.
@@ -427,7 +427,7 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
     auto textRange = characterRange(scope, textSimpleRange);
 
     auto& annotations = editor->customCompositionAnnotations();
-    if (auto it = annotations.find(NSTextCompletionAttributeName); it != annotations.end()) {
+    if (auto it = annotations.find(StringImpl::create(NSTextCompletionAttributeName).get()); it != annotations.end()) {
         for (auto& annotationRange : it->value) {
             auto intersectionRange = NSIntersectionRange(textRange, annotationRange);
             if (intersectionRange.length) {

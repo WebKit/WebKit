@@ -62,25 +62,25 @@ public:
 
     NODELETE static bool isVPXSupported();
 
-    using OutputCallback = Function<void(std::expected<DecodedFrame, String>&&)>;
-    using CreateResult = std::expected<Ref<VideoDecoder>, String>;
-    using CreatePromise = NativePromise<Ref<VideoDecoder>, String>;
+    using OutputCallback = Function<void(std::expected<DecodedFrame, RefPtr<StringImpl>>&&)>;
+    using CreateResult = std::expected<Ref<VideoDecoder>, RefPtr<StringImpl>>;
+    using CreatePromise = NativePromise<Ref<VideoDecoder>, RefPtr<StringImpl>>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&);
+    using CreatorFunction = void(*)(StringImpl*, const Config&, CreateCallback&&, OutputCallback&&);
     NODELETE WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static Ref<CreatePromise> create(const String&, const Config&, OutputCallback&&);
-    WEBCORE_EXPORT static void createLocalDecoder(const String&, const Config&, CreateCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl*, const Config&, OutputCallback&&);
+    WEBCORE_EXPORT static void createLocalDecoder(StringImpl*, const Config&, CreateCallback&&, OutputCallback&&);
 
-    using DecodePromise = NativePromise<void, String>;
+    using DecodePromise = NativePromise<void, RefPtr<StringImpl>>;
     virtual Ref<DecodePromise> decode(VideoEncodedData&&) = 0;
 
     virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
 
-    static String fourCCToCodecString(uint32_t fourCC);
+    static RefPtr<StringImpl> fourCCToCodecString(uint32_t fourCC);
 
     static CreatorFunction s_customCreator;
 protected:

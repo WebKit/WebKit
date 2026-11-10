@@ -41,8 +41,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCError);
 }
 
 #define INJECT_STRING_VALUE(key, value) { \
-    if (!value.isNull())\
-        [mutableUserInfo setObject:value.createNSString().get() forKey:key];\
+    if (value)\
+        [mutableUserInfo setObject:createNSString(value).get() forKey:key];\
 }
 
 RetainPtr<id> CoreIPCError::toID() const
@@ -70,8 +70,8 @@ RetainPtr<id> CoreIPCError::toID() const
 
     if (m_localizedRecoveryOptionsError) {
         RetainPtr options = [NSMutableArray arrayWithCapacity:m_localizedRecoveryOptionsError->size()];
-        for (const String& entry : borrow(*m_localizedRecoveryOptionsError))
-            [options addObject:entry.createNSString().get()];
+        for (const RefPtr<StringImpl>& entry : borrow(*m_localizedRecoveryOptionsError))
+            [options addObject:createNSString(entry).get()];
         INJECT_VALUE(NSLocalizedRecoveryOptionsErrorKey, options)
     }
 
@@ -93,14 +93,14 @@ RetainPtr<id> CoreIPCError::toID() const
         RetainPtr interfaces = adoptNS([[NSMutableArray alloc] initWithCapacity:m_networkResolutionReport->interfaces.size()]);
         for (auto& [type, name] : borrow(m_networkResolutionReport->interfaces)) {
             [interfaces addObject:@{
-                @"type" : type.createNSString().get() ?: @"",
-                @"name" : name.createNSString().get() ?: @"",
+                @"type" : createNSString(type).get() ?: @"",
+                @"name" : createNSString(name).get() ?: @"",
             }];
         }
         RetainPtr report = @{
-            @"provider" : m_networkResolutionReport->provider.createNSString().get() ?: @"",
-            @"dnsFailureReason" : m_networkResolutionReport->dnsFailureReason.createNSString().get() ?: @"",
-            @"extendedDNSErrorExtraText" : m_networkResolutionReport->extendedDNSErrorExtraText.createNSString().get() ?: @"",
+            @"provider" : createNSString(m_networkResolutionReport->provider).get() ?: @"",
+            @"dnsFailureReason" : createNSString(m_networkResolutionReport->dnsFailureReason).get() ?: @"",
+            @"extendedDNSErrorExtraText" : createNSString(m_networkResolutionReport->extendedDNSErrorExtraText).get() ?: @"",
             @"interfaces" : interfaces,
         };
         INJECT_VALUE(@"networkResolutionReport", report)
@@ -116,7 +116,7 @@ RetainPtr<id> CoreIPCError::toID() const
         INJECT_VALUE(NSUnderlyingErrorKey, underlyingNSError)
     }
 
-    return adoptNS([[NSError alloc] initWithDomain:m_domain.createNSString().get() code:m_code userInfo:(__bridge NSDictionary *)mutableUserInfo.get()]);
+    return adoptNS([[NSError alloc] initWithDomain:createNSString(m_domain).get() code:m_code userInfo:(__bridge NSDictionary *)mutableUserInfo.get()]);
 }
 
 
@@ -128,11 +128,11 @@ RetainPtr<id> CoreIPCError::toID() const
 
 #define EXTRACT_STRING_VALUE(key, target) { \
     if (RetainPtr extractedValue = dynamic_objc_cast<NSString>([userInfo objectForKey:key]))\
-        target = String(extractedValue.get());\
+        target = StringImpl::create(extractedValue.get());\
 }
 
 CoreIPCError::CoreIPCError(NSError *nsError)
-    : m_domain([nsError domain])
+    : m_domain(StringImpl::create([nsError domain]))
     , m_code([nsError code])
 {
     RetainPtr<NSDictionary> userInfo = [nsError userInfo];
@@ -194,11 +194,11 @@ CoreIPCError::CoreIPCError(NSError *nsError)
 
     if (RetainPtr<id> extractedValue = [userInfo objectForKey:NSLocalizedRecoveryOptionsErrorKey]) {
         if (RetainPtr array = dynamic_objc_cast<NSArray>(extractedValue)) {
-            m_localizedRecoveryOptionsError = Vector<String> { };
+            m_localizedRecoveryOptionsError = Vector<RefPtr<StringImpl>> { };
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL id object in array.get()) {
                 if (RetainPtr string = dynamic_objc_cast<NSString>(object))
-                    m_localizedRecoveryOptionsError->append(string.get());
+                    m_localizedRecoveryOptionsError->append(StringImpl::create(string.get()));
             }
         }
     }
@@ -224,11 +224,11 @@ CoreIPCError::CoreIPCError(NSError *nsError)
     if (RetainPtr resolutionReport = dynamic_objc_cast<NSDictionary>([userInfo objectForKey:@"networkResolutionReport"])) {
         NetworkResolutionReport report;
         if (RetainPtr value = dynamic_objc_cast<NSString>([resolutionReport objectForKey:@"provider"]))
-            report.provider = value.get();
+            report.provider = StringImpl::create(value.get());
         if (RetainPtr value = dynamic_objc_cast<NSString>([resolutionReport objectForKey:@"dnsFailureReason"]))
-            report.dnsFailureReason = value.get();
+            report.dnsFailureReason = StringImpl::create(value.get());
         if (RetainPtr value = dynamic_objc_cast<NSString>([resolutionReport objectForKey:@"extendedDNSErrorExtraText"]))
-            report.extendedDNSErrorExtraText = value.get();
+            report.extendedDNSErrorExtraText = StringImpl::create(value.get());
         if (RetainPtr interfaces = dynamic_objc_cast<NSArray>([resolutionReport objectForKey:@"interfaces"])) {
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL id entry in interfaces.get()) {
@@ -237,9 +237,9 @@ CoreIPCError::CoreIPCError(NSError *nsError)
                     continue;
                 NetworkResolutionReportInterface interface;
                 if (RetainPtr value = dynamic_objc_cast<NSString>([interfaceDictionary objectForKey:@"type"]))
-                    interface.type = value.get();
+                    interface.type = StringImpl::create(value.get());
                 if (RetainPtr value = dynamic_objc_cast<NSString>([interfaceDictionary objectForKey:@"name"]))
-                    interface.name = value.get();
+                    interface.name = StringImpl::create(value.get());
                 report.interfaces.append(WTF::move(interface));
             }
         }

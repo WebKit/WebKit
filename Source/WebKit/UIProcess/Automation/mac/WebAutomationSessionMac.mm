@@ -52,7 +52,7 @@ using namespace WebCore;
 
 #pragma mark Commands for 'PLATFORM(MAC)'
 
-void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<bool>&& enableAutoCapturing, Inspector::CommandCallback<void>&& callback)
+void WebAutomationSession::inspectBrowsingContext(StringImpl* handle, std::optional<bool>&& enableAutoCapturing, Inspector::CommandCallback<void>&& callback)
 {
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
@@ -129,13 +129,13 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 
 void WebAutomationSession::markEventAsSynthesizedForAutomation(NSEvent *event)
 {
-    objc_setAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey, m_sessionIdentifier.createNSString().get(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey, createNSString(m_sessionIdentifier).get(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 {
     RetainPtr senderSessionIdentifier = checked_objc_cast<NSString>(objc_getAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey));
-    if ([senderSessionIdentifier isEqualToString:m_sessionIdentifier.createNSString().get()])
+    if ([senderSessionIdentifier isEqualToString:createNSString(m_sessionIdentifier).get()])
         return true;
 
     switch (event.type) {
@@ -217,7 +217,7 @@ static RetainPtr<NSEvent> simulatedMouseEvent(NSEventType type, WebCore::IntPoin
     return [NSEvent eventWithCGEvent:cgEvent.get()];
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEventModifier> keyModifiers, StringImpl* pointerType)
 {
     UNUSED_PARAM(pointerType);
 
@@ -355,10 +355,10 @@ static constexpr unsigned short unknownKeyCode = USHRT_MAX;
 
 static int keyCodeForCharKey(CharKey charKey)
 {
-    if (charKey.length() != 1)
+    if (length(charKey) != 1)
         return unknownKeyCode;
 
-    switch (charKey[0]) {
+    switch (codeUnitAt(charKey, 0)) {
     case 'q':
     case 'Q':
         return kVK_ANSI_Q;
@@ -796,7 +796,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
         },
         [&] (CharKey charKey) {
             keyCode = keyCodeForCharKey(charKey);
-            characters = charKey.createNSString();
+            characters = createNSString(charKey);
             unmodifiedCharacters = characters;
         }
     );
@@ -905,7 +905,7 @@ static BOOL characterIsProducedUsingShift(NSString *characters)
     }
 }
 
-void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
+void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, StringImpl* keySequence)
 {
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
@@ -914,7 +914,7 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     // This command is more similar to the 'insertText:' editing command, except
     // that this emits keyup/keydown/keypress events for roughly each character.
     // This API should move more towards that direction in the future.
-    RetainPtr text = keySequence.createNSString();
+    RetainPtr text = createNSString(keySequence);
 
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];
     RetainPtr window = page.platformWindow();

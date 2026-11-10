@@ -56,7 +56,7 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&&
     return create(WTF::move(logger), WTF::move(source), createVersion4UUIDString(), WTF::move(postTask));
 }
 
-Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id, std::function<void(Function<void()>&&)>&& postTask)
+Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, RefPtr<StringImpl>&& id, std::function<void(Function<void()>&&)>&& postTask)
 {
     auto privateTrack = adoptRef(*new MediaStreamTrackPrivate(WTF::move(logger), WTF::move(source), WTF::move(id), WTF::move(postTask)));
     privateTrack->initialize();
@@ -293,7 +293,7 @@ void MediaStreamTrackPrivateSourceObserver::applyConstraints(const MediaConstrai
     });
 }
 
-static MediaStreamTrackData fromIdAndSource(String&& id, RealtimeMediaSource& source)
+static MediaStreamTrackData fromIdAndSource(RefPtr<StringImpl>&& id, RealtimeMediaSource& source)
 {
     return  {
         .trackId = WTF::move(id),
@@ -312,7 +312,7 @@ static MediaStreamTrackData fromIdAndSource(String&& id, RealtimeMediaSource& so
     };
 }
 
-MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& trackLogger, Ref<RealtimeMediaSource>&& source, String&& id, std::function<void(Function<void()>&&)>&& postTask)
+MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& trackLogger, Ref<RealtimeMediaSource>&& source, RefPtr<StringImpl>&& id, std::function<void(Function<void()>&&)>&& postTask)
     : m_sourceObserver(MediaStreamTrackPrivateSourceObserver::create(WTF::move(source), WTF::move(postTask)))
     , m_data(fromIdAndSource(WTF::move(id), m_sourceObserver->source()))
     , m_isCaptureTrack(m_sourceObserver->source().isCaptureSource())
@@ -610,7 +610,7 @@ void MediaStreamTrackPrivate::sourceSettingsChanged(RealtimeMediaSourceSettings&
     });
 }
 
-void MediaStreamTrackPrivate::sourceConfigurationChanged(String&& label, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities, size_t settingsCapabilitiesUpdateCount)
+void MediaStreamTrackPrivate::sourceConfigurationChanged(RefPtr<StringImpl>&& label, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities, size_t settingsCapabilitiesUpdateCount)
 {
     ASSERT(isOnCreationThread());
     ALWAYS_LOG(LOGIDENTIFIER);

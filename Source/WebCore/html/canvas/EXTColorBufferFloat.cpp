@@ -42,7 +42,7 @@ EXTColorBufferFloat::EXTColorBufferFloat(WebGLRenderingContextBase& context)
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.
     // Enable it both in the backend and in WebKit.
-    context.getExtension("EXT_float_blend"_s);
+    context.getExtension("EXT_float_blend"_si);
 }
 
 EXTColorBufferFloat::~EXTColorBufferFloat() = default;

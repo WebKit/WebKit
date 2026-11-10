@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-static AtomString serializeANPlusB(const std::pair<int, int>&);
+static RefPtr<AtomStringImpl> serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
 static void appendImplicitSelectorPseudoClassScopeIfNeeded(MutableCSSSelector& selector)
@@ -191,7 +191,7 @@ MutableCSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParser
             auto unknownRange = initialRange.rangeUntil(range);
             unknownSelector->setMatch(CSSSelector::Match::ForgivingUnknown);
             // We store the complete range content for serialization.
-            unknownSelector->setValue(AtomString { unknownRange.serialize() });
+            unknownSelector->setValue(AtomStringImpl::add(unknownRange.serialize()).get());
             // If the range contains a nesting selector, we mark this unknown selector as "nest containing" (it will be used during rule set building)
             for (auto& token : unknownRange) {
                 if (token.type() == DelimiterToken && token.delimiter() == '&') {
@@ -252,7 +252,7 @@ MutableCSSSelectorList CSSSelectorParser::consumeNestedComplexForgivingSelectorL
     });
 }
 
-std::optional<CSSSelectorList> CSSSelectorParser::parseSelectorList(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
+std::optional<CSSSelectorList> CSSSelectorParser::parseSelectorList(StringImpl* string, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
 {
     return parseCSSSelectorList(CSSTokenizer(string).tokenRange(), context, styleSheet, nestedContext);
 }
@@ -320,9 +320,9 @@ static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTo
     return FixedVector<PossiblyQuotedIdentifier> { WTF::move(list) };
 }
 
-static std::optional<FixedVector<AtomString>> consumeCommaSeparatedCustomIdentList(CSSParserTokenRange& range)
+static std::optional<FixedVector<RefPtr<AtomStringImpl>>> consumeCommaSeparatedCustomIdentList(CSSParserTokenRange& range)
 {
-    Vector<AtomString> customIdents { };
+    Vector<RefPtr<AtomStringImpl>> customIdents { };
 
     do {
         auto ident = CSSPropertyParserHelpers::consumeEagerlyResolvableCustomIdentRaw(range);
@@ -338,7 +338,7 @@ static std::optional<FixedVector<AtomString>> consumeCommaSeparatedCustomIdentLi
     // The parsing code guarantees there has to be at least one custom ident.
     ASSERT(!customIdents.isEmpty());
 
-    return FixedVector<AtomString> { WTF::move(customIdents) };
+    return FixedVector<RefPtr<AtomStringImpl>> { WTF::move(customIdents) };
 }
 
 static std::optional<FixedVector<int>> consumeCommaSeparatedIntegerList(CSSParserTokenRange& range)
@@ -640,8 +640,8 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeCompoundSelector(C
     SetForScope ignoreDefaultNamespace(m_ignoreDefaultNamespace, m_resistDefaultNamespace && !parsedName && atEndIgnoringWhitespace(range));
     if (!compoundSelector) {
         auto namespacePrefix = parsedName->namespacePrefix;
-        AtomString namespaceURI = determineNamespace(namespacePrefix);
-        if (namespaceURI.isNull()) {
+        RefPtr<AtomStringImpl> namespaceURI = determineNamespace(namespacePrefix);
+        if (!namespaceURI) {
             m_failedParsing = true;
             return nullptr;
         }
@@ -691,8 +691,8 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeSimpleSelector(CSS
 
 std::optional<ParsedQualifiedName> consumeQualifiedName(CSSParserTokenRange& range)
 {
-    AtomString name;
-    AtomString namespacePrefix;
+    RefPtr<AtomStringImpl> name;
+    RefPtr<AtomStringImpl> namespacePrefix;
 
     auto& firstToken = range.peek();
     if (firstToken.type() == IdentToken) {
@@ -807,7 +807,7 @@ static bool isEquivalentToClassSelector(const CSSSelector& selector, CSSParserMo
     // Neither [class~=""] nor a value with whitespace can match anything, which is not what a
     // class selector would do.
     auto& value = selector.value();
-    return !value.isEmpty() && value.find(isASCIIWhitespace<char16_t>) == notFound;
+    return !isEmpty(value) && find(value, isASCIIWhitespace<char16_t>) == notFound;
 }
 
 std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeAttribute(CSSParserTokenRange& range)
@@ -821,11 +821,11 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeAttribute(CSSParse
         return nullptr;
     block.consumeWhitespace();
 
-    AtomString namespaceURI = determineNamespace(parsedName->namespacePrefix);
-    if (namespaceURI.isNull())
+    RefPtr<AtomStringImpl> namespaceURI = determineNamespace(parsedName->namespacePrefix);
+    if (!namespaceURI)
         return nullptr;
 
-    QualifiedName qualifiedName = parsedName->namespacePrefix.isNull()
+    QualifiedName qualifiedName = !parsedName->namespacePrefix
         ? QualifiedName(nullAtom(), parsedName->name, nullAtom())
         : QualifiedName(parsedName->namespacePrefix, parsedName->name, namespaceURI);
 
@@ -855,7 +855,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeAttribute(CSSParse
     return selector;
 }
 
-static AtomString consumePickerArgument(CSSParserTokenRange& block)
+static RefPtr<AtomStringImpl> consumePickerArgument(CSSParserTokenRange& block)
 {
     auto& ident = block.consumeIncludingWhitespace();
     if (ident.type() != IdentToken || !block.atEnd())
@@ -1064,7 +1064,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
 
         case CSSSelector::PseudoElement::Picker: {
             auto argument = consumePickerArgument(block);
-            if (argument.isNull())
+            if (!argument)
                 return nullptr;
 
             selector->setStringList({ { argument } });
@@ -1075,7 +1075,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionOld:
         case CSSSelector::PseudoElement::ViewTransitionNew: {
-            Vector<AtomString> nameAndClasses;
+            Vector<RefPtr<AtomStringImpl>> nameAndClasses;
 
             // Check for implicit universal selector.
             if (block.peek().type() == DelimiterToken && block.peek().delimiter() == '.')
@@ -1107,19 +1107,19 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             if (!block.atEnd())
                 return nullptr;
 
-            selector->setStringList(FixedVector<AtomString> { WTF::move(nameAndClasses) });
+            selector->setStringList(FixedVector<RefPtr<AtomStringImpl>> { WTF::move(nameAndClasses) });
             return selector;
         }
 
         case CSSSelector::PseudoElement::Part: {
-            Vector<AtomString> argumentList;
+            Vector<RefPtr<AtomStringImpl>> argumentList;
             do {
                 auto& ident = block.consumeIncludingWhitespace();
                 if (ident.type() != IdentToken)
                     return nullptr;
                 argumentList.append(ident.value().toAtomString());
             } while (!block.atEnd());
-            selector->setStringList(FixedVector<AtomString> { WTF::move(argumentList) });
+            selector->setStringList(FixedVector<RefPtr<AtomStringImpl>> { WTF::move(argumentList) });
             return selector;
         }
         case CSSSelector::PseudoElement::Slotted: {
@@ -1201,10 +1201,10 @@ CSSSelector::AttributeMatchType CSSSelectorParser::consumeAttributeFlags(CSSPars
 }
 
 // <an+b> token sequences have special serialization rules: https://www.w3.org/TR/css-syntax-3/#serializing-anb
-static AtomString serializeANPlusB(const std::pair<int, int>& ab)
+static RefPtr<AtomStringImpl> serializeANPlusB(const std::pair<int, int>& ab)
 {
     if (!ab.first)
-        return AtomString::number(ab.second);
+        return AtomStringImpl::number(ab.second);
 
     StringBuilder builder;
 
@@ -1301,18 +1301,18 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
     return true;
 }
 
-const AtomString& CSSSelectorParser::defaultNamespace() const
+const RefPtr<AtomStringImpl>& CSSSelectorParser::defaultNamespace() const
 {
     if (!m_styleSheet || m_ignoreDefaultNamespace)
         return starAtom();
     return m_styleSheet->defaultNamespace();
 }
 
-const AtomString& CSSSelectorParser::determineNamespace(const AtomString& prefix)
+const RefPtr<AtomStringImpl>& CSSSelectorParser::determineNamespace(AtomStringImpl* prefix)
 {
-    if (prefix.isNull())
+    if (!prefix)
         return defaultNamespace();
-    if (prefix.isEmpty())
+    if (isEmpty(prefix))
         return emptyAtom(); // No namespace. If an element/attribute has a namespace, we won't match it.
     if (prefix == starAtom())
         return starAtom(); // We'll match any namespace.
@@ -1321,20 +1321,20 @@ const AtomString& CSSSelectorParser::determineNamespace(const AtomString& prefix
     return m_styleSheet->namespaceURIFromPrefix(prefix);
 }
 
-void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, MutableCSSSelector& compoundSelector)
+void CSSSelectorParser::prependTypeSelectorIfNeeded(AtomStringImpl* namespacePrefix, AtomStringImpl* elementName, MutableCSSSelector& compoundSelector)
 {
     bool isShadowDOM = compoundSelector.needsImplicitShadowCombinatorForMatching();
     
-    if (elementName.isNull() && defaultNamespace() == starAtom() && !isShadowDOM)
+    if (!elementName && defaultNamespace() == starAtom() && !isShadowDOM)
         return;
 
-    AtomString determinedElementName = elementName.isNull() ? starAtom() : elementName;
-    AtomString namespaceURI = determineNamespace(namespacePrefix);
-    if (namespaceURI.isNull()) {
+    RefPtr<AtomStringImpl> determinedElementName = !elementName ? starAtom().get() : elementName;
+    RefPtr<AtomStringImpl> namespaceURI = determineNamespace(namespacePrefix);
+    if (!namespaceURI) {
         m_failedParsing = true;
         return;
     }
-    AtomString determinedPrefix = namespacePrefix;
+    RefPtr<AtomStringImpl> determinedPrefix = namespacePrefix;
     if (namespaceURI == defaultNamespace())
         determinedPrefix = nullAtom();
     QualifiedName tag(determinedPrefix, determinedElementName, namespaceURI);
@@ -1348,7 +1348,7 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespaceP
     // (relation) on in the cases where there are no simple selectors preceding
     // the pseudo element.
     bool isHostPseudo = compoundSelector.isHostPseudoClass();
-    if (isHostPseudo && elementName.isNull() && namespacePrefix.isNull())
+    if (isHostPseudo && !elementName && !namespacePrefix)
         return;
     if (tag != anyQName() || isHostPseudo || isShadowDOM)
         compoundSelector.appendTagInComplexSelector(tag, determinedPrefix == nullAtom() && determinedElementName == starAtom() && !isHostPseudo);
@@ -1582,9 +1582,9 @@ std::optional<Style::PseudoElementIdentifier> CSSSelectorParser::parsePseudoElem
     }
     case CSSSelector::PseudoElement::Picker: {
         auto argument = consumePickerArgument(block);
-        if (argument.isNull())
+        if (!argument)
             return { };
-        return { Style::PseudoElementIdentifier { PseudoElementType::UserAgentPartFallback, AtomString { makeString("picker("_s, argument, ')') } } };
+        return { Style::PseudoElementIdentifier { PseudoElementType::UserAgentPartFallback, AtomStringImpl::add(makeString("picker("_s, argument, ')')) } };
     }
     default:
         return { };

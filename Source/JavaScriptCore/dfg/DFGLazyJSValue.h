@@ -76,7 +76,7 @@ public:
         return result;
     }
 
-    static LazyJSValue newString(Graph&, const String&);
+    static LazyJSValue newString(Graph&, StringImpl*);
 
     LazinessKind kind() const { return m_kind; }
     SpeculatedType speculatedType() const { return kind() == KnownValue ? SpecBytecodeTop : SpecString; }
@@ -102,7 +102,7 @@ public:
         return u.character;
     }
 
-    String tryGetString(Graph&) const;
+    RefPtr<StringImpl> tryGetString(Graph&) const;
     
     StringImpl* stringImpl() const
     {

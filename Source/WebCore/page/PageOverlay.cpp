@@ -244,17 +244,17 @@ void PageOverlay::didScrollFrame(LocalFrame& frame)
     m_client.didScrollFrame(*this, frame);
 }
 
-bool PageOverlay::copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint parameter, String& value)
+bool PageOverlay::copyAccessibilityAttributeStringValueForPoint(RefPtr<StringImpl> attribute, FloatPoint parameter, RefPtr<StringImpl>& value)
 {
     return m_client.copyAccessibilityAttributeStringValueForPoint(*this, attribute, parameter, value);
 }
 
-bool PageOverlay::copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint parameter, bool& value)
+bool PageOverlay::copyAccessibilityAttributeBoolValueForPoint(RefPtr<StringImpl> attribute, FloatPoint parameter, bool& value)
 {
     return m_client.copyAccessibilityAttributeBoolValueForPoint(*this, attribute, parameter, value);
 }
 
-Vector<String> PageOverlay::copyAccessibilityAttributeNames(bool parameterizedNames)
+Vector<RefPtr<StringImpl>> PageOverlay::copyAccessibilityAttributeNames(bool parameterizedNames)
 {
     return m_client.copyAccessibilityAttributeNames(*this, parameterizedNames);
 }

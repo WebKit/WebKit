@@ -72,7 +72,7 @@ public:
 
     void dump(PrintStream&) const;
     void forEachFrame(NOESCAPE const std::invocable<int, void*, const char*> auto&) const;
-    WTF_EXPORT_PRIVATE String toString() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
 
 private:
     StackTrace(size_t size, size_t initialFrame)

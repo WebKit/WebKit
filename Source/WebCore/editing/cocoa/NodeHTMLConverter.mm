@@ -153,7 +153,7 @@ using NodeSet = HashSet<Ref<Node>>;
 class HTMLConverterCaches {
     WTF_MAKE_TZONE_ALLOCATED(HTMLConverterCaches);
 public:
-    String propertyValueForNode(Node&, CSSPropertyID );
+    RefPtr<StringImpl> propertyValueForNode(Node&, CSSPropertyID );
     bool floatPropertyValueForNode(Node&, CSSPropertyID, float&);
     Color colorPropertyValueForNode(Node&, CSSPropertyID);
 
@@ -359,7 +359,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
     if (dataSource) {
         if (RefPtr<ArchiveResource> resource = dataSource->subresource(URL)) {
             RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:protect(resource->data())->makeContiguous()->createNSData().get()]);
-            RetainPtr filename = resource->response().suggestedFilename().createNSString();
+            RetainPtr filename = createNSString(resource->response().suggestedFilename());
             if (!filename || ![filename length])
                 filename = suggestedFilenameWithMIMEType(resource->url().createNSURL().get(), resource->mimeType());
             [wrapper setPreferredFilename:filename.get()];
@@ -507,7 +507,7 @@ RefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& ele
     return properties->getPropertyCSSValue(propertyId);
 }
 
-static std::optional<String> stringFromCSSValue(CSSValue& value)
+static std::optional<RefPtr<StringImpl>> stringFromCSSValue(CSSValue& value)
 {
     if (value.isValueList() || value.isAppleColorFilterValue() || value.isFilterValue() || value.isTextShadowPropertyValue() || value.isBoxShadowPropertyValue() || value.isURL() || value.isKeywordValue() || value.isStringValue())
         return value.cssText(CSS::defaultSerializationContext());
@@ -515,7 +515,7 @@ static std::optional<String> stringFromCSSValue(CSSValue& value)
     return std::nullopt;
 }
 
-String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID propertyId)
+RefPtr<StringImpl> HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
     using namespace ElementNames;
 
@@ -523,7 +523,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
     if (!element) {
         if (RefPtr parent = node.parentInComposedTree())
             return propertyValueForNode(*parent, propertyId);
-        return String();
+        return nullptr;
     }
 
     bool inherit = false;
@@ -575,56 +575,56 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
         case HTML::p:
         case HTML::pre:
         case HTML::ul:
-            return "block"_s;
+            return "block"_si;
         case HTML::li:
-            return "list-item"_s;
+            return "list-item"_si;
         case HTML::table:
-            return "table"_s;
+            return "table"_si;
         case HTML::tr:
-            return "table-row"_s;
+            return "table-row"_si;
         case HTML::th:
         case HTML::td:
-            return "table-cell"_s;
+            return "table-cell"_si;
         case HTML::thead:
-            return "table-header-group"_s;
+            return "table-header-group"_si;
         case HTML::tbody:
-            return "table-row-group"_s;
+            return "table-row-group"_si;
         case HTML::tfoot:
-            return "table-footer-group"_s;
+            return "table-footer-group"_si;
         case HTML::col:
-            return "table-column"_s;
+            return "table-column"_si;
         case HTML::colgroup:
-            return "table-column-group"_s;
+            return "table-column-group"_si;
         case HTML::caption:
-            return "table-caption"_s;
+            return "table-caption"_si;
         default:
             break;
         }
         break;
     case CSSPropertyID::WhiteSpace:
         if (element->hasTagName(preTag))
-            return "pre"_s;
+            return "pre"_si;
         inherit = true;
         break;
     case CSSPropertyID::FontStyle:
         if (element->hasTagName(iTag) || element->hasTagName(citeTag) || element->hasTagName(emTag) || element->hasTagName(varTag) || element->hasTagName(addressTag))
-            return "italic"_s;
+            return "italic"_si;
         inherit = true;
         break;
     case CSSPropertyID::FontWeight:
         if (element->hasTagName(bTag) || element->hasTagName(strongTag) || element->hasTagName(thTag))
-            return "bolder"_s;
+            return "bolder"_si;
         inherit = true;
         break;
     case CSSPropertyID::TextDecorationLine:
         switch (element->elementName()) {
         case HTML::u:
         case HTML::ins:
-            return "underline"_s;
+            return "underline"_si;
         case HTML::s:
         case HTML::strike:
         case HTML::del:
-            return "line-through"_s;
+            return "line-through"_si;
         default:
             break;
         }
@@ -632,19 +632,19 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
         break;
     case CSSPropertyID::TextAlign:
         if (element->hasTagName(centerTag) || element->hasTagName(captionTag) || element->hasTagName(thTag))
-            return "center"_s;
+            return "center"_si;
         inherit = true;
         break;
     case CSSPropertyID::VerticalAlign:
         switch (element->elementName()) {
         case HTML::sup:
-            return "super"_s;
+            return "super"_si;
         case HTML::sub:
-            return "sub"_s;
+            return "sub"_si;
         case HTML::thead:
         case HTML::tbody:
         case HTML::tfoot:
-            return "middle"_s;
+            return "middle"_si;
         case HTML::tr:
         case HTML::th:
         case HTML::td:
@@ -675,7 +675,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
             return propertyValueForNode(*parent, propertyId);
     }
 
-    return String();
+    return nullptr;
 }
 
 static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
@@ -786,11 +786,11 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
 
 bool HTMLConverterCaches::isBlockElement(Element& element)
 {
-    String displayValue = propertyValueForNode(element, CSSPropertyID::Display);
-    if (displayValue == "block"_s || displayValue == "list-item"_s || displayValue.startsWith("table"_s))
+    RefPtr<StringImpl> displayValue = propertyValueForNode(element, CSSPropertyID::Display);
+    if (equal(displayValue, "block"_s) || equal(displayValue, "list-item"_s) || startsWith(displayValue, "table"_s))
         return true;
-    String floatValue = propertyValueForNode(element, CSSPropertyID::Float);
-    if (floatValue == "left"_s || floatValue == "right"_s)
+    RefPtr<StringImpl> floatValue = propertyValueForNode(element, CSSPropertyID::Float);
+    if (equal(floatValue, "left"_s) || equal(floatValue, "right"_s))
         return true;
     return false;
 }
@@ -801,7 +801,7 @@ bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
         return false;
     // In the text system, text blocks (table elements) and documents (body elements)
     // have their own background colors, which should not be inherited.
-    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || propertyValueForNode(element, CSSPropertyID::Display).startsWith("table"_s);
+    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || startsWith(propertyValueForNode(element, CSSPropertyID::Display), "table"_s);
 }
 
 RefPtr<Element> HTMLConverter::_blockLevelElementForNode(Node* node)
@@ -931,14 +931,14 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         font = [fontManager convertFont:actualFont toSize:fontSize];
 #endif
     if (!font) {
-        String fontName = _caches->propertyValueForNode(element, CSSPropertyID::FontFamily);
-        if (fontName.length())
-            font = _fontForNameAndSize(fontName.convertToASCIILowercase().createNSString().get(), fontSize, _fontCache.get());
+        RefPtr<StringImpl> fontName = _caches->propertyValueForNode(element, CSSPropertyID::FontFamily);
+        if (length(fontName))
+            font = _fontForNameAndSize(createNSString(convertToASCIILowercase(fontName)).get(), fontSize, _fontCache.get());
         if (!font)
             font = [PlatformFontClass fontWithName:@"Times" size:fontSize];
 
-        String fontStyle = _caches->propertyValueForNode(element, CSSPropertyID::FontStyle);
-        if (fontStyle == "italic"_s || fontStyle == "oblique"_s) {
+        RefPtr<StringImpl> fontStyle = _caches->propertyValueForNode(element, CSSPropertyID::FontStyle);
+        if (equal(fontStyle, "italic"_s) || equal(fontStyle, "oblique"_s)) {
             RetainPtr originalFont = font;
 #if PLATFORM(IOS_FAMILY)
             font = [PlatformFontClass fontWithFamilyName:[font familyName] traits:UIFontTraitItalic size:[font pointSize]];
@@ -949,8 +949,8 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
                 font = originalFont;
         }
 
-        String fontWeight = _caches->propertyValueForNode(element, CSSPropertyID::FontStyle);
-        if (fontWeight.startsWith("bold"_s) || parseIntegerAllowingTrailingJunk<int>(fontWeight).value_or(0) >= 700) {
+        RefPtr<StringImpl> fontWeight = _caches->propertyValueForNode(element, CSSPropertyID::FontStyle);
+        if (startsWith(fontWeight, "bold"_s) || parseIntegerAllowingTrailingJunk<int>(fontWeight).value_or(0) >= 700) {
             // ??? handle weight properly using NSFontManager
             RetainPtr originalFont = font;
 #if PLATFORM(IOS_FAMILY)
@@ -962,7 +962,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
                 font = originalFont;
         }
 #if !PLATFORM(IOS_FAMILY) // IJB: No small caps support on iOS
-        if (_caches->propertyValueForNode(element, CSSPropertyID::FontVariantCaps) == "small-caps"_s) {
+        if (equal(_caches->propertyValueForNode(element, CSSPropertyID::FontVariantCaps), "small-caps"_s)) {
             // ??? synthesize small-caps if [font isEqual:originalFont]
             RetainPtr originalFont = font;
             font = [fontManager convertFont:font toHaveTrait:NSSmallCapsFontMask];
@@ -986,13 +986,13 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (strokeColor)
         [attrs setObject:strokeColor.get() forKey:NSStrokeColorAttributeName];
 
-    String fontKerning = _caches->propertyValueForNode(element, CSSPropertyID::FontKerning);
-    String letterSpacing = _caches->propertyValueForNode(element, CSSPropertyID::LetterSpacing);
-    if (fontKerning.length() || letterSpacing.length()) {
-        if (fontKerning == noneAtom())
+    RefPtr<StringImpl> fontKerning = _caches->propertyValueForNode(element, CSSPropertyID::FontKerning);
+    RefPtr<StringImpl> letterSpacing = _caches->propertyValueForNode(element, CSSPropertyID::LetterSpacing);
+    if (length(fontKerning) || length(letterSpacing)) {
+        if (equal(fontKerning, noneAtom()))
             [attrs setObject:@0.0 forKey:NSKernAttributeName];
         else {
-            double kernVal = letterSpacing.length() ? letterSpacing.toDouble() : 0.0;
+            double kernVal = length(letterSpacing) ? toDouble(letterSpacing) : 0.0;
             if (std::abs(kernVal - 0) < FLT_EPSILON)
                 [attrs setObject:@0.0 forKey:NSKernAttributeName]; // auto and normal, the other possible values, are both "kerning enabled"
             else
@@ -1000,29 +1000,29 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         }
     }
 
-    String fontLigatures = _caches->propertyValueForNode(element, CSSPropertyID::FontVariantLigatures);
-    if (fontLigatures.length()) {
-        if (fontLigatures.contains("normal"_s))
+    RefPtr<StringImpl> fontLigatures = _caches->propertyValueForNode(element, CSSPropertyID::FontVariantLigatures);
+    if (length(fontLigatures)) {
+        if (contains(fontLigatures, "normal"_s))
             ;   // default: whatever the system decides to do
-        else if (fontLigatures.contains("common-ligatures"_s))
+        else if (contains(fontLigatures, "common-ligatures"_s))
             [attrs setObject:@1 forKey:NSLigatureAttributeName];   // explicitly enabled
-        else if (fontLigatures.contains("no-common-ligatures"_s))
+        else if (contains(fontLigatures, "no-common-ligatures"_s))
             [attrs setObject:@0 forKey:NSLigatureAttributeName];  // explicitly disabled
     }
 
-    String textDecoration = _caches->propertyValueForNode(element, CSSPropertyID::TextDecorationLine);
-    if (textDecoration.length()) {
-        if (textDecoration.contains("underline"_s))
+    RefPtr<StringImpl> textDecoration = _caches->propertyValueForNode(element, CSSPropertyID::TextDecorationLine);
+    if (length(textDecoration)) {
+        if (contains(textDecoration, "underline"_s))
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if (textDecoration.contains("line-through"_s))
+        if (contains(textDecoration, "line-through"_s))
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
     }
 
-    String verticalAlign = _caches->propertyValueForNode(element, CSSPropertyID::VerticalAlign);
-    if (verticalAlign.length()) {
-        if (verticalAlign == "super"_s)
+    RefPtr<StringImpl> verticalAlign = _caches->propertyValueForNode(element, CSSPropertyID::VerticalAlign);
+    if (length(verticalAlign)) {
+        if (equal(verticalAlign, "super"_s))
             [attrs setObject:[NSNumber numberWithInteger:1] forKey:NSSuperscriptAttributeName];
-        else if (verticalAlign == "sub"_s)
+        else if (equal(verticalAlign, "sub"_s))
             [attrs setObject:[NSNumber numberWithInteger:-1] forKey:NSSuperscriptAttributeName];
     }
 
@@ -1030,9 +1030,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (_caches->floatPropertyValueForNode(element, CSSPropertyID::VerticalAlign, baselineOffset))
         [attrs setObject:@(baselineOffset) forKey:NSBaselineOffsetAttributeName];
 
-    String textShadow = _caches->propertyValueForNode(element, CSSPropertyID::TextShadow);
-    if (textShadow.length() > 4) {
-        RetainPtr shadow = _shadowForShadowStyle(textShadow.createNSString().get());
+    RefPtr<StringImpl> textShadow = _caches->propertyValueForNode(element, CSSPropertyID::TextShadow);
+    if (length(textShadow) > 4) {
+        RetainPtr shadow = _shadowForShadowStyle(createNSString(textShadow).get());
         if (shadow)
             [attrs setObject:shadow.get() forKey:NSShadowAttributeName];
     }
@@ -1058,30 +1058,30 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             [attrs setObject:_topPresentationIntent.get() forKey:NSPresentationIntentAttributeName];
         bool isParagraph = coreBlockElement->hasTagName(pTag) || coreBlockElement->hasTagName(liTag) || heading || coreBlockElement->hasTagName(blockquoteTag);
 
-        String textAlign = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::TextAlign);
-        if (textAlign.length()) {
+        RefPtr<StringImpl> textAlign = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::TextAlign);
+        if (length(textAlign)) {
             // WebKit can return -khtml-left, -khtml-right, -khtml-center
-            if (textAlign.endsWith("left"_s))
+            if (endsWith(textAlign, "left"_s))
                 [paragraphStyle setAlignment:NSTextAlignmentLeft];
-            else if (textAlign.endsWith("right"_s))
+            else if (endsWith(textAlign, "right"_s))
                 [paragraphStyle setAlignment:NSTextAlignmentRight];
-            else if (textAlign.endsWith("center"_s))
+            else if (endsWith(textAlign, "center"_s))
                 [paragraphStyle setAlignment:NSTextAlignmentCenter];
-            else if (textAlign.endsWith("justify"_s))
+            else if (endsWith(textAlign, "justify"_s))
                 [paragraphStyle setAlignment:NSTextAlignmentJustified];
         }
 
-        String direction = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::Direction);
-        if (direction.length()) {
-            if (direction == "ltr"_s)
+        RefPtr<StringImpl> direction = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::Direction);
+        if (length(direction)) {
+            if (equal(direction, "ltr"_s))
                 [paragraphStyle setBaseWritingDirection:NSWritingDirectionLeftToRight];
-            else if (direction == "rtl"_s)
+            else if (equal(direction, "rtl"_s))
                 [paragraphStyle setBaseWritingDirection:NSWritingDirectionRightToLeft];
         }
 
-        String hyphenation = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::Hyphens);
-        if (hyphenation.length()) {
-            if (hyphenation == autoAtom())
+        RefPtr<StringImpl> hyphenation = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::Hyphens);
+        if (length(hyphenation)) {
+            if (equal(hyphenation, autoAtom()))
                 [paragraphStyle setHyphenationFactor:1.0];
             else
                 [paragraphStyle setHyphenationFactor:0.0];
@@ -1280,7 +1280,7 @@ void HTMLConverter::_addRemoteFrameMarker(FrameIdentifier frameIdentifier)
     if (rangeToReplace.location < _domRangeStartIndex)
         _domRangeStartIndex += rangeToReplace.length;
 
-    [_attrStr addAttribute:protect(remoteFrameIdentifierAttributeName()) value:makeString(frameIdentifier.toUInt64()).createNSString() range:rangeToReplace];
+    [_attrStr addAttribute:protect(remoteFrameIdentifierAttributeName()) value:createNSString(makeString(frameIdentifier.toUInt64())) range:rangeToReplace];
 
     _flags.isSoft = NO;
 }
@@ -1302,7 +1302,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     if (!fileWrapper && dataSource) {
         if (auto resource = dataSource->subresource(url)) {
             auto& mimeType = resource->mimeType();
-            if (!usePlaceholder || mimeType != textHTMLContentTypeAtom()) {
+            if (!usePlaceholder || !equal(mimeType, textHTMLContentTypeAtom())) {
                 fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:protect(resource->data())->makeContiguous()->createNSData().get()]);
                 [fileWrapper setPreferredFilename:protect(suggestedFilenameWithMIMEType(url, mimeType))];
             } else
@@ -1361,10 +1361,10 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (!attachment) {
             RetainPtr textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
 
-            if (auto& ariaLabel = element.getAttribute("aria-label"_s); !ariaLabel.isEmpty())
-                [textAttachment setAccessibilityLabel:ariaLabel.createNSString().get()];
-            if (auto& altText = element.getAttribute("alt"_s); !altText.isEmpty())
-                [textAttachment setAccessibilityLabel:altText.createNSString().get()];
+            if (auto& ariaLabel = element.getAttribute("aria-label"_atom); !isEmpty(ariaLabel))
+                [textAttachment setAccessibilityLabel:createNSString(ariaLabel).get()];
+            if (auto& altText = element.getAttribute("alt"_atom); !isEmpty(altText))
+                [textAttachment setAccessibilityLabel:createNSString(altText).get()];
 
 #if PLATFORM(IOS_FAMILY)
             float verticalAlign = 0.0;
@@ -1439,7 +1439,7 @@ void HTMLConverter::_fillInBlock(NSTextBlock *block, Element& element, PlatformC
 {
     float result = 0;
 
-    RetainPtr width = element.getAttribute(widthAttr).createNSString();
+    RetainPtr width = createNSString(element.getAttribute(widthAttr));
     if ((width && [width length]) || !isTable) {
         if (_caches->floatPropertyValueForNode(element, CSSPropertyID::Width, result))
             [block setValue:result type:NSTextBlockValueTypeAbsolute forDimension:NSTextBlockDimensionWidth];
@@ -1648,8 +1648,8 @@ void HTMLConverter::_processHeadElement(Element& element)
     // FIXME: Should gather data from other sources e.g. Word, but for that we would need to be able to get comments from DOM
 
     for (RefPtr child = Traversal<HTMLMetaElement>::firstChild(element); child; child = Traversal<HTMLMetaElement>::nextSibling(*child)) {
-        RetainPtr name = child->name().createNSString();
-        RetainPtr content = child->content().createNSString();
+        RetainPtr name = createNSString(child->name());
+        RetainPtr content = createNSString(child->content());
         if (name && content)
             _processMetaElementWithName(name.get(), content.get());
     }
@@ -1813,7 +1813,7 @@ static NSInteger listItemOrdinalForElement(const Element& element)
 
 static constexpr auto languageClassPrefix = "language-"_s;
 
-static String languageHintFromClassAttribute(const Element& element)
+static RefPtr<StringImpl> languageHintFromClassAttribute(const Element& element)
 {
     // Element::classNames() folds case in quirks mode, so read the attribute to keep the hint as written.
     for (auto& classToken : SpaceSplitString { element.attributeWithoutSynchronization(classAttr), SpaceSplitString::ShouldFoldCase::No }) {
@@ -1824,9 +1824,9 @@ static String languageHintFromClassAttribute(const Element& element)
     return { };
 }
 
-static String languageHintForCodeBlockElement(const Element& element)
+static RefPtr<StringImpl> languageHintForCodeBlockElement(const Element& element)
 {
-    if (auto languageHint = languageHintFromClassAttribute(element); !languageHint.isEmpty())
+    if (auto languageHint = languageHintFromClassAttribute(element); !isEmpty(languageHint))
         return languageHint;
 
     // <pre><code class="language-x"> is the CommonMark form.
@@ -1947,16 +1947,16 @@ NSInlinePresentationIntent HTMLConverter::_inlinePresentationIntentForElement(El
 
 BOOL HTMLConverter::_enterElement(Element& element, BOOL embedded)
 {
-    String displayValue = _caches->propertyValueForNode(element, CSSPropertyID::Display);
+    RefPtr<StringImpl> displayValue = _caches->propertyValueForNode(element, CSSPropertyID::Display);
     if (!m_readsAllPresentationIntents && element.hasTagName(blockquoteTag))
         _enterBlockquote();
 
     if (element.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
-    else if ((!m_ignoreUserSelectNoneContent || !m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(element)) && (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s))) {
-        if (_caches->isBlockElement(element) && !element.hasTagName(brTag) && !(displayValue == "table-cell"_s && ![_textTables count])
-            && !(!m_readsAllPresentationIntents && [_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
-            _newParagraphForElement(element, element.tagName().createNSString().get(), NO, YES);
+    else if ((!m_ignoreUserSelectNoneContent || !m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(element)) && (!length(displayValue) || !(equal(displayValue, noneAtom()) || equal(displayValue, "table-column"_s) || equal(displayValue, "table-column-group"_s)))) {
+        if (_caches->isBlockElement(element) && !element.hasTagName(brTag) && !(equal(displayValue, "table-cell"_s) && ![_textTables count])
+            && !(!m_readsAllPresentationIntents && [_textLists count] > 0 && equal(displayValue, "block"_s) && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
+            _newParagraphForElement(element, createNSString(element.tagName()).get(), NO, YES);
         return YES;
     }
     return NO;
@@ -1969,12 +1969,12 @@ void HTMLConverter::_addLinkForElement(Element& element, NSRange range)
         return;
 #endif
 
-    RetainPtr urlString = element.getAttribute(hrefAttr).createNSString();
+    RetainPtr urlString = createNSString(element.getAttribute(hrefAttr));
     RetainPtr strippedString = [urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (urlString && [urlString length] > 0 && strippedString && [strippedString length] > 0 && ![strippedString hasPrefix:@"#"]) {
-        RetainPtr url = protect(element.document())->encodingParseURL(urlString.get()).createNSURL();
+        RetainPtr url = protect(element.document())->encodingParseURL(StringImpl::create(urlString.get()).get()).createNSURL();
         if (!url)
-            url = protect(element.document())->encodingParseURL(strippedString.get()).createNSURL();
+            url = protect(element.document())->encodingParseURL(StringImpl::create(strippedString.get()).get()).createNSURL();
         if (!url)
             url = [NSURL _web_URLWithString:strippedString.get() relativeToURL:nil];
         [_attrStr addAttribute:NSLinkAttributeName value:url ? (id)url.get() : (id)urlString.get() range:range];
@@ -1995,22 +1995,22 @@ void HTMLConverter::_addTableForElement(Element *tableElement)
         ASSERT(tableElement);
         Ref coreTableElement = *tableElement;
 
-        RetainPtr cellSpacing = coreTableElement->getAttribute(cellspacingAttr).createNSString();
+        RetainPtr cellSpacing = createNSString(coreTableElement->getAttribute(cellspacingAttr));
         if (cellSpacing && [cellSpacing length] > 0 && ![cellSpacing hasSuffix:@"%"])
             cellSpacingVal = [cellSpacing floatValue];
-        RetainPtr cellPadding = coreTableElement->getAttribute(cellpaddingAttr).createNSString();
+        RetainPtr cellPadding = createNSString(coreTableElement->getAttribute(cellpaddingAttr));
         if (cellPadding && [cellPadding length] > 0 && ![cellPadding hasSuffix:@"%"])
             cellPaddingVal = [cellPadding floatValue];
 
         _fillInBlock(table.get(), coreTableElement, nil, 0, 0, YES);
 
-        if (_caches->propertyValueForNode(coreTableElement, CSSPropertyID::BorderCollapse) == "collapse"_s) {
+        if (equal(_caches->propertyValueForNode(coreTableElement, CSSPropertyID::BorderCollapse), "collapse"_s)) {
             [table setCollapsesBorders:YES];
             cellSpacingVal = 0;
         }
-        if (_caches->propertyValueForNode(coreTableElement, CSSPropertyID::EmptyCells) == "hide"_s)
+        if (equal(_caches->propertyValueForNode(coreTableElement, CSSPropertyID::EmptyCells), "hide"_s))
             [table setHidesEmptyCells:YES];
-        if (_caches->propertyValueForNode(coreTableElement, CSSPropertyID::TableLayout) == "fixed"_s)
+        if (equal(_caches->propertyValueForNode(coreTableElement, CSSPropertyID::TableLayout), "fixed"_s))
             [table setLayoutAlgorithm:NSTextTableLayoutAlgorithmFixed];
     }
 
@@ -2053,16 +2053,16 @@ void HTMLConverter::_addTableCellForElement(Element* element)
 
         block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
 
-        String verticalAlign = _caches->propertyValueForNode(*element, CSSPropertyID::VerticalAlign);
+        RefPtr<StringImpl> verticalAlign = _caches->propertyValueForNode(*element, CSSPropertyID::VerticalAlign);
 
         _fillInBlock(block.get(), *element, color, cellSpacingVal / 2, 0, NO);
-        if (verticalAlign == "middle"_s)
+        if (equal(verticalAlign, "middle"_s))
             [block setVerticalAlignment:NSTextBlockVerticalAlignmentMiddle];
-        else if (verticalAlign == "bottom"_s)
+        else if (equal(verticalAlign, "bottom"_s))
             [block setVerticalAlignment:NSTextBlockVerticalAlignmentBottom];
-        else if (verticalAlign == "baseline"_s)
+        else if (equal(verticalAlign, "baseline"_s))
             [block setVerticalAlignment:NSTextBlockVerticalAlignmentBaseline];
-        else if (verticalAlign == "top"_s)
+        else if (equal(verticalAlign, "top"_s))
             [block setVerticalAlignment:NSTextBlockVerticalAlignmentTop];
     } else {
         block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
@@ -2077,50 +2077,50 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
 {
     BOOL retval = YES;
     BOOL isBlockLevel = _caches->isBlockElement(element);
-    String displayValue = _caches->propertyValueForNode(element, CSSPropertyID::Display);
+    RefPtr<StringImpl> displayValue = _caches->propertyValueForNode(element, CSSPropertyID::Display);
     if (isBlockLevel)
         [_writingDirectionArray removeAllObjects];
     else {
-        String bidi = _caches->propertyValueForNode(element, CSSPropertyID::UnicodeBidi);
-        if (bidi == "embed"_s) {
+        RefPtr<StringImpl> bidi = _caches->propertyValueForNode(element, CSSPropertyID::UnicodeBidi);
+        if (equal(bidi, "embed"_s)) {
             NSUInteger val = NSWritingDirectionEmbedding;
-            if (_caches->propertyValueForNode(element, CSSPropertyID::Direction) == "rtl"_s)
+            if (equal(_caches->propertyValueForNode(element, CSSPropertyID::Direction), "rtl"_s))
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
-        } else if (bidi == "bidi-override"_s) {
+        } else if (equal(bidi, "bidi-override"_s)) {
             NSUInteger val = NSWritingDirectionOverride;
-            if (_caches->propertyValueForNode(element, CSSPropertyID::Direction) == "rtl"_s)
+            if (equal(_caches->propertyValueForNode(element, CSSPropertyID::Direction), "rtl"_s))
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
         }
     }
-    if (displayValue == "table"_s || (![_textTables count] && displayValue == "table-row-group"_s)) {
+    if (equal(displayValue, "table"_s) || (![_textTables count] && equal(displayValue, "table-row-group"_s))) {
         RefPtr tableElement = &element;
-        if (displayValue == "table-row-group"_s) {
+        if (equal(displayValue, "table-row-group"_s)) {
             // If we are starting in medias res, the first thing we see may be the tbody, so go up to the table
             tableElement = _blockLevelElementForNode(protect(element.parentInComposedTree()));
-            if (!tableElement || _caches->propertyValueForNode(*tableElement, CSSPropertyID::Display) != "table"_s)
+            if (!tableElement || !equal(_caches->propertyValueForNode(*tableElement, CSSPropertyID::Display), "table"_s))
                 tableElement = &element;
         }
         while ([_textTables count] > [_textBlocks count])
             _addTableCellForElement(nil);
         _addTableForElement(tableElement.get());
-    } else if (displayValue == "table-footer-group"_s && [_textTables count] > 0) {
+    } else if (equal(displayValue, "table-footer-group"_s) && [_textTables count] > 0) {
         m_textTableFooters.add((__bridge CFTypeRef)[_textTables lastObject], element);
         retval = NO;
-    } else if (displayValue == "table-row"_s && [_textTables count] > 0) {
+    } else if (equal(displayValue, "table-row"_s) && [_textTables count] > 0) {
         auto color = _colorForElement(element, CSSPropertyID::BackgroundColor);
         if (!color)
             color = (PlatformColor *)[PlatformColorClass clearColor];
         [_textTableRowBackgroundColors addObject:color.get()];
-    } else if (displayValue == "table-cell"_s) {
+    } else if (equal(displayValue, "table-cell"_s)) {
         while ([_textTables count] < [_textBlocks count] + 1)
             _addTableForElement(nil);
         _addTableCellForElement(&element);
 #if ENABLE(ATTACHMENT_ELEMENT)
     } else if (RefPtr attachment = dynamicDowncast<HTMLAttachmentElement>(element)) {
         if (attachment->file()) {
-            RetainPtr url = [NSURL fileURLWithPath:attachment->file()->path().createNSString().get()];
+            RetainPtr url = [NSURL fileURLWithPath:createNSString(attachment->file()->path()).get()];
             if (url)
                 _addAttachmentForElement(element, url.get(), isBlockLevel, NO);
         }
@@ -2131,9 +2131,9 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         if (imageElement->isMultiRepresentationHEIC())
             retval = !_addMultiRepresentationHEICAttachmentForImageElement(*imageElement);
 #endif
-        RetainPtr urlString = element.imageSourceURL().createNSString();
+        RetainPtr urlString = createNSString(element.imageSourceURL());
         if (retval && urlString && [urlString length] > 0) {
-            RetainPtr url = protect(element.document())->encodingParseURL(urlString.get()).createNSURL();
+            RetainPtr url = protect(element.document())->encodingParseURL(StringImpl::create(urlString.get()).get()).createNSURL();
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
 #if PLATFORM(IOS_FAMILY)
@@ -2146,21 +2146,21 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         }
         retval = NO;
     } else if (element.hasTagName(objectTag)) {
-        RetainPtr baseString = element.getAttribute(codebaseAttr).createNSString();
-        RetainPtr urlString = element.getAttribute(dataAttr).createNSString();
-        RetainPtr declareString = element.getAttribute(declareAttr).createNSString();
+        RetainPtr baseString = createNSString(element.getAttribute(codebaseAttr));
+        RetainPtr urlString = createNSString(element.getAttribute(dataAttr));
+        RetainPtr declareString = createNSString(element.getAttribute(declareAttr));
         if (urlString && [urlString length] > 0 && ![@"true" isEqualToString:declareString.get()]) {
             RetainPtr<NSURL> baseURL;
             RetainPtr<NSURL> url;
             if (baseString && [baseString length] > 0) {
-                baseURL = protect(element.document())->encodingParseURL(baseString.get()).createNSURL();
+                baseURL = protect(element.document())->encodingParseURL(StringImpl::create(baseString.get()).get()).createNSURL();
                 if (!baseURL)
                     baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
             }
             if (baseURL)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:baseURL.get()];
             if (!url)
-                url = protect(element.document())->encodingParseURL(urlString.get()).createNSURL();
+                url = protect(element.document())->encodingParseURL(StringImpl::create(urlString.get()).get()).createNSURL();
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
             if (url)
@@ -2177,8 +2177,8 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         }
     } else if (element.hasTagName(brTag)) {
         RefPtr blockElement = _blockLevelElementForNode(protect(element.parentInComposedTree()));
-        RetainPtr breakClass = element.getAttribute(classAttr).createNSString();
-        RetainPtr blockTag = blockElement ? blockElement->tagName().createNSString() : nil;
+        RetainPtr breakClass = createNSString(element.getAttribute(classAttr));
+        RetainPtr blockTag = blockElement ? createNSString(blockElement->tagName()) : nil;
         BOOL isExtraBreak = [AppleInterchangeNewline.createNSString() isEqualToString:breakClass.get()];
         BOOL blockElementIsParagraph = ([@"P" isEqualToString:blockTag.get()] || [@"LI" isEqualToString:blockTag.get()] || ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]));
         if (isExtraBreak)
@@ -2187,7 +2187,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             if (blockElement && blockElementIsParagraph)
                 _newLineForElement(element);
             else
-                _newParagraphForElement(element, element.tagName().createNSString().get(), YES, NO);
+                _newParagraphForElement(element, createNSString(element.tagName()).get(), YES, NO);
         }
     } else if (element.hasTagName(ulTag)) {
         TextList textList;
@@ -2215,14 +2215,14 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
     } else if (element.hasTagName(inputTag)) {
         if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element)) {
             if (inputElement->type() == textAtom()) {
-                RetainPtr value = inputElement->value()->createNSString();
+                RetainPtr value = createNSString(inputElement->value().get());
                 if (value && [value length] > 0)
                     _addValue(value.get(), element);
             }
         }
     } else if (element.hasTagName(textareaTag)) {
         if (RefPtr textAreaElement = dynamicDowncast<HTMLTextAreaElement>(element)) {
-            RetainPtr value = textAreaElement->value()->createNSString();
+            RetainPtr value = createNSString(textAreaElement->value().get());
             if (value && [value length] > 0)
                 _addValue(value.get(), element);
         }
@@ -2343,26 +2343,26 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range, NSPresent
 
 void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger startIndex)
 {
-    String displayValue = _caches->propertyValueForNode(element, CSSPropertyID::Display);
+    RefPtr<StringImpl> displayValue = _caches->propertyValueForNode(element, CSSPropertyID::Display);
     NSRange range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
     if (range.length > 0 && element.hasTagName(aTag))
         _addLinkForElement(element, range);
     if (!_flags.reachedEnd && _caches->isBlockElement(element)) {
         [_writingDirectionArray removeAllObjects];
-        if (displayValue == "table-cell"_s && ![_textBlocks count]) {
+        if (equal(displayValue, "table-cell"_s) && ![_textBlocks count]) {
             _newTabForElement(element);
-        } else if (!m_readsAllPresentationIntents && [_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)) {
+        } else if (!m_readsAllPresentationIntents && [_textLists count] > 0 && equal(displayValue, "block"_s) && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)) {
             _newLineForElement(element);
         } else {
-            _newParagraphForElement(element, element.tagName().createNSString().get(), !range.length, YES);
+            _newParagraphForElement(element, createNSString(element.tagName()).get(), !range.length, YES);
         }
     } else if ([_writingDirectionArray count] > 0) {
-        String bidi = _caches->propertyValueForNode(element, CSSPropertyID::UnicodeBidi);
-        if (bidi == "embed"_s || bidi == "bidi-override"_s)
+        RefPtr<StringImpl> bidi = _caches->propertyValueForNode(element, CSSPropertyID::UnicodeBidi);
+        if (equal(bidi, "embed"_s) || equal(bidi, "bidi-override"_s))
             [_writingDirectionArray removeLastObject];
     }
     range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
-    if (displayValue == "table"_s && [_textTables count] > 0) {
+    if (equal(displayValue, "table"_s) && [_textTables count] > 0) {
         NSTextTable *key = [_textTables lastObject];
         RefPtr footer = m_textTableFooters.get((__bridge CFTypeRef)key);
         while ([_textTables count] < [_textBlocks count] + 1)
@@ -2376,7 +2376,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         [_textTablePaddings removeLastObject];
         [_textTableRows removeLastObject];
         [_textTableRowArrays removeLastObject];
-    } else if (displayValue == "table-row"_s && [_textTables count] > 0) {
+    } else if (equal(displayValue, "table-row"_s) && [_textTables count] > 0) {
         NSTextTable *table = [_textTables lastObject];
         RetainPtr<NSTextTableBlock> block;
         NSMutableArray *rowArray = [_textTableRowArrays lastObject];
@@ -2413,7 +2413,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         [_textTableRowArrays addObject:rowArray];
         if ([_textTableRowBackgroundColors count] > 0)
             [_textTableRowBackgroundColors removeLastObject];
-    } else if (displayValue == "table-cell"_s && [_textBlocks count] > 0) {
+    } else if (equal(displayValue, "table-cell"_s) && [_textBlocks count] > 0) {
         while ([_textTables count] > [_textBlocks count]) {
             [_textTables removeLastObject];
             [_textTableSpacings removeLastObject];
@@ -2432,7 +2432,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
     } else if (element.hasTagName(qTag)) {
         _addQuoteForElement(element, NO, --_quoteLevel);
     } else if (element.hasTagName(spanTag)) {
-        RetainPtr className = element.getAttribute(classAttr).createNSString();
+        RetainPtr className = createNSString(element.getAttribute(classAttr));
         RetainPtr<NSMutableString> mutableString;
         NSUInteger i, count = 0;
         unichar c;
@@ -2484,9 +2484,9 @@ void HTMLConverter::_processText(Text& text)
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
 
-    String originalString = text.data();
+    RefPtr<StringImpl> originalString = text.data();
     unsigned startOffset = 0;
-    unsigned endOffset = originalString.length();
+    unsigned endOffset = length(originalString);
     if (&text == m_start.containerNode()) {
         startOffset = m_start.offsetInContainerNode();
         _domRangeStartIndex = [_attrStr length];
@@ -2496,15 +2496,15 @@ void HTMLConverter::_processText(Text& text)
         endOffset = m_end.offsetInContainerNode();
         _flags.reachedEnd = YES;
     }
-    if ((startOffset > 0 || endOffset < originalString.length()) && endOffset >= startOffset)
-        originalString = originalString.substring(startOffset, endOffset - startOffset);
-    String outputString = originalString;
+    if ((startOffset > 0 || endOffset < length(originalString)) && endOffset >= startOffset)
+        originalString = substring(originalString, startOffset, endOffset - startOffset);
+    RefPtr<StringImpl> outputString = originalString;
 
     // FIXME: Use RenderText's content instead.
     bool wasSpace = false;
-    if (_caches->propertyValueForNode(text, CSSPropertyID::WhiteSpace).startsWith("pre"_s)) {
-        if (textLength && originalString.length() && _flags.isSoft) {
-            unichar c = originalString.codeUnitAt(0);
+    if (startsWith(_caches->propertyValueForNode(text, CSSPropertyID::WhiteSpace), "pre"_s)) {
+        if (textLength && length(originalString) && _flags.isSoft) {
+            unichar c = codeUnitAt(originalString, 0);
             if (c == '\n' || c == '\r' || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter || c == NSFormFeedCharacter || c == WebNextLineCharacter)
                 rangeToReplace = NSMakeRange(textLength - 1, 1);
         }
@@ -2514,16 +2514,16 @@ void HTMLConverter::_processText(Text& text)
                 intent = _presentationIntentForElement(*parent);
             if (intent && [intent intentKind] != NSPresentationIntentKindCodeBlock) {
                 unsigned firstReplacedIndex = rangeToReplace.length ? 1 : 0;
-                outputString = makeString(StringView { outputString }.left(firstReplacedIndex), makeStringByReplacingAll(outputString.substring(firstReplacedIndex), '\n', NSLineSeparatorCharacter));
+                outputString = makeString(StringView { outputString }.left(firstReplacedIndex), makeStringByReplacingAll(substring(outputString, firstReplacedIndex), '\n', NSLineSeparatorCharacter));
             }
         }
     } else {
-        unsigned count = originalString.length();
+        unsigned count = length(originalString);
         bool wasLeading = true;
         StringBuilder builder;
         Latin1Character noBreakSpaceRepresentation = 0;
         for (unsigned i = 0; i < count; i++) {
-            char16_t c = originalString.codeUnitAt(i);
+            char16_t c = codeUnitAt(originalString, i);
             bool isWhitespace = c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == 0xc || c == 0x200b;
             if (isWhitespace)
                 wasSpace = (!wasLeading || !suppressLeadingSpace);
@@ -2534,7 +2534,7 @@ void HTMLConverter::_processText(Text& text)
                     builder.append(c);
                 else {
                     if (!noBreakSpaceRepresentation)
-                        noBreakSpaceRepresentation = _caches->propertyValueForNode(text, CSSPropertyID::WebkitNbspMode) == "space"_s ? ' ' : noBreakSpace;
+                        noBreakSpaceRepresentation = equal(_caches->propertyValueForNode(text, CSSPropertyID::WebkitNbspMode), "space"_s) ? ' ' : noBreakSpace;
                     builder.append(noBreakSpaceRepresentation);
                 }
                 wasSpace = false;
@@ -2546,17 +2546,17 @@ void HTMLConverter::_processText(Text& text)
         outputString = builder.toString();
     }
 
-    if (outputString.length()) {
-        String textTransform = _caches->propertyValueForNode(text, CSSPropertyID::TextTransform);
-        if (textTransform == "capitalize"_s)
+    if (length(outputString)) {
+        RefPtr<StringImpl> textTransform = _caches->propertyValueForNode(text, CSSPropertyID::TextTransform);
+        if (equal(textTransform, "capitalize"_s))
             outputString = capitalize(outputString, nullAtom()); // FIXME: Needs to take locale into account to work correctly.
-        else if (textTransform == "uppercase"_s)
-            outputString = outputString.convertToUppercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
-        else if (textTransform == "lowercase"_s)
-            outputString = outputString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
+        else if (equal(textTransform, "uppercase"_s))
+            outputString = convertToUppercaseWithoutLocale(outputString); // FIXME: Needs locale to work correctly.
+        else if (equal(textTransform, "lowercase"_s))
+            outputString = convertToLowercaseWithoutLocale(outputString); // FIXME: Needs locale to work correctly.
 
-        [_attrStr replaceCharactersInRange:rangeToReplace withString:outputString.createNSString().get()];
-        rangeToReplace.length = outputString.length();
+        [_attrStr replaceCharactersInRange:rangeToReplace withString:createNSString(outputString).get()];
+        rangeToReplace.length = length(outputString);
         if (rangeToReplace.length)
             [_attrStr setAttributes:aggregatedAttributesForAncestors(text).get() range:rangeToReplace];
         _flags.isSoft = wasSpace;

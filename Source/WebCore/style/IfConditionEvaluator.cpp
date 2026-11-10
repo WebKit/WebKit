@@ -109,7 +109,7 @@ MQ::EvaluationResult IfConditionEvaluator::evaluateFeature(const MQ::Feature& fe
 
     // Force resolution of the queried custom property. Range queries comparing
     // literals (e.g. style(5 > 3)) have no custom-property name to resolve.
-    if (!feature.name.isNull()) {
+    if (feature.name) {
         m_styleBuilder.applyCustomProperty(feature.name);
 
         // A tainted queried property taints the whole if() substitution value (CSS Values 5 §8.7.2).

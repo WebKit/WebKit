@@ -115,7 +115,7 @@ struct TextSuggestion {
 
     ID identifier;
     CharacterRange originalRange;
-    String replacement;
+    RefPtr<StringImpl> replacement;
     State state;
 };
 

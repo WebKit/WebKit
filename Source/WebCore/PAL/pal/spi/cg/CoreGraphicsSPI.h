@@ -569,11 +569,11 @@ WTF_EXTERN_C_END
 
 #ifdef __cplusplus
 
-inline String CGPDFDictionaryGetNameString(CGPDFDictionaryRef dictionary, ASCIILiteral key)
+inline RefPtr<StringImpl> CGPDFDictionaryGetNameString(CGPDFDictionaryRef dictionary, ASCIILiteral key)
 {
     const char* value = nullptr;
     CGPDFDictionaryGetName(dictionary, key.characters(), &value);
-    return value ? String::fromUTF8(value) : String();
+    return value ? StringImpl::fromUTF8(value) : nullptr;
 }
 
 #endif // __cplusplus

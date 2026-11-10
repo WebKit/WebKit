@@ -62,10 +62,10 @@ public:
     int trackIndex() const final;
 
     TrackID id() const final;
-    std::optional<String> trackUID() const final;
+    std::optional<RefPtr<StringImpl>> trackUID() const final;
 
-    String label() const final;
-    String language() const final;
+    RefPtr<StringImpl> label() const final;
+    RefPtr<StringImpl> language() const final;
 
     void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) final;
 

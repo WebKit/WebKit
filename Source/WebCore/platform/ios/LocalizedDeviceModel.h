@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT String localizedDeviceModel();
-WEBCORE_EXPORT void setLocalizedDeviceModel(const String&);
+WEBCORE_EXPORT RefPtr<StringImpl> localizedDeviceModel();
+WEBCORE_EXPORT void setLocalizedDeviceModel(StringImpl*);
 
 }
 

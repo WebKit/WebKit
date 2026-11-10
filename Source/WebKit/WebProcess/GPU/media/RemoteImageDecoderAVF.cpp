@@ -49,7 +49,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteImageDecoderAVF::RemoteImageDecoderAVF(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, const String& mimeType)
+RemoteImageDecoderAVF::RemoteImageDecoderAVF(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, StringImpl* mimeType)
     : ImageDecoder()
     , m_gpuProcessConnection(manager.ensureGPUProcessConnection())
     , m_manager(manager)
@@ -69,7 +69,7 @@ Ref<RemoteImageDecoderAVFManager> RemoteImageDecoderAVF::manager() const
     return m_manager.get();
 }
 
-bool RemoteImageDecoderAVF::canDecodeType(const String& mimeType)
+bool RemoteImageDecoderAVF::canDecodeType(StringImpl* mimeType)
 {
 #if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
@@ -123,12 +123,12 @@ RepetitionCount RemoteImageDecoderAVF::repetitionCount() const
     return m_frameCount > 1 ? RepetitionCountInfinite : RepetitionCountNone;
 }
 
-String RemoteImageDecoderAVF::uti() const
+RefPtr<StringImpl> RemoteImageDecoderAVF::uti() const
 {
     return m_uti;
 }
 
-String RemoteImageDecoderAVF::filenameExtension() const
+RefPtr<StringImpl> RemoteImageDecoderAVF::filenameExtension() const
 {
     return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType);
 }

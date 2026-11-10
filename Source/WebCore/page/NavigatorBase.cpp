@@ -82,70 +82,70 @@ NavigatorBase::NavigatorBase(ScriptExecutionContext* context)
 
 NavigatorBase::~NavigatorBase() = default;
 
-String NavigatorBase::appName()
+RefPtr<StringImpl> NavigatorBase::appName()
 {
-    return "Netscape"_s;
+    return "Netscape"_si;
 }
 
-String NavigatorBase::appVersion() const
+RefPtr<StringImpl> NavigatorBase::appVersion() const
 {
     // Version is everything in the user agent string past the "Mozilla/" prefix.
-    const String& agent = userAgent();
-    return agent.substring(agent.find('/') + 1);
+    const RefPtr<StringImpl>& agent = userAgent();
+    return substring(agent, find(agent, '/') + 1);
 }
 
-String NavigatorBase::platform() const
+RefPtr<StringImpl> NavigatorBase::platform() const
 {
 #if OS(LINUX)
-    static NeverDestroyed<String> platformName = [] {
+    static NeverDestroyed<RefPtr<StringImpl>> platformName = [] {
         struct utsname osname;
         return uname(&osname) >= 0 ? makeString(unsafeSpan(osname.sysname), " "_s, unsafeSpan(osname.machine)) : emptyString();
     }();
-    return platformName->isolatedCopy();
+    return isolatedCopy(platformName.get());
 #elif PLATFORM(IOS_FAMILY)
     return PAL::deviceName();
 #elif OS(MACOS)
-    return "MacIntel"_s;
+    return "MacIntel"_si;
 #elif OS(WINDOWS)
-    return "Win32"_s;
+    return "Win32"_si;
 #elif OS(HAIKU)
-    return "Haiku"_s;
+    return "Haiku"_si;
 #else
-    return ""_s;
+    return ""_si;
 #endif
 }
 
-String NavigatorBase::appCodeName()
+RefPtr<StringImpl> NavigatorBase::appCodeName()
 {
-    return "Mozilla"_s;
+    return "Mozilla"_si;
 }
 
-String NavigatorBase::product()
+RefPtr<StringImpl> NavigatorBase::product()
 {
     return WEBCORE_NAVIGATOR_PRODUCT;
 }
 
-String NavigatorBase::productSub()
+RefPtr<StringImpl> NavigatorBase::productSub()
 {
     return WEBCORE_NAVIGATOR_PRODUCT_SUB;
 }
 
-String NavigatorBase::vendor()
+RefPtr<StringImpl> NavigatorBase::vendor()
 {
     return WEBCORE_NAVIGATOR_VENDOR;
 }
 
-String NavigatorBase::vendorSub()
+RefPtr<StringImpl> NavigatorBase::vendorSub()
 {
     return WEBCORE_NAVIGATOR_VENDOR_SUB;
 }
 
-String NavigatorBase::language()
+RefPtr<StringImpl> NavigatorBase::language()
 {
     return defaultLanguage();
 }
 
-Vector<String> NavigatorBase::languages()
+Vector<RefPtr<StringImpl>> NavigatorBase::languages()
 {
     // We intentionally expose only the primary language for privacy reasons.
     return { defaultLanguage() };
@@ -178,7 +178,7 @@ ServiceWorkerContainer& NavigatorBase::serviceWorker()
 ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutionContext& context)
 {
     if (RefPtr document = dynamicDowncast<Document>(context); document && document->isSandboxed(SandboxFlag::Origin))
-        return Exception { ExceptionCode::SecurityError, "Service Worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_s };
+        return Exception { ExceptionCode::SecurityError, "Service Worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_si };
     return serviceWorker();
 }
 

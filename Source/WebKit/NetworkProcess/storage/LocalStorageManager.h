@@ -45,11 +45,11 @@ class StorageAreaRegistry;
 class LocalStorageManager {
     WTF_MAKE_TZONE_ALLOCATED(LocalStorageManager);
 public:
-    static Vector<WebCore::SecurityOriginData> originsOfLocalStorageData(const String& path);
-    static String localStorageFilePath(const String& directory, const WebCore::ClientOrigin&);
-    static String localStorageFilePath(const String& directory);
+    static Vector<WebCore::SecurityOriginData> originsOfLocalStorageData(StringImpl* path);
+    static RefPtr<StringImpl> localStorageFilePath(StringImpl* directory, const WebCore::ClientOrigin&);
+    static RefPtr<StringImpl> localStorageFilePath(StringImpl* directory);
 
-    LocalStorageManager(const String& path, StorageAreaRegistry&);
+    LocalStorageManager(StringImpl* path, StorageAreaRegistry&);
     NODELETE bool isActive() const;
     bool hasDataInMemory() const;
     void clearDataInMemory();
@@ -65,8 +65,8 @@ public:
     void cancelConnectToTransientLocalStorageArea(IPC::Connection::UniqueID);
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
 
-    HashMap<String, String> fetchStorageMap() const;
-    bool setStorageMap(WebCore::ClientOrigin, HashMap<String, String>&&, Ref<WorkQueue>&&);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> fetchStorageMap() const;
+    bool setStorageMap(WebCore::ClientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&, Ref<WorkQueue>&&);
 
 private:
     void connectionClosedForLocalStorageArea(IPC::Connection::UniqueID);
@@ -75,7 +75,7 @@ private:
     StorageAreaBase& ensureLocalStorageArea(const WebCore::ClientOrigin&, Ref<WorkQueue>&&) LIFETIME_BOUND;
     MemoryStorageArea& ensureTransientLocalStorageArea(const WebCore::ClientOrigin&);
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     const CheckedRef<StorageAreaRegistry> m_registry;
     RefPtr<MemoryStorageArea> m_transientStorageArea;
     RefPtr<StorageAreaBase> m_localStorageArea;

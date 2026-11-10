@@ -36,33 +36,33 @@ namespace WebCore {
 
 class ContentType {
 public:
-    NODELETE WEBCORE_EXPORT explicit ContentType(String&& type);
-    NODELETE WEBCORE_EXPORT explicit ContentType(const String& type);
-    NODELETE WEBCORE_EXPORT ContentType(const String& type, bool); // Use by the IPC serializer.
+    NODELETE WEBCORE_EXPORT explicit ContentType(RefPtr<StringImpl>&& type);
+    NODELETE WEBCORE_EXPORT explicit ContentType(StringImpl* type);
+    NODELETE WEBCORE_EXPORT ContentType(StringImpl* type, bool); // Use by the IPC serializer.
     ContentType() = default;
 
     WEBCORE_EXPORT static ContentType fromURL(const WTF::URL&);
 
-    WEBCORE_EXPORT static const String& codecsParameter();
-    static const String& profilesParameter();
+    WEBCORE_EXPORT static const RefPtr<StringImpl>& codecsParameter();
+    static const RefPtr<StringImpl>& profilesParameter();
 
-    WEBCORE_EXPORT String parameter(const String& parameterName) const;
-    WEBCORE_EXPORT String containerType() const;
-    Vector<String> codecs() const;
-    Vector<String> profiles() const;
-    const String& raw() const LIFETIME_BOUND { return m_type; }
-    bool isEmpty() const { return m_type.isEmpty(); }
+    WEBCORE_EXPORT RefPtr<StringImpl> parameter(StringImpl* parameterName) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> containerType() const;
+    Vector<RefPtr<StringImpl>> codecs() const;
+    Vector<RefPtr<StringImpl>> profiles() const;
+    const RefPtr<StringImpl>& raw() const LIFETIME_BOUND { return m_type; }
+    bool isEmpty() const { return WTF::isEmpty(m_type); }
 
     bool typeWasInferredFromExtension() const { return m_typeWasInferredFromExtension; }
 
-    WEBCORE_EXPORT String toJSONString() const;
-    bool operator==(const ContentType& other) const { return raw() == other.raw(); }
+    WEBCORE_EXPORT RefPtr<StringImpl> toJSONString() const;
+    bool operator==(const ContentType& other) const { return equal(raw(), other.raw()); }
 
-    ContentType isolatedCopy() const & { return { m_type.isolatedCopy(), m_typeWasInferredFromExtension }; }
-    ContentType isolatedCopy() && { return { WTF::move(m_type).isolatedCopy(), m_typeWasInferredFromExtension }; }
+    ContentType isolatedCopy() const & { return { WTF::isolatedCopy(m_type), m_typeWasInferredFromExtension }; }
+    ContentType isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(m_type)), m_typeWasInferredFromExtension }; }
 
 private:
-    String m_type;
+    RefPtr<StringImpl> m_type;
     bool m_typeWasInferredFromExtension { false };
 };
 
@@ -73,7 +73,7 @@ template<typename Type> struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::ContentType> {
-    static String toString(const WebCore::ContentType& type)
+    static RefPtr<StringImpl> toString(const WebCore::ContentType& type)
     {
         return type.toJSONString();
     }

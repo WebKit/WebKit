@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct OpenID4VPUnsignedRequest {
-    String requestJSON;
+    RefPtr<StringImpl> requestJSON;
 };
 
 } // namespace WebCore

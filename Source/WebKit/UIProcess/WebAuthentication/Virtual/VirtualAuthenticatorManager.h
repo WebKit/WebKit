@@ -39,13 +39,13 @@ class VirtualAuthenticatorManager final : public AuthenticatorManager {
 public:
     static Ref<VirtualAuthenticatorManager> create();
 
-    String createAuthenticator(const VirtualAuthenticatorConfiguration& /*config/*/);
-    bool removeAuthenticator(const String& /*authenticatorId*/);
+    RefPtr<StringImpl> createAuthenticator(const VirtualAuthenticatorConfiguration& /*config/*/);
+    bool removeAuthenticator(StringImpl* /*authenticatorId*/);
 
     bool isVirtual() const final { return true; }
 
-    void addCredential(const String&, VirtualCredential&);
-    Vector<VirtualCredential> credentialsMatchingList(const String& authenticatorId, const String& rpId, const Vector<Vector<uint8_t>>& credentialIds);
+    void addCredential(StringImpl*, VirtualCredential&);
+    Vector<VirtualCredential> credentialsMatchingList(StringImpl* authenticatorId, StringImpl* rpId, const Vector<Vector<uint8_t>>& credentialIds);
 
 protected:
     void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) override;
@@ -59,8 +59,8 @@ private:
     void runPanel() override;
     void filterTransports(TransportSet&) const override { };
 
-    HashMap<String, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
-    HashMap<String, Vector<VirtualCredential>> m_credentialsByAuthenticator;
+    HashMap<RefPtr<StringImpl>, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
+    HashMap<RefPtr<StringImpl>, Vector<VirtualCredential>> m_credentialsByAuthenticator;
 };
 
 } // namespace WebKit

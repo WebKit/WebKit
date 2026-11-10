@@ -82,10 +82,10 @@ JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 // FIXME: Basically any use of this is bad. toString() returns a JSString* so we don't need to
 // pass around the originalValue; we could just pass around the JSString*. Then you don't need
 // this function. You just use the JSString* that toString() returned.
-static inline JSString* jsStringWithReuse(JSGlobalObject* globalObject, JSValue originalValue, const String& string)
+static inline JSString* jsStringWithReuse(JSGlobalObject* globalObject, JSValue originalValue, StringImpl* string)
 {
     if (originalValue.isString()) {
-        ASSERT(asString(originalValue)->value(globalObject) == string);
+        ASSERT(equal(asString(originalValue)->value(globalObject), string));
         return asString(originalValue);
     }
     return jsString(getVM(globalObject), string);
@@ -96,10 +96,10 @@ static inline JSString* jsStringWithReuse(JSGlobalObject* globalObject, JSValue 
 // pass around the originalValue; we could just pass around the JSString*. And since we've
 // resolved it, we know that we can just allocate the substring cell directly.
 // https://bugs.webkit.org/show_bug.cgi?id=158140
-static inline JSString* jsSubstring(JSGlobalObject* globalObject, JSValue originalValue, const String& string, unsigned offset, unsigned length)
+static inline JSString* jsSubstring(JSGlobalObject* globalObject, JSValue originalValue, StringImpl* string, unsigned offset, unsigned length)
 {
     if (originalValue.isString()) {
-        ASSERT(asString(originalValue)->value(globalObject) == string);
+        ASSERT(equal(asString(originalValue)->value(globalObject), string));
         return jsSubstring(globalObject, asString(originalValue), offset, length);
     }
     return jsSubstring(getVM(globalObject), string, offset, length);

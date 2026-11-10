@@ -143,14 +143,14 @@ void WebSocketChannelInspector::didSendWebSocketFrame(const WebSocketFrame& fram
     });
 }
 
-void WebSocketChannelInspector::didReceiveWebSocketFrameError(const String& errorMessage) const
+void WebSocketChannelInspector::didReceiveWebSocketFrameError(StringImpl* errorMessage) const
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
     if (!m_documentIdentifier)
         return;
 
-    ScriptExecutionContext::ensureOnContextThread(*m_documentIdentifier, [progressIdentifier = m_progressIdentifier, errorMessage = errorMessage.isolatedCopy()](ScriptExecutionContext& context) {
+    ScriptExecutionContext::ensureOnContextThread(*m_documentIdentifier, [progressIdentifier = m_progressIdentifier, errorMessage = isolatedCopy(errorMessage)](ScriptExecutionContext& context) {
         if (RefPtr document = dynamicDowncast<Document>(context))
             InspectorInstrumentation::didReceiveWebSocketFrameError(document.get(), progressIdentifier, errorMessage);
     });

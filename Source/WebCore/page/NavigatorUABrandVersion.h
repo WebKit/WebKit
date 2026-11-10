@@ -30,8 +30,8 @@
 namespace WebCore {
 
 struct NavigatorUABrandVersion {
-    String brand;
-    String version;
+    RefPtr<StringImpl> brand;
+    RefPtr<StringImpl> version;
 };
 
 }

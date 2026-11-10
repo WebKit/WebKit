@@ -105,7 +105,7 @@ public:
 
     CSSParserTokenRange consumeAll() { return { std::exchange(m_tokens, std::span<const CSSParserToken> { }) }; }
 
-    String serialize(CSSParserToken::SerializationMode = CSSParserToken::SerializationMode::Normal) const;
+    RefPtr<StringImpl> serialize(CSSParserToken::SerializationMode = CSSParserToken::SerializationMode::Normal) const;
 
     std::span<const CSSParserToken> span() const LIFETIME_BOUND { return m_tokens; }
 

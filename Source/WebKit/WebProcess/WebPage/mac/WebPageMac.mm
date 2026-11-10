@@ -256,7 +256,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 
     postLayoutData.candidateRequestStartPosition = characterCount({ *paragraphStart, *selectionStartBoundary });
     postLayoutData.selectedTextLength = characterCount({ *selectionStartBoundary, *selectionEnd });
-    postLayoutData.paragraphContextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
+    postLayoutData.paragraphContextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : nullptr;
     postLayoutData.stringForCandidateRequest = protect(frame.editor())->stringForCandidateRequest();
 
     auto quads = RenderObject::absoluteTextQuads(*selectedRange);
@@ -274,7 +274,7 @@ void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandid
         protect(frame->editor())->handleAcceptedCandidate(acceptedCandidate);
 }
 
-static String commandNameForSelectorName(const String& selectorName)
+static RefPtr<StringImpl> commandNameForSelectorName(StringImpl* selectorName)
 {
     // Map selectors into Editor command names.
     // This is not needed for any selectors that have the same name as the Editor command.
@@ -292,10 +292,10 @@ static String commandNameForSelectorName(const String& selectorName)
 
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are not case sensitive.
-    size_t selectorNameLength = selectorName.length();
-    if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
-        return String();
-    return selectorName.left(selectorNameLength - 1);
+    size_t selectorNameLength = length(selectorName);
+    if (selectorNameLength < 2 || codeUnitAt(selectorName, selectorNameLength - 1) != ':')
+        return nullptr;
+    return left(selectorName, selectorNameLength - 1);
 }
 
 NODELETE static LocalFrame* frameForEvent(KeyboardEvent* event)
@@ -317,7 +317,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     Borrow borrowedCommands = commands;
     for (size_t i = 0; i < borrowedCommands->size(); ++i) {
         auto& currentCommand = borrowedCommands[i];
-        if (currentCommand.commandName == "insertText:"_s) {
+        if (equal(currentCommand.commandName, "insertText:"_s)) {
             if (editor->hasComposition()) {
                 eventWasHandled = true;
                 editor->confirmComposition(currentCommand.text);
@@ -338,11 +338,11 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 // One example is space bar that results in scrolling down the page.
                 eventWasHandled |= editor->insertText(currentCommand.text, event);
             }
-        } else if (currentCommand.commandName == "setMarkedText:"_s) {
+        } else if (equal(currentCommand.commandName, "setMarkedText:"_s)) {
             setCompositionAsync(currentCommand.text, currentCommand.underlines, currentCommand.highlights, { },
                 EditingRange { currentCommand.selectedRange }, EditingRange { currentCommand.replacementRange });
         } else {
-            if (currentCommand.commandName == "scrollPageDown:"_s || currentCommand.commandName == "scrollPageUp:"_s)
+            if (equal(currentCommand.commandName, "scrollPageDown:"_s) || equal(currentCommand.commandName, "scrollPageUp:"_s))
                 frame->eventHandler().setProcessingKeyRepeatForPotentialScroll(event && event->repeat());
 
             Editor::Command command = editor->command(commandNameForSelectorName(currentCommand.commandName));
@@ -375,7 +375,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     ASSERT(!platformEvent->macEvent()); // Cannot have a native event in WebProcess.
 
     // Don't handle Esc while handling keydown event, we need to dispatch a keypress first.
-    if (platformEvent->type() != PlatformEvent::Type::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation"_s)
+    if (platformEvent->type() != PlatformEvent::Type::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && equal(commandNameForSelectorName(commands[0].commandName), "cancelOperation"_s))
         return false;
 
     if (handleKeyEventByRelinquishingFocusToChrome(event))
@@ -429,13 +429,13 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     // WebCore::editingAttributedString() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
-    if (attributedString.string.length() > editingRange.length) {
-        ASSERT(attributedString.string.length() == editingRange.length + 1);
-        ASSERT(attributedString.string[static_cast<unsigned>(editingRange.length)] == '\n' || attributedString.string[static_cast<unsigned>(editingRange.length)] == ' ');
+    if (length(attributedString.string) > editingRange.length) {
+        ASSERT(length(attributedString.string) == editingRange.length + 1);
+        ASSERT(codeUnitAt(attributedString.string, static_cast<unsigned>(editingRange.length)) == '\n' || codeUnitAt(attributedString.string, static_cast<unsigned>(editingRange.length)) == ' ');
         attributedString.truncate(editingRange.length);
     }
 
-    EditingRange rangeToSend(editingRange.location, attributedString.string.length());
+    EditingRange rangeToSend(editingRange.location, length(attributedString.string));
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
@@ -446,7 +446,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     completionHandler(attributedString, rangeToSend);
 }
 
-bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
+bool WebPage::performNonEditingBehaviorForSelector(StringImpl* selector, KeyboardEvent* event)
 {
     // First give accessibility a chance to handle the event.
     RefPtr frame = frameForEvent(event);
@@ -461,33 +461,33 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     
     RefPtr page = m_page;
     if (!frame->eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
-        if (selector == "moveUp:"_s)
+        if (equal(selector, "moveUp:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Line);
-        else if (selector == "moveToBeginningOfParagraph:"_s)
+        else if (equal(selector, "moveToBeginningOfParagraph:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Page);
-        else if (selector == "moveToBeginningOfDocument:"_s) {
+        else if (equal(selector, "moveToBeginningOfDocument:"_s)) {
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Document);
             didPerformAction |= scroll(page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Document);
-        } else if (selector == "moveDown:"_s)
+        } else if (equal(selector, "moveDown:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Line);
-        else if (selector == "moveToEndOfParagraph:"_s)
+        else if (equal(selector, "moveToEndOfParagraph:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Page);
-        else if (selector == "moveToEndOfDocument:"_s) {
+        else if (equal(selector, "moveToEndOfDocument:"_s)) {
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Document);
             didPerformAction |= scroll(page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Document);
-        } else if (selector == "moveLeft:"_s)
+        } else if (equal(selector, "moveLeft:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Line);
-        else if (selector == "moveWordLeft:"_s)
+        else if (equal(selector, "moveWordLeft:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Page);
-        else if (selector == "moveRight:"_s)
+        else if (equal(selector, "moveRight:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollRight, ScrollGranularity::Line);
-        else if (selector == "moveWordRight:"_s)
+        else if (equal(selector, "moveWordRight:"_s))
             didPerformAction = scroll(page.get(), ScrollDirection::ScrollRight, ScrollGranularity::Page);
     }
 
-    if (selector == "moveToLeftEndOfLine:"_s)
+    if (equal(selector, "moveToLeftEndOfLine:"_s))
         didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? protect(page->backForward())->goBack() : protect(page->backForward())->goForward();
-    else if (selector == "moveToRightEndOfLine:"_s)
+    else if (equal(selector, "moveToRightEndOfLine:"_s))
         didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? protect(page->backForward())->goForward() : protect(page->backForward())->goBack();
 
     return didPerformAction;
@@ -533,7 +533,7 @@ void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteT
     [accessibilityRemoteObject setRemoteParent:remoteElement.get() token:elementTokenData.get()];
 }
 
-void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
+void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -541,8 +541,8 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
 
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
-        String selection = pluginView->selectionString();
-        if (!selection.isNull())
+        RefPtr<StringImpl> selection = pluginView->selectionString();
+        if (selection)
             return completionHandler(WTF::move(selection));
     }
 #endif
@@ -553,7 +553,7 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
     completionHandler(protect(frame->editor())->stringSelectionForPasteboard());
 }
 
-void WebPage::getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+void WebPage::getDataSelectionForPasteboard(const RefPtr<StringImpl> pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -740,7 +740,7 @@ void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
+void WebPage::handleTelephoneNumberClick(StringImpl* number, const IntPoint& point, const IntRect& rect)
 {
     send(Messages::WebPageProxy::ShowTelephoneNumberMenu(number, point, rect));
 }
@@ -748,7 +748,7 @@ void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& p
 
 #if ENABLE(SERVICE_CONTROLS)
 
-void WebPage::handleSelectionServiceClick(WebCore::FrameIdentifier frameID, FrameSelection& selection, const Vector<String>& phoneNumbers, const IntPoint& point)
+void WebPage::handleSelectionServiceClick(WebCore::FrameIdentifier frameID, FrameSelection& selection, const Vector<RefPtr<StringImpl>>& phoneNumbers, const IntPoint& point)
 {
     auto range = selection.selection().firstRange();
     if (!range)
@@ -808,16 +808,16 @@ bool WebPage::handlePDFServiceClick(WebCore::FrameIdentifier frameID, const IntP
         element.isContentEditable(),
         elementBoxInMainFrameView,
         element.uniqueIdentifier(),
-        "application/pdf"_s
+        "application/pdf"_si
     }, { }));
     return true;
 }
 
 #endif
 
-String WebPage::platformUserAgent(const URL&) const
+RefPtr<StringImpl> WebPage::platformUserAgent(const URL&) const
 {
-    return String();
+    return nullptr;
 }
 
 bool WebPage::hoverSupportedByPrimaryPointingDevice() const
@@ -858,7 +858,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         HitTestRequest::Type::AllowChildFrameContent,
     });
 
-    WebHitTestResultData immediateActionResult(hitTestResult, { });
+    WebHitTestResultData immediateActionResult(hitTestResult, nullptr);
 
     // The UI process will hit-test again in the remote frame's process, so this one must not act on the hit test.
     auto subframe = EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get());
@@ -1167,22 +1167,22 @@ void WebPage::togglePDFAccessibilityDisplayMode(PDFPluginIdentifier identifier)
 
 #endif // ENABLE(AX_PDF_SUPPORT)
 
-void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
+void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(StringImpl*, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
     RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
-        return completionHandler({ }, { }, { });
+        return completionHandler(nullptr, { }, { });
     pdfPlugin->save(WTF::move(completionHandler));
 }
 
-void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
+void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(StringImpl*, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
     for (Ref pluginView : m_pluginViews) {
         if (pluginView->pdfPluginIdentifier() == identifier)
             return pluginView->openWithPreview(WTF::move(completionHandler));
     }
 
-    completionHandler({ }, { }, { });
+    completionHandler(nullptr, { }, { });
 }
 
 void WebPage::createPDFHUD(PDFPluginBase& plugin, WebCore::FrameIdentifier frameID, const IntRect& boundingBox)

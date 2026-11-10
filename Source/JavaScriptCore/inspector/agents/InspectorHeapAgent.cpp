@@ -45,7 +45,7 @@ using namespace JSC;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorHeapAgent);
 
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
-    : InspectorAgentBase("Heap"_s)
+    : InspectorAgentBase("Heap"_si)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(makeUniqueRef<HeapFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(HeapBackendDispatcher::create(protect(context.backendDispatcher), this))
@@ -154,26 +154,26 @@ std::optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(
 {
     HeapProfiler* heapProfiler = protect(m_environment)->vm().heapProfiler();
     if (!heapProfiler) {
-        errorString = "No heap snapshot"_s;
+        errorString = "No heap snapshot"_si;
         return std::nullopt;
     }
 
     HeapSnapshot* snapshot = heapProfiler->mostRecentSnapshot();
     if (!snapshot) {
-        errorString = "No heap snapshot"_s;
+        errorString = "No heap snapshot"_si;
         return std::nullopt;
     }
 
     const std::optional<HeapSnapshotNode> optionalNode = snapshot->nodeForObjectIdentifier(heapObjectIdentifier);
     if (!optionalNode) {
-        errorString = "No object for identifier, it may have been collected"_s;
+        errorString = "No object for identifier, it may have been collected"_si;
         return std::nullopt;
     }
 
     return optionalNode;
 }
 
-Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDetails>, RefPtr<Protocol::Runtime::ObjectPreview>>> InspectorHeapAgent::getPreview(int heapObjectId)
+Protocol::ErrorStringOr<std::tuple<RefPtr<StringImpl>, RefPtr<Protocol::Debugger::FunctionDetails>, RefPtr<Protocol::Runtime::ObjectPreview>>> InspectorHeapAgent::getPreview(int heapObjectId)
 {
     Protocol::ErrorString errorString;
 
@@ -223,7 +223,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     return { { nullString(), nullptr, injectedScript.previewValue(cell) } };
 }
 
-Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent::getRemoteObject(int heapObjectId, const String& objectGroup)
+Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent::getRemoteObject(int heapObjectId, StringImpl* objectGroup)
 {
     Protocol::ErrorString errorString;
 

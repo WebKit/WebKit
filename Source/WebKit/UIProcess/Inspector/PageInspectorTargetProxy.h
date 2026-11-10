@@ -42,16 +42,16 @@ class PageInspectorTargetProxy final : public InspectorTargetProxy {
     WTF_MAKE_NONCOPYABLE(PageInspectorTargetProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageInspectorTargetProxy);
 public:
-    static std::unique_ptr<PageInspectorTargetProxy> create(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);
-    static std::unique_ptr<PageInspectorTargetProxy> create(ProvisionalPageProxy&, const String& targetId, Inspector::InspectorTargetType);
-    PageInspectorTargetProxy(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);
+    static std::unique_ptr<PageInspectorTargetProxy> create(WebPageProxy&, StringImpl* targetId, Inspector::InspectorTargetType);
+    static std::unique_ptr<PageInspectorTargetProxy> create(ProvisionalPageProxy&, StringImpl* targetId, Inspector::InspectorTargetType);
+    PageInspectorTargetProxy(WebPageProxy&, StringImpl* targetId, Inspector::InspectorTargetType);
 
     void didCommitProvisionalTarget() override;
     bool isProvisional() const override;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;
-    void sendMessageToTargetBackend(const String&) override;
+    void sendMessageToTargetBackend(StringImpl*) override;
 
 private:
     WeakRef<WebPageProxy> m_page;

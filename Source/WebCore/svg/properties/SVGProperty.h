@@ -78,7 +78,7 @@ public:
     // Synchronizing the SVG attribute and its reflection here.
     bool isDirty() const { return m_state == SVGPropertyState::Dirty; }
     void setDirty() { m_state = SVGPropertyState::Dirty; }
-    std::optional<String> synchronize()
+    std::optional<RefPtr<StringImpl>> synchronize()
     {
         if (m_state == SVGPropertyState::Clean)
             return std::nullopt;
@@ -87,7 +87,7 @@ public:
     }
 
     // This is used when calling setAttribute().
-    virtual String valueAsString() const { return emptyString(); }
+    virtual RefPtr<StringImpl> valueAsString() const { return emptyString(); }
 
 protected:
     SVGProperty(SVGPropertyOwner* owner = nullptr, SVGPropertyAccess access = SVGPropertyAccess::ReadWrite)

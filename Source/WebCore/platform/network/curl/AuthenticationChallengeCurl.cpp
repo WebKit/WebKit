@@ -75,7 +75,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceForServerTrust(const URL
     auto serverType = protectionSpaceServerTypeFromURI(url, false);
     auto authenticationScheme = ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
 
-    return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), serverType, String(), authenticationScheme, certificateInfo);
+    return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), serverType, nullptr, authenticationScheme, certificateInfo);
 }
 
 std::optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& url)
@@ -107,28 +107,28 @@ ProtectionSpace::AuthenticationScheme AuthenticationChallenge::authenticationSch
     return ProtectionSpace::AuthenticationScheme::Unknown;
 }
 
-String AuthenticationChallenge::parseRealm(const ResourceResponse& response)
+RefPtr<StringImpl> AuthenticationChallenge::parseRealm(const ResourceResponse& response)
 {
     static constexpr auto wwwAuthenticate = "www-authenticate"_s;
     static constexpr auto proxyAuthenticate = "proxy-authenticate"_s;
-    static NeverDestroyed<String> realmString(MAKE_STATIC_STRING_IMPL("realm="));
+    static NeverDestroyed<RefPtr<StringImpl>> realmString(MAKE_STATIC_STRING_IMPL("realm="));
 
-    String realm;
+    RefPtr<StringImpl> realm;
     auto authHeader = response.httpHeaderField(StringView { response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate });
-    auto realmPos = authHeader.findIgnoringASCIICase(realmString.get());
+    auto realmPos = findIgnoringASCIICase(authHeader, realmString.get());
     if (realmPos != notFound) {
-        realm = authHeader.substring(realmPos + realmString.get().length());
-        realm = realm.left(realm.find(','));
+        realm = substring(authHeader, realmPos + length(realmString.get()));
+        realm = left(realm, find(realm, ','));
         removeLeadingAndTrailingQuotes(realm);
     }
     return realm;
 }
 
-void AuthenticationChallenge::removeLeadingAndTrailingQuotes(String& value)
+void AuthenticationChallenge::removeLeadingAndTrailingQuotes(RefPtr<StringImpl>& value)
 {
-    auto length = value.length();
-    if (value.startsWith('"') && value.endsWith('"') && length > 1)
-        value = value.substring(1, length - 2);
+    auto length = WTF::length(value);
+    if (startsWith(value, '"') && endsWith(value, '"') && length > 1)
+        value = substring(value, 1, length - 2);
 }
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ struct BoundaryPoint {
 
     inline Document& document() const; // Defined in BoundaryPointInlines.h
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 };
 
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);

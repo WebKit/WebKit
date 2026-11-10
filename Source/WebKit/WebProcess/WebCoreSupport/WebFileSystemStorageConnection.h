@@ -68,13 +68,13 @@ private:
     // FileSystemStorageConnection
     void closeHandle(WebCore::FileSystemHandleIdentifier) final;
     void isSameEntry(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::SameEntryCallback&&) final;
-    void move(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, const String& newName, VoidCallback&&) final;
-    void getFileHandle(WebCore::FileSystemHandleIdentifier, const String& name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&&) final;
-    void getDirectoryHandle(WebCore::FileSystemHandleIdentifier, const String& name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&&) final;
-    void removeEntry(WebCore::FileSystemHandleIdentifier, const String& name, bool deleteRecursively, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
+    void move(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, StringImpl* newName, VoidCallback&&) final;
+    void getFileHandle(WebCore::FileSystemHandleIdentifier, StringImpl* name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&&) final;
+    void getDirectoryHandle(WebCore::FileSystemHandleIdentifier, StringImpl* name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&&) final;
+    void removeEntry(WebCore::FileSystemHandleIdentifier, StringImpl* name, bool deleteRecursively, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
     void resolve(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::ResolveCallback&&) final;
     void getHandleNames(WebCore::FileSystemHandleIdentifier, FileSystemStorageConnection::GetHandleNamesCallback&&) final;
-    void getHandle(WebCore::FileSystemHandleIdentifier, const String& name, FileSystemStorageConnection::GetHandleCallback&&) final;
+    void getHandle(WebCore::FileSystemHandleIdentifier, StringImpl* name, FileSystemStorageConnection::GetHandleCallback&&) final;
     void addGlobalIdentifierReference(WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier) final;
     void removeGlobalIdentifierReferences(WebCore::ClientOrigin&&, Vector<WebCore::FileSystemHandleGlobalIdentifier>&&) final;
     void resolveGlobalIdentifier(WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier, ResolveGlobalIdentifierCallback&&) final;

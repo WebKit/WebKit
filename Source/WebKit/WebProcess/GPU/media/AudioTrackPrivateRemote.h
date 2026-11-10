@@ -55,8 +55,8 @@ private:
 
     using AudioTrackKind = WebCore::AudioTrackPrivate::Kind;
     AudioTrackKind kind() const final { return m_kind; }
-    String label() const final { return m_label; }
-    String language() const final { return m_language; }
+    RefPtr<StringImpl> label() const final { return m_label; }
+    RefPtr<StringImpl> language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
     void setEnabled(bool) final;
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
@@ -64,8 +64,8 @@ private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     AudioTrackKind m_kind { AudioTrackKind::None };
     WebCore::TrackID m_id;
-    String m_label;
-    String m_language;
+    RefPtr<StringImpl> m_label;
+    RefPtr<StringImpl> m_language;
     int m_trackIndex { -1 };
 
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };

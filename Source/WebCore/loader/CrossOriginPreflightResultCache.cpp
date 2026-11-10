@@ -44,7 +44,7 @@ static const auto maxPreflightCacheTimeout = 600_s; // Should be short enough to
 
 CrossOriginPreflightResultCache::CrossOriginPreflightResultCache() = default;
 
-static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
+static bool parseAccessControlMaxAge(StringImpl* string, Seconds& expiryDelta)
 {
     // FIXME: This should probably reject strings that have a leading "+".
     auto parsedInteger = parseInteger<int64_t>(string);
@@ -52,7 +52,7 @@ static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
     return parsedInteger.has_value();
 }
 
-std::expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPreflightResultCacheItem::create(StoredCredentialsPolicy policy, const ResourceResponse& response)
+std::expected<UniqueRef<CrossOriginPreflightResultCacheItem>, RefPtr<StringImpl>> CrossOriginPreflightResultCacheItem::create(StoredCredentialsPolicy policy, const ResourceResponse& response)
 {
     auto methods = parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods));
     if (!methods)
@@ -72,7 +72,7 @@ std::expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOrigi
     return makeUniqueRef<CrossOriginPreflightResultCacheItem>(MonotonicTime::now() + expiryDelta, policy, WTF::move(*methods), WTF::move(*headers));
 }
 
-std::optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(const String& method, const HTTPHeaderMap& requestHeaders) const
+std::optional<RefPtr<StringImpl>> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(StringImpl* method, const HTTPHeaderMap& requestHeaders) const
 {
     if (!allowsCrossOriginMethod(method, m_storedCredentialsPolicy))
         return makeString("Method "_s, method, " is not allowed by Access-Control-Allow-Methods."_s);
@@ -82,12 +82,12 @@ std::optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHead
     return { };
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy) const
+bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(StringImpl* method, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
     return m_methods.contains(method) || (m_methods.contains<HashTranslatorASCIILiteral>("*"_s) && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodAllowlist(method);
 }
 
-std::optional<String> CrossOriginPreflightResultCacheItem::validateCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy) const
+std::optional<RefPtr<StringImpl>> CrossOriginPreflightResultCacheItem::validateCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
     bool validWildcard = m_headers.contains<HashTranslatorASCIILiteral>("*"_s) && storedCredentialsPolicy != StoredCredentialsPolicy::Use;
     for (const auto& header : requestHeaders) {
@@ -99,7 +99,7 @@ std::optional<String> CrossOriginPreflightResultCacheItem::validateCrossOriginHe
     return { };
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders) const
+bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentialsPolicy storedCredentialsPolicy, StringImpl* method, const HTTPHeaderMap& requestHeaders) const
 {
     if (m_absoluteExpiryTime < MonotonicTime::now())
         return false;
@@ -126,7 +126,7 @@ void CrossOriginPreflightResultCache::appendEntry(PAL::SessionID sessionID, cons
     m_preflightHashMap.set(std::make_tuple(sessionID, origin, url), WTF::move(preflightResult));
 }
 
-bool CrossOriginPreflightResultCache::canSkipPreflight(PAL::SessionID sessionID, const ClientOrigin& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders)
+bool CrossOriginPreflightResultCache::canSkipPreflight(PAL::SessionID sessionID, const ClientOrigin& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, StringImpl* method, const HTTPHeaderMap& requestHeaders)
 {
     ASSERT(isMainThread());
     auto it = m_preflightHashMap.find(std::make_tuple(sessionID, origin, url));

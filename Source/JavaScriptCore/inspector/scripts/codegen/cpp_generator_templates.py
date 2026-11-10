@@ -97,7 +97,7 @@ protected:
     """${classAndExportMacro} ${domainName}BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<${domainName}BackendDispatcher> create(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
-    void dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message) final;
+    void dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message) final;
 ${commandDeclarations}
 private:
     ${domainName}BackendDispatcher(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
@@ -123,11 +123,11 @@ private:
         """    virtual void ${commandName}(${parameters}) = 0;""")
 
     BackendDispatcherImplementationSmallSwitch = (
-    """void ${domainName}BackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
+    """void ${domainName}BackendDispatcher::dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message)
 {
     Ref<${domainName}BackendDispatcher> protect(*this);
 
-    auto protocol_parameters = protocol_message->getObject("params"_s);
+    auto protocol_parameters = protocol_message->getObject("params"_si);
 
 ${dispatchCases}
 
@@ -135,14 +135,14 @@ ${dispatchCases}
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (
-"""void ${domainName}BackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
+"""void ${domainName}BackendDispatcher::dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message)
 {
     Ref<${domainName}BackendDispatcher> protect(*this);
 
-    auto protocol_parameters = protocol_message->getObject("params"_s);
+    auto protocol_parameters = protocol_message->getObject("params"_si);
 
     using CallHandler = void (${domainName}BackendDispatcher::*)(long protocol_requestId, RefPtr<JSON::Object>&& protocol_message);
-    using DispatchMap = HashMap<String, CallHandler>;
+    using DispatchMap = HashMap<RefPtr<StringImpl>, CallHandler>;
     static NeverDestroyed<DispatchMap> dispatchMap = DispatchMap({
 ${dispatchCases}
     });
@@ -166,13 +166,13 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain("${domainExposedAs}"_s, this);
+    m_backendDispatcher->registerDispatcherForDomain("${domainExposedAs}"_si, this);
 }""")
 
     BackendDispatcherImplementationPrepareCommandArguments = (
 """${parameterDeclarations}
     if (m_backendDispatcher->hasProtocolErrors()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method \'${domainExposedAs}.${commandName}\' can't be processed"_s);
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method \'${domainExposedAs}.${commandName}\' can't be processed"_si);
         return;
     }
 """)

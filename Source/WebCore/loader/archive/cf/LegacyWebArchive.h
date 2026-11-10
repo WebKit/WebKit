@@ -55,7 +55,7 @@ public:
         ShouldSaveScriptsFromMemoryCache shouldSaveScriptsFromMemoryCache { ShouldSaveScriptsFromMemoryCache::Yes };
         ShouldArchiveSubframes shouldArchiveSubframes { ShouldArchiveSubframes::Yes };
         Vector<MarkupExclusionRule> markupExclusionRules { };
-        String mainResourceFileName { };
+        RefPtr<StringImpl> mainResourceFileName { };
     };
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, ArchiveOptions&&, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter = { });
@@ -87,7 +87,7 @@ private:
 
     static RefPtr<LegacyWebArchive> create(CFDictionaryRef);
     static RefPtr<LegacyWebArchive> createInternal(Node&, const ArchiveOptions&, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter);
-    static RefPtr<LegacyWebArchive> createInternal(const String& markupString, const ArchiveOptions&, LocalFrame&, Vector<Ref<Node>>&& nodes, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter);
+    static RefPtr<LegacyWebArchive> createInternal(StringImpl* markupString, const ArchiveOptions&, LocalFrame&, Vector<Ref<Node>>&& nodes, NOESCAPE const Function<bool(LocalFrame&)>& frameFilter);
     static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);

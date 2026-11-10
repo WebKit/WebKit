@@ -89,8 +89,8 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
-    static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, const JSC::ArgList&);
+    static RefPtr<StringImpl> codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, RefPtr<StringImpl>, const JSC::ArgList&);
     static JSC::Structure* trustedScriptStructure(JSC::JSGlobalObject*);
 
     // Make binding code generation easier.
@@ -123,11 +123,11 @@ public:
 
     JSC::JSObject* readableStreamByteStrategySize();
 
-    using ScriptErrorCallback = Function<void(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)>;
+    using ScriptErrorCallback = Function<void(StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber)>;
 
     void addScriptErrorCallback(ScriptErrorCallback&&);
     NODELETE bool hasScriptErrorCallbacks() const;
-    void invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const;
+    void invokeScriptErrorCallbacks(StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber) const;
 
     JSHandleIdentifier addJSHandle(JSC::JSObject&);
     NODELETE void refJSHandle(JSHandleIdentifier);
@@ -147,7 +147,7 @@ protected:
 #endif
 
     static JSC::Identifier moduleLoaderResolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, RefPtr<JSC::ScriptFetcher>, bool useImportMap);
-    static JSC::JSPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, const String&, RefPtr<JSC::ScriptFetchParameters>, RefPtr<JSC::ScriptFetcher>);
+    static JSC::JSPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, StringImpl*, RefPtr<JSC::ScriptFetchParameters>, RefPtr<JSC::ScriptFetcher>);
     static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, RefPtr<JSC::ScriptFetcher>, JSC::JSValue, JSC::JSValue);
     static JSC::JSPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, RefPtr<JSC::ScriptFetchParameters>, const JSC::SourceOrigin&, bool deferred);
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, RefPtr<JSC::ScriptFetcher>);

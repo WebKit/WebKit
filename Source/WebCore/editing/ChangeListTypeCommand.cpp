@@ -84,16 +84,16 @@ static void removeSourceListAttributes(const HTMLElement& listToReplace, HTMLEle
     list.removeInlineStyleProperty(CSSPropertyID::ListStyleType);
 
     Ref classList = list.classList();
-    bool sourceHasClassNameForSmartList = classList->contains(AppleDecimalListClass) || classList->contains(AppleDiscListClass) || classList->contains(AppleDashListClass);
+    bool sourceHasClassNameForSmartList = classList->contains(AtomStringImpl::add(AppleDecimalListClass).ptr()) || classList->contains(AtomStringImpl::add(AppleDiscListClass).ptr()) || classList->contains(AtomStringImpl::add(AppleDashListClass).ptr());
 
     if (sourceHasClassNameForSmartList) {
-        FixedVector<AtomString> classNamesToRemove { AppleDashListClass, (convertToUnorderedList ? AppleDecimalListClass : AppleDiscListClass) };
+        FixedVector<RefPtr<AtomStringImpl>> classNamesToRemove { AtomStringImpl::add(AppleDashListClass), AtomStringImpl::add(convertToUnorderedList ? AppleDecimalListClass : AppleDiscListClass) };
         classList->remove(classNamesToRemove);
-        classList->add(convertToUnorderedList ? AppleDiscListClass : AppleDecimalListClass);
+        classList->add(AtomStringImpl::add(convertToUnorderedList ? AppleDiscListClass : AppleDecimalListClass).ptr());
     }
 
     RefPtr existingInlineStyle = listToReplace.inlineStyle();
-    if (existingInlineStyle && !existingInlineStyle->getPropertyValue(CSSPropertyID::ListStyleType).isEmpty())
+    if (existingInlineStyle && !isEmpty(existingInlineStyle->getPropertyValue(CSSPropertyID::ListStyleType)))
         list.setInlineStyleProperty(CSSPropertyID::ListStyleType, (convertToUnorderedList ? CSSValueID::Disc : CSSValueID::Decimal));
 }
 

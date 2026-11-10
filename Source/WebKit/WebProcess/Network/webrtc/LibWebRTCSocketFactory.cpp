@@ -84,7 +84,7 @@ std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createUdpSock
     return socket;
 }
 
-std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions& options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
+std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, RefPtr<StringImpl>&& userAgent, const webrtc::PacketSocketTcpOptions& options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
     ASSERT(!WTF::isMainRunLoop());
 

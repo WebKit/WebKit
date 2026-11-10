@@ -80,17 +80,17 @@ public:
     void setDescentOverride(CSSValue&);
     void setLineGapOverride(CSSValue&);
 
-    AtomString family() const;
-    String style() const;
-    String weight() const;
-    String width() const;
-    String unicodeRange() const;
-    String featureSettings() const;
-    String display() const;
-    String ascentOverride() const;
-    String descentOverride() const;
-    String lineGapOverride() const;
-    String sizeAdjust() const;
+    RefPtr<AtomStringImpl> family() const;
+    RefPtr<StringImpl> style() const;
+    RefPtr<StringImpl> weight() const;
+    RefPtr<StringImpl> width() const;
+    RefPtr<StringImpl> unicodeRange() const;
+    RefPtr<StringImpl> featureSettings() const;
+    RefPtr<StringImpl> display() const;
+    RefPtr<StringImpl> ascentOverride() const;
+    RefPtr<StringImpl> descentOverride() const;
+    RefPtr<StringImpl> lineGapOverride() const;
+    RefPtr<StringImpl> sizeAdjust() const;
 
     // Pending => Loading  => TimedOut
     //              ||  \\    //  ||

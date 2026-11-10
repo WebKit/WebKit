@@ -40,7 +40,7 @@ enum class ContextMenuItemIsSeparator : bool { No, Yes };
 enum class ContextMenuItemHasAction : bool { No, Yes };
 
 struct PDFContextMenuItem {
-    String title;
+    RefPtr<StringImpl> title;
     int state;
     int tag;
     WebCore::ContextMenuAction action;

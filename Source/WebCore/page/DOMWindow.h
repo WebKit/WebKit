@@ -136,10 +136,10 @@ public:
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
 
-    ExceptionOr<AtomString> name() const;
-    ExceptionOr<void> setName(const AtomString&);
-    ExceptionOr<String> status() const;
-    ExceptionOr<void> setStatus(const String&);
+    ExceptionOr<RefPtr<AtomStringImpl>> name() const;
+    ExceptionOr<void> setName(AtomStringImpl*);
+    ExceptionOr<RefPtr<StringImpl>> status() const;
+    ExceptionOr<void> setStatus(StringImpl*);
     ExceptionOr<Document*> document() const;
     ExceptionOr<History&> history();
     ExceptionOr<CustomElementRegistry&> ensureCustomElementRegistry();
@@ -171,7 +171,7 @@ public:
     ExceptionOr<Viewport&> viewport();
     ExceptionOr<Storage*> localStorage();
     ExceptionOr<Storage*> sessionStorage();
-    ExceptionOr<String> origin() const;
+    ExceptionOr<RefPtr<StringImpl>> origin() const;
     ExceptionOr<bool> isSecureContext() const;
     ExceptionOr<bool> crossOriginIsolated() const;
     ExceptionOr<bool> originAgentCluster() const;
@@ -179,17 +179,17 @@ public:
     ExceptionOr<void> stop();
     ExceptionOr<Performance&> performance() const;
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer);
-    ExceptionOr<Ref<CSSStyleDeclaration>> getComputedStyle(Element&, const String& pseudoElt) const;
-    ExceptionOr<RefPtr<WebCore::MediaQueryList>> matchMedia(const String&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, RefPtr<StringImpl>&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer);
+    ExceptionOr<Ref<CSSStyleDeclaration>> getComputedStyle(Element&, StringImpl* pseudoElt) const;
+    ExceptionOr<RefPtr<WebCore::MediaQueryList>> matchMedia(StringImpl*);
     ExceptionOr<Crypto&> crypto() const;
-    ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
-    ExceptionOr<void> alert(const String& message = emptyString());
-    ExceptionOr<bool> confirmForBindings(const String& message);
-    ExceptionOr<String> prompt(const String& message, const String& defaultValue);
+    ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl* urlString, AtomStringImpl* frameName, StringImpl* windowFeaturesString);
+    ExceptionOr<void> alert(StringImpl* message = emptyString());
+    ExceptionOr<bool> confirmForBindings(StringImpl* message);
+    ExceptionOr<RefPtr<StringImpl>> prompt(StringImpl* message, StringImpl* defaultValue);
     ExceptionOr<void> captureEvents();
     ExceptionOr<void> releaseEvents();
-    ExceptionOr<bool> find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
+    ExceptionOr<bool> find(StringImpl*, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
     ExceptionOr<unsigned> requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     ExceptionOr<unsigned> webkitRequestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     ExceptionOr<void> cancelAnimationFrame(unsigned id);
@@ -197,11 +197,11 @@ public:
     ExceptionOr<void> cancelIdleCallback(unsigned id);
     ExceptionOr<void> createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     ExceptionOr<void> createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
-    ExceptionOr<RefPtr<CSSRuleList>> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
+    ExceptionOr<RefPtr<CSSRuleList>> getMatchedCSSRules(Element*, StringImpl* pseudoElt, bool authorOnly = true) const;
     ExceptionOr<RefPtr<WebKitPoint>> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
     ExceptionOr<RefPtr<WebKitPoint>> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
-    ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
-    ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, const String& selectors);
+    ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, StringImpl* selectors);
+    ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, StringImpl* selectors);
     ExceptionOr<Ref<DOMRect>> convertRectToMainFrameCoordinates(const DOMRectInit&);
     ExceptionOr<void> scrollBy(const ScrollToOptions&) const;
     ExceptionOr<void> scrollBy(double x, double y) const;
@@ -222,8 +222,8 @@ public:
 
     ExceptionOr<void> reportError(JSDOMGlobalObject&, JSC::JSValue);
     ExceptionOr<JSC::JSValue> structuredClone(JSDOMGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& relevantGlobalObject, JSC::JSValue, StructuredSerializeOptions&&);
-    ExceptionOr<String> btoa(const String&);
-    ExceptionOr<String> atob(const String&);
+    ExceptionOr<RefPtr<StringImpl>> btoa(StringImpl*);
+    ExceptionOr<RefPtr<StringImpl>> atob(StringImpl*);
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     ExceptionOr<PushManager&> pushManager();
@@ -234,15 +234,15 @@ public:
     // frame), we would like to zero out m_frame to avoid being confused
     // by the document that is currently active in m_frame.
     bool isCurrentlyDisplayedInFrame() const;
-    void printErrorMessage(const String&) const;
-    String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
+    void printErrorMessage(StringImpl*) const;
+    RefPtr<StringImpl> crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
     bool isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const URL&);
 
 protected:
     bool passesSetLocationSecurityChecks(const LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState& navigationState);
     explicit DOMWindow(GlobalWindowIdentifier&&, DOMWindowType);
 
-    ExceptionOr<RefPtr<SecurityOrigin>> createTargetOriginForPostMessage(const String&, Document&);
+    ExceptionOr<RefPtr<SecurityOrigin>> createTargetOriginForPostMessage(StringImpl*, Document&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::DOMWindow; }
     void refEventTarget() final { ref(); }

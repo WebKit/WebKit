@@ -77,8 +77,8 @@ public:
 
     bool isGeneratedContent() const { return m_isGeneratedContent; }
 
-    const String& altText() const LIFETIME_BOUND { return m_altText; }
-    void setAltText(const String& altText) { m_altText = altText; }
+    const RefPtr<StringImpl>& altText() const LIFETIME_BOUND { return m_altText; }
+    void setAltText(StringImpl* altText) { m_altText = altText; }
 
     // https://html.spec.whatwg.org/multipage/images.html#current-pixel-density
     float currentPixelDensity() const { return m_currentPixelDensity; }
@@ -92,7 +92,7 @@ public:
 
     virtual bool shouldDisplayBrokenImageIcon() const;
 
-    String accessibilityDescription() const;
+    RefPtr<StringImpl> accessibilityDescription() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     bool isMultiRepresentationHEIC() const;
@@ -189,7 +189,7 @@ private:
     bool imageRepresentsNothing() const;
 
     // Text to display as long as the image isn't available.
-    String m_altText;
+    RefPtr<StringImpl> m_altText;
     const std::unique_ptr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText { false };
     bool m_isGeneratedContent { false };

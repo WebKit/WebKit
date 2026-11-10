@@ -44,12 +44,12 @@ public:
     JSC::JSValue wrapper(JSC::JSGlobalObject*);
     void clearAllWrappers();
 
-    void setSavedResultAlias(const std::optional<String>& alias) { m_savedResultAlias = alias; }
-    const std::optional<String>& savedResultAlias() const LIFETIME_BOUND { return m_savedResultAlias; }
+    void setSavedResultAlias(const std::optional<RefPtr<StringImpl>>& alias) { m_savedResultAlias = alias; }
+    const std::optional<RefPtr<StringImpl>>& savedResultAlias() const LIFETIME_BOUND { return m_savedResultAlias; }
 
 private:
     PerGlobalObjectWrapperWorld m_wrappers;
-    std::optional<String> m_savedResultAlias;
+    std::optional<RefPtr<StringImpl>> m_savedResultAlias;
 };
 
 } // namespace Inspector

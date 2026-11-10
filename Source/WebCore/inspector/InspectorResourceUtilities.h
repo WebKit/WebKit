@@ -60,7 +60,7 @@ class TextResourceDecoder;
 
 namespace Inspector {
 namespace Protocol {
-using ErrorString = String;
+using ErrorString = RefPtr<StringImpl>;
 namespace Page {
 enum class ResourceType : int;
 }
@@ -73,20 +73,20 @@ enum class ResourceType : uint8_t;
 // WebContent process and the Protocol object built later in the UIProcess (rather than shipping
 // protocol JSON across the wire). See webkit.org/b/308896.
 struct FrameResource {
-    String url;
+    RefPtr<StringImpl> url;
     ResourceType type { ResourceType::Other };
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
     bool canceled { false };
     bool failed { false };
-    String sourceMapURL;
-    String targetId;
+    RefPtr<StringImpl> sourceMapURL;
+    RefPtr<StringImpl> targetId;
 };
 
 // Per-frame data gathered from a frame's hosting WebContent process: the committed document's
 // protocol loaderId string (computed by that process so it matches the live Network events) and
 // the frame's cached subresources.
 struct FrameResourceData {
-    String loaderId;
+    RefPtr<StringImpl> loaderId;
     Vector<FrameResource> resources;
 };
 
@@ -94,7 +94,7 @@ struct FrameResourceData {
 // back into protocol objects after gathering matches from a hosting WebContent process.
 struct SearchMatch {
     int lineNumber { 0 };
-    String lineContent;
+    RefPtr<StringImpl> lineContent;
 };
 
 // Plain, IPC-serializable mirror of Protocol::Page::SearchResult, carried unqualified across IPC;
@@ -103,7 +103,7 @@ struct SearchMatch {
 // frameID is optional only to keep the struct default-constructible for IPC decoding; every emitted
 // result sets it.
 struct SearchResult {
-    String url;
+    RefPtr<StringImpl> url;
     std::optional<WebCore::FrameIdentifier> frameID;
     int matchesCount { 0 };
     std::optional<WebCore::ResourceLoaderIdentifier> resourceID;
@@ -111,7 +111,7 @@ struct SearchResult {
 
 // Completion for Network.loadResource: {content, mimeType, status} on success, or an error string
 // on failure.
-using LoadResourceCompletionHandler = CompletionHandler<void(std::expected<std::tuple<String /* content */, String /* mimeType */, int /* status */>, String /* error */>&&)>;
+using LoadResourceCompletionHandler = CompletionHandler<void(std::expected<std::tuple<RefPtr<StringImpl> /* content */, RefPtr<StringImpl> /* mimeType */, int /* status */>, RefPtr<StringImpl> /* error */>&&)>;
 
 enum class InitiatorType : uint8_t {
     Parser,
@@ -121,8 +121,8 @@ enum class InitiatorType : uint8_t {
 
 // Plain, IPC-serializable mirror of Protocol::Console::CallFrame.
 struct InitiatorCallFrame {
-    String functionName;
-    String sourceURL;
+    RefPtr<StringImpl> functionName;
+    RefPtr<StringImpl> sourceURL;
     uint32_t sourceID { 0 }; // A JSC::SourceID; the protocol reports it as a Debugger.ScriptId string.
     unsigned lineNumber { 0 };
     unsigned columnNumber { 0 };
@@ -156,7 +156,7 @@ struct InitiatorData {
     Vector<InitiatorStackTraceLevel> stackTrace;
 
     // Set only for InitiatorType::Parser.
-    String parserURL;
+    RefPtr<StringImpl> parserURL;
     std::optional<int> parserLineNumber;
 
     // May accompany any type.
@@ -169,14 +169,14 @@ struct InitiatorData {
 
 // Request data the inspector needs that doesn't travel with ResourceRequest over IPC.
 struct RequestExtras {
-    String postData; // Null when the request has no body.
+    RefPtr<StringImpl> postData; // Null when the request has no body.
     std::optional<WebCore::ReferrerPolicy> referrerPolicy;
-    String integrity;
+    RefPtr<StringImpl> integrity;
 };
 
 namespace ResourceUtilities {
 
-WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
+WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, StringImpl* textEncodingName, bool withBase64Encode, RefPtr<StringImpl>* result);
 WEBCORE_EXPORT Vector<WebCore::CachedResource*> cachedResourcesForFrame(WebCore::LocalFrame*);
 // Adds the cookies the frame's document would send to its own URL and to each of its cached subresources' URLs.
 // FrameSiteOnly skips URLs on a site other than the frame's, which a Site Isolation process may not look up.
@@ -185,23 +185,23 @@ WEBCORE_EXPORT void collectRawCookiesForFrame(WebCore::LocalFrame&, ListHashSet<
 WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObjectsForFrame(WebCore::LocalFrame&);
 WEBCORE_EXPORT Vector<Inspector::FrameResource> buildResourceDataForFrame(WebCore::LocalFrame&);
 WEBCORE_EXPORT Ref<Inspector::Protocol::Page::FrameResource> buildResourceObject(const Inspector::FrameResource&);
-void resourceContent(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*, const URL&, String* result, bool* base64Encoded);
-WEBCORE_EXPORT bool mainResourceContent(WebCore::LocalFrame*, bool withBase64Encode, String* result);
+void resourceContent(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*, const URL&, RefPtr<StringImpl>* result, bool* base64Encoded);
+WEBCORE_EXPORT bool mainResourceContent(WebCore::LocalFrame*, bool withBase64Encode, RefPtr<StringImpl>* result);
 
-WEBCORE_EXPORT String sourceMapURLForResource(WebCore::CachedResource*);
+WEBCORE_EXPORT RefPtr<StringImpl> sourceMapURLForResource(WebCore::CachedResource*);
 RefPtr<WebCore::CachedResource> WEBCORE_EXPORT cachedResource(const WebCore::LocalFrame*, const URL&);
 NODELETE Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(WebCore::CachedResource::Type);
 Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(const WebCore::CachedResource&);
 
 NODELETE Inspector::Protocol::Page::ResourceType resourceTypeToProtocol(Inspector::ResourceType);
 Inspector::Protocol::Page::ResourceType cachedResourceTypeToProtocol(const WebCore::CachedResource&);
-WebCore::LocalFrame* findFrameWithSecurityOrigin(WebCore::Page&, const String& originRawString);
+WebCore::LocalFrame* findFrameWithSecurityOrigin(WebCore::Page&, StringImpl* originRawString);
 WebCore::DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*);
 
-WEBCORE_EXPORT bool shouldTreatAsText(const String& mimeType);
-WEBCORE_EXPORT Ref<WebCore::TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
-WEBCORE_EXPORT std::optional<String> textContentForCachedResource(WebCore::CachedResource&);
-WEBCORE_EXPORT bool cachedResourceContent(WebCore::CachedResource&, String* result, bool* base64Encoded);
+WEBCORE_EXPORT bool shouldTreatAsText(StringImpl* mimeType);
+WEBCORE_EXPORT Ref<WebCore::TextResourceDecoder> createTextDecoder(StringImpl* mimeType, StringImpl* textEncodingName);
+WEBCORE_EXPORT std::optional<RefPtr<StringImpl>> textContentForCachedResource(WebCore::CachedResource&);
+WEBCORE_EXPORT bool cachedResourceContent(WebCore::CachedResource&, RefPtr<StringImpl>* result, bool* base64Encoded);
 
 WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const WebCore::HTTPHeaderMap&);
 
@@ -233,7 +233,7 @@ WEBCORE_EXPORT RequestExtras copyRequestExtras(const WebCore::ResourceRequest&, 
 WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(const WebCore::ResourceRequest&, const RequestExtras&);
 
 // Loads url in the given context on behalf of the inspector, bypassing cross-origin checks (Network.loadResource).
-WEBCORE_EXPORT void loadResource(WebCore::ScriptExecutionContext&, const String& url, LoadResourceCompletionHandler&&);
+WEBCORE_EXPORT void loadResource(WebCore::ScriptExecutionContext&, StringImpl* url, LoadResourceCompletionHandler&&);
 
 } // namespace ResourceUtilities
 

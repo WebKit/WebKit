@@ -217,8 +217,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     RetainPtr<CTLineRef> line;
 
     LOG_WITH_STREAM(TextShaping,
-        stream << "Complex shaping " << characters.size() << " code units with info " << String(adoptCF(CFCopyDescription(stringAttributes.get())).get()) << ".\n";
-        stream << "Font attributes: " << String(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(effectiveFont->platformData().ctFont())).get())).get())).get()) << "\n";
+        stream << "Complex shaping " << characters.size() << " code units with info " << StringImpl::create(adoptCF(CFCopyDescription(stringAttributes.get())).get()) << ".\n";
+        stream << "Font attributes: " << StringImpl::create(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(effectiveFont->platformData().ctFont())).get())).get())).get()) << "\n";
         stream << "Code Units:";
         for (auto codePoint : characters)
             stream << " " << codePoint;

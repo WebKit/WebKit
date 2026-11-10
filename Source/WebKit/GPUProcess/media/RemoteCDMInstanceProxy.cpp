@@ -64,7 +64,7 @@ RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
     m_instance->clearClient();
 }
 
-void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
+void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(StringImpl* type, Ref<SharedBuffer>&& initData)
 {
     if (!m_cdm)
         return;
@@ -90,7 +90,7 @@ void RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificat
     m_instance->setServerCertificate(WTF::move(certificate), WTF::move(completion));
 }
 
-void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
+void RemoteCDMInstanceProxy::setStorageDirectory(StringImpl* directory)
 {
     if (!m_cdm)
         return;
@@ -100,10 +100,10 @@ void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
         return;
 
     auto mediaKeysStorageDirectory = factory->mediaKeysStorageDirectory();
-    if (mediaKeysStorageDirectory.isEmpty())
+    if (isEmpty(mediaKeysStorageDirectory))
         return;
 
-    if (directory.startsWith(mediaKeysStorageDirectory))
+    if (startsWith(directory, mediaKeysStorageDirectory))
         m_instance->setStorageDirectory(directory);
 }
 

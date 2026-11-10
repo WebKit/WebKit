@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-String undoRedoLabel(EditAction editAction)
+RefPtr<StringImpl> undoRedoLabel(EditAction editAction)
 {
     switch (editAction) {
     case EditAction::Unspecified:

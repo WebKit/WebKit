@@ -52,21 +52,21 @@ private:
     void requestMaximizeWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
 
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
-    void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, const String& resource, CompletionHandler<void(const String&)>&&) override;
-    void unloadWebExtension(WebKit::WebAutomationSession&, const String& identifier, CompletionHandler<void(bool)>&&) override;
+    void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, StringImpl* resource, CompletionHandler<void(StringImpl*)>&&) override;
+    void unloadWebExtension(WebKit::WebAutomationSession&, StringImpl* identifier, CompletionHandler<void(bool)>&&) override;
 #endif
 
-    void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const String& commandName, const String& arguments, CompletionHandler<void(const String&)>&&) override;
+    void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, StringImpl* commandName, StringImpl* arguments, CompletionHandler<void(StringImpl*)>&&) override;
 
     bool shouldEnableInspectorTesting(WebKit::WebAutomationSession&) override;
 
     bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void acceptCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
-    std::optional<String> messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
-    std::optional<String> defaultTextOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
-    std::optional<String> userInputOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
-    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy&, const String&) override;
+    std::optional<RefPtr<StringImpl>> messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    std::optional<RefPtr<StringImpl>> defaultTextOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    std::optional<RefPtr<StringImpl>> userInputOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy&, StringImpl*) override;
     std::optional<API::AutomationSessionClient::JavaScriptDialogType> typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     API::AutomationSessionClient::BrowsingContextPresentation currentPresentationOfPage(WebAutomationSession&, WebPageProxy&) override;
 

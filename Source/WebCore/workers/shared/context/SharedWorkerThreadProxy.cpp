@@ -157,7 +157,7 @@ void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
     }, WorkerRunLoop::defaultMode());
 }
 
-void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
+void SharedWorkerThreadProxy::postExceptionToWorkerObject(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL)
 {
     ASSERT(!isMainThread());
     if (!m_workerThread->isInStaticScriptEvaluation())
@@ -166,21 +166,21 @@ void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMes
     if (protect(m_workerThread->WorkerOrWorkletThread::globalScope())->settingsValues().workerParseErrorReportingEnabled)
         return;
 
-    callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy(), lineNumber, columnNumber, sourceURL = sourceURL.isolatedCopy()] {
+    callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = isolatedCopy(errorMessage), lineNumber, columnNumber, sourceURL = isolatedCopy(sourceURL)] {
         bool isErrorEvent = true;
         if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
             connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
     });
 }
 
-void SharedWorkerThreadProxy::reportErrorToWorkerObject(const String& errorMessage)
+void SharedWorkerThreadProxy::reportErrorToWorkerObject(StringImpl* errorMessage)
 {
     ASSERT(!isMainThread());
 
-    callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy()] {
+    callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = isolatedCopy(errorMessage)] {
         bool isErrorEvent = false;
         if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
-            connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, 0, 0, { }, isErrorEvent);
+            connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, 0, 0, nullptr, isErrorEvent);
     });
 }
 
@@ -218,7 +218,7 @@ void SharedWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& ta
     });
 }
 
-bool SharedWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool SharedWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, StringImpl* mode)
 {
     if (m_isTerminatingOrTerminated)
         return false;
@@ -227,7 +227,7 @@ bool SharedWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(Script
     return true;
 }
 
-void SharedWorkerThreadProxy::postMessageToDebugger(const String&)
+void SharedWorkerThreadProxy::postMessageToDebugger(StringImpl*)
 {
 
 }

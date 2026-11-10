@@ -48,7 +48,7 @@ RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(Platform
 RetainPtr<CVPixelBufferRef> createCVPixelBufferFromImage(PlatformImagePtr);
 
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)
-void CVPixelBufferDumpToFile(CVPixelBufferRef, const String& name);
+void CVPixelBufferDumpToFile(CVPixelBufferRef, StringImpl* name);
 #endif
 
 } // namespace WebCore

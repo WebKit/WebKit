@@ -540,7 +540,7 @@ void NetworkConnectionToWebProcess::queryLocalNetworkAccessPermission(std::optio
     protect(NetworkProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::QueryLocalNetworkAccessPermission(sessionID(), webPageProxyID, origin, addressSpace), WTF::move(completion));
 }
 
-void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker)
+void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, StringImpl* protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker)
 {
     MESSAGE_CHECK(request.url().isValid());
     auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies());
@@ -550,7 +550,7 @@ void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& r
         return;
     }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow) {
-        CONNECTION_RELEASE_LOG(Loading, "createSocketChannel: forcing EphemeralStateless because Web process is not allowed to use firstPartyForCookies %" SENSITIVE_LOG_STRING " for url %" SENSITIVE_LOG_STRING, request.firstPartyForCookies().string().utf8(), request.url().string().utf8());
+        CONNECTION_RELEASE_LOG(Loading, "createSocketChannel: forcing EphemeralStateless because Web process is not allowed to use firstPartyForCookies %" SENSITIVE_LOG_STRING " for url %" SENSITIVE_LOG_STRING, utf8(request.firstPartyForCookies().string()), utf8(request.url().string()));
         storedCredentialsPolicy = WebCore::StoredCredentialsPolicy::EphemeralStateless;
     }
 
@@ -607,7 +607,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 {
     auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies());
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow) [[unlikely]]
-        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8(), loadParameters.request.url().string().utf8());
+        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, utf8(loadParameters.request.firstPartyForCookies().string()), utf8(loadParameters.request.url().string()));
 
     MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
     if (!NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
@@ -783,7 +783,7 @@ auto NetworkConnectionToWebProcess::localNetworkAccessFrameRecord(FrameIdentifie
     return std::nullopt;
 }
 
-void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
+void NetworkConnectionToWebProcess::prefetchDNS(StringImpl* hostname)
 {
     if (CheckedPtr networkSession = this->networkSession(); networkSession && networkSession->canPrefetchDNS())
         WebCore::prefetchDNS(hostname);
@@ -892,7 +892,7 @@ bool NetworkConnectionToWebProcess::consumeDownloadAuthorization(DownloadID down
     return true;
 }
 
-void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
+void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, StringImpl* suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
 {
     if (!consumeDownloadAuthorization(downloadID))
         return;
@@ -932,7 +932,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optio
     loader->convertToDownload(downloadID, request, response);
 }
 
-void NetworkConnectionToWebProcess::registerURLSchemesAsCORSEnabled(Vector<String>&& schemes)
+void NetworkConnectionToWebProcess::registerURLSchemesAsCORSEnabled(Vector<RefPtr<StringImpl>>&& schemes)
 {
     Ref registry = m_schemeRegistry;
     for (auto&& scheme : borrow(schemes))
@@ -988,7 +988,7 @@ auto NetworkConnectionToWebProcess::validateCookieAccess(ASCIILiteral messageNam
     return CookieAccess::Allow;
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, IncludeSecureCookies includeSecureCookies, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&& completionHandler)
+void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, IncludeSecureCookies includeSecureCookies, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void(RefPtr<StringImpl> cookieString, bool secureCookiesAccessed)>&& completionHandler)
 {
     auto access = validateCookieAccess("cookiesForDOM"_s, firstParty, url, &sameSiteInfo, webPageProxyID);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler({ }, false));
@@ -1008,7 +1008,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const S
     completionHandler(WTF::move(result.first), result.second);
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, const String& cookieString, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, WebPageProxyIdentifier webPageProxyID)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, StringImpl* cookieString, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, WebPageProxyIdentifier webPageProxyID)
 {
     auto access = validateCookieAccess("setCookiesFromDOM"_s, firstParty, url, &sameSiteInfo, webPageProxyID);
     MESSAGE_CHECK(access != CookieAccess::Terminate);
@@ -1103,11 +1103,11 @@ void NetworkConnectionToWebProcess::setRawCookie(const URL& firstParty, const UR
 #endif
 }
 
-void NetworkConnectionToWebProcess::deleteCookie(const URL& firstParty, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::deleteCookie(const URL& firstParty, const URL& url, StringImpl* cookieName, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!firstParty.isEmpty() && firstParty.isValid(), completionHandler());
     MESSAGE_CHECK_COMPLETION(!url.isEmpty() && url.isValid(), completionHandler());
-    MESSAGE_CHECK_COMPLETION(!cookieName.isEmpty(), completionHandler());
+    MESSAGE_CHECK_COMPLETION(!isEmpty(cookieName), completionHandler());
     auto access = validateCookieAccess("deleteCookie"_s, firstParty, url, nullptr, std::nullopt);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler());
     if (access != CookieAccess::Allow)
@@ -1163,7 +1163,7 @@ void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty,
 // Replies std::nullopt rather than an empty vector on failure, so that WebCookieCache does not cache it as "no cookies".
 void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(url.host().toString()), completionHandler(std::nullopt));
+    MESSAGE_CHECK_COMPLETION(HashSet<RefPtr<StringImpl>>::isValidValue(url.host().toString()), completionHandler(std::nullopt));
     auto access = validateCookieAccess("domCookiesForHost"_s, url, url, nullptr, std::nullopt);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler(std::nullopt));
     if (access != CookieAccess::Allow)
@@ -1197,7 +1197,7 @@ void NetworkConnectionToWebProcess::subscribeToCookieChangeNotifications(const U
     completionHandler(startedListening);
 }
 
-void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(const String& host)
+void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(StringImpl* host)
 {
     MESSAGE_CHECK(m_hostsWithCookieListeners.isValidValue(host));
 
@@ -1205,15 +1205,15 @@ void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(con
     ASSERT_UNUSED(removed, removed);
 
     if (CheckedPtr networkStorageSession = storageSession())
-        networkStorageSession->stopListeningForCookieChangeNotifications(*this, HashSet<String> { host });
+        networkStorageSession->stopListeningForCookieChangeNotifications(*this, HashSet<RefPtr<StringImpl>> { host });
 }
 
-void NetworkConnectionToWebProcess::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
+void NetworkConnectionToWebProcess::cookiesAdded(StringImpl* host, const Vector<WebCore::Cookie>& cookies)
 {
     m_connection->send(Messages::NetworkProcessConnection::CookiesAdded(host, cookies), 0);
 }
 
-void NetworkConnectionToWebProcess::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
+void NetworkConnectionToWebProcess::cookiesDeleted(StringImpl* host, const Vector<WebCore::Cookie>& cookies)
 {
     m_connection->send(Messages::NetworkProcessConnection::CookiesDeleted(host, cookies), 0);
 }
@@ -1251,11 +1251,11 @@ void NetworkConnectionToWebProcess::cookieEnabledStateMayHaveChanged()
     m_connection->send(Messages::NetworkProcessConnection::UpdateCachedCookiesEnabled(), 0);
 }
 
-bool NetworkConnectionToWebProcess::isFilePathAllowed(String path)
+bool NetworkConnectionToWebProcess::isFilePathAllowed(RefPtr<StringImpl> path)
 {
     path = FileSystem::lexicallyNormal(path);
     auto parentPath = FileSystem::parentPath(path);
-    while (parentPath != path) {
+    while (!equal(parentPath, path)) {
         if (m_allowedFilePaths.contains(path))
             return true;
         path = parentPath;
@@ -1274,7 +1274,7 @@ static bool shouldCheckBlobFileAccess()
 }
 
 // FIXME: (rdar://176402219) The web process should not send file paths to the network process. File paths should come from the UI process.
-void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, StringImpl* path, StringImpl* replacementPath, SandboxExtension::Handle&& extensionHandle, StringImpl* contentType)
 {
     MESSAGE_CHECK(!url.isEmpty());
 
@@ -1286,19 +1286,19 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
 
 #if PLATFORM(COCOA)
     // FIXME: Promote to MESSAGE_CHECK.
-    if (!replacementPath.isEmpty() && !isFilePathAllowed(replacementPath)) {
+    if (!isEmpty(replacementPath) && !isFilePathAllowed(replacementPath)) {
         RELEASE_LOG_FAULT(Loading, "NetworkConnectionToWebProcess::registerInternalFileBlobURL replacementPath is not allowed");
         return;
     }
 #else
-    MESSAGE_CHECK(replacementPath.isEmpty() || isFilePathAllowed(replacementPath));
+    MESSAGE_CHECK(isEmpty(replacementPath) || isFilePathAllowed(replacementPath));
 #endif
 
     m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTF::move(extensionHandle))), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, StringImpl* contentType)
 {
     MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
@@ -1320,9 +1320,9 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& s
     session->blobRegistry().registerBlobURL(url, srcURL, WTF::move(policyContainer), topOrigin);
 }
 
-void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(URL&& url, URL&& srcURL, const String& fileBackedPath, String&& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(URL&& url, URL&& srcURL, StringImpl* fileBackedPath, RefPtr<StringImpl>&& contentType)
 {
-    MESSAGE_CHECK(!url.isEmpty() && !srcURL.isEmpty() && !fileBackedPath.isEmpty());
+    MESSAGE_CHECK(!url.isEmpty() && !srcURL.isEmpty() && !isEmpty(fileBackedPath));
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1339,7 +1339,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
     session->blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, WTF::move(file), contentType, { });
 }
 
-void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, StringImpl* contentType)
 {
     MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
@@ -1413,7 +1413,7 @@ CompletionHandlerCallingScope NetworkConnectionToWebProcess::retainBlobURLsWhile
     } };
 }
 
-void NetworkConnectionToWebProcess::blobType(const URL& url, CompletionHandler<void(String)>&& completionHandler)
+void NetworkConnectionToWebProcess::blobType(const URL& url, CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler)
 {
     CheckedPtr session = networkSession();
     completionHandler(session ? session->blobRegistry().blobType(url) : emptyString());
@@ -1425,7 +1425,7 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<v
     completionHandler(session ? session->blobRegistry().blobSize(url) : 0);
 }
 
-void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     CheckedPtr session = networkSession();
     if (!session)
@@ -1440,7 +1440,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
     for (auto& file : borrow(fileReferences))
         file->prepareForFileAccess();
 
-    session->blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, [this, protectedThis = Ref { *this }, fileReferences = WTF::move(fileReferences), completionHandler = WTF::move(completionHandler)](Vector<String>&& filePaths) mutable {
+    session->blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, [this, protectedThis = Ref { *this }, fileReferences = WTF::move(fileReferences), completionHandler = WTF::move(completionHandler)](Vector<RefPtr<StringImpl>>&& filePaths) mutable {
         for (auto& file : borrow(fileReferences))
             file->revokeFileAccess();
 
@@ -1455,7 +1455,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
     });
 }
 
-void NetworkConnectionToWebProcess::registerBlobPathForTesting(const String& path, CompletionHandler<void()>&& completion)
+void NetworkConnectionToWebProcess::registerBlobPathForTesting(StringImpl* path, CompletionHandler<void()>&& completion)
 {
     if (!allowTestOnlyIPC())
         return completion();
@@ -1463,15 +1463,15 @@ void NetworkConnectionToWebProcess::registerBlobPathForTesting(const String& pat
     completion();
 }
 
-void NetworkConnectionToWebProcess::generalStoragePathForTesting(CompletionHandler<void(String&&)>&& completion)
+void NetworkConnectionToWebProcess::generalStoragePathForTesting(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completion)
 {
     CheckedPtr session = networkSession();
     if (!session)
         return completion({ });
-    completion(String { session->storageManager().path() });
+    completion(RefPtr<StringImpl> { session->storageManager().path() });
 }
 
-void NetworkConnectionToWebProcess::allowAccessToFile(const String& path)
+void NetworkConnectionToWebProcess::allowAccessToFile(StringImpl* path)
 {
     m_allowedFilePaths.add(FileSystem::lexicallyNormal(path));
 }
@@ -1625,12 +1625,12 @@ void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::Reg
     }
 }
 
-void NetworkConnectionToWebProcess::addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
+void NetworkConnectionToWebProcess::addOriginAccessAllowListEntry(StringImpl* sourceOrigin, StringImpl* destinationProtocol, StringImpl* destinationHost, bool allowDestinationSubdomains)
 {
     SecurityPolicy::addOriginAccessAllowlistEntry(SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
-void NetworkConnectionToWebProcess::removeOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
+void NetworkConnectionToWebProcess::removeOriginAccessAllowListEntry(StringImpl* sourceOrigin, StringImpl* destinationProtocol, StringImpl* destinationHost, bool allowDestinationSubdomains)
 {
     SecurityPolicy::removeOriginAccessAllowlistEntry(SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
@@ -2053,7 +2053,7 @@ void NetworkConnectionToWebProcess::flushNetworkProcessIPC(CompletionHandler<voi
     callback();
 }
 
-void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message)
+void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, StringImpl* message)
 {
     m_connection->send(Messages::NetworkProcessConnection::BroadcastConsoleMessage(source, level, message), 0);
 }
@@ -2179,7 +2179,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
 }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& additionalHeaders, WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
 {
     if (!url.isValid()
         || !portAllowed(url)
@@ -2224,9 +2224,9 @@ void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedP
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void NetworkConnectionToWebProcess::shouldOffloadIFrameForHost(const String& host, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::shouldOffloadIFrameForHost(StringImpl* host, CompletionHandler<void(bool)>&& completionHandler)
 {
-    CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", host.utf8());
+    CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", utf8(host));
     if (CheckedPtr session = networkSession())
         protect(session->resourceMonitorThrottler())->tryAccess(host, ContinuousApproximateTime::now(), WTF::move(completionHandler));
     else
@@ -2235,10 +2235,10 @@ void NetworkConnectionToWebProcess::shouldOffloadIFrameForHost(const String& hos
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-void NetworkConnectionToWebProcess::takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&& callback)
+void NetworkConnectionToWebProcess::takeInvalidMessageStringForTesting(CompletionHandler<void(RefPtr<StringImpl>&&)>&& callback)
 {
-    String error = connection().takeErrorString();
-    if (error.isNull())
+    RefPtr<StringImpl> error = connection().takeErrorString();
+    if (!error)
         error = emptyString();
     callback(WTF::move(error));
 }

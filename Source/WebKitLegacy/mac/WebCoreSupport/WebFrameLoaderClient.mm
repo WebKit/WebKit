@@ -584,7 +584,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     if (!provisionalDocumentLoader)
         return;
 
-    m_webFrame->_private->provisionalURL = provisionalDocumentLoader->url().string().createNSString().autorelease();
+    m_webFrame->_private->provisionalURL = createNSString(provisionalDocumentLoader->url().string()).autorelease();
 
     RetainPtr webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
@@ -612,7 +612,7 @@ void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url, dou
 
 void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 {
-    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string().createNSString();
+    m_webFrame->_private->url = createNSString(core(m_webFrame.get())->document()->url().string());
 
     RetainPtr webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
@@ -625,7 +625,7 @@ void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
 {
-    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string().createNSString();
+    m_webFrame->_private->url = createNSString(core(m_webFrame.get())->document()->url().string());
 
     RetainPtr webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
@@ -635,7 +635,7 @@ void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
 
 void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
 {
-    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string().createNSString();
+    m_webFrame->_private->url = createNSString(core(m_webFrame.get())->document()->url().string());
 
     RetainPtr webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
@@ -645,7 +645,7 @@ void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
 
 void WebFrameLoaderClient::dispatchDidPopStateWithinPage()
 {
-    m_webFrame->_private->url = core(m_webFrame.get())->document()->url().string().createNSString();
+    m_webFrame->_private->url = createNSString(core(m_webFrame.get())->document()->url().string());
 
     RetainPtr webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
@@ -667,7 +667,7 @@ void WebFrameLoaderClient::dispatchWillClose()
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     ASSERT(!m_webFrame->_private->provisionalURL);
-    m_webFrame->_private->provisionalURL = protect(protect(core(m_webFrame.get()))->loader().provisionalDocumentLoader())->url().string().createNSString();
+    m_webFrame->_private->provisionalURL = createNSString(protect(protect(core(m_webFrame.get()))->loader().provisionalDocumentLoader())->url().string());
 
     RetainPtr webView = getWebView(m_webFrame.get());
 #if !PLATFORM(IOS_FAMILY)
@@ -693,7 +693,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const WebCore::StringWithDire
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
     if (implementations->didReceiveTitleForFrameFunc) {
         // FIXME: Use direction of title.
-        CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView.get(), @selector(webView:didReceiveTitle:forFrame:), truncatedTitle.string.createNSString().get(), m_webFrame.get());
+        CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView.get(), @selector(webView:didReceiveTitle:forFrame:), createNSString(truncatedTitle.string).get(), m_webFrame.get());
     }
 }
 
@@ -837,7 +837,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     }
 }
 
-WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy policy, const String&)
+WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy policy, StringImpl*)
 {
     RetainPtr currentWebView = getWebView(m_webFrame.get());
     auto features = adoptNS([[NSDictionary alloc] init]);
@@ -867,12 +867,12 @@ void WebFrameLoaderClient::dispatchShow()
     [[webView.get() _UIDelegateForwarder] webViewShow:webView.get()];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, const String&, WebCore::FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, StringImpl*, WebCore::FramePolicyFunction&& function)
 {
     RetainPtr webView = getWebView(m_webFrame.get());
 
     [[webView.get() _policyDelegateForwarder] webView:webView.get()
-        decidePolicyForMIMEType:response.mimeType().createNSString().get()
+        decidePolicyForMIMEType:createNSString(response.mimeType()).get()
         request:protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get()
         frame:m_webFrame.get()
         decisionListener:setUpPolicyListener(WTF::move(function), WebCore::PolicyAction::Use, nil, nil).get()];
@@ -898,7 +898,7 @@ static BOOL shouldTryAppLink(WebView *webView, const WebCore::NavigationAction& 
 #endif
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, WebCore::FormState* formState, const String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, WebCore::FormState* formState, StringImpl* frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&& function)
 {
     RetainPtr webView = getWebView(m_webFrame.get());
     BOOL tryAppLink = shouldTryAppLink(webView.get(), action, nullptr);
@@ -907,18 +907,18 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const WebCore:
     RetainPtr<NSURL> referrerURL;
     if (tryAppLink) {
         appLinkURL = request.url().createNSURL();
-        if (!request.httpReferrer().isEmpty())
+        if (!isEmpty(request.httpReferrer()))
             referrerURL = URL(request.httpReferrer()).createNSURL();
     }
 
     [[webView.get() _policyDelegateForwarder] webView:webView.get()
         decidePolicyForNewWindowAction:protect(actionDictionary(action, formState))
         request:protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get()
-        newFrameName:frameName.createNSString().get()
+        newFrameName:createNSString(frameName).get()
         decisionListener:setUpPolicyListener(WTF::move(function), WebCore::PolicyAction::Ignore, appLinkURL.get(), referrerURL.get()).get()];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WebCore::FormState* formState, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WebCore::FormState* formState, StringImpl*, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&& function)
 {
     RetainPtr webView = getWebView(m_webFrame.get());
     BOOL tryAppLink = shouldTryAppLink(webView.get(), action, protect(core(m_webFrame.get())));
@@ -927,7 +927,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const WebCore
     RetainPtr<NSURL> referrerURL;
     if (tryAppLink) {
         appLinkURL = request.url().createNSURL();
-        if (!request.httpReferrer().isEmpty())
+        if (!isEmpty(request.httpReferrer()))
             referrerURL = URL(request.httpReferrer()).createNSURL();
     }
 
@@ -959,7 +959,7 @@ static NSDictionary *makeFormFieldValuesDictionary(WebCore::FormState& formState
     size_t size = textFieldValues.size();
     auto dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
     for (auto& value : textFieldValues)
-        [dictionary setObject:value.second.createNSString().get() forKey:value.first.createNSString().get()];
+        [dictionary setObject:createNSString(value.second).get() forKey:createNSString(value.first).get()];
     return dictionary.autorelease();
 }
 
@@ -975,7 +975,7 @@ void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&
     CallFormDelegate(webView, @selector(willSendSubmitEventToForm:inFrame:withValues:), formElement.get(), m_webFrame.get(), values.get());
 }
 
-void WebFrameLoaderClient::dispatchWillSubmitForm(WebCore::FormState& formState, URL&&, String&&, CompletionHandler<void()>&& completionHandler)
+void WebFrameLoaderClient::dispatchWillSubmitForm(WebCore::FormState& formState, URL&&, RefPtr<StringImpl>&&, CompletionHandler<void()>&& completionHandler)
 {
     RetainPtr webView = getWebView(m_webFrame.get());
     id<WebFormDelegate> formDelegate = [webView _formDelegate];
@@ -1004,7 +1004,7 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
     [protect(getWebView(m_webFrame.get())) setMainFrameDocumentReady:ready];
 }
 
-void WebFrameLoaderClient::startDownload(const WebCore::ResourceRequest& request, const String& /* suggestedName */, WebCore::FromDownloadAttribute)
+void WebFrameLoaderClient::startDownload(const WebCore::ResourceRequest& request, StringImpl* /* suggestedName */, WebCore::FromDownloadAttribute)
 {
     // FIXME: Should download full request.
     [protect(getWebView(m_webFrame.get())) _downloadURL:request.url().createNSURL().get()];
@@ -1044,11 +1044,11 @@ void WebFrameLoaderClient::finishedLoading(WebCore::DocumentLoader* loader)
     [protect(dataSource(loader)) _finishedLoading];
 }
 
-static inline NSString *nilOrNSString(const String& string)
+static inline NSString *nilOrNSString(StringImpl* string)
 {
-    if (string.isNull())
+    if (!string)
         return nil;
-    return string.createNSString().autorelease();
+    return createNSString(string).autorelease();
 }
 
 void WebFrameLoaderClient::updateGlobalHistory()
@@ -1063,12 +1063,12 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if ([view.get() historyDelegate]) {
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view.get());
         if (implementations->navigatedFunc) {
-            auto data = adoptNS([[WebNavigationData alloc] initWithURLString:loader->url().string().createNSString().get()
+            auto data = adoptNS([[WebNavigationData alloc] initWithURLString:createNSString(loader->url().string()).get()
                 title:protect(nilOrNSString(loader->title().string))
                 originalRequest:protect(loader->originalRequestCopy().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get()
                 response:protect(loader->response().nsURLResponse()).get()
                 hasSubstituteData:loader->substituteData().isValid()
-                clientRedirectSource:loader->clientRedirectSourceForHistory().createNSString().get()]);
+                clientRedirectSource:createNSString(loader->clientRedirectSourceForHistory()).get()]);
 
             CallHistoryDelegate(implementations->navigatedFunc, view.get(), @selector(webView:didNavigateWithNavigationData:inFrame:), data.get(), m_webFrame.get());
         }
@@ -1076,13 +1076,13 @@ void WebFrameLoaderClient::updateGlobalHistory()
         return;
     }
 
-    [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory().createNSURL().get() withTitle:loader->title().string.createNSString().get() method:loader->originalRequestCopy().httpMethod().createNSString().get() wasFailure:loader->urlForHistoryReflectsFailure()];
+    [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory().createNSURL().get() withTitle:createNSString(loader->title().string).get() method:createNSString(loader->originalRequestCopy().httpMethod()).get() wasFailure:loader->urlForHistoryReflectsFailure()];
 }
 
-static void addRedirectURL(WebHistoryItem *item, const String& url)
+static void addRedirectURL(WebHistoryItem *item, StringImpl* url)
 {
     if (!item->_private->_redirectURLs)
-        item->_private->_redirectURLs = makeUnique<Vector<String>>();
+        item->_private->_redirectURLs = makeUnique<Vector<RefPtr<StringImpl>>>();
 
     // Our API allows us to store all the URLs in the redirect chain, but for
     // now we only have a use for the final URL.
@@ -1098,23 +1098,23 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     RefPtr loader = core(m_webFrame.get())->loader().documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
-    if (!loader->clientRedirectSourceForHistory().isNull()) {
+    if (loader->clientRedirectSourceForHistory()) {
         if (implementations) {
             if (implementations->clientRedirectFunc) {
                 CallHistoryDelegate(implementations->clientRedirectFunc, view.get(), @selector(webView:didPerformClientRedirectFromURL:toURL:inFrame:),
-                    m_webFrame->_private->url.get(), loader->clientRedirectDestinationForHistory().createNSString().get(), m_webFrame.get());
+                    m_webFrame->_private->url.get(), createNSString(loader->clientRedirectDestinationForHistory()).get(), m_webFrame.get());
             }
-        } else if (RetainPtr item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory().createNSString().get()])
+        } else if (RetainPtr item = [[WebHistory optionalSharedHistory] _itemForURLString:createNSString(loader->clientRedirectSourceForHistory()).get()])
             addRedirectURL(item.get(), loader->clientRedirectDestinationForHistory());
     }
 
-    if (!loader->serverRedirectSourceForHistory().isNull()) {
+    if (loader->serverRedirectSourceForHistory()) {
         if (implementations) {
             if (implementations->serverRedirectFunc) {
                 CallHistoryDelegate(implementations->serverRedirectFunc, view.get(), @selector(webView:didPerformServerRedirectFromURL:toURL:inFrame:),
-                    loader->serverRedirectSourceForHistory().createNSString().get(), loader->serverRedirectDestinationForHistory().createNSString().get(), m_webFrame.get());
+                    createNSString(loader->serverRedirectSourceForHistory()).get(), createNSString(loader->serverRedirectDestinationForHistory()).get(), m_webFrame.get());
             }
-        } else if (RetainPtr item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->serverRedirectSourceForHistory().createNSString().get()])
+        } else if (RetainPtr item = [[WebHistory optionalSharedHistory] _itemForURLString:createNSString(loader->serverRedirectSourceForHistory()).get()])
             addRedirectURL(item.get(), loader->serverRedirectDestinationForHistory());
     }
 }
@@ -1161,14 +1161,14 @@ bool WebFrameLoaderClient::canHandleRequest(const WebCore::ResourceRequest& requ
     return [WebView _canHandleRequest:protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get() forMainFrame:core(m_webFrame.get())->isMainFrame()];
 }
 
-bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const
+bool WebFrameLoaderClient::canShowMIMEType(StringImpl* MIMEType) const
 {
-    return [protect(getWebView(m_webFrame.get())) _canShowMIMEType:MIMEType.createNSString().get()];
+    return [protect(getWebView(m_webFrame.get())) _canShowMIMEType:createNSString(MIMEType).get()];
 }
 
-bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
+bool WebFrameLoaderClient::canShowMIMETypeAsHTML(StringImpl* MIMEType) const
 {
-    return [WebView canShowMIMETypeAsHTML:MIMEType.createNSString().get()];
+    return [WebView canShowMIMETypeAsHTML:createNSString(MIMEType).get()];
 }
 
 bool WebFrameLoaderClient::representationExistsForURLScheme(StringView URLScheme) const
@@ -1176,9 +1176,9 @@ bool WebFrameLoaderClient::representationExistsForURLScheme(StringView URLScheme
     return [WebView _representationExistsForURLScheme:URLScheme.createNSString().get()];
 }
 
-String WebFrameLoaderClient::generatedMIMETypeForURLScheme(StringView URLScheme) const
+RefPtr<StringImpl> WebFrameLoaderClient::generatedMIMETypeForURLScheme(StringView URLScheme) const
 {
-    return [WebView _generatedMIMETypeForURLScheme:URLScheme.createNSString().get()];
+    return StringImpl::create([WebView _generatedMIMETypeForURLScheme:URLScheme.createNSString().get()]);
 }
 
 void WebFrameLoaderClient::frameLoadCompleted()
@@ -1317,10 +1317,10 @@ void WebFrameLoaderClient::setTitle(const WebCore::StringWithDirection& title, c
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view.get());
         // FIXME: Use direction of title.
         if (implementations->setTitleFunc)
-            CallHistoryDelegate(implementations->setTitleFunc, view.get(), @selector(webView:updateHistoryTitle:forURL:inFrame:), title.string.createNSString().get(), url.string().createNSString().get(), m_webFrame.get());
+            CallHistoryDelegate(implementations->setTitleFunc, view.get(), @selector(webView:updateHistoryTitle:forURL:inFrame:), createNSString(title.string).get(), createNSString(url.string()).get(), m_webFrame.get());
         else if (implementations->deprecatedSetTitleFunc) {
             IGNORE_WARNINGS_BEGIN("undeclared-selector")
-            CallHistoryDelegate(implementations->deprecatedSetTitleFunc, view.get(), @selector(webView:updateHistoryTitle:forURL:), title.string.createNSString().get(), url.string().createNSString().get());
+            CallHistoryDelegate(implementations->deprecatedSetTitleFunc, view.get(), @selector(webView:updateHistoryTitle:forURL:), createNSString(title.string).get(), createNSString(url.string()).get());
             IGNORE_WARNINGS_END
         }
         return;
@@ -1334,7 +1334,7 @@ void WebFrameLoaderClient::setTitle(const WebCore::StringWithDirection& title, c
     if ([[nsURL absoluteString] isEqualToString:@"about:blank"])
         return;
 #endif
-    [[[WebHistory optionalSharedHistory] itemForURL:nsURL.get()] setTitle:title.string.createNSString().get()];
+    [[[WebHistory optionalSharedHistory] itemForURL:nsURL.get()] setTitle:createNSString(title.string).get()];
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(WebCore::CachedFrame* cachedFrame)
@@ -1384,7 +1384,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
 #if PLATFORM(IOS_FAMILY)
     bool willProduceHTMLView;
     // Fast path that skips initialization of objc class objects.
-    if (protect([dataSource _documentLoader].get())->responseMIMEType() == "text/html"_s)
+    if (equal(protect([dataSource _documentLoader].get())->responseMIMEType(), "text/html"_s))
         willProduceHTMLView = true;
     else
         willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
@@ -1455,7 +1455,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
     // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
     // will get the proper title.
     if (auto documentLoader = [dataSource _documentLoader])
-        protect(documentLoader.get())->setTitle({ [dataSource pageTitle], WebCore::TextDirection::LTR });
+        protect(documentLoader.get())->setTitle({ StringImpl::create([dataSource pageTitle]), WebCore::TextDirection::LTR });
 
     if (RefPtr ownerElement = coreFrame->ownerElement())
         coreView->setCanHaveScrollbars(ownerElement->scrollingMode() != WebCore::ScrollbarMode::AlwaysOff);
@@ -1494,7 +1494,7 @@ RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(WebC
     return policyListener;
 }
 
-String WebFrameLoaderClient::userAgent(const URL& url) const
+RefPtr<StringImpl> WebFrameLoaderClient::userAgent(const URL& url) const
 {
     RetainPtr webView = getWebView(m_webFrame.get());
     ASSERT(webView);
@@ -1579,7 +1579,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<WebCore::LocalFrame> WebFrameLoaderClient::createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement& ownerElement)
+RefPtr<WebCore::LocalFrame> WebFrameLoaderClient::createFrame(AtomStringImpl* name, WebCore::HTMLFrameOwnerElement& ownerElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -1614,20 +1614,20 @@ RefPtr<WebCore::LocalFrame> WebFrameLoaderClient::createFrame(const AtomString& 
     return nullptr;
 }
 
-WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeType)
+WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, StringImpl* mimeType)
 {
     RetainPtr webView = getWebView(m_webFrame.get());
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    String type = mimeType;
+    RefPtr<StringImpl> type = mimeType;
 
-    if (type.isEmpty()) {
+    if (isEmpty(type)) {
         // Try to guess the MIME type based off the extension.
         RetainPtr nsURL = url.createNSURL();
         NSString *extension = [[nsURL path] pathExtension];
         if ([extension length] > 0) {
-            type = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
-            if (type.isEmpty()) {
+            type = StringImpl::create([[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension]);
+            if (isEmpty(type)) {
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
                 if ([webView _pluginForExtension:extension])
                     return WebCore::ObjectContentType::PlugIn;
@@ -1635,11 +1635,11 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
         }
     }
 
-    if (type.isEmpty())
+    if (isEmpty(type))
         return WebCore::ObjectContentType::Frame; // Go ahead and hope that we can display the content.
 
     WebCore::ObjectContentType plugInType = WebCore::ObjectContentType::None;
-    if ([webView _pluginForMIMEType:type.createNSString().get()])
+    if ([webView _pluginForMIMEType:createNSString(type).get()])
         plugInType = WebCore::ObjectContentType::PlugIn;
 
     if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(type))
@@ -1648,7 +1648,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     if (plugInType != WebCore::ObjectContentType::None)
         return plugInType;
 
-    if ([m_webFrame->_private->webFrameView _viewClassForMIMEType:type.createNSString().get()])
+    if ([m_webFrame->_private->webFrameView _viewClassForMIMEType:createNSString(type).get()])
         return WebCore::ObjectContentType::Frame;
     
     return WebCore::ObjectContentType::None;
@@ -1658,7 +1658,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     return WebCore::ObjectContentType::None;
 }
 
-NODELETE static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, ASCIILiteral name)
+NODELETE static RefPtr<AtomStringImpl> parameterValue(const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues, ASCIILiteral name)
 {
     size_t size = paramNames.size();
     ASSERT(size == paramValues.size());
@@ -1733,7 +1733,7 @@ static bool shouldBlockPlugin(WebBasePluginPackage *)
 }
 
 RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInElement& element, const URL& url,
-    const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, const String& mimeType, bool loadManually)
+    const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues, StringImpl* mimeType, bool loadManually)
 {
     RetainPtr domElement = kit(&element);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -1770,10 +1770,10 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
 
     RetainPtr<NSString> MIMEType;
     RetainPtr<WebBasePluginPackage> pluginPackage;
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         pluginPackage = nil;
     else {
-        MIMEType = mimeType.createNSString();
+        MIMEType = createNSString(mimeType);
         pluginPackage = [webView.get() _pluginForMIMEType:MIMEType.get()];
     }
 
@@ -1787,7 +1787,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
     {
         pluginPackage = [webView.get() _pluginForExtension:extension];
         if (pluginPackage) {
-            RetainPtr newMIMEType = [pluginPackage MIMETypeForExtension:extension];
+            RetainPtr newMIMEType = [pluginPackage MIMETypeForExtension:StringImpl::create(extension)];
             if ([newMIMEType length] != 0)
                 MIMEType = WTF::move(newMIMEType);
         }
@@ -1816,7 +1816,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
             URL pluginPageURL = document->encodingParseURL(parameterValue(paramNames, paramValues, "pluginspage"_s));
             if (!pluginPageURL.protocolIsInHTTPFamily())
                 pluginPageURL = URL();
-            RetainPtr pluginName = pluginPackage ? [pluginPackage pluginInfo].name.createNSString() : nil;
+            RetainPtr pluginName = pluginPackage ? createNSString([pluginPackage pluginInfo].name) : nil;
 
             RetainPtr error = adoptNS([[NSError alloc] _initWithPluginErrorCode:errorCode contentURL:pluginURL.get() pluginPageURL:pluginPageURL.createNSURL().get() pluginName:pluginName.get() MIMEType:MIMEType.get()]);
             CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
@@ -1856,11 +1856,11 @@ void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(std
     completionHandler(makeUnexpected(WebCore::internalError(url)));
 }
 
-AtomString WebFrameLoaderClient::overrideMediaType() const
+RefPtr<AtomStringImpl> WebFrameLoaderClient::overrideMediaType() const
 {
     RetainPtr overrideType = [protect(getWebView(m_webFrame.get())) mediaStyle];
     if (overrideType)
-        return AtomString { overrideType.get() };
+        return AtomStringImpl::add((__bridge CFStringRef)overrideType.get());
     return nullAtom();
 }
 
@@ -1927,7 +1927,7 @@ bool WebFrameLoaderClient::shouldLoadMediaElementURL(const URL& url) const
 #endif
 
 #if USE(QUICK_LOOK)
-RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
+RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(StringImpl* fileName, StringImpl* uti)
 {
     class QuickLookDocumentWriter : public WebCore::LegacyPreviewLoaderClient {
     public:
@@ -1968,13 +1968,13 @@ RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLo
     if (![m_webFrame webView].preferences.quickLookDocumentSavingEnabled)
         return nullptr;
 
-    RetainPtr filePath = WebCore::createTemporaryFileForQuickLook(fileName.createNSString().get());
+    RetainPtr filePath = WebCore::createTemporaryFileForQuickLook(createNSString(fileName).get());
     if (!filePath)
         return nullptr;
 
     auto documentWriter = adoptRef(*new QuickLookDocumentWriter(filePath.get()));
 
-    [m_webFrame provisionalDataSource]._quickLookContent = @{ WebQuickLookFileNameKey : filePath.get(), WebQuickLookUTIKey : uti.createNSString().get() };
+    [m_webFrame provisionalDataSource]._quickLookContent = @{ WebQuickLookFileNameKey : filePath.get(), WebQuickLookUTIKey : createNSString(uti).get() };
     [m_webFrame provisionalDataSource]._quickLookPreviewLoaderClient = documentWriter.ptr();
     return documentWriter;
 }
@@ -1987,7 +1987,7 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblo
 }
 #endif
 
-void WebFrameLoaderClient::prefetchDNS(const String& hostname)
+void WebFrameLoaderClient::prefetchDNS(StringImpl* hostname)
 {
     WebCore::prefetchDNS(hostname);
 }

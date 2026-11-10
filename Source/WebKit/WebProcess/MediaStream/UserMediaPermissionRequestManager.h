@@ -55,7 +55,7 @@ public:
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);
     void userMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, WebCore::MediaDeviceHashSalts&&, CompletionHandler<void()>&&);
-    void userMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier, WebCore::MediaAccessDenialReason, String&&, WebCore::MediaConstraintType);
+    void userMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier, WebCore::MediaAccessDenialReason, RefPtr<StringImpl>&&, WebCore::MediaConstraintType);
 
     void enumerateMediaDevices(WebCore::Document&, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&, WebCore::MediaDeviceHashSalts&&)>&&);
 
@@ -69,7 +69,7 @@ private:
 #if USE(GSTREAMER)
     // WebCore::RealtimeMediaSourceCenterObserver
     void devicesChanged() final;
-    void deviceWillBeRemoved(const String& persistentId) final { }
+    void deviceWillBeRemoved(StringImpl* persistentId) final { }
 #endif
 
     void sendUserMediaRequest(WebCore::UserMediaRequest&);

@@ -55,7 +55,7 @@
 
 - (NSString *)partition
 {
-    return _message->partition().createNSString().autorelease();
+    return createNSString(_message->partition()).autorelease();
 }
 
 - (API::Object&)_apiObject

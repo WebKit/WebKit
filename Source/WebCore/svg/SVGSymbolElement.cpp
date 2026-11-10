@@ -47,7 +47,7 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGSymbolElement(tagName, document));
 }
 
-void SVGSymbolElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGSymbolElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGFitToViewBox::parseAttribute(name, newValue);
     SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

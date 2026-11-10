@@ -1097,7 +1097,7 @@ public:
         return *m_opInfo.as<LazyJSValue*>();
     }
 
-    String tryGetString(Graph&);
+    RefPtr<StringImpl> tryGetString(Graph&);
 
     JSValue initializationValueForActivation() const
     {

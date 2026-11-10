@@ -51,7 +51,7 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    void load(const String&) final;
+    void load(StringImpl*) final;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) final { };
 #endif
@@ -100,7 +100,7 @@ public:
     void pushNextHolePunchBuffer();
     void setNetworkState(MediaPlayer::NetworkState);
 
-    static void getSupportedTypes(HashSet<String>&);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>&);
 
 private:
     friend class MediaPlayerFactoryHolePunch;

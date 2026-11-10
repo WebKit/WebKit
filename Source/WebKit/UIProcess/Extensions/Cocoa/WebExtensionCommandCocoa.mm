@@ -87,7 +87,7 @@ namespace WebKit {
 void WebExtensionCommand::dispatchChangedEventSoonIfNeeded()
 {
     // Already scheduled to fire if old shortcut is set.
-    if (!m_oldShortcut.isNull())
+    if (m_oldShortcut)
         return;
 
     m_oldShortcut = shortcutString();
@@ -103,14 +103,14 @@ void WebExtensionCommand::dispatchChangedEventSoonIfNeeded()
     }).get());
 }
 
-bool WebExtensionCommand::setActivationKey(String activationKey, SuppressEvents suppressEvents)
+bool WebExtensionCommand::setActivationKey(RefPtr<StringImpl> activationKey, SuppressEvents suppressEvents)
 {
-    if (activationKey.isEmpty()) {
+    if (isEmpty(activationKey)) {
         m_activationKey = nullString();
         return true;
     }
 
-    if (activationKey.length() > 1)
+    if (length(activationKey) > 1)
         return false;
 
     static NSCharacterSet *notAllowedCharacterSet = [] {
@@ -128,55 +128,55 @@ bool WebExtensionCommand::setActivationKey(String activationKey, SuppressEvents 
         return allowedCharacterSet.invertedSet;
     }();
 
-    if ([activationKey.createNSString() rangeOfCharacterFromSet:notAllowedCharacterSet].location != NSNotFound)
+    if ([createNSString(activationKey) rangeOfCharacterFromSet:notAllowedCharacterSet].location != NSNotFound)
         return false;
 
     if (suppressEvents == SuppressEvents::No)
         dispatchChangedEventSoonIfNeeded();
 
 #if PLATFORM(IOS_FAMILY)
-    m_activationKey = activationKey.convertToASCIIUppercase();
+    m_activationKey = convertToASCIIUppercase(activationKey);
 #else
-    m_activationKey = activationKey.convertToASCIILowercase();
+    m_activationKey = convertToASCIILowercase(activationKey);
 #endif
 
     return true;
 }
 
-String WebExtensionCommand::shortcutString() const
+RefPtr<StringImpl> WebExtensionCommand::shortcutString() const
 {
     auto flags = modifierFlags();
     auto key = activationKey();
 
-    if (!flags || key.isEmpty())
+    if (!flags || isEmpty(key))
         return emptyString();
 
-    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>> specialKeyMap = HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> {
         { ","_s, "Comma"_s },
         { "."_s, "Period"_s },
         { " "_s, "Space"_s },
-        { @"\uF704", "F1"_s },
-        { @"\uF705", "F2"_s },
-        { @"\uF706", "F3"_s },
-        { @"\uF707", "F4"_s },
-        { @"\uF708", "F5"_s },
-        { @"\uF709", "F6"_s },
-        { @"\uF70A", "F7"_s },
-        { @"\uF70B", "F8"_s },
-        { @"\uF70C", "F9"_s },
-        { @"\uF70D", "F10"_s },
-        { @"\uF70E", "F11"_s },
-        { @"\uF70F", "F12"_s },
-        { @"\uF727", "Insert"_s },
-        { @"\uF728", "Delete"_s },
-        { @"\uF729", "Home"_s },
-        { @"\uF72B", "End"_s },
-        { @"\uF72C", "PageUp"_s },
-        { @"\uF72D", "PageDown"_s },
-        { @"\uF700", "Up"_s },
-        { @"\uF701", "Down"_s },
-        { @"\uF702", "Left"_s },
-        { @"\uF703", "Right"_s }
+        { StringImpl::create(@"\uF704"), "F1"_s },
+        { StringImpl::create(@"\uF705"), "F2"_s },
+        { StringImpl::create(@"\uF706"), "F3"_s },
+        { StringImpl::create(@"\uF707"), "F4"_s },
+        { StringImpl::create(@"\uF708"), "F5"_s },
+        { StringImpl::create(@"\uF709"), "F6"_s },
+        { StringImpl::create(@"\uF70A"), "F7"_s },
+        { StringImpl::create(@"\uF70B"), "F8"_s },
+        { StringImpl::create(@"\uF70C"), "F9"_s },
+        { StringImpl::create(@"\uF70D"), "F10"_s },
+        { StringImpl::create(@"\uF70E"), "F11"_s },
+        { StringImpl::create(@"\uF70F"), "F12"_s },
+        { StringImpl::create(@"\uF727"), "Insert"_s },
+        { StringImpl::create(@"\uF728"), "Delete"_s },
+        { StringImpl::create(@"\uF729"), "Home"_s },
+        { StringImpl::create(@"\uF72B"), "End"_s },
+        { StringImpl::create(@"\uF72C"), "PageUp"_s },
+        { StringImpl::create(@"\uF72D"), "PageDown"_s },
+        { StringImpl::create(@"\uF700"), "Up"_s },
+        { StringImpl::create(@"\uF701"), "Down"_s },
+        { StringImpl::create(@"\uF702"), "Left"_s },
+        { StringImpl::create(@"\uF703"), "Right"_s }
     };
 
     StringBuilder stringBuilder;
@@ -205,72 +205,72 @@ String WebExtensionCommand::shortcutString() const
     if (!stringBuilder.isEmpty())
         stringBuilder.append('+');
 
-    if (auto specialKey = specialKeyMap.get().get(key); !specialKey.isEmpty())
+    if (auto specialKey = specialKeyMap.get().get(key); !isEmpty(specialKey))
         stringBuilder.append(specialKey);
     else
-        stringBuilder.append(key.convertToASCIIUppercase());
+        stringBuilder.append(convertToASCIIUppercase(key));
 
     return stringBuilder.toString();
 }
 
-String WebExtensionCommand::userVisibleShortcut() const
+RefPtr<StringImpl> WebExtensionCommand::userVisibleShortcut() const
 {
     auto flags = modifierFlags();
     auto key = activationKey();
 
-    if (!flags || key.isEmpty())
+    if (!flags || isEmpty(key))
         return emptyString();
 
 #if PLATFORM(MAC)
-    NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:key.createNSString().get() modifierMask:flags.toRaw()];
-    return shortcut.localizedDisplayName ?: @"";
+    NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:createNSString(key).get() modifierMask:flags.toRaw()];
+    return StringImpl::create(shortcut.localizedDisplayName ?: @"");
 #else
-    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>> specialKeyMap = HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> {
         { ","_s, ","_s },
         { "."_s, "."_s },
         { " "_s, "Space"_s },
-        { @"\uF704", "F1"_s },
-        { @"\uF705", "F2"_s },
-        { @"\uF706", "F3"_s },
-        { @"\uF707", "F4"_s },
-        { @"\uF708", "F5"_s },
-        { @"\uF709", "F6"_s },
-        { @"\uF70A", "F7"_s },
-        { @"\uF70B", "F8"_s },
-        { @"\uF70C", "F9"_s },
-        { @"\uF70D", "F10"_s },
-        { @"\uF70E", "F11"_s },
-        { @"\uF70F", "F12"_s },
-        { @"\uF727", "Ins"_s },
-        { @"\uF728", @"⌫" },
-        { @"\uF729", @"↖︎" },
-        { @"\uF72B", @"↘︎" },
-        { @"\uF72C", @"⇞" },
-        { @"\uF72D", @"⇟" },
-        { @"\uF700", @"↑" },
-        { @"\uF701", @"↓" },
-        { @"\uF702", @"←" },
-        { @"\uF703", @"→" }
+        { StringImpl::create(@"\uF704"), "F1"_s },
+        { StringImpl::create(@"\uF705"), "F2"_s },
+        { StringImpl::create(@"\uF706"), "F3"_s },
+        { StringImpl::create(@"\uF707"), "F4"_s },
+        { StringImpl::create(@"\uF708"), "F5"_s },
+        { StringImpl::create(@"\uF709"), "F6"_s },
+        { StringImpl::create(@"\uF70A"), "F7"_s },
+        { StringImpl::create(@"\uF70B"), "F8"_s },
+        { StringImpl::create(@"\uF70C"), "F9"_s },
+        { StringImpl::create(@"\uF70D"), "F10"_s },
+        { StringImpl::create(@"\uF70E"), "F11"_s },
+        { StringImpl::create(@"\uF70F"), "F12"_s },
+        { StringImpl::create(@"\uF727"), "Ins"_s },
+        { StringImpl::create(@"\uF728"), StringImpl::create(@"⌫") },
+        { StringImpl::create(@"\uF729"), StringImpl::create(@"↖︎") },
+        { StringImpl::create(@"\uF72B"), StringImpl::create(@"↘︎") },
+        { StringImpl::create(@"\uF72C"), StringImpl::create(@"⇞") },
+        { StringImpl::create(@"\uF72D"), StringImpl::create(@"⇟") },
+        { StringImpl::create(@"\uF700"), StringImpl::create(@"↑") },
+        { StringImpl::create(@"\uF701"), StringImpl::create(@"↓") },
+        { StringImpl::create(@"\uF702"), StringImpl::create(@"←") },
+        { StringImpl::create(@"\uF703"), StringImpl::create(@"→") }
     };
 
     StringBuilder stringBuilder;
 
     if (flags.contains(ModifierFlags::Control))
-        stringBuilder.append(String(@"⌃"));
+        stringBuilder.append(StringImpl::create(@"⌃").get());
 
     if (flags.contains(ModifierFlags::Option))
-        stringBuilder.append(String(@"⌥"));
+        stringBuilder.append(StringImpl::create(@"⌥").get());
 
     if (flags.contains(ModifierFlags::Shift))
-        stringBuilder.append(String(@"⇧"));
+        stringBuilder.append(StringImpl::create(@"⇧").get());
 
     if (flags.contains(ModifierFlags::Command))
-        stringBuilder.append(String(@"⌘"));
+        stringBuilder.append(StringImpl::create(@"⌘").get());
 
-    if (auto specialKey = specialKeyMap.get().get(key); !specialKey.isEmpty())
+    if (auto specialKey = specialKeyMap.get().get(key); !isEmpty(specialKey))
         stringBuilder.append(specialKey);
     else
-        stringBuilder.append(key.convertToASCIIUppercase());
+        stringBuilder.append(convertToASCIIUppercase(key));
 
     return stringBuilder.toString();
 #endif
@@ -279,19 +279,19 @@ String WebExtensionCommand::userVisibleShortcut() const
 CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
 {
 #if USE(APPKIT)
-    auto *result = [[_WKWebExtensionMenuItem alloc] initWithTitle:description().createNSString().get() handler:makeBlockPtr([this, protectedThis = Ref { *this }](id sender) mutable {
+    auto *result = [[_WKWebExtensionMenuItem alloc] initWithTitle:createNSString(description()).get() handler:makeBlockPtr([this, protectedThis = Ref { *this }](id sender) mutable {
         if (RefPtr context = extensionContext())
             context->performCommand(const_cast<WebExtensionCommand&>(*this), WebExtensionContext::UserTriggered::Yes);
     }).get()];
 
-    result.keyEquivalent = activationKey().createNSString().get();
+    result.keyEquivalent = createNSString(activationKey()).get();
     result.keyEquivalentModifierMask = modifierFlags().toRaw();
     if (RefPtr context = extensionContext())
         result.image = toCocoaImage(protect(context->extension())->icon(WebCore::FloatSize(16, 16)));
 
     return result;
 #else
-    return [UIAction actionWithTitle:description().createNSString().get() image:nil identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }](UIAction *) mutable {
+    return [UIAction actionWithTitle:createNSString(description()).get() image:nil identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }](UIAction *) mutable {
         if (RefPtr context = extensionContext())
             context->performCommand(const_cast<WebExtensionCommand&>(*this), WebExtensionContext::UserTriggered::Yes);
     }).get()];
@@ -301,15 +301,15 @@ CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
 #if PLATFORM(IOS_FAMILY)
 UIKeyCommand *WebExtensionCommand::keyCommand() const
 {
-    if (activationKey().isEmpty())
+    if (isEmpty(activationKey()))
         return nil;
 
-    return [_WKWebExtensionKeyCommand commandWithTitle:description().createNSString().get() image:nil input:activationKey().createNSString().get() modifierFlags:modifierFlags().toRaw() identifier:identifier().createNSString().get()];
+    return [_WKWebExtensionKeyCommand commandWithTitle:createNSString(description()).get() image:nil input:createNSString(activationKey()).get() modifierFlags:modifierFlags().toRaw() identifier:createNSString(identifier()).get()];
 }
 
 bool WebExtensionCommand::matchesKeyCommand(UIKeyCommand *keyCommand) const
 {
-    return keyCommand.modifierFlags == modifierFlags().toRaw() && [keyCommand.input isEqual:activationKey().createNSString().get()] && [keyCommand.propertyList[@"identifier"] isEqual:identifier().createNSString().get()];
+    return keyCommand.modifierFlags == modifierFlags().toRaw() && [keyCommand.input isEqual:createNSString(activationKey()).get()] && [keyCommand.propertyList[@"identifier"] isEqual:createNSString(identifier()).get()];
 }
 #endif
 
@@ -319,42 +319,42 @@ bool WebExtensionCommand::matchesEvent(NSEvent *event) const
     if (event.type != NSEventTypeKeyDown || event.isARepeat)
         return false;
 
-    if (activationKey().isEmpty())
+    if (isEmpty(activationKey()))
         return false;
 
     auto expectedModifierFlags = modifierFlags().toRaw();
     if ((event.modifierFlags & expectedModifierFlags) != expectedModifierFlags)
         return false;
 
-    static NeverDestroyed<HashMap<String, uint16_t>> specialKeyMap = HashMap<String, uint16_t> {
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, uint16_t>> specialKeyMap = HashMap<RefPtr<StringImpl>, uint16_t> {
         { ","_s, kVK_ANSI_Comma },
         { "."_s, kVK_ANSI_Period },
         { " "_s, kVK_Space },
-        { @"\uF704", kVK_F1 },
-        { @"\uF705", kVK_F2 },
-        { @"\uF706", kVK_F3 },
-        { @"\uF707", kVK_F4 },
-        { @"\uF708", kVK_F5 },
-        { @"\uF709", kVK_F6 },
-        { @"\uF70A", kVK_F7 },
-        { @"\uF70B", kVK_F8 },
-        { @"\uF70C", kVK_F9 },
-        { @"\uF70D", kVK_F10 },
-        { @"\uF70E", kVK_F11 },
-        { @"\uF70F", kVK_F12 },
+        { StringImpl::create(@"\uF704"), kVK_F1 },
+        { StringImpl::create(@"\uF705"), kVK_F2 },
+        { StringImpl::create(@"\uF706"), kVK_F3 },
+        { StringImpl::create(@"\uF707"), kVK_F4 },
+        { StringImpl::create(@"\uF708"), kVK_F5 },
+        { StringImpl::create(@"\uF709"), kVK_F6 },
+        { StringImpl::create(@"\uF70A"), kVK_F7 },
+        { StringImpl::create(@"\uF70B"), kVK_F8 },
+        { StringImpl::create(@"\uF70C"), kVK_F9 },
+        { StringImpl::create(@"\uF70D"), kVK_F10 },
+        { StringImpl::create(@"\uF70E"), kVK_F11 },
+        { StringImpl::create(@"\uF70F"), kVK_F12 },
         // Insert (\uF727) is not present on Apple keyboards.
-        { @"\uF728", kVK_ForwardDelete },
-        { @"\uF729", kVK_Home },
-        { @"\uF72B", kVK_End },
-        { @"\uF72C", kVK_PageUp },
-        { @"\uF72D", kVK_PageDown },
-        { @"\uF700", kVK_UpArrow },
-        { @"\uF701", kVK_DownArrow },
-        { @"\uF702", kVK_LeftArrow },
-        { @"\uF703", kVK_RightArrow }
+        { StringImpl::create(@"\uF728"), kVK_ForwardDelete },
+        { StringImpl::create(@"\uF729"), kVK_Home },
+        { StringImpl::create(@"\uF72B"), kVK_End },
+        { StringImpl::create(@"\uF72C"), kVK_PageUp },
+        { StringImpl::create(@"\uF72D"), kVK_PageDown },
+        { StringImpl::create(@"\uF700"), kVK_UpArrow },
+        { StringImpl::create(@"\uF701"), kVK_DownArrow },
+        { StringImpl::create(@"\uF702"), kVK_LeftArrow },
+        { StringImpl::create(@"\uF703"), kVK_RightArrow }
     };
 
-    if (equalIgnoringASCIICase(activationKey(), String(event.charactersIgnoringModifiers)))
+    if (equalIgnoringASCIICase(activationKey(), StringImpl::create(event.charactersIgnoringModifiers).get()))
         return true;
 
     if (auto mappedKeyCode = specialKeyMap.get().get(activationKey()))

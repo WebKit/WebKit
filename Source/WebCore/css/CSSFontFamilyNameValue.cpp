@@ -42,7 +42,7 @@ CSSFontFamilyNameValue::CSSFontFamilyNameValue(CSS::FontFamilyName&& fontFamilyN
 {
 }
 
-String CSSFontFamilyNameValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontFamilyNameValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_fontFamilyName);
 }

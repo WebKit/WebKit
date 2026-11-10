@@ -47,12 +47,12 @@ public:
     IdTargetObserverRegistry();
     ~IdTargetObserverRegistry();
 
-    void notifyObservers(Element&, const AtomString& id);
+    void notifyObservers(Element&, AtomStringImpl* id);
 
 private:
-    void addObserver(const AtomString& id, IdTargetObserver&);
-    void removeObserver(const AtomString& id, IdTargetObserver&);
-    void notifyObserversInternal(Element&, const AtomString& id);
+    void addObserver(AtomStringImpl* id, IdTargetObserver&);
+    void removeObserver(AtomStringImpl* id, IdTargetObserver&);
+    void notifyObserversInternal(Element&, AtomStringImpl* id);
 
     struct ObserverSet final : public CanMakeCheckedPtr<ObserverSet> {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ObserverSet);
@@ -63,14 +63,14 @@ private:
         HashSet<CheckedRef<IdTargetObserver>> observers;
     };
 
-    using IdToObserverSetMap = HashMap<AtomString, std::unique_ptr<ObserverSet>>;
+    using IdToObserverSetMap = HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<ObserverSet>>;
     IdToObserverSetMap m_registry;
     CheckedPtr<ObserverSet> m_notifyingObserversInSet;
 };
 
-inline void IdTargetObserverRegistry::notifyObservers(Element& element, const AtomString& id)
+inline void IdTargetObserverRegistry::notifyObservers(Element& element, AtomStringImpl* id)
 {
-    ASSERT(!id.isEmpty());
+    ASSERT(!isEmpty(id));
     ASSERT(!m_notifyingObserversInSet);
     if (m_registry.isEmpty())
         return;

@@ -183,9 +183,9 @@ void Scope::clearResolver()
     counterStyleRegistry().clearAuthorCounterStyles();
 }
 
-void Scope::registerSubstitutionAttribute(const AtomString& attributeName, AttributeAffectsShadowTree affectsShadowTree) const
+void Scope::registerSubstitutionAttribute(AtomStringImpl* attributeName, AttributeAffectsShadowTree affectsShadowTree) const
 {
-    auto lowercaseName = attributeName.convertToASCIILowercase();
+    auto lowercaseName = convertToASCIILowercase(attributeName);
     if (affectsShadowTree == AttributeAffectsShadowTree::Yes)
         m_substitutionAttributes.set(lowercaseName, AttributeAffectsShadowTree::Yes);
     else
@@ -371,20 +371,20 @@ void Scope::establishPreferredStylesheetSetName(const Element& element, const CS
     // tree order. This is called at sheet-creation time so that a later-inserted
     // stylesheet placed earlier in tree order does not override the name.
     // https://drafts.csswg.org/cssom/#add-a-css-style-sheet
-    if (!documentScope().m_preferredStylesheetSetName.isEmpty())
+    if (!isEmpty(documentScope().m_preferredStylesheetSetName))
         return;
 
     if (element.isInShadowTree())
         return;
 
     auto title = sheet.title();
-    if (title.isNull() || title.isEmpty())
+    if (!title || isEmpty(title))
         return;
 
     if (is<HTMLStyleElement>(element))
         documentScope().m_preferredStylesheetSetName = title;
     else if (auto* linkElement = dynamicDowncast<HTMLLinkElement>(element)) {
-        if (!linkElement->isEnabledViaScript() && !linkElement->attributeWithoutSynchronization(HTMLNames::relAttr).contains("alternate"_s))
+        if (!linkElement->isEnabledViaScript() && !contains(linkElement->attributeWithoutSynchronization(HTMLNames::relAttr), "alternate"_s))
             documentScope().m_preferredStylesheetSetName = title;
     }
 }
@@ -430,7 +430,7 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
             LOG_WITH_STREAM(StyleSheets, stream << " adding sheet " << sheet << " from ProcessingInstruction node " << node);
         } else if (isAnyOf<HTMLLinkElement, HTMLStyleElement, SVGStyleElement>(node)) {
             Ref element = uncheckedDowncast<Element>(node);
-            AtomString title = element->isInShadowTree() ? nullAtom() : element->attributeWithoutSynchronization(titleAttr);
+            RefPtr<AtomStringImpl> title = element->isInShadowTree() ? nullAtom() : element->attributeWithoutSynchronization(titleAttr);
             bool enabledViaScript = false;
             if (RefPtr linkElement = dynamicDowncast<HTMLLinkElement>(element.get())) {
                 // <LINK> element
@@ -439,8 +439,8 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
                 enabledViaScript = linkElement->isEnabledViaScript();
                 if (linkElement->styleSheetIsLoading()) {
                     // it is loading but we should still decide which style sheet set to use
-                    if (!enabledViaScript && !title.isEmpty() && documentScope().m_preferredStylesheetSetName.isEmpty()) {
-                        if (!linkElement->attributeWithoutSynchronization(relAttr).contains("alternate"_s))
+                    if (!enabledViaScript && !isEmpty(title) && isEmpty(documentScope().m_preferredStylesheetSetName)) {
+                        if (!contains(linkElement->attributeWithoutSynchronization(relAttr), "alternate"_s))
                             documentScope().m_preferredStylesheetSetName = title;
                     }
                     continue;
@@ -464,21 +464,21 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
             auto& rel = element->attributeWithoutSynchronization(relAttr);
-            if (!enabledViaScript && sheet && !title.isEmpty()) {
+            if (!enabledViaScript && sheet && !isEmpty(title)) {
                 // Yes, we have a title.
-                if (documentScope().m_preferredStylesheetSetName.isEmpty()) {
+                if (isEmpty(documentScope().m_preferredStylesheetSetName)) {
                     // No preferred set has been established. If
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set. Otherwise, just ignore
                     // this sheet.
-                    if (is<HTMLStyleElement>(element.get()) || !rel.contains("alternate"_s))
+                    if (is<HTMLStyleElement>(element.get()) || !contains(rel, "alternate"_s))
                         documentScope().m_preferredStylesheetSetName = title;
                 }
-                if (title != documentScope().m_preferredStylesheetSetName)
+                if (!equal(title, documentScope().m_preferredStylesheetSetName))
                     sheet = nullptr;
             }
 
-            if (rel.contains("alternate"_s) && title.isEmpty())
+            if (contains(rel, "alternate"_s) && isEmpty(title))
                 sheet = nullptr;
 
             if (sheet)
@@ -491,7 +491,7 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
     auto canActivateAdoptedStyleSheet = [&](auto& sheet) {
         if (sheet.disabled())
             return false;
-        return sheet.title().isEmpty() || sheet.title() == documentScope().m_preferredStylesheetSetName;
+        return isEmpty(sheet.title()) || equal(sheet.title(), documentScope().m_preferredStylesheetSetName);
     };
 
     for (auto& adoptedStyleSheet : treeScope().adoptedStyleSheets()) {

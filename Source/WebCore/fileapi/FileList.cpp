@@ -40,7 +40,7 @@ File* FileList::item(unsigned index) const
     return m_files[index].ptr();
 }
 
-Vector<String> FileList::paths() const
+Vector<RefPtr<StringImpl>> FileList::paths() const
 {
     return m_files.map([](auto& file) {
         return file->path();

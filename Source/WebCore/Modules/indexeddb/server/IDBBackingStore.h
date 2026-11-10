@@ -74,10 +74,10 @@ public:
 
     virtual IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) = 0;
     virtual IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) = 0;
-    virtual IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const String& newName) = 0;
+    virtual IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, StringImpl* newName) = 0;
     virtual IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) = 0;
     virtual IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier) = 0;
-    virtual IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) = 0;
+    virtual IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName) = 0;
     virtual IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyData&, bool& keyExists) = 0;
     virtual IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyRangeData&) = 0;
     // Implements the spec's "store a record into an object store" algorithm: if storing a record with the given
@@ -112,7 +112,7 @@ public:
 
     virtual bool supportsSimultaneousReadWriteTransactions() = 0;
     virtual bool isEphemeral() = 0;
-    virtual String fullDatabasePath() const = 0;
+    virtual RefPtr<StringImpl> fullDatabasePath() const = 0;
 
     virtual void close() = 0;
 

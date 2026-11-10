@@ -35,17 +35,17 @@ WKTypeID WKURLGetTypeID()
 
 WKURLRef WKURLCreateWithUTF8CString(const char* string)
 {
-    return WebKit::toAPILeakingRef(API::URL::create(String::fromUTF8(string)));
+    return WebKit::toAPILeakingRef(API::URL::create(StringImpl::fromUTF8(string)));
 }
 
 WKURLRef WKURLCreateWithUTF8String(const char* string, size_t length)
 {
-    return WebKit::toAPILeakingRef(API::URL::create(String::fromUTF8(unsafeMakeSpan(string, length))));
+    return WebKit::toAPILeakingRef(API::URL::create(StringImpl::fromUTF8(unsafeMakeSpan(string, length))));
 }
 
 WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative)
 {
-    return WebKit::toAPILeakingRef(API::URL::create(protect(WebKit::toImpl(baseURL)).get(), String::fromUTF8(relative)));
+    return WebKit::toAPILeakingRef(API::URL::create(protect(WebKit::toImpl(baseURL)).get(), StringImpl::fromUTF8(relative)));
 }
 
 WKStringRef WKURLCopyString(WKURLRef url)

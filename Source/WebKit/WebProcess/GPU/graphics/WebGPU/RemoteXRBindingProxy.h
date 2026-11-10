@@ -53,7 +53,7 @@ public:
 
     RefPtr<::WebGPU::XRProjectionLayer> createProjectionLayer(const ::WebGPU::XRProjectionLayerDescriptor&) final;
     RefPtr<::WebGPU::XRSubImage> getViewSubImage(::WebGPU::XRProjectionLayer&) final;
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final;
 
 private:

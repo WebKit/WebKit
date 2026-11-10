@@ -47,17 +47,17 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VirtualService);
 
-Ref<VirtualService> VirtualService::create(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& configuration)
+Ref<VirtualService> VirtualService::create(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>>& configuration)
 {
     return adoptRef(*new VirtualService(observer, configuration));
 }
 
-VirtualService::VirtualService(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
+VirtualService::VirtualService(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>>& authenticators)
     : AuthenticatorTransportService(observer), m_authenticators(authenticators)
 {
 }
 
-Ref<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
+Ref<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer, Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>>& authenticators)
 {
     return VirtualService::create(observer, authenticators);
 }

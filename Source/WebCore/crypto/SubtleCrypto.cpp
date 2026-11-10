@@ -127,9 +127,9 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (std::holds_alternative<String>(algorithmIdentifier)) {
+    if (std::holds_alternative<RefPtr<StringImpl>>(algorithmIdentifier)) {
         auto newParams = Strong<JSObject>(vm, JSC::constructEmptyObject(&state));
-        newParams->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, std::get<String>(algorithmIdentifier)));
+        newParams->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, std::get<RefPtr<StringImpl>>(algorithmIdentifier)));
         
         return normalizeCryptoAlgorithmParameters(state, newParams, operation);
     }
@@ -455,25 +455,25 @@ static void rejectWithException(Ref<DeferredPromise>&& passedPromise, ExceptionC
 {
     switch (ec) {
     case ExceptionCode::NotSupportedError:
-        passedPromise->reject(ec, "The algorithm is not supported"_s);
+        passedPromise->reject(ec, "The algorithm is not supported"_si);
         return;
     case ExceptionCode::SyntaxError:
-        passedPromise->reject(ec, "A required parameter was missing or out-of-range"_s);
+        passedPromise->reject(ec, "A required parameter was missing or out-of-range"_si);
         return;
     case ExceptionCode::InvalidStateError:
-        passedPromise->reject(ec, "The requested operation is not valid for the current state of the provided key"_s);
+        passedPromise->reject(ec, "The requested operation is not valid for the current state of the provided key"_si);
         return;
     case ExceptionCode::InvalidAccessError:
-        passedPromise->reject(ec, "The requested operation is not valid for the provided key"_s);
+        passedPromise->reject(ec, "The requested operation is not valid for the provided key"_si);
         return;
     case ExceptionCode::UnknownError:
-        passedPromise->reject(ec, "The operation failed for an unknown transient reason (e.g. out of memory)"_s);
+        passedPromise->reject(ec, "The operation failed for an unknown transient reason (e.g. out of memory)"_si);
         return;
     case ExceptionCode::DataError:
-        passedPromise->reject(ec, "Data provided to an operation does not meet requirements"_s);
+        passedPromise->reject(ec, "Data provided to an operation does not meet requirements"_si);
         return;
     case ExceptionCode::OperationError:
-        passedPromise->reject(ec, "The operation failed for an operation-specific reason"_s);
+        passedPromise->reject(ec, "The operation failed for an operation-specific reason"_si);
         return;
     default:
         break;
@@ -579,7 +579,7 @@ void SubtleCrypto::addAuthenticatedEncryptionWarningIfNecessary(CryptoAlgorithmI
 {
     if (algorithmIdentifier == CryptoAlgorithmIdentifier::AES_CBC || algorithmIdentifier == CryptoAlgorithmIdentifier::AES_CTR) {
         if (RefPtr context = scriptExecutionContext(); !context->hasLoggedAuthenticatedEncryptionWarning()) {
-            context->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks."_s);
+            context->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks."_si);
             context->setHasLoggedAuthenticatedEncryptionWarning(true);
         }
     }
@@ -601,12 +601,12 @@ void SubtleCrypto::encrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
     auto data = copyToVector(WTF::move(dataBufferSource));
 
     if (params->identifier != key.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!key.allows(CryptoKeyUsageEncrypt)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support encryption"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support encryption"_si);
         return;
     }
 
@@ -641,12 +641,12 @@ void SubtleCrypto::decrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
     auto data = copyToVector(WTF::move(dataBufferSource));
 
     if (params->identifier != key.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!key.allows(CryptoKeyUsageDecrypt)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support decryption"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support decryption"_si);
         return;
     }
 
@@ -679,12 +679,12 @@ void SubtleCrypto::sign(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algori
     auto data = copyToVector(WTF::move(dataBufferSource));
 
     if (params->identifier != key.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!key.allows(CryptoKeyUsageSign)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support signing"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support signing"_si);
         return;
     }
 
@@ -718,12 +718,12 @@ void SubtleCrypto::doVerify(JSC::JSGlobalObject& state, AlgorithmIdentifier&& al
     auto data = copyToVector(WTF::move(dataBufferSource));
 
     if (params->identifier != key.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!key.allows(CryptoKeyUsageVerify)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support verification"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support verification"_si);
         return;
     }
 
@@ -845,12 +845,12 @@ void SubtleCrypto::deriveKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&& a
     auto keyUsagesBitmap = toCryptoKeyUsageBitmap(keyUsages);
 
     if (params->identifier != baseKey.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!baseKey.allows(CryptoKeyUsageDeriveKey)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support CryptoKey derivation"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support CryptoKey derivation"_si);
         return;
     }
 
@@ -858,7 +858,7 @@ void SubtleCrypto::deriveKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&& a
 
     auto result = getLengthAlgorithm->getKeyLength(*getLengthParams);
     if (result.hasException()) {
-        promise->reject(result.releaseException().code(), "Cannot get key length from derivedKeyType"_s);
+        promise->reject(result.releaseException().code(), "Cannot get key length from derivedKeyType"_si);
         return;
     }
     std::optional<size_t> length = result.releaseReturnValue();
@@ -906,12 +906,12 @@ void SubtleCrypto::deriveBits(JSC::JSGlobalObject& state, AlgorithmIdentifier&& 
     auto params = paramsOrException.releaseReturnValue();
 
     if (params->identifier != baseKey.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!baseKey.allows(CryptoKeyUsageDeriveBits)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support bits derivation"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support bits derivation"_si);
         return;
     }
 
@@ -983,7 +983,7 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
     }
 
     if (!key.extractable()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "The CryptoKey is nonextractable"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "The CryptoKey is nonextractable"_si);
         return;
     }
 
@@ -1039,12 +1039,12 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
     auto wrapParams = wrapParamsOrException.releaseReturnValue();
 
     if (wrapParams->identifier != wrappingKey.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "Wrapping CryptoKey doesn't match AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "Wrapping CryptoKey doesn't match AlgorithmIdentifier"_si);
         return;
     }
 
     if (!wrappingKey.allows(CryptoKeyUsageWrapKey)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "Wrapping CryptoKey doesn't support wrapKey operation"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "Wrapping CryptoKey doesn't support wrapKey operation"_si);
         return;
     }
 
@@ -1054,7 +1054,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
     }
 
     if (!key.extractable()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "The CryptoKey is nonextractable"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "The CryptoKey is nonextractable"_si);
         return;
     }
 
@@ -1082,8 +1082,8 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
         case SubtleCrypto::KeyFormat::Jwk: {
             // FIXME: Converting to JS just to JSON-Stringify seems inefficient. We should find a way to go directly from the struct to JSON.
             auto jwk = toJS<IDLDictionary<JsonWebKey>>(*(promise->globalObject()), *(promise->globalObject()), WTF::move(std::get<JsonWebKey>(key)));
-            String jwkString = JSONStringify(promise->globalObject(), jwk, 0);
-            bytes.append(jwkString.utf8(StrictConversion).span());
+            RefPtr<StringImpl> jwkString = JSONStringify(promise->globalObject(), jwk, 0);
+            bytes.append(utf8(jwkString, StrictConversion).span());
         }
         }
 
@@ -1147,12 +1147,12 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
     auto keyUsagesBitmap = toCryptoKeyUsageBitmap(keyUsages);
 
     if (unwrapParams->identifier != unwrappingKey.algorithmIdentifier()) {
-        promise->reject(ExceptionCode::InvalidAccessError, "Unwrapping CryptoKey doesn't match unwrap AlgorithmIdentifier"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "Unwrapping CryptoKey doesn't match unwrap AlgorithmIdentifier"_si);
         return;
     }
 
     if (!unwrappingKey.allows(CryptoKeyUsageUnwrapKey)) {
-        promise->reject(ExceptionCode::InvalidAccessError, "Unwrapping CryptoKey doesn't support unwrapKey operation"_s);
+        promise->reject(ExceptionCode::InvalidAccessError, "Unwrapping CryptoKey doesn't support unwrapKey operation"_si);
         return;
     }
 
@@ -1192,7 +1192,7 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
             JSLockHolder locker(vm);
             auto jwkObject = JSONParse(&state, byteCast<Latin1Character>(bytes.span()));
             if (!jwkObject) {
-                promise->reject(ExceptionCode::DataError, "WrappedKey cannot be converted to a JSON object"_s);
+                promise->reject(ExceptionCode::DataError, "WrappedKey cannot be converted to a JSON object"_si);
                 return;
             }
             auto jwkConversionResult = convert<IDLDictionary<JsonWebKey>>(state, jwkObject);

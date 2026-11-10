@@ -62,7 +62,7 @@ public:
     std::optional<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID() const { return m_mainFrameClipLayerID.asOptional(); }
 
     // The zoom override currently installed on the scrolled-contents layer, empty when there is none
-    String delegatedZoomOverrideAsTextForTesting() const;
+    RefPtr<StringImpl> delegatedZoomOverrideAsTextForTesting() const;
 
 private:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);

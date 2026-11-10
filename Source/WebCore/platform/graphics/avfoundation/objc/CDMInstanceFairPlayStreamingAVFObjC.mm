@@ -216,7 +216,7 @@ NODELETE static WTFLogChannel& logChannel() { return LogEME; }
 #define FPS_ERROR_LOG_WITH(object, ...) ((void)0)
 #endif
 
-static String initTypeForRequest(AVContentKeyRequest* request)
+static RefPtr<StringImpl> initTypeForRequest(AVContentKeyRequest* request)
 {
     if ([request.identifier isKindOfClass:NSString.class] && [request.identifier hasPrefix:@"skd://"])
         return CDMPrivateFairPlayStreaming::skdName();
@@ -229,7 +229,7 @@ static String initTypeForRequest(AVContentKeyRequest* request)
         return CDMPrivateFairPlayStreaming::sinfName();
     }
 
-    return String(nsInitType);
+    return StringImpl::create(nsInitType);
 }
 
 static Ref<SharedBuffer> initializationDataForRequest(AVContentKeyRequest* request)
@@ -237,7 +237,7 @@ static Ref<SharedBuffer> initializationDataForRequest(AVContentKeyRequest* reque
     if (!request)
         return SharedBuffer::create();
 
-    if (initTypeForRequest(request) == CDMPrivateFairPlayStreaming::skdName())
+    if (equal(initTypeForRequest(request), CDMPrivateFairPlayStreaming::skdName()))
         return SharedBuffer::create([request.identifier dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES]);
 
     return SharedBuffer::create(request.initializationData);
@@ -280,13 +280,13 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
     return m_session.get();
 }
 
-RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData(const String& initDataType, SharedBuffer& initData)
+RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData(StringImpl* initDataType, SharedBuffer& initData)
 {
     for (auto requestIter = m_unexpectedKeyRequests.begin(); requestIter != m_unexpectedKeyRequests.end(); ++requestIter) {
         auto& request = *requestIter;
         auto requestType = initTypeForRequest(request.get());
         auto requestInitData = initializationDataForRequest(request.get());
-        if (initDataType != requestType || initData != requestInitData.get())
+        if (!equal(initDataType, requestType) || initData != requestInitData.get())
             continue;
 
         return m_unexpectedKeyRequests.take(requestIter);
@@ -358,7 +358,7 @@ SUPPRESS_NODELETE bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKe
 
 bool CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(const CDMMediaCapability& capability)
 {
-    if (![PAL::getAVURLAssetClassSingleton() isPlayableExtendedMIMEType:capability.contentType.createNSString().get()])
+    if (![PAL::getAVURLAssetClassSingleton() isPlayableExtendedMIMEType:createNSString(capability.contentType).get()])
         return false;
 
     // FairPlay only supports 'cbcs' encryption:
@@ -400,10 +400,10 @@ void CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate(Ref<SharedBuffer>
     callback(CDMInstanceSuccessValue::Succeeded);
 }
 
-void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& storageDirectory)
+void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(StringImpl* storageDirectory)
 {
     INFO_LOG(LOGIDENTIFIER);
-    if (storageDirectory.isEmpty()) {
+    if (isEmpty(storageDirectory)) {
         m_storageURL = nil;
         return;
     }
@@ -415,8 +415,8 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
         if (!FileSystem::makeAllDirectories(storageDirectory))
             return;
     } else if (*fileType != FileSystem::FileType::Directory) {
-        String tempDirectory = FileSystem::createTemporaryDirectory(@"MediaKeys");
-        if (tempDirectory.isNull())
+        RefPtr<StringImpl> tempDirectory = StringImpl::create(protect(FileSystem::createTemporaryDirectory(@"MediaKeys")).get());
+        if (!tempDirectory)
             return;
 
         auto tempStoragePath = FileSystem::pathByAppendingComponent(tempDirectory, FileSystem::pathFileName(storagePath));
@@ -427,7 +427,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
             return;
     }
 
-    m_storageURL = adoptNS([[NSURL alloc] initFileURLWithPath:storagePath.createNSString().get() isDirectory:NO]);
+    m_storageURL = adoptNS([[NSURL alloc] initFileURLWithPath:createNSString(storagePath).get() isDirectory:NO]);
 }
 
 RefPtr<CDMInstanceSession> CDMInstanceFairPlayStreamingAVFObjC::createSession()
@@ -447,9 +447,9 @@ void CDMInstanceFairPlayStreamingAVFObjC::clearClient()
     m_client = nullptr;
 }
 
-const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
+const RefPtr<StringImpl>& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
 {
-    static const NeverDestroyed<String> s_keySystem { MAKE_STATIC_STRING_IMPL("com.apple.fps") };
+    static const NeverDestroyed<RefPtr<StringImpl>> s_keySystem { MAKE_STATIC_STRING_IMPL("com.apple.fps") };
     return s_keySystem;
 }
 
@@ -756,7 +756,7 @@ CDMKeyIDs CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
     return keyIDs;
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, KeyGroupingStrategy keyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, KeyGroupingStrategy keyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!isLicenseTypeSupported(licenseType)) {
         ERROR_LOG(LOGIDENTIFIER, " false, licenseType \"", licenseType, "\" not supported");
@@ -792,12 +792,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     RetainPtr<NSString> identifier;
     RetainPtr<NSData> initializationData;
 
-    if (initDataType == CDMPrivateFairPlayStreaming::sinfName())
+    if (equal(initDataType, CDMPrivateFairPlayStreaming::sinfName()))
         initializationData = initData->makeContiguous()->createNSData();
-    else if (initDataType == CDMPrivateFairPlayStreaming::skdName())
+    else if (equal(initDataType, CDMPrivateFairPlayStreaming::skdName()))
         identifier = adoptNS([[NSString alloc] initWithData:initData->makeContiguous()->createNSData().get() encoding:NSUTF8StringEncoding]);
 #if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
-    else if (initDataType == InitDataRegistry::cencName()) {
+    else if (equal(initDataType, InitDataRegistry::cencName())) {
         // AVFoundation's FairPlay PSSH parser only reads the first PSSH atom in the
         // supplied data and rejects the entire blob if its SystemID is not FairPlay's
         // (rdar://179255226). Filter the cenc init data down to the FairPlay PSSH alone
@@ -809,11 +809,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             return;
         }
         auto psshString = base64EncodeToString(fairPlayPssh->makeContiguous()->span());
-        initializationData = [NSJSONSerialization dataWithJSONObject:@{ @"pssh": psshString.createNSString().get() } options:NSJSONWritingPrettyPrinted error:nil];
+        initializationData = [NSJSONSerialization dataWithJSONObject:@{ @"pssh": createNSString(psshString).get() } options:NSJSONWritingPrettyPrinted error:nil];
     }
 #endif
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-    else if (initDataType == CDMPrivateFairPlayStreaming::mptsName())
+    else if (equal(initDataType, CDMPrivateFairPlayStreaming::mptsName()))
         initializationData = initData->makeContiguous()->createNSData();
 #endif
     else {
@@ -826,22 +826,22 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     m_requestLicenseCallback = WTF::move(callback);
 
     if (m_group) {
-        RetainPtr options = @{ ContentKeyReportGroupKey: m_group.get(), InitializationDataTypeKey: initDataType.createNSString().get() };
+        RetainPtr options = @{ ContentKeyReportGroupKey: m_group.get(), InitializationDataTypeKey: createNSString(initDataType).get() };
         [m_group processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
         return;
     }
 
-    RetainPtr options = @{ InitializationDataTypeKey: initDataType.createNSString().get() };
+    RetainPtr options = @{ InitializationDataTypeKey: createNSString(initDataType).get() };
     [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
 }
 
-static bool isEqual(const SharedBuffer& data, const String& value)
+static bool isEqual(const SharedBuffer& data, StringImpl* value)
 {
     auto arrayBuffer = data.tryCreateArrayBuffer();
     if (!arrayBuffer)
         return false;
 
-    auto exceptionOrDecoder = TextDecoder::create("utf8"_s, TextDecoder::Options());
+    auto exceptionOrDecoder = TextDecoder::create("utf8"_si, TextDecoder::Options());
     if (exceptionOrDecoder.hasException())
         return false;
 
@@ -850,12 +850,12 @@ static bool isEqual(const SharedBuffer& data, const String& value)
     if (stringOrException.hasException())
         return false;
 
-    return stringOrException.returnValue() == value;
+    return equal(stringOrException.returnValue(), value);
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, Ref<SharedBuffer>&& responseData, LicenseUpdateCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(StringImpl*, LicenseType, Ref<SharedBuffer>&& responseData, LicenseUpdateCallback&& callback)
 {
-    if (!m_expiredSessions.isEmpty() && isEqual(responseData, "acknowledged"_s)) {
+    if (!m_expiredSessions.isEmpty() && isEqual(responseData, "acknowledged"_si)) {
         RefPtr certificate = m_instance->serverCertificate();
         RetainPtr storageURL = m_instance->storageURL();
 
@@ -875,7 +875,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         return;
     }
 
-    if (!m_requests.isEmpty() && isEqual(responseData, "renew"_s)) {
+    if (!m_requests.isEmpty() && isEqual(responseData, "renew"_si)) {
         RetainPtr request = lastKeyRequest();
         if (!request) {
             ERROR_LOG(LOGIDENTIFIER, "\"renew\", Failed, no outstanding keys");
@@ -902,7 +902,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         return;
     }
 
-    if (m_currentRequest.value().initType == InitDataRegistry::cencName()) {
+    if (equal(m_currentRequest.value().initType, InitDataRegistry::cencName())) {
         if (m_updateResponseCollector) {
             m_updateResponseCollector->fail();
             m_updateResponseCollector = nullptr;
@@ -946,7 +946,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             if (!object)
                 return false;
 
-            auto keyIDString = object->getString("keyID"_s);
+            auto keyIDString = object->getString("keyID"_si);
             if (!keyIDString)
                 return false;
 
@@ -966,8 +966,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
 
             auto& request = m_currentRequest.value().requests[foundIndex];
 
-            auto payloadFindResults = object->find("payload"_s);
-            auto errorFindResults = object->find("error"_s);
+            auto payloadFindResults = object->find("payload"_si);
+            auto errorFindResults = object->find("error"_si);
             bool hasPayload = payloadFindResults != object->end();
             bool hasError = errorFindResults != object->end();
 
@@ -1016,7 +1016,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
     m_updateLicenseCallback = WTF::move(callback);
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType licenseType, const String& sessionId, const String&, LoadSessionCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType licenseType, StringImpl* sessionId, StringImpl*, LoadSessionCallback&& callback)
 {
     if (licenseType == LicenseType::PersistentUsageRecord) {
         RetainPtr storageURL = m_instance->storageURL();
@@ -1042,7 +1042,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
             if (!playbackSessionIdValue)
                 continue;
 
-            if (sessionId == String(playbackSessionIdValue.get())) {
+            if (equal(sessionId, StringImpl::create(playbackSessionIdValue.get()).get())) {
                 // FIXME(rdar://problem/35934922): use key values stored in expired session report once available
                 changedKeys.append((KeyStatusVector::ValueType){ SharedBuffer::create(), KeyStatus::Released });
                 m_expiredSessions.append(expiredSessionData);
@@ -1060,7 +1060,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
     }
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, CloseSessionCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(StringImpl*, CloseSessionCallback&& callback)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (m_requestLicenseCallback) {
@@ -1081,7 +1081,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
     callback();
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String& sessionId, LicenseType licenseType, RemoveSessionDataCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(StringImpl* sessionId, LicenseType licenseType, RemoveSessionDataCallback&& callback)
 {
     if (m_group)
         [m_group expire];
@@ -1109,7 +1109,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
             if (!playbackSessionIdValue)
                 continue;
 
-            if (sessionId == String(playbackSessionIdValue.get())) {
+            if (equal(sessionId, StringImpl::create(playbackSessionIdValue.get()).get())) {
                 // FIXME(rdar://problem/35934922): use key values stored in expired session report once available
                 changedKeys.append((KeyStatusVector::ValueType){ SharedBuffer::create(), KeyStatus::Released });
                 m_expiredSessions.append(expiredSessionData);
@@ -1148,7 +1148,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
     callback({ }, nullptr, Failed);
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::storeRecordOfKeyUsage(const String&)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::storeRecordOfKeyUsage(StringImpl*)
 {
     // no-op; key usage data is stored automatically.
 }
@@ -1171,7 +1171,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::clearClient()
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest *request)
 {
     auto initDataType = initTypeForRequest(request);
-    if (initDataType.isEmpty()) {
+    if (isEmpty(initDataType)) {
         ERROR_LOG(LOGIDENTIFIER, "- request has empty initDataType");
         return;
     }
@@ -1210,7 +1210,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
                 if (!protectedThis)
                     return;
 
-                if (protectedThis->m_sessionId.isEmpty()) {
+                if (isEmpty(protectedThis->m_sessionId)) {
                     NSData *sessionID = nullptr;
                     if (protectedThis->m_group)
                         sessionID = [protectedThis->m_group contentProtectionSessionIdentifier];
@@ -1242,7 +1242,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
         return;
 
     auto initDataType = initTypeForRequest(requests.first().get());
-    if (initDataType != InitDataRegistry::cencName()) {
+    if (!equal(initDataType, InitDataRegistry::cencName())) {
         didProvideRequest(requests.first().get());
         requests.removeAt(0);
 
@@ -1309,8 +1309,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
             auto entry = JSON::Object::create();
             auto& keyID = requestData.first;
             auto& payload = requestData.second;
-            entry->setString("keyID"_s, base64EncodeToString(keyID->makeContiguous()->span()));
-            entry->setString("payload"_s, base64EncodeToString(span(payload.get())));
+            entry->setString("keyID"_si, base64EncodeToString(keyID->makeContiguous()->span()));
+            entry->setString("payload"_si, base64EncodeToString(span(payload.get())));
             requestJSON->pushObject(WTF::move(entry));
         }
         auto requestBuffer = utf8Buffer(requestJSON->toJSONString());
@@ -1351,14 +1351,14 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::requestMatchesRenewingRequest(A
     });
 }
 
-RetainPtr<NSDictionary> CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKeyRequestWithHashSalt(const String& mediaKeysHashSeedString)
+RetainPtr<NSDictionary> CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKeyRequestWithHashSalt(StringImpl* mediaKeysHashSeedString)
 {
     if (!PAL::canLoad_AVFoundation_AVContentKeyRequestRandomDeviceIdentifierSeedKey() || !PAL::canLoad_AVFoundation_AVContentKeyRequestShouldRandomizeDeviceIdentifierKey())
         return @{ };
 
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
-    Vector<uint8_t> seedData(ReserveCapacityTag { }, mediaKeysHashSeedString.length());
-    for (auto character : mediaKeysHashSeedString.span8()) {
+    Vector<uint8_t> seedData(ReserveCapacityTag { }, length(mediaKeysHashSeedString));
+    for (auto character : span8(mediaKeysHashSeedString)) {
         if (isASCIIHexDigit(character))
             seedData.append(toASCIIHexValue(character));
     }
@@ -1377,7 +1377,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
 {
     ASSERT(!m_requestLicenseCallback);
     auto initDataType = initTypeForRequest(request);
-    if (initDataType.isEmpty())
+    if (isEmpty(initDataType))
         return;
 
     Request currentRequest = { initDataType, { request } };
@@ -1521,7 +1521,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::nextRequest()
     if (nextRequest.requests.isEmpty())
         return;
 
-    if (nextRequest.initType == InitDataRegistry::cencName()) {
+    if (equal(nextRequest.initType, InitDataRegistry::cencName())) {
         didProvideRequests(WTF::move(nextRequest.requests));
         return;
     }
@@ -1591,13 +1591,13 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVC
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *sessionIdentifier)
 {
-    String sessionId = emptyString();
+    RefPtr<StringImpl> sessionId = emptyString();
     if (sessionIdentifier) {
         Ref sessionIdentifierBuffer = SharedBuffer::create(sessionIdentifier);
         sessionId = toHexString(sessionIdentifierBuffer->span());
     }
 
-    if (m_sessionId == sessionId)
+    if (equal(m_sessionId, sessionId))
         return;
 
     m_sessionId = sessionId;

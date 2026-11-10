@@ -50,7 +50,7 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface)
 {
 }
 
-MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, AtomStringImpl* eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const DoublePoint& screenLocation, const DoublePoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, IsSimulated isSimulated, IsTrusted isTrusted)
     : UIEventWithKeyState(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTF::move(view), detail, modifiers, isTrusted)
@@ -63,13 +63,13 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
     init(m_isSimulated, windowLocation);
 }
 
-MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
     : MouseRelatedEvent(eventInterface, type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
         WTF::move(view), 0, globalLocation, globalLocation /* Converted in init */, 0, 0, modifiers, IsSimulated::No)
 {
 }
 
-MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, AtomStringImpl* eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(eventInterface, eventType, initializer, isTrusted)
         , m_movementX(initializer.movementX)
         , m_movementY(initializer.movementY)
@@ -88,13 +88,13 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
     init(false, DoublePoint::zero());
 }
 
-MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const EventModifierInit& initializer, IsTrusted isTrusted)
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, AtomStringImpl* eventType, const EventModifierInit& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(eventInterface, eventType, initializer, isTrusted)
 {
     init(false, DoublePoint::zero());
 }
 
-static inline bool isMoveEventType(const AtomString& eventType)
+static inline bool isMoveEventType(AtomStringImpl* eventType)
 {
     auto& eventNames = WebCore::eventNames();
     return eventType == eventNames.mousemoveEvent

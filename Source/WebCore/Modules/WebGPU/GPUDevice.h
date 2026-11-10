@@ -92,7 +92,7 @@ template<typename T> struct UniquelyAnnotatedDescriptor;
 class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(GPUDevice);
 public:
-    static Ref<GPUDevice> create(ScriptExecutionContext*, Ref<::WebGPU::Device>&&, Ref<WebGPUIntegration>&&, String&& label, String&& queueLabel, GPUAdapterInfo&);
+    static Ref<GPUDevice> create(ScriptExecutionContext*, Ref<::WebGPU::Device>&&, Ref<WebGPUIntegration>&&, RefPtr<StringImpl>&& label, RefPtr<StringImpl>&& queueLabel, GPUAdapterInfo&);
 
     NODELETE static HashSet<GPUDevice*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
@@ -107,8 +107,8 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     NODELETE Ref<GPUSupportedFeatures> features() const;
     NODELETE Ref<GPUSupportedLimits> limits() const;
@@ -120,7 +120,7 @@ public:
     RefPtr<::WebGPU::XRBinding> createXRBinding(const WebXRSession&);
     ExceptionOr<Ref<GPUBuffer>> createBuffer(GPUBufferDescriptor&&);
     ExceptionOr<Ref<GPUTexture>> createTexture(GPUTextureDescriptor&&);
-    std::optional<String> errorValidatingSupportedFormat(GPUTextureFormat) const;
+    std::optional<RefPtr<StringImpl>> errorValidatingSupportedFormat(GPUTextureFormat) const;
     ExceptionOr<Ref<GPUSampler>> createSampler(std::optional<GPUSamplerDescriptor>&&);
     ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(GPUExternalTextureDescriptor&&);
 
@@ -145,7 +145,7 @@ public:
     using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUError>>>;
     void popErrorScope(ErrorScopePromise&&);
 
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     using EventTarget::addEventListener;
     void listenForUncapturedErrors();
 
@@ -179,7 +179,7 @@ private:
     friend class GPUBuffer;
     friend class GPUTexture;
 
-    GPUDevice(ScriptExecutionContext*, Ref<::WebGPU::Device>&&, Ref<WebGPUIntegration>&&, String&& label, String&& queueLabel, GPUAdapterInfo&);
+    GPUDevice(ScriptExecutionContext*, Ref<::WebGPU::Device>&&, Ref<WebGPUIntegration>&&, RefPtr<StringImpl>&& label, RefPtr<StringImpl>&& queueLabel, GPUAdapterInfo&);
 
     void didChangeBufferMemoryCost(GPUBuffer&);
     void didChangeTextureMemoryCost(GPUTexture&);
@@ -207,7 +207,7 @@ private:
     const Ref<::WebGPU::Device> m_backing;
     const Ref<GPUQueue> m_queue;
     const RefPtr<GPUPipelineLayout> m_autoPipelineLayout;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     RefPtr<::WebGPU::CommandEncoder> m_invalidCommandEncoder;
     RefPtr<::WebGPU::CommandBuffer> m_invalidCommandBuffer;
     RefPtr<::WebGPU::RenderPassEncoder> m_invalidRenderPassEncoder;

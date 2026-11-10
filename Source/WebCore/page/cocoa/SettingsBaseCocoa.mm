@@ -43,25 +43,25 @@ namespace WebCore {
 
 void SettingsBase::initializeDefaultFontFamilies()
 {
-    setStandardFontFamily("Songti TC"_s, USCRIPT_TRADITIONAL_HAN);
-    setStandardFontFamily("Songti SC"_s, USCRIPT_SIMPLIFIED_HAN);
-    setStandardFontFamily("Hiragino Mincho ProN"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
-    setStandardFontFamily("AppleMyungjo"_s, USCRIPT_HANGUL);
+    setStandardFontFamily("Songti TC"_si, USCRIPT_TRADITIONAL_HAN);
+    setStandardFontFamily("Songti SC"_si, USCRIPT_SIMPLIFIED_HAN);
+    setStandardFontFamily("Hiragino Mincho ProN"_si, USCRIPT_KATAKANA_OR_HIRAGANA);
+    setStandardFontFamily("AppleMyungjo"_si, USCRIPT_HANGUL);
 }
 
 #else
 
 void SettingsBase::initializeDefaultFontFamilies()
 {
-    setStandardFontFamily("PingFang TC"_s, USCRIPT_TRADITIONAL_HAN);
-    setStandardFontFamily("PingFang SC"_s, USCRIPT_SIMPLIFIED_HAN);
-    setStandardFontFamily("Hiragino Mincho ProN"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
-    setStandardFontFamily("Apple SD Gothic Neo"_s, USCRIPT_HANGUL);
+    setStandardFontFamily("PingFang TC"_si, USCRIPT_TRADITIONAL_HAN);
+    setStandardFontFamily("PingFang SC"_si, USCRIPT_SIMPLIFIED_HAN);
+    setStandardFontFamily("Hiragino Mincho ProN"_si, USCRIPT_KATAKANA_OR_HIRAGANA);
+    setStandardFontFamily("Apple SD Gothic Neo"_si, USCRIPT_HANGUL);
 
-    setStandardFontFamily("Times"_s, USCRIPT_COMMON);
-    setFixedFontFamily("Courier"_s, USCRIPT_COMMON);
-    setSerifFontFamily("Times"_s, USCRIPT_COMMON);
-    setSansSerifFontFamily("Helvetica"_s, USCRIPT_COMMON);
+    setStandardFontFamily("Times"_si, USCRIPT_COMMON);
+    setFixedFontFamily("Courier"_si, USCRIPT_COMMON);
+    setSerifFontFamily("Times"_si, USCRIPT_COMMON);
+    setSansSerifFontFamily("Helvetica"_si, USCRIPT_COMMON);
 }
 
 #endif

@@ -38,21 +38,21 @@ enum class ArchiveError : uint8_t {
     SerializationFailure,
 };
 
-inline String errorDescription(ArchiveError error)
+inline RefPtr<StringImpl> errorDescription(ArchiveError error)
 {
     switch (error) {
     case ArchiveError::EmptyResource:
-        return "Empty resource"_s;
+        return "Empty resource"_si;
     case ArchiveError::FileSystemError:
-        return "File system error"_s;
+        return "File system error"_si;
     case ArchiveError::InvalidFilePath:
-        return "Invalid file path"_s;
+        return "Invalid file path"_si;
     case ArchiveError::InvalidFrame:
-        return "Invalid frame"_s;
+        return "Invalid frame"_si;
     case ArchiveError::NotImplemented:
-        return "Not implemented"_s;
+        return "Not implemented"_si;
     case ArchiveError::SerializationFailure:
-        return "Serialization failure"_s;
+        return "Serialization failure"_si;
     }
 }
 

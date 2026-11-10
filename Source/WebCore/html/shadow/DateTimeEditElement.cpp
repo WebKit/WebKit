@@ -66,12 +66,12 @@ class DateTimeEditBuilder final : private DateTimeFormat::TokenHandler {
 public:
     DateTimeEditBuilder(DateTimeEditElement&, const DateTimeEditElement::LayoutParameters&);
 
-    bool build(const String&);
+    bool build(StringImpl*);
 
 private:
     // DateTimeFormat::TokenHandler functions:
     void visitField(DateTimeFormat::FieldType, int);
-    void visitLiteral(const String&);
+    void visitLiteral(StringImpl*);
 
     const Ref<DateTimeEditElement> m_editElement;
     const DateTimeEditElement::LayoutParameters& m_parameters;
@@ -83,7 +83,7 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& element, const Dat
 {
 }
 
-bool DateTimeEditBuilder::build(const String& formatString)
+bool DateTimeEditBuilder::build(StringImpl* formatString)
 {
     m_editElement->resetFields();
     return DateTimeFormat::parse(formatString, *this);
@@ -178,9 +178,9 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 }
 
-void DateTimeEditBuilder::visitLiteral(const String& text)
+void DateTimeEditBuilder::visitLiteral(StringImpl* text)
 {
-    ASSERT(text.length());
+    ASSERT(length(text));
 
     Ref document = m_editElement->document();
     Ref element = HTMLDivElement::create(document.get());
@@ -192,12 +192,12 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
     // make spaces appear up to 2px larger between fields. This padding is necessary to
     // prevent selected fields from appearing squished. To fix, pull fields closer
     // together by applying a negative margin.
-    if (text.startsWith(' '))
+    if (startsWith(text, ' '))
         element->setInlineStyleProperty(CSSPropertyID::MarginInlineStart, -1, CSSUnitType::Px);
-    if (text.endsWith(' '))
+    if (endsWith(text, ' '))
         element->setInlineStyleProperty(CSSPropertyID::MarginInlineEnd, -1, CSSUnitType::Px);
 
-    element->appendChild(Text::create(document.get(), String { text }));
+    element->appendChild(Text::create(document.get(), RefPtr<StringImpl> { text }));
     protect(m_editElement->fieldsWrapperElement())->appendChild(element);
 }
 
@@ -237,7 +237,7 @@ void DateTimeEditElement::defaultEventHandler(Event& event)
 {
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
         RefPtr editControlOwner = m_editControlOwner;
-        if (editControlOwner && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+        if (editControlOwner && equal(keyboardEvent->keyIdentifier(), "U+0020"_s)) {
             // Forward space keypresses to the owner to activate the date picker.
             editControlOwner->didReceiveSpaceKeyFromControl();
             // We want to mark the event as handled to avoid scrolling the page.
@@ -416,7 +416,7 @@ void DateTimeEditElement::didSuppressBlurDueToPickerFocusTransfer()
         editControlOwner->didSuppressBlurDueToPickerFocusTransfer();
 }
 
-AtomString DateTimeEditElement::localeIdentifier() const
+RefPtr<AtomStringImpl> DateTimeEditElement::localeIdentifier() const
 {
     if (RefPtr editControlOwner = m_editControlOwner)
         return editControlOwner->localeIdentifier();
@@ -447,14 +447,14 @@ void DateTimeEditElement::setEmptyValue(const LayoutParameters& layoutParameters
         field->setEmptyValue();
 }
 
-String DateTimeEditElement::value() const
+RefPtr<StringImpl> DateTimeEditElement::value() const
 {
     if (RefPtr editControlOwner = m_editControlOwner)
         return editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState());
     return emptyString();
 }
 
-String DateTimeEditElement::placeholderValue() const
+RefPtr<StringImpl> DateTimeEditElement::placeholderValue() const
 {
     if (RefPtr editControlOwner = m_editControlOwner)
         return editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue::Yes));

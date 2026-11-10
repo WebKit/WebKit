@@ -374,7 +374,7 @@ static void logGLDebugMessage(GLenum source, GLenum type, GLuint identifier, GLe
     if (type == GL_DEBUG_TYPE_ERROR_KHR && LOG_CHANNEL(GLContext).level >= WTFLogLevel::Debug) {
         WTF::StringPrintStream backtraceStream;
         WTFReportBacktraceWithPrefixAndPrintStream(backtraceStream, "#");
-        RELEASE_LOG(GLContext, "Backtrace leading to error:\n%s", backtraceStream.toString().utf8());
+        RELEASE_LOG(GLContext, "Backtrace leading to error:\n%s", utf8(backtraceStream.toString()));
     }
 }
 
@@ -606,19 +606,19 @@ IGNORE_CLANG_WARNINGS_END
 
 unsigned GLContext::versionFromString(const char* versionStringAsChar)
 {
-    auto versionString = String::fromLatin1(versionStringAsChar);
-    Vector<String> versionStringComponents = versionString.split(' ');
+    auto versionString = StringImpl::fromLatin1(versionStringAsChar);
+    Vector<RefPtr<StringImpl>> versionStringComponents = split(versionString, ' ');
 
-    Vector<String> versionDigits;
-    if (versionStringComponents[0] == "OpenGL"_s) {
+    Vector<RefPtr<StringImpl>> versionDigits;
+    if (equal(versionStringComponents[0], "OpenGL"_s)) {
         // If the version string starts with "OpenGL" it can be GLES 1 or 2. In GLES1 version string starts
         // with "OpenGL ES-<profile> major.minor" and in GLES2 with "OpenGL ES major.minor". Version is the
         // third component in both cases.
-        versionDigits = versionStringComponents[2].split('.');
+        versionDigits = split(versionStringComponents[2], '.');
     } else {
         // Version is the first component. The version number is always "major.minor" or
         // "major.minor.release". Ignore the release number.
-        versionDigits = versionStringComponents[0].split('.');
+        versionDigits = split(versionStringComponents[0], '.');
     }
 
     return parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).value_or(0) * 100 + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).value_or(0) * 10;

@@ -41,33 +41,33 @@ public:
         return adoptRef(*new DOMStringList);
     }
 
-    static Ref<DOMStringList> create(Vector<String>&& strings)
+    static Ref<DOMStringList> create(Vector<RefPtr<StringImpl>>&& strings)
     {
         return adoptRef(*new DOMStringList(WTF::move(strings)));
     }
 
     bool isEmpty() const { return m_strings.isEmpty(); }
     void clear() { m_strings.clear(); }
-    void append(String&& string) { m_strings.append(WTF::move(string)); }
+    void append(RefPtr<StringImpl>&& string) { m_strings.append(WTF::move(string)); }
     void sort();
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_strings.size(); }
 
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }
-    NODELETE String item(unsigned index) const;
-    NODELETE bool contains(const String&) const;
+    NODELETE RefPtr<StringImpl> item(unsigned index) const;
+    NODELETE bool contains(StringImpl*) const;
 
-    operator const Vector<String>&() const LIFETIME_BOUND { return m_strings; }
+    operator const Vector<RefPtr<StringImpl>>&() const LIFETIME_BOUND { return m_strings; }
 
 private:
     DOMStringList() = default;
-    explicit DOMStringList(Vector<String>&& strings)
+    explicit DOMStringList(Vector<RefPtr<StringImpl>>&& strings)
         : m_strings(WTF::move(strings))
     {
     }
 
-    Vector<String> m_strings;
+    Vector<RefPtr<StringImpl>> m_strings;
 };
 
 inline WebCoreOpaqueRoot root(DOMStringList* list) { return WebCoreOpaqueRoot { list }; }

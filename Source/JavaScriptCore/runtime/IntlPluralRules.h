@@ -82,7 +82,7 @@ private:
     IntlPluralRules(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    NODELETE static Vector<String> localeData(const String&, RelevantExtensionKey);
+    NODELETE static Vector<RefPtr<StringImpl>> localeData(StringImpl*, RelevantExtensionKey);
 
     enum class Type : bool { Cardinal, Ordinal };
 
@@ -90,7 +90,7 @@ private:
     std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter> m_numberFormatter;
     std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter> m_numberRangeFormatter;
 
-    String m_locale;
+    RefPtr<StringImpl> m_locale;
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };

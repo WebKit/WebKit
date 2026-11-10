@@ -42,15 +42,15 @@ static void removePrivilegedNoCORSRequestHeaders(HTTPHeaderMap& headers)
     headers.remove(HTTPHeaderName::Range);
 }
 
-static ExceptionOr<bool> canWriteHeader(const String& name, const String& value, const String& combinedValue, FetchHeaders::Guard guard)
+static ExceptionOr<bool> canWriteHeader(StringImpl* name, StringImpl* value, StringImpl* combinedValue, FetchHeaders::Guard guard)
 {
     if (!isValidHTTPToken(name))
         return Exception { ExceptionCode::TypeError, makeString("Invalid header name: '"_s, name, '\'') };
-    ASSERT(value.isEmpty() || (!isASCIIWhitespaceWithoutFF(value[0]) && !isASCIIWhitespaceWithoutFF(value[value.length() - 1])));
+    ASSERT(isEmpty(value) || (!isASCIIWhitespaceWithoutFF(codeUnitAt(value, 0)) && !isASCIIWhitespaceWithoutFF(codeUnitAt(value, length(value) - 1))));
     if (!isValidHTTPHeaderValue((value)))
         return Exception { ExceptionCode::TypeError, makeString("Header '"_s, name, "' has invalid value: '"_s, value, '\'') };
     if (guard == FetchHeaders::Guard::Immutable)
-        return Exception { ExceptionCode::TypeError, "Headers object's guard is 'immutable'"_s };
+        return Exception { ExceptionCode::TypeError, "Headers object's guard is 'immutable'"_si };
     if (guard == FetchHeaders::Guard::Request && isForbiddenHeader(name, value))
         return false;
     if (guard == FetchHeaders::Guard::RequestNoCors && !isSimpleHeader(name, combinedValue))
@@ -60,12 +60,12 @@ static ExceptionOr<bool> canWriteHeader(const String& name, const String& value,
     return true;
 }
 
-static ExceptionOr<void> appendSetCookie(const String& value, Vector<String>& setCookieValues, FetchHeaders::Guard guard)
+static ExceptionOr<void> appendSetCookie(StringImpl* value, Vector<RefPtr<StringImpl>>& setCookieValues, FetchHeaders::Guard guard)
 {
     if (!isValidHTTPHeaderValue((value)))
         return Exception { ExceptionCode::TypeError, makeString("Header 'Set-Cookie' has invalid value: '"_s, value, '\'') };
     if (guard == FetchHeaders::Guard::Immutable)
-        return Exception { ExceptionCode::TypeError, "Headers object's guard is 'immutable'"_s };
+        return Exception { ExceptionCode::TypeError, "Headers object's guard is 'immutable'"_si };
 
     if (guard == FetchHeaders::Guard::None)
         setCookieValues.append(value);
@@ -73,16 +73,16 @@ static ExceptionOr<void> appendSetCookie(const String& value, Vector<String>& se
     return { };
 }
 
-static ExceptionOr<void> appendToHeaderMap(const String& name, const String& value, HTTPHeaderMap& headers, Vector<String>& setCookieValues, FetchHeaders::Guard guard)
+static ExceptionOr<void> appendToHeaderMap(StringImpl* name, StringImpl* value, HTTPHeaderMap& headers, Vector<RefPtr<StringImpl>>& setCookieValues, FetchHeaders::Guard guard)
 {
-    String normalizedValue = value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    RefPtr<StringImpl> normalizedValue = trim(value, isASCIIWhitespaceWithoutFF<char16_t>);
     if (equalIgnoringASCIICase(name, "set-cookie"_s))
         return appendSetCookie(normalizedValue, setCookieValues, guard);
 
-    String combinedValue = normalizedValue;
-    String existingValue = headers.get(name);
-    ASSERT(!existingValue.isNull() || !headers.contains(name));
-    if (!existingValue.isNull())
+    RefPtr<StringImpl> combinedValue = normalizedValue;
+    RefPtr<StringImpl> existingValue = headers.get(name);
+    ASSERT(existingValue || !headers.contains(name));
+    if (existingValue)
         combinedValue = makeString(existingValue, ", "_s, normalizedValue);
     auto canWriteResult = canWriteHeader(name, normalizedValue, combinedValue, guard);
     if (canWriteResult.hasException())
@@ -100,7 +100,7 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
 static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
 {
     ASSERT(!equalIgnoringASCIICase(header.key, "set-cookie"_s));
-    String normalizedValue = header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    RefPtr<StringImpl> normalizedValue = trim(header.value, isASCIIWhitespaceWithoutFF<char16_t>);
     auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
@@ -118,19 +118,19 @@ static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapCon
 }
 
 // https://fetch.spec.whatwg.org/#concept-headers-fill
-static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, Vector<String>& setCookieValues, const FetchHeaders::Init& headersInit, FetchHeaders::Guard guard)
+static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, Vector<RefPtr<StringImpl>>& setCookieValues, const FetchHeaders::Init& headersInit, FetchHeaders::Guard guard)
 {
-    if (std::holds_alternative<Vector<Vector<String>>>(headersInit)) {
-        auto& sequence = std::get<Vector<Vector<String>>>(headersInit);
+    if (std::holds_alternative<Vector<Vector<RefPtr<StringImpl>>>>(headersInit)) {
+        auto& sequence = std::get<Vector<Vector<RefPtr<StringImpl>>>>(headersInit);
         for (auto& header : sequence) {
             if (header.size() != 2)
-                return Exception { ExceptionCode::TypeError, "Header sub-sequence must contain exactly two items"_s };
+                return Exception { ExceptionCode::TypeError, "Header sub-sequence must contain exactly two items"_si };
             auto result = appendToHeaderMap(header[0], header[1], headers, setCookieValues, guard);
             if (result.hasException())
                 return result.releaseException();
         }
     } else {
-        auto& record = std::get<Vector<KeyValuePair<String, String>>>(headersInit);
+        auto& record = std::get<Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>>(headersInit);
         for (auto& header : record) {
             auto result = appendToHeaderMap(header.key, header.value, headers, setCookieValues, guard);
             if (result.hasException())
@@ -144,7 +144,7 @@ static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, Vector<String>& s
 ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(std::optional<Init>&& headersInit)
 {
     HTTPHeaderMap headers;
-    Vector<String> setCookieValues;
+    Vector<RefPtr<StringImpl>> setCookieValues;
 
     if (headersInit) {
         auto result = fillHeaderMap(headers, setCookieValues, *headersInit, Guard::None);
@@ -176,19 +176,19 @@ ExceptionOr<void> FetchHeaders::fill(const FetchHeaders& otherHeaders)
     return { };
 }
 
-ExceptionOr<void> FetchHeaders::append(const String& name, const String& value)
+ExceptionOr<void> FetchHeaders::append(StringImpl* name, StringImpl* value)
 {
     ++m_updateCounter;
     return appendToHeaderMap(name, value, m_headers, m_setCookieValues, m_guard);
 }
 
 // https://fetch.spec.whatwg.org/#dom-headers-delete
-ExceptionOr<void> FetchHeaders::remove(const String& name)
+ExceptionOr<void> FetchHeaders::remove(StringImpl* name)
 {
     if (!isValidHTTPToken(name))
         return Exception { ExceptionCode::TypeError, makeString("Invalid header name: '"_s, name, '\'') };
     if (m_guard == FetchHeaders::Guard::Immutable)
-        return Exception { ExceptionCode::TypeError, "Headers object's guard is 'immutable'"_s };
+        return Exception { ExceptionCode::TypeError, "Headers object's guard is 'immutable'"_si };
     if (m_guard == FetchHeaders::Guard::Request && isForbiddenHeaderName(name))
         return { };
     if (m_guard == FetchHeaders::Guard::RequestNoCors && !isNoCORSSafelistedRequestHeaderName(name) && !isPriviledgedNoCORSRequestHeaderName(name))
@@ -208,25 +208,25 @@ ExceptionOr<void> FetchHeaders::remove(const String& name)
     return { };
 }
 
-ExceptionOr<String> FetchHeaders::get(const String& name) const
+ExceptionOr<RefPtr<StringImpl>> FetchHeaders::get(StringImpl* name) const
 {
     if (!isValidHTTPToken(name))
         return Exception { ExceptionCode::TypeError, makeString("Invalid header name: '"_s, name, '\'') };
 
     if (equalIgnoringASCIICase(name, "set-cookie"_s)) {
         if (m_setCookieValues.isEmpty())
-            return String();
+            return RefPtr<StringImpl> { };
         return makeString(interleave(m_setCookieValues, ", "_s));
     }
     return m_headers.get(name);
 }
 
-const Vector<String>& FetchHeaders::getSetCookie() const
+const Vector<RefPtr<StringImpl>>& FetchHeaders::getSetCookie() const
 {
     return m_setCookieValues;
 }
 
-ExceptionOr<bool> FetchHeaders::has(const String& name) const
+ExceptionOr<bool> FetchHeaders::has(StringImpl* name) const
 {
     if (!isValidHTTPToken(name))
         return Exception { ExceptionCode::TypeError, makeString("Invalid header name: '"_s, name, '\'') };
@@ -236,9 +236,9 @@ ExceptionOr<bool> FetchHeaders::has(const String& name) const
     return m_headers.contains(name);
 }
 
-ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
+ExceptionOr<void> FetchHeaders::set(StringImpl* name, StringImpl* value)
 {
-    String normalizedValue = value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    RefPtr<StringImpl> normalizedValue = trim(value, isASCIIWhitespaceWithoutFF<char16_t>);
     auto canWriteResult = canWriteHeader(name, normalizedValue, normalizedValue, m_guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
@@ -261,7 +261,7 @@ ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
 void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
 {
     for (auto& header : headers) {
-        String normalizedValue = header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+        RefPtr<StringImpl> normalizedValue = trim(header.value, isASCIIWhitespaceWithoutFF<char16_t>);
         auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
         if (canWriteResult.hasException())
             continue;
@@ -274,26 +274,26 @@ void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
     }
 }
 
-static bool compareIteratorKeys(const String& a, const String& b)
+static bool compareIteratorKeys(StringImpl* a, StringImpl* b)
 {
     // null in the iterator's m_keys represents Set-Cookie.
     return WTF::codePointCompareLessThan(
-        a.isNull() ? "set-cookie"_s : a,
-        b.isNull() ? "set-cookie"_s : b);
+        !a ? "set-cookie"_s : StringView { a },
+        !b ? "set-cookie"_s : StringView { b });
 }
 
-std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
+std::optional<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> FetchHeaders::Iterator::next()
 {
     if (m_keys.isEmpty() || m_updateCounter != m_headers->m_updateCounter) {
         bool hasSetCookie = !m_headers->m_setCookieValues.isEmpty();
         m_keys.shrink(0);
         m_keys.reserveCapacity(m_headers->m_headers.size() + (hasSetCookie ? 1 : 0));
         m_keys.appendContainerWithMapping(m_headers->m_headers, [](auto& header) {
-            ASSERT(!header.key.isNull());
-            return header.key.convertToASCIILowercase();
+            ASSERT(header.key);
+            return convertToASCIILowercase(header.key);
         });
         if (hasSetCookie)
-            m_keys.append(String());
+            m_keys.append(nullString());
         std::ranges::sort(m_keys, compareIteratorKeys);
 
         // We adjust the current index to work with Set-Cookie headers.
@@ -301,7 +301,7 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         // gives you the current total index into the iteration.
         m_currentIndex += m_setCookieIndex;
         if (hasSetCookie) {
-            size_t setCookieKeyIndex = std::ranges::lower_bound(m_keys, String(), compareIteratorKeys) - m_keys.begin();
+            size_t setCookieKeyIndex = std::ranges::lower_bound(m_keys, nullString(), compareIteratorKeys) - m_keys.begin();
             if (m_currentIndex < setCookieKeyIndex)
                 m_setCookieIndex = 0;
             else {
@@ -315,19 +315,19 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
     }
     while (m_currentIndex < m_keys.size()) {
         auto key = m_keys[m_currentIndex];
-        if (key.isNull()) {
+        if (!key) {
             if (m_setCookieIndex < m_headers->m_setCookieValues.size()) {
-                String value = m_headers->m_setCookieValues[m_setCookieIndex++];
-                ASSERT(!value.isNull());
-                return KeyValuePair<String, String> { "set-cookie"_s, WTF::move(value) };
+                RefPtr<StringImpl> value = m_headers->m_setCookieValues[m_setCookieIndex++];
+                ASSERT(value);
+                return KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>> { "set-cookie"_s, WTF::move(value) };
             }
             m_currentIndex++;
             continue;
         }
         m_currentIndex++;
-        String value = m_headers->m_headers.get(key);
-        if (!value.isNull())
-            return KeyValuePair<String, String> { WTF::move(key), WTF::move(value) };
+        RefPtr<StringImpl> value = m_headers->m_headers.get(key);
+        if (value)
+            return KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>> { WTF::move(key), WTF::move(value) };
     }
     return std::nullopt;
 }

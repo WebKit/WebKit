@@ -35,7 +35,7 @@ namespace JSC {
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable"_s, &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeExecutable) };
 
-NativeExecutable* NativeExecutable::create(VM& vm, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction function, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, const String& name)
+NativeExecutable* NativeExecutable::create(VM& vm, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction function, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, StringImpl* name)
 {
     NativeExecutable* executable;
     executable = new (NotNull, allocateCell<NativeExecutable>(vm)) NativeExecutable(vm, function, constructor, implementationVisibility);
@@ -58,7 +58,7 @@ Structure* NativeExecutable::createStructure(VM& vm, JSGlobalObject* globalObjec
     return Structure::create(vm, globalObject, proto, TypeInfo(NativeExecutableType, StructureFlags), info());
 }
 
-void NativeExecutable::finishCreation(VM& vm, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, unsigned length, const String& name)
+void NativeExecutable::finishCreation(VM& vm, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, unsigned length, StringImpl* name)
 {
     Base::finishCreation(vm);
     m_jitCodeForCall = WTF::move(callThunk);
@@ -138,7 +138,7 @@ JSString* NativeExecutable::toStringSlow(JSGlobalObject *globalObject)
 
 JSString* NativeExecutable::nameJSString(VM& vm) const
 {
-    return m_name.isNull() ? jsEmptyString(vm) : jsString(vm, m_name);
+    return !m_name ? jsEmptyString(vm) : jsString(vm, m_name);
 }
 
 template<typename Visitor>

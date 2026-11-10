@@ -59,7 +59,7 @@ void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame* frame)
     if (!page)
         return;
 
-    auto searchString = frame->editor().selectedText().trim(deprecatedIsSpaceOrNewline);
+    auto searchString = trim(frame->editor().selectedText(), deprecatedIsSpaceOrNewline);
     searchString = makeStringByReplacingAll(encodeWithURLEscapeSequences(searchString), "%20"_s, "+"_s);
     auto searchURL = URL { makeString("https://www.google.com/search?q="_s, searchString, "&ie=UTF-8&oe=UTF-8"_s) };
 
@@ -81,7 +81,7 @@ bool WebContextMenuClient::isSpeaking() const
     return false;
 }
 
-void WebContextMenuClient::speak(const String&)
+void WebContextMenuClient::speak(StringImpl*)
 {
     notImplemented();
 }

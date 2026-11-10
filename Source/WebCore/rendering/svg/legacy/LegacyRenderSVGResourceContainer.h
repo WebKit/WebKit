@@ -75,17 +75,17 @@ private:
     void willBeDestroyed() final;
     void registerResource();
 
-    AtomString m_id;
+    RefPtr<AtomStringImpl> m_id;
     SingleThreadWeakKeyHashSet<RenderElement> m_clients;
     InlineWeakKeyHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };
 
-inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope&, const AtomString&); // Defined in LegacyRenderSVGResourceContainerInlines.h
+inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope&, AtomStringImpl*); // Defined in LegacyRenderSVGResourceContainerInlines.h
 
 template<typename Renderer>
-Renderer* getRenderSVGResourceById(TreeScope&, const AtomString&); // Defined in LegacyRenderSVGResourceContainerInlines.h
+Renderer* getRenderSVGResourceById(TreeScope&, AtomStringImpl*); // Defined in LegacyRenderSVGResourceContainerInlines.h
 
 } // namespace WebCore
 

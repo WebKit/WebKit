@@ -115,7 +115,7 @@ public:
     virtual bool containsCurrentColor() const = 0;
     virtual bool canDrawAtSize(const RenderElement&, const FloatSize& size) const { return !size.isEmpty(); }
     virtual bool drawsSVGImage() const { return false; }
-    virtual WTF::String accessibilityDescription() const { return { }; }
+    virtual RefPtr<StringImpl> accessibilityDescription() const { return { }; }
     virtual bool isAnimated() const { return false; }
     virtual void startAnimation() { }
     virtual void stopAnimation() { }

@@ -41,7 +41,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 class AirStackAllocatorStats {
 public:
-    AirStackAllocatorStats(const String& label = { }) { setLabel(label); }
+    AirStackAllocatorStats(StringImpl* label = nullptr) { setLabel(label); }
 
     ASCIILiteral name() const { return "StackAlloc"_s; }
 

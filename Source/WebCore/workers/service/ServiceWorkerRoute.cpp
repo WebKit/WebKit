@@ -96,7 +96,7 @@ static inline std::optional<ExceptionData> validateServiceWorkerRouteCondition(S
             return *exception;
     }
 
-    if (!condition.requestMethod.isNull()) {
+    if (condition.requestMethod) {
         if (!isValidHTTPToken(condition.requestMethod))
             return ExceptionData { ExceptionCode::TypeError, "Method is not a valid HTTP token."_s };
         if (isForbiddenMethod(condition.requestMethod))
@@ -141,8 +141,8 @@ bool matchRouterCondition(const ServiceWorkerRouteCondition& condition, const Fe
             return false;
     }
 
-    if (!condition.requestMethod.isNull()) {
-        if (condition.requestMethod != request.httpMethod())
+    if (condition.requestMethod) {
+        if (!equal(condition.requestMethod, request.httpMethod()))
             return false;
     }
 

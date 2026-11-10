@@ -41,14 +41,14 @@ namespace WebCore {
 
 class WebVTTTokenizer {
 public:
-    explicit WebVTTTokenizer(const String&);
+    explicit WebVTTTokenizer(StringImpl*);
     bool nextToken(WebVTTToken&);
 
 private:
     template<typename CharacterType>
     bool nextTokenImpl(StringParsingBuffer<CharacterType>&, WebVTTToken&);
 
-    String m_input;
+    RefPtr<StringImpl> m_input;
     Variant<StringParsingBuffer<Latin1Character>, StringParsingBuffer<char16_t>> m_buffer;
 };
 

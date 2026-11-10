@@ -213,7 +213,7 @@ Color::DebugRGBA Color::debugRGBA() const
     return { r, g, b, a };
 }
 
-String Color::debugDescription() const
+RefPtr<StringImpl> Color::debugDescription() const
 {
     return serializationForRenderTreeAsText(*this);
 }

@@ -38,13 +38,13 @@
 
 namespace JSC {
 
-typedef JSObject* (*ErrorFactory)(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+typedef JSObject* (*ErrorFactory)(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
 
-String defaultSourceAppender(const String&, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
-String notAFunctionSourceAppender(const String&, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
+RefPtr<StringImpl> defaultSourceAppender(StringImpl*, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
+RefPtr<StringImpl> notAFunctionSourceAppender(StringImpl*, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
 
-String constructErrorMessage(JSGlobalObject*, JSValue, const String&);
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, JSValue, const String&, ErrorInstance::SourceAppender);
+RefPtr<StringImpl> constructErrorMessage(JSGlobalObject*, JSValue, StringImpl*);
+JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, JSValue, StringImpl*, ErrorInstance::SourceAppender);
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createUndefinedVariableError(JSGlobalObject*, const Identifier&);
 JSObject* createTDZError(JSGlobalObject*, StringView);
@@ -62,10 +62,10 @@ JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject*, const 
 JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject*, const Identifier&);
 JSObject* createInvalidPrivateNameError(JSGlobalObject*);
 JSObject* createRedefinedPrivateNameError(JSGlobalObject*);
-String errorDescriptionForValue(JSGlobalObject*, JSValue);
+RefPtr<StringImpl> errorDescriptionForValue(JSGlobalObject*, JSValue);
 
 JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&);
-JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&, const String&);
+JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&, StringImpl*);
 JS_EXPORT_PRIVATE Exception* throwStackOverflowError(JSGlobalObject*, ThrowScope&);
 
 #if ASSERT_ENABLED

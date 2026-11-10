@@ -40,14 +40,14 @@ using BufferBindingSizesForPipeline = HashMap<uint32_t, BufferBindingSizesForBin
 
 struct PreparedLibrary {
     id<MTLLibrary> library { nil };
-    String msl;
-    String label;
+    RefPtr<StringImpl> msl;
+    RefPtr<StringImpl> label;
     WGSL::DeviceState deviceState;
     WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
-    HashMap<String, WGSL::ConstantValue> wgslConstantValues;
+    HashMap<RefPtr<StringImpl>, WGSL::ConstantValue> wgslConstantValues;
 };
 
-std::optional<PreparedLibrary> prepareLibrary(const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WebGPU::ConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **);
+std::optional<PreparedLibrary> prepareLibrary(const ShaderModule&, PipelineLayout*, StringImpl* entryPointName, NSString *label, std::span<const WebGPU::ConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **);
 
 struct LibraryCompileRequest {
     id<MTLLibrary> cachedLibrary { nil };
@@ -71,8 +71,8 @@ id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPoin
 NSString* errorValidatingBindGroup(const BindGroup&, const BufferBindingSizesForBindGroup*, const Vector<uint32_t>*);
 
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
-void dumpMetalReproCaseComputePSO(String&& shaderSource, String&& functionName);
-bool dumpMetalReproCaseRenderPSO(String&& vertexShaderSource, String&& vertexFunctionName, String&& fragmentShaderSource, String&& fragmentFunctionName, MTLRenderPipelineDescriptor*, ShaderModule::VertexStageIn& shaderLocations, const Device&);
+void dumpMetalReproCaseComputePSO(RefPtr<StringImpl>&& shaderSource, RefPtr<StringImpl>&& functionName);
+bool dumpMetalReproCaseRenderPSO(RefPtr<StringImpl>&& vertexShaderSource, RefPtr<StringImpl>&& vertexFunctionName, RefPtr<StringImpl>&& fragmentShaderSource, RefPtr<StringImpl>&& fragmentFunctionName, MTLRenderPipelineDescriptor*, ShaderModule::VertexStageIn& shaderLocations, const Device&);
 void clearMetalPSORepro();
 #endif
 

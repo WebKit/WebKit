@@ -41,7 +41,7 @@ class OverconstrainedErrorEvent final : public Event {
 public:
     virtual ~OverconstrainedErrorEvent() = default;
 
-    static Ref<OverconstrainedErrorEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
+    static Ref<OverconstrainedErrorEvent> create(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
     {
         return adoptRef(*new OverconstrainedErrorEvent(type, canBubble, cancelable, error));
     }
@@ -50,7 +50,7 @@ public:
         RefPtr<OverconstrainedError> error;
     };
 
-    static Ref<OverconstrainedErrorEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<OverconstrainedErrorEvent> create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new OverconstrainedErrorEvent(type, initializer, isTrusted));
     }
@@ -58,12 +58,12 @@ public:
     OverconstrainedError* error() const { return m_error.get(); }
 
 private:
-    explicit OverconstrainedErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
+    explicit OverconstrainedErrorEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
         : Event(EventInterfaceType::OverconstrainedErrorEvent, type, canBubble, cancelable)
         , m_error(error)
     {
     }
-    OverconstrainedErrorEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+    OverconstrainedErrorEvent(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
         : Event(EventInterfaceType::OverconstrainedErrorEvent, type, initializer, isTrusted)
         , m_error(initializer.error)
     {

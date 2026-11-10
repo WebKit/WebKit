@@ -77,7 +77,7 @@ NODELETE static bool isNotQuoteOrBackslash(char16_t ch)
     return ch != '"' && ch != '\\';
 }
 
-static String collectHTTPQuotedString(StringView input, unsigned& startIndex)
+static RefPtr<StringImpl> collectHTTPQuotedString(StringView input, unsigned& startIndex)
 {
     ASSERT(input[startIndex] == '"');
     unsigned inputLength = input.length();
@@ -124,10 +124,10 @@ NODELETE static bool isNotSemicolonOrEqualSign(char16_t ch)
 bool ParsedContentType::parseContentType()
 {
     unsigned index = 0;
-    unsigned contentTypeLength = m_contentType.length();
+    unsigned contentTypeLength = length(m_contentType);
     skipSpaces(m_contentType, index);
     if (index >= contentTypeLength)  {
-        LOG_ERROR("Invalid Content-Type string '%s'", m_contentType.utf8());
+        LOG_ERROR("Invalid Content-Type string '%s'", utf8(m_contentType));
         return false;
     }
 
@@ -138,7 +138,7 @@ bool ParsedContentType::parseContentType()
         return false;
     }
 
-    if (index >= contentTypeLength || m_contentType[index++] != '/') {
+    if (index >= contentTypeLength || codeUnitAt(m_contentType, index++) != '/') {
         LOG_ERROR("Invalid Content-Type, missing '/'.");
         return false;
     }
@@ -150,36 +150,36 @@ bool ParsedContentType::parseContentType()
     }
 
     // There should not be any quoted strings until we reach the parameters.
-    size_t semiColonIndex = m_contentType.find(';', contentTypeStart);
+    size_t semiColonIndex = find(m_contentType, ';', contentTypeStart);
     if (semiColonIndex == notFound) {
-        setContentType(m_contentType.substring(contentTypeStart, contentTypeLength - contentTypeStart));
+        setContentType(substring(m_contentType, contentTypeStart, contentTypeLength - contentTypeStart));
         return true;
     }
 
-    setContentType(m_contentType.substring(contentTypeStart, semiColonIndex - contentTypeStart));
+    setContentType(substring(m_contentType, contentTypeStart, semiColonIndex - contentTypeStart));
     index = semiColonIndex + 1;
     while (true) {
         skipSpaces(m_contentType, index);
         auto keyRange = parseToken(m_contentType, index, isNotSemicolonOrEqualSign);
         if (index >= contentTypeLength)
             break;
-        if (m_contentType[index] != '=' && m_contentType[index] != ';') {
+        if (codeUnitAt(m_contentType, index) != '=' && codeUnitAt(m_contentType, index) != ';') {
             LOG_ERROR("Invalid Content-Type malformed parameter.");
             return false;
         }
-        if (m_contentType[index++] == ';')
+        if (codeUnitAt(m_contentType, index++) == ';')
             continue;
 
         // Should we tolerate spaces here?
-        String parameterValue;
+        RefPtr<StringImpl> parameterValue;
         StringView valueRange;
-        if (index < contentTypeLength && m_contentType[index] == '"') {
+        if (index < contentTypeLength && codeUnitAt(m_contentType, index) == '"') {
             parameterValue = collectHTTPQuotedString(m_contentType, index);
             parseToken(m_contentType, index, isNotSemicolon);
         } else
             valueRange = parseToken(m_contentType, index, isNotSemicolon, true);
 
-        if (parameterValue.isNull()) {
+        if (!parameterValue) {
             if (valueRange.isNull())
                 continue;
             parameterValue = valueRange.toString();
@@ -195,35 +195,35 @@ bool ParsedContentType::parseContentType()
     return true;
 }
 
-std::optional<ParsedContentType> ParsedContentType::create(const String& contentType)
+std::optional<ParsedContentType> ParsedContentType::create(StringImpl* contentType)
 {
-    ParsedContentType parsedContentType(contentType.trim(isASCIIWhitespaceWithoutFF<char16_t>));
+    ParsedContentType parsedContentType(trim(contentType, isASCIIWhitespaceWithoutFF<char16_t>));
     if (!parsedContentType.parseContentType())
         return std::nullopt;
     return { WTF::move(parsedContentType) };
 }
 
-bool isValidContentType(const String& contentType)
+bool isValidContentType(StringImpl* contentType)
 {
     return ParsedContentType::create(contentType) != std::nullopt;
 }
 
-ParsedContentType::ParsedContentType(const String& contentType)
+ParsedContentType::ParsedContentType(StringImpl* contentType)
     : m_contentType(contentType)
 {
 }
 
-String ParsedContentType::charset() const
+RefPtr<StringImpl> ParsedContentType::charset() const
 {
-    return parameterValueForName("charset"_s);
+    return parameterValueForName("charset"_si);
 }
 
-void ParsedContentType::setCharset(String&& charset)
+void ParsedContentType::setCharset(RefPtr<StringImpl>&& charset)
 {
-    m_parameterValues.set("charset"_s, WTF::move(charset));
+    m_parameterValues.set("charset"_si, WTF::move(charset));
 }
 
-String ParsedContentType::parameterValueForName(const String& name) const
+RefPtr<StringImpl> ParsedContentType::parameterValueForName(StringImpl* name) const
 {
     return m_parameterValues.get(name);
 }
@@ -233,33 +233,33 @@ size_t ParsedContentType::parameterCount() const
     return m_parameterValues.size();
 }
 
-void ParsedContentType::setContentType(String&& contentRange)
+void ParsedContentType::setContentType(RefPtr<StringImpl>&& contentRange)
 {
     m_mimeType = StringView(WTF::move(contentRange)).trim(isASCIIWhitespaceWithoutFF<char16_t>).convertToASCIILowercase();
 }
 
-NODELETE static bool containsNonQuoteStringTokenCharacters(const String& input)
+NODELETE static bool containsNonQuoteStringTokenCharacters(StringImpl* input)
 {
-    for (unsigned index = 0; index < input.length(); ++index) {
-        if (!isQuotedStringTokenCharacter(input[index]))
+    for (unsigned index = 0; index < length(input); ++index) {
+        if (!isQuotedStringTokenCharacter(codeUnitAt(input, index)))
             return true;
     }
     return false;
 }
 
-void ParsedContentType::setContentTypeParameter(const String& keyName, const String& keyValue)
+void ParsedContentType::setContentTypeParameter(StringImpl* keyName, StringImpl* keyValue)
 {
-    String name = keyName;
-    if (m_parameterValues.contains(name) || !isValidHTTPToken(name) || containsNonQuoteStringTokenCharacters(keyValue))
+    RefPtr<StringImpl> name = keyName;
+    if (m_parameterValues.contains(name) || !isValidHTTPToken(name.get()) || containsNonQuoteStringTokenCharacters(keyValue))
         return;
     // FIXME: Lowercasing after a contains check is almost certainly wrong. It means we overwrite
     // when the name is different in case.
-    name = name.convertToASCIILowercase();
+    name = convertToASCIILowercase(name);
     m_parameterValues.set(name, keyValue);
     m_parameterNames.append(name);
 }
 
-String ParsedContentType::serialize() const
+RefPtr<StringImpl> ParsedContentType::serialize() const
 {
     StringBuilder builder;
     builder.append(m_mimeType);
@@ -267,11 +267,11 @@ String ParsedContentType::serialize() const
         builder.append(';');
         builder.append(name);
         builder.append('=');
-        String value = m_parameterValues.get(name);
-        if (value.isEmpty() || !isValidHTTPToken(value)) {
+        RefPtr<StringImpl> value = m_parameterValues.get(name);
+        if (isEmpty(value) || !isValidHTTPToken(value.get())) {
             builder.append('"');
-            for (unsigned index = 0; index < value.length(); ++index) {
-                auto ch = value[index];
+            for (unsigned index = 0; index < length(value); ++index) {
+                auto ch = codeUnitAt(value, index);
                 if (ch == '\\' || ch =='"')
                     builder.append('\\');
                 builder.append(ch);

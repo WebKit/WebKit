@@ -58,13 +58,13 @@
 - (NSString *)cssText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->cssText().createNSString().autorelease();
+    return createNSString(IMPL->cssText()).autorelease();
 }
 
 - (void)setCssText:(NSString *)newCssText
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setCssText(newCssText));
+    raiseOnDOMError(IMPL->setCssText(StringImpl::create(newCssText).get()));
 }
 
 - (unsigned)length
@@ -82,49 +82,49 @@
 - (NSString *)getPropertyValue:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getPropertyValue(propertyName).createNSString().autorelease();
+    return createNSString(IMPL->getPropertyValue(StringImpl::create(propertyName).get())).autorelease();
 }
 
 - (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getPropertyCSSValue(propertyName)));
+    return kit(WTF::getPtr(IMPL->getPropertyCSSValue(StringImpl::create(propertyName).get())));
 }
 
 - (NSString *)removeProperty:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->removeProperty(propertyName)).createNSString().autorelease();
+    return createNSString(raiseOnDOMError(IMPL->removeProperty(StringImpl::create(propertyName).get()))).autorelease();
 }
 
 - (NSString *)getPropertyPriority:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getPropertyPriority(propertyName).createNSString().autorelease();
+    return createNSString(IMPL->getPropertyPriority(StringImpl::create(propertyName).get())).autorelease();
 }
 
 - (void)setProperty:(NSString *)propertyName value:(NSString *)value priority:(NSString *)priority
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->setProperty(propertyName, value, priority));
+    return raiseOnDOMError(IMPL->setProperty(StringImpl::create(propertyName).get(), StringImpl::create(value).get(), StringImpl::create(priority).get()));
 }
 
 - (NSString *)item:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->item(index).createNSString().autorelease();
+    return createNSString(IMPL->item(index)).autorelease();
 }
 
 - (NSString *)getPropertyShorthand:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getPropertyShorthand(propertyName).createNSString().autorelease();
+    return createNSString(IMPL->getPropertyShorthand(StringImpl::create(propertyName).get())).autorelease();
 }
 
 - (BOOL)isPropertyImplicit:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->isPropertyImplicit(propertyName);
+    return IMPL->isPropertyImplicit(StringImpl::create(propertyName).get());
 }
 
 @end

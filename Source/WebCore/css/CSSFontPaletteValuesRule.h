@@ -39,16 +39,16 @@ public:
 
     virtual ~CSSFontPaletteValuesRule();
 
-    NODELETE String name() const;
-    String fontFamily() const;
-    String basePalette() const;
-    String overrideColors() const;
+    NODELETE RefPtr<StringImpl> name() const;
+    RefPtr<StringImpl> fontFamily() const;
+    RefPtr<StringImpl> basePalette() const;
+    RefPtr<StringImpl> overrideColors() const;
 
 private:
     CSSFontPaletteValuesRule(StyleRuleFontPaletteValues&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontPaletteValues; }
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontPaletteValues> m_fontPaletteValuesRule;

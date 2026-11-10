@@ -93,11 +93,11 @@ func dispatchMessage(
 }
 
 func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.Connection) {
-    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
+    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.StringImpl.create(from: error.reason.description))
 }
 
 func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.StreamServerConnection) {
-    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
+    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.StringImpl.create(from: error.reason.description))
 }
 
 private func logFailedMessageCheck(
@@ -107,9 +107,9 @@ private func logFailedMessageCheck(
     line: UInt
 ) {
     IPC.Connection.logFailedMessageCheck(
-        WTF.String(reason.description),
-        WTF.String(function.description),
-        WTF.String(file.description),
+        WTF.StringImpl.create(from: reason.description),
+        WTF.StringImpl.create(from: function.description),
+        WTF.StringImpl.create(from: file.description),
         UInt32(truncatingIfNeeded: line)
     )
 }

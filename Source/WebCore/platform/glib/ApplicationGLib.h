@@ -24,11 +24,11 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT void setApplicationName(const String&);
-WEBCORE_EXPORT const String& getApplicationName();
+WEBCORE_EXPORT void setApplicationName(StringImpl*);
+WEBCORE_EXPORT const RefPtr<StringImpl>& getApplicationName();
 
-WEBCORE_EXPORT void setApplicationID(const String&);
-WEBCORE_EXPORT const String& getApplicationID();
+WEBCORE_EXPORT void setApplicationID(StringImpl*);
+WEBCORE_EXPORT const RefPtr<StringImpl>& getApplicationID();
 
 } // namespace WebCore
 

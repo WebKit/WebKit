@@ -57,7 +57,7 @@ CSSGroupingRule::~CSSGroupingRule()
     }
 }
 
-ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsigned index)
+ExceptionOr<unsigned> CSSGroupingRule::insertRule(StringImpl* ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
 
@@ -155,7 +155,7 @@ void CSSGroupingRule::cssTextForRules(StringBuilder& rules) const
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); ++index) {
         auto ruleText = protect(item(index))->cssText();
-        if (!ruleText.isEmpty())
+        if (!isEmpty(ruleText))
             rules.append("\n  "_s, WTF::move(ruleText));
     }
 }

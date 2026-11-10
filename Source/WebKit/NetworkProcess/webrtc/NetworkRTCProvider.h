@@ -132,18 +132,18 @@ private:
     void startListeningForIPC();
 
     void createUDPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t, uint16_t, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&);
-    void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&);
+    void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, RefPtr<StringImpl>&& userAgent, int, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&);
     void sendToSocket(WebCore::LibWebRTCSocketIdentifier, std::span<const uint8_t>, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
     void setSocketOption(WebCore::LibWebRTCSocketIdentifier, int option, int value);
 
-    void createResolver(LibWebRTCResolverIdentifier, String&&);
+    void createResolver(LibWebRTCResolverIdentifier, RefPtr<StringImpl>&&);
     void stopResolver(LibWebRTCResolverIdentifier);
-    void getInterfaceName(URL&&, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&, CompletionHandler<void(String&&)>&&);
+    void getInterfaceName(URL&&, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 
 #if PLATFORM(COCOA)
-    const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
+    const RefPtr<StringImpl>& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
 #else
     static webrtc::Thread& rtcNetworkThread();
     void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<webrtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);
@@ -171,7 +171,7 @@ private:
     SharedPreferencesForWebProcess m_sharedPreferences WTF_GUARDED_BY_LOCK(m_sharedPreferencesLock);
 
 #if PLATFORM(COCOA)
-    HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
+    HashMap<WebPageProxyIdentifier, RefPtr<StringImpl>> m_attributedBundleIdentifiers;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
     UTF8CString m_applicationBundleIdentifier;
     const Ref<WorkQueue> m_rtcNetworkThreadQueue;

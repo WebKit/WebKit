@@ -78,9 +78,9 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     friend class MediaPlayerRemoteFactory;
-    void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String>&);
+    void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<RefPtr<StringImpl>>&);
     WebCore::MediaPlayer::SupportsType supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&);
-    NODELETE bool supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType);
+    NODELETE bool supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, StringImpl* keySystem, StringImpl* mimeType);
 
     HashMap<WebCore::MediaPlayerIdentifier, ThreadSafeWeakPtr<MediaPlayerPrivateRemote>> m_players;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;

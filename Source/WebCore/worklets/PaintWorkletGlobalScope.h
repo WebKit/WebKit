@@ -45,13 +45,13 @@ struct PaintDefinition final : public CanMakeWeakPtr<PaintDefinition>, public Ca
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PaintDefinition);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(PaintDefinition);
 
-    PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments);
+    PaintDefinition(AtomStringImpl* name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<RefPtr<AtomStringImpl>>&& inputProperties, Vector<RefPtr<StringImpl>>&& inputArguments);
 
-    const AtomString name;
+    const RefPtr<AtomStringImpl> name;
     const JSC::JSObject* const paintConstructor;
     const Ref<CSSPaintCallback> paintCallback;
-    const Vector<AtomString> inputProperties;
-    const Vector<String> inputArguments;
+    const Vector<RefPtr<AtomStringImpl>> inputProperties;
+    const Vector<RefPtr<StringImpl>> inputArguments;
 };
 
 class PaintWorkletGlobalScope final : public WorkletGlobalScope {
@@ -60,10 +60,10 @@ class PaintWorkletGlobalScope final : public WorkletGlobalScope {
 public:
     static RefPtr<PaintWorkletGlobalScope> tryCreate(Document&, ScriptSourceCode&&);
 
-    ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, const AtomString& name, JSC::Strong<JSC::JSObject> paintConstructor);
+    ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, AtomStringImpl* name, JSC::Strong<JSC::JSObject> paintConstructor);
     double devicePixelRatio() const;
 
-    HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
     Lock& paintDefinitionLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
 
     void prepareForDestruction() final
@@ -94,12 +94,12 @@ private:
 
     bool isPaintWorkletGlobalScope() const final { return true; }
 
-    HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap WTF_GUARDED_BY_LOCK(m_paintDefinitionLock);
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap WTF_GUARDED_BY_LOCK(m_paintDefinitionLock);
     Lock m_paintDefinitionLock;
     bool m_hasPreparedForDestruction { false };
 };
 
-inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> HashMap<String, std::unique_ptr<PaintDefinition>>&
+inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> HashMap<RefPtr<StringImpl>, std::unique_ptr<PaintDefinition>>&
 {
     ASSERT(m_paintDefinitionLock.isLocked());
     return m_paintDefinitionMap;

@@ -59,31 +59,31 @@
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->value().createNSString().autorelease();
+    return createNSString(IMPL->value()).autorelease();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setValue(newValue);
+    IMPL->setValue(AtomStringImpl::add((__bridge CFStringRef)newValue).get());
 }
 
 - (NSString *)item:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->item(index).createNSString().autorelease();
+    return createNSString(IMPL->item(index)).autorelease();
 }
 
 - (BOOL)contains:(NSString *)token
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->contains(token);
+    return IMPL->contains(AtomStringImpl::add((__bridge CFStringRef)token).get());
 }
 
 - (BOOL)toggle:(NSString *)token force:(BOOL)force
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->toggle(token, force));
+    return raiseOnDOMError(IMPL->toggle(AtomStringImpl::add((__bridge CFStringRef)token).get(), force));
 }
 
 @end

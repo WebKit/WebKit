@@ -374,10 +374,10 @@ void webkitScriptDialogImplConfirm(WebKitScriptDialogImpl* dialog)
     webkitScriptDialogImplClose(dialog);
 }
 
-void webkitScriptDialogImplSetEntryText(WebKitScriptDialogImpl* dialog, const String& text)
+void webkitScriptDialogImplSetEntryText(WebKitScriptDialogImpl* dialog, StringImpl* text)
 {
     if (dialog->priv->dialog->type != WEBKIT_SCRIPT_DIALOG_PROMPT)
         return;
 
-    gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), text.utf8().legacyCStringPointer());
+    gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), utf8(text).legacyCStringPointer());
 }

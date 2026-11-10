@@ -39,7 +39,7 @@
 namespace TestWebKitAPI {
 
 template<size_t length>
-String utf16String(const char16_t (&url)[length])
+RefPtr<StringImpl> utf16String(const char16_t (&url)[length])
 {
     StringBuilder builder;
     builder.reserveCapacity(length - 1);

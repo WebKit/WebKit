@@ -64,25 +64,25 @@ public:
     void ref() const final { }
     void deref() const final { }
 
-    std::unique_ptr<CDMPrivate> createCDM(const String& keySystem, const String& mediaKeysHashSalt, const CDMPrivateClient&) final;
-    RefPtr<CDMProxy> createCDMProxy(const String&) final;
-    bool supportsKeySystem(const String&) final;
-    const Vector<String>& supportedKeySystems() const;
+    std::unique_ptr<CDMPrivate> createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, const CDMPrivateClient&) final;
+    RefPtr<CDMProxy> createCDMProxy(StringImpl*) final;
+    bool supportsKeySystem(StringImpl*) final;
+    const Vector<RefPtr<StringImpl>>& supportedKeySystems() const;
 
 private:
     friend class NeverDestroyed<CDMFactoryThunder>;
     CDMFactoryThunder();
-    Vector<String> m_supportedKeySystems;
+    Vector<RefPtr<StringImpl>> m_supportedKeySystems;
 };
 
 class CDMPrivateThunder final : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateThunder);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivateThunder);
 public:
-    CDMPrivateThunder(const String& keySystem);
+    CDMPrivateThunder(StringImpl* keySystem);
     virtual ~CDMPrivateThunder() = default;
 
-    Vector<String> supportedInitDataTypes() const final;
+    Vector<RefPtr<StringImpl>> supportedInitDataTypes() const final;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration& configuration, const CDMRestrictions&) const final
     {
@@ -92,7 +92,7 @@ public:
     {
         return supportsConfiguration(configuration);
     }
-    Vector<String> supportedRobustnesses() const final;
+    Vector<RefPtr<StringImpl>> supportedRobustnesses() const final;
     CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
     CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const final;
@@ -100,12 +100,12 @@ public:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const String&, const SharedBuffer&) const final;
+    bool supportsInitData(StringImpl*, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
-    std::optional<String> sanitizeSessionId(const String&) const final;
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl*) const final;
 
 private:
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
     Thunder::UniqueThunderSystem m_thunderSystem;
 };
 
@@ -113,34 +113,34 @@ class CDMInstanceThunder final : public CDMInstanceProxy {
     WTF_MAKE_TZONE_ALLOCATED(CDMInstanceThunder);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMInstanceThunder);
 public:
-    CDMInstanceThunder(const String& keySystem);
+    CDMInstanceThunder(StringImpl* keySystem);
     virtual ~CDMInstanceThunder() = default;
 
     // CDMInstance
     ImplementationType implementationType() const final { return ImplementationType::Thunder; }
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
-    void setStorageDirectory(const String&) final;
-    const String& keySystem() const LIFETIME_BOUND final { return m_keySystem; }
+    void setStorageDirectory(StringImpl*) final;
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND final { return m_keySystem; }
     RefPtr<CDMInstanceSession> createSession() final;
 
     OpenCDMSystem& thunderSystem() const { return *m_thunderSystem.get(); };
 
 private:
     Thunder::UniqueThunderSystem m_thunderSystem;
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
 };
 
 class CDMInstanceSessionThunder final : public CDMInstanceSessionProxy {
 public:
     CDMInstanceSessionThunder(CDMInstanceThunder&);
 
-    void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
-    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
-    void closeSession(const String&, CloseSessionCallback&&) final;
-    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
-    void storeRecordOfKeyUsage(const String&) final;
+    void requestLicense(LicenseType, KeyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(StringImpl*, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void loadSession(LicenseType, StringImpl*, StringImpl*, LoadSessionCallback&&) final;
+    void closeSession(StringImpl*, CloseSessionCallback&&) final;
+    void removeSessionData(StringImpl*, LicenseType, RemoveSessionDataCallback&&) final;
+    void storeRecordOfKeyUsage(StringImpl*) final;
 
     bool isValid() const { return m_session && m_message && !m_message->isEmpty(); }
 
@@ -167,7 +167,7 @@ private:
     void sessionChanged(SessionChangedResult);
 
     // FIXME: Check all original uses of these attributes.
-    String m_sessionID;
+    RefPtr<StringImpl> m_sessionID;
     KeyStore m_keyStore;
     bool m_doesKeyStoreNeedMerging { false };
     InitData m_initData;

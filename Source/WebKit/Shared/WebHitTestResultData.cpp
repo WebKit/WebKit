@@ -71,7 +71,7 @@ static std::optional<ResourceResponse> linkLocalResourceFromHitTestResult(const 
     return webFrame->resourceResponseForURL(hitTestResult.absoluteLinkURL());
 }
 
-static String imageSuggestedFilenameFromHitTestResult(const HitTestResult& hitTestResult)
+static RefPtr<StringImpl> imageSuggestedFilenameFromHitTestResult(const HitTestResult& hitTestResult)
 {
     if (!hitTestResult.hasEntireImage())
         return nullString();
@@ -88,7 +88,7 @@ static String imageSuggestedFilenameFromHitTestResult(const HitTestResult& hitTe
 
 WebHitTestResultData::WebHitTestResultData() = default;
 
-WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, const String& tooltipText, bool includeImage)
+WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, StringImpl* tooltipText, bool includeImage)
     : absoluteImageURL(hitTestResult.absoluteImageURL().string())
     , absolutePDFURL(hitTestResult.absolutePDFURL().string())
     , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
@@ -135,10 +135,10 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
                     sourceImageMIMEType = image->mimeType();
             }
 
-            imageText = [&]() -> String {
+            imageText = [&]() -> RefPtr<StringImpl> {
                 if (auto* element = dynamicDowncast<Element>(target.get())) {
                     auto& title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
-                    if (!title.isEmpty())
+                    if (!isEmpty(title))
                         return title;
                 }
 
@@ -148,13 +148,13 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     }
 }
 
-WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, const String& tooltipText)
+WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, StringImpl* tooltipText)
     : WebHitTestResultData(hitTestResult, tooltipText, false) { }
 
 WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, bool includeImage)
-    : WebHitTestResultData(hitTestResult, String(), includeImage) { }
+    : WebHitTestResultData(hitTestResult, nullptr, includeImage) { }
 
-WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& absoluteModelURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, const String& imageSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, bool isActivePDFAnnotation, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, std::optional<WebCore::FrameIdentifier> targetFrame, const String& lookupText, const String& tooltipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, bool hasEntireImage, bool allowsFollowingLink, bool allowsFollowingImageURL, std::optional<WebCore::ResourceResponse>&& linkLocalResourceResponse,
+WebHitTestResultData::WebHitTestResultData(StringImpl* absoluteImageURL, StringImpl* absolutePDFURL, StringImpl* absoluteLinkURL, StringImpl* absoluteMediaURL, StringImpl* absoluteModelURL, StringImpl* linkLabel, StringImpl* linkTitle, StringImpl* linkSuggestedFilename, StringImpl* imageSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, bool isActivePDFAnnotation, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, std::optional<WebCore::FrameIdentifier> targetFrame, StringImpl* lookupText, StringImpl* tooltipText, StringImpl* imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, StringImpl* sourceImageMIMEType, bool hasEntireImage, bool allowsFollowingLink, bool allowsFollowingImageURL, std::optional<WebCore::ResourceResponse>&& linkLocalResourceResponse,
 #if PLATFORM(MAC)
     const WebHitTestResultPlatformData& platformData,
 #endif

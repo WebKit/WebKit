@@ -280,7 +280,7 @@ public:
     void setHasStylusDevice(bool);
 #endif
 
-    void updateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
+    void updateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, RefPtr<StringImpl>>&&);
 
     NODELETE WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>) const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
@@ -368,7 +368,7 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void destroyRenderingResources();
-    void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
+    void getProcessDisplayName(CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
     std::optional<audit_token_t> auditTokenForSelf();
 #endif
 
@@ -376,10 +376,10 @@ public:
     void releaseSystemMallocMemory();
 #endif
 
-    const String& uiProcessBundleIdentifier() const LIFETIME_BOUND { return m_uiProcessBundleIdentifier; }
+    const RefPtr<StringImpl>& uiProcessBundleIdentifier() const LIFETIME_BOUND { return m_uiProcessBundleIdentifier; }
 
-    void updateActivePages(const String& overrideDisplayName);
-    void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
+    void updateActivePages(StringImpl* overrideDisplayName);
+    void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState> changed);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
@@ -405,7 +405,7 @@ public:
     bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
 
-    void prefetchDNS(const String&);
+    void prefetchDNS(StringImpl*);
 
     WebAutomationSessionProxy* automationSessionProxy() LIFETIME_BOUND { return m_automationSessionProxy.get(); }
 #if ENABLE(MODEL_PROCESS)
@@ -428,7 +428,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void setMediaMIMETypes(const Vector<String>);
+    void setMediaMIMETypes(const Vector<RefPtr<StringImpl>>);
 #if ENABLE(REMOTE_INSPECTOR)
     void enableRemoteWebInspector();
 #endif
@@ -445,10 +445,10 @@ public:
 #endif
 
 #if ENABLE(NOTIFY_BLOCKING)
-    void postNotification(const String& message, std::optional<uint64_t> state);
-    void postObserverNotification(const String& message);
-    void getNotifyStateForTesting(const String&, CompletionHandler<void(std::optional<uint64_t>)>&&);
-    void setNotifyState(const String&, uint64_t state);
+    void postNotification(StringImpl* message, std::optional<uint64_t> state);
+    void postObserverNotification(StringImpl* message);
+    void getNotifyStateForTesting(StringImpl*, CompletionHandler<void(std::optional<uint64_t>)>&&);
+    void setNotifyState(StringImpl*, uint64_t state);
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -505,9 +505,9 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void willWriteToPasteboardAsynchronously(const String& pasteboardName);
-    void waitForPendingPasteboardWritesToFinish(const String& pasteboardName);
-    void didWriteToPasteboardAsynchronously(const String& pasteboardName);
+    void willWriteToPasteboardAsynchronously(StringImpl* pasteboardName);
+    void waitForPendingPasteboardWritesToFinish(StringImpl* pasteboardName);
+    void didWriteToPasteboardAsynchronously(StringImpl* pasteboardName);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -549,7 +549,7 @@ public:
     void initializeVulkanIfNeeded();
 #endif // PLATFORM(GTK) || PLATFORM(WPE)
 
-    String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+    RefPtr<StringImpl> mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
     FileSystem::Salt mediaKeysStorageSalt() const { return m_mediaKeysStorageSalt; }
 
     bool haveStorageAccessQuirksForDomain(const WebCore::RegistrableDomain&);
@@ -563,7 +563,7 @@ public:
 
 #if PLATFORM(COCOA)
     void registerAdditionalFonts(AdditionalFonts&&);
-    void registerFontMap(HashMap<String, URL>&&, HashMap<String, Vector<String>>&&, Vector<SandboxExtension::Handle>&& sandboxExtensions);
+    void registerFontMap(HashMap<RefPtr<StringImpl>, URL>&&, HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>&&, Vector<SandboxExtension::Handle>&& sandboxExtensions);
 #endif
 
     void didReceiveRemoteCommand(WebCore::PlatformMediaSessionRemoteControlCommandType, const WebCore::PlatformMediaSessionRemoteCommandArgument&, std::optional<WebCore::MediaSessionIdentifier> targetSession);
@@ -609,22 +609,22 @@ private:
     void setIsInProcessCache(bool, CompletionHandler<void()>&&);
     void markIsNoLongerPrewarmed();
 
-    void registerURLSchemeAsEmptyDocument(const String&);
-    void registerURLSchemeAsSecure(const String&) const;
-    void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
-    void setDomainRelaxationForbiddenForURLScheme(const String&) const;
-    void registerURLSchemeAsLocal(const String&) const;
+    void registerURLSchemeAsEmptyDocument(StringImpl*);
+    void registerURLSchemeAsSecure(StringImpl*) const;
+    void registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl*) const;
+    void setDomainRelaxationForbiddenForURLScheme(StringImpl*) const;
+    void registerURLSchemeAsLocal(StringImpl*) const;
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-    void registerURLSchemeAsNoAccess(const String&) const;
+    void registerURLSchemeAsNoAccess(StringImpl*) const;
 #endif
-    void registerURLSchemeAsDisplayIsolated(const String&) const;
-    void registerURLSchemeAsCORSEnabled(const String&);
-    void registerURLSchemeAsAlwaysRevalidated(const String&) const;
-    void registerURLSchemeAsCachePartitioned(const String&) const;
-    void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
+    void registerURLSchemeAsDisplayIsolated(StringImpl*) const;
+    void registerURLSchemeAsCORSEnabled(StringImpl*);
+    void registerURLSchemeAsAlwaysRevalidated(StringImpl*) const;
+    void registerURLSchemeAsCachePartitioned(StringImpl*) const;
+    void registerURLSchemeAsCanDisplayOnlyIfCanRequest(StringImpl*) const;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    void registerURLSchemeAsWebExtension(const String&) const;
+    void registerURLSchemeAsWebExtension(StringImpl*) const;
 #endif
 
     NODELETE void setDefaultRequestTimeoutInterval(double);
@@ -634,7 +634,7 @@ private:
     void clearResourceLoadStatistics();
     void flushResourceLoadStatistics();
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
-    void userPreferredLanguagesChanged(const Vector<String>&) const;
+    void userPreferredLanguagesChanged(const Vector<RefPtr<StringImpl>>&) const;
     NODELETE void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     void setOptInCookiePartitioningEnabled(bool);
@@ -653,7 +653,7 @@ private:
     void prepareForPrinting(CompletionHandler<void(bool)>&&);
 #endif
 
-    void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
+    void startMemorySampler(SandboxExtension::Handle&&, StringImpl*, const double);
     void stopMemorySampler();
     
     void garbageCollectJavaScriptObjects();
@@ -685,13 +685,13 @@ private:
     NODELETE void setEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices);
 #endif
 
-    void handleInjectedBundleMessage(const String& messageName, const UserData& messageBody);
-    void setInjectedBundleParameter(const String& key, std::span<const uint8_t>);
+    void handleInjectedBundleMessage(StringImpl* messageName, const UserData& messageBody);
+    void setInjectedBundleParameter(StringImpl* key, std::span<const uint8_t>);
     void setInjectedBundleParameters(std::span<const uint8_t>);
 
     NODELETE bool areAllPagesSuspended() const;
 
-    void ensureAutomationSessionProxy(const String& sessionIdentifier);
+    void ensureAutomationSessionProxy(StringImpl* sessionIdentifier);
     void destroyAutomationSessionProxy();
 
     void logDiagnosticMessageForNetworkProcessCrash();
@@ -718,12 +718,12 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
-    void removeMockMediaDevice(const String&);
-    void setMockMediaDeviceIsEphemeral(const String&, bool);
+    void removeMockMediaDevice(StringImpl*);
+    void setMockMediaDeviceIsEphemeral(StringImpl*, bool);
     void resetMockMediaDevices();
 #if ENABLE(SANDBOX_EXTENSIONS)
     void grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&);
-    void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
+    void revokeUserMediaDeviceSandboxExtensions(const Vector<RefPtr<StringImpl>>&);
 #endif
 
 #endif
@@ -779,8 +779,8 @@ private:
     void accessibilityPreferencesDidChange(const AccessibilityPreferences&);
     void updatePageAccessibilitySettings();
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    void setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode, const Vector<String>&);
-    void setMediaAccessibilityPreferredLanguages(const Vector<String>&);
+    void setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode, const Vector<RefPtr<StringImpl>>&);
+    void setMediaAccessibilityPreferredLanguages(const Vector<RefPtr<StringImpl>>&);
     void setMediaAccessibilityPreferredCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
 #endif
 
@@ -807,8 +807,8 @@ private:
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void handlePreferenceChange(const String& domain, const String& key, id value) final;
-    void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
+    void handlePreferenceChange(StringImpl* domain, StringImpl* key, id value) final;
+    void dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key) final;
 
     void accessibilitySettingsDidChange() final;
 #endif
@@ -860,7 +860,7 @@ private:
 
     OptionSet<TextCheckerState> m_textCheckerState;
 
-    String m_uiProcessBundleIdentifier;
+    RefPtr<StringImpl> m_uiProcessBundleIdentifier;
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     const UniqueRef<WebLoaderStrategy> m_webLoaderStrategy;
     RefPtr<WebFileSystemStorageConnection> m_fileSystemStorageConnection;
@@ -901,7 +901,7 @@ private:
     const std::unique_ptr<LibWebRTCNetwork> m_libWebRTCNetwork;
 #endif
 
-    HashSet<String> m_dnsPrefetchedHosts;
+    HashSet<RefPtr<StringImpl>> m_dnsPrefetchedHosts;
     PAL::HysteresisActivity m_dnsPrefetchHystereris;
 
     RefPtr<WebAutomationSessionProxy> m_automationSessionProxy;
@@ -929,7 +929,7 @@ private:
     const std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     std::optional<double> m_cpuLimit;
 
-    String m_uiProcessName;
+    RefPtr<StringImpl> m_uiProcessName;
     WebCore::RegistrableDomain m_registrableDomain;
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -955,7 +955,7 @@ private:
     std::optional<bool> m_isEnhancedSecurityEnabled;
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
-    HashMap<String, Ref<SandboxExtension>> m_mediaCaptureSandboxExtensions;
+    HashMap<RefPtr<StringImpl>, Ref<SandboxExtension>> m_mediaCaptureSandboxExtensions;
     RefPtr<SandboxExtension> m_machBootstrapExtension;
 #endif
 
@@ -981,7 +981,7 @@ private:
     Vector<RefPtr<SandboxExtension>> m_assetServicesExtensions;
 
 #if PLATFORM(COCOA)
-    HashCountedSet<String> m_pendingPasteboardWriteCounts;
+    HashCountedSet<RefPtr<StringImpl>> m_pendingPasteboardWriteCounts;
     std::optional<audit_token_t> m_auditTokenForSelf;
     const RetainPtr<NSMutableDictionary> m_accessibilityRemoteFrameTokenCache;
 #endif
@@ -1016,7 +1016,7 @@ private:
     bool m_prefersNonBlinkingCursor { false };
 #endif
 
-    String m_mediaKeysStorageDirectory;
+    RefPtr<StringImpl> m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 
     Lock m_webTransportSessionsLock;
@@ -1030,10 +1030,10 @@ private:
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 
 #if ENABLE(NOTIFY_BLOCKING)
-    HashMap<String, int> m_notifyTokens;
+    HashMap<RefPtr<StringImpl>, int> m_notifyTokens;
 #endif
 #if ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
-    String m_pendingDisplayName;
+    RefPtr<StringImpl> m_pendingDisplayName;
 #endif
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
     bool m_shouldInitializeAccessibility { false };

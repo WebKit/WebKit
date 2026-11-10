@@ -57,7 +57,7 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF() = defaul
 
 #if ENABLE(DATACUE_VALUE)
 
-void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, const String& type)
+void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, StringImpl* type)
 {
     ASSERT(isMainThread());
     ASSERT(cueFormat() == CueFormat::Data);
@@ -70,7 +70,7 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
     m_currentCueStartTime = start;
     if (end.isPositiveInfinite())
         m_incompleteCues.append(IncompleteMetaDataCue { cueData.ptr(), start });
-    notifyMainThreadClient([&](auto& client) {
+    notifyMainThreadClient([&, type = RefPtr { type }](auto& client) {
         downcast<InbandTextTrackPrivateClient>(client).addDataCue(start, end, WTF::move(cueData), type);
     });
 }

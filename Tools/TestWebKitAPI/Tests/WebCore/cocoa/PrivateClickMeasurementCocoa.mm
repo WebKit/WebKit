@@ -81,13 +81,13 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);
-    EXPECT_EQ(sourceUnlinkableToken->getString("source_engagement_type"_s), "click"_s);
-    EXPECT_EQ(sourceUnlinkableToken->getString("source_nonce"_s), "ABCDEFabcdef0123456789"_s);
-    EXPECT_FALSE(sourceUnlinkableToken->getString("source_unlinkable_token"_s).isEmpty());
-    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_s), 3);
+    EXPECT_EQ(sourceUnlinkableToken->getString("source_engagement_type"_si), "click"_s);
+    EXPECT_EQ(sourceUnlinkableToken->getString("source_nonce"_si), "ABCDEFabcdef0123456789"_s);
+    EXPECT_FALSE(isEmpty(sourceUnlinkableToken->getString("source_unlinkable_token"_si)));
+    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_si), 3);
 
     // Generate the signature.
-    auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_s));
+    auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_si));
 
     RetainPtr blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
     ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->span().data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
@@ -97,9 +97,9 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     EXPECT_FALSE(errorMessage);
     auto& persistentToken = pcm.sourceSecretToken();
     EXPECT_TRUE(persistentToken);
-    EXPECT_FALSE(persistentToken->tokenBase64URL.isEmpty());
-    EXPECT_FALSE(persistentToken->keyIDBase64URL.isEmpty());
-    EXPECT_FALSE(persistentToken->signatureBase64URL.isEmpty());
+    EXPECT_FALSE(isEmpty(persistentToken->tokenBase64URL));
+    EXPECT_FALSE(isEmpty(persistentToken->keyIDBase64URL));
+    EXPECT_FALSE(isEmpty(persistentToken->signatureBase64URL));
 }
 
 } // namespace TestWebKitAPI

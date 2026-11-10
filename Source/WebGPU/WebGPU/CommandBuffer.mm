@@ -83,9 +83,9 @@ void CommandBuffer::releasePriorCommandBuffers()
         queue->removeMTLCommandBuffer(commandBuffer.get());
 }
 
-void CommandBuffer::setLabel(String&& label)
+void CommandBuffer::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_commandBuffer.label = label.createNSString().get();
+    m_commandBuffer.label = createNSString(label).get();
 }
 
 void CommandBuffer::makeInvalid(NSString* lastError)

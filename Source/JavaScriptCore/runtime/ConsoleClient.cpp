@@ -44,9 +44,9 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ConsoleClient);
 
-static void appendURLAndPosition(StringBuilder& builder, const String& url, unsigned lineNumber, unsigned columnNumber)
+static void appendURLAndPosition(StringBuilder& builder, StringImpl* url, unsigned lineNumber, unsigned columnNumber)
 {
-    if (url.isEmpty())
+    if (isEmpty(url))
         return;
 
     builder.append(url);
@@ -60,142 +60,142 @@ static void appendURLAndPosition(StringBuilder& builder, const String& url, unsi
 
 static void appendMessagePrefix(StringBuilder& builder, MessageSource source, MessageType type, MessageLevel level)
 {
-    String sourceString;
+    RefPtr<StringImpl> sourceString;
     switch (source) {
     case MessageSource::ConsoleAPI:
         // Default, no need to be more specific.
         break;
     case MessageSource::XML:
-        sourceString = "XML"_s;
+        sourceString = "XML"_si;
         break;
     case MessageSource::JS:
-        sourceString = "JS"_s;
+        sourceString = "JS"_si;
         break;
     case MessageSource::Network:
-        sourceString = "NETWORK"_s;
+        sourceString = "NETWORK"_si;
         break;
     case MessageSource::Storage:
-        sourceString = "STORAGE"_s;
+        sourceString = "STORAGE"_si;
         break;
     case MessageSource::Rendering:
-        sourceString = "RENDERING"_s;
+        sourceString = "RENDERING"_si;
         break;
     case MessageSource::CSS:
-        sourceString = "CSS"_s;
+        sourceString = "CSS"_si;
         break;
     case MessageSource::Accessibility:
-        sourceString = "Accessibility"_s;
+        sourceString = "Accessibility"_si;
         break;
     case MessageSource::Security:
-        sourceString = "SECURITY"_s;
+        sourceString = "SECURITY"_si;
         break;
     case MessageSource::ContentBlocker:
-        sourceString = "CONTENTBLOCKER"_s;
+        sourceString = "CONTENTBLOCKER"_si;
         break;
     case MessageSource::Media:
-        sourceString = "MEDIA"_s;
+        sourceString = "MEDIA"_si;
         break;
     case MessageSource::MediaSource:
-        sourceString = "MEDIASOURCE"_s;
+        sourceString = "MEDIASOURCE"_si;
         break;
     case MessageSource::WebRTC:
-        sourceString = "WEBRTC"_s;
+        sourceString = "WEBRTC"_si;
         break;
     case MessageSource::ITPDebug:
-        sourceString = "ITPDEBUG"_s;
+        sourceString = "ITPDEBUG"_si;
         break;
     case MessageSource::PrivateClickMeasurement:
-        sourceString = "PRIVATECLICKMEASUREMENT"_s;
+        sourceString = "PRIVATECLICKMEASUREMENT"_si;
         break;
     case MessageSource::PaymentRequest:
-        sourceString = "PAYMENTREQUEST"_s;
+        sourceString = "PAYMENTREQUEST"_si;
         break;
     case MessageSource::Other:
-        sourceString = "OTHER"_s;
+        sourceString = "OTHER"_si;
         break;
     }
 
-    String typeString;
+    RefPtr<StringImpl> typeString;
     switch (type) {
     case MessageType::Log:
         // Default, no need to be more specific.
         break;
     case MessageType::Clear:
-        typeString = "CLEAR"_s;
+        typeString = "CLEAR"_si;
         break;
     case MessageType::Dir:
-        typeString = "DIR"_s;
+        typeString = "DIR"_si;
         break;
     case MessageType::DirXML:
-        typeString = "DIRXML"_s;
+        typeString = "DIRXML"_si;
         break;
     case MessageType::Table:
-        typeString = "TABLE"_s;
+        typeString = "TABLE"_si;
         break;
     case MessageType::Trace:
-        typeString = "TRACE"_s;
+        typeString = "TRACE"_si;
         break;
     case MessageType::StartGroup:
-        typeString = "STARTGROUP"_s;
+        typeString = "STARTGROUP"_si;
         break;
     case MessageType::StartGroupCollapsed:
-        typeString = "STARTGROUPCOLLAPSED"_s;
+        typeString = "STARTGROUPCOLLAPSED"_si;
         break;
     case MessageType::EndGroup:
-        typeString = "ENDGROUP"_s;
+        typeString = "ENDGROUP"_si;
         break;
     case MessageType::Assert:
-        typeString = "ASSERT"_s;
+        typeString = "ASSERT"_si;
         break;
     case MessageType::Timing:
-        typeString = "TIMING"_s;
+        typeString = "TIMING"_si;
         break;
     case MessageType::Profile:
-        typeString = "PROFILE"_s;
+        typeString = "PROFILE"_si;
         break;
     case MessageType::ProfileEnd:
-        typeString = "PROFILEEND"_s;
+        typeString = "PROFILEEND"_si;
         break;
     case MessageType::Image:
-        typeString = "IMAGE"_s;
+        typeString = "IMAGE"_si;
         break;
     }
 
-    String levelString;
+    RefPtr<StringImpl> levelString;
     switch (level) {
     case MessageLevel::Log:
         // Default, no need to be more specific.
         if (type == MessageType::Log)
-            levelString = "LOG"_s;
+            levelString = "LOG"_si;
         break;
     case MessageLevel::Debug:
-        levelString = "DEBUG"_s;
+        levelString = "DEBUG"_si;
         break;
     case MessageLevel::Info:
-        levelString = "INFO"_s;
+        levelString = "INFO"_si;
         break;
     case MessageLevel::Warning:
-        levelString = "WARN"_s;
+        levelString = "WARN"_si;
         break;
     case MessageLevel::Error:
-        levelString = "ERROR"_s;
+        levelString = "ERROR"_si;
         break;
     }
 
     builder.append("CONSOLE"_s);
-    if (!sourceString.isEmpty())
+    if (!isEmpty(sourceString))
         builder.append(' ', sourceString);
-    if (!typeString.isEmpty())
+    if (!isEmpty(typeString))
         builder.append(' ', typeString);
-    if (!levelString.isEmpty())
+    if (!isEmpty(levelString))
         builder.append(' ', levelString);
 }
 
-void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber)
+void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, MessageLevel level, StringImpl* message, StringImpl* url, unsigned lineNumber, unsigned columnNumber)
 {
     StringBuilder builder;
 
-    if (!url.isEmpty()) {
+    if (!isEmpty(url)) {
         appendURLAndPosition(builder, url, lineNumber, columnNumber);
         builder.append(": "_s);
     }
@@ -203,7 +203,7 @@ void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, 
     appendMessagePrefix(builder, source, type, level);
     builder.append(' ', message);
 
-    SAFE_WTFLOGALWAYS("%s", builder.toString().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(builder.toString()));
 }
 
 void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
@@ -215,7 +215,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
 
     StringBuilder builder(OverflowPolicy::RecordOverflow);
 
-    if (!lastCaller.sourceURL().isEmpty()) {
+    if (!isEmpty(lastCaller.sourceURL())) {
         appendURLAndPosition(builder, lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());
         builder.append(": "_s);
     }
@@ -232,21 +232,21 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     if (builder.hasOverflowed())
         WTFLogAlways("Console message exceeded maximum length.");
     else
-        SAFE_WTFLOGALWAYS("%s", builder.toString().utf8());
+        SAFE_WTFLOGALWAYS("%s", utf8(builder.toString()));
 
     if (isTraceMessage) {
         for (size_t i = 0; i < callStack->size(); ++i) {
             const ScriptCallFrame& callFrame = callStack->at(i);
-            String functionName = callFrame.functionName();
-            if (functionName.isEmpty())
-                functionName = "(unknown)"_s;
+            RefPtr<StringImpl> functionName = callFrame.functionName();
+            if (isEmpty(functionName))
+                functionName = "(unknown)"_si;
 
             StringBuilder callFrameBuilder;
             callFrameBuilder.append(i, ": "_s, functionName, '(');
             appendURLAndPosition(callFrameBuilder, callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());
             callFrameBuilder.append(')');
 
-            SAFE_WTFLOGALWAYS("%s", callFrameBuilder.toString().utf8());
+            SAFE_WTFLOGALWAYS("%s", utf8(callFrameBuilder.toString()));
         }
     }
 }

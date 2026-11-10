@@ -74,7 +74,7 @@ enum class MediaSourcePrivateEndOfStreamStatus : uint8_t {
 class WEBCORE_EXPORT MediaSourcePrivate
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSourcePrivate> {
 public:
-    typedef Vector<String> CodecsArray;
+    typedef Vector<RefPtr<StringImpl>> CodecsArray;
 
     using AddStatus = MediaSourcePrivateAddStatus;
     using EndOfStreamStatus = MediaSourcePrivateEndOfStreamStatus;
@@ -232,8 +232,8 @@ private:
     std::atomic<bool> m_reenqueuePending { false };
 };
 
-String convertEnumerationToString(MediaSourcePrivate::AddStatus);
-String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus);
+RefPtr<StringImpl> convertEnumerationToString(MediaSourcePrivate::AddStatus);
+RefPtr<StringImpl> convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus);
 
 } // namespace WebCore
 
@@ -243,7 +243,7 @@ template<typename Type> struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::MediaSourcePrivate::AddStatus> {
-    static String toString(const WebCore::MediaSourcePrivate::AddStatus status)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSourcePrivate::AddStatus status)
     {
         return convertEnumerationToString(status);
     }
@@ -251,7 +251,7 @@ struct LogArgument<WebCore::MediaSourcePrivate::AddStatus> {
 
 template <>
 struct LogArgument<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
-    static String toString(const WebCore::MediaSourcePrivate::EndOfStreamStatus status)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSourcePrivate::EndOfStreamStatus status)
     {
         return convertEnumerationToString(status);
     }

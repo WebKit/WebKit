@@ -40,7 +40,7 @@ WebAttachmentElementClient::WebAttachmentElementClient(WebPage& page)
 {
 }
 
-void WebAttachmentElementClient::requestAttachmentIcon(const String& identifier, const WebCore::FloatSize& size)
+void WebAttachmentElementClient::requestAttachmentIcon(StringImpl* identifier, const WebCore::FloatSize& size)
 {
     Ref { m_page.get() }->requestAttachmentIcon(identifier, size);
 }

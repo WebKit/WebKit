@@ -46,7 +46,7 @@ PageInspectorTarget::PageInspectorTarget(WebPage& page)
 
 PageInspectorTarget::~PageInspectorTarget() = default;
 
-String PageInspectorTarget::identifier() const
+RefPtr<StringImpl> PageInspectorTarget::identifier() const
 {
     return toTargetID(m_page->identifier());
 }
@@ -70,13 +70,13 @@ void PageInspectorTarget::disconnect()
     m_channel.reset();
 }
 
-void PageInspectorTarget::sendMessageToTargetBackend(const String& message)
+void PageInspectorTarget::sendMessageToTargetBackend(StringImpl* message)
 {
     if (RefPtr corePage = m_page->corePage())
         protect(corePage->inspectorController())->dispatchMessageFromFrontend(message);
 }
 
-String PageInspectorTarget::toTargetID(WebCore::PageIdentifier pageID)
+RefPtr<StringImpl> PageInspectorTarget::toTargetID(WebCore::PageIdentifier pageID)
 {
     return makeString("page-"_s, pageID.toUInt64());
 }

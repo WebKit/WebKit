@@ -92,7 +92,7 @@ int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFa
 {
     static int GST_AUTOPLUG_SELECT_SKIP;
     static int GST_AUTOPLUG_SELECT_TRY;
-    static Vector<String> pluginsToSkip;
+    static Vector<RefPtr<StringImpl>> pluginsToSkip;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         GEnumClass* enumClass = G_ENUM_CLASS(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));
@@ -107,7 +107,7 @@ int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFa
 
     auto factoryName = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)));
     for (const auto& pluginToSkip : pluginsToSkip) {
-        if (pluginToSkip == factoryName)
+        if (equal(pluginToSkip, factoryName))
             return GST_AUTOPLUG_SELECT_SKIP;
     }
     return GST_AUTOPLUG_SELECT_TRY;
@@ -356,7 +356,7 @@ void AudioFileReader::plugDeinterleave(GstPad* pad)
     GstElement* audioConvert  = makeGStreamerElement("audioconvert"_s);
     GstElement* audioResample = makeGStreamerElement("audioresample"_s);
     GstElement* capsFilter = gst_element_factory_make("capsfilter", nullptr);
-    m_deInterleave = makeGStreamerElement("deinterleave"_s, "deinterleave"_s);
+    m_deInterleave = makeGStreamerElement("deinterleave"_s, "deinterleave"_si);
 
     g_object_set(m_deInterleave.get(), "keep-positions", TRUE, nullptr);
     g_signal_connect_swapped(m_deInterleave.get(), "pad-added", G_CALLBACK(deinterleavePadAddedCallback), this);
@@ -390,7 +390,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     // Build the pipeline giostreamsrc ! decodebin
     // A deinterleave element is added once a src pad becomes available in decodebin.
     static Atomic<uint32_t> pipelineId;
-    m_pipeline = gst_pipeline_new(makeString("audio-file-reader-"_s, pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = gst_pipeline_new(ascii(makeString("audio-file-reader-"_s, pipelineId.exchangeAdd(1))).data());
     registerActivePipeline(m_pipeline);
 
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -415,7 +415,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     GRefPtr memoryStream = gMemoryInputStreamNewFromStaticData(m_data);
     g_object_set(source, "stream", memoryStream.get(), nullptr);
 
-    m_decodebin = makeGStreamerElement("decodebin"_s, "decodebin"_s);
+    m_decodebin = makeGStreamerElement("decodebin"_s, "decodebin"_si);
     g_signal_connect(m_decodebin.get(), "autoplug-select", G_CALLBACK(decodebinAutoplugSelectCallback), nullptr);
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 

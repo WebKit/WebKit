@@ -35,21 +35,21 @@ namespace WebCore {
 struct ApplePayPayment {
     struct Token {
         ApplePayPaymentMethod paymentMethod;
-        String transactionIdentifier;
-        String paymentData;
+        RefPtr<StringImpl> transactionIdentifier;
+        RefPtr<StringImpl> paymentData;
     };
 
     Token token;
     std::optional<ApplePayPaymentContact> billingContact;
     std::optional<ApplePayPaymentContact> shippingContact;
-    String installmentAuthorizationToken;
+    RefPtr<StringImpl> installmentAuthorizationToken;
 };
 
 struct LocalizedApplePayPayment {
     ApplePayPayment::Token token;
     std::optional<LocalizedApplePayPaymentContact> billingContact;
     std::optional<LocalizedApplePayPaymentContact> shippingContact;
-    String installmentAuthorizationToken;
+    RefPtr<StringImpl> installmentAuthorizationToken;
 };
 
 }

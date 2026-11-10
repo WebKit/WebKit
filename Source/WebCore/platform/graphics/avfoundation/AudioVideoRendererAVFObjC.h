@@ -124,7 +124,7 @@ public:
     void setPreservesPitchAndCorrectionAlgorithm(bool, std::optional<PitchCorrectionAlgorithm>) final;
     void setAudioTimePitchAlgorithm(AVSampleBufferAudioRenderer *, NSString *) const;
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    void setOutputDeviceId(const String&) final;
+    void setOutputDeviceId(StringImpl*) final;
     void setOutputDeviceIdOnRenderer(AVSampleBufferAudioRenderer *);
 #endif
 
@@ -209,7 +209,7 @@ private:
     void audioRendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *, const CMTime&) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingInfo(bool prefersSpatialAudioExperience, SoundStageSize, const String& sceneIdentifier, const String& defaultLabel, const String& label) final;
+    void setSpatialTrackingInfo(bool prefersSpatialAudioExperience, SoundStageSize, StringImpl* sceneIdentifier, StringImpl* defaultLabel, StringImpl* label) final;
     void updateSpatialTrackingLabel();
 #endif
 
@@ -292,8 +292,8 @@ private:
     };
     NODELETE AudioTrackProperties& audioTrackPropertiesFor(TrackIdentifier);
 
-    String toString(TrackIdentifier) const;
-    String toString(SeekState) const;
+    RefPtr<StringImpl> toString(TrackIdentifier) const;
+    RefPtr<StringImpl> toString(SeekState) const;
 
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
@@ -328,7 +328,7 @@ private:
     bool m_preservesPitch { true };
     std::optional<PitchCorrectionAlgorithm> m_pitchCorrectionAlgorithm;
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    String m_audioOutputDeviceId;
+    RefPtr<StringImpl> m_audioOutputDeviceId;
 #endif
 
     mutable Lock m_publishLock;
@@ -401,9 +401,9 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     bool m_prefersSpatialAudioExperience { false };
     SoundStageSize m_soundStage { SoundStageSize::Auto };
-    String m_sceneIdentifier;
-    String m_defaultSpatialTrackingLabel;
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_sceneIdentifier;
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
 #endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)

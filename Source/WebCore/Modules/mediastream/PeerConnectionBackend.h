@@ -100,8 +100,8 @@ class PeerConnectionBackend
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
 
-    static std::optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, const String& kind);
-    static std::optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, StringImpl* kind);
+    static std::optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, StringImpl* kind);
 
     explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend();
@@ -113,7 +113,7 @@ public:
     void setRemoteDescription(const RTCSessionDescription&, Function<void(ExceptionOr<void>&&)>&&);
     void addIceCandidate(RTCIceCandidate*, Function<void(ExceptionOr<void>&&)>&&);
 
-    virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
+    virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(StringImpl*, const RTCDataChannelInit&) = 0;
 
     void stop();
 
@@ -122,16 +122,16 @@ public:
     virtual void restartIce() = 0;
     virtual bool setConfiguration(MediaEndpointConfiguration&&) = 0;
 
-    virtual void gatherDecoderImplementationName(Function<void(String&&)>&&) = 0;
+    virtual void gatherDecoderImplementationName(Function<void(RefPtr<StringImpl>&&)>&&) = 0;
     virtual void getStats(Ref<DeferredPromise>&&) = 0;
     virtual void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) = 0;
     virtual void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) = 0;
 
-    virtual ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<String>&&);
+    virtual ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<RefPtr<StringImpl>>&&);
     virtual void removeTrack(RTCRtpSender&) { }
 
     enum class IgnoreNegotiationNeededFlag : bool { No, Yes };
-    virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag);
+    virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(StringImpl*, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag);
     virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&);
 
     void markAsNeedingNegotiation(uint32_t);
@@ -140,25 +140,25 @@ public:
     struct DescriptionStates {
         std::optional<RTCSignalingState> signalingState;
         std::optional<RTCSdpType> currentLocalDescriptionSdpType;
-        String currentLocalDescriptionSdp;
+        RefPtr<StringImpl> currentLocalDescriptionSdp;
         std::optional<RTCSdpType> pendingLocalDescriptionSdpType;
-        String pendingLocalDescriptionSdp;
+        RefPtr<StringImpl> pendingLocalDescriptionSdp;
         std::optional<RTCSdpType> currentRemoteDescriptionSdpType;
-        String currentRemoteDescriptionSdp;
+        RefPtr<StringImpl> currentRemoteDescriptionSdp;
         std::optional<RTCSdpType> pendingRemoteDescriptionSdpType;
-        String pendingRemoteDescriptionSdp;
+        RefPtr<StringImpl> pendingRemoteDescriptionSdp;
 
         DescriptionStates isolatedCopy() &&;
     };
     struct TransceiverState {
-        String mid;
+        RefPtr<StringImpl> mid;
         Vector<Ref<MediaStream>> receiverStreams;
         std::optional<RTCRtpTransceiverDirection> firedDirection;
     };
     using TransceiverStates = Vector<TransceiverState>;
 
-    void newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&&);
-    void newDataChannel(UniqueRef<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+    void newICECandidate(RefPtr<StringImpl>&& sdp, RefPtr<StringImpl>&& mid, unsigned short sdpMLineIndex, RefPtr<StringImpl>&& serverURL, std::optional<DescriptionStates>&&);
+    void newDataChannel(UniqueRef<RTCDataChannelHandler>&&, RefPtr<StringImpl>&&, RTCDataChannelInit&&);
 
     virtual void disableICECandidateFiltering();
     NODELETE void enableICECandidateFiltering();
@@ -179,7 +179,7 @@ public:
 
     virtual bool isLocalDescriptionSet() const = 0;
 
-    void finishedRegisteringMDNSName(const String& ipAddress, const String& name);
+    void finishedRegisteringMDNSName(StringImpl* ipAddress, StringImpl* name);
 
     struct CertificateInformation {
         enum class Type { RSASSAPKCS1v15, ECDSAP256 };
@@ -224,7 +224,7 @@ public:
 
     void iceGatheringStateChanged(RTCIceGatheringState);
 
-    virtual void startGatheringStatLogs(Function<void(String&&)>&&) { }
+    virtual void startGatheringStatLogs(Function<void(RefPtr<StringImpl>&&)>&&) { }
     virtual void stopGatheringStatLogs() { }
 
     NODELETE WEBCORE_EXPORT void ref() const;
@@ -235,10 +235,10 @@ public:
 protected:
     void doneGatheringCandidates();
 
-    void createOfferSucceeded(String&&);
+    void createOfferSucceeded(RefPtr<StringImpl>&&);
     void createOfferFailed(Exception&&);
 
-    void createAnswerSucceeded(String&&);
+    void createAnswerSucceeded(RefPtr<StringImpl>&&);
     void createAnswerFailed(Exception&&);
 
     void setLocalDescriptionSucceeded(std::optional<DescriptionStates>&&, std::optional<TransceiverStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&, std::optional<double>);
@@ -247,21 +247,21 @@ protected:
     void setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&&, std::optional<TransceiverStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&, std::optional<double>);
     void setRemoteDescriptionFailed(Exception&&);
 
-    NODELETE void validateSDP(const String&) const;
+    NODELETE void validateSDP(StringImpl*) const;
 
 #if PLATFORM(WPE) || PLATFORM(GTK)
-    bool isJSONLogStreamingEnabled() const { return !m_jsonFilePath.isEmpty(); }
+    bool isJSONLogStreamingEnabled() const { return !isEmpty(m_jsonFilePath); }
 #endif
 
     struct MessageLogEvent {
-        String message;
+        RefPtr<StringImpl> message;
         std::optional<std::span<const uint8_t>> payload;
     };
-    using StatsLogEvent = String;
+    using StatsLogEvent = RefPtr<StringImpl>;
 
     using LogEvent = Variant<MessageLogEvent, StatsLogEvent>;
-    String generateJSONLogEvent(LogEvent&&, bool isForGatherLogs);
-    NODELETE void emitJSONLogEvent(String&&);
+    RefPtr<StringImpl> generateJSONLogEvent(LogEvent&&, bool isForGatherLogs);
+    NODELETE void emitJSONLogEvent(RefPtr<StringImpl>&&);
 
 private:
     virtual void doCreateOffer(RTCOfferOptions&&) = 0;
@@ -284,12 +284,12 @@ private:
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
-    String m_logIdentifierString;
+    RefPtr<StringImpl> m_logIdentifierString;
     bool m_finishedGatheringCandidates { false };
     bool m_isProcessingLocalDescriptionAnswer { false };
 
 #if PLATFORM(WPE) || PLATFORM(GTK)
-    String m_jsonFilePath;
+    RefPtr<StringImpl> m_jsonFilePath;
 #endif
 };
 
@@ -298,13 +298,13 @@ inline PeerConnectionBackend::DescriptionStates PeerConnectionBackend::Descripti
     return DescriptionStates {
         signalingState,
         currentLocalDescriptionSdpType,
-        WTF::move(currentLocalDescriptionSdp).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(currentLocalDescriptionSdp)),
         pendingLocalDescriptionSdpType,
-        WTF::move(pendingLocalDescriptionSdp).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(pendingLocalDescriptionSdp)),
         currentRemoteDescriptionSdpType,
-        WTF::move(currentRemoteDescriptionSdp).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(currentRemoteDescriptionSdp)),
         pendingRemoteDescriptionSdpType,
-        WTF::move(pendingRemoteDescriptionSdp).isolatedCopy()
+        WTF::isolatedCopy(WTF::move(pendingRemoteDescriptionSdp))
     };
 }
 } // namespace WebCore
@@ -316,12 +316,12 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::PeerConnectionBackend::TransceiverState> {
-    static String toString(const WebCore::PeerConnectionBackend::TransceiverState&);
+    static RefPtr<StringImpl> toString(const WebCore::PeerConnectionBackend::TransceiverState&);
 };
 
 template <>
 struct LogArgument<WebCore::PeerConnectionBackend::TransceiverStates> {
-    static String toString(const WebCore::PeerConnectionBackend::TransceiverStates&);
+    static RefPtr<StringImpl> toString(const WebCore::PeerConnectionBackend::TransceiverStates&);
 };
 
 }

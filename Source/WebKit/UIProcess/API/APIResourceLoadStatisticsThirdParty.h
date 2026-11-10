@@ -45,7 +45,7 @@ public:
         RELEASE_ASSERT(RunLoop::isMain());
     }
 
-    const WTF::String& thirdPartyDomain() const LIFETIME_BOUND { return m_thirdPartyData.thirdPartyDomain.string(); }
+    const RefPtr<StringImpl>& thirdPartyDomain() const LIFETIME_BOUND { return m_thirdPartyData.thirdPartyDomain.string(); }
     const Vector<WebKit::ITPThirdPartyDataForSpecificFirstParty>& underFirstParties() const LIFETIME_BOUND { return m_thirdPartyData.underFirstParties; }
 
 private:

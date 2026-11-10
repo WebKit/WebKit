@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-String PageData::description() const
+RefPtr<StringImpl> PageData::description() const
 {
     TextStream ts;
 
@@ -46,7 +46,7 @@ String PageData::description() const
     return ts.release();
 }
 
-String MainFrameData::description() const
+RefPtr<StringImpl> MainFrameData::description() const
 {
     TextStream ts;
 
@@ -83,7 +83,7 @@ String MainFrameData::description() const
     return ts.release();
 }
 
-String RemoteLayerTreeCommitBundle::description() const
+RefPtr<StringImpl> RemoteLayerTreeCommitBundle::description() const
 {
     TextStream ts;
 

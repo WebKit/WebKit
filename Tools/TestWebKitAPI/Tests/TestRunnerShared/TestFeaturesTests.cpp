@@ -71,7 +71,7 @@ class TestHeaderForTest : public testing::Test {
 protected:
     void TearDown() override
     {
-        if (!m_testFilePath.isNull())
+        if (m_testFilePath)
             FileSystem::deleteFile(m_testFilePath);
     }
 
@@ -84,13 +84,13 @@ protected:
         handle = { };
 
         WTR::TestCommand command;
-        command.absolutePath = std::filesystem::path { m_testFilePath.utf8().data() };
+        command.absolutePath = std::filesystem::path { utf8(m_testFilePath).data() };
         std::unordered_map<std::string, WTR::TestHeaderKeyType> keyTypeMap { { "useFlexibleViewport", WTR::TestHeaderKeyType::BoolTestRunner } };
         return WTR::testHeaderForTest(command, keyTypeMap);
     }
 
 private:
-    String m_testFilePath;
+    RefPtr<StringImpl> m_testFilePath;
 };
 
 TEST_F(TestHeaderForTest, CommaSeparatedSkipIfDisabledKeys)

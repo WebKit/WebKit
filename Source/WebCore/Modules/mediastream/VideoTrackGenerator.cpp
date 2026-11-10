@@ -190,13 +190,13 @@ void VideoTrackGenerator::Sink::write(ScriptExecutionContext&, JSC::JSValue valu
     auto* jsFrameObject = dynamicDowncast<JSWebCodecsVideoFrame>(value);
     RefPtr frameObject = jsFrameObject ? &jsFrameObject->wrapped() : nullptr;
     if (!frameObject) {
-        promise.reject(Exception { ExceptionCode::TypeError, "Expected a VideoFrame object"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Expected a VideoFrame object"_si });
         return;
     }
 
     RefPtr videoFrame = frameObject->internalFrame();
     if (!videoFrame) {
-        promise.reject(Exception { ExceptionCode::TypeError, "VideoFrame object is not valid"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "VideoFrame object is not valid"_si });
         return;
     }
 

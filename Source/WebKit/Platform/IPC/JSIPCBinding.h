@@ -68,7 +68,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, T&&)
     return JSC::JSValue();
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, String&&);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, RefPtr<StringImpl>&&);
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, URL&&);
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::RegistrableDomain&&);
 

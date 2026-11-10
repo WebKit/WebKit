@@ -33,14 +33,14 @@
 namespace WebKit {
 
 <%- for @pref in @exposedPreferences do -%>
-void WebPreferences::set<%= @pref.name %>(const <%= @pref.type %>& value)
+void WebPreferences::set<%= @pref.name %>(const <%= @pref.cppType %>& value)
 {
     if (!m_store.set<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
         return;
     update<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value, <%= @pref.ephemeral? %>);
 }
 
-<%= @pref.type %> WebPreferences::<%= @pref.nameLower %>() const
+<%= @pref.cppType %> WebPreferences::<%= @pref.nameLower %>() const
 {
 <%- if @pref.hasInspectorOverride? -%>
     if (m_<%= @pref.nameLower %>InspectorOverride)
@@ -57,7 +57,7 @@ void WebPreferences::delete<%= @pref.name %>()
 <%- end -%>
 
 <%- for @pref in @inspectorOverridePreferences do -%>
-void WebPreferences::set<%= @pref.name %>InspectorOverride(std::optional<<%= @pref.type %>> <%= @pref.nameLower %>InspectorOverride)
+void WebPreferences::set<%= @pref.name %>InspectorOverride(std::optional<<%= @pref.cppType %>> <%= @pref.nameLower %>InspectorOverride)
 {
     if (m_<%= @pref.nameLower %>InspectorOverride == <%= @pref.nameLower %>InspectorOverride)
         return;

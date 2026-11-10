@@ -78,7 +78,7 @@ AXTextMarkerRange AccessibilityObject::textMarkerRangeForNSRange(const NSRange& 
     if (!isTextControl())
         return { visiblePositionForIndex(range.location), visiblePositionForIndex(range.location + range.length) };
 
-    if (range.location + range.length > text().length())
+    if (range.location + range.length > length(text()))
         return { };
 
     if (CheckedPtr cache = axObjectCache()) {
@@ -155,7 +155,7 @@ RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range
         // Non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX).
         if (it.text().length()) {
             auto listMarkerText = listMarkerTextForNodeAndPosition(node.ptr(), makeContainerOffsetPosition(it.range().start));
-            if (!listMarkerText.isEmpty()) {
+            if (!isEmpty(listMarkerText)) {
                 if (auto attrString = attributedStringCreate(node.get(), listMarkerText, it.range(), SpellCheck::No))
                     [result addObject:attrString.get()];
             }

@@ -2683,14 +2683,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case StringCharCodeAt:
     case StringCodePointAt: {
-        if (auto string = node->child1()->tryGetString(m_graph); !string.isNull()) {
+        if (auto string = node->child1()->tryGetString(m_graph); string) {
             if (node->child2()->isInt32Constant()) {
                 int32_t index = node->child2()->asInt32();
-                if (index >= 0 && static_cast<unsigned>(index) < string.length()) {
+                if (index >= 0 && static_cast<unsigned>(index) < WTF::length(string)) {
                     if (node->op() == StringCharCodeAt)
-                        setConstant(node, jsNumber(string.codeUnitAt(static_cast<unsigned>(index))));
+                        setConstant(node, jsNumber(codeUnitAt(string, static_cast<unsigned>(index))));
                     else
-                        setConstant(node, jsNumber(codePointAt(string, static_cast<unsigned>(index), string.length())));
+                        setConstant(node, jsNumber(codePointAt(string, static_cast<unsigned>(index), WTF::length(string))));
                     break;
                 }
             }

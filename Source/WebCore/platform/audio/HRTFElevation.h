@@ -56,7 +56,7 @@ public:
     // Normally, there will only be a single HRTF database set, but this API supports the possibility of multiple ones with different names.
     // Interpolated azimuths will be generated based on InterpolationFactor.
     // Valid values for elevation are -45 -> +90 in 15 degree increments.
-    static std::unique_ptr<HRTFElevation> createForSubject(const String& subjectName, int elevation, float sampleRate);
+    static std::unique_ptr<HRTFElevation> createForSubject(StringImpl* subjectName, int elevation, float sampleRate);
 
     static void clearCache();
 
@@ -91,7 +91,7 @@ public:
     // Valid values for azimuth are 0 -> 345 in 15 degree increments.
     // Valid values for elevation are -45 -> +90 in 15 degree increments.
     // Returns true on success.
-    static bool calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
+    static bool calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, StringImpl* subjectName,
                                                     RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
 
 private:

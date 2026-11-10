@@ -56,7 +56,7 @@ public:
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData();
-    static RefPtr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, const String& itemInCollection, bool& wrapping, DownloadableBinaryFontTrustedTypes);
+    static RefPtr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, StringImpl* itemInCollection, bool& wrapping, DownloadableBinaryFontTrustedTypes);
     static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, const FontCreationContext&);
 
     virtual RefPtr<Font> createFont(const FontDescription&, const FontCreationContext&);
@@ -69,11 +69,11 @@ protected:
     bool ensureCustomFontData(SharedBuffer* data);
 
 private:
-    static RefPtr<FontCustomPlatformData> createCustomFontDataWithPolicy(SharedBuffer&, const String& itemInCollection, bool& wrapping, FontParsingPolicy);
-    static RefPtr<FontCustomPlatformData> createCustomFontDataSystemParser(SharedBuffer&, const String& itemInCollection, bool& wrapping);
-    static RefPtr<FontCustomPlatformData> createCustomFontDataSafeFontParser(SharedBuffer&, const String& itemInCollection, bool& wrapping);
+    static RefPtr<FontCustomPlatformData> createCustomFontDataWithPolicy(SharedBuffer&, StringImpl* itemInCollection, bool& wrapping, FontParsingPolicy);
+    static RefPtr<FontCustomPlatformData> createCustomFontDataSystemParser(SharedBuffer&, StringImpl* itemInCollection, bool& wrapping);
+    static RefPtr<FontCustomPlatformData> createCustomFontDataSafeFontParser(SharedBuffer&, StringImpl* itemInCollection, bool& wrapping);
 
-    String calculateItemInCollection() const;
+    RefPtr<StringImpl> calculateItemInCollection() const;
 
     void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) override;
     NODELETE bool mayTryReplaceEncodedData() const override;

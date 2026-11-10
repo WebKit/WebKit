@@ -49,15 +49,15 @@ class WebCookieJar final : public WebCore::CookieJar {
 public:
     static Ref<WebCookieJar> create() { return adoptRef(*new WebCookieJar); }
     
-    String cookies(WebCore::Document&, const URL&) const final;
-    void setCookies(WebCore::Document&, const URL&, const String& cookieString) final;
+    RefPtr<StringImpl> cookies(WebCore::Document&, const URL&) const final;
+    void setCookies(WebCore::Document&, const URL&, StringImpl* cookieString) final;
     bool cookiesEnabled(WebCore::Document&) final;
     void remoteCookiesEnabled(const WebCore::Document&, CompletionHandler<void(bool)>&&) const final;
-    std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies) const final;
+    std::pair<RefPtr<StringImpl>, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies) const final;
     std::optional<SHA1::Digest> cookieRequestHeaderFieldValueDigest(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies) const final;
     bool getRawCookies(WebCore::Document&, const URL&, Vector<WebCore::Cookie>&) const final;
     void setRawCookie(const WebCore::Document&, const WebCore::Cookie&, WebCore::ShouldPartitionCookie) final;
-    void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&) final;
+    void deleteCookie(const WebCore::Document&, const URL&, StringImpl* cookieName, CompletionHandler<void()>&&) final;
 
     void getCookiesAsync(WebCore::Document&, const URL&, const WebCore::CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&) const final;
     void setCookieAsync(WebCore::Document&, const URL&, const WebCore::Cookie&, CompletionHandler<void(bool)>&&) const final;
@@ -65,11 +65,11 @@ public:
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     void addChangeListenerWithAccess(const URL&, const URL& firstParty, WebCore::FrameIdentifier, WebPageProxyIdentifier, const WebCore::CookieChangeListener&);
     void addChangeListener(const WebCore::Document&, const WebCore::CookieChangeListener&) final;
-    void removeChangeListener(const String& host, const WebCore::CookieChangeListener&) final;
+    void removeChangeListener(StringImpl* host, const WebCore::CookieChangeListener&) final;
 #endif
 
-    void cookiesAdded(const String& host, Vector<WebCore::Cookie>&&);
-    void cookiesDeleted(const String& host, Vector<WebCore::Cookie>&&);
+    void cookiesAdded(StringImpl* host, Vector<WebCore::Cookie>&&);
+    void cookiesDeleted(StringImpl* host, Vector<WebCore::Cookie>&&);
     void allCookiesDeleted();
 
     void clearCache() final;
@@ -82,11 +82,11 @@ private:
     WebCookieJar();
 
     bool remoteCookiesEnabledSync(WebCore::Document&) const;
-    void clearCacheForHost(const String&) final;
+    void clearCacheForHost(StringImpl*) final;
     bool isEligibleForCache(WebFrame&, const URL& firstPartyForCookies, const URL& resourceURL) const;
 
     const Ref<WebCookieCache> m_cache;
-    HashMap<String, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
+    HashMap<RefPtr<StringImpl>, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
 };
 
 } // namespace WebKit

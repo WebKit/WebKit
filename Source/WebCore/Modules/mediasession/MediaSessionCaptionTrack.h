@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct MediaSessionCaptionTrack {
-    String label;
-    String language;
-    String identifier;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> language;
+    RefPtr<StringImpl> identifier;
     std::optional<bool> enabled { false };
 };
 

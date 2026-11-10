@@ -49,7 +49,7 @@ static UStringSearch* createSearcher()
     // without setting both the pattern and the text.
     UErrorCode status = U_ZERO_ERROR;
     auto searchCollatorName = makeString(unsafeSpan(currentSearchLocaleID()), "@collation=search"_s);
-    UStringSearch* searcher = usearchOpen(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8(), 0, &status);
+    UStringSearch* searcher = usearchOpen(&newlineCharacter, 1, &newlineCharacter, 1, utf8(searchCollatorName), 0, &status);
     ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
     return searcher;
 }
@@ -60,14 +60,15 @@ static UStringSearch* globalSearcher()
     return searcher;
 }
 
-ICUSearcher::ICUSearcher(const String& foldedTarget, FindOptions& options)
+ICUSearcher::ICUSearcher(StringImpl* foldedTarget, FindOptions& options)
 {
     lock();
     // Characters in the separator category never really occur at the beginning of a word,
     // so if the target begins with such a character, we just ignore the AtWordStart option.
-    if (options.contains(FindOption::AtWordStarts) && foldedTarget.length()) {
+    if (options.contains(FindOption::AtWordStarts) && length(foldedTarget)) {
         char32_t targetFirstCharacter;
-        U16_GET(foldedTarget, 0, 0u, foldedTarget.length(), targetFirstCharacter);
+        StringView target { foldedTarget };
+        U16_GET(target, 0, 0u, target.length(), targetFirstCharacter);
         if (isSeparator(targetFirstCharacter))
             options.remove(FindOption::AtWordStarts);
     }
@@ -479,11 +480,11 @@ bool isSeparator(char32_t character)
     return isNonLatin1Separator(character);
 }
 
-NODELETE bool containsKanaLetters(const String& pattern)
+NODELETE bool containsKanaLetters(StringImpl* pattern)
 {
-    if (pattern.is8Bit())
+    if (is8Bit(pattern))
         return false;
-    for (auto character : pattern.span16()) {
+    for (auto character : span16(pattern)) {
         if (isKanaLetter(character))
             return true;
     }
@@ -493,9 +494,9 @@ NODELETE bool containsKanaLetters(const String& pattern)
 // FIXME: We'd like to tailor the searcher to fold quote marks for us instead
 // of doing it in a separate replacement pass here, but ICU doesn't offer a way
 // to add tailoring on top of the locale-specific tailoring as of this writing.
-String foldQuoteMarks(const String& stringToFold)
+RefPtr<StringImpl> foldQuoteMarks(StringImpl* stringToFold)
 {
-    String result = makeStringByReplacingAll(stringToFold, hebrewPunctuationGeresh, '\'');
+    RefPtr<StringImpl> result = makeStringByReplacingAll(stringToFold, hebrewPunctuationGeresh, '\'');
     result = makeStringByReplacingAll(result, hebrewPunctuationGershayim, '"');
     result = makeStringByReplacingAll(result, leftDoubleQuotationMark, '"');
     result = makeStringByReplacingAll(result, leftLowDoubleQuotationMark, '"');

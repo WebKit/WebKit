@@ -54,7 +54,7 @@ private:
     void serviceAnimation(MonotonicTime) final;
     bool retargetActiveAnimation(const FloatPoint&) final;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     bool animateScroll(MonotonicTime);
 

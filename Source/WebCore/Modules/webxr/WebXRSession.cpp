@@ -128,12 +128,12 @@ const WebXRRenderState& WebXRSession::renderState() const
 }
 
 // https://www.w3.org/TR/webxr/#dom-xrsession-enabledfeatures
-const Vector<String> WebXRSession::enabledFeatures() const
+const Vector<RefPtr<StringImpl>> WebXRSession::enabledFeatures() const
 {
-    Vector<String> enabledFeatureArray;
+    Vector<RefPtr<StringImpl>> enabledFeatureArray;
     for (const auto& feature : m_requestedFeatures) {
-        String sessionFeature = PlatformXR::sessionFeatureDescriptor(feature);
-        if (sessionFeature != ""_s)
+        RefPtr<StringImpl> sessionFeature = PlatformXR::sessionFeatureDescriptor(feature);
+        if (!equal(sessionFeature, ""_s))
             enabledFeatureArray.append(WTF::move(sessionFeature));
     }
 

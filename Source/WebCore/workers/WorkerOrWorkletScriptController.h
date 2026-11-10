@@ -98,18 +98,18 @@ public:
 
     void setException(JSC::Exception*);
 
-    void disableEval(const String& errorMessage);
-    void disableWebAssembly(const String& errorMessage);
+    void disableEval(StringImpl* errorMessage);
+    void disableWebAssembly(StringImpl* errorMessage);
     void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement);
 
     enum class ParseResult : bool { Failed, Succeeded };
 
-    void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    ParseResult evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
+    void evaluate(const ScriptSourceCode&, RefPtr<StringImpl>* returnedExceptionMessage = nullptr);
+    ParseResult evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, RefPtr<StringImpl>* returnedExceptionMessage = nullptr);
 
     JSC::JSValue evaluateModule(const URL&, JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
-    void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
+    void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, RefPtr<StringImpl>* returnedExceptionMessage = nullptr);
     bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
 
     void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);

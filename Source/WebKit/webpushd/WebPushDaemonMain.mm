@@ -108,23 +108,23 @@ static void applySandbox()
     static ASCIILiteral userDirectorySuffix = "com.apple.webkit.webpushd"_s;
 #endif
     NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-    auto profilePath = makeString(String([bundle resourcePath]), profileName);
+    auto profilePath = makeString(StringImpl::create([bundle resourcePath]), profileName);
     if (FileSystem::fileExists(profilePath)) {
-        AuxiliaryProcess::applySandboxProfileForDaemon(profilePath, userDirectorySuffix);
+        AuxiliaryProcess::applySandboxProfileForDaemon(profilePath, StringImpl::create(userDirectorySuffix).ptr());
         return;
     }
 
-    auto oldProfilePath = makeString(String([bundle resourcePath]), "/com.apple.WebKit.webpushd.sb"_s);
-    AuxiliaryProcess::applySandboxProfileForDaemon(oldProfilePath, "com.apple.webkit.webpushd"_s);
+    auto oldProfilePath = makeString(StringImpl::create([bundle resourcePath]), "/com.apple.WebKit.webpushd.sb"_s);
+    AuxiliaryProcess::applySandboxProfileForDaemon(oldProfilePath, "com.apple.webkit.webpushd"_si);
 #endif
 }
 
-static String getWebPushDirectoryPathWithMigrationIfNecessary()
+static RefPtr<StringImpl> getWebPushDirectoryPathWithMigrationIfNecessary()
 {
     RetainPtr paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    String libraryPath = paths.get()[0];
+    RefPtr<StringImpl> libraryPath = StringImpl::create(paths.get()[0]);
 #if PLATFORM(MAC) && !ENABLE(RELOCATABLE_WEBPUSHD)
-    String oldPath = FileSystem::pathByAppendingComponents(libraryPath, std::initializer_list<StringView>({ "WebKit"_s, "WebPush"_s }));
+    RefPtr<StringImpl> oldPath = FileSystem::pathByAppendingComponents(libraryPath, std::initializer_list<StringView>({ "WebKit"_s, "WebPush"_s }));
 
     RetainPtr containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.com.apple.webkit.webpushd"];
 
@@ -132,15 +132,15 @@ static String getWebPushDirectoryPathWithMigrationIfNecessary()
     BOOL canReadContainer = !![[NSFileManager defaultManager] contentsOfDirectoryAtURL:containerURL.get() includingPropertiesForKeys:nil options:0 error:&error];
     RELEASE_ASSERT_WITH_MESSAGE(canReadContainer, "Could not access webpushd group container: %s", error.description.UTF8String);
 
-    String containerPath = [containerURL path];
-    String newPath = FileSystem::pathByAppendingComponents(containerPath, std::initializer_list<StringView>({ "Library"_s, "WebKit"_s, "WebPush"_s }));
+    RefPtr<StringImpl> containerPath = StringImpl::create([containerURL path]);
+    RefPtr<StringImpl> newPath = FileSystem::pathByAppendingComponents(containerPath, std::initializer_list<StringView>({ "Library"_s, "WebKit"_s, "WebPush"_s }));
 
-    String oldDatabasePath = FileSystem::pathByAppendingComponent(oldPath, "PushDatabase.db"_s);
-    String newDatabasePath = FileSystem::pathByAppendingComponent(newPath, "PushDatabase.db"_s);
+    RefPtr<StringImpl> oldDatabasePath = FileSystem::pathByAppendingComponent(oldPath, "PushDatabase.db"_s);
+    RefPtr<StringImpl> newDatabasePath = FileSystem::pathByAppendingComponent(newPath, "PushDatabase.db"_s);
     if (FileSystem::fileExists(oldDatabasePath) && !FileSystem::fileExists(newDatabasePath)) {
         FileSystem::makeAllDirectories(newPath);
         bool migrated = WebCore::SQLiteFileSystem::moveDatabaseFile(oldDatabasePath, newDatabasePath);
-        RELEASE_LOG(Push, "Moved push database to new container path %" PUBLIC_LOG_STRING " with result: %d", newDatabasePath.utf8(), migrated);
+        RELEASE_LOG(Push, "Moved push database to new container path %" PUBLIC_LOG_STRING " with result: %d", utf8(newDatabasePath), migrated);
     }
 
     return newPath;
@@ -214,16 +214,16 @@ int WebPushDaemonMain(int argc, char** argv)
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();
         else {
-            String webPushDirectoryPath = getWebPushDirectoryPathWithMigrationIfNecessary();
+            RefPtr<StringImpl> webPushDirectoryPath = getWebPushDirectoryPathWithMigrationIfNecessary();
 
 #if ENABLE(RELOCATABLE_WEBPUSHD)
-            String pushDatabasePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "PushDatabase.relocatable.db"_s);
+            RefPtr<StringImpl> pushDatabasePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "PushDatabase.relocatable.db"_s);
 #else
-            String pushDatabasePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "PushDatabase.db"_s);
+            RefPtr<StringImpl> pushDatabasePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "PushDatabase.db"_s);
 #endif
-            String webClipCachePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "WebClipCache.plist"_s);
+            RefPtr<StringImpl> webClipCachePath = FileSystem::pathByAppendingComponent(webPushDirectoryPath, "WebClipCache.plist"_s);
 
-            ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath, webClipCachePath);
+            ::WebPushD::WebPushDaemon::singleton().startPushService(StringImpl::fromLatin1(incomingPushServiceName), pushDatabasePath, webClipCachePath);
         }
     }
     CFRunLoopRun();

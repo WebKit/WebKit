@@ -29,7 +29,7 @@ from webkit.opaque_ipc_types import opaque_ipc_types
 from webkit.untrusted_origins import unwrap_if_untrusted, unwrap_untrusted
 from webkit import parser
 from webkit import swift_types
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, ANYTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, NOT_USING_IPC_CONNECTION_ATTRIBUTE, WANTS_DISPATCH_MESSAGE_ATTRIBUTE, WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import cpp_type_for_ipc_type, is_string_type_alias, BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, ANYTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, NOT_USING_IPC_CONNECTION_ATTRIBUTE, WANTS_DISPATCH_MESSAGE_ATTRIBUTE, WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
@@ -277,10 +277,14 @@ def function_parameter_type(type, kind, for_reply=False):
     if kind.startswith('enum:'):
         return type
 
-    if type_must_be_moved(type) or for_reply:
-        return '%s&&' % type
+    # A StringView accepts every kind of string a sender has, and is encoded the same way.
+    if is_string_type_alias(type) and not for_reply:
+        return 'StringView'
 
-    return 'const %s&' % type
+    if type_must_be_moved(type) or for_reply:
+        return '%s&&' % cpp_type_for_ipc_type(type)
+
+    return 'const %s&' % cpp_type_for_ipc_type(type)
 
 
 def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=False):
@@ -306,7 +310,7 @@ def message_to_struct_declaration(receiver, message):
 
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
-    result.append('    using Arguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.parameters]))
+    result.append('    using Arguments = std::tuple<%s>;\n' % ', '.join([cpp_type_for_ipc_type(parameter.type) for parameter in message.parameters]))
     result.append('\n')
     result.append('    static constexpr IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
     result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
@@ -332,15 +336,15 @@ def message_to_struct_declaration(receiver, message):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::AnyThread;\n')
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
-        result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
+        result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([cpp_type_for_ipc_type(parameter.type) for parameter in message.reply_parameters]))
         result.append('    using Reply = CompletionHandler<void(%s)>;\n' % ', '.join([function_parameter_type(x.type, x.kind, True) for x in message.reply_parameters]))
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             if len(message.reply_parameters) == 0:
                 result.append('    using Promise = WTF::NativePromise<void, IPC::Error>;\n')
             elif len(message.reply_parameters) == 1:
-                result.append('    using Promise = WTF::NativePromise<%s, IPC::Error>;\n' % message.reply_parameters[0].type)
+                result.append('    using Promise = WTF::NativePromise<%s, IPC::Error>;\n' % cpp_type_for_ipc_type(message.reply_parameters[0].type))
             else:
-                result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
+                result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error>;\n' % ', '.join([cpp_type_for_ipc_type(parameter.type) for parameter in message.reply_parameters]))
 
     result.append('    %s%s(%s)\n' % (len(message.parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
     for i in range(len(message.parameters)):
@@ -1492,7 +1496,8 @@ def headers_for_type(type, for_implementation_file=False):
         'PlatformXR::TransientInputHitTestSource': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::VisibilityState': ['<WebCore/PlatformXR.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
-        'String': ['<wtf/text/WTFString.h>'],
+        'AtomString': ['<wtf/text/AtomString.h>'],
+        'String': ['<wtf/text/StringView.h>', '<wtf/text/WTFString.h>'],
         'std::monostate': [],
         'URL': ['<wtf/URLHash.h>'],
         'WTF::GenericPromise::Result': ['<wtf/NativePromise.h>'],

@@ -161,7 +161,7 @@ public:
     NODELETE bool hasNegotiatedLegacyTLS() const;
     NODELETE void negotiatedLegacyTLS(const Transaction::Token&);
     bool wasPrivateRelayed() const { return m_committedState.wasPrivateRelayed; }
-    String proxyName() { return m_committedState.proxyName; }
+    RefPtr<StringImpl> proxyName() { return m_committedState.proxyName; }
     WebCore::ResourceResponseSource source() { return m_committedState.source; }
 
     NODELETE double estimatedProgress() const;
@@ -183,7 +183,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const URL&);
     void didFailProvisionalLoad(const Transaction::Token&);
 
-    void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, const String& proxyName, const WebCore::ResourceResponseSource, const WebCore::SecurityOriginData&);
+    void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, StringImpl* proxyName, const WebCore::ResourceResponseSource, const WebCore::SecurityOriginData&);
 
     void receivedQualifiedServerTrust(const Transaction::Token&, WebCore::CertificateInfo&&, WebCore::CertificateInfo&&);
 
@@ -195,9 +195,9 @@ public:
     void setUnreachableURL(const Transaction::Token&, const URL&);
     void setBaseURL(const Transaction::Token&, const URL&);
 
-    NODELETE const String& title() const LIFETIME_BOUND;
-    void setTitle(const Transaction::Token&, String&&);
-    void setTitleFromBrowsingWarning(const Transaction::Token&, const String&);
+    NODELETE const RefPtr<StringImpl>& title() const LIFETIME_BOUND;
+    void setTitle(const Transaction::Token&, RefPtr<StringImpl>&&);
+    void setTitleFromBrowsingWarning(const Transaction::Token&, StringImpl*);
 
     NODELETE bool canGoBack() const;
     NODELETE void setCanGoBack(const Transaction::Token&, bool);
@@ -247,8 +247,8 @@ private:
         URL unreachableURL;
         URL baseURL;
 
-        String title;
-        String titleFromBrowsingWarning;
+        RefPtr<StringImpl> title;
+        RefPtr<StringImpl> titleFromBrowsingWarning;
 
         URL resourceDirectoryURL;
 
@@ -261,7 +261,7 @@ private:
         bool networkRequestsInProgress { false };
 
         WebCore::CertificateInfo certificateInfo;
-        String proxyName;
+        RefPtr<StringImpl> proxyName;
         WebCore::ResourceResponseSource source;
 
         WebCore::CertificateInfo qualifiedServerTrust;

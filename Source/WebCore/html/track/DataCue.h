@@ -48,9 +48,9 @@ class DataCue final : public TextTrackCue {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DataCue);
 public:
     static Ref<DataCue> create(Document&, double start, double end, ArrayBuffer& data);
-    static Ref<DataCue> create(Document&, double start, double end, JSC::JSValue, const String& type);
+    static Ref<DataCue> create(Document&, double start, double end, JSC::JSValue, StringImpl* type);
     static Ref<DataCue> create(Document&, const MediaTime& start, const MediaTime& end, std::span<const uint8_t> data);
-    static Ref<DataCue> create(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String& type);
+    static Ref<DataCue> create(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, StringImpl* type);
 
     virtual ~DataCue();
 
@@ -62,14 +62,14 @@ public:
     JSC::JSValue value(JSC::JSGlobalObject&) const;
     void setValue(JSC::JSGlobalObject&, JSC::JSValue);
 
-    String type() const { return m_type; }
-    void setType(const String& type) { m_type = type; }
+    RefPtr<StringImpl> type() const { return m_type; }
+    void setType(StringImpl* type) { m_type = type; }
 
 private:
-    DataCue(Document&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, StringImpl*);
     DataCue(Document&, const MediaTime& start, const MediaTime& end, std::span<const uint8_t>);
-    DataCue(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
-    DataCue(Document&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, StringImpl*);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, JSC::JSValue, StringImpl*);
 
     NODELETE JSC::JSValue valueOrNull() const;
     CueType cueType() const final { return Data; }
@@ -77,7 +77,7 @@ private:
     void toJSON(JSON::Object&) const final;
 
     RefPtr<ArrayBuffer> m_data;
-    String m_type;
+    RefPtr<StringImpl> m_type;
     RefPtr<SerializedPlatformDataCue> m_platformValue;
     // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
     // due to reference cycles; we should use JSValueInWrappedObject instead.

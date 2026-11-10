@@ -33,21 +33,21 @@
 
 namespace WebCore {
 
-std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const String& serverPublicKeyBase64URL)
+std::optional<RefPtr<StringImpl>> PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(StringImpl* serverPublicKeyBase64URL)
 {
-    return calculateAndUpdateUnlinkableToken(serverPublicKeyBase64URL, m_sourceUnlinkableToken, "source"_s);
+    return calculateAndUpdateUnlinkableToken(serverPublicKeyBase64URL, m_sourceUnlinkableToken, "source"_si);
 }
 
-std::expected<PCM::DestinationUnlinkableToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationUnlinkableToken(const String& serverPublicKeyBase64URL)
+std::expected<PCM::DestinationUnlinkableToken, RefPtr<StringImpl>> PrivateClickMeasurement::calculateAndUpdateDestinationUnlinkableToken(StringImpl* serverPublicKeyBase64URL)
 {
     PCM::DestinationUnlinkableToken destinationToken;
-    auto errorMessage = calculateAndUpdateUnlinkableToken(serverPublicKeyBase64URL, destinationToken, "destination"_s);
+    auto errorMessage = calculateAndUpdateUnlinkableToken(serverPublicKeyBase64URL, destinationToken, "destination"_si);
     if (errorMessage)
         return makeUnexpected(*errorMessage);
     return destinationToken;
 }
 
-std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken(const String& serverPublicKeyBase64URL, PCM::UnlinkableToken& unlinkableToken, const String& contextForLogMessage)
+std::optional<RefPtr<StringImpl>> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken(StringImpl* serverPublicKeyBase64URL, PCM::UnlinkableToken& unlinkableToken, StringImpl* contextForLogMessage)
 {
 #if HAVE(RSA_BSSA)
     {
@@ -59,7 +59,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken
         NSError* nsError = 0;
         unlinkableToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstance() initWithPublicKey:serverPublicKey.get() error:&nsError]);
         if (nsError)
-            return nsError.localizedDescription;
+            return StringImpl::create(nsError.localizedDescription);
         if (!unlinkableToken.blinder)
             return makeString("Did not get a "_s, contextForLogMessage, " unlinkable token blinder."_s);
     }
@@ -67,7 +67,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken
     NSError* nsError = 0;
     unlinkableToken.waitingToken = [unlinkableToken.blinder tokenWaitingActivationWithContent:nullptr error:&nsError];
     if (nsError)
-        return nsError.localizedDescription;
+        return StringImpl::create(nsError.localizedDescription);
     if (!unlinkableToken.waitingToken)
         return makeString("Did not get a "_s, contextForLogMessage, " unlinkable token waiting token."_s);
 
@@ -81,26 +81,26 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken
 #endif // HAVE(RSA_BSSA)
 }
 
-std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL)
+std::optional<RefPtr<StringImpl>> PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(StringImpl* serverResponseBase64URL)
 {
     PCM::SourceSecretToken secretToken;
-    if (auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, m_sourceUnlinkableToken, secretToken, "source"_s))
+    if (auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, m_sourceUnlinkableToken, secretToken, "source"_si))
         return errorMessage;
     
     m_sourceSecretToken = WTF::move(secretToken);
     return std::nullopt;
 }
 
-std::expected<PCM::DestinationSecretToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(const String& serverResponseBase64URL, PCM::DestinationUnlinkableToken& unlinkableToken)
+std::expected<PCM::DestinationSecretToken, RefPtr<StringImpl>> PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(StringImpl* serverResponseBase64URL, PCM::DestinationUnlinkableToken& unlinkableToken)
 {
     PCM::DestinationSecretToken secretToken;
-    auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, unlinkableToken, secretToken, "destination"_s);
+    auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, unlinkableToken, secretToken, "destination"_si);
     if (errorMessage)
         return makeUnexpected(*errorMessage);
     return secretToken;
 }
 
-std::optional<String> PrivateClickMeasurement::calculateAndUpdateSecretToken(const String& serverResponseBase64URL, PCM::UnlinkableToken& unlinkableToken, PCM::SecretToken& secretToken, const String& contextForLogMessage)
+std::optional<RefPtr<StringImpl>> PrivateClickMeasurement::calculateAndUpdateSecretToken(StringImpl* serverResponseBase64URL, PCM::UnlinkableToken& unlinkableToken, PCM::SecretToken& secretToken, StringImpl* contextForLogMessage)
 {
 #if HAVE(RSA_BSSA)
     if (!unlinkableToken.waitingToken)
@@ -115,7 +115,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateSecretToken(con
         NSError* nsError = 0;
         unlinkableToken.readyToken = [unlinkableToken.waitingToken activateTokenWithServerResponse:serverResponse.get() error:&nsError];
         if (nsError)
-            return nsError.localizedDescription;
+            return StringImpl::create(nsError.localizedDescription);
         if (!unlinkableToken.readyToken)
             return makeString("Did not get a "_s, contextForLogMessage, " unlinkable token ready token."_s);
     }

@@ -45,7 +45,7 @@
 namespace WebCore {
 namespace MQ {
 
-AtomString FeatureParser::consumeFeatureName(CSSParserTokenRange& range)
+RefPtr<AtomStringImpl> FeatureParser::consumeFeatureName(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return nullAtom();
@@ -55,7 +55,7 @@ AtomString FeatureParser::consumeFeatureName(CSSParserTokenRange& range)
     return name.convertToASCIILowercaseAtom();
 }
 
-AtomString bareCustomPropertyName(std::span<const CSSParserToken> tokens)
+RefPtr<AtomStringImpl> bareCustomPropertyName(std::span<const CSSParserToken> tokens)
 {
     if (tokens.size() == 1 && tokens[0].type() == IdentToken && isCustomPropertyName(tokens[0].value()))
         return tokens[0].value().toAtomString();
@@ -72,7 +72,7 @@ std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range,
     return consumeRangeFeature(range, context, options);
 };
 
-std::optional<Value> FeatureParser::consumeCustomPropertyValue(const AtomString& propertyName, CSSParserTokenRange& range, const CSSParserContext& context)
+std::optional<Value> FeatureParser::consumeCustomPropertyValue(AtomStringImpl* propertyName, CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto valueRange = range;
     range.consumeAll();
@@ -122,26 +122,26 @@ static std::optional<Value> consumeValue(CSSParserTokenRange& range, const CSSPa
 
 std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const CSSParserContext& context, EnumSet<FeatureParserOption> options)
 {
-    auto consumePlainFeatureName = [&]() -> std::pair<AtomString, ComparisonOperator> {
+    auto consumePlainFeatureName = [&]() -> std::pair<RefPtr<AtomStringImpl>, ComparisonOperator> {
         auto name = consumeFeatureName(range);
-        if (name.isEmpty())
+        if (isEmpty(name))
             return { };
         if (isCustomPropertyName(name))
             return { name, ComparisonOperator::Equal };
-        if (name.startsWith("min-"_s))
+        if (startsWith(name, "min-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::GreaterThanOrEqual };
-        if (name.startsWith("max-"_s))
+        if (startsWith(name, "max-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::LessThanOrEqual };
-        if (name.startsWith("-webkit-min-"_s))
+        if (startsWith(name, "-webkit-min-"_s))
             return { makeAtomString("-webkit-"_s, StringView(name).substring(12)), ComparisonOperator::GreaterThanOrEqual };
-        if (name.startsWith("-webkit-max-"_s))
+        if (startsWith(name, "-webkit-max-"_s))
             return { makeAtomString("-webkit-"_s, StringView(name).substring(12)), ComparisonOperator::LessThanOrEqual };
 
         return { name, ComparisonOperator::Equal };
     };
 
     auto [featureName, op] = consumePlainFeatureName();
-    if (featureName.isEmpty())
+    if (isEmpty(featureName))
         return { };
 
     range.consumeWhitespace();
@@ -243,7 +243,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
     auto leftComparison = consumeLeftComparison();
 
     auto featureName = consumeFeatureName(range);
-    if (featureName.isEmpty())
+    if (isEmpty(featureName))
         return { };
 
     auto rightComparison = consumeRightComparison();

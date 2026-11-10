@@ -550,8 +550,8 @@ TEST(WKScrollViewTests, WheelEventDispatchedToCrossOriginSubframeWithSiteIsolati
         )PAGEDATA";
 
     HTTPServer server({
-        { "/example"_s, { String::fromUTF8(mainHTML) } },
-        { "/webkit"_s, { String::fromUTF8(iframeHTML) } },
+        { "/example"_s, { StringImpl::fromUTF8(mainHTML) } },
+        { "/webkit"_s, { StringImpl::fromUTF8(iframeHTML) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto captureAttributes = [&](bool enableSiteIsolation) -> RetainPtr<NSMutableDictionary> {

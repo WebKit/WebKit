@@ -83,11 +83,11 @@ static std::optional<DetectedItem> detectItem(const VisiblePosition& position, c
 {
     if (position.isNull())
         return { };
-    String fullPlainTextString = plainText(contextRange);
+    RefPtr<StringImpl> fullPlainTextString = plainText(contextRange);
     CFIndex hitLocation = characterCount(*makeSimpleRange(contextRange.start, position));
 
     RetainPtr scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
-    RetainPtr scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
+    RetainPtr scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, createCFString(fullPlainTextString).get(), CFRangeMake(0, length(fullPlainTextString))));
 
     if (!DDScannerScanQuery(scanner.get(), scanQuery.get()))
         return { };
@@ -202,7 +202,7 @@ static BOOL resultIsURL(DDResultRef result)
 
 bool DataDetection::canBePresentedByDataDetectors(const URL& url)
 {
-    return [protect(PAL::softLink_DataDetectorsCore_DDURLTapAndHoldSchemes()) containsObject:url.protocol().convertToASCIILowercase().createNSString().get()];
+    return [protect(PAL::softLink_DataDetectorsCore_DDURLTapAndHoldSchemes()) containsObject:createNSString(url.protocol().convertToASCIILowercase()).get()];
 }
 
 bool DataDetection::isDataDetectorLink(Element& element)
@@ -216,7 +216,7 @@ bool DataDetection::requiresExtendedContext(Element& element)
     return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "calendar-event"_s);
 }
 
-String DataDetection::dataDetectorIdentifier(Element& element)
+RefPtr<StringImpl> DataDetection::dataDetectorIdentifier(Element& element)
 {
     return element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
 }
@@ -230,7 +230,7 @@ bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
         return true;
     
     auto& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
-    if (resultAttribute.isEmpty())
+    if (isEmpty(resultAttribute))
         return false;
 
     auto* dataDetectionResults = element.document().frame()->dataDetectionResultsIfExists();
@@ -350,7 +350,7 @@ static NSString *dataDetectorTypeForCategory(DDResultCategory category)
     }
 }
 
-static String dataDetectorStringForPath(NSIndexPath *path)
+static RefPtr<StringImpl> dataDetectorStringForPath(NSIndexPath *path)
 {
     auto length = path.length;
     switch (length) {
@@ -536,13 +536,13 @@ static std::optional<Vector<Vector<SimpleRange>>> parseAllResultRanges(const Sim
 }
 
 struct DDQueryFragmentCore {
-    String string;
+    RefPtr<StringImpl> string;
     WTF::Range<long> range;
     long identifier;
 
     bool operator==(const DDQueryFragmentCore& other) const
     {
-        return string == other.string && range == other.range && identifier == other.identifier;
+        return equal(string, other.string) && range == other.range && identifier == other.identifier;
     }
 };
 
@@ -552,7 +552,7 @@ static Vector<DDQueryFragmentCore> getFragmentsFromQuery(DDScanQueryRef scanQuer
     auto fragmentCount = _DDScanQueryGetNumberOfFragments(scanQuery);
     for (CFIndex i = 0; i < fragmentCount; i++) {
         DDQueryFragment *fragment = DDScanQueryGetFragmentAtIndex(scanQuery, i);
-        fragments.append({ String { fragment->string }, { fragment->range.location, fragment->range.location + fragment->range.length }, reinterpret_cast<long>(fragment->identifier) });
+        fragments.append({ StringImpl::create(protect(fragment->string).get()), { fragment->range.location, fragment->range.location + fragment->range.length }, reinterpret_cast<long>(fragment->identifier) });
     }
     return fragments;
 }
@@ -609,7 +609,7 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
     RetainPtr tz = adoptCF(CFTimeZoneCopyDefault());
     NSDate *referenceDate = referenceDateFromContext ? [NSDate dateWithTimeIntervalSince1970:*referenceDateFromContext] : [NSDate date];
     RefPtr<Text> lastTextNodeToUpdate;
-    String lastNodeContent;
+    RefPtr<StringImpl> lastNodeContent;
     unsigned contentOffset = 0;
     DDQueryOffset lastModifiedQueryOffset = { };
     lastModifiedQueryOffset.queryIndex = -1;
@@ -631,7 +631,7 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
         if (resultRanges.isEmpty())
             continue;
 
-        RetainPtr identifier = dataDetectorStringForPath(indexPaths[resultIndex].get()).createNSString();
+        RetainPtr identifier = createNSString(dataDetectorStringForPath(indexPaths[resultIndex].get()));
         RetainPtr correspondingURL = constructURLStringForResult(coreResult, identifier.get(), referenceDate, (NSTimeZone *)tz.get(), types);
 
         if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first().start.container, resultRanges.last().end.container))
@@ -650,27 +650,27 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
                 continue;
 
             Ref document = currentTextNode->document();
-            String textNodeData;
+            RefPtr<StringImpl> textNodeData;
 
             if (lastTextNodeToUpdate != currentTextNode.get()) {
                 if (lastTextNodeToUpdate)
                     lastTextNodeToUpdate->setData(lastNodeContent);
                 if (range.start.offset > 0)
-                    textNodeData = currentTextNode->data().left(range.start.offset);
+                    textNodeData = left(currentTextNode->data(), range.start.offset);
             } else
-                textNodeData = currentTextNode->data().substring(contentOffset, range.start.offset - contentOffset);
+                textNodeData = substring(currentTextNode->data(), contentOffset, range.start.offset - contentOffset);
 
-            if (!textNodeData.isEmpty())
+            if (!isEmpty(textNodeData))
                 parentNode->insertBefore(Text::create(document, WTF::move(textNodeData)), currentTextNode.get());
 
             // Create the actual anchor node and insert it before the current node.
-            textNodeData = currentTextNode->data().substring(range.start.offset, range.end.offset - range.start.offset);
+            textNodeData = substring(currentTextNode->data(), range.start.offset, range.end.offset - range.start.offset);
             auto newTextNode = Text::create(document, WTF::move(textNodeData));
             parentNode->insertBefore(newTextNode.copyRef(), currentTextNode.get());
 
             Ref anchorElement = HTMLAnchorElement::create(document);
-            anchorElement->setAttributeWithoutSynchronization(hrefAttr, correspondingURL.get());
-            anchorElement->setAttributeWithoutSynchronization(dirAttr, "ltr"_s);
+            anchorElement->setAttributeWithoutSynchronization(hrefAttr, AtomStringImpl::add((__bridge CFStringRef)correspondingURL.get()).get());
+            anchorElement->setAttributeWithoutSynchronization(dirAttr, "ltr"_atom);
 
             if (shouldUseLightLinks) {
                 document->updateStyleIfNeeded();
@@ -698,14 +698,14 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
 
             // Add a special attribute to mark this URLification as the result of data detectors.
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectorsAttr, trueAtom());
-            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_typeAttr, dataDetectorTypeForCategory(PAL::softLink_DataDetectorsCore_DDResultGetCategory(coreResult)));
-            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, identifier.get());
+            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_typeAttr, AtomStringImpl::add(protect((__bridge CFStringRef)dataDetectorTypeForCategory(PAL::softLink_DataDetectorsCore_DDResultGetCategory(coreResult))).get()).get());
+            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, AtomStringImpl::add((__bridge CFStringRef)identifier.get()).get());
 
             parentNode->insertBefore(WTF::move(anchorElement), currentTextNode.get());
 
             contentOffset = range.end.offset;
 
-            lastNodeContent = currentTextNode->data().substring(range.end.offset, currentTextNode->length() - range.end.offset);
+            lastNodeContent = substring(currentTextNode->data(), range.end.offset, currentTextNode->length() - range.end.offset);
             lastTextNodeToUpdate = WTF::move(currentTextNode);
         }
     }
@@ -805,9 +805,9 @@ void DataDetection::removeDataDetectedLinksInDocument(Document&)
 
 #endif
 
-const String& DataDetection::dataDetectorURLProtocol()
+const RefPtr<StringImpl>& DataDetection::dataDetectorURLProtocol()
 {
-    static NeverDestroyed<String> protocol(MAKE_STATIC_STRING_IMPL("x-apple-data-detectors"));
+    static NeverDestroyed<RefPtr<StringImpl>> protocol(MAKE_STATIC_STRING_IMPL("x-apple-data-detectors"));
     return protocol;
 }
 
@@ -897,7 +897,7 @@ Vector<SimpleRange> DataDetection::detectRanges(const SimpleRange& contextRange,
     fullPlainTextString = makeStringByReplacingAll(fullPlainTextString, '\n', " "_s);
 
     RetainPtr scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
-    RetainPtr scanQuery = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
+    RetainPtr scanQuery = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, createCFString(fullPlainTextString).get(), CFRangeMake(0, length(fullPlainTextString))));
 
     if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get()))
         return ranges;
@@ -929,7 +929,7 @@ Ref<HTMLDivElement> DataDetection::createElementForImageOverlay(Document& docume
     auto container = HTMLDivElement::create(document);
     if (RefPtr frame = document.frame()) {
         auto resultIdentifier = frame->dataDetectionResults().addImageOverlayDataDetectionResult(info.result.get());
-        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, AtomString::number(resultIdentifier.toUInt64()));
+        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, AtomStringImpl::number(resultIdentifier.toUInt64()));
     }
     return container;
 }

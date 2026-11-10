@@ -48,18 +48,18 @@
 
 namespace WebKit {
 
-static inline JSValueRef makeErrorValue(JSGlobalContextRef contextRef, const String& errorMessage)
+static inline JSValueRef makeErrorValue(JSGlobalContextRef contextRef, StringImpl* errorMessage)
 {
     auto argument = JSValueMakeString(contextRef, toJSString(errorMessage).get());
     return JSObjectMakeError(contextRef, 1, &argument, 0);
 }
 
-JSValueRef WebExtensionAPIRuntimeBase::reportError(String errorMessage, JSGlobalContextRef contextRef, NOESCAPE const Function<void()>& handler)
+JSValueRef WebExtensionAPIRuntimeBase::reportError(RefPtr<StringImpl> errorMessage, JSGlobalContextRef contextRef, NOESCAPE const Function<void()>& handler)
 {
-    ASSERT(!errorMessage.isEmpty());
+    ASSERT(!isEmpty(errorMessage));
     ASSERT(contextRef);
 
-    RELEASE_LOG_ERROR(Extensions, "Runtime error reported: %" PUBLIC_LOG_STRING, errorMessage.utf8());
+    RELEASE_LOG_ERROR(Extensions, "Runtime error reported: %" PUBLIC_LOG_STRING, utf8(errorMessage));
 
     auto result = Protected(contextRef, makeErrorValue(contextRef, errorMessage));
 
@@ -73,8 +73,8 @@ JSValueRef WebExtensionAPIRuntimeBase::reportError(String errorMessage, JSGlobal
 
     if (!m_lastErrorAccessed) {
         // Log the error to the console if it wasn't checked in the callback.
-        RefPtr consoleString = toJSString("console"_s);
-        RefPtr errorString = toJSString("error"_s);
+        RefPtr consoleString = toJSString("console"_si);
+        RefPtr errorString = toJSString("error"_si);
         JSObjectRef globalObject = JSContextGetGlobalObject(contextRef);
         JSObjectRef consoleObject = JSValueToObject(contextRef, JSObjectGetProperty(contextRef, globalObject, consoleString.get(), nullptr), nullptr);
         if (consoleObject) {
@@ -93,14 +93,14 @@ JSValueRef WebExtensionAPIRuntimeBase::reportError(String errorMessage, JSGlobal
     return result.get();
 }
 
-JSValueRef WebExtensionAPIRuntimeBase::reportError(const String& errorMessage, WebExtensionCallbackHandler& callback)
+JSValueRef WebExtensionAPIRuntimeBase::reportError(StringImpl* errorMessage, WebExtensionCallbackHandler& callback)
 {
     return reportError(errorMessage, callback.globalContext(), [&]() {
         callback.call();
     });
 }
 
-bool WebExtensionAPIRuntime::parseConnectOptions(RefPtr<JSON::Value> options, std::optional<String>& name, const String& sourceKey, String& outExceptionString)
+bool WebExtensionAPIRuntime::parseConnectOptions(RefPtr<JSON::Value> options, std::optional<RefPtr<StringImpl>>& name, StringImpl* sourceKey, RefPtr<StringImpl>& outExceptionString)
 {
     if (!options)
         return true;
@@ -114,8 +114,8 @@ bool WebExtensionAPIRuntime::parseConnectOptions(RefPtr<JSON::Value> options, st
     if (!runtimeObject)
         return false;
 
-    auto nameString = runtimeObject->getString(nameKey);
-    if (!nameString.isEmpty())
+    auto nameString = runtimeObject->getString(StringImpl::create(nameKey).ptr());
+    if (!isEmpty(nameString))
         name = nameString;
 
     return true;
@@ -128,7 +128,7 @@ bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage
         return false;
 
     if (name == "connectNative"_s || name == "sendNativeMessage"_s)
-        return extensionContext->hasPermission("nativeMessaging"_s);
+        return extensionContext->hasPermission("nativeMessaging"_si);
 
     ASSERT_NOT_REACHED();
     return false;
@@ -141,20 +141,20 @@ RefPtr<JSON::Object> WebExtensionAPIRuntime::getManifest()
     return protect(extensionContext())->manifest();
 }
 
-URL WebExtensionAPIRuntime::getURL(const String& resourcePath, String& outExceptionString)
+URL WebExtensionAPIRuntime::getURL(StringImpl* resourcePath, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getURL
 
     return URL { extensionContext().baseURL(), resourcePath };
 }
 
-String WebExtensionAPIRuntime::getVersion()
+RefPtr<StringImpl> WebExtensionAPIRuntime::getVersion()
 {
     RefPtr manifest = protect(extensionContext())->manifest();
-    return manifest ? manifest->getString(versionKey) : nullString();
+    return manifest ? manifest->getString(StringImpl::create(versionKey).ptr()) : nullString();
 }
 
-String WebExtensionAPIRuntime::runtimeIdentifier()
+RefPtr<StringImpl> WebExtensionAPIRuntime::runtimeIdentifier()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/id
 
@@ -183,8 +183,8 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
 
     auto globalContext = callback->globalContext();
     callback->call(fromObject(callback->globalContext(), {
-        { "os"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(osValue).get())) },
-        { "arch"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(archValue).get())) }
+        { "os"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(StringImpl::create(osValue).ptr()).get())) },
+        { "arch"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(StringImpl::create(archValue).ptr()).get())) }
     }));
 }
 
@@ -234,20 +234,20 @@ double WebExtensionAPIRuntime::getFrameId(JSContextRef context, JSValueRef targe
     return toWebAPI(toWebExtensionFrameIdentifier(*frame));
 }
 
-String WebExtensionAPIRuntime::getDocumentId(JSContextRef context, JSValueRef target, String& outExceptionString)
+RefPtr<StringImpl> WebExtensionAPIRuntime::getDocumentId(JSContextRef context, JSValueRef target, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://github.com/w3c/webextensions/blob/main/proposals/runtime_get_document_id.md
 
     RefPtr frame = target ? WebFrame::contentFrameForWindowOrFrameElement(context, target) : nullptr;
     if (!frame) {
-        outExceptionString = toErrorString(nullString(), "target"_s, "is not a valid window or frame element"_s);
-        return String();
+        outExceptionString = toErrorString(nullString(), "target"_si, "is not a valid window or frame element"_si);
+        return nullptr;
     }
 
     auto documentIdentifier = toDocumentIdentifier(*frame);
     if (!documentIdentifier) {
-        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occurred"_s);
-        return String();
+        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occurred"_si);
+        return nullptr;
     }
 
     return documentIdentifier.value().toString();
@@ -327,18 +327,18 @@ JSValueRef WebExtensionAPIRuntime::platformOS(JSContextRef context)
     });
 }
 
-void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, const String& extensionID, const WebExtensionMessage& message, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, StringImpl* extensionID, const WebExtensionMessage& message, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
     if (message.length() > webExtensionMaxMessageLength) {
-        outExceptionString = toErrorString(nullString(), "message"_s, "it exceeded the maximum allowed length"_s);
+        outExceptionString = toErrorString(nullString(), "message"_si, "it exceeded the maximum allowed length"_si);
         return;
     }
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_s);
+        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_si);
         return;
     }
 
@@ -369,21 +369,21 @@ void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIden
 #endif
 }
 
-RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, JSContextRef context, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString)
+RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, JSContextRef context, StringImpl* extensionID, RefPtr<JSON::Value> options, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_s);
+        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_si);
         return nullptr;
     }
 
-    std::optional<String> name;
-    if (!parseConnectOptions(options, name, "options"_s, outExceptionString))
+    std::optional<RefPtr<StringImpl>> name;
+    if (!parseConnectOptions(options, name, "options"_si, outExceptionString))
         return nullptr;
 
-    String resolvedName = name.value_or(nullString());
+    RefPtr<StringImpl> resolvedName = name.value_or(nullString());
 
     WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
@@ -412,12 +412,12 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifi
     return port;
 }
 
-void WebExtensionAPIRuntime::sendNativeMessage(WebFrame& frame, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIRuntime::sendNativeMessage(WebFrame& frame, StringImpl* applicationID, StringImpl* messageJSON, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendNativeMessage
 
 #if PLATFORM(COCOA)
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendNativeMessage(applicationID, messageJSON), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendNativeMessage(applicationID, messageJSON), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -428,7 +428,7 @@ void WebExtensionAPIRuntime::sendNativeMessage(WebFrame& frame, const String& ap
 #endif
 }
 
-RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebPageProxyIdentifier webPageProxyIdentifier, JSContextRef context, const String& applicationID)
+RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebPageProxyIdentifier webPageProxyIdentifier, JSContextRef context, StringImpl* applicationID)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connectNative
 
@@ -447,18 +447,18 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebPageProxyId
     return port;
 }
 
-void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, StringImpl* extensionID, StringImpl* messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
-    if (messageJSON.length() > webExtensionMaxMessageLength) {
-        outExceptionString = toErrorString(nullString(), "message"_s, "it exceeded the maximum allowed length"_s);
+    if (length(messageJSON) > webExtensionMaxMessageLength) {
+        outExceptionString = toErrorString(nullString(), "message"_si, "it exceeded the maximum allowed length"_si);
         return;
     }
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_s);
+        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_si);
         return;
     }
 
@@ -484,7 +484,7 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
     }
 
 #if PLATFORM(COCOA)
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, WebExtensionError>&& result) {
         if (!result) {
             callback->call();
             return;
@@ -495,21 +495,21 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
 #endif
 }
 
-RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page, WebFrame& frame, JSContextRef context, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString)
+RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page, WebFrame& frame, JSContextRef context, StringImpl* extensionID, RefPtr<JSON::Value> options, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
 
-    std::optional<String> name;
-    if (!WebExtensionAPIRuntime::parseConnectOptions(options, name, "options"_s, outExceptionString))
+    std::optional<RefPtr<StringImpl>> name;
+    if (!WebExtensionAPIRuntime::parseConnectOptions(options, name, "options"_si, outExceptionString))
         return nullptr;
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_s);
+        outExceptionString = toErrorString(nullString(), nullString(), "an unexpected error occured"_si);
         return nullptr;
     }
 
-    String resolvedName = name.value_or(nullString());
+    RefPtr<StringImpl> resolvedName = name.value_or(nullString());
 
     WebExtensionMessageSenderParameters senderParameters {
         std::nullopt, // unique identifier
@@ -658,7 +658,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWo
     }
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, StringImpl* name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
     if (!hasDOMWrapperWorld(contentWorldType)) {
         completionHandler({ });
@@ -705,7 +705,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
     completionHandler(WTF::move(firedEventCounts));
 }
 
-void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, StringImpl* name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
@@ -726,7 +726,7 @@ void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWo
     }
 }
 
-inline String toWebAPI(WebExtensionContextInstallReason installReason)
+inline RefPtr<StringImpl> toWebAPI(WebExtensionContextInstallReason installReason)
 {
     switch (installReason) {
     case WebExtensionContextInstallReason::None:
@@ -747,14 +747,14 @@ inline String toWebAPI(WebExtensionContextInstallReason installReason)
     return nullString();
 }
 
-void WebExtensionContextProxy::dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason installReason, String previousVersion)
+void WebExtensionContextProxy::dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason installReason, RefPtr<StringImpl> previousVersion)
 {
     Ref<JSON::Object> details = JSON::Object::create();
 
-    details->setString(reasonKey, toWebAPI(installReason));
+    details->setString(StringImpl::create(reasonKey).ptr(), toWebAPI(installReason));
 
     if (installReason == WebExtensionContextInstallReason::ExtensionUpdate)
-        details->setString(previousVersionKey, previousVersion);
+        details->setString(StringImpl::create(previousVersionKey).ptr(), previousVersion);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         protect(protect(namespaceObject.runtime())->onInstalled())->invokeListenersWithJSONArgument(details->toJSONString());

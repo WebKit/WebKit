@@ -44,11 +44,11 @@ std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSGloba
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto errorTypeValue = errorInstance.get(lexicalGlobalObject, vm.propertyNames->name);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
-    String errorTypeString = errorTypeValue.toWTFString(lexicalGlobalObject);
+    RefPtr<StringImpl> errorTypeString = errorTypeValue.toWTFString(lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     PropertyDescriptor messageDescriptor;
-    String message;
+    RefPtr<StringImpl> message;
     if (errorInstance.getOwnPropertyDescriptor(lexicalGlobalObject, vm.propertyNames->message, messageDescriptor) && messageDescriptor.isDataDescriptor()) {
         EXCEPTION_ASSERT(!scope.exception());
         message = messageDescriptor.value().toWTFString(lexicalGlobalObject);
@@ -72,7 +72,7 @@ std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSGloba
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     PropertyDescriptor sourceURLDescriptor;
-    String sourceURL;
+    RefPtr<StringImpl> sourceURL;
     if (errorInstance.getOwnPropertyDescriptor(lexicalGlobalObject, vm.propertyNames->sourceURL, sourceURLDescriptor) && sourceURLDescriptor.isDataDescriptor()) {
         EXCEPTION_ASSERT(!scope.exception());
         sourceURL = sourceURLDescriptor.value().toWTFString(lexicalGlobalObject);
@@ -80,7 +80,7 @@ std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSGloba
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     PropertyDescriptor stackDescriptor;
-    String stack;
+    RefPtr<StringImpl> stack;
     if (errorInstance.getOwnPropertyDescriptor(lexicalGlobalObject, vm.propertyNames->stack, stackDescriptor) && stackDescriptor.isDataDescriptor()) {
         EXCEPTION_ASSERT(!scope.exception());
         stack = stackDescriptor.value().toWTFString(lexicalGlobalObject);
@@ -88,7 +88,7 @@ std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSGloba
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     PropertyDescriptor causeDescriptor;
-    String cause;
+    RefPtr<StringImpl> cause;
     if (errorInstance.getOwnPropertyDescriptor(lexicalGlobalObject, vm.propertyNames->cause, causeDescriptor) && causeDescriptor.isDataDescriptor()) {
         EXCEPTION_ASSERT(!scope.exception());
         cause = causeDescriptor.value().toWTFString(lexicalGlobalObject);

@@ -134,13 +134,13 @@ private:
             menu->appendItem(item);
     }
     
-    void contextMenuItemSelected(ContextMenuAction action, const String&) override
+    void contextMenuItemSelected(ContextMenuAction action, StringImpl*) override
     {
         if (m_frontendHost) {
             UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(dynamicDowncast<Document>(executionContext(m_globalObject))));
             int itemNumber = action - ContextMenuItemBaseCustomTag;
 
-            ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuItemSelected"_s, WebCore::functionCallHandlerFromAnyThread);
+            ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuItemSelected"_si, WebCore::functionCallHandlerFromAnyThread);
             function.appendArgument(itemNumber);
             std::ignore = function.call();
         }
@@ -149,7 +149,7 @@ private:
     void contextMenuCleared() override
     {
         if (m_frontendHost) {
-            ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuCleared"_s, WebCore::functionCallHandlerFromAnyThread);
+            ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuCleared"_si, WebCore::functionCallHandlerFromAnyThread);
             std::ignore = function.call();
 
             m_frontendHost->m_menuProvider = nullptr;
@@ -210,20 +210,20 @@ void InspectorFrontendHost::loaded()
         m_client->frontendLoaded();
 }
 
-static std::optional<InspectorFrontendClient::DockSide> dockSideFromString(const String& dockSideString)
+static std::optional<InspectorFrontendClient::DockSide> dockSideFromString(StringImpl* dockSideString)
 {
-    if (dockSideString == "undocked"_s)
+    if (equal(dockSideString, "undocked"_s))
         return InspectorFrontendClient::DockSide::Undocked;
-    if (dockSideString == "right"_s)
+    if (equal(dockSideString, "right"_s))
         return InspectorFrontendClient::DockSide::Right;
-    if (dockSideString == "left"_s)
+    if (equal(dockSideString, "left"_s))
         return InspectorFrontendClient::DockSide::Left;
-    if (dockSideString == "bottom"_s)
+    if (equal(dockSideString, "bottom"_s))
         return InspectorFrontendClient::DockSide::Bottom;
     return std::nullopt;
 }
 
-bool InspectorFrontendHost::supportsDockSide(const String& dockSideString)
+bool InspectorFrontendHost::supportsDockSide(StringImpl* dockSideString)
 {
     if (!m_client)
         return false;
@@ -235,7 +235,7 @@ bool InspectorFrontendHost::supportsDockSide(const String& dockSideString)
     return m_client->supportsDockSide(dockSide.value());
 }
 
-void InspectorFrontendHost::requestSetDockSide(const String& dockSideString)
+void InspectorFrontendHost::requestSetDockSide(StringImpl* dockSideString)
 {
     if (!m_client)
         return;
@@ -274,7 +274,7 @@ void InspectorFrontendHost::bringToFront()
         m_client->bringToFront();
 }
 
-void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
+void InspectorFrontendHost::inspectedURLChanged(StringImpl* newURL)
 {
     if (m_client)
         m_client->inspectedURLChanged(newURL);
@@ -291,9 +291,9 @@ float InspectorFrontendHost::zoomFactor()
     return m_client ? m_client->pageZoomFactor() : 1.0;
 }
 
-void InspectorFrontendHost::setForcedAppearance(String appearance)
+void InspectorFrontendHost::setForcedAppearance(RefPtr<StringImpl> appearance)
 {
-    if (appearance == "light"_s) {
+    if (equal(appearance, "light"_s)) {
         if (m_frontendPage)
             protect(m_frontendPage)->setUseDarkAppearanceOverride(false);
         if (m_client)
@@ -301,7 +301,7 @@ void InspectorFrontendHost::setForcedAppearance(String appearance)
         return;
     }
 
-    if (appearance == "dark"_s) {
+    if (equal(appearance, "dark"_s)) {
         if (m_frontendPage)
             protect(m_frontendPage)->setUseDarkAppearanceOverride(true);
         if (m_client)
@@ -315,12 +315,12 @@ void InspectorFrontendHost::setForcedAppearance(String appearance)
         m_client->setForcedAppearance(InspectorFrontendClient::Appearance::System);
 }
 
-String InspectorFrontendHost::userInterfaceLayoutDirection()
+RefPtr<StringImpl> InspectorFrontendHost::userInterfaceLayoutDirection()
 {
     if (m_client && m_client->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::RTL)
-        return "rtl"_s;
+        return "rtl"_si;
 
-    return "ltr"_s;
+    return "ltr"_si;
 }
 
 void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)
@@ -358,35 +358,35 @@ bool InspectorFrontendHost::isRemote() const
     return m_client && m_client->isRemote();
 }
 
-String InspectorFrontendHost::localizedStringsURL() const
+RefPtr<StringImpl> InspectorFrontendHost::localizedStringsURL() const
 {
-    return m_client ? m_client->localizedStringsURL() : String();
+    return m_client ? m_client->localizedStringsURL() : nullptr;
 }
 
-String InspectorFrontendHost::backendCommandsURL() const
+RefPtr<StringImpl> InspectorFrontendHost::backendCommandsURL() const
 {
-    return m_client ? m_client->backendCommandsURL() : String();
+    return m_client ? m_client->backendCommandsURL() : nullptr;
 }
 
-static String debuggableTypeToString(DebuggableType debuggableType)
+static RefPtr<StringImpl> debuggableTypeToString(DebuggableType debuggableType)
 {
     switch (debuggableType) {
     case DebuggableType::ITML:
-        return "itml"_s;
+        return "itml"_si;
     case DebuggableType::JavaScript:
-        return "javascript"_s;
+        return "javascript"_si;
     case DebuggableType::Page:
-        return "page"_s;
+        return "page"_si;
     case DebuggableType::ServiceWorker:
-        return "service-worker"_s;
+        return "service-worker"_si;
     case DebuggableType::WebPage:
-        return "web-page"_s;
+        return "web-page"_si;
     case DebuggableType::WasmDebugger:
-        return "wasm-debugger"_s;
+        return "wasm-debugger"_si;
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 InspectorFrontendHost::DebuggableInfo InspectorFrontendHost::debuggableInfo() const
@@ -408,39 +408,39 @@ unsigned InspectorFrontendHost::inspectionLevel() const
     return m_client ? m_client->inspectionLevel() : 1;
 }
 
-String InspectorFrontendHost::platform() const
+RefPtr<StringImpl> InspectorFrontendHost::platform() const
 {
 #if PLATFORM(COCOA)
-    return "mac"_s;
+    return "mac"_si;
 #elif OS(WINDOWS)
-    return "windows"_s;
+    return "windows"_si;
 #elif OS(LINUX)
-    return "linux"_s;
+    return "linux"_si;
 #elif OS(FREEBSD)
-    return "freebsd"_s;
+    return "freebsd"_si;
 #elif OS(OPENBSD)
-    return "openbsd"_s;
+    return "openbsd"_si;
 #else
-    return "unknown"_s;
+    return "unknown"_si;
 #endif
 }
 
-String InspectorFrontendHost::platformVersionName() const
+RefPtr<StringImpl> InspectorFrontendHost::platformVersionName() const
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000
-    return "tahoe"_s;
+    return "tahoe"_si;
 #else
     return emptyString();
 #endif
 }
 
-void InspectorFrontendHost::copyText(const String& text)
+void InspectorFrontendHost::copyText(StringImpl* text)
 {
     auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : std::nullopt;
     Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(WTF::move(pageID)))->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
-void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence)
+void InspectorFrontendHost::killText(StringImpl* text, bool shouldPrependToKillRing, bool shouldStartNewSequence)
 {
     if (!m_frontendPage)
         return;
@@ -455,7 +455,7 @@ void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKil
     editor->addTextToKillRing(text, insertionMode);
 }
 
-void InspectorFrontendHost::openURLExternally(const String& url)
+void InspectorFrontendHost::openURLExternally(StringImpl* url)
 {
     if (WTF::isValidJavaScriptURL(url))
         return;
@@ -464,7 +464,7 @@ void InspectorFrontendHost::openURLExternally(const String& url)
         m_client->openURLExternally(url);
 }
 
-void InspectorFrontendHost::revealFileExternally(const String& path)
+void InspectorFrontendHost::revealFileExternally(StringImpl* path)
 {
     if (!WTF::protocolIs(path, "file"_s))
         return;
@@ -499,14 +499,14 @@ bool InspectorFrontendHost::canLoad()
     return false;
 }
 
-void InspectorFrontendHost::load(const String& path, Ref<DeferredPromise>&& promise)
+void InspectorFrontendHost::load(StringImpl* path, Ref<DeferredPromise>&& promise)
 {
     if (!m_client) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
-    m_client->load(path, [promise = WTF::move(promise)](const String& content) {
+    m_client->load(path, [promise = WTF::move(promise)](StringImpl* content) {
         if (!content)
             promise->reject(ExceptionCode::NotFoundError);
         else
@@ -534,7 +534,7 @@ void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
             return;
         }
 
-        String serializedColor;
+        RefPtr<StringImpl> serializedColor;
         // FIXME: <webkit.org/b/241198> Inspector frontend should support all color function gamuts.
         if (color->colorSpace() != ColorSpaceName::SRGB && color->colorSpace() != ColorSpaceName::DisplayP3) {
             // DisplayP3 is the least-lossy format the frontend currently supports. This conversion will only be lossy
@@ -548,7 +548,7 @@ void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
     });
 }
 
-void InspectorFrontendHost::sendMessageToBackend(const String& message)
+void InspectorFrontendHost::sendMessageToBackend(StringImpl* message)
 {
     if (m_client)
         m_client->sendMessageToBackend(message);
@@ -559,12 +559,12 @@ void InspectorFrontendHost::sendMessageToBackend(const String& message)
 static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&& items, ContextMenu& menu)
 {
     for (auto& item : items) {
-        if (item.type == "separator"_s) {
-            menu.appendItem({ ContextMenuItemType::Separator, ContextMenuItemTagNoAction, { } });
+        if (equal(item.type, "separator"_s)) {
+            menu.appendItem({ ContextMenuItemType::Separator, ContextMenuItemTagNoAction, nullptr });
             continue;
         }
 
-        if (item.type == "subMenu"_s && item.subItems) {
+        if (equal(item.type, "subMenu"_s) && item.subItems) {
             ContextMenu subMenu;
             populateContextMenu(WTF::move(*item.subItems), subMenu);
 
@@ -572,7 +572,7 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
             continue;
         }
 
-        auto type = item.type == "checkbox"_s ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
+        auto type = equal(item.type, "checkbox"_s) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
         auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.value_or(0));
         ContextMenuItem menuItem = { type, action, item.label };
         if (item.enabled)
@@ -637,10 +637,10 @@ bool InspectorFrontendHost::isUnderTest()
     return m_client && m_client->isUnderTest();
 }
 
-void InspectorFrontendHost::unbufferedLog(const String& message)
+void InspectorFrontendHost::unbufferedLog(StringImpl* message)
 {
     // This is used only for debugging inspector tests.
-    SAFE_WTFLOGALWAYS("%s", message.utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(message));
 }
 
 void InspectorFrontendHost::beep()
@@ -695,7 +695,7 @@ bool InspectorFrontendHost::supportsShowCertificate() const
     return m_frontendPage->settings().inspectorSupportsShowingCertificate();
 }
 
-bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
+bool InspectorFrontendHost::showCertificate(StringImpl* serializedCertificate)
 {
     if (!m_client)
         return false;
@@ -758,7 +758,7 @@ static std::optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSON
     return std::nullopt;
 }
 
-void InspectorFrontendHost::logDiagnosticEvent(const String& eventName, const String& payloadString)
+void InspectorFrontendHost::logDiagnosticEvent(StringImpl* eventName, StringImpl* payloadString)
 {
     if (!supportsDiagnosticLogging())
         return;
@@ -791,7 +791,7 @@ bool InspectorFrontendHost::supportsWebExtensions()
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const String& extensionTabID, HTMLIFrameElement& extensionFrameElement)
+void InspectorFrontendHost::didShowExtensionTab(StringImpl* extensionID, StringImpl* extensionTabID, HTMLIFrameElement& extensionFrameElement)
 {
     if (!m_client)
         return;
@@ -803,7 +803,7 @@ void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const
     m_client->didShowExtensionTab(extensionID, extensionTabID, frame->frameID());
 }
 
-void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
+void InspectorFrontendHost::didHideExtensionTab(StringImpl* extensionID, StringImpl* extensionTabID)
 {
     if (!m_client)
         return;
@@ -811,7 +811,7 @@ void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const
     m_client->didHideExtensionTab(extensionID, extensionTabID);
 }
 
-void InspectorFrontendHost::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const String& newURLString)
+void InspectorFrontendHost::didNavigateExtensionTab(StringImpl* extensionID, StringImpl* extensionTabID, StringImpl* newURLString)
 {
     if (!m_client)
         return;
@@ -819,7 +819,7 @@ void InspectorFrontendHost::didNavigateExtensionTab(const String& extensionID, c
     m_client->didNavigateExtensionTab(extensionID, extensionTabID, URL { newURLString });
 }
 
-void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
+void InspectorFrontendHost::inspectedPageDidNavigate(StringImpl* newURLString)
 {
     if (!m_client)
         return;
@@ -827,16 +827,16 @@ void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
     m_client->inspectedPageDidNavigate(URL { newURLString });
 }
 
-ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)
+ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, StringImpl* scriptSource)
 {
     RefPtr frame = dynamicDowncast<LocalFrame>(extensionFrameElement.contentFrame());
     if (!frame)
-        return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_si };
 
     CheckedRef script = frame->script();
     JSDOMGlobalObject* frameGlobalObject = script->globalObject(mainThreadNormalWorldSingleton());
     if (!frameGlobalObject)
-        return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_si };
 
     JSC::SuspendExceptionScope scope(frameGlobalObject->vm());
     ValueOrException result = script->evaluateInWorld(ScriptSourceCode(scriptSource, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorldSingleton());
@@ -849,7 +849,7 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
-String InspectorFrontendHost::getPath(const File& file) const
+RefPtr<StringImpl> InspectorFrontendHost::getPath(const File& file) const
 {
     return file.path();
 }

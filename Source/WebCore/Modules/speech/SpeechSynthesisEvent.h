@@ -38,23 +38,23 @@ class SpeechSynthesisEvent : public Event {
 public:
     using Init = SpeechSynthesisEventInit;
 
-    NODELETE static Ref<SpeechSynthesisEvent> create(const AtomString& type, Init&&);
+    NODELETE static Ref<SpeechSynthesisEvent> create(AtomStringImpl* type, Init&&);
 
     const SpeechSynthesisUtterance& utterance() const { return m_utterance; }
     unsigned long charIndex() const { return m_charIndex; }
     unsigned long charLength() const { return m_charLength; }
     float elapsedTime() const { return m_elapsedTime; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
 protected:
-    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, Init&&);
+    SpeechSynthesisEvent(enum EventInterfaceType, AtomStringImpl* type, Init&&);
 
 private:
     const Ref<SpeechSynthesisUtterance> m_utterance;
     unsigned long m_charIndex;
     unsigned long m_charLength;
     float m_elapsedTime;
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace WebCore

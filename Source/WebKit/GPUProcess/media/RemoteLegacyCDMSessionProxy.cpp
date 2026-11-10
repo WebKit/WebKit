@@ -88,7 +88,7 @@ static RefPtr<WebCore::SharedBuffer> convertToOptionalSharedBuffer(T array)
     return SharedBuffer::create(array->span());
 }
 
-void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, const String& mediaKeysHashSalt, GenerateKeyCallback&& completion)
+void RemoteLegacyCDMSessionProxy::generateKeyRequest(StringImpl* mimeType, RefPtr<SharedBuffer>&& initData, StringImpl* mediaKeysHashSalt, GenerateKeyCallback&& completion)
 {
     if (!m_session) {
         completion({ }, emptyString(), 0, 0);
@@ -102,7 +102,7 @@ void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, Ref
     }
 
     m_mediaKeysHashSalt = mediaKeysHashSalt;
-    String destinationURL;
+    RefPtr<StringImpl> destinationURL;
     unsigned short errorCode { 0 };
     uint32_t systemCode { 0 };
 
@@ -139,7 +139,7 @@ void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCa
     completion(succeeded, convertToOptionalSharedBuffer(nextMessage), errorCode, systemCode);
 }
 
-RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(const String& keyId)
+RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(StringImpl* keyId)
 {
     if (!m_session)
         return nullptr;
@@ -147,12 +147,12 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(const Stri
     return m_session->cachedKeyForKeyID(keyId);
 }
 
-void RemoteLegacyCDMSessionProxy::cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&& completion)
+void RemoteLegacyCDMSessionProxy::cachedKeyForKeyID(RefPtr<StringImpl> keyId, CachedKeyForKeyIDCallback&& completion)
 {
     completion(convertToOptionalSharedBuffer(getCachedKeyForKeyId(keyId)));
 }
 
-void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, String destinationURL)
+void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, RefPtr<StringImpl> destinationURL)
 {
     RefPtr factory = m_factory.get();
     if (!factory)
@@ -178,7 +178,7 @@ void RemoteLegacyCDMSessionProxy::sendError(MediaKeyErrorCode errorCode, uint32_
     gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
 }
 
-String RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory() const
+RefPtr<StringImpl> RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory() const
 {
     RefPtr factory = m_factory.get();
     if (!factory)

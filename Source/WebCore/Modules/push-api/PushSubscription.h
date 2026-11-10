@@ -55,7 +55,7 @@ public:
 
     NODELETE WEBCORE_EXPORT const PushSubscriptionData& data() const;
 
-    NODELETE const String& endpoint() const;
+    NODELETE const RefPtr<StringImpl>& endpoint() const;
     NODELETE std::optional<EpochTimeStamp> expirationTime() const;
     PushSubscriptionOptions& options() const;
     NODELETE const Vector<uint8_t>& clientECDHPublicKey() const;

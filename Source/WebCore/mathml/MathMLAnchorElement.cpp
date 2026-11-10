@@ -71,14 +71,14 @@ URL MathMLAnchorElement::hrefURL() const
     return href();
 }
 
-AtomString MathMLAnchorElement::target() const
+RefPtr<AtomStringImpl> MathMLAnchorElement::target() const
 {
     return attributeWithoutSynchronization(MathMLNames::targetAttr);
 }
 
 void MathMLAnchorElement::setFullURL(const URL& fullURL)
 {
-    setAttributeWithoutSynchronization(MathMLNames::hrefAttr, AtomString { fullURL.string() });
+    setAttributeWithoutSynchronization(MathMLNames::hrefAttr, AtomStringImpl::add(fullURL.string()).get());
 }
 
 void MathMLAnchorElement::defaultEventHandler(Event& event)
@@ -94,7 +94,7 @@ void MathMLAnchorElement::defaultEventHandler(Event& event)
             event.setDefaultHandled();
             URL completedURL = hrefURL();
 
-            AtomString downloadAttr = parseDownloadAttribute(*this, completedURL, MathMLNames::downloadAttr);
+            RefPtr<AtomStringImpl> downloadAttr = parseDownloadAttribute(*this, completedURL, MathMLNames::downloadAttr);
             auto referrerPolicy = effectiveReferrerPolicy(m_linkRelations, this->referrerPolicy());
 
             sendPings(*this, MathMLNames::pingAttr, completedURL);
@@ -114,7 +114,7 @@ void MathMLAnchorElement::defaultEventHandler(Event& event)
     MathMLElement::defaultEventHandler(event);
 }
 
-void MathMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLAnchorElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -126,10 +126,10 @@ void MathMLAnchorElement::attributeChanged(const QualifiedName& name, const Atom
 }
 
 // Falls back to using <base> element's target if the anchor does not have one.
-AtomString MathMLAnchorElement::effectiveTarget() const
+RefPtr<AtomStringImpl> MathMLAnchorElement::effectiveTarget() const
 {
     auto effectiveTarget = target();
-    if (effectiveTarget.isEmpty())
+    if (isEmpty(effectiveTarget))
         effectiveTarget = document().baseTarget();
     return makeTargetBlankIfHasDanglingMarkup(effectiveTarget);
 }
@@ -142,7 +142,7 @@ DOMTokenList& MathMLAnchorElement::relList()
     return *m_relList;
 }
 
-String MathMLAnchorElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> MathMLAnchorElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }

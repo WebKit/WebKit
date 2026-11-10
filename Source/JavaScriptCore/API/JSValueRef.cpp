@@ -399,7 +399,7 @@ JSValueRef JSBigIntCreateWithDouble(JSContextRef ctx, double value, JSValueRef* 
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (!isInteger(value)) {
-        setException(ctx, exception, createRangeError(globalObject, "Not an integer"_s));
+        setException(ctx, exception, createRangeError(globalObject, "Not an integer"_si));
         return nullptr;
     }
 
@@ -685,7 +685,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    return toRef(globalObject, jsString(vm, string ? string->string() : String()));
+    return toRef(globalObject, jsString(vm, string ? string->string() : nullptr));
 }
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
@@ -696,12 +696,12 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
-    String str = string->string();
-    if (str.is8Bit()) {
-        LiteralParser<Latin1Character, JSONReviverMode::Disabled> parser(globalObject, str.span8(), StrictJSON);
+    RefPtr<StringImpl> str = string->string();
+    if (is8Bit(str)) {
+        LiteralParser<Latin1Character, JSONReviverMode::Disabled> parser(globalObject, span8(str), StrictJSON);
         return toRef(globalObject, parser.tryLiteralParse());
     }
-    LiteralParser<char16_t, JSONReviverMode::Disabled> parser(globalObject, str.span16(), StrictJSON);
+    LiteralParser<char16_t, JSONReviverMode::Disabled> parser(globalObject, span16(str), StrictJSON);
     return toRef(globalObject, parser.tryLiteralParse());
 }
 
@@ -717,7 +717,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue value = toJS(globalObject, apiValue);
-    String result = JSONStringify(globalObject, value, indent);
+    RefPtr<StringImpl> result = JSONStringify(globalObject, value, indent);
     if (exception)
         *exception = nullptr;
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)

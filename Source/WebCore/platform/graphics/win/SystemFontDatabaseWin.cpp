@@ -75,7 +75,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
     }
     float size = shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : std::abs(logFont.lfHeight);
     auto weight = logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue();
-    return { logFont.lfFaceName, size, weight };
+    return { AtomStringImpl::add(unsafeMakeSpan(ucharFrom(logFont.lfFaceName), wcslen(logFont.lfFaceName))), size, weight };
 }
 
 void SystemFontDatabase::platformInvalidate()

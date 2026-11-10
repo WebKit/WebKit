@@ -60,8 +60,8 @@ private:
     void startMonitoringGamepads(WebCore::GamepadProviderClient&) final;
     void stopMonitoringGamepads(WebCore::GamepadProviderClient&) final;
     const Vector<WeakPtr<WebCore::PlatformGamepad>>& platformGamepads() final;
-    void playEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
-    void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
+    void playEffect(unsigned gamepadIndex, StringImpl* gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(unsigned gamepadIndex, StringImpl* gamepadID, CompletionHandler<void()>&&) final;
 
     WeakHashSet<WebCore::GamepadProviderClient> m_clients;
 

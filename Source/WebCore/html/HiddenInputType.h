@@ -49,7 +49,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
@@ -57,7 +57,7 @@ private:
     bool rendererIsNeeded() final;
     bool storesValueSeparateFromAttribute() final;
     bool shouldRespectHeightAndWidthAttributes() final;
-    void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void setValue(StringImpl*, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
     bool appendFormData(DOMFormData&) const final;
     bool dirAutoUsesValue() const final;
 };

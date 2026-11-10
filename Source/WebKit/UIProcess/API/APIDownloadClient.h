@@ -61,8 +61,8 @@ public:
     virtual void didReceiveAuthenticationChallenge(WebKit::DownloadProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel); }
     virtual void didReceiveData(WebKit::DownloadProxy&, uint64_t, uint64_t, uint64_t) { }
     virtual void decidePlaceholderPolicy(WebKit::DownloadProxy&, CompletionHandler<void(WebKit::UseDownloadPlaceholder, const WTF::URL&)>&& completionHandler) { completionHandler(WebKit::UseDownloadPlaceholder::No, { }); }
-    virtual void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy&, const WebCore::ResourceResponse&, const WTF::String&, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) { completionHandler(WebKit::AllowOverwrite::No, { }); }
-    virtual void didCreateDestination(WebKit::DownloadProxy&, const WTF::String&) { }
+    virtual void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy&, const WebCore::ResourceResponse&, StringImpl*, CompletionHandler<void(WebKit::AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler) { completionHandler(WebKit::AllowOverwrite::No, { }); }
+    virtual void didCreateDestination(WebKit::DownloadProxy&, StringImpl*) { }
     virtual void didFinish(WebKit::DownloadProxy&) { }
     virtual void didFail(WebKit::DownloadProxy&, const WebCore::ResourceError&, API::Data* resumeData) { }
 #if HAVE(MODERN_DOWNLOADPROGRESS)

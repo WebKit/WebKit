@@ -108,8 +108,8 @@ private:
     void respondReceived(Respond&&) final;
     void downgrade(Authenticator& id, Ref<Authenticator>&& downgradedAuthenticator) final;
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
-    void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
-    void requestNewPin(uint64_t minLength, CompletionHandler<void(const WTF::String&)>&&) final;
+    void requestPin(uint64_t retries, CompletionHandler<void(StringImpl*)>&&) final;
+    void requestNewPin(uint64_t minLength, CompletionHandler<void(StringImpl*)>&&) final;
     void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) final;
     void cancelRequest() final;
 

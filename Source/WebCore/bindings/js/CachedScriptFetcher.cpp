@@ -37,17 +37,17 @@
 
 namespace WebCore {
 
-Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
+Ref<CachedScriptFetcher> CachedScriptFetcher::create(AtomStringImpl* charset)
 {
     return adoptRef(*new CachedScriptFetcher(charset));
 }
 
-CachedResourceHandle<CachedResource> CachedScriptFetcher::requestModuleResource(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
+CachedResourceHandle<CachedResource> CachedScriptFetcher::requestModuleResource(Document& document, const URL& sourceURL, FetchOptionsDestination destination, RefPtr<StringImpl>&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
 {
-    return requestResourceWithCache(document, sourceURL, destination, defaultCrossOriginModeForModule, WTF::move(integrity), { }, serviceWorkersMode, referrer);
+    return requestResourceWithCache(document, sourceURL, destination, StringImpl::create(defaultCrossOriginModeForModule).ptr(), WTF::move(integrity), { }, serviceWorkersMode, referrer);
 }
 
-RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
+RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, StringImpl* crossOriginMode, RefPtr<StringImpl>&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
 {
     if (!document.settings().isScriptEnabled())
         return nullptr;
@@ -73,7 +73,7 @@ RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& d
     // script's URL unfiltered, e.g. to a URL scheme handler.
     if (!referrer.isEmpty() && request.resourceRequest().url().protocolIsInHTTPFamily())
         request.resourceRequest().setHTTPReferrer(referrer.strippedForUseAsReferrer().string);
-    if (!m_initiatorType.isNull())
+    if (m_initiatorType)
         request.setInitiatorType(m_initiatorType);
 
     switch (destination) {

@@ -1063,7 +1063,7 @@ void SkiaCompositingLayer::paintRepaintCounter(SkCanvas& canvas, PaintContext& c
 
     if (m_repaintCountOverlay.count != m_repaintCount) {
         m_repaintCountOverlay.count = m_repaintCount;
-        m_repaintCountOverlay.string = String::number(*m_repaintCount).ascii();
+        m_repaintCountOverlay.string = ascii(makeString(*m_repaintCount));
         SkRect textBounds;
         font.measureText(m_repaintCountOverlay.string.data(), m_repaintCountOverlay.string.length(), SkTextEncoding::kUTF8, &textBounds);
         m_repaintCountOverlay.backgroundWidth = textBounds.width() + padding * 2;

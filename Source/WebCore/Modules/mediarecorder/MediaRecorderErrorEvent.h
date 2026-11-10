@@ -39,14 +39,14 @@ public:
         Ref<DOMException> error;
     };
 
-    NODELETE static Ref<MediaRecorderErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    NODELETE static Ref<MediaRecorderErrorEvent> create(const AtomString&, Exception&&);
+    NODELETE static Ref<MediaRecorderErrorEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<MediaRecorderErrorEvent> create(AtomStringImpl*, Exception&&);
 
     DOMException& error() const { return m_error; }
 
 private:
-    MediaRecorderErrorEvent(const AtomString&, Init&&, IsTrusted);
-    MediaRecorderErrorEvent(const AtomString&, Exception&&);
+    MediaRecorderErrorEvent(AtomStringImpl*, Init&&, IsTrusted);
+    MediaRecorderErrorEvent(AtomStringImpl*, Exception&&);
 
     const Ref<DOMException> m_error;
 };

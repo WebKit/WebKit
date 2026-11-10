@@ -32,7 +32,7 @@ namespace WebCore {
 class ProgressEvent : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ProgressEvent);
 public:
-    static Ref<ProgressEvent> create(const AtomString& type, bool lengthComputable, double loaded, double total)
+    static Ref<ProgressEvent> create(AtomStringImpl* type, bool lengthComputable, double loaded, double total)
     {
         return adoptRef(*new ProgressEvent(EventInterfaceType::ProgressEvent, type, lengthComputable, loaded, total));
     }
@@ -43,7 +43,7 @@ public:
         double total { 0 };
     };
 
-    static Ref<ProgressEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<ProgressEvent> create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new ProgressEvent(EventInterfaceType::ProgressEvent, type, initializer, isTrusted));
     }
@@ -53,8 +53,8 @@ public:
     double total() const { return m_total; }
 
 protected:
-    ProgressEvent(enum EventInterfaceType, const AtomString& type, bool lengthComputable, double loaded, double total);
-    ProgressEvent(enum EventInterfaceType, const AtomString&, const Init&, IsTrusted);
+    ProgressEvent(enum EventInterfaceType, AtomStringImpl* type, bool lengthComputable, double loaded, double total);
+    ProgressEvent(enum EventInterfaceType, AtomStringImpl*, const Init&, IsTrusted);
 
 private:
     bool isProgressEvent() const final { return true; }

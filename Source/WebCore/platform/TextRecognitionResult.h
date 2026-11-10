@@ -45,14 +45,14 @@ namespace WebCore {
 struct CharacterRange;
 
 struct TextRecognitionWordData {
-    TextRecognitionWordData(const String& theText, FloatQuad&& quad, bool leadingWhitespace)
+    TextRecognitionWordData(StringImpl* theText, FloatQuad&& quad, bool leadingWhitespace)
         : text(theText)
         , normalizedQuad(WTF::move(quad))
         , hasLeadingWhitespace(leadingWhitespace)
     {
     }
 
-    String text;
+    RefPtr<StringImpl> text;
     FloatQuad normalizedQuad;
     bool hasLeadingWhitespace { true };
 };
@@ -89,13 +89,13 @@ struct TextRecognitionDataDetector {
 #endif // ENABLE(DATA_DETECTION)
 
 struct TextRecognitionBlockData {
-    TextRecognitionBlockData(const String& theText, FloatQuad&& quad)
+    TextRecognitionBlockData(StringImpl* theText, FloatQuad&& quad)
         : text(theText)
         , normalizedQuad(WTF::move(quad))
     {
     }
 
-    String text;
+    RefPtr<StringImpl> text;
     FloatQuad normalizedQuad;
 };
 

@@ -62,13 +62,13 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
 {
     auto* document = dynamicDowncast<Document>(context);
     if (!document)
-        return Exception { ExceptionCode::NotSupportedError, "OfflineAudioContext is only supported in Document contexts"_s };
+        return Exception { ExceptionCode::NotSupportedError, "OfflineAudioContext is only supported in Document contexts"_si };
     if (!options.numberOfChannels || options.numberOfChannels > maxNumberOfChannels)
-        return Exception { ExceptionCode::NotSupportedError, "Number of channels is not in range"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Number of channels is not in range"_si };
     if (!options.length)
-        return Exception { ExceptionCode::NotSupportedError, "length cannot be 0"_s };
+        return Exception { ExceptionCode::NotSupportedError, "length cannot be 0"_si };
     if (!isSupportedSampleRate(options.sampleRate))
-        return Exception { ExceptionCode::NotSupportedError, "sampleRate is not in range"_s };
+        return Exception { ExceptionCode::NotSupportedError, "sampleRate is not in range"_si };
 
     Ref audioContext = adoptRef(*new OfflineAudioContext(*document, options));
     audioContext->suspendIfNeeded();
@@ -133,23 +133,23 @@ void OfflineAudioContext::uninitialize()
     BaseAudioContext::uninitialize();
 
     if (auto promise = std::exchange(m_pendingRenderingPromise, nullptr); promise && !isContextStopped())
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is going away"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is going away"_si });
 }
 
 void OfflineAudioContext::startRendering(Ref<DeferredPromise>&& promise)
 {
     if (isStopped()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is stopped"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is stopped"_si });
         return;
     }
 
     if (m_didStartRendering) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Rendering was already started"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Rendering was already started"_si });
         return;
     }
 
     if (!renderTarget()) {
-        promise->reject(Exception { ExceptionCode::NotSupportedError, "Failed to create audio buffer"_s });
+        promise->reject(Exception { ExceptionCode::NotSupportedError, "Failed to create audio buffer"_si });
         return;
     }
 
@@ -170,32 +170,32 @@ void OfflineAudioContext::startRendering(Ref<DeferredPromise>&& promise)
 void OfflineAudioContext::suspendRendering(double suspendTime, Ref<DeferredPromise>&& promise)
 {
     if (isStopped()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is stopped"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is stopped"_si });
         return;
     }
 
     if (suspendTime < 0) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "suspendTime cannot be negative"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "suspendTime cannot be negative"_si });
         return;
     }
 
     double totalRenderDuration = length() / sampleRate();
     if (totalRenderDuration <= suspendTime) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "suspendTime cannot be greater than total rendering duration"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "suspendTime cannot be greater than total rendering duration"_si });
         return;
     }
 
     size_t frame = AudioUtilities::timeToSampleFrame(suspendTime, sampleRate());
     frame = AudioUtilities::renderQuantumSize * ((frame + AudioUtilities::renderQuantumSize - 1) / AudioUtilities::renderQuantumSize);
     if (frame < currentSampleFrame()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Suspension frame is earlier than current frame"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Suspension frame is earlier than current frame"_si });
         return;
     }
 
     Locker locker { graphLock() };
     auto addResult = m_suspendRequests.add(frame, promise);
     if (!addResult.isNewEntry) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "There is already a pending suspend request at this frame"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "There is already a pending suspend request at this frame"_si });
         return;
     }
 }
@@ -203,11 +203,11 @@ void OfflineAudioContext::suspendRendering(double suspendTime, Ref<DeferredPromi
 void OfflineAudioContext::resumeRendering(Ref<DeferredPromise>&& promise)
 {
     if (!m_didStartRendering) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Cannot resume an offline audio context that has not started"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Cannot resume an offline audio context that has not started"_si });
         return;
     }
     if (isClosed()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Cannot resume an offline audio context that is closed"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Cannot resume an offline audio context that is closed"_si });
         return;
     }
     if (state() == AudioContextState::Running) {
@@ -277,7 +277,7 @@ void OfflineAudioContext::finishedRendering(bool didRendering)
         queueTaskToDispatchEvent(*this, TaskSource::MediaElement, OfflineAudioCompletionEvent::create(*renderedBuffer));
         settleRenderingPromise(renderedBuffer.releaseNonNull());
     } else
-        settleRenderingPromise(Exception { ExceptionCode::InvalidStateError, "Offline rendering failed"_s });
+        settleRenderingPromise(Exception { ExceptionCode::InvalidStateError, "Offline rendering failed"_si });
 }
 
 void OfflineAudioContext::settleRenderingPromise(ExceptionOr<Ref<AudioBuffer>>&& result)

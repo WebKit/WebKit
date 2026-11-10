@@ -73,12 +73,12 @@ RefPtr<CachedScript> LoadableSpeculationRules::requestSpeculationRules(Document&
     options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::DoPolicyCheck;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.serviceWorkersMode = ServiceWorkersMode::All;
-    options.integrity = ""_s;
+    options.integrity = ""_si;
     options.referrerPolicy = ReferrerPolicy::EmptyString;
     options.fetchPriority = RequestPriority::Auto;
     options.destination = FetchOptionsDestination::Speculationrules;
 
-    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, ""_s);
+    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, ""_si);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setPriority(ResourceLoadPriority::Low);
 
@@ -120,14 +120,14 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
     }
 
     // 3. If the result of extracting a MIME type from response's header list does not have an essence of "application/speculationrules+json", then abort these steps.
-    if (resource.mimeType() != "application/speculationrules+json") {
+    if (!equal(resource.mimeType(), "application/speculationrules+json")) {
         document->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Invalid speculation rules MIME type "_s, m_url.string()));
         return;
     }
 
     // 4. Let bodyText be the result of UTF-8 decoding bodyBytes.
-    String speculationRulesText = cachedScript->script(CachedScript::ShouldDecodeAsUTF8Only::Yes).toString();
-    if (speculationRulesText.isEmpty())
+    RefPtr<StringImpl> speculationRulesText = cachedScript->script(CachedScript::ShouldDecodeAsUTF8Only::Yes).toString();
+    if (isEmpty(speculationRulesText))
         return;
 
     if (RefPtr frame = document->frame()) {

@@ -53,7 +53,7 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
         init.maxRetransmitTime = *options.maxPacketLifeTime;
     if (options.maxRetransmits)
         init.maxRetransmits = *options.maxRetransmits;
-    init.protocol = options.protocol.utf8().toStdString();
+    init.protocol = utf8(options.protocol).toStdString();
     init.negotiated = options.negotiated;
     if (options.id)
         init.id = *options.id;
@@ -91,7 +91,7 @@ RTCDataChannelInit LibWebRTCDataChannelHandler::dataChannelInit() const
     return init;
 }
 
-String LibWebRTCDataChannelHandler::label() const
+RefPtr<StringImpl> LibWebRTCDataChannelHandler::label() const
 {
     return fromStdString(m_channel->label());
 }
@@ -109,7 +109,7 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
             Ref contiguousData = data->makeContiguous();
             client.didReceiveRawData(contiguousData->span());
-        }, [&](String& text) {
+        }, [&](RefPtr<StringImpl>& text) {
             client.didReceiveStringData(text);
         }, [&](StateChange stateChange) {
             if (stateChange.error) {
@@ -181,7 +181,7 @@ void LibWebRTCDataChannelHandler::checkState()
         if (error && !error->ok()) {
             auto rtcError = toRTCError(*error);
             if (!rtcError)
-                rtcError = RTCError::create(RTCError::Init { RTCErrorDetailType::DataChannelFailure, { }, { }, { }, { } }, String { });
+                rtcError = RTCError::create(RTCError::Init { RTCErrorDetailType::DataChannelFailure, { }, { }, { }, { } }, nullptr);
             client->didDetectError(rtcError.releaseNonNull());
         }
         client->didChangeReadyState(state);
@@ -196,7 +196,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
         if (buffer.binary)
             m_bufferedMessages.append(SharedBuffer::create(data));
         else
-            m_bufferedMessages.append(String::fromUTF8(data));
+            m_bufferedMessages.append(StringImpl::fromUTF8(data));
         return;
     }
 
@@ -210,7 +210,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
         if (buffer->binary)
             client->didReceiveRawData(data);
         else
-            client->didReceiveStringData(String::fromUTF8(data));
+            client->didReceiveStringData(StringImpl::fromUTF8(data));
     });
 }
 

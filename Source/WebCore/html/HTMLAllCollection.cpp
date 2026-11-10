@@ -47,12 +47,12 @@ inline HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType t
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#dom-htmlallcollection-item
-std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
+std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(AtomStringImpl* nameOrIndex) const
 {
-    if (nameOrIndex.isNull())
+    if (!nameOrIndex)
         return std::nullopt;
 
-    if (auto index = JSC::parseIndex(*nameOrIndex.impl())) {
+    if (auto index = JSC::parseIndex(*nameOrIndex)) {
         if (RefPtr element = item(index.value()))
             return Variant<Ref<HTMLCollection>, Ref<Element>> { element.releaseNonNull() };
         return std::nullopt;
@@ -62,7 +62,7 @@ std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::nam
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#concept-get-all-named
-std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::namedItemOrItems(const AtomString& name) const
+std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::namedItemOrItems(AtomStringImpl* name) const
 {
     auto namedItems = this->namedItems(name);
 
@@ -74,7 +74,7 @@ std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::nam
     return Variant<Ref<HTMLCollection>, Ref<Element>> { Ref<HTMLCollection> { downcast<Document>(ownerNode()).allFilteredByName(name) } };
 }
 
-HTMLAllNamedSubCollection::HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomString& name)
+HTMLAllNamedSubCollection::HTMLAllNamedSubCollection(Document& document, CollectionType type, AtomStringImpl* name)
     : CachedHTMLCollection(document, type)
     , m_name(name)
 {

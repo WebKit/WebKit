@@ -65,13 +65,13 @@ Ref<JSON::Object> FloatSize::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("width"_s, m_width);
-    object->setDouble("height"_s, m_height);
+    object->setDouble("width"_si, m_width);
+    object->setDouble("height"_si, m_height);
 
     return object;
 }
 
-String FloatSize::toJSONString() const
+RefPtr<StringImpl> FloatSize::toJSONString() const
 {
     return toJSONObject()->toJSONString();
 }

@@ -61,13 +61,13 @@ inline bool EventTarget::hasEventListeners() const
     return data && !data->eventListenerMap.isEmpty();
 }
 
-inline bool EventTarget::hasEventListeners(const AtomString& eventType) const
+inline bool EventTarget::hasEventListeners(AtomStringImpl* eventType) const
 {
     auto* data = eventTargetData();
     return data && data->eventListenerMap.contains(eventType);
 }
 
-inline bool EventTarget::hasCapturingEventListeners(const AtomString& eventType)
+inline bool EventTarget::hasCapturingEventListeners(AtomStringImpl* eventType)
 {
     auto* data = eventTargetData();
     return data && data->eventListenerMap.containsCapturing(eventType);

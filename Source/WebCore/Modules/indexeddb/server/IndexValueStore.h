@@ -104,7 +104,7 @@ public:
     Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey, CursorDuplicity);
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:

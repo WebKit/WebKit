@@ -46,7 +46,7 @@ private:
 
     bool isSelectFallbackButtonElement() const final { return true; }
 
-    void setText(const String&);
+    void setText(StringImpl*);
 
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* hostStyle) final;
 };

@@ -115,27 +115,27 @@ void TextChecker::toggleSpellingUIIsShowing()
     notImplemented();
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String&)
+void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, StringImpl*)
 {
     notImplemented();
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String&, const GrammarDetail&)
+void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, StringImpl*, const GrammarDetail&)
 {
     notImplemented();
 }
 
-void TextChecker::getGuessesForWord(SpellDocumentTag, const String&, const String&, int32_t, Vector<String>&, bool)
+void TextChecker::getGuessesForWord(SpellDocumentTag, StringImpl*, StringImpl*, int32_t, Vector<RefPtr<StringImpl>>&, bool)
 {
     notImplemented();
 }
 
-void TextChecker::learnWord(SpellDocumentTag, const String&)
+void TextChecker::learnWord(SpellDocumentTag, StringImpl*)
 {
     notImplemented();
 }
 
-void TextChecker::ignoreWord(SpellDocumentTag, const String&)
+void TextChecker::ignoreWord(SpellDocumentTag, StringImpl*)
 {
     notImplemented();
 }

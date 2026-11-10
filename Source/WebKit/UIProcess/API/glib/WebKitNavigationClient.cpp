@@ -66,8 +66,8 @@ private:
         RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
         if (!frame || !frame->isMainFrame())
             return;
-        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
-            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(utf8(resourceError.domain())),
+            toWebKitError(resourceError.errorCode()), utf8(resourceError.localizedDescription()).legacyCStringPointer()));
         if (resourceError.tlsErrors()) {
             webkitWebViewLoadFailedWithTLSErrors(m_webView, resourceError.failingURL().string(), error.get(),
                 static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()), resourceError.certificate());
@@ -90,8 +90,8 @@ private:
         RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
         if (!frame || !frame->isMainFrame())
             return;
-        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
-            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(utf8(resourceError.domain())),
+            toWebKitError(resourceError.errorCode()), utf8(resourceError.localizedDescription()).legacyCStringPointer()));
         webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().string(), error.get());
     }
 

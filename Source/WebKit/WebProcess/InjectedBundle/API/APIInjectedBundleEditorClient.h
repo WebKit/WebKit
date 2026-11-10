@@ -55,16 +55,16 @@ public:
     virtual bool shouldBeginEditing(WebKit::WebPage&, const WebCore::SimpleRange&) { return true; }
     virtual bool shouldEndEditing(WebKit::WebPage&, const WebCore::SimpleRange&) { return true; }
     virtual bool shouldInsertNode(WebKit::WebPage&, WebCore::Node&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
-    virtual bool shouldInsertText(WebKit::WebPage&, const WTF::String&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
+    virtual bool shouldInsertText(WebKit::WebPage&, StringImpl*, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
     virtual bool shouldDeleteRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&) { return true; }
     virtual bool shouldChangeSelectedRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&, const std::optional<WebCore::SimpleRange>&, WebCore::Affinity, bool) { return true; }
     virtual bool shouldApplyStyle(WebKit::WebPage&, const WebCore::StyleProperties&, const std::optional<WebCore::SimpleRange>&) { return true; }
-    virtual void didBeginEditing(WebKit::WebPage&, const WTF::String&) { }
-    virtual void didEndEditing(WebKit::WebPage&, const WTF::String&) { }
-    virtual void didChange(WebKit::WebPage&, const WTF::String&) { }
-    virtual void didChangeSelection(WebKit::WebPage&, const WTF::String&) { }
+    virtual void didBeginEditing(WebKit::WebPage&, StringImpl*) { }
+    virtual void didEndEditing(WebKit::WebPage&, StringImpl*) { }
+    virtual void didChange(WebKit::WebPage&, StringImpl*) { }
+    virtual void didChangeSelection(WebKit::WebPage&, StringImpl*) { }
     virtual void willWriteToPasteboard(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&) { }
-    virtual void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<WTF::String>&, Vector<RefPtr<WebCore::SharedBuffer>>&) { }
+    virtual void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<RefPtr<StringImpl>>&, Vector<RefPtr<WebCore::SharedBuffer>>&) { }
     virtual void didWriteToPasteboard(WebKit::WebPage&) { }
     virtual bool performTwoStepDrop(WebKit::WebPage&, WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool) { return false; }
 };

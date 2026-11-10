@@ -107,7 +107,7 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    return toRef(JSCallbackFunction::create(vm, globalObject, callAsFunction, name ? name->string() : "anonymous"_s));
+    return toRef(JSCallbackFunction::create(vm, globalObject, callAsFunction, name ? name->string() : "anonymous"_si));
 }
 
 JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor)
@@ -818,7 +818,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     jsObject->getPropertyNames(globalObject, arrayBuilder, DontEnumPropertiesMode::Exclude);
 
     propertyNames->array = WTF::map(arrayBuilder, [](auto& item) {
-        return OpaqueJSString::tryCreate(item.string()).releaseNonNull();
+        return OpaqueJSString::tryCreate(item.impl()).releaseNonNull();
     });
 
     return JSPropertyNameArrayRetain(propertyNames);

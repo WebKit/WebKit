@@ -362,15 +362,15 @@ struct LogArgument;
 
 template<>
 struct LogArgument<WebKit::FullScreenState> {
-    static String toString(WebKit::FullScreenState state)
+    static RefPtr<StringImpl> toString(WebKit::FullScreenState state)
     {
         switch (state) {
-        case WebKit::NotInFullScreen: return "NotInFullScreen"_s;
-        case WebKit::WaitingToEnterFullScreen: return "WaitingToEnterFullScreen"_s;
-        case WebKit::EnteringFullScreen: return "EnteringFullScreen"_s;
-        case WebKit::InFullScreen: return "InFullScreen"_s;
-        case WebKit::WaitingToExitFullScreen: return "WaitingToExitFullScreen"_s;
-        case WebKit::ExitingFullScreen: return "ExitingFullScreen"_s;
+        case WebKit::NotInFullScreen: return "NotInFullScreen"_si;
+        case WebKit::WaitingToEnterFullScreen: return "WaitingToEnterFullScreen"_si;
+        case WebKit::EnteringFullScreen: return "EnteringFullScreen"_si;
+        case WebKit::InFullScreen: return "InFullScreen"_si;
+        case WebKit::WaitingToExitFullScreen: return "WaitingToExitFullScreen"_si;
+        case WebKit::ExitingFullScreen: return "ExitingFullScreen"_si;
         }
     }
 };

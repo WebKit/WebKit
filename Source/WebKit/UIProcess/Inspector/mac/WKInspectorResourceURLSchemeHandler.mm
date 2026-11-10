@@ -57,7 +57,7 @@
 - (NSSet<NSURL *> *)mainResourceURLsForCSP
 {
     if (!_mainResourceURLsForCSP)
-        _mainResourceURLsForCSP = adoptNS([[NSSet alloc] initWithObjects:adoptNS([[NSURL alloc] initWithString:WebKit::WebInspectorUIProxy::inspectorPageURL().createNSString().get()]).get(), adoptNS([[NSURL alloc] initWithString:WebKit::WebInspectorUIProxy::inspectorTestPageURL().createNSString().get()]).get(), nil]);
+        _mainResourceURLsForCSP = adoptNS([[NSSet alloc] initWithObjects:adoptNS([[NSURL alloc] initWithString:createNSString(WebKit::WebInspectorUIProxy::inspectorPageURL()).get()]).get(), adoptNS([[NSURL alloc] initWithString:createNSString(WebKit::WebInspectorUIProxy::inspectorTestPageURL()).get()]).get(), nil]);
 
     return _mainResourceURLsForCSP.get();
 }
@@ -99,7 +99,7 @@
             return;
         }
 
-        RetainPtr mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(String(fileURLForRequest.get().pathExtension)).createNSString();
+        RetainPtr mimeType = createNSString(WebCore::MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(fileURLForRequest.get().pathExtension).get()));
         if (!mimeType)
             mimeType = @"application/octet-stream";
 

@@ -35,11 +35,11 @@ class PerformancePaintTiming final : public PerformanceEntry {
 public:
     static Ref<PerformancePaintTiming> createFirstContentfulPaint(DOMHighResTimeStamp timeStamp)
     {
-        return adoptRef(*new PerformancePaintTiming("first-contentful-paint"_s, timeStamp));
+        return adoptRef(*new PerformancePaintTiming("first-contentful-paint"_si, timeStamp));
     }
 
 private:
-    PerformancePaintTiming(const String& name, DOMHighResTimeStamp timeStamp)
+    PerformancePaintTiming(StringImpl* name, DOMHighResTimeStamp timeStamp)
         : PerformanceEntry(name, timeStamp, timeStamp)
     {
     }

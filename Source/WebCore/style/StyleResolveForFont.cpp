@@ -338,21 +338,21 @@ static ResolvedFontFamily fontFamilyFromUnresolvedFontFamily(const CSSPropertyPa
 
     auto families = WTF::compactMap(unresolvedFamily, [&](auto& item) -> std::optional<WebCore::FontFamily> {
         auto [familyName, isGenericFamily] = switchOn(item,
-            [&](CSSValueID ident) -> std::pair<AtomString, bool> {
+            [&](CSSValueID ident) -> std::pair<RefPtr<AtomStringImpl>, bool> {
                 if (ident != CSSValueID::WebkitBody) {
                     // FIXME: Treat system-ui like other generic font families
                     if (ident == CSSValueID::SystemUi)
                         return { nameString(CSSValueID::SystemUi), true };
-                    return { *familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident)), true };
+                    return { AtomStringImpl::add(*familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident))), true };
                 }
-                return { AtomString(context->settingsValues().fontGenericFamilies.standardFontFamily()), false };
+                return { AtomStringImpl::add(context->settingsValues().fontGenericFamilies.standardFontFamily()), false };
             },
-            [&](const AtomString& familyString) -> std::pair<AtomString, bool> {
+            [&](AtomStringImpl* familyString) -> std::pair<RefPtr<AtomStringImpl>, bool> {
                 return { familyString, false };
             }
         );
 
-        if (familyName.isEmpty())
+        if (isEmpty(familyName))
             return std::nullopt;
 
         if (isFirstFont) {
@@ -400,7 +400,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
 
     auto useFixedDefaultSize = [](const FontCascadeDescription& fontDescription) {
         return fontDescription.familyCount() == 1
-            && fontDescription.firstFamily().name == *familyNamesData->at(FamilyNamesIndex::MonospaceFamily);
+            && fontDescription.firstFamily().name == AtomStringImpl::add(*familyNamesData->at(FamilyNamesIndex::MonospaceFamily)).get();
     };
 
     // Font family applied in the same way as StyleBuilderCustom::applyValueFontFamily

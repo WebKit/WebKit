@@ -157,8 +157,8 @@ public:
     // Names of the attributes that attr() has been seen reading from elements in this scope. These
     // are discovered by building style, so they are not derivable from the style sheets and have to
     // survive both style sheet changes and the resolver being dropped.
-    void registerSubstitutionAttribute(const AtomString&, AttributeAffectsShadowTree) const;
-    std::optional<AttributeAffectsShadowTree> substitutionAttribute(const AtomString& lowercaseLocalName) const { return m_substitutionAttributes.getOptional(lowercaseLocalName); }
+    void registerSubstitutionAttribute(AtomStringImpl*, AttributeAffectsShadowTree) const;
+    std::optional<AttributeAffectsShadowTree> substitutionAttribute(AtomStringImpl* lowercaseLocalName) const { return m_substitutionAttributes.getOptional(lowercaseLocalName); }
 
 protected:
     explicit Scope(Document&);
@@ -240,7 +240,7 @@ private:
     const UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
     const UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
 
-    mutable HashMap<AtomString, AttributeAffectsShadowTree> m_substitutionAttributes;
+    mutable HashMap<RefPtr<AtomStringImpl>, AttributeAffectsShadowTree> m_substitutionAttributes;
 };
 
 NODELETE RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

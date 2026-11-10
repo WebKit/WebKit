@@ -88,7 +88,7 @@ public:
     NODELETE bool isGlobalLexicalEnvironment() const;
     bool isNestedLexicalScope() const;
 
-    String name() const;
+    RefPtr<StringImpl> name() const;
     DebuggerLocation location() const;
 
     JSValue caughtValue(JSGlobalObject*) const;

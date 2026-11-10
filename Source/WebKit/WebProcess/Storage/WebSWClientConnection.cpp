@@ -167,7 +167,7 @@ void WebSWClientConnection::postMessageToServiceWorkerClientAndNotifyWhenDispatc
     }, CompletionHandlerCallThread::AnyThread } });
 }
 
-void WebSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, WebCore::ServiceWorkerClientData&& data, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
+void WebSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, WebCore::ServiceWorkerClientData&& data, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&& userAgent)
 {
     send(Messages::WebSWServerConnection::RegisterServiceWorkerClient { clientOrigin, data, controllingServiceWorkerRegistrationIdentifier, userAgent });
 }
@@ -282,7 +282,7 @@ void WebSWClientConnection::clear()
 
     auto retrieveRecordResponseBodyCallbacks = std::exchange(m_retrieveRecordResponseBodyCallbacks, { });
     for (auto& callback : retrieveRecordResponseBodyCallbacks.values())
-        callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Connection to network process lost"_s }));
+        callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Connection to network process lost"_si }));
 
     // Destroying these tasks fires their captured CompletionHandlerWithFinalizer
     // objects, which resolves the corresponding JS-visible promises with default values.
@@ -350,7 +350,7 @@ void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
 }
 
 #if ENABLE(NOTIFICATION_EVENT)
-void WebSWClientConnection::getNotifications(const URL& registrationURL, const String& tag, GetNotificationsCallback&& callback)
+void WebSWClientConnection::getNotifications(const URL& registrationURL, StringImpl* tag, GetNotificationsCallback&& callback)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
@@ -387,7 +387,7 @@ void WebSWClientConnection::disableNavigationPreload(WebCore::ServiceWorkerRegis
     });
 }
 
-void WebSWClientConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
+void WebSWClientConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, RefPtr<StringImpl>&& headerValue, ExceptionOrVoidCallback&& callback)
 {
     sendWithAsyncReply(Messages::WebSWServerConnection::SetNavigationPreloadHeaderValue { registrationIdentifier, headerValue }, [callback = WTF::move(callback)](auto&& error) mutable {
         if (error)
@@ -403,14 +403,14 @@ void WebSWClientConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
     });
 }
 
-void WebSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
+void WebSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
     sendWithAsyncReply(Messages::WebSWServerConnection::StartBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier, requests, options }, [callback = WTF::move(callback)](auto&& result) mutable {
         callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
-void WebSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
+void WebSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
     sendWithAsyncReply(Messages::WebSWServerConnection::BackgroundFetchInformation { registrationIdentifier, backgroundFetchIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
         callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
@@ -422,12 +422,12 @@ void WebSWClientConnection::backgroundFetchIdentifiers(ServiceWorkerRegistration
     sendWithAsyncReply(Messages::WebSWServerConnection::BackgroundFetchIdentifiers { registrationIdentifier }, WTF::move(callback));
 }
 
-void WebSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, AbortBackgroundFetchCallback&& callback)
+void WebSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, AbortBackgroundFetchCallback&& callback)
 {
     sendWithAsyncReply(Messages::WebSWServerConnection::AbortBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier }, WTF::move(callback));
 }
 
-void WebSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& recordOptions, MatchBackgroundFetchCallback&& callback)
+void WebSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, RetrieveRecordsOptions&& recordOptions, MatchBackgroundFetchCallback&& callback)
 {
     sendWithAsyncReply(Messages::WebSWServerConnection::MatchBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier, recordOptions }, WTF::move(callback));
 }

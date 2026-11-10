@@ -43,22 +43,22 @@ Exception convertToException(Error error)
 {
     switch (error) {
     case Error::NotImplemented:
-        return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Not implemented"_si };
     case Error::ReadDisk:
-        return Exception { ExceptionCode::TypeError, "Failed reading data from the file system"_s };
+        return Exception { ExceptionCode::TypeError, "Failed reading data from the file system"_si };
     case Error::WriteDisk:
-        return Exception { ExceptionCode::TypeError, "Failed writing data to the file system"_s };
+        return Exception { ExceptionCode::TypeError, "Failed writing data to the file system"_si };
     case Error::QuotaExceeded:
-        return Exception { ExceptionCode::QuotaExceededError, "Quota exceeded"_s };
+        return Exception { ExceptionCode::QuotaExceededError, "Quota exceeded"_si };
     case Error::Internal:
-        return Exception { ExceptionCode::TypeError, "Internal error"_s };
+        return Exception { ExceptionCode::TypeError, "Internal error"_si };
     case Error::Stopped:
-        return Exception { ExceptionCode::TypeError, "Context is stopped"_s };
+        return Exception { ExceptionCode::TypeError, "Context is stopped"_si };
     case Error::CORP:
-        return Exception { ExceptionCode::TypeError, "Cross-Origin-Resource-Policy failure"_s };
+        return Exception { ExceptionCode::TypeError, "Cross-Origin-Resource-Policy failure"_si };
     }
     ASSERT_NOT_REACHED();
-    return Exception { ExceptionCode::TypeError, "Connection stopped"_s };
+    return Exception { ExceptionCode::TypeError, "Connection stopped"_si };
 }
 
 Exception convertToExceptionAndLog(ScriptExecutionContext* context, Error error)
@@ -71,7 +71,7 @@ Exception convertToExceptionAndLog(ScriptExecutionContext* context, Error error)
 
 static inline bool matchURLs(const ResourceRequest& request, const URL& cachedURL, const CacheQueryOptions& options)
 {
-    ASSERT(options.ignoreMethod || request.httpMethod() == "GET"_s);
+    ASSERT(options.ignoreMethod || equal(request.httpMethod(), "GET"_s));
 
     if (!options.ignoreSearch)
         return equalIgnoringFragmentIdentifier(request.url(), cachedURL);
@@ -91,12 +91,12 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
     if (options.ignoreVary)
         return true;
 
-    String varyValue = cachedResponse.httpHeaderField(WebCore::HTTPHeaderName::Vary);
-    if (varyValue.isNull())
+    RefPtr<StringImpl> varyValue = cachedResponse.httpHeaderField(WebCore::HTTPHeaderName::Vary);
+    if (!varyValue)
         return true;
 
     bool isVarying = false;
-    varyValue.split(',', [&](StringView view) {
+    split(varyValue, ',', [&](StringView view) {
         if (isVarying)
             return;
         auto nameView = view.trim(isASCIIWhitespaceWithoutFF<char16_t>);
@@ -104,13 +104,13 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
             isVarying = true;
             return;
         }
-        isVarying = cachedRequest.httpHeaderField(nameView) != request.httpHeaderField(nameView);
+        isVarying = !equal(cachedRequest.httpHeaderField(nameView), request.httpHeaderField(nameView));
     });
 
     return !isVarying;
 }
 
-bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions& options)
+bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& varyHeaders, const CacheQueryOptions& options)
 {
     if (!matchURLs(request, url, options))
         return false;
@@ -122,7 +122,7 @@ bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVar
         return false;
 
     for (const auto& pair : varyHeaders) {
-        if (pair.value != request.httpHeaderField(pair.key))
+        if (!equal(pair.value, request.httpHeaderField(pair.key)))
             return false;
     }
     return true;
@@ -163,7 +163,7 @@ CrossThreadRecord toCrossThreadRecord(Record&& record)
         record.requestHeadersGuard,
         WTF::move(record.request).isolatedCopy(),
         WTF::move(record.options).isolatedCopy(),
-        WTF::move(record.referrer).isolatedCopy(),
+        isolatedCopy(WTF::move(record.referrer)),
         record.responseHeadersGuard,
         record.response.crossThreadData(),
         isolatedResponseBody(record.responseBody),
@@ -195,7 +195,7 @@ CrossThreadRecord CrossThreadRecord::isolatedCopy() &&
         requestHeadersGuard,
         WTF::move(request).isolatedCopy(),
         WTF::move(options).isolatedCopy(),
-        WTF::move(referrer).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(referrer)),
         responseHeadersGuard,
         WTF::move(response).isolatedCopy(),
         isolatedResponseBody(responseBody),

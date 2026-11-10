@@ -163,7 +163,7 @@ public:
 
     using SecurityOriginSet = HashSet<Ref<SecurityOrigin>>;
     WEBCORE_EXPORT void removeResourcesWithOrigin(const SecurityOrigin&);
-    void removeResourcesWithOrigin(const SecurityOrigin&, const String& cachePartition);
+    void removeResourcesWithOrigin(const SecurityOrigin&, StringImpl* cachePartition);
     WEBCORE_EXPORT void removeResourcesWithOrigin(const ClientOrigin&);
     WEBCORE_EXPORT void removeResourcesWithOrigins(PAL::SessionID, const HashSet<Ref<SecurityOrigin>>&);
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
@@ -178,7 +178,7 @@ public:
     WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
 private:
-    using CachedResourceMap = HashMap<std::pair<URL, String /* partitionName */>, RefPtr<CachedResource>>;
+    using CachedResourceMap = HashMap<std::pair<URL, RefPtr<StringImpl> /* partitionName */>, RefPtr<CachedResource>>;
     using LRUList = WeakListHashSet<CachedResource>;
 
     MemoryCache();

@@ -137,7 +137,7 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
     });
 }
 
-void WebXRSystem::obtainCurrentDevice(XRSessionMode mode, const Vector<String>& requiredFeatures, const Vector<String>& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&& callback)
+void WebXRSystem::obtainCurrentDevice(XRSessionMode mode, const Vector<RefPtr<StringImpl>>& requiredFeatures, const Vector<RefPtr<StringImpl>>& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&& callback)
 {
     if (isImmersive(mode)) {
         ensureImmersiveXRDeviceIsSelected([protectedThis = protect(*this), callback = WTF::move(callback)]() mutable {
@@ -223,7 +223,7 @@ bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow
 // https://immersive-web.github.io/webxr/#inline-session-request-is-allowed
 bool WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject(LocalDOMWindow& globalObject, Document& document, const XRSessionInit& init) const
 {
-    auto isEmptyOrViewer = [](const Vector<String>& features) {
+    auto isEmptyOrViewer = [](const Vector<RefPtr<StringImpl>>& features) {
         if (features.isEmpty())
             return true;
         if (features.size() == 1) {
@@ -375,11 +375,11 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
     // We're merging both loops in a single lambda. The only difference is that a failure on any required features
     // implies cancelling the whole process while failures in optional features are just skipped.
     enum class ParsingMode { Strict, Loose };
-    auto parseFeatures = [this, &device, mode, &resolvedFeatures, &previouslyEnabled](const Vector<String>& sessionFeatures, ParsingMode parsingMode) -> bool {
+    auto parseFeatures = [this, &device, mode, &resolvedFeatures, &previouslyEnabled](const Vector<RefPtr<StringImpl>>& sessionFeatures, ParsingMode parsingMode) -> bool {
         bool returnOnFailure = parsingMode == ParsingMode::Strict;
         for (const auto& sessionFeature : sessionFeatures) {
             // 1. If the feature is null, continue to the next entry.
-            if (sessionFeature.isNull())
+            if (!sessionFeature)
                 continue;
 
             // FIXME: This is only testing for XRReferenceSpaceType features. It

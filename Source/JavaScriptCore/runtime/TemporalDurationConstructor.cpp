@@ -75,7 +75,7 @@ TemporalDurationConstructor::TemporalDurationConstructor(VM& vm, Structure* stru
 
 void TemporalDurationConstructor::finishCreation(VM& vm, TemporalDurationPrototype* durationPrototype)
 {
-    Base::finishCreation(vm, 0, "Duration"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "Duration"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, durationPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -100,7 +100,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!isInteger(v)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_si);
         result.setField(i, v);
     }
 

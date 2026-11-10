@@ -61,7 +61,7 @@ namespace WebCore {
 bool SourceBufferPrivateGStreamer::isContentTypeSupported(const ContentType& type)
 {
     const auto& containerType = type.containerType();
-    return containerType == "audio/mpeg"_s || containerType.endsWith("mp4"_s) || containerType.endsWith("aac"_s) || containerType.endsWith("webm"_s);
+    return equal(containerType, "audio/mpeg"_s) || endsWith(containerType, "mp4"_s) || endsWith(containerType, "aac"_s) || endsWith(containerType, "webm"_s);
 }
 
 Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType, bool textTracksEnabled)
@@ -153,7 +153,7 @@ bool SourceBufferPrivateGStreamer::canSwitchToType(const ContentType& type)
 
     if (isContentTypeSupported(type)) {
         if (player)
-            GST_INFO_OBJECT(player->pipeline(), "type change %s -> %s", m_type.raw().utf8(), type.raw().utf8());
+            GST_INFO_OBJECT(player->pipeline(), "type change %s -> %s", utf8(m_type.raw()), utf8(type.raw()));
         m_type = type;
 
         return true;
@@ -231,7 +231,7 @@ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, Trac
 
         if (mappedBuffer) [[likely]] {
             auto message = makeString("Text sample (trackId="_s, trackId, ')');
-            GST_MEMDUMP_OBJECT(player->pipeline(), message.utf8().legacyCStringPointer(), mappedBuffer.data(), mappedBuffer.size());
+            GST_MEMDUMP_OBJECT(player->pipeline(), utf8(message).legacyCStringPointer(), mappedBuffer.data(), mappedBuffer.size());
         }
     }
 #endif
@@ -368,32 +368,32 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
         //           MSE_MAX_BUFFER_SIZE='*:100M'
         //           MSE_MAX_BUFFER_SIZE='video:90M,T:100000'
 
-        auto s = String::fromLatin1(std::getenv("MSE_MAX_BUFFER_SIZE"));
-        if (!s.isEmpty()) {
-            Vector<String> entries = s.split(',');
-            for (const String& entry : entries) {
-                Vector<String> keyvalue = entry.split(':');
+        auto s = StringImpl::fromLatin1(std::getenv("MSE_MAX_BUFFER_SIZE"));
+        if (!isEmpty(s)) {
+            Vector<RefPtr<StringImpl>> entries = split(s, ',');
+            for (auto& entry : entries) {
+                Vector<RefPtr<StringImpl>> keyvalue = split(entry, ':');
                 if (keyvalue.size() != 2)
                     continue;
-                auto key = keyvalue[0].trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
-                auto value = keyvalue[1].trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
+                auto key = convertToLowercaseWithoutLocale(trim(keyvalue[0], deprecatedIsSpaceOrNewline));
+                auto value = convertToLowercaseWithoutLocale(trim(keyvalue[1], deprecatedIsSpaceOrNewline));
                 size_t units = 1;
-                if (value.endsWith('k'))
+                if (endsWith(value, 'k'))
                     units = 1024;
-                else if (value.endsWith('m'))
+                else if (endsWith(value, 'm'))
                     units = 1024 * 1024;
                 if (units != 1)
-                    value = value.left(value.length()-1);
+                    value = left(value, length(value)-1);
                 auto parsedSize = parseInteger<size_t>(value);
                 if (!parsedSize)
                     continue;
                 size_t size = *parsedSize;
 
-                if (key == "a"_s || key == "audio"_s || key == "*"_s)
+                if (equal(key, "a"_s) || equal(key, "audio"_s) || equal(key, "*"_s))
                     maxBufferSizeAudio = size * units;
-                if (key == "v"_s || key == "video"_s || key == "*"_s)
+                if (equal(key, "v"_s) || equal(key, "video"_s) || equal(key, "*"_s))
                     maxBufferSizeVideo = size * units;
-                if (key == "t"_s || key == "text"_s || key == "*"_s)
+                if (equal(key, "t"_s) || equal(key, "text"_s) || equal(key, "*"_s))
                     maxBufferSizeText = size * units;
             }
         }

@@ -78,7 +78,7 @@ void PhoneNumberPossessionCoordinator::deref() const
 void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document& document, PhoneNumberPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
 {
     if (mediation == MediationRequirement::Conditional) {
-        promise.reject(Exception { ExceptionCode::TypeError, "Conditional mediation is not supported for phone number possession credentials."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Conditional mediation is not supported for phone number possession credentials."_si });
         return;
     }
 
@@ -88,42 +88,42 @@ void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document
     }
 
     if (m_hasPendingRequest) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "A phone number possession request is already in progress."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "A phone number possession request is already in progress."_si });
         return;
     }
 
     Ref callerOrigin = document.securityOrigin();
     if (callerOrigin->isOpaque()) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The credential operation is not allowed in an opaque origin."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The credential operation is not allowed in an opaque origin."_si });
         return;
     }
 
     if (!m_client) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "Phone number possession is not supported."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Phone number possession is not supported."_si });
         return;
     }
 
     if (!document.isSameOriginWithAncestors()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_si });
         return;
     }
 
     RefPtr frame = document.frame();
     RefPtr window = document.window();
     if (!frame || !window || !document.page()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_si });
         return;
     }
 
     if (!document.isFullyActiveAndHasUserAttention()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document must be focused and visible."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document must be focused and visible."_si });
         return;
     }
 
-    if (request.relyingPartyIdentifier.isEmpty())
+    if (isEmpty(request.relyingPartyIdentifier))
         request.relyingPartyIdentifier = callerOrigin->domain();
     else
-        request.relyingPartyIdentifier = request.relyingPartyIdentifier.convertToASCIILowercase();
+        request.relyingPartyIdentifier = convertToASCIILowercase(request.relyingPartyIdentifier);
 
     if (auto exception = validatePhoneNumberPossessionRequest(request)) {
         promise.reject(WTF::move(*exception));
@@ -131,19 +131,19 @@ void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document
     }
 
     if (URL::hostIsIPAddress(callerOrigin->domain())) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_si });
         return;
     }
 
     // FIXME: Support related origins and remove this check.
     if (!callerOrigin->isMatchingRegistrableDomainSuffix(request.relyingPartyIdentifier)) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_si });
         return;
     }
 
     // Consume the activation last, so that a request rejected for invalid input doesn't use it up.
     if (!window->consumeTransientActivation()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "Calling get() needs to be triggered by an activation triggering user event."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "Calling get() needs to be triggered by an activation triggering user event."_si });
         return;
     }
 

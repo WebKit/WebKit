@@ -61,7 +61,7 @@ private:
     const PlatformLayerIdentifier m_layerIdentifier { PlatformLayerIdentifier::generate() };
     const WeakPtr<GraphicsLayer> m_graphicsLayer;
     const Color m_backgroundColor;
-    const String m_text;
+    const RefPtr<StringImpl> m_text;
     const Ref<PlatformCALayer> m_borderLayer;
     const Ref<PlatformCALayer> m_indicatorLayer;
 };

@@ -126,7 +126,7 @@ JSValueRef callWithArguments(JSObjectRef callbackFunction, JSRetainPtr<JSGlobalC
     if (exception) {
         JSC::JSLockHolder lock(globalObject->vm());
         auto exceptionValue = toJS(globalObject, exception);
-        RELEASE_LOG_ERROR(Extensions, "Uncaught exception in extension callback: %" PUBLIC_LOG_STRING, exceptionValue.toWTFString(globalObject).utf8());
+        RELEASE_LOG_ERROR(Extensions, "Uncaught exception in extension callback: %" PUBLIC_LOG_STRING, utf8(exceptionValue.toWTFString(globalObject)));
         WebCore::reportException(globalObject, exceptionValue);
     }
 
@@ -134,7 +134,7 @@ JSValueRef callWithArguments(JSObjectRef callbackFunction, JSRetainPtr<JSGlobalC
 }
 
 
-void WebExtensionCallbackHandler::reportError(const String& message)
+void WebExtensionCallbackHandler::reportError(StringImpl* message)
 {
     if (!m_globalContext)
         return;
@@ -147,7 +147,7 @@ void WebExtensionCallbackHandler::reportError(const String& message)
     if (!m_rejectFunction)
         return;
 
-    RELEASE_LOG_ERROR(Extensions, "Promise rejected: %" PUBLIC_LOG_STRING, message.utf8());
+    RELEASE_LOG_ERROR(Extensions, "Promise rejected: %" PUBLIC_LOG_STRING, utf8(message));
 
     JSValueRef messageValue = JSValueMakeString(m_globalContext.get(), toJSString(message).get());
     JSValueRef error = JSObjectMakeError(m_globalContext.get(), 1, &messageValue, nullptr);
@@ -201,7 +201,7 @@ RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JS
     return WebExtensionCallbackHandler::create(context, callbackFunction, runtime);
 }
 
-String toString(JSContextRef context, JSValueRef value, NullStringPolicy nullStringPolicy)
+RefPtr<StringImpl> toString(JSContextRef context, JSValueRef value, NullStringPolicy nullStringPolicy)
 {
     ASSERT(context);
     ASSERT(value);
@@ -229,12 +229,12 @@ String toString(JSContextRef context, JSValueRef value, NullStringPolicy nullStr
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String toString(JSStringRef string)
+RefPtr<StringImpl> toString(JSStringRef string)
 {
     if (!string)
         return nullString();
 
-    return String { utf8CString(string) };
+    return StringImpl::create((utf8CString(string)).span());
 }
 
 JSValueRef toWindowObject(JSContextRef context, WebFrame& frame)
@@ -255,13 +255,13 @@ JSValueRef toWindowObject(JSContextRef context, WebPage& page)
     return toWindowObject(context, page.mainWebFrame());
 }
 
-JSValueRef toJSValueRef(JSContextRef context, const String& string, NullOrEmptyString nullOrEmptyString)
+JSValueRef toJSValueRef(JSContextRef context, StringImpl* string, NullOrEmptyString nullOrEmptyString)
 {
     ASSERT(context);
 
     switch (nullOrEmptyString) {
     case NullOrEmptyString::NullStringAsNull:
-        if (string.isEmpty())
+        if (isEmpty(string))
             return JSValueMakeNull(context);
         [[fallthrough]];
 
@@ -280,22 +280,22 @@ JSValueRef toJSValueRef(JSContextRef context, URL url, NullOrEmptyString nullOrE
     return toJSValueRef(context, url.string(), nullOrEmptyString);
 }
 
-JSObjectRef toJSError(JSContextRef context, const String& string)
+JSObjectRef toJSError(JSContextRef context, StringImpl* string)
 {
     ASSERT(context);
 
-    RELEASE_LOG_ERROR(Extensions, "Exception thrown: %" PUBLIC_LOG_STRING, string.utf8());
+    RELEASE_LOG_ERROR(Extensions, "Exception thrown: %" PUBLIC_LOG_STRING, utf8(string));
 
     JSValueRef messageArgument = toJSValueRef(context, string, NullOrEmptyString::NullStringAsEmptyString);
 
     return JSObjectMakeError(context, 1, &messageArgument, nullptr);
 }
 
-JSValueRef deserializeJSONString(JSContextRef context, const String& jsonString)
+JSValueRef deserializeJSONString(JSContextRef context, StringImpl* jsonString)
 {
     ASSERT(context);
 
-    if (jsonString.isEmpty())
+    if (isEmpty(jsonString))
         return JSValueMakeNull(context);
 
     if (RefPtr string = toJSString(jsonString)) {
@@ -306,7 +306,7 @@ JSValueRef deserializeJSONString(JSContextRef context, const String& jsonString)
     return JSValueMakeNull(context);
 }
 
-String serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* exception)
+RefPtr<StringImpl> serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT(context);
 
@@ -407,7 +407,7 @@ std::optional<WebExtensionMessage> serializeMessage(JSContextRef context, JSValu
 
     if (!useStructuredClone) {
         auto json = serializeJSObject(context, value, exception);
-        if (json.isNull())
+        if (!json)
             return std::nullopt;
         return WebExtensionMessage { WTF::move(json) };
     }
@@ -458,7 +458,7 @@ JSValueRef fromArray(JSContextRef context, Vector<size_t>&& array)
     }));
 }
 
-JSValueRef fromArray(JSContextRef context, Vector<String>&& array)
+JSValueRef fromArray(JSContextRef context, Vector<RefPtr<StringImpl>>&& array)
 {
     if (!context)
         return nullptr;
@@ -469,7 +469,7 @@ JSValueRef fromArray(JSContextRef context, Vector<String>&& array)
     }));
 }
 
-JSValueRef fromObject(JSContextRef context, HashMap<String, Protected<JSValueRef>>&& object)
+JSValueRef fromObject(JSContextRef context, HashMap<RefPtr<StringImpl>, Protected<JSValueRef>>&& object)
 {
     if (!context)
         return nullptr;
@@ -488,9 +488,9 @@ JSValueRef makeEnumObject(JSContextRef context, std::initializer_list<std::pair<
 {
     auto globalContext = JSContextGetGlobalContext(context);
 
-    HashMap<String, Protected<JSValueRef>> object;
+    HashMap<RefPtr<StringImpl>, Protected<JSValueRef>> object;
     for (auto& [name, value] : entries)
-        object.add(String { name }, Protected(globalContext, JSValueMakeString(context, toJSString(value).get())));
+        object.add(StringImpl::create(name), Protected(globalContext, JSValueMakeString(context, toJSString(StringImpl::create(value).ptr()).get())));
 
     return fromObject(context, WTF::move(object));
 }
@@ -602,7 +602,7 @@ RefPtr<WebPage> toWebPage(JSContextRef context)
     return frame ? frame->page() : nullptr;
 }
 
-String toJSONString(JSContextRef context, JSValueRef value)
+RefPtr<StringImpl> toJSONString(JSContextRef context, JSValueRef value)
 {
     if (!context)
         return nullString();
@@ -628,9 +628,9 @@ bool isDictionary(JSContextRef context, JSValueRef value)
     if (isThenable(context, value))
         return false;
 
-    RefPtr protoString = toJSString("__proto__"_s);
-    RefPtr objectString = toJSString("Object"_s);
-    RefPtr prototypeString = toJSString("prototype"_s);
+    RefPtr protoString = toJSString("__proto__"_si);
+    RefPtr objectString = toJSString("Object"_si);
+    RefPtr prototypeString = toJSString("prototype"_si);
 
     JSObjectRef thisObject = JSValueToObject(context, value, nullptr);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
@@ -647,7 +647,7 @@ bool isRegularExpression(JSContextRef context, JSValueRef value)
     if (!context || !JSValueIsObject(context, value))
         return false;
 
-    RefPtr regexpString = toJSString("RegExp"_s);
+    RefPtr regexpString = toJSString("RegExp"_si);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     JSObjectRef regexpValue = JSValueToObject(context, JSObjectGetProperty(context, globalObject, regexpString.get(), nullptr), nullptr);
 
@@ -659,7 +659,7 @@ bool isThenable(JSContextRef context, JSValueRef value)
     if (!context || !JSValueIsObject(context, value))
         return false;
 
-    RefPtr thenableString = toJSString("then"_s);
+    RefPtr thenableString = toJSString("then"_si);
     JSObjectRef valueObject = JSValueToObject(context, value, nullptr);
     JSValueRef thenableObject = JSObjectGetProperty(context, valueObject, thenableString.get(), nullptr);
 
@@ -678,7 +678,7 @@ Vector<Protected<JSValueRef>> toVector<Protected<JSValueRef>>(JSContextRef conte
         return { };
 
     JSObjectRef object = JSValueToObject(context, value, nullptr);
-    int32_t length = JSValueToInt32(context, JSObjectGetProperty(context, object, toJSString("length"_s).get(), nullptr), nullptr);
+    int32_t length = JSValueToInt32(context, JSObjectGetProperty(context, object, toJSString("length"_si).get(), nullptr), nullptr);
     Vector<Protected<JSValueRef>> result;
 
     if (length >= 0) {
@@ -702,7 +702,7 @@ static RefPtr<JSON::Value> toJSONArray(JSContextRef context, JSValueRef value)
     if (!object)
         return nullptr;
 
-    size_t length = JSValueToInt32(context, JSObjectGetProperty(context, object, toJSString("length"_s).get(), nullptr), nullptr);
+    size_t length = JSValueToInt32(context, JSObjectGetProperty(context, object, toJSString("length"_si).get(), nullptr), nullptr);
     Ref result = JSON::Array::create();
 
     for (size_t i = 0; i < length; ++i) {

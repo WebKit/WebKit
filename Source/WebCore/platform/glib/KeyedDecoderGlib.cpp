@@ -51,21 +51,21 @@ KeyedDecoderGlib::~KeyedDecoderGlib()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
-HashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVariant* variant)
+HashMap<RefPtr<StringImpl>, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVariant* variant)
 {
-    HashMap<String, GRefPtr<GVariant>> dictionary;
+    HashMap<RefPtr<StringImpl>, GRefPtr<GVariant>> dictionary;
     GVariantIter iter;
     g_variant_iter_init(&iter, variant);
     const char* key;
     GVariant* value;
     while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
         if (key)
-            dictionary.set(String::fromUTF8(key), value);
+            dictionary.set(StringImpl::fromUTF8(key), value);
     }
     return dictionary;
 }
 
-bool KeyedDecoderGlib::decodeBytes(const String& key, std::span<const uint8_t>& bytes)
+bool KeyedDecoderGlib::decodeBytes(StringImpl* key, std::span<const uint8_t>& bytes)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)
@@ -76,7 +76,7 @@ bool KeyedDecoderGlib::decodeBytes(const String& key, std::span<const uint8_t>& 
 }
 
 template<typename T, typename F>
-bool KeyedDecoderGlib::decodeSimpleValue(const String& key, T& result, F getFunction)
+bool KeyedDecoderGlib::decodeSimpleValue(StringImpl* key, T& result, F getFunction)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)
@@ -86,52 +86,52 @@ bool KeyedDecoderGlib::decodeSimpleValue(const String& key, T& result, F getFunc
     return true;
 }
 
-bool KeyedDecoderGlib::decodeBool(const String& key, bool& result)
+bool KeyedDecoderGlib::decodeBool(StringImpl* key, bool& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_boolean);
 }
 
-bool KeyedDecoderGlib::decodeUInt32(const String& key, uint32_t& result)
+bool KeyedDecoderGlib::decodeUInt32(StringImpl* key, uint32_t& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_uint32);
 }
 
-bool KeyedDecoderGlib::decodeUInt64(const String& key, uint64_t& result)
+bool KeyedDecoderGlib::decodeUInt64(StringImpl* key, uint64_t& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_uint64);
 }
 
-bool KeyedDecoderGlib::decodeInt32(const String& key, int32_t& result)
+bool KeyedDecoderGlib::decodeInt32(StringImpl* key, int32_t& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_int32);
 }
 
-bool KeyedDecoderGlib::decodeInt64(const String& key, int64_t& result)
+bool KeyedDecoderGlib::decodeInt64(StringImpl* key, int64_t& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_int64);
 }
 
-bool KeyedDecoderGlib::decodeFloat(const String& key, float& result)
+bool KeyedDecoderGlib::decodeFloat(StringImpl* key, float& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_double);
 }
 
-bool KeyedDecoderGlib::decodeDouble(const String& key, double& result)
+bool KeyedDecoderGlib::decodeDouble(StringImpl* key, double& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_double);
 }
 
-bool KeyedDecoderGlib::decodeString(const String& key, String& result)
+bool KeyedDecoderGlib::decodeString(StringImpl* key, RefPtr<StringImpl>& result)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)
         return false;
 
-    result = String::fromUTF8(g_variant_get_string(value.get(), nullptr));
+    result = StringImpl::fromUTF8(g_variant_get_string(value.get(), nullptr));
     return true;
 }
 
-bool KeyedDecoderGlib::beginObject(const String& key)
+bool KeyedDecoderGlib::beginObject(StringImpl* key)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)
@@ -146,7 +146,7 @@ void KeyedDecoderGlib::endObject()
     m_dictionaryStack.removeLast();
 }
 
-bool KeyedDecoderGlib::beginArray(const String& key)
+bool KeyedDecoderGlib::beginArray(StringImpl* key)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)

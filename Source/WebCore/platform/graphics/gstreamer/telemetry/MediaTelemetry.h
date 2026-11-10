@@ -103,15 +103,15 @@ public:
     };
 
     ~MediaTelemetryReport();
-    void reportPlaybackState(AVPipelineState, const String& additionalInfo = emptyString(), MediaType = MediaType::None);
-    void reportDrmInfo(DrmType, const String& additionalInfo = emptyString());
+    void reportPlaybackState(AVPipelineState, StringImpl* additionalInfo = emptyString(), MediaType = MediaType::None);
+    void reportDrmInfo(DrmType, StringImpl* additionalInfo = emptyString());
     void reportWaylandInfo(const MediaTelemetryWaylandInfoGetter&, WaylandAction, WaylandGraphicsState, WaylandInputsState);
 
 private:
     MediaTelemetryReport() { }
 
     const std::unique_ptr<MediaTelemetryReportPrivateMembers> m_privateMembers;
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace WebCore

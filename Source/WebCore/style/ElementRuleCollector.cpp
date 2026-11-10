@@ -254,7 +254,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     auto& id = element.idForStyleResolution();
-    if (!id.isNull())
+    if (id)
         collectMatchingRulesForList(ruleSet.idRules(id), matchRequest);
     if (element.hasClass()) {
         for (auto& className : element.classNames())
@@ -273,7 +273,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     if (m_pseudoElementRequest) {
         if (m_pseudoElementRequest->type() == PseudoElementType::UserAgentPartFallback)
             collectMatchingRulesForList(ruleSet.userAgentPartRules(m_pseudoElementRequest->nameOrPart()), matchRequest);
-        else if (!m_pseudoElementRequest->nameOrPart().isNull())
+        else if (m_pseudoElementRequest->nameOrPart())
             collectMatchingRulesForList(ruleSet.namedPseudoElementRules(m_pseudoElementRequest->nameOrPart()), matchRequest);
     }
 
@@ -480,7 +480,7 @@ void ElementRuleCollector::matchPartPseudoElementRules(DeclarationOrigin origin)
     if (!element().containingShadowRoot())
         return;
 
-    bool isUserAgentPart = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().userAgentPart().isNull();
+    bool isUserAgentPart = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !!element().userAgentPart();
 
     auto& partMatchingElement = isUserAgentPart ? *element().shadowHost() : element();
     if (partMatchingElement.partNames().isEmpty() || !partMatchingElement.isInShadowTree())
@@ -557,7 +557,7 @@ void ElementRuleCollector::collectMatchingUserAgentPartRules(const MatchRequest&
     if (element().isWebVTTElement() || element().userAgentPart() == UserAgentParts::cue())
         collectMatchingRulesForList(&rules.cuePseudoRules(), matchRequest);
 #endif
-    if (auto& part = element().userAgentPart(); !part.isEmpty())
+    if (auto& part = element().userAgentPart(); !isEmpty(part))
         collectMatchingRulesForList(rules.userAgentPartRules(part), matchRequest);
 }
 
@@ -609,13 +609,13 @@ void ElementRuleCollector::matchUARules(const RuleSet& rules)
     sortAndTransferMatchedRules(DeclarationOrigin::UserAgent);
 }
 
-static Vector<AtomString> classListForNamedViewTransitionPseudoElement(const Document& document, const AtomString& name)
+static Vector<RefPtr<AtomStringImpl>> classListForNamedViewTransitionPseudoElement(const Document& document, AtomStringImpl* name)
 {
     auto* activeViewTransition = document.activeViewTransition();
     if (!activeViewTransition)
         return { };
 
-    ASSERT(!name.isNull());
+    ASSERT(name);
 
     auto* capturedElement = activeViewTransition->namedElements().find(name);
     if (!capturedElement)

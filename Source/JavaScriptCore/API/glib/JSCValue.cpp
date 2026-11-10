@@ -373,7 +373,7 @@ JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
     if (!bytes)
         return jsc_value_new_string(context, nullptr);
 
-    auto string = String::fromUTF8(span(bytes));
+    auto string = StringImpl::fromUTF8(span(bytes));
     RefPtr jsString = OpaqueJSString::tryCreate(WTF::move(string));
     return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
@@ -1069,7 +1069,7 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
         return;
     }
 
-    auto name = OpaqueJSString::tryCreate(String::fromUTF8(propertyName));
+    auto name = OpaqueJSString::tryCreate(StringImpl::fromUTF8(propertyName));
     if (!name)
         return;
 
@@ -1102,7 +1102,7 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
         return;
     }
 
-    auto name = OpaqueJSString::tryCreate(String::fromUTF8(propertyName));
+    auto name = OpaqueJSString::tryCreate(StringImpl::fromUTF8(propertyName));
     if (!name)
         return;
 
@@ -1115,12 +1115,12 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
             closure = adoptGRef(g_cclosure_new_swap(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
         else
             closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "get"_s, functionType, nullptr, WTF::move(closure), propertyType, Vector<GType> { });
+        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "get"_si, functionType, nullptr, WTF::move(closure), propertyType, Vector<GType> { });
         descriptor.setGetter(function);
     }
     if (setter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s, functionType, nullptr, WTF::move(closure), G_TYPE_NONE, Vector<GType> { propertyType });
+        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_si, functionType, nullptr, WTF::move(closure), G_TYPE_NONE, Vector<GType> { propertyType });
         descriptor.setSetter(function);
     }
     object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(vm.ptr()), descriptor, true);
@@ -1182,7 +1182,7 @@ static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char*
     JSC::JSGlobalObject* globalObject = toJS(jscContextGetJSContext(context));
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, globalObject, name ? String::fromUTF8(name) : "anonymous"_s,
+    auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, globalObject, name ? StringImpl::fromUTF8(name) : "anonymous"_si,
         JSC::JSCCallbackFunction::Type::Function, nullptr, WTF::move(closure), returnType, WTF::move(parameters)));
     return jscContextGetOrCreateValue(context, functionObject);
 }
@@ -2085,14 +2085,15 @@ JSCValue* jsc_value_new_from_json(JSCContext* context, const char* json)
 
     JSValueRef exception = nullptr;
     JSC::JSValue jsValue;
-    String jsonString = String::fromUTF8(json);
-    if (jsonString.is8Bit()) {
-        JSC::LiteralParser<Latin1Character, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, jsonString.span8(), JSC::StrictJSON);
+    RefPtr<StringImpl> jsonString = StringImpl::fromUTF8(json);
+    if (is8Bit(jsonString)) {
+        JSC::LiteralParser<Latin1Character, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, span8(jsonString), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));
     } else {
-        JSC::LiteralParser<char16_t, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, jsonString.span16(), JSC::StrictJSON);
+        JSC::LiteralParser<char16_t, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, span16(jsonString), JSC::StrictJSON);
+
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));

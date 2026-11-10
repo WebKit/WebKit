@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -102,9 +103,9 @@ public:
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using ReplyArguments = std::tuple<String>;
-    using Reply = CompletionHandler<void(String&&)>;
-    using Promise = WTF::NativePromise<String, IPC::Error>;
+    using ReplyArguments = std::tuple<RefPtr<StringImpl>>;
+    using Reply = CompletionHandler<void(RefPtr<StringImpl>&&)>;
+    using Promise = WTF::NativePromise<RefPtr<StringImpl>, IPC::Error>;
     MessageWithoutArgumentAndReplyWithArgument()
     {
     }
@@ -119,7 +120,7 @@ private:
 
 class MessageWithArgument {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgument; }
     static constexpr bool isSync = false;
@@ -127,7 +128,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit MessageWithArgument(const String& argument)
+    explicit MessageWithArgument(StringView argument)
         : m_argument(argument)
     {
     }
@@ -139,12 +140,12 @@ public:
     }
 
 private:
-    const String& m_argument;
+    StringView m_argument;
 };
 
 class MessageWithArgumentAndEmptyReply {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply; }
     static constexpr bool isSync = false;
@@ -157,7 +158,7 @@ public:
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
-    explicit MessageWithArgumentAndEmptyReply(const String& argument)
+    explicit MessageWithArgumentAndEmptyReply(StringView argument)
         : m_argument(argument)
     {
     }
@@ -169,12 +170,12 @@ public:
     }
 
 private:
-    const String& m_argument;
+    StringView m_argument;
 };
 
 class MessageWithArgumentAndReplyWithArgument {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument; }
     static constexpr bool isSync = false;
@@ -184,10 +185,10 @@ public:
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using ReplyArguments = std::tuple<String>;
-    using Reply = CompletionHandler<void(String&&)>;
-    using Promise = WTF::NativePromise<String, IPC::Error>;
-    explicit MessageWithArgumentAndReplyWithArgument(const String& argument)
+    using ReplyArguments = std::tuple<RefPtr<StringImpl>>;
+    using Reply = CompletionHandler<void(RefPtr<StringImpl>&&)>;
+    using Promise = WTF::NativePromise<RefPtr<StringImpl>, IPC::Error>;
+    explicit MessageWithArgumentAndReplyWithArgument(StringView argument)
         : m_argument(argument)
     {
     }
@@ -199,7 +200,7 @@ public:
     }
 
 private:
-    const String& m_argument;
+    StringView m_argument;
 };
 
 class MessageWithoutArgumentAndEmptyReplyReply {
@@ -226,7 +227,7 @@ private:
 
 class MessageWithoutArgumentAndReplyWithArgumentReply {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply; }
     static constexpr bool isSync = false;
@@ -234,7 +235,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit MessageWithoutArgumentAndReplyWithArgumentReply(const String& reply)
+    explicit MessageWithoutArgumentAndReplyWithArgumentReply(StringView reply)
         : m_reply(reply)
     {
     }
@@ -246,7 +247,7 @@ public:
     }
 
 private:
-    const String& m_reply;
+    StringView m_reply;
 };
 
 class MessageWithArgumentAndEmptyReplyReply {
@@ -273,7 +274,7 @@ private:
 
 class MessageWithArgumentAndReplyWithArgumentReply {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply; }
     static constexpr bool isSync = false;
@@ -281,7 +282,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit MessageWithArgumentAndReplyWithArgumentReply(const String& reply)
+    explicit MessageWithArgumentAndReplyWithArgumentReply(StringView reply)
         : m_reply(reply)
     {
     }
@@ -293,7 +294,7 @@ public:
     }
 
 private:
-    const String& m_reply;
+    StringView m_reply;
 };
 
 } // namespace TestWithoutUsingIPCConnection

@@ -99,18 +99,18 @@ static int sendTestMessage(std::span<const uint8_t> buffer, void* context)
 
 namespace WebKit {
 
-static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
+static WKMessageTestDriverFunc messageTestDriver(RefPtr<StringImpl>&& driverName)
 {
-    if (driverName.isEmpty() || driverName == "default"_s)
-        driverName = String::fromUTF8(getenv("WEBKIT_MESSAGE_TEST_DEFAULT_DRIVER"));
-    if (driverName.isEmpty() || driverName == "default"_s)
+    if (isEmpty(driverName) || equal(driverName, "default"_s))
+        driverName = StringImpl::fromUTF8(getenv("WEBKIT_MESSAGE_TEST_DEFAULT_DRIVER"));
+    if (isEmpty(driverName) || equal(driverName, "default"_s))
         return defaultTestDriver;
-    auto testDriver = reinterpret_cast<WKMessageTestDriverFunc>(dlsym(RTLD_DEFAULT, driverName.utf8().legacyCStringPointer()));
+    auto testDriver = reinterpret_cast<WKMessageTestDriverFunc>(dlsym(RTLD_DEFAULT, utf8(driverName).legacyCStringPointer()));
     RELEASE_ASSERT(testDriver);
     return testDriver;
 }
 
-static void runMessageTesting(IPC::Connection& connection, std::atomic<bool>& shouldStop, String&& driverName)
+static void runMessageTesting(IPC::Connection& connection, std::atomic<bool>& shouldStop, RefPtr<StringImpl>&& driverName)
 {
     connection.setIgnoreInvalidMessageForTesting();
     SendMessageContext context { connection, shouldStop };
@@ -130,7 +130,7 @@ IPCTester::~IPCTester()
     stopIfNeeded();
 }
 
-void IPCTester::startMessageTesting(IPC::Connection& connection, String&& driverName)
+void IPCTester::startMessageTesting(IPC::Connection& connection, RefPtr<StringImpl>&& driverName)
 {
     if (!m_testQueue)
         m_testQueue = WorkQueue::create("IPC testing work queue"_s);
@@ -266,13 +266,13 @@ void IPCTester::syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionH
     completionHandler();
 }
 
-void IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&& completionHandler)
+void IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, RefPtr<StringImpl>)>&& completionHandler)
 {
     if (sendEngaged) {
-        completionHandler(WebCore::ExceptionData { WebCore::ExceptionCode::WrongDocumentError, "m"_s }, "a"_s);
+        completionHandler(WebCore::ExceptionData { WebCore::ExceptionCode::WrongDocumentError, "m"_s }, "a"_si);
         return;
     }
-    completionHandler(std::nullopt, "b"_s);
+    completionHandler(std::nullopt, "b"_si);
 }
 
 void IPCTester::stopIfNeeded()
@@ -296,7 +296,7 @@ void IPCTester::checkTestParameter(IPC::Connection& connection, TestParameter pa
 
 static bool nodesAreEqual(const IPCTesterNode& a, const IPCTesterNode& b)
 {
-    if (a.name() != b.name() || a.children().size() != b.children().size())
+    if (!equal(a.name(), b.name()) || a.children().size() != b.children().size())
         return false;
     for (size_t i = 0; i < a.children().size(); ++i) {
         if (!nodesAreEqual(a.children()[i], b.children()[i]))
@@ -308,19 +308,19 @@ static bool nodesAreEqual(const IPCTesterNode& a, const IPCTesterNode& b)
 // Sends IPCTesterReceiver in the WebContent process messages that it takes as C++ types and as Swift
 // types, and replies with the names of the messages whose replies differ from what IPCTesterPayload.h
 // says they should be.
-void IPCTester::sendSwiftTypesMessagesToReceiver(IPC::Connection& connection, CompletionHandler<void(String&&)>&& completionHandler)
+void IPCTester::sendSwiftTypesMessagesToReceiver(IPC::Connection& connection, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
-    auto failures = Box<Vector<String>>::create();
+    auto failures = Box<Vector<RefPtr<StringImpl>>>::create();
     Ref aggregator = CallbackAggregator::create([failures, completionHandler = WTF::move(completionHandler)] mutable {
-        completionHandler(makeStringByJoining(failures->span(), ", "_s));
+        completionHandler(makeStringByJoining(failures->span(), ", "_si));
     });
     auto check = [failures](bool passed, ASCIILiteral description) {
         if (!passed)
             failures->append(description);
     };
 
-    auto latin1 = String::fromLatin1("caf\xe9");
-    auto utf16 = String::fromUTF8("caf\xc3\xa9 \xe2\x98\xba \xf0\x9f\x98\x80");
+    auto latin1 = StringImpl::fromLatin1("caf\xe9");
+    auto utf16 = StringImpl::fromUTF8("caf\xc3\xa9 \xe2\x98\xba \xf0\x9f\x98\x80");
 
     IPCTesterInner inner { -5, "inner"_s };
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::TransformInner(inner), [aggregator, check, inner](IPCTesterInner&& reply) {
@@ -346,12 +346,12 @@ void IPCTester::sendSwiftTypesMessagesToReceiver(IPC::Connection& connection, Co
         .text = "Hello, world"_s,
         .nullText = { },
         .numbers = { 1, 2, 3, 0xFFFFFFFF },
-        .strings = { "a"_s, latin1, utf16, emptyString(), String() },
+        .strings = { "a"_s, latin1, utf16, emptyString(), nullString() },
         .color = IPCTesterColor::Blue,
         .flags = { IPCTesterFlag::First, IPCTesterFlag::Third },
         .choice = IPCTesterChoice::Yes,
         .inner = { 7, "inner"_s },
-        .inners = { { -1, utf16 }, { 0, String() } },
+        .inners = { { -1, utf16 }, { 0, nullString() } },
         .variant = IPCTesterInner { 3, "variant"_s },
         .identifier = IPCConnectionTesterIdentifier::generate(),
     });
@@ -377,8 +377,8 @@ void IPCTester::sendSwiftTypesMessagesToReceiver(IPC::Connection& connection, Co
     auto syncResult = connection.sendSync(Messages::IPCTesterReceiver::TransformPayloadSynchronouslySwift(payloads[0]), 0);
     check(syncResult.succeeded() && std::get<0>(syncResult.reply()) == ipcTesterTransformed(payloads[0]), "TransformPayloadSynchronouslySwift"_s);
 
-    Ref node = IPCTesterNode::create("root"_s, { IPCTesterNode::create("first"_s, { }), IPCTesterNode::create(String { utf16 }, { IPCTesterNode::create("grandchild"_s, { }) }) });
-    RefPtr link = IPCTesterNode::create("link"_s, { IPCTesterNode::create("child"_s, { }) });
+    Ref node = IPCTesterNode::create("root"_si, { IPCTesterNode::create("first"_si, { }), IPCTesterNode::create(RefPtr<StringImpl> { utf16 }, { IPCTesterNode::create("grandchild"_si, { }) }) });
+    RefPtr link = IPCTesterNode::create("link"_si, { IPCTesterNode::create("child"_si, { }) });
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::TransformNodeSwift(node, link), [aggregator, check, node](RefPtr<IPCTesterNode>&& mirrored, uint32_t nodeCount) {
         check(mirrored && nodesAreEqual(*mirrored, ipcTesterMirrored(node)), "TransformNodeSwift mirrored"_s);
         check(nodeCount == 6, "TransformNodeSwift nodeCount"_s);
@@ -389,26 +389,26 @@ void IPCTester::sendSwiftTypesMessagesToReceiver(IPC::Connection& connection, Co
     }, 0);
 
     auto identifier = IPCConnectionTesterIdentifier::generate();
-    IPCTesterVariant variant = IPCTesterInner { -9, String() };
+    IPCTesterVariant variant = IPCTesterInner { -9, nullString() };
     auto expectedDescription = ipcTesterDescription(IPCTesterColor::Green, { IPCTesterFlag::First, IPCTesterFlag::Second }, IPCTesterChoice::No, identifier, variant, true);
-    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::DescribeSwift(IPCTesterColor::Green, { IPCTesterFlag::First, IPCTesterFlag::Second }, IPCTesterChoice::No, identifier, variant, true), [aggregator, check, expectedDescription](String&& description) {
-        check(description == expectedDescription, "DescribeSwift"_s);
+    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::DescribeSwift(IPCTesterColor::Green, { IPCTesterFlag::First, IPCTesterFlag::Second }, IPCTesterChoice::No, identifier, variant, true), [aggregator, check, expectedDescription](RefPtr<StringImpl>&& description) {
+        check(equal(description, expectedDescription), "DescribeSwift"_s);
     }, 0);
 
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::HalveEvenNumberSwift(10), [aggregator, check](uint32_t half) {
         check(half == 5, "HalveEvenNumberSwift"_s);
     }, 0);
 
-    connection.send(Messages::IPCTesterReceiver::RecordSwift("one"_s), 0);
-    connection.send(Messages::IPCTesterReceiver::RecordSwift(String()), 0);
+    connection.send(Messages::IPCTesterReceiver::RecordSwift("one"_si), 0);
+    connection.send(Messages::IPCTesterReceiver::RecordSwift(nullString()), 0);
     connection.send(Messages::IPCTesterReceiver::RecordSwift(latin1), 0);
     connection.send(Messages::IPCTesterReceiver::RecordSwift(utf16), 0);
-    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::TakeRecordedSwift(), [aggregator, check, latin1, utf16](Vector<String>&& texts) {
-        check(texts == Vector<String> { "one"_s, String(), latin1, utf16 } && texts[1].isNull(), "TakeRecordedSwift"_s);
+    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::TakeRecordedSwift(), [aggregator, check, latin1, utf16](Vector<RefPtr<StringImpl>>&& texts) {
+        check(contentEquals(texts, Vector<RefPtr<StringImpl>> { "one"_s, nullString(), latin1, utf16 }) && !texts[1], "TakeRecordedSwift"_s);
     }, 0);
-    connection.send(Messages::IPCTesterReceiver::RecordSwift("two"_s), 0);
+    connection.send(Messages::IPCTesterReceiver::RecordSwift("two"_si), 0);
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::ClearRecordedSwift(), [aggregator] { }, 0);
-    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::TakeRecordedSwift(), [aggregator, check](Vector<String>&& texts) {
+    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::TakeRecordedSwift(), [aggregator, check](Vector<RefPtr<StringImpl>>&& texts) {
         check(texts.isEmpty(), "ClearRecordedSwift"_s);
     }, 0);
 }

@@ -169,10 +169,10 @@ void MediaStream::removeTrack(MediaStreamTrack& track)
     }
 }
 
-MediaStreamTrack* MediaStream::getTrackById(String id)
+MediaStreamTrack* MediaStream::getTrackById(RefPtr<StringImpl> id)
 {
     auto position = m_tracks.findIf([&](auto& track) {
-        return track->id() == id;
+        return equal(track->id(), id);
     });
     if (position == notFound)
         return nullptr;
@@ -269,10 +269,10 @@ void MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& track)
     updateActiveState();
 }
 
-RefPtr<MediaStreamTrack> MediaStream::internalTakeTrack(const String& trackId)
+RefPtr<MediaStreamTrack> MediaStream::internalTakeTrack(StringImpl* trackId)
 {
     auto position = m_tracks.findIf([&](auto& track) {
-        return track->id() == trackId;
+        return equal(track->id(), trackId);
     });
     if (position == notFound)
         return nullptr;

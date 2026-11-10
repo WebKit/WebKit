@@ -85,7 +85,7 @@ private:
     // Messages
     void didCreateLayer(WebCore::LayerHostingContextIdentifier);
     void didFinishLoading(WebCore::NodeIdentifier, const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);
-    void didConvertModelData(Ref<WebCore::SharedBuffer>&&, const String& convertedMIMEType);
+    void didConvertModelData(Ref<WebCore::SharedBuffer>&&, StringImpl* convertedMIMEType);
     void didFailLoading(WebCore::NodeIdentifier);
     void didUpdateEntityTransform(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
 #if ENABLE(SPATIAL_PORTAL)
@@ -135,7 +135,7 @@ private:
     Seconds currentTime(WebCore::NodeIdentifier) const final;
     void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data, const URL& sourceURL) final;
-    String environmentMapForTesting() const final;
+    RefPtr<StringImpl> environmentMapForTesting() const final;
 #if ENABLE(SPATIAL_PORTAL)
     void disableEnvironmentMap() final;
     void enableSystemEnvironmentMap() final;
@@ -144,7 +144,7 @@ private:
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
-    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement) final;
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -164,7 +164,7 @@ private:
     void updateVolumetricPresentationSize(const WebCore::FloatSize&) final;
 #endif
 
-    void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) final;
+    void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, RefPtr<StringImpl>>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&) final;
 
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;

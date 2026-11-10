@@ -177,18 +177,18 @@ constexpr struct NonPrintableKeyEntry {
 
 // Disambiguates the meaning of certain non-printable keys which have different
 // meanings under different languages, but use the same VKEY code.
-static String languageSpecificOemVirtualKeyToDomKey(int virtualKey, HKL layout)
+static RefPtr<StringImpl> languageSpecificOemVirtualKeyToDomKey(int virtualKey, HKL layout)
 {
     WORD language = LOWORD(layout);
     WORD primaryLanguage = PRIMARYLANGID(language);
     if (primaryLanguage == LANG_KOREAN) {
         switch (virtualKey) {
         case VK_HANGUL:
-            return "HangulMode"_s;
+            return "HangulMode"_si;
         case VK_HANJA:
-            return "HanjaMode"_s;
+            return "HanjaMode"_si;
         default:
-            return String();
+            return nullptr;
         }
     } else if (primaryLanguage == LANG_JAPANESE) {
         switch (virtualKey) {
@@ -196,33 +196,33 @@ static String languageSpecificOemVirtualKeyToDomKey(int virtualKey, HKL layout)
         // that third-party apps might synthesize, so we handle it anyway.
         case VK_KANA:
         case VK_ATTN:
-            return "KanaMode"_s;
+            return "KanaMode"_si;
         case VK_KANJI:
-            return "KanjiMode"_s;
+            return "KanjiMode"_si;
         case VK_OEM_ATTN:
-            return "Alphanumeric"_s;
+            return "Alphanumeric"_si;
         case VK_OEM_FINISH:
-            return "Katakana"_s;
+            return "Katakana"_si;
         case VK_OEM_COPY:
-            return "Hiragana"_s;
+            return "Hiragana"_si;
         case VK_OEM_BACKTAB:
-            return "Romaji"_s;
+            return "Romaji"_si;
         case VK_OEM_AUTO:
-            return "Hankaku"_s;
+            return "Hankaku"_si;
         case VK_OEM_ENLW:
-            return "Zenkaku"_s;
+            return "Zenkaku"_si;
         default:
-            return String();
+            return nullptr;
         }
     }
-    return String();
+    return nullptr;
 }
 
-static String nonPrintableVirtualKeyToDomKey(int virtualKey, HKL layout)
+static RefPtr<StringImpl> nonPrintableVirtualKeyToDomKey(int virtualKey, HKL layout)
 {
     // 1. Check if |virtualKey| has a |layout|-specific meaning.
-    const String key = languageSpecificOemVirtualKeyToDomKey(virtualKey, layout);
-    if (!key.isNull())
+    const RefPtr<StringImpl> key = languageSpecificOemVirtualKeyToDomKey(virtualKey, layout);
+    if (key)
         return key;
 
     // 2. Most |virtualKeys| have the same meaning regardless of |layout|.
@@ -234,7 +234,7 @@ static String nonPrintableVirtualKeyToDomKey(int virtualKey, HKL layout)
     if (result != std::end(cNonPrintableKeyMap) && result->virtualKey == virtualKey)
         return result->domKey;
 
-    return String();
+    return nullptr;
 }
 
 WindowsKeyNames::WindowsKeyNames()
@@ -269,7 +269,7 @@ auto WindowsKeyNames::printableKeyFromVirtualKey(unsigned virtualKey, KeyModifie
 
     for (auto tryModifiers : modifiersToTry) {
         const auto& it = m_printableKeyCodeToKey.find(std::make_pair(virtualKey, tryModifiers));
-        if (it != m_printableKeyCodeToKey.end() && !it->value.isNull()) {
+        if (it != m_printableKeyCodeToKey.end() && it->value) {
             // A printable character produced with both Control and Alt held means
             // the key is AltGraph-shifted on this layout.
             return { it->value, hasControlAndAlt(tryModifiers) };
@@ -279,7 +279,7 @@ auto WindowsKeyNames::printableKeyFromVirtualKey(unsigned virtualKey, KeyModifie
     return { };
 }
 
-String WindowsKeyNames::domKeyFromParams(WPARAM virtualKey, LPARAM lParam)
+RefPtr<StringImpl> WindowsKeyNames::domKeyFromParams(WPARAM virtualKey, LPARAM lParam)
 {
     bool extended = lParam & 0x01000000;
     auto modifiers = currentKeyModifiers();
@@ -288,17 +288,17 @@ String WindowsKeyNames::domKeyFromParams(WPARAM virtualKey, LPARAM lParam)
     // Windows expresses right-Alt as VK_MENU with the extended flag set.
     // This key should generate AltGraph under layouts which use that modifier.
     if (virtualKey == VK_MENU && extended && m_hasAltGraph)
-        return "AltGraph"_s;
+        return "AltGraph"_si;
 
-    String key = nonPrintableVirtualKeyToDomKey(virtualKey, m_keyboardLayout);
-    if (!key.isNull())
+    RefPtr<StringImpl> key = nonPrintableVirtualKeyToDomKey(virtualKey, m_keyboardLayout);
+    if (key)
         return key;
 
     key = printableKeyFromVirtualKey(virtualKey, modifiers).key;
-    if (!key.isNull())
+    if (key)
         return key;
 
-    return "Unidentified"_s;
+    return "Unidentified"_si;
 }
 
 bool WindowsKeyNames::shouldExposeLeftControlPlusRightAltAsAltGraph()
@@ -340,15 +340,15 @@ bool WindowsKeyNames::shouldExposeAltGraphForKeyEvent(UINT message, WPARAM virtu
     return printableKeyFromVirtualKey(virtualKey, currentKeyModifiers()).isAltGraphShifted;
 }
 
-String WindowsKeyNames::domKeyFromChar(char16_t c)
+RefPtr<StringImpl> WindowsKeyNames::domKeyFromChar(char16_t c)
 {
     switch (c) {
     case '\x1b':
-        return "Escape"_s;
+        return "Escape"_si;
     case '\t':
-        return "Tab"_s;
+        return "Tab"_si;
     case '\r':
-        return "Enter"_s;
+        return "Enter"_si;
     default:
         break;
     }
@@ -517,7 +517,7 @@ constexpr struct {
     { 0x016d, "MediaSelect"_s },
 };
 
-String WindowsKeyNames::domCodeFromLParam(LPARAM lParam)
+RefPtr<StringImpl> WindowsKeyNames::domCodeFromLParam(LPARAM lParam)
 {
     unsigned extendedScanCode = (lParam >> 16) & 0x1ff;
     const auto* result = std::lower_bound(
@@ -528,7 +528,7 @@ String WindowsKeyNames::domCodeFromLParam(LPARAM lParam)
     if (result != std::end(cDomCodeMap) && result->scanCode == extendedScanCode)
         return result->domCode;
 
-    return "Unidentified"_s;
+    return "Unidentified"_si;
 }
 
 void WindowsKeyNames::updateLayout()
@@ -573,7 +573,7 @@ void WindowsKeyNames::updateLayout()
                     m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), "Dead"_s);
             } else if (rv == 1) {
                 if (translatedChars[0] >= 0x20) {
-                    m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), String(translatedChars, 1));
+                    m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), StringImpl::create(translatedChars, 1));
 
                     // Detect whether the layout makes use of AltGraph.
                     if (hasControlAndAlt(modifiers))

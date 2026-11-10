@@ -77,7 +77,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     CredentialStorage& credentialStorage() LIFETIME_BOUND { return m_credentialStorage; }
 
-    WEBCORE_EXPORT static String cookiePartitionIdentifier(const URL& firstPartyForCookies);
+    WEBCORE_EXPORT static RefPtr<StringImpl> cookiePartitionIdentifier(const URL& firstPartyForCookies);
 
 #if PLATFORM(COCOA)
     enum class ShouldDisableCFURLCache : bool { No, Yes };
@@ -93,14 +93,14 @@ public:
     WEBCORE_EXPORT static NSHTTPCookie *setCookiePartition(NSHTTPCookie *, NSString *partition);
 #endif
 
-    WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, const String& partition) const;
-    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, const String& partition) const;
-    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&, ThirdPartyCookieBlockingDecision, const String& partition) const;
-    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, const String& cookieString, ThirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, const String& partition) const;
-    WEBCORE_EXPORT bool setCookieFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, const Cookie&, ThirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, const String& partition) const;
-    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, ThirdPartyCookieBlockingDecision, const String& partition, Vector<Cookie>&) const;
+    WEBCORE_EXPORT std::pair<RefPtr<StringImpl>, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, StringImpl* partition) const;
+    WEBCORE_EXPORT std::pair<RefPtr<StringImpl>, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, StringImpl* partition) const;
+    WEBCORE_EXPORT std::pair<RefPtr<StringImpl>, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&, ThirdPartyCookieBlockingDecision, StringImpl* partition) const;
+    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, StringImpl* cookieString, ThirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, StringImpl* partition) const;
+    WEBCORE_EXPORT bool setCookieFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, const Cookie&, ThirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, StringImpl* partition) const;
+    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, ThirdPartyCookieBlockingDecision, StringImpl* partition, Vector<Cookie>&) const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
-    WEBCORE_EXPORT void deleteCookie(const URL& firstParty, const URL&, const String& cookieName, const String& partition, CompletionHandler<void()>&&) const;
+    WEBCORE_EXPORT void deleteCookie(const URL& firstParty, const URL&, StringImpl* cookieName, StringImpl* partition, CompletionHandler<void()>&&) const;
     WEBCORE_EXPORT void deleteAllCookies(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)
 
@@ -110,9 +110,9 @@ protected:
 #if PLATFORM(COCOA)
     enum class CookiesFor : bool { DOMAccess, HTTPHeader };
 
-    WEBCORE_EXPORT std::pair<String, bool> cookiesForSession(const URL& firstParty, const SameSiteInfo&, const URL&, CookiesFor, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, const String& partition) const;
-    WEBCORE_EXPORT std::optional<Vector<Cookie>> cookiesForSessionAsVector(const URL& firstParty, const SameSiteInfo&, const URL&, CookiesFor, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, const String& partition, const String& cookieName) const;
-    WEBCORE_EXPORT RetainPtr<NSArray> cookiesForURL(const URL& firstParty, const SameSiteInfo&, const URL&, ThirdPartyCookieBlockingDecision, const String& partition) const;
+    WEBCORE_EXPORT std::pair<RefPtr<StringImpl>, bool> cookiesForSession(const URL& firstParty, const SameSiteInfo&, const URL&, CookiesFor, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, StringImpl* partition) const;
+    WEBCORE_EXPORT std::optional<Vector<Cookie>> cookiesForSessionAsVector(const URL& firstParty, const SameSiteInfo&, const URL&, CookiesFor, IncludeSecureCookies, ThirdPartyCookieBlockingDecision, StringImpl* partition, StringImpl* cookieName) const;
+    WEBCORE_EXPORT RetainPtr<NSArray> cookiesForURL(const URL& firstParty, const SameSiteInfo&, const URL&, ThirdPartyCookieBlockingDecision, StringImpl* partition) const;
     WEBCORE_EXPORT void deleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *, CompletionHandler<void()>&&) const;
     WEBCORE_EXPORT static Vector<Cookie> nsCookiesToCookieVector(NSArray *, NOESCAPE const Function<bool(NSHTTPCookie *)>& filter = { });
 #endif

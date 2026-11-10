@@ -514,7 +514,7 @@ void BifurcatedGraphicsContext::drawGlyphsImmediate(const FontBase& font, std::s
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::drawEmphasisMarks(const FontCascade& cascade, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
+void BifurcatedGraphicsContext::drawEmphasisMarks(const FontCascade& cascade, const TextRun& run, AtomStringImpl* mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
 {
     m_primaryContext.drawEmphasisMarks(cascade, run, mark, point, from, to);
     m_secondaryContext.drawEmphasisMarks(cascade, run, mark, point, from, to);
@@ -578,7 +578,7 @@ void BifurcatedGraphicsContext::setURLForRect(const URL& url, const FloatRect& r
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::setDestinationForRect(const String& name, const FloatRect& rect)
+void BifurcatedGraphicsContext::setDestinationForRect(StringImpl* name, const FloatRect& rect)
 {
     m_primaryContext.setDestinationForRect(name, rect);
     m_secondaryContext.setDestinationForRect(name, rect);
@@ -586,7 +586,7 @@ void BifurcatedGraphicsContext::setDestinationForRect(const String& name, const 
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::addDestinationAtPoint(const String& name, const FloatPoint& point)
+void BifurcatedGraphicsContext::addDestinationAtPoint(StringImpl* name, const FloatPoint& point)
 {
     m_primaryContext.addDestinationAtPoint(name, point);
     m_secondaryContext.addDestinationAtPoint(name, point);

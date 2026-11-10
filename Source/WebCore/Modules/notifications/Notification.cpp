@@ -95,16 +95,16 @@ static ExceptionOr<Ref<SerializedScriptValue>> createSerializedScriptValue(Scrip
 {
     auto globalObject = context.globalObject();
     if (!globalObject)
-        return Exception { ExceptionCode::TypeError, "Notification cannot be created without a global object"_s };
+        return Exception { ExceptionCode::TypeError, "Notification cannot be created without a global object"_si };
 
     Vector<Ref<MessagePort>> dummyPorts;
     return SerializedScriptValue::create(*globalObject, value, { }, dummyPorts, SerializationForStorage::Yes);
 }
 
-ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options)
+ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& context, RefPtr<StringImpl>&& title, Options&& options)
 {
     if (context.isServiceWorkerGlobalScope())
-        return Exception { ExceptionCode::TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_s };
+        return Exception { ExceptionCode::TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_si };
 
     auto dataResult = createSerializedScriptValue(context, options.data);
     if (dataResult.hasException())
@@ -117,7 +117,7 @@ ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& cont
     return notification;
 }
 
-ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
+ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecutionContext& context, RefPtr<StringImpl>&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
 {
     auto dataResult = createSerializedScriptValue(context, options.data);
     if (dataResult.hasException())
@@ -158,7 +158,7 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, const UR
     }
 
     RefPtr<SerializedScriptValue> dataScriptValue;
-    if (payload.options && !payload.options->dataJSONString.isEmpty() && context.globalObject()) {
+    if (payload.options && !isEmpty(payload.options->dataJSONString) && context.globalObject()) {
         JSC::JSLockHolder lock(context.globalObject());
         auto value = JSONParse(context.globalObject(), payload.options->dataJSONString);
         dataScriptValue = SerializedScriptValue::convert(*context.globalObject(), value);
@@ -175,14 +175,14 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, const UR
     return notification;
 }
 
-Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier, const String& title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
+Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier, StringImpl* title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
     : ActiveDOMObject(&context)
     , m_identifier(identifier)
-    , m_title(title.isolatedCopy())
+    , m_title(isolatedCopy(title))
     , m_direction(options.dir)
-    , m_lang(WTF::move(options.lang).isolatedCopy())
-    , m_body(WTF::move(options.body).isolatedCopy())
-    , m_tag(WTF::move(options.tag).isolatedCopy())
+    , m_lang(isolatedCopy(WTF::move(options.lang)))
+    , m_body(isolatedCopy(WTF::move(options.body)))
+    , m_tag(isolatedCopy(WTF::move(options.tag)))
     , m_dataForBindings(WTF::move(dataForBindings))
     , m_silent(options.silent)
     , m_state(Idle)
@@ -198,15 +198,15 @@ Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier
         RELEASE_ASSERT_NOT_REACHED();
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    if (!options.navigate.isEmpty()) {
-        auto navigate = context.parseURL(WTF::move(options.navigate).isolatedCopy());
+    if (!isEmpty(options.navigate)) {
+        auto navigate = context.parseURL(isolatedCopy(WTF::move(options.navigate)));
         if (navigate.isValid())
             m_navigate = WTF::move(navigate);
     }
 #endif
 
-    if (!options.icon.isEmpty()) {
-        auto iconURL = context.parseURL(WTF::move(options.icon).isolatedCopy());
+    if (!isEmpty(options.icon)) {
+        auto iconURL = context.parseURL(isolatedCopy(WTF::move(options.icon)));
         if (iconURL.isValid())
             m_icon = iconURL;
     }
@@ -298,7 +298,7 @@ void Notification::close()
     case Showing:
         if (isPersistent() && WallTime::now() - m_creationTime < s_persistentNotificationMinimumLifetime) {
             if (RefPtr context = scriptExecutionContext())
-                context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Persistent notifications cannot be closed shortly after they are shown."_s);
+                context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Persistent notifications cannot be closed shortly after they are shown."_si);
             return;
         }
         if (auto* client = clientFromContext())
@@ -431,19 +431,19 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
         return resolvePromiseAndCallback(Permission::Denied);
 
     if (!document.isSecureContext()) {
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a secure context."_s);
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a secure context."_si);
         return resolvePromiseAndCallback(Permission::Denied);
     }
 
     if (!document.isSameOriginAsTopDocument()) {
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a browsing context with the same security origin as the top level browsing context."_s);
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a browsing context with the same security origin as the top level browsing context."_si);
         return resolvePromiseAndCallback(Permission::Denied);
     }
 
     RefPtr frame = document.frame();
     RefPtr window = frame ? frame->window() : nullptr;
     if (!window || !window->consumeTransientActivation()) {
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Notification prompting can only be done from a user gesture."_s);
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Notification prompting can only be done from a user gesture."_si);
         return resolvePromiseAndCallback(Permission::Denied);
     }
 

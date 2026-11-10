@@ -101,7 +101,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
      Email Address []:me@example.com
      */
 
-    String pemEncodedPrivateKey(""
+    RefPtr<StringImpl> pemEncodedPrivateKey(""
     "MIIJRAIBADANBgkqhkiG9w0BAQEFAASCCS4wggkqAgEAAoICAQDPk42aRXUw186m"
     "ZCdhn9S5Az4HNY1QmsS5fz8bD95zQVmjrtApJy7J3NhsA7o3lHE6rFz/SUL2JfnA"
     "iMlYrfdbhfP/9xiEg+9EkErm/gE2JJa9wWKQURzVWzmyB/OEHDEMLGdjfkQBvWDi"
@@ -153,7 +153,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
     "668Bn1U3U9d/iNCXFM78iKqoJCBoURyirmG/tI6gfJiLn05Tz6nYz31Y40Fm1Swg"
     "hgOy/TdJO/NjmTHBgpITP6lv69QvaV9z"_s);
 
-    String pemEncodedCertificate(""
+    RefPtr<StringImpl> pemEncodedCertificate(""
     "MIIFgDCCA2gCCQD+QY1JRnM3IjANBgkqhkiG9w0BAQsFADCBgTELMAkGA1UEBhMC"
     "VVMxEzARBgNVBAgMCk5ldyBNZXhpY28xETAPBgNVBAcMCFNhbnRhIEZlMQ0wCwYD"
     "VQQKDARTZWxmMQ8wDQYDVQQLDAZNeXNlbGYxCzAJBgNVBAMMAk1lMR0wGwYJKoZI"
@@ -656,7 +656,7 @@ TEST(WebKit, ErrorSecureCoding)
     EXPECT_WK_STREQ(decodedError.domain, NSURLErrorDomain);
     EXPECT_WK_STREQ(NSStringFromClass([decodedError.userInfo[_WKRecoveryAttempterErrorKey] class]), @"WKReloadFrameErrorRecoveryAttempter");
 
-    server.setResponse("/"_s, { "<script>alert('reloaded successfully')</script>"_s });
+    server.setResponse("/"_si, { "<script>alert('reloaded successfully')</script>"_si });
     EXPECT_TRUE([(id<_WKErrorRecoveryAttempting>)error.userInfo[_WKRecoveryAttempterErrorKey] attemptRecovery]);
     EXPECT_WK_STREQ([webView _test_waitForAlert], "reloaded successfully");
 }

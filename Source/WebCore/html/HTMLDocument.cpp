@@ -110,9 +110,9 @@ Ref<DocumentParser> HTMLDocument::createParser()
 }
 
 // https://html.spec.whatwg.org/multipage/dom.html#dom-document-nameditem
-std::optional<Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>>> HTMLDocument::namedItem(const AtomString& name)
+std::optional<Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>>> HTMLDocument::namedItem(AtomStringImpl* name)
 {
-    if (name.isNull() || !hasDocumentNamedItem(name))
+    if (!name || !hasDocumentNamedItem(name))
         return std::nullopt;
 
     if (documentNamedItemContainsMultipleElements(name)) [[unlikely]] {
@@ -130,12 +130,12 @@ std::optional<Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>>> HTML
     return Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>> { WTF::move(element) };
 }
 
-bool HTMLDocument::isSupportedPropertyName(const AtomString& name) const
+bool HTMLDocument::isSupportedPropertyName(AtomStringImpl* name) const
 {
-    return !name.isNull() && hasDocumentNamedItem(name);
+    return !!name && hasDocumentNamedItem(name);
 }
 
-Vector<AtomString> HTMLDocument::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> HTMLDocument::supportedPropertyNames() const
 {
     if (Quirks::shouldOmitHTMLDocumentSupportedPropertyNames())
         return { };
@@ -148,23 +148,23 @@ Vector<AtomString> HTMLDocument::supportedPropertyNames() const
     return properties;
 }
 
-void HTMLDocument::addDocumentNamedItem(const AtomString& name, Element& item)
+void HTMLDocument::addDocumentNamedItem(AtomStringImpl* name, Element& item)
 {
     m_documentNamedItem.add(name, item, *this);
     addImpureProperty(name);
 }
 
-void HTMLDocument::removeDocumentNamedItem(const AtomString& name, Element& item)
+void HTMLDocument::removeDocumentNamedItem(AtomStringImpl* name, Element& item)
 {
     m_documentNamedItem.remove(name, item);
 }
 
-void HTMLDocument::addWindowNamedItem(const AtomString& name, Element& item)
+void HTMLDocument::addWindowNamedItem(AtomStringImpl* name, Element& item)
 {
     m_windowNamedItem.add(name, item, *this);
 }
 
-void HTMLDocument::removeWindowNamedItem(const AtomString& name, Element& item)
+void HTMLDocument::removeWindowNamedItem(AtomStringImpl* name, Element& item)
 {
     m_windowNamedItem.remove(name, item);
 }
@@ -221,13 +221,13 @@ bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
             &valuetypeAttr,
             &vlinkAttr,
         };
-        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> set;
         set.reserveInitialCapacity(std::size(names));
         for (auto* name : names)
             set.add(name->get().localName());
         return set;
     }();
-    auto isPossibleHTMLAttr = !attributeName.hasPrefix() && attributeName.namespaceURI().isNull();
+    auto isPossibleHTMLAttr = !attributeName.hasPrefix() && !attributeName.namespaceURI();
     return !isPossibleHTMLAttr || !set.get().contains(attributeName.localName());
 }
 

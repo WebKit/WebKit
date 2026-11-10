@@ -97,7 +97,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchEventWhenPossible(Event& event
         target->dispatchEvent(event);
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomString& type)
+void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(AtomStringImpl* type)
 {
     ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent);
 
@@ -111,7 +111,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomString
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchErrorProgressEvent(const AtomString& type)
+void XMLHttpRequestProgressEventThrottle::dispatchErrorProgressEvent(AtomStringImpl* type)
 {
     ASSERT(type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 

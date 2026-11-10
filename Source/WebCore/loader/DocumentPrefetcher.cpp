@@ -77,25 +77,25 @@ static bool isPassingSecurityChecks(const URL& url, Document& document)
     Ref urlOrigin = SecurityOrigin::create(url);
     if (!documentOrigin->isSameOriginAs(urlOrigin)) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error,
-            "Prefetch request denied: not same origin as document"_s);
+            "Prefetch request denied: not same origin as document"_si);
         return false;
     }
 
     if (!SecurityOrigin::isSecure(url)) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error,
-            "Prefetch request denied: URL must be secure (HTTPS)"_s);
+            "Prefetch request denied: URL must be secure (HTTPS)"_si);
         return false;
     }
 
     return true;
 }
 
-static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, const URL& referrerURL, const Document& document)
+static ResourceRequest makePrefetchRequest(URL&& url, const Vector<RefPtr<StringImpl>>& tags, std::optional<ReferrerPolicy> referrerPolicy, const URL& referrerURL, const Document& document)
 {
     if (!referrerPolicy)
         referrerPolicy = document.referrerPolicy();
 
-    String referrer = SecurityPolicy::generateReferrerHeader(*referrerPolicy, url, referrerURL, OriginAccessPatternsForWebProcess::singleton());
+    RefPtr<StringImpl> referrer = SecurityPolicy::generateReferrerHeader(*referrerPolicy, url, referrerURL, OriginAccessPatternsForWebProcess::singleton());
 
     ResourceRequest request { WTF::move(url) };
     request.setPriority(ResourceLoadPriority::VeryLow);
@@ -106,22 +106,22 @@ static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags
         for (size_t i = 0; i < tags.size(); ++i) {
             if (i > 0)
                 builder.append(", "_s);
-            if (tags[i] == nullAtom())
+            if (!tags[i])
                 builder.append("null"_s);
             else
                 builder.append(tags[i]);
         }
         request.setHTTPHeaderField(HTTPHeaderName::SecSpeculationTags, builder.toString());
     }
-    request.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_si);
 
-    if (!referrer.isEmpty())
+    if (!isEmpty(referrer))
         request.setHTTPReferrer(WTF::move(referrer));
 
     return request;
 }
 
-void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
+void DocumentPrefetcher::prefetch(const URL& url, const Vector<RefPtr<StringImpl>>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
 {
     RefPtr document = m_frame ? m_frame->document() : nullptr;
     if (!document)

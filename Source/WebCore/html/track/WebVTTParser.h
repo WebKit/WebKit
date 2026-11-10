@@ -74,14 +74,14 @@ public:
     MediaTime endTime() const { return m_endTime; }
     void setEndTime(const MediaTime& endTime) { m_endTime = endTime; }
 
-    String id() const { return m_id; }
-    void setId(const String& id) { m_id = id; }
+    RefPtr<StringImpl> id() const { return m_id; }
+    void setId(StringImpl* id) { m_id = id; }
 
-    String content() const { return m_content; }
-    void setContent(const String& content) { m_content = content; }
+    RefPtr<StringImpl> content() const { return m_content; }
+    void setContent(StringImpl* content) { m_content = content; }
 
-    String settings() const { return m_settings; }
-    void setSettings(const String& settings) { m_settings = settings; }
+    RefPtr<StringImpl> settings() const { return m_settings; }
+    void setSettings(StringImpl* settings) { m_settings = settings; }
 
     MediaTime originalStartTime() const { return m_originalStartTime; }
     void setOriginalStartTime(const MediaTime& time) { m_originalStartTime = time; }
@@ -92,9 +92,9 @@ private:
     MediaTime m_startTime;
     MediaTime m_endTime;
     MediaTime m_originalStartTime;
-    String m_id;
-    String m_content;
-    String m_settings;
+    RefPtr<StringImpl> m_id;
+    RefPtr<StringImpl> m_content;
+    RefPtr<StringImpl> m_settings;
 };
 
 class WEBCORE_EXPORT WebVTTParser final {
@@ -116,7 +116,7 @@ public:
     WebVTTParser(WebVTTParserClient&, Document&);
     ~WebVTTParser();
 
-    static inline bool isRecognizedTag(const AtomString& tagName)
+    static inline bool isRecognizedTag(AtomStringImpl* tagName)
     {
         return iTag->hasLocalName(tagName)
             || bTag->hasLocalName(tagName)
@@ -125,7 +125,7 @@ public:
             || rtTag->hasLocalName(tagName);
     }
 
-    static bool collectTimeStamp(const String&, MediaTime&);
+    static bool collectTimeStamp(StringImpl*, MediaTime&);
 
     // Useful functions for parsing percentage settings.
     static bool parseFloatPercentageValue(VTTScanner& valueScanner, double&);
@@ -133,7 +133,7 @@ public:
 
     // Input data to the parser to parse.
     void parseBytes(std::span<const uint8_t>);
-    void parseFileHeader(String&&);
+    void parseFileHeader(RefPtr<StringImpl>&&);
     void parseCueData(const ISOWebVTTCue&);
     void flush();
     void fileFinished();
@@ -144,21 +144,21 @@ public:
     Vector<Ref<StyleSheetContents>> takeStyleSheets();
     
     // Create the DocumentFragment representation of the WebVTT cue text.
-    static Ref<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
+    static Ref<DocumentFragment> createDocumentFragmentFromCueText(Document&, StringImpl*);
 
 private:
     void parse();
     void flushPendingCue();
-    NODELETE bool hasRequiredFileIdentifier(const String&);
-    ParseState collectCueId(const String&);
-    ParseState collectTimingsAndSettings(const String&);
-    ParseState collectCueText(const String&);
-    ParseState recoverCue(const String&);
-    ParseState ignoreBadCue(const String&);
-    ParseState collectRegionSettings(const String&);
-    ParseState collectWebVTTBlock(const String&);
-    ParseState checkAndRecoverCue(const String& line);
-    ParseState collectStyleSheet(const String&);
+    NODELETE bool hasRequiredFileIdentifier(StringImpl*);
+    ParseState collectCueId(StringImpl*);
+    ParseState collectTimingsAndSettings(StringImpl*);
+    ParseState collectCueText(StringImpl*);
+    ParseState recoverCue(StringImpl*);
+    ParseState ignoreBadCue(StringImpl*);
+    ParseState collectRegionSettings(StringImpl*);
+    ParseState collectWebVTTBlock(StringImpl*);
+    ParseState checkAndRecoverCue(StringImpl* line);
+    ParseState collectStyleSheet(StringImpl*);
     bool checkAndCreateRegion(StringView line);
     bool checkAndStoreRegion(StringView line);
     bool checkStyleSheet(StringView line);
@@ -174,12 +174,12 @@ private:
 
     BufferedLineReader m_lineReader;
     const Ref<TextResourceDecoder> m_decoder;
-    String m_currentId;
+    RefPtr<StringImpl> m_currentId;
     MediaTime m_currentStartTime;
     MediaTime m_currentEndTime;
     StringBuilder m_currentContent;
-    String m_previousLine;
-    String m_currentSettings;
+    RefPtr<StringImpl> m_previousLine;
+    RefPtr<StringImpl> m_currentSettings;
     RefPtr<VTTRegion> m_currentRegion;
     StringBuilder m_currentSourceStyleSheet;
     

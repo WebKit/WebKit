@@ -35,30 +35,30 @@
 
 namespace WebCore {
 
-static String originStringFromURL(const URL& url)
+static RefPtr<StringImpl> originStringFromURL(const URL& url)
 {
     return makeString(url.protocol(), "://"_s, url.hostAndPort(), '/');
 }
 
-static String protectionSpaceMapKeyFromURL(const URL& url)
+static RefPtr<StringImpl> protectionSpaceMapKeyFromURL(const URL& url)
 {
     ASSERT(url.isValid());
 
     // Remove the last path component that is not a directory to determine the subtree for which credentials will apply.
     // We keep a leading slash, but remove a trailing one.
-    String directoryURL = url.string().left(url.pathEnd());
+    RefPtr<StringImpl> directoryURL = left(url.string(), url.pathEnd());
     unsigned directoryURLPathStart = url.pathStart();
-    ASSERT(directoryURL[directoryURLPathStart] == '/');
-    if (directoryURL.length() > directoryURLPathStart + 1) {
-        size_t index = directoryURL.reverseFind('/');
+    ASSERT(codeUnitAt(directoryURL, directoryURLPathStart) == '/');
+    if (length(directoryURL) > directoryURLPathStart + 1) {
+        size_t index = reverseFind(directoryURL, '/');
         ASSERT(index != notFound);
-        directoryURL = directoryURL.left((index != directoryURLPathStart) ? index : directoryURLPathStart + 1);
+        directoryURL = left(directoryURL, (index != directoryURLPathStart) ? index : directoryURLPathStart + 1);
     }
 
     return directoryURL;
 }
 
-void CredentialStorage::set(const String& partitionName, const Credential& credential, const ProtectionSpace& protectionSpace, const URL& url)
+void CredentialStorage::set(StringImpl* partitionName, const Credential& credential, const ProtectionSpace& protectionSpace, const URL& url)
 {
     ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested || url.protocolIsInHTTPFamily());
     ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested || url.isValid());
@@ -76,12 +76,12 @@ void CredentialStorage::set(const String& partitionName, const Credential& crede
     }
 }
 
-Credential CredentialStorage::get(const String& partitionName, const ProtectionSpace& protectionSpace)
+Credential CredentialStorage::get(StringImpl* partitionName, const ProtectionSpace& protectionSpace)
 {
     return m_protectionSpaceToCredentialMap.get(std::make_pair(partitionName, protectionSpace));
 }
 
-void CredentialStorage::remove(const String& partitionName, const ProtectionSpace& protectionSpace)
+void CredentialStorage::remove(StringImpl* partitionName, const ProtectionSpace& protectionSpace)
 {
     m_protectionSpaceToCredentialMap.remove(std::make_pair(partitionName, protectionSpace));
 }
@@ -91,10 +91,10 @@ void CredentialStorage::removeCredentialsWithOrigin(const SecurityOriginData& or
     m_protectionSpaceToCredentialMap.removeIf([&](auto& keyValuePair) {
         auto& protectionSpace = keyValuePair.key.second;
         auto expectedPort = origin.port() ? origin.port() : WTF::defaultPortForProtocol(origin.protocol());
-        return protectionSpace.host() == origin.host()
+        return equal(protectionSpace.host(), origin.host())
             && expectedPort && protectionSpace.port() == *expectedPort
-            && ((protectionSpace.serverType() == ProtectionSpace::ServerType::HTTP && origin.protocol() == "http"_s)
-                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && origin.protocol() == "https"_s));
+            && ((protectionSpace.serverType() == ProtectionSpace::ServerType::HTTP && equal(origin.protocol(), "http"_s))
+                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && equal(origin.protocol(), "https"_s)));
     });
 }
 
@@ -105,19 +105,19 @@ HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
         auto& protectionSpace = keyValuePair.key.second;
         if (protectionSpace.isProxy())
             continue;
-        String protocol;
+        RefPtr<StringImpl> protocol;
         switch (protectionSpace.serverType()) {
         case ProtectionSpace::ServerType::HTTP:
-            protocol = "http"_s;
+            protocol = "http"_si;
             break;
         case ProtectionSpace::ServerType::HTTPS:
-            protocol = "https"_s;
+            protocol = "https"_si;
             break;
         case ProtectionSpace::ServerType::FTP:
-            protocol = "ftp"_s;
+            protocol = "ftp"_si;
             break;
         case ProtectionSpace::ServerType::FTPS:
-            protocol = "ftps"_s;
+            protocol = "ftps"_si;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -130,7 +130,7 @@ HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
     return origins;
 }
 
-HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtectionSpaceForURL(const URL& url)
+HashMap<RefPtr<StringImpl>, ProtectionSpace>::iterator CredentialStorage::findDefaultProtectionSpaceForURL(const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
     ASSERT(url.isValid());
@@ -139,24 +139,24 @@ HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtect
     if (!m_originsWithCredentials.contains(originStringFromURL(url)))
         return m_pathToDefaultProtectionSpaceMap.end();
 
-    String directoryURL = protectionSpaceMapKeyFromURL(url);
+    RefPtr<StringImpl> directoryURL = protectionSpaceMapKeyFromURL(url);
     unsigned directoryURLPathStart = url.pathStart();
     while (true) {
         PathToDefaultProtectionSpaceMap::iterator iter = m_pathToDefaultProtectionSpaceMap.find(directoryURL);
         if (iter != m_pathToDefaultProtectionSpaceMap.end())
             return iter;
 
-        if (directoryURL.length() == directoryURLPathStart + 1)  // path is "/" already, cannot shorten it any more
+        if (length(directoryURL) == directoryURLPathStart + 1)  // path is "/" already, cannot shorten it any more
             return m_pathToDefaultProtectionSpaceMap.end();
 
-        size_t index = directoryURL.reverseFind('/', directoryURL.length() - 2);
+        size_t index = reverseFind(directoryURL, '/', length(directoryURL) - 2);
         ASSERT(index != notFound);
-        directoryURL = directoryURL.left((index == directoryURLPathStart) ? index + 1 : index);
-        ASSERT(directoryURL.length() > directoryURLPathStart);
+        directoryURL = left(directoryURL, (index == directoryURLPathStart) ? index + 1 : index);
+        ASSERT(length(directoryURL) > directoryURLPathStart);
     }
 }
 
-bool CredentialStorage::set(const String& partitionName, const Credential& credential, const URL& url)
+bool CredentialStorage::set(StringImpl* partitionName, const Credential& credential, const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
     ASSERT(url.isValid());
@@ -168,7 +168,7 @@ bool CredentialStorage::set(const String& partitionName, const Credential& crede
     return true;
 }
 
-Credential CredentialStorage::get(const String& partitionName, const URL& url)
+Credential CredentialStorage::get(StringImpl* partitionName, const URL& url)
 {
     PathToDefaultProtectionSpaceMap::iterator iter = findDefaultProtectionSpaceForURL(url);
     if (iter == m_pathToDefaultProtectionSpaceMap.end())

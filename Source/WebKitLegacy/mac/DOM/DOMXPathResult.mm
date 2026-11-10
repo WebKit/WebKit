@@ -66,7 +66,7 @@
 - (NSString *)stringValue
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->stringValue()).createNSString().autorelease();
+    return createNSString(raiseOnDOMError(IMPL->stringValue())).autorelease();
 }
 
 - (BOOL)booleanValue

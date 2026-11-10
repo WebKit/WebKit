@@ -64,11 +64,11 @@ void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&
     m_rtcSender->SetFrameTransformer(webrtc::scoped_refptr<webrtc::FrameTransformerInterface>(this));
 }
 
-bool LibWebRTCRtpSenderTransformBackend::requestKeyFrame(const String& rid)
+bool LibWebRTCRtpSenderTransformBackend::requestKeyFrame(StringImpl* rid)
 {
     std::vector<std::string> rtcRids;
-    if (!rid.isEmpty())
-        rtcRids.push_back(rid.utf8().toStdString());
+    if (!isEmpty(rid))
+        rtcRids.push_back(utf8(rid).toStdString());
     ASSERT(mediaType() == MediaType::Video);
     return m_rtcSender->GenerateKeyFrame(rtcRids).ok();
 }

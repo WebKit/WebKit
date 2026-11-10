@@ -76,7 +76,7 @@ private:
 
     void getBindGroupLayout(uint32_t index, WebGPUIdentifier);
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::ComputePipeline> m_backing;

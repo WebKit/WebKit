@@ -52,7 +52,7 @@ ChromeClient::ChromeClient() = default;
 
 ChromeClient::~ChromeClient() = default;
 
-void ChromeClient::transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+void ChromeClient::transcodeChosenFiles(Vector<RefPtr<StringImpl>>&& transcodingPaths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion)
 {
 #if PLATFORM(MAC)
     transcodeImagesInBackgroundQueue(WTF::move(transcodingPaths), WTF::move(destinationUTI), WTF::move(destinationExtension), WTF::move(completion));
@@ -122,7 +122,7 @@ RefPtr<NativePromise<Ref<NativeImage>, void>> ChromeClient::createDisplayOnlyIma
 #if ENABLE(WEB_AUTHN)
 ExceptionOr<Vector<std::optional<ValidatedDigitalCredentialRequest>>> ChromeClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
 {
-    return Exception { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s };
+    return Exception { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_si };
 };
 #endif
 
@@ -152,7 +152,7 @@ void ChromeClient::requestTextRecognition(Element&, TextRecognitionOptions&&, Co
 #if ENABLE(VIDEO)
 void ChromeClient::showCaptionDisplaySettings(HTMLMediaElement&, const ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
-    completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s });
+    completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_si });
 }
 #endif
 

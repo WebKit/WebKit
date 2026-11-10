@@ -79,7 +79,7 @@ bool AccessibilityObjectAtspi::setCurrentValue(double value)
     if (m_coreObject->canSetNumericValue())
         return m_coreObject->setValue(value);
 
-    return m_coreObject->setValue(String::numberToStringFixedPrecision(value));
+    return m_coreObject->setValue(StringImpl::numberToStringFixedPrecision(value));
 }
 
 double AccessibilityObjectAtspi::minimumValue() const
@@ -98,8 +98,8 @@ double AccessibilityObjectAtspi::minimumIncrement() const
         return 0;
 
     auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject.get())->getAttribute(HTMLNames::stepAttr);
-    if (!stepAttribute.isEmpty())
-        return stepAttribute.toFloat();
+    if (!isEmpty(stepAttribute))
+        return toFloat(stepAttribute);
 
     // If 'step' attribute is not defined, WebCore assumes a 5% of the range between
     // minimum and maximum values. Implicit value of step should be one or larger.

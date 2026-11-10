@@ -30,7 +30,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> Syste
 {
     auto& systemSettings = SystemSettings::singleton();
     auto systemFontFamily = systemSettings.fontFamily();
-    return { systemFontFamily ? AtomString(*systemFontFamily) : WebKitFontFamilyNames::standardFamily, systemSettings.fontSize().value_or(16), FontSelectionValue(systemSettings.fontWeight().value_or(400)) };
+    return { systemFontFamily ? AtomStringImpl::add(*systemFontFamily) : WebKitFontFamilyNames::standardFamily.get(), systemSettings.fontSize().value_or(16), FontSelectionValue(systemSettings.fontWeight().value_or(400)) };
 }
 
 void SystemFontDatabase::platformInvalidate()

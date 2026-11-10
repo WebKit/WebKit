@@ -702,7 +702,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
     auto markSlowPathIfNeeded = [&] (Node* node) {
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (Options::dumpDFGJITSizeStatistics()) [[unlikely]] {
-            String id = makeString("DFG_slow_"_s, m_graph.opName(node->op()));
+            RefPtr<StringImpl> id = makeString("DFG_slow_"_s, m_graph.opName(node->op()));
             sizeMarker = vm().jitSizeStatistics->markStart(id, *this);
         }
         return sizeMarker;
@@ -2209,7 +2209,7 @@ void SpeculativeJIT::compileCurrentBlock()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (Options::dumpDFGJITSizeStatistics()) [[unlikely]] {
-            String id = makeString("DFG_fast_"_s, m_graph.opName(m_currentNode->op()));
+            RefPtr<StringImpl> id = makeString("DFG_fast_"_s, m_graph.opName(m_currentNode->op()));
             sizeMarker = vm().jitSizeStatistics->markStart(id, *this);
         }
 
@@ -7135,10 +7135,10 @@ void SpeculativeJIT::compileStringEquality(
     const JumpList& fastTrue, const JumpList& fastFalse,
     Edge leftEdge, Edge rightEdge)
 {
-    String leftConst = leftEdge ? leftEdge->tryGetString(m_graph) : String();
-    String rightConst = rightEdge ? rightEdge->tryGetString(m_graph) : String();
-    bool leftAtom = !leftConst.isNull() && leftConst.impl()->isAtom();
-    bool rightAtom = !rightConst.isNull() && rightConst.impl()->isAtom();
+    RefPtr<StringImpl> leftConst = leftEdge ? leftEdge->tryGetString(m_graph) : nullptr;
+    RefPtr<StringImpl> rightConst = rightEdge ? rightEdge->tryGetString(m_graph) : nullptr;
+    bool leftAtom = !!leftConst && leftConst.get()->isAtom();
+    bool rightAtom = !!rightConst && rightConst.get()->isAtom();
 
     JumpList trueCase;
     JumpList falseCase;
@@ -7155,11 +7155,11 @@ void SpeculativeJIT::compileStringEquality(
         ropeCase.append(branchIfRopeStringImpl(implGPR));
     };
 
-    auto resolveDataPtr = [&](bool atom, const String& constStr, GPRReg implGPR) {
+    auto resolveDataPtr = [&](bool atom, StringImpl* constStr, GPRReg implGPR) {
         if (atom) {
-            const void* data = constStr.is8Bit()
-                ? static_cast<const void*>(constStr.span8().data())
-                : static_cast<const void*>(constStr.span16().data());
+            const void* data = WTF::is8Bit(constStr)
+                ? static_cast<const void*>(span8(constStr).data())
+                : static_cast<const void*>(span16(constStr).data());
             move(TrustedImmPtr(data), implGPR);
             return;
         }
@@ -7182,23 +7182,23 @@ void SpeculativeJIT::compileStringEquality(
     loadImplAndCheckRope(rightAtom, rightGPR, rightTempGPR);
 
     if (leftAtom || rightAtom) {
-        const String& constStr = leftAtom ? leftConst : rightConst;
+        const RefPtr<StringImpl>& constStr = leftAtom ? leftConst : rightConst;
         if (leftAtom && rightAtom) {
-            if (leftConst.length() != rightConst.length())
+            if (length(leftConst) != length(rightConst))
                 falseCase.append(jump());
         } else {
             GPRReg dynImplGPR = leftAtom ? rightTempGPR : leftTempGPR;
-            falseCase.append(branch32(NotEqual, Address(dynImplGPR, StringImpl::lengthMemoryOffset()), TrustedImm32(constStr.length())));
+            falseCase.append(branch32(NotEqual, Address(dynImplGPR, StringImpl::lengthMemoryOffset()), TrustedImm32(length(constStr))));
         }
-        move(TrustedImm32(constStr.length()), lengthGPR);
+        move(TrustedImm32(length(constStr)), lengthGPR);
 
-        unsigned constLength = leftAtom ? leftConst.length() : rightConst.length();
+        unsigned constLength = leftAtom ? length(leftConst) : length(rightConst);
         if (!constLength)
             trueCase.append(jump());
 
-        bool constIs8Bit = leftAtom ? leftConst.is8Bit() : rightConst.is8Bit();
+        bool constIs8Bit = leftAtom ? WTF::is8Bit(leftConst) : WTF::is8Bit(rightConst);
         if (leftAtom && rightAtom) {
-            if (leftConst.is8Bit() != rightConst.is8Bit())
+            if (WTF::is8Bit(leftConst) != WTF::is8Bit(rightConst))
                 slowCase.append(jump());
         } else {
             GPRReg dynImplGPR = leftAtom ? rightTempGPR : leftTempGPR;
@@ -7911,17 +7911,17 @@ bool SpeculativeJIT::canBeRope(Edge edge)
     }
 
     // If this value is LazyValue, it will be converted to JSString, and the result must be non-rope string.
-    String string = edge->tryGetString(m_graph);
-    if (!string.isNull())
+    RefPtr<StringImpl> string = edge->tryGetString(m_graph);
+    if (string)
         return false;
     return true;
 }
 
 std::optional<unsigned> SpeculativeJIT::tryGetConstantStringLength(Edge edge)
 {
-    String string = edge->tryGetString(m_graph);
+    RefPtr<StringImpl> string = edge->tryGetString(m_graph);
     if (!!string)
-        return string.length();
+        return length(string);
     if (JSValue value = m_state.forNode(edge).m_value) {
         if (value.isCell() && value.asCell()->type() == StringType)
             return asString(value)->length();
@@ -13674,13 +13674,13 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
 {
     if (node->child3().useKind() == StringUse) {
         const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
-        String searchString = node->child2()->tryGetString(m_graph);
+        RefPtr<StringImpl> searchString = node->child2()->tryGetString(m_graph);
         if (!!searchString)
             tablePointer = m_graph.tryAddStringSearchTable8(searchString);
 
-        String replacementString = node->child3()->tryGetString(m_graph);
+        RefPtr<StringImpl> replacementString = node->child3()->tryGetString(m_graph);
         if (!!replacementString) {
-            if (!replacementString.length()) {
+            if (!length(replacementString)) {
                 SpeculateCellOperand string(this, node->child1());
                 SpeculateCellOperand search(this, node->child2());
                 GPRReg stringGPR = string.gpr();
@@ -13698,7 +13698,7 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
                 return;
             }
 
-            if (replacementString.find('$') == notFound) {
+            if (find(replacementString, '$') == notFound) {
                 SpeculateCellOperand string(this, node->child1());
                 SpeculateCellOperand search(this, node->child2());
                 SpeculateCellOperand replace(this, node->child3());
@@ -17570,10 +17570,10 @@ void SpeculativeJIT::compileMakeAtomString(Node* node)
     case 2: {
         const ConcatKeyAtomStringCache* cache = nullptr;
         GPRReg variableGPR = InvalidGPRReg;
-        if (auto string = node->child1()->tryGetString(m_graph); !string.isNull()) {
+        if (auto string = node->child1()->tryGetString(m_graph); string) {
             cache = m_graph.tryAddConcatKeyAtomStringCache(string, emptyString(), ConcatKeyAtomStringCache::Mode::Variable1);
             variableGPR = opGPRs[1];
-        } else if (auto string = node->child2()->tryGetString(m_graph); !string.isNull()) {
+        } else if (auto string = node->child2()->tryGetString(m_graph); string) {
             cache = m_graph.tryAddConcatKeyAtomStringCache(string, emptyString(), ConcatKeyAtomStringCache::Mode::Variable0);
             variableGPR = opGPRs[0];
         }
@@ -17600,16 +17600,16 @@ void SpeculativeJIT::compileMakeAtomString(Node* node)
     case 3: {
         const ConcatKeyAtomStringCache* cache = nullptr;
         GPRReg variableGPR = InvalidGPRReg;
-        if (auto s0 = node->child1()->tryGetString(m_graph); !s0.isNull()) {
-            if (auto s1 = node->child2()->tryGetString(m_graph); !s1.isNull()) {
+        if (auto s0 = node->child1()->tryGetString(m_graph); s0) {
+            if (auto s1 = node->child2()->tryGetString(m_graph); s1) {
                 cache = m_graph.tryAddConcatKeyAtomStringCache(s0, s1, ConcatKeyAtomStringCache::Mode::Variable2);
                 variableGPR = opGPRs[2];
-            } else if (auto s2 = node->child3()->tryGetString(m_graph); !s2.isNull()) {
+            } else if (auto s2 = node->child3()->tryGetString(m_graph); s2) {
                 cache = m_graph.tryAddConcatKeyAtomStringCache(s0, s2, ConcatKeyAtomStringCache::Mode::Variable1);
                 variableGPR = opGPRs[1];
             }
-        } else if (auto s1 = node->child2()->tryGetString(m_graph); !s1.isNull()) {
-            if (auto s2 = node->child3()->tryGetString(m_graph); !s2.isNull()) {
+        } else if (auto s1 = node->child2()->tryGetString(m_graph); s1) {
+            if (auto s2 = node->child3()->tryGetString(m_graph); s2) {
                 cache = m_graph.tryAddConcatKeyAtomStringCache(s1, s2, ConcatKeyAtomStringCache::Mode::Variable0);
                 variableGPR = opGPRs[0];
             }
@@ -17780,9 +17780,9 @@ void SpeculativeJIT::compileStringLocaleCompare(Node* node)
 void SpeculativeJIT::compileStringIndexOf(Node* node)
 {
     std::optional<char16_t> character;
-    String searchString = node->child2()->tryGetString(m_graph);
-    if (!!searchString && searchString.length() == 1)
-        character = searchString.codeUnitAt(0);
+    RefPtr<StringImpl> searchString = node->child2()->tryGetString(m_graph);
+    if (searchString && length(searchString) == 1)
+        character = codeUnitAt(searchString, 0);
 
     if (node->child3()) {
         SpeculateCellOperand base(this, node->child1());
@@ -17931,9 +17931,9 @@ void SpeculativeJIT::compileStringSearch(Node* node)
 void SpeculativeJIT::compileStringLastIndexOf(Node* node)
 {
     std::optional<char16_t> character;
-    String searchString = node->child2()->tryGetString(m_graph);
-    if (!!searchString && searchString.length() == 1)
-        character = searchString.codeUnitAt(0);
+    RefPtr<StringImpl> searchString = node->child2()->tryGetString(m_graph);
+    if (searchString && length(searchString) == 1)
+        character = codeUnitAt(searchString, 0);
 
     if (node->child3()) {
         SpeculateCellOperand base(this, node->child1());
@@ -18092,9 +18092,9 @@ void SpeculativeJIT::compileStringStartsOrEndsWith(Node* node)
     bool isStartsWith = node->op() == StringStartsWith;
 
     if (!node->child3()) {
-        String search = node->child2()->tryGetString(m_graph);
-        if (!search.isNull() && search.length() >= 1 && search.length() <= maxConstantSearchLength && search.is8Bit()) {
-            compileStringStartsOrEndsWithConstant(node, isStartsWith, search.span8());
+        RefPtr<StringImpl> search = node->child2()->tryGetString(m_graph);
+        if (search && length(search) >= 1 && length(search) <= maxConstantSearchLength && is8Bit(search)) {
+            compileStringStartsOrEndsWithConstant(node, isStartsWith, span8(search));
             return;
         }
     }

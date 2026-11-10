@@ -68,7 +68,7 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
     if (auto* result = map.tryGet(identifier))
         return *result;
 
-    if (platformEvent->text().codePointAt(0) == ' ')
+    if (codePointAt(platformEvent->text(), 0) == ' ')
         return KeyboardScrollingKey::Space;
 
     return { };

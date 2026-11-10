@@ -99,7 +99,7 @@ static inline bool nameShouldBeVisibleInDocumentAll(Element& element)
 }
 
 template <typename HTMLCollectionClass>
-Element* CachedHTMLCollection<HTMLCollectionClass>::namedItem(const AtomString& name) const
+Element* CachedHTMLCollection<HTMLCollectionClass>::namedItem(AtomStringImpl* name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
@@ -107,7 +107,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass>::namedItem(const AtomString& 
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
 
-    if (name.isEmpty())
+    if (isEmpty(name))
         return nullptr;
 
     Ref root = rootNode();

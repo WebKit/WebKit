@@ -145,7 +145,7 @@
     WebCore::JSMainThreadNullState state;
     DOMNode* inRelatedTargetObjC = inRelatedTarget;
     RefPtr inRelatedTargetNode = core(inRelatedTargetObjC);
-    IMPL->initMouseEvent(type, canBubble, cancelable, toWindowProxy(view), detail, inScreenX, inScreenY, inClientX, inClientY, inCtrlKey, inAltKey, inShiftKey, inMetaKey, inButton, WTF::move(inRelatedTargetNode));
+    IMPL->initMouseEvent(AtomStringImpl::add((__bridge CFStringRef)type).get(), canBubble, cancelable, toWindowProxy(view), detail, inScreenX, inScreenY, inClientX, inClientY, inCtrlKey, inAltKey, inShiftKey, inMetaKey, inButton, WTF::move(inRelatedTargetNode));
 }
 
 @end

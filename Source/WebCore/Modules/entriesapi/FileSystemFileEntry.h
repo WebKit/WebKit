@@ -35,14 +35,14 @@ class ScriptExecutionContext;
 
 class FileSystemFileEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemFileEntry> create(ScriptExecutionContext&, DOMFileSystem&, const String&);
+    static Ref<FileSystemFileEntry> create(ScriptExecutionContext&, DOMFileSystem&, StringImpl*);
 
     void file(ScriptExecutionContext&, Ref<FileCallback>&&, RefPtr<ErrorCallback>&& = nullptr);
 
 private:
     bool isFile() const final { return true; }
 
-    FileSystemFileEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);
+    FileSystemFileEntry(ScriptExecutionContext&, DOMFileSystem&, StringImpl* virtualPath);
 };
 static_assert(sizeof(FileSystemFileEntry) == sizeof(FileSystemEntry));
 

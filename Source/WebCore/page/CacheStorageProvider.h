@@ -42,7 +42,7 @@ public:
         {
         }
 
-        Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+        Ref<OpenPromise> open(const ClientOrigin&, StringImpl*) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
         Ref<RemovePromise> remove(DOMCacheIdentifier) final { return RemovePromise::createAndReject(DOMCacheEngine::Error::Stopped); }
         Ref<RetrieveCachesPromise> retrieveCaches(const ClientOrigin&, uint64_t)  final { return RetrieveCachesPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
         Ref<RetrieveRecordsPromise> retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&)  final { return RetrieveRecordsPromise::createAndReject(DOMCacheEngine::Error::Stopped); }

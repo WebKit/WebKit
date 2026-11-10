@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PseudoElement);
 
 const QualifiedName& pseudoElementTagName()
 {
-    static NeverDestroyed<QualifiedName> name(nullAtom(), "<pseudo>"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> name(nullAtom(), "<pseudo>"_atom, nullAtom());
     return name;
 }
 

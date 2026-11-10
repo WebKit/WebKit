@@ -146,26 +146,26 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     WKElementActionHandlerInternal handler = nil;
     switch (type) {
     case _WKElementActionTypeCopy:
-        title = WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link and Image or Copy Image action button").createNSString();
+        title = createNSString(WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link and Image or Copy Image action button"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
     case _WKElementActionTypeOpen:
-        title = WEB_UI_STRING("Open", "Title for Open Link action button").createNSString();
+        title = createNSString(WEB_UI_STRING("Open", "Title for Open Link action button"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
     case _WKElementActionTypeSaveImage:
-        title = WEB_UI_STRING("Save to Photos", "Title for Save to Photos action button").createNSString();
+        title = createNSString(WEB_UI_STRING("Save to Photos", "Title for Save to Photos action button"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     case _WKElementActionTypeViewSpatial:
-        title = WEB_UI_STRING("View Spatial Photo", "Title for View Spatial Photo action button").createNSString();
+        title = createNSString(WEB_UI_STRING("View Spatial Photo", "Title for View Spatial Photo action button"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -173,14 +173,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 #endif
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
     case _WKElementActionTypeAddToReadingList:
-        title = WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button").createNSString();
+        title = createNSString(WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button"));
         handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) {
             addToReadingList(actionInfo.URL, actionInfo.title);
         };
         break;
 #endif
     case _WKElementActionTypeShare:
-        title = WEB_UI_STRING("Share…", "Title for Share action button").createNSString();
+        title = createNSString(WEB_UI_STRING("Share…", "Title for Share action button"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:NO];
         };
@@ -190,7 +190,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionTypeImageExtraction:
 #if ENABLE(IMAGE_ANALYSIS)
-        title = WEB_UI_STRING("Show Text", "Title for Show Text action button").createNSString();
+        title = createNSString(WEB_UI_STRING("Show Text", "Title for Show Text action button"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -198,7 +198,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionTypeRevealImage:
 #if ENABLE(IMAGE_ANALYSIS)
-        title = WebCore::contextMenuItemTagLookUpImage().createNSString();
+        title = createNSString(WebCore::contextMenuItemTagLookUpImage());
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -206,7 +206,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionTypeCopyCroppedImage:
 #if ENABLE(IMAGE_ANALYSIS)
-        title = WebCore::contextMenuItemTagCopySubject().createNSString();
+        title = createNSString(WebCore::contextMenuItemTagCopySubject());
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -214,7 +214,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionPlayAnimation:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-        title = WEB_UI_STRING("Play Animation", "Title for play animation action button or context menu item").createNSString();
+        title = createNSString(WEB_UI_STRING("Play Animation", "Title for play animation action button or context menu item"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -222,7 +222,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionPauseAnimation:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-        title = WEB_UI_STRING("Pause Animation", "Title for pause animation action button or context menu item").createNSString();
+        title = createNSString(WEB_UI_STRING("Pause Animation", "Title for pause animation action button or context menu item"));
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -245,7 +245,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 {
     RetainPtr<NSString> customTitle;
     if (type == _WKElementActionTypeCopy && info.type == _WKActivatedElementTypeLink && !info._isImage)
-        customTitle = WEB_UI_STRING_KEY("Copy Link", "Copy Link (ActionSheet)", "Title for Copy Link button").createNSString();
+        customTitle = createNSString(WEB_UI_STRING_KEY("Copy Link", "Copy Link (ActionSheet)", "Title for Copy Link button"));
     return [self _elementActionWithType:type customTitle:customTitle.get() assistant:assistant disabled:disabled];
 }
 

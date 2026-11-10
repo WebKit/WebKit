@@ -57,31 +57,31 @@
 - (NSString *)src
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr).string()).autorelease();
 }
 
 - (void)setSrc:(NSString *)newSrc
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, newSrc);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, AtomStringImpl::add((__bridge CFStringRef)newSrc).get());
 }
 
 - (NSString *)currentSrc
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->currentSrc().string().createNSString().autorelease();
+    return createNSString(IMPL->currentSrc().string()).autorelease();
 }
 
 - (NSString *)crossOrigin
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->crossOrigin().createNSString().autorelease();
+    return createNSString(IMPL->crossOrigin()).autorelease();
 }
 
 - (void)setCrossOrigin:(NSString *)newCrossOrigin
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::crossoriginAttr, newCrossOrigin);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::crossoriginAttr, AtomStringImpl::add((__bridge CFStringRef)newCrossOrigin).get());
 }
 
 - (unsigned short)networkState
@@ -93,13 +93,13 @@
 - (NSString *)preload
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->preload().createNSString().autorelease();
+    return createNSString(IMPL->preload()).autorelease();
 }
 
 - (void)setPreload:(NSString *)newPreload
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setPreload(newPreload);
+    IMPL->setPreload(AtomStringImpl::add((__bridge CFStringRef)newPreload).get());
 }
 
 - (DOMTimeRanges *)buffered
@@ -291,13 +291,13 @@
 - (NSString *)mediaGroup
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::mediagroupAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::mediagroupAttr)).autorelease();
 }
 
 - (void)setMediaGroup:(NSString *)newMediaGroup
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediagroupAttr, newMediaGroup);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediagroupAttr, AtomStringImpl::add((__bridge CFStringRef)newMediaGroup).get());
 }
 
 - (void)load
@@ -309,7 +309,7 @@
 - (NSString *)canPlayType:(NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->canPlayType(type).createNSString().autorelease();
+    return createNSString(IMPL->canPlayType(StringImpl::create(type).get())).autorelease();
 }
 
 - (NSTimeInterval)getStartDate

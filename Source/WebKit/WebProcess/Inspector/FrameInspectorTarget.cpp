@@ -48,7 +48,7 @@ FrameInspectorTarget::FrameInspectorTarget(WebFrame& frame)
 
 FrameInspectorTarget::~FrameInspectorTarget() = default;
 
-String FrameInspectorTarget::identifier() const
+RefPtr<StringImpl> FrameInspectorTarget::identifier() const
 {
     return toTargetID(m_frame->frameID(), WebCore::Process::identifier());
 }
@@ -95,7 +95,7 @@ void FrameInspectorTarget::disconnect()
     m_channel.reset();
 }
 
-void FrameInspectorTarget::sendMessageToTargetBackend(const String& message)
+void FrameInspectorTarget::sendMessageToTargetBackend(StringImpl* message)
 {
     if (!m_channel)
         return;
@@ -105,7 +105,7 @@ void FrameInspectorTarget::sendMessageToTargetBackend(const String& message)
         protect(inspectedFrame->inspectorController())->dispatchMessageFromFrontend(message);
 }
 
-String FrameInspectorTarget::toTargetID(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
+RefPtr<StringImpl> FrameInspectorTarget::toTargetID(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
 {
     return makeString("frame-"_s, frameID.toUInt64(), '-', processID.toUInt64());
 }

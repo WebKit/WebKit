@@ -70,7 +70,7 @@ class RemoteWebInspectorUIProxyClient : public CanMakeWeakPtr<RemoteWebInspector
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteWebInspectorUIProxyClient);
 public:
     virtual ~RemoteWebInspectorUIProxyClient() { }
-    virtual void sendMessageToBackend(const String& message) = 0;
+    virtual void sendMessageToBackend(StringImpl* message) = 0;
     virtual void closeFromFrontend() = 0;
     virtual Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy&) = 0;
 };
@@ -96,13 +96,13 @@ public:
 
     void invalidate();
 
-    void initialize(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
+    void initialize(Ref<API::DebuggableInfo>&&, StringImpl* backendCommandsURL);
     void closeFromBackend();
     void show();
     void showConsole();
     void showResources();
 
-    void sendMessageToFrontend(const String& message);
+    void sendMessageToFrontend(StringImpl* message);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
@@ -143,17 +143,17 @@ private:
     void resetState();
     void bringToFront();
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void load(const String& path, CompletionHandler<void(const String&)>&&);
+    void load(StringImpl* path, CompletionHandler<void(StringImpl*)>&&);
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     NODELETE void setSheetRect(const WebCore::FloatRect&);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void startWindowDrag();
-    void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
+    void openURLExternally(StringImpl* url);
+    void revealFileExternally(StringImpl* path);
     void showCertificate(const WebCore::CertificateInfo&);
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
-    void sendMessageToBackend(const String& message);
+    void sendMessageToBackend(StringImpl* message);
 
     void createFrontendPageAndWindow();
     void closeFrontendPageAndWindow();
@@ -164,13 +164,13 @@ private:
     void platformResetState();
     void platformBringToFront();
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
+    void platformLoad(StringImpl* path, CompletionHandler<void(StringImpl*)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     NODELETE void platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();
-    void platformOpenURLExternally(const String& url);
-    void platformRevealFileExternally(const String& path);
+    void platformOpenURLExternally(StringImpl* url);
+    void platformRevealFileExternally(StringImpl* path);
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
     WeakPtr<RemoteWebInspectorUIProxyClient> m_client;
@@ -181,13 +181,13 @@ private:
 #endif
     
     Ref<API::DebuggableInfo> m_debuggableInfo;
-    String m_backendCommandsURL;
+    RefPtr<StringImpl> m_backendCommandsURL;
 
 #if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorView;
     RetainPtr<NSWindow> m_window;
     RetainPtr<WKRemoteWebInspectorUIProxyObjCAdapter> m_objCAdapter;
-    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    HashMap<RefPtr<StringImpl>, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     WebCore::FloatRect m_sheetRect;
 #endif
 #if PLATFORM(GTK)

@@ -33,6 +33,7 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Variant.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -98,7 +99,7 @@ private:
 
 class SendBitmapOrText {
 public:
-    using Arguments = std::tuple<Variant<String, WebCore::ShareableBitmapHandle>>;
+    using Arguments = std::tuple<Variant<RefPtr<StringImpl>, WebCore::ShareableBitmapHandle>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithImageData_SendBitmapOrText; }
     static constexpr bool isSync = false;
@@ -106,7 +107,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit SendBitmapOrText(Variant<String, WebCore::ShareableBitmapHandle>&& content)
+    explicit SendBitmapOrText(Variant<RefPtr<StringImpl>, WebCore::ShareableBitmapHandle>&& content)
         : m_content(WTF::move(content))
     {
     }
@@ -118,7 +119,7 @@ public:
     }
 
 private:
-    Variant<String, WebCore::ShareableBitmapHandle>&& m_content;
+    Variant<RefPtr<StringImpl>, WebCore::ShareableBitmapHandle>&& m_content;
 };
 
 class ReceiveImageDataReply {

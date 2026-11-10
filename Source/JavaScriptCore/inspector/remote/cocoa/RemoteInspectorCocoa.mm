@@ -233,7 +233,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID targetID)
     Ref { *m_relayConnection }->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
 }
 
-void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
+void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, StringImpl* message)
 {
     Locker locker { m_mutex };
 
@@ -245,7 +245,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
     if (!targetConnection)
         return;
 
-    RetainPtr messageData = [message.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+    RetainPtr messageData = [createNSString(message) dataUsingEncoding:NSUTF8StringEncoding];
     NSUInteger messageLength = [messageData length];
     const NSUInteger maxChunkSize = 2 * 1024 * 1024; // 2 Mebibytes
 
@@ -490,32 +490,32 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
 
     switch (target.type()) {
     case RemoteInspectionTarget::Type::ITML:
-        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
-        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
+        [listing setObject:createNSString(target.name()).get() forKey:WIRTitleKey];
+        [listing setObject:createNSString(target.nameOverride()).get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeITML forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::JavaScript:
-        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
-        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
+        [listing setObject:createNSString(target.name()).get() forKey:WIRTitleKey];
+        [listing setObject:createNSString(target.nameOverride()).get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::ServiceWorker:
-        [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
-        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
-        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
+        [listing setObject:createNSString(target.url()).get() forKey:WIRURLKey];
+        [listing setObject:createNSString(target.name()).get() forKey:WIRTitleKey];
+        [listing setObject:createNSString(target.nameOverride()).get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeServiceWorker forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::WebPage:
     case RemoteInspectionTarget::Type::LegacyWebPage:
-        [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
-        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
-        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
+        [listing setObject:createNSString(target.url()).get() forKey:WIRURLKey];
+        [listing setObject:createNSString(target.name()).get() forKey:WIRTitleKey];
+        [listing setObject:createNSString(target.nameOverride()).get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeWebPage forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::WasmDebugger:
-        [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
-        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
-        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
+        [listing setObject:createNSString(target.url()).get() forKey:WIRURLKey];
+        [listing setObject:createNSString(target.name()).get() forKey:WIRTitleKey];
+        [listing setObject:createNSString(target.nameOverride()).get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeWasmDebugger forKey:WIRTypeKey];
         if (auto pid = target.webContentProcessPID()) {
             RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
@@ -551,12 +551,12 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
     [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
-    [listing setObject:target.name().createNSString().get() forKey:WIRSessionIdentifierKey];
+    [listing setObject:createNSString(target.name()).get() forKey:WIRSessionIdentifierKey];
     [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
     [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
     if (m_clientCapabilities) {
-        [listing setObject:m_clientCapabilities->browserName.createNSString().get() forKey:WIRAutomationTargetNameKey];
-        [listing setObject:m_clientCapabilities->browserVersion.createNSString().get() forKey:WIRAutomationTargetVersionKey];
+        [listing setObject:createNSString(m_clientCapabilities->browserName).get() forKey:WIRAutomationTargetNameKey];
+        [listing setObject:createNSString(m_clientCapabilities->browserVersion).get() forKey:WIRAutomationTargetVersionKey];
     }
 
     if (RefPtr connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
@@ -881,7 +881,7 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
     if (!m_clientCapabilities || !m_clientCapabilities->remoteAutomationAllowed)
         return;
 
-    m_client->requestAutomationSession(suggestedSessionIdentifier, sessionCapabilities);
+    m_client->requestAutomationSession(StringImpl::create(suggestedSessionIdentifier).get(), sessionCapabilities);
 }
 
 void RemoteInspector::receivedPingSuccessMessage()

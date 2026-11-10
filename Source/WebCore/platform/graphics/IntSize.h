@@ -176,7 +176,7 @@ public:
     WEBCORE_EXPORT operator SIZE() const;
 #endif
 
-    WEBCORE_EXPORT String toJSONString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
 
 private:
@@ -224,7 +224,7 @@ template<> struct HashTraits<WebCore::IntSize>;
 
 template<typename> struct LogArgument;
 template<> struct LogArgument<WebCore::IntSize> {
-    static String toString(const WebCore::IntSize& size) { return size.toJSONString(); }
+    static RefPtr<StringImpl> toString(const WebCore::IntSize& size) { return size.toJSONString(); }
 };
 
 }

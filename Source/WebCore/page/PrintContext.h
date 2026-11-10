@@ -83,9 +83,9 @@ public:
 
     // Used by layout tests.
     WEBCORE_EXPORT static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels); // Returns -1 if page isn't found.
-    WEBCORE_EXPORT static String pageProperty(LocalFrame*, const String& propertyName, int pageNumber);
+    WEBCORE_EXPORT static RefPtr<StringImpl> pageProperty(LocalFrame*, StringImpl* propertyName, int pageNumber);
     WEBCORE_EXPORT static bool isPageBoxVisible(LocalFrame*, int pageNumber);
-    WEBCORE_EXPORT static String pageSizeAndMarginsInPixels(LocalFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
+    WEBCORE_EXPORT static RefPtr<StringImpl> pageSizeAndMarginsInPixels(LocalFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
     WEBCORE_EXPORT static int numberOfPages(LocalFrame&, const FloatSize& pageSizeInPixels);
     // Used by print reftests.
     WEBCORE_EXPORT static IntSize cssPageBoxesSize(LocalFrame&, const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin);
@@ -116,7 +116,7 @@ private:
     void outputLinkedDestinations(GraphicsContext&, Document&, const IntRect& pageRect);
 
     Vector<IntRect> m_pageRects;
-    std::unique_ptr<HashMap<String, Ref<Element>>> m_linkedDestinations;
+    std::unique_ptr<HashMap<RefPtr<StringImpl>, Ref<Element>>> m_linkedDestinations;
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting { false };
 };

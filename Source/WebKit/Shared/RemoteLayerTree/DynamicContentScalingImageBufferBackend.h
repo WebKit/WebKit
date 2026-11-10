@@ -61,7 +61,7 @@ public:
     std::optional<WebCore::DynamicContentScalingDisplayList> displayList() const;
 protected:
     unsigned bytesPerRow() const final;
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }

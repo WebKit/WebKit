@@ -79,7 +79,7 @@ TemporalInstantConstructor::TemporalInstantConstructor(VM& vm, Structure* struct
 
 void TemporalInstantConstructor::finishCreation(VM& vm, TemporalInstantPrototype* instantPrototype)
 {
-    Base::finishCreation(vm, 1, "Instant"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Instant"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, instantPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

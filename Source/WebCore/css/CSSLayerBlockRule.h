@@ -36,21 +36,21 @@ namespace WebCore {
 
 class StyleRuleLayer;
 
-using CascadeLayerName = Vector<AtomString>;
+using CascadeLayerName = Vector<RefPtr<AtomStringImpl>>;
 
 class CSSLayerBlockRule final : public CSSGroupingRule {
 public:
     static Ref<CSSLayerBlockRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
 
-    String cssText() const final;
-    String name() const;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> name() const;
 
 private:
     CSSLayerBlockRule(StyleRuleLayer&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::LayerBlock; }
 };
 
-String stringFromCascadeLayerName(const CascadeLayerName&);
+RefPtr<StringImpl> stringFromCascadeLayerName(const CascadeLayerName&);
 
 } // namespace WebCore
 

@@ -243,9 +243,9 @@ RefPtr<Model> HTMLModelElement::model() const
     return m_model;
 }
 
-NODELETE static bool isSupportedModelType(const AtomString& type)
+NODELETE static bool isSupportedModelType(AtomStringImpl* type)
 {
-    return type.isEmpty() || MIMETypeRegistry::isSupportedModelMIMEType(type);
+    return isEmpty(type) || MIMETypeRegistry::isSupportedModelMIMEType(type);
 }
 
 URL HTMLModelElement::selectModelSource() const
@@ -290,10 +290,10 @@ CachedResourceRequest HTMLModelElement::createResourceRequest(const URL& resourc
     auto crossOriginAttribute = parseCORSSettingsAttribute(attributeWithoutSynchronization(HTMLNames::crossoriginAttr));
     // Make sure CORS is always enabled by passing a non-null cross origin attribute
     Ref document = this->document();
-    if (crossOriginAttribute.isNull()) {
+    if (!crossOriginAttribute) {
         Ref documentOrigin = document->securityOrigin();
         if (LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(documentOrigin->protocol()) || documentOrigin->protocol() != resourceURL.protocol())
-            crossOriginAttribute = "anonymous"_s;
+            crossOriginAttribute = "anonymous"_si;
     }
     auto request = createPotentialAccessControlRequest(ResourceRequest { URL { resourceURL } }, WTF::move(options), document, crossOriginAttribute);
     request.setInitiator(*this);
@@ -313,7 +313,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_dataMemoryCost.store(0, std::memory_order_relaxed);
     m_dataComplete = false;
     m_model = nullptr;
-    m_originalMIMEType = String();
+    m_originalMIMEType = nullptr;
 
     if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
@@ -337,7 +337,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     if (!m_readyPromise->isFulfilled())
         m_readyPromise->reject(Exception { ExceptionCode::AbortError });
 
-    triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The model URL was updated"_s });
+    triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The model URL was updated"_si });
 
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
     m_shouldCreateModelPlayerUponRendererAttachment = false;
@@ -706,7 +706,7 @@ void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, NodeIdentifier n
 
 #if ENABLE(MODEL_PROCESS)
 
-void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType)
+void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedBuffer>&& convertedData, StringImpl* convertedMIMEType)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     if (&modelPlayer != m_modelPlayer && &modelPlayer != m_pendingModelPlayer)
@@ -716,9 +716,9 @@ void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedB
 #endif
     ASSERT(m_dataComplete);
 
-    RELEASE_LOG(ModelElement, "%p - HTMLModelElement::didConvertModelData: Received converted model data, size=%zu mimeType=%s", this, convertedData->size(), convertedMIMEType.utf8());
+    RELEASE_LOG(ModelElement, "%p - HTMLModelElement::didConvertModelData: Received converted model data, size=%zu mimeType=%s", this, convertedData->size(), utf8(convertedMIMEType));
 
-    m_model = Model::create(WTF::move(convertedData), String { convertedMIMEType }, m_sourceURL, true /* isConverted */);
+    m_model = Model::create(WTF::move(convertedData), RefPtr<StringImpl> { convertedMIMEType }, m_sourceURL, true /* isConverted */);
     m_dataMemoryCost.store(m_model->data()->size(), std::memory_order_relaxed);
     reportExtraMemoryCost();
 }
@@ -833,7 +833,7 @@ bool HTMLModelElement::isVisible() const
 #endif
 }
 
-void HTMLModelElement::logWarning(ModelPlayer& modelPlayer, const String& warningMessage)
+void HTMLModelElement::logWarning(ModelPlayer& modelPlayer, StringImpl* warningMessage)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     if (&modelPlayer != m_modelPlayer && &modelPlayer != m_pendingModelPlayer)
@@ -853,7 +853,7 @@ void HTMLModelElement::modelDidChange()
     if (!page) {
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::AbortError });
-        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model not associated with a page"_s });
+        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model not associated with a page"_si });
         return;
     }
 
@@ -872,7 +872,7 @@ void HTMLModelElement::modelDidChange()
 #endif
     if (!hasRenderer) {
         m_shouldCreateModelPlayerUponRendererAttachment = true;
-        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model cannot be rendered"_s });
+        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model cannot be rendered"_si });
         return;
     }
 
@@ -891,7 +891,7 @@ void HTMLModelElement::createModelPlayer()
 #endif
 
     if (modelContainerSizeIsEmpty())
-        return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model container size is empty"_s });
+        return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model container size is empty"_si });
 
 #if ENABLE(GPU_PROCESS_MODEL)
     // If a live player is already showing content, route the new player into
@@ -938,7 +938,7 @@ void HTMLModelElement::createModelPlayer()
     if (!modelPlayer) {
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::AbortError });
-        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model player creation failed"_s });
+        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model player creation failed"_si });
         return;
     }
 
@@ -1196,7 +1196,7 @@ ExceptionOr<void> HTMLModelElement::setEntityTransform(const DOMMatrixReadOnly& 
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
     if (!insidePortal && canSetEntityTransform())
-        return Exception { ExceptionCode::InvalidStateError, "Transform is read-only unless StageMode is set to 'none'"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Transform is read-only unless StageMode is set to 'none'"_si };
 #endif
 
 #if ENABLE(SPATIAL_PORTAL)
@@ -1334,7 +1334,7 @@ bool HTMLModelElement::isInteractive() const
 #endif
 }
 
-void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLModelElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == srcAttr)
         sourcesChanged();
@@ -1457,8 +1457,8 @@ void HTMLModelElement::logInteractionDiagnostic()
         modelType = 2;
 
     DiagnosticLoggingClient::ValueDictionary dictionary;
-    dictionary.set("type"_s, modelType);
-    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("ModelElementInteraction"_s, "Safari"_s, dictionary, ShouldSample::No);
+    dictionary.set("type"_si, modelType);
+    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("ModelElementInteraction"_si, "Safari"_si, dictionary, ShouldSample::No);
 }
 
 std::optional<PlatformLayerIdentifier> HTMLModelElement::layerID() const
@@ -1610,7 +1610,7 @@ WebCore::StageModeOperation HTMLModelElement::stageMode() const
         return WebCore::StageModeOperation::None;
 #endif
 
-    String attr = attributeWithoutSynchronization(HTMLNames::stagemodeAttr);
+    RefPtr<StringImpl> attr = attributeWithoutSynchronization(HTMLNames::stagemodeAttr);
     if (equalLettersIgnoringASCIICase(attr, "orbit"_s))
         return WebCore::StageModeOperation::Orbit;
 
@@ -1745,12 +1745,12 @@ void HTMLModelElement::environmentMapStyleDidChange()
 
 #endif
 
-String HTMLModelElement::effectiveEnvironmentMapForTesting() const
+RefPtr<StringImpl> HTMLModelElement::effectiveEnvironmentMapForTesting() const
 {
     if (RefPtr modelPlayer = m_modelPlayer)
         return modelPlayer->environmentMapForTesting();
 
-    return "no player"_s;
+    return "no player"_si;
 }
 
 URL HTMLModelElement::selectEnvironmentMapURL() const
@@ -1759,7 +1759,7 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
         return { };
 
     if (hasAttributeWithoutSynchronization(environmentmapAttr)) {
-        const auto& attr = attributeWithoutSynchronization(environmentmapAttr).string().trim(isASCIIWhitespace);
+        const auto& attr = trim(attributeWithoutSynchronization(environmentmapAttr), isASCIIWhitespace);
         if (StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>())
             return { };
         return getURLAttribute(environmentmapAttr);
@@ -1828,10 +1828,12 @@ bool HTMLModelElement::shouldDeferLoading() const
     return !isVisible() && isModelDeferred() && !document().page()->shouldDisableModelLoadDelaysForTesting();
 }
 
-static String modelMIMEType(const SharedBuffer& data, const String& contentType)
+static RefPtr<StringImpl> modelMIMEType(const SharedBuffer& data, StringImpl* contentType)
 {
     auto mimeType = MIMESniffer::getModelMIMETypeFromContent(data.span());
-    return mimeType.isNull() ? contentType : mimeType;
+    if (!mimeType)
+        return contentType;
+    return mimeType;
 }
 
 void HTMLModelElement::modelResourceFinished()
@@ -1855,7 +1857,7 @@ void HTMLModelElement::modelResourceFinished()
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
 
-        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::NetworkError, "The model resource failed to load"_s });
+        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::NetworkError, "The model resource failed to load"_si });
         return;
     }
 
@@ -2135,7 +2137,7 @@ void HTMLModelElement::triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<R
         return;
 
     if (result.hasException())
-        RELEASE_LOG_ERROR(ModelElement, "%p - HTMLModelElement: Model Player creation request: FAILED with error: %s", this, result.exception().message().utf8());
+        RELEASE_LOG_ERROR(ModelElement, "%p - HTMLModelElement: Model Player creation request: FAILED with error: %s", this, utf8(result.exception().message()));
     else
         RELEASE_LOG_INFO(ModelElement, "%p - HTMLModelElement: Model Player creation request: SUCCEEDED", this);
 
@@ -2213,7 +2215,7 @@ bool HTMLModelElement::modelContainerSizeIsEmpty() const
 #endif
 }
 
-void HTMLModelElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLModelElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyID::Width, value);
@@ -2332,7 +2334,7 @@ size_t HTMLModelElement::externalMemoryCost() const
 void HTMLModelElement::sourceRequestResource()
 {
     if (m_sourceURL.isEmpty())
-        return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The source URL is empty"_s });
+        return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The source URL is empty"_si });
 
     auto request = createResourceRequest(m_sourceURL, FetchOptions::Destination::Model);
     auto resource = protect(protect(document())->cachedResourceLoader())->requestModelResource(WTF::move(request));
@@ -2341,7 +2343,7 @@ void HTMLModelElement::sourceRequestResource()
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
 
-        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::NetworkError, "The model resource cannot be created"_s });
+        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::NetworkError, "The model resource cannot be created"_si });
         return;
     }
 
@@ -2418,25 +2420,25 @@ bool HTMLModelElement::isModelUnloaded() const
     return !isVisible() && m_model && !hasLiveModelPlayer();
 }
 
-String HTMLModelElement::modelElementStateForTesting() const
+RefPtr<StringImpl> HTMLModelElement::modelElementStateForTesting() const
 {
     if (isModelDeferred())
-        return "Deferred"_s;
+        return "Deferred"_si;
     if (isModelLoading())
-        return "Loading"_s;
+        return "Loading"_si;
     if (isModelLoaded())
-        return "Loaded"_s;
+        return "Loaded"_si;
     if (isModelUnloading())
-        return "Unloading"_s;
+        return "Unloading"_si;
     if (isModelUnloaded())
-        return "Unloaded"_s;
+        return "Unloaded"_si;
 
     ASSERT_NOT_REACHED();
-    return "Unknown"_s;
+    return "Unknown"_si;
 }
 
 #if ENABLE(MODEL_PROCESS)
-void HTMLModelElement::sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler) const
+void HTMLModelElement::sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOptions& options, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler) const
 {
     RefPtr modelPlayer = m_modelPlayer;
     if (modelPlayer) {
@@ -2455,10 +2457,10 @@ void HTMLModelElement::sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOpt
     completionHandler({ });
 }
 
-String HTMLModelElement::dumpLabelForTesting(unsigned treeOrderPosition) const
+RefPtr<StringImpl> HTMLModelElement::dumpLabelForTesting(unsigned treeOrderPosition) const
 {
     auto& id = getIdAttribute();
-    if (!id.isEmpty())
+    if (!isEmpty(id))
         return makeString('#', id);
     return makeString(localName(), '[', treeOrderPosition, ']');
 }

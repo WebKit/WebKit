@@ -37,11 +37,11 @@ enum class EditorCommandSource : uint8_t;
 
 class EditorInternalCommand {
 public:
-    bool (*execute)(LocalFrame&, Event*, EditorCommandSource, const String&);
+    bool (*execute)(LocalFrame&, Event*, EditorCommandSource, StringImpl*);
     bool (*isSupportedFromDOM)(LocalFrame*);
     bool (*isEnabled)(LocalFrame&, Event*, EditorCommandSource);
     TriState (*state)(LocalFrame&, Event*);
-    String (*value)(LocalFrame&, Event*);
+    RefPtr<StringImpl> (*value)(LocalFrame&, Event*);
     bool isTextInsertion;
     bool (*allowExecutionWhenDisabled)(LocalFrame&, EditorCommandSource);
 };

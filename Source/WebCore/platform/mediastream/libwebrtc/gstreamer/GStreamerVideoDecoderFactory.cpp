@@ -73,14 +73,14 @@ public:
     bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) override
     {
         static Atomic<uint64_t> uniqueId = 0;
-        m_id = makeString("webkit-webrtc-video-dec-"_s, uniqueId.exchangeAdd(1)).ascii();
+        m_id = ascii(makeString("webkit-webrtc-video-dec-"_s, uniqueId.exchangeAdd(1)));
         updateCapsFromImageSize({ codecSettings.max_render_resolution().Width(), codecSettings.max_render_resolution().Height() });
         return true;
     }
 
     void addDecoderIfSupported(std::vector<webrtc::SdpVideoFormat>& codecList)
     {
-        if (!GStreamerRegistryScanner::singleton().isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, mediaType()))
+        if (!GStreamerRegistryScanner::singleton().isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, StringImpl::create(mediaType()).ptr()))
             return;
 
         auto formats = configureSupportedDecoder();
@@ -182,7 +182,7 @@ class VP8Decoder : public PassthroughVideoDecoder {
 public:
     static std::unique_ptr<webrtc::VideoDecoder> Create(const webrtc::Environment& environment)
     {
-        auto factory = GStreamerRegistryScanner::singleton().isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, "video/x-vp8"_s, false).factory;
+        auto factory = GStreamerRegistryScanner::singleton().isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, "video/x-vp8"_si, false).factory;
         if (!factory) {
             GST_INFO("No GStreamer VP8 decoder found, falling back to LibWebRTC for VP8 decoding.");
             return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder(environment));
@@ -248,7 +248,7 @@ std::unique_ptr<webrtc::VideoDecoder> GStreamerVideoDecoderFactory::Create(const
     if (WTF::equalLettersIgnoringASCIICase(formatName, "vp9"_s))
         return VP9Decoder::Create();
 
-    GST_ERROR("Could not create decoder for %s", formatName.ascii().data());
+    GST_ERROR("Could not create decoder for %s", ascii(formatName).data());
     return nullptr;
 }
 

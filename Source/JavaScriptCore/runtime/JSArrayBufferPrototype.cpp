@@ -310,7 +310,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
     if (auto* jsMemory = thisObject->associatedWasmMemoryWrapper()) {
         size_t oldByteLength = thisObject->impl()->byteLength();
         if (newByteLength < oldByteLength)
-            return throwVMRangeError(globalObject, scope, "Cannot shrink WebAssembly memory"_s);
+            return throwVMRangeError(globalObject, scope, "Cannot shrink WebAssembly memory"_si);
         if (newByteLength % PageCount::pageSize)
             return throwVMRangeError(globalObject, scope, makeString("WebAssembly memory cannot be resized to new byte length "_s, newByteLength, " because it is not a multiple of "_s, PageCount::pageSize));
         size_t delta = newByteLength - oldByteLength;
@@ -351,7 +351,7 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
         // We should just transfer!
         ArrayBufferContents contents;
         if (!arrayBuffer->impl()->transferTo(vm, contents)) [[unlikely]] {
-            throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_s);
+            throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_si);
             return nullptr;
         }
         auto newBuffer = ArrayBuffer::create(WTF::move(contents));
@@ -366,7 +366,7 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
 
         ArrayBufferContents contents;
         if (!arrayBuffer->impl()->transferTo(vm, contents)) [[unlikely]] {
-            throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_s);
+            throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_si);
             return nullptr;
         }
         auto newBuffer = ArrayBuffer::create(WTF::move(contents));
@@ -388,7 +388,7 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
 
     ArrayBufferContents dummyContents;
     if (!arrayBuffer->impl()->transferTo(vm, dummyContents)) [[unlikely]] {
-        throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_s);
+        throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_si);
         return nullptr;
     }
 

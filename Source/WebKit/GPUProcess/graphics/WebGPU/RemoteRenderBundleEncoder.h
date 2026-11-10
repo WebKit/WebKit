@@ -97,13 +97,13 @@ private:
     void setBindGroup(uint32_t, std::optional<WebGPUIdentifier>,
         std::optional<Vector<uint32_t>>&& dynamicOffsets);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     void finish(const WebGPU::RenderBundleDescriptor&, WebGPUIdentifier);
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::RenderBundleEncoder> m_backing;

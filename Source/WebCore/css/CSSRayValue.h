@@ -47,7 +47,7 @@ public:
     const CSS::RayFunction& ray() const LIFETIME_BOUND { return m_ray; }
     CSSBoxType coordinateBox() const { return m_coordinateBox; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSRayValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

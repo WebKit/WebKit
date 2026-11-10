@@ -45,7 +45,7 @@
 namespace WebCore {
 
 // https://streams.spec.whatwg.org/#abstract-opdef-packandpostmessage
-static ExceptionOr<void> packAndPostMessage(JSDOMGlobalObject& globalObject, MessagePort& port, const String& type, JSC::JSValue value)
+static ExceptionOr<void> packAndPostMessage(JSDOMGlobalObject& globalObject, MessagePort& port, StringImpl* type, JSC::JSValue value)
 {
     Ref vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
@@ -53,21 +53,21 @@ static ExceptionOr<void> packAndPostMessage(JSDOMGlobalObject& globalObject, Mes
 
     auto* data = JSC::constructEmptyObject(&globalObject);
     if (catchScope.exception()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "Unable to post message"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to post message"_si };
     JSC::Strong<JSC::JSObject> strongData(vm, data);
 
     auto* jsType = JSC::jsNontrivialString(vm.get(), type);
     if (catchScope.exception()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "Unable to post message"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to post message"_si };
     JSC::Strong<JSC::JSString> strongType(vm.get(), jsType);
 
     data->putDirect(vm.get(), vm->propertyNames->type, jsType);
     if (catchScope.exception()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "Unable to set value"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to set value"_si };
 
     data->putDirect(vm.get(), vm->propertyNames->value, value);
     if (catchScope.exception()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "Unable to set value"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to set value"_si };
 
     return port.postMessage(globalObject, data, StructuredSerializeOptions { });
 }
@@ -75,11 +75,11 @@ static ExceptionOr<void> packAndPostMessage(JSDOMGlobalObject& globalObject, Mes
 // https://streams.spec.whatwg.org/#abstract-opdef-crossrealmtransformsenderror
 static void crossRealmTransformSendError(JSDOMGlobalObject& globalObject, MessagePort& port, JSC::JSValue error)
 {
-    packAndPostMessage(globalObject, port, "error"_s, error);
+    packAndPostMessage(globalObject, port, "error"_si, error);
 }
 
 // https://streams.spec.whatwg.org/#abstract-opdef-packandpostmessagehandlingerror
-static ExceptionOr<void> packAndPostMessageHandlingError(JSDOMGlobalObject& globalObject, MessagePort& port, const String& type, JSC::JSValue value)
+static ExceptionOr<void> packAndPostMessageHandlingError(JSDOMGlobalObject& globalObject, MessagePort& port, StringImpl* type, JSC::JSValue value)
 {
     auto result = packAndPostMessage(globalObject, port, type, value);
     if (result.hasException())
@@ -145,27 +145,27 @@ private:
         if (!typeValue.isString())
             return false;
 
-        String type = JSC::asString(typeValue)->tryGetValue();
-        if (type == "chunk"_s) {
+        RefPtr<StringImpl> type = JSC::asString(typeValue)->tryGetValue();
+        if (equal(type, "chunk"_s)) {
             controller().enqueue(value);
             return true;
         }
-        if (type == "close"_s) {
+        if (equal(type, "close"_s)) {
             controller().close();
             return true;
         }
-        if (type == "error"_s) {
+        if (equal(type, "error"_s)) {
             errorStream(globalObject, value);
             return true;
         }
 
-        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::TypeError, "Unexpected value"_s));
+        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::TypeError, "Unexpected value"_si));
         return true;
     }
 
     void handleMessageError(JSDOMGlobalObject& globalObject)
     {
-        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::DataCloneError, "Failed to deserialize value"_s));
+        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::DataCloneError, "Failed to deserialize value"_si));
     }
 
     void errorStream(JSDOMGlobalObject& globalObject, JSC::JSValue error)
@@ -189,7 +189,7 @@ private:
         if (!globalObject)
             return;
 
-        packAndPostMessage(*downcast<JSDOMGlobalObject>(globalObject), m_port.get(), "pull"_s, JSC::jsUndefined());
+        packAndPostMessage(*downcast<JSDOMGlobalObject>(globalObject), m_port.get(), "pull"_si, JSC::jsUndefined());
         pullFinished();
     }
     void doCancel(JSC::JSValue reason) final
@@ -199,7 +199,7 @@ private:
         if (!globalObject)
             return;
 
-        auto result = packAndPostMessageHandlingError(*downcast<JSDOMGlobalObject>(globalObject), m_port.get(), "error"_s, reason);
+        auto result = packAndPostMessageHandlingError(*downcast<JSDOMGlobalObject>(globalObject), m_port.get(), "error"_si, reason);
         if (result.hasException())
             cancelFinished(result.releaseException());
         else
@@ -272,26 +272,26 @@ private:
         if (!typeValue.isString())
             return false;
 
-        String type = JSC::asString(typeValue)->tryGetValue();
-        if (type == "pull"_s) {
+        RefPtr<StringImpl> type = JSC::asString(typeValue)->tryGetValue();
+        if (equal(type, "pull"_s)) {
             if (auto promise = std::exchange(m_backpressurePromise, { }))
                 promise->resolve();
             return true;
         }
-        if (type == "error"_s) {
+        if (equal(type, "error"_s)) {
             errorIfNeeded(globalObject, value);
             if (auto promise = std::exchange(m_backpressurePromise, { }))
                 promise->resolve();
             return true;
         }
 
-        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::TypeError, "Unexpected value"_s));
+        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::TypeError, "Unexpected value"_si));
         return true;
     }
 
     void handleMessageError(JSDOMGlobalObject& globalObject)
     {
-        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::DataCloneError, "Failed to deserialize value"_s));
+        errorStream(globalObject, createDOMException(&globalObject, ExceptionCode::DataCloneError, "Failed to deserialize value"_si));
     }
 
     void errorStream(JSDOMGlobalObject& globalObject, JSC::JSValue error)
@@ -333,7 +333,7 @@ private:
             if (!protectedThis->m_backpressurePromise)
                 return;
 
-            auto result = packAndPostMessageHandlingError(*globalObject, protectedThis->m_port.get(), "chunk"_s, chunk.get());
+            auto result = packAndPostMessageHandlingError(*globalObject, protectedThis->m_port.get(), "chunk"_si, chunk.get());
             if (result.hasException()) {
                 protectedThis->m_port->close();
                 promise.reject(result.exception());
@@ -344,13 +344,13 @@ private:
     }
     void close(JSDOMGlobalObject& globalObject, DOMPromiseDeferred<void>&& promise) final
     {
-        packAndPostMessage(globalObject, m_port, "close"_s, JSC::jsUndefined());
+        packAndPostMessage(globalObject, m_port, "close"_si, JSC::jsUndefined());
         m_port->close();
         promise.resolve();
     }
     void abort(JSDOMGlobalObject& globalObject, JSC::JSValue reason, DOMPromiseDeferred<void>&& promise) final
     {
-        promise.settle(packAndPostMessage(globalObject, m_port, "error"_s, reason));
+        promise.settle(packAndPostMessage(globalObject, m_port, "error"_si, reason));
         m_port->close();
     }
 
@@ -362,7 +362,7 @@ ExceptionOr<Ref<WritableStream>> setupCrossRealmTransformWritable(JSDOMGlobalObj
 {
     RefPtr backpressurePromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
     if (!backpressurePromise)
-        return Exception { ExceptionCode::InvalidStateError, "Unable to create a promise"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to create a promise"_si };
     return WritableStream::create(globalObject, CrossRealmWritableStreamSink::create(port, backpressurePromise.releaseNonNull()));
 }
 

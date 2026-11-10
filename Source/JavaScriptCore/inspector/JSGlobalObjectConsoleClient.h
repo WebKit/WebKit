@@ -59,20 +59,20 @@ public:
 
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
-    void count(JSC::JSGlobalObject*, const String& label) final;
-    void countReset(JSC::JSGlobalObject*, const String& label) final;
-    void profile(JSC::JSGlobalObject*, const String& title) final;
-    void profileEnd(JSC::JSGlobalObject*, const String& title) final;
-    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) final;
-    void time(JSC::JSGlobalObject*, const String& label) final;
-    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<ScriptArguments>&&) final;
-    void timeEnd(JSC::JSGlobalObject*, const String& label) final;
+    void count(JSC::JSGlobalObject*, StringImpl* label) final;
+    void countReset(JSC::JSGlobalObject*, StringImpl* label) final;
+    void profile(JSC::JSGlobalObject*, StringImpl* title) final;
+    void profileEnd(JSC::JSGlobalObject*, StringImpl* title) final;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, StringImpl* title) final;
+    void time(JSC::JSGlobalObject*, StringImpl* label) final;
+    void timeLog(JSC::JSGlobalObject*, StringImpl* label, Ref<ScriptArguments>&&) final;
+    void timeEnd(JSC::JSGlobalObject*, StringImpl* label) final;
     void timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
     void record(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
     void recordEnd(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
     void screenshot(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
 
-    void warnUnimplemented(const String& method);
+    void warnUnimplemented(StringImpl* method);
     void internalAddMessage(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&);
 
     void startConsoleProfile();
@@ -82,7 +82,7 @@ private:
     CheckedPtr<InspectorDebuggerAgent> m_debuggerAgent;
     CheckedPtr<InspectorHeapAgent> m_heapAgent;
     CheckedPtr<InspectorScriptProfilerAgent> m_scriptProfilerAgent;
-    Vector<String> m_profiles;
+    Vector<RefPtr<StringImpl>> m_profiles;
     bool m_profileRestoreBreakpointActiveValue { false };
 };
 

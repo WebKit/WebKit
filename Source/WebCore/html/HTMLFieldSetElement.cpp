@@ -99,7 +99,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     }
 }
 
-void HTMLFieldSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLFieldSetElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     bool oldHasDisabledAttribute = hasDisabledAttribute();
 
@@ -196,9 +196,9 @@ bool HTMLFieldSetElement::supportsFocus() const
     return HTMLElement::supportsFocus() && !isDisabledFormControl();
 }
 
-const AtomString& HTMLFieldSetElement::formControlType() const
+const RefPtr<AtomStringImpl>& HTMLFieldSetElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> fieldset("fieldset"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fieldset("fieldset"_s);
     return fieldset;
 }
 

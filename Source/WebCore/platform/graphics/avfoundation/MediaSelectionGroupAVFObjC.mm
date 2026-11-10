@@ -114,12 +114,12 @@ AVPlayerItem *MediaSelectionOptionAVFObjC::playerItem() const
     return protectedGroup->playerItem();
 }
 
-Ref<MediaSelectionGroupAVFObjC> MediaSelectionGroupAVFObjC::create(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
+Ref<MediaSelectionGroupAVFObjC> MediaSelectionGroupAVFObjC::create(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<RefPtr<StringImpl>>& characteristics)
 {
     return adoptRef(*new MediaSelectionGroupAVFObjC(item, group, characteristics));
 }
 
-MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
+MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<RefPtr<StringImpl>>& characteristics)
     : m_playerItem(item)
     , m_mediaSelectionGroup(group)
     , m_selectionTimer(*this, &MediaSelectionGroupAVFObjC::selectionTimerFired)
@@ -135,7 +135,7 @@ MediaSelectionGroupAVFObjC::~MediaSelectionGroupAVFObjC()
         option->clearGroup();
 }
 
-void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteristics)
+void MediaSelectionGroupAVFObjC::updateOptions(const Vector<RefPtr<StringImpl>>& characteristics)
 {
     assertIsMainThread();
 

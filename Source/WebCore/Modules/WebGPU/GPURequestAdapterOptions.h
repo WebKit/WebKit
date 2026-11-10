@@ -42,7 +42,7 @@ struct GPURequestAdapterOptions {
         };
     }
 
-    String featureLevel;
+    RefPtr<StringImpl> featureLevel;
     std::optional<GPUPowerPreference> powerPreference;
     bool forceFallbackAdapter { false };
     bool xrCompatible { false };

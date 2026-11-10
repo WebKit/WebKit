@@ -255,7 +255,7 @@ JSGlobalObject* CallFrame::globalObjectOfClosestCodeBlock(VM& vm, CallFrame* cal
     return nullptr;
 }
 
-String CallFrame::friendlyFunctionName()
+RefPtr<StringImpl> CallFrame::friendlyFunctionName()
 {
     if (this->isNativeCalleeFrame())
         return emptyString();
@@ -266,11 +266,11 @@ String CallFrame::friendlyFunctionName()
 
     switch (codeBlock->codeType()) {
     case EvalCode:
-        return "eval code"_s;
+        return "eval code"_si;
     case ModuleCode:
-        return "module code"_s;
+        return "module code"_si;
     case GlobalCode:
-        return "global code"_s;
+        return "global code"_si;
     case FunctionCode:
         if (jsCallee())
             return getCalculatedDisplayName(codeBlock->vm(), jsCallee());
@@ -317,8 +317,8 @@ void CallFrame::dump(PrintStream& out) const
 
         out.print(")");
 
-        String source = codeBlock->ownerExecutable()->sourceURL();
-        if (!source.isEmpty()) {
+        RefPtr<StringImpl> source = codeBlock->ownerExecutable()->sourceURL();
+        if (!isEmpty(source)) {
             out.print(" at ");
 
             URL url = URL(source);

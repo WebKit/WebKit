@@ -87,7 +87,7 @@ namespace WebKit {
 
 struct WebProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    String injectedBundlePath;
+    RefPtr<StringImpl> injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;
     Vector<SandboxExtension::Handle> additionalSandboxExtensionHandles;
 
@@ -97,28 +97,28 @@ struct WebProcessCreationParameters {
     Vector<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
 #endif
 
-    Vector<String> urlSchemesRegisteredAsEmptyDocument;
-    Vector<String> urlSchemesRegisteredAsSecure;
-    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
-    Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
-    Vector<String> urlSchemesRegisteredAsLocal;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsEmptyDocument;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsSecure;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    Vector<RefPtr<StringImpl>> urlSchemesForWhichDomainRelaxationIsForbidden;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsLocal;
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-    Vector<String> urlSchemesRegisteredAsNoAccess;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsNoAccess;
 #endif
-    Vector<String> urlSchemesRegisteredAsDisplayIsolated;
-    Vector<String> urlSchemesRegisteredAsCORSEnabled;
-    Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
-    Vector<String> urlSchemesRegisteredAsCachePartitioned;
-    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsDisplayIsolated;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsCORSEnabled;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsAlwaysRevalidated;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsCachePartitioned;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    Vector<String> urlSchemesRegisteredAsWebExtensions;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsWebExtensions;
 #endif
 
-    Vector<String> fontAllowList;
-    Vector<String> overrideLanguages;
+    Vector<RefPtr<StringImpl>> fontAllowList;
+    Vector<RefPtr<StringImpl>> overrideLanguages;
 #if USE(GSTREAMER)
-    Vector<String> gstreamerOptions;
+    Vector<RefPtr<StringImpl>> gstreamerOptions;
 #endif
 
     CacheModel cacheModel;
@@ -156,7 +156,7 @@ struct WebProcessCreationParameters {
     OptionSet<TextCheckerState> textCheckerState;
 
 #if PLATFORM(COCOA)
-    String uiProcessBundleIdentifier;
+    RefPtr<StringImpl> uiProcessBundleIdentifier;
     int latencyQOS { 0 };
     int throughputQOS { 0 };
 #endif
@@ -164,7 +164,7 @@ struct WebProcessCreationParameters {
     ProcessID presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
-    String uiProcessBundleResourcePath;
+    RefPtr<StringImpl> uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
     bool shouldEnableJIT { false };
@@ -175,16 +175,16 @@ struct WebProcessCreationParameters {
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<String, bool> notificationPermissions;
+    HashMap<RefPtr<StringImpl>, bool> notificationPermissions;
 #endif
 
 #if PLATFORM(WAYLAND)
-    String waylandCompositorDisplayName;
+    RefPtr<StringImpl> waylandCompositorDisplayName;
 #endif
 
 #if PLATFORM(COCOA)
-    Vector<String> mediaMIMETypes;
-    HashMap<String, bool> mediaSourceTypesSupported;
+    Vector<RefPtr<StringImpl>> mediaMIMETypes;
+    HashMap<RefPtr<StringImpl>, bool> mediaSourceTypesSupported;
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
@@ -239,8 +239,8 @@ struct WebProcessCreationParameters {
     bool supportsPictureInPicture { false };
     WebCore::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;
-    String localizedDeviceModel;
-    String contentSizeCategory;
+    RefPtr<StringImpl> localizedDeviceModel;
+    RefPtr<StringImpl> contentSizeCategory;
 #endif
 
 #if USE(GBM)
@@ -274,21 +274,21 @@ struct WebProcessCreationParameters {
 #endif
 
 #if USE(GLIB)
-    String applicationID;
-    String applicationName;
+    RefPtr<StringImpl> applicationID;
+    RefPtr<StringImpl> applicationName;
 #if ENABLE(REMOTE_INSPECTOR)
     UTF8CString inspectorServerAddress;
 #endif
 #endif
 
 #if USE(ATSPI)
-    String accessibilityBusAddress;
-    String accessibilityBusName;
+    RefPtr<StringImpl> accessibilityBusAddress;
+    RefPtr<StringImpl> accessibilityBusName;
 #endif
 
-    String timeZoneOverride;
+    RefPtr<StringImpl> timeZoneOverride;
 
-    HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
+    HashMap<WebCore::RegistrableDomain, RefPtr<StringImpl>> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
     ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
     WebCore::QuirkTable quirkTable;
@@ -300,7 +300,7 @@ struct WebProcessCreationParameters {
     std::optional<Seconds> overridePersistentNotificationMinimumLifetime;
 
 #if ENABLE(NOTIFY_BLOCKING)
-    Vector<std::pair<String, uint64_t>> notifyState;
+    Vector<std::pair<RefPtr<StringImpl>, uint64_t>> notifyState;
 #endif
 
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)

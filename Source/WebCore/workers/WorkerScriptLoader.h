@@ -67,8 +67,8 @@ public:
 
     enum class Source : uint8_t { ClassicWorkerScript, ClassicWorkerImport, ModuleScript };
 
-    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier = std::nullopt, String&& referrer = { });
+    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, StringImpl* initiatorIdentifier);
+    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, RefPtr<StringImpl>&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier = std::nullopt, RefPtr<StringImpl>&& referrer = { });
 
     void notifyError(std::optional<ScriptExecutionContextIdentifier>);
 
@@ -81,14 +81,14 @@ public:
 
     const ScriptBuffer& script() const LIFETIME_BOUND { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const LIFETIME_BOUND { return m_contentSecurityPolicy; }
-    const String& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
+    const RefPtr<StringImpl>& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const LIFETIME_BOUND { return m_crossOriginEmbedderPolicy; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
     NODELETE const URL& responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
     bool isRedirected() const { return m_isRedirected; }
     const CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
-    const String& responseMIMEType() const LIFETIME_BOUND { return m_responseMIMEType; }
+    const RefPtr<StringImpl>& responseMIMEType() const LIFETIME_BOUND { return m_responseMIMEType; }
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
     bool failed() const { return m_failed; }
     ResourceLoaderIdentifier identifier() const { return *m_identifier; }
@@ -129,8 +129,8 @@ public:
     WEBCORE_EXPORT static RefPtr<ServiceWorkerDataManager> serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier);
 
     std::optional<ScriptExecutionContextIdentifier> clientIdentifier() const { return m_clientIdentifier; }
-    const String& userAgentForSharedWorker() const LIFETIME_BOUND { return m_userAgentForSharedWorker; }
-    const String& navigatorPlatformForSharedWorker() const LIFETIME_BOUND { return m_navigatorPlatformForSharedWorker; }
+    const RefPtr<StringImpl>& userAgentForSharedWorker() const LIFETIME_BOUND { return m_userAgentForSharedWorker; }
+    const RefPtr<StringImpl>& navigatorPlatformForSharedWorker() const LIFETIME_BOUND { return m_navigatorPlatformForSharedWorker; }
 
 private:
     friend class RefCounted<WorkerScriptLoader>;
@@ -139,7 +139,7 @@ private:
     WorkerScriptLoader();
     ~WorkerScriptLoader();
 
-    std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
+    std::unique_ptr<ResourceRequest> createResourceRequest(StringImpl* initiatorIdentifier);
     void notifyFinished(std::optional<ScriptExecutionContextIdentifier>);
 
     WeakPtr<WorkerScriptLoaderClient> m_client;
@@ -149,11 +149,11 @@ private:
     URL m_url;
     URL m_responseURL;
     CertificateInfo m_certificateInfo;
-    String m_responseMIMEType;
+    RefPtr<StringImpl> m_responseMIMEType;
     Source m_source;
     FetchOptions::Destination m_destination;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
-    String m_referrerPolicy;
+    RefPtr<StringImpl> m_referrerPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     Markable<ResourceLoaderIdentifier> m_identifier;
     bool m_failed { false };
@@ -170,8 +170,8 @@ private:
     std::optional<SecurityOriginData> m_topOriginForServiceWorkerRegistration;
     const RefPtr<ServiceWorkerDataManager> m_serviceWorkerDataManager;
     WeakPtr<ScriptExecutionContext> m_context;
-    String m_userAgentForSharedWorker;
-    String m_navigatorPlatformForSharedWorker;
+    RefPtr<StringImpl> m_userAgentForSharedWorker;
+    RefPtr<StringImpl> m_navigatorPlatformForSharedWorker;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     std::optional<bool> m_globalPrivacyControlEnabled;
 };

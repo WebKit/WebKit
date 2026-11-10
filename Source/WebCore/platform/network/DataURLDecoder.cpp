@@ -46,7 +46,7 @@
 namespace WebCore {
 namespace DataURLDecoder {
 
-static bool shouldRemoveFragmentIdentifier(const String& mediaType)
+static bool shouldRemoveFragmentIdentifier(StringImpl* mediaType)
 {
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DataURLFragmentRemoval))
@@ -69,10 +69,10 @@ static WorkQueue& decodeQueueSingleton()
     return queue.get();
 }
 
-static Result parseMediaType(const String& mediaType)
+static Result parseMediaType(StringImpl* mediaType)
 {
     if (std::optional<ParsedContentType> parsedContentType = ParsedContentType::create(mediaType))
-        return { parsedContentType->mimeType().isolatedCopy(), parsedContentType->charset().isolatedCopy(), parsedContentType->serialize().isolatedCopy(), { } };
+        return { isolatedCopy(parsedContentType->mimeType()), isolatedCopy(parsedContentType->charset()), isolatedCopy(parsedContentType->serialize()), { } };
     return { "text/plain"_s, "US-ASCII"_s, "text/plain;charset=US-ASCII"_s, { } };
 }
 
@@ -95,13 +95,13 @@ public:
         //  mediatype := [<mimetype>][;charset=<charsettype>]
 
         constexpr auto dataString = "data:"_s;
-        ASSERT(url.string().startsWith(dataString));
+        ASSERT(startsWith(url.string(), dataString));
 
         size_t headerStart = dataString.length();
-        size_t headerEnd = url.string().find(',', headerStart);
+        size_t headerEnd = find(url.string(), ',', headerStart);
         if (headerEnd == notFound)
             return false;
-        if (size_t fragmentInHeader = url.string().reverseFind('#', headerEnd); fragmentInHeader != notFound)
+        if (size_t fragmentInHeader = reverseFind(url.string(), '#', headerEnd); fragmentInHeader != notFound)
             return false;
         size_t encodedDataStart = headerEnd + 1;
 
@@ -120,8 +120,8 @@ public:
 
         // If header does not end with "base64", mediaType should be the whole header.
         auto mediaType = (isBase64 ? header.left(mediaTypeEnd) : header).toString();
-        mediaType = mediaType.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-        if (mediaType.startsWith(';'))
+        mediaType = trim(mediaType, isASCIIWhitespaceWithoutFF<char16_t>);
+        if (startsWith(mediaType, ';'))
             mediaType = makeString("text/plain"_s, mediaType);
 
         if (shouldRemoveFragmentIdentifier(mediaType))

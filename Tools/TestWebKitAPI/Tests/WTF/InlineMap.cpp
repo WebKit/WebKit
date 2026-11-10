@@ -408,13 +408,13 @@ TEST(WTF_InlineMap, CopyAssignmentToSelf)
 TEST(WTF_InlineMap, CopyConstructionWithStrings)
 {
     // Copy construction works correctly with String key/value types.
-    InlineMap<String, String, 5, StringHash> map1;
+    InlineMap<RefPtr<StringImpl>, RefPtr<StringImpl>, 5, StringHash> map1;
 
     map1.add("key1"_s, "value1"_s);
     map1.add("key2"_s, "value2"_s);
     map1.add("key3"_s, "value3"_s);
 
-    InlineMap<String, String, 5, StringHash> map2(map1);
+    InlineMap<RefPtr<StringImpl>, RefPtr<StringImpl>, 5, StringHash> map2(map1);
 
     EXPECT_EQ(map1.size(), 3u);
     EXPECT_EQ(map2.size(), 3u);
@@ -597,7 +597,7 @@ TEST(WTF_InlineMap, IterationAfterRemove)
 TEST(WTF_InlineMap, RemoveWithStrings)
 {
     // Remove works correctly with String keys.
-    InlineMap<String, unsigned, 5, StringHash> map;
+    InlineMap<RefPtr<StringImpl>, unsigned, 5, StringHash> map;
 
     map.add("one"_s, 1);
     map.add("two"_s, 2);
@@ -893,7 +893,7 @@ TEST(WTF_InlineMap, DestructorCalledOnClearAfterGrowth)
 TEST(WTF_InlineMap, StringKeys)
 {
     // String objects work as map keys.
-    InlineMap<String, unsigned, 5, StringHash> map;
+    InlineMap<RefPtr<StringImpl>, unsigned, 5, StringHash> map;
 
     map.add("one"_s, 1);
     map.add("two"_s, 2);
@@ -913,7 +913,7 @@ TEST(WTF_InlineMap, StringKeys)
 TEST(WTF_InlineMap, StringValues)
 {
     // String objects work as map values.
-    InlineMap<unsigned, String, 5, IntHash<unsigned>> map;
+    InlineMap<unsigned, RefPtr<StringImpl>, 5, IntHash<unsigned>> map;
 
     map.add(1, "one"_s);
     map.add(2, "two"_s);
@@ -928,7 +928,7 @@ TEST(WTF_InlineMap, StringValues)
 TEST(WTF_InlineMap, StringKeysAndValues)
 {
     // String-to-String map works, and duplicate add preserves the original value.
-    InlineMap<String, String, 5, StringHash> map;
+    InlineMap<RefPtr<StringImpl>, RefPtr<StringImpl>, 5, StringHash> map;
 
     map.add("key1"_s, "value1"_s);
     map.add("key2"_s, "value2"_s);
@@ -948,7 +948,7 @@ TEST(WTF_InlineMap, StringKeysAndValues)
 TEST(WTF_InlineMap, StringKeysGrowth)
 {
     // String keys survive growth from inline to hashed mode.
-    InlineMap<String, unsigned, 5, StringHash> map;
+    InlineMap<RefPtr<StringImpl>, unsigned, 5, StringHash> map;
 
     // Add enough entries to trigger growth to hashed mode
     for (unsigned i = 1; i <= 100; ++i)
@@ -1168,7 +1168,7 @@ TEST(WTF_InlineMap, ClearHashedMode)
 TEST(WTF_InlineMap, ClearWithStrings)
 {
     // Clearing works correctly with String key/value types.
-    InlineMap<String, String, 5, StringHash> map;
+    InlineMap<RefPtr<StringImpl>, RefPtr<StringImpl>, 5, StringHash> map;
 
     map.add("key1"_s, "value1"_s);
     map.add("key2"_s, "value2"_s);
@@ -1392,8 +1392,8 @@ TEST(WTF_InlineMap, SwapBothPopulated)
 TEST(WTF_InlineMap, SwapWithStrings)
 {
     // Swap works correctly with String key/value types.
-    InlineMap<String, String, 5, StringHash> map1;
-    InlineMap<String, String, 5, StringHash> map2;
+    InlineMap<RefPtr<StringImpl>, RefPtr<StringImpl>, 5, StringHash> map1;
+    InlineMap<RefPtr<StringImpl>, RefPtr<StringImpl>, 5, StringHash> map2;
 
     map1.add("key1"_s, "value1"_s);
     map1.add("key2"_s, "value2"_s);
@@ -1417,7 +1417,7 @@ TEST(WTF_InlineMap, SwapWithStrings)
 TEST(WTF_InlineMap, PackedRefPtrKeysBasic)
 {
     // PackedRefPtr<StringImpl> keys work for basic add/find/contains.
-    Vector<String> strings;
+    Vector<RefPtr<StringImpl>> strings;
     strings.append("alpha"_s);
     strings.append("beta"_s);
     strings.append("gamma"_s);
@@ -1425,7 +1425,7 @@ TEST(WTF_InlineMap, PackedRefPtrKeysBasic)
     InlineMap<PackedRefPtr<StringImpl>, unsigned, 5> map;
 
     for (unsigned i = 0; i < strings.size(); ++i) {
-        auto result = map.add(strings[i].impl(), i + 1);
+        auto result = map.add(strings[i].get(), i + 1);
         EXPECT_TRUE(result.isNewEntry);
     }
 
@@ -1433,27 +1433,27 @@ TEST(WTF_InlineMap, PackedRefPtrKeysBasic)
     EXPECT_EQ(map.size(), 3u);
 
     for (unsigned i = 0; i < strings.size(); ++i) {
-        EXPECT_TRUE(map.contains(strings[i].impl()));
-        auto it = map.find(strings[i].impl());
+        EXPECT_TRUE(map.contains(strings[i].get()));
+        auto it = map.find(strings[i].get());
         ASSERT_FALSE(it == map.end());
         EXPECT_EQ(it->value, i + 1);
     }
 
-    EXPECT_FALSE(map.contains(String("delta"_s).impl()));
+    EXPECT_FALSE(map.contains("delta"_si.get()));
 }
 
 TEST(WTF_InlineMap, PackedRefPtrKeysGrowth)
 {
     // PackedRefPtr keys survive growth from inline to hashed mode.
     constexpr unsigned count = 50;
-    Vector<String> strings;
+    Vector<RefPtr<StringImpl>> strings;
     for (unsigned i = 0; i < count; ++i)
         strings.append(makeString("key_"_s, i));
 
     InlineMap<PackedRefPtr<StringImpl>, unsigned, 5> map;
 
     for (unsigned i = 0; i < count; ++i) {
-        auto result = map.add(strings[i].impl(), i * 10);
+        auto result = map.add(strings[i].get(), i * 10);
         EXPECT_TRUE(result.isNewEntry);
     }
 
@@ -1461,45 +1461,45 @@ TEST(WTF_InlineMap, PackedRefPtrKeysGrowth)
     EXPECT_EQ(map.size(), count);
 
     for (unsigned i = 0; i < count; ++i) {
-        EXPECT_TRUE(map.contains(strings[i].impl()));
-        auto it = map.find(strings[i].impl());
+        EXPECT_TRUE(map.contains(strings[i].get()));
+        auto it = map.find(strings[i].get());
         ASSERT_FALSE(it == map.end());
         EXPECT_EQ(it->value, i * 10);
     }
 
-    EXPECT_FALSE(map.contains(String("nonexistent"_s).impl()));
+    EXPECT_FALSE(map.contains("nonexistent"_si.get()));
 }
 
 TEST(WTF_InlineMap, PackedRefPtrKeysRemoveAndReinsert)
 {
     // PackedRefPtr keys can be removed and re-inserted with new values.
     constexpr unsigned count = 20;
-    Vector<String> strings;
+    Vector<RefPtr<StringImpl>> strings;
     for (unsigned i = 0; i < count; ++i)
         strings.append(makeString("var_"_s, i));
 
     InlineMap<PackedRefPtr<StringImpl>, unsigned, 5> map;
 
     for (unsigned i = 0; i < count; ++i)
-        map.add(strings[i].impl(), i);
+        map.add(strings[i].get(), i);
 
     EXPECT_FALSE(WTF::InlineMapAccessForTesting::isInline(map));
 
     // Remove even-indexed entries
     for (unsigned i = 0; i < count; i += 2)
-        EXPECT_TRUE(map.remove(strings[i].impl()));
+        EXPECT_TRUE(map.remove(strings[i].get()));
 
     EXPECT_EQ(map.size(), count / 2);
 
     // Verify odd-indexed entries are still present
     for (unsigned i = 1; i < count; i += 2) {
-        EXPECT_TRUE(map.contains(strings[i].impl()));
-        EXPECT_EQ(map.find(strings[i].impl())->value, i);
+        EXPECT_TRUE(map.contains(strings[i].get()));
+        EXPECT_EQ(map.find(strings[i].get())->value, i);
     }
 
     // Re-add even-indexed entries with new values
     for (unsigned i = 0; i < count; i += 2) {
-        auto result = map.add(strings[i].impl(), i + 1000);
+        auto result = map.add(strings[i].get(), i + 1000);
         EXPECT_TRUE(result.isNewEntry);
     }
 
@@ -1507,9 +1507,9 @@ TEST(WTF_InlineMap, PackedRefPtrKeysRemoveAndReinsert)
 
     // Verify all entries
     for (unsigned i = 0; i < count; ++i) {
-        EXPECT_TRUE(map.contains(strings[i].impl()));
+        EXPECT_TRUE(map.contains(strings[i].get()));
         unsigned expectedValue = (i % 2) ? i : i + 1000;
-        EXPECT_EQ(map.find(strings[i].impl())->value, expectedValue);
+        EXPECT_EQ(map.find(strings[i].get())->value, expectedValue);
     }
 }
 
@@ -1517,14 +1517,14 @@ TEST(WTF_InlineMap, PackedRefPtrKeysCopy)
 {
     // Copying a map with PackedRefPtr keys produces an independent copy.
     constexpr unsigned count = 20;
-    Vector<String> strings;
+    Vector<RefPtr<StringImpl>> strings;
     for (unsigned i = 0; i < count; ++i)
         strings.append(makeString("name_"_s, i));
 
     InlineMap<PackedRefPtr<StringImpl>, unsigned, 5> map1;
 
     for (unsigned i = 0; i < count; ++i)
-        map1.add(strings[i].impl(), i);
+        map1.add(strings[i].get(), i);
 
     EXPECT_FALSE(WTF::InlineMapAccessForTesting::isInline(map1));
 
@@ -1534,14 +1534,14 @@ TEST(WTF_InlineMap, PackedRefPtrKeysCopy)
     EXPECT_EQ(map2.size(), count);
 
     for (unsigned i = 0; i < count; ++i) {
-        EXPECT_TRUE(map1.contains(strings[i].impl()));
-        EXPECT_TRUE(map2.contains(strings[i].impl()));
-        EXPECT_EQ(map1.find(strings[i].impl())->value, i);
-        EXPECT_EQ(map2.find(strings[i].impl())->value, i);
+        EXPECT_TRUE(map1.contains(strings[i].get()));
+        EXPECT_TRUE(map2.contains(strings[i].get()));
+        EXPECT_EQ(map1.find(strings[i].get())->value, i);
+        EXPECT_EQ(map2.find(strings[i].get())->value, i);
     }
 
     // Modifying copy should not affect original
-    map2.add(String("extra"_s).impl(), 999);
+    map2.add("extra"_si.get(), 999);
     EXPECT_EQ(map1.size(), count);
     EXPECT_EQ(map2.size(), count + 1);
 }
@@ -2117,7 +2117,7 @@ TEST(WTF_InlineMap, ClearEmptyHashedTransitionsToInline)
 TEST(WTF_InlineMap, ShrinkToInlineWithStrings)
 {
     // Shrink-to-inline transition works with String keys.
-    InlineMap<String, unsigned, 5, StringHash> map;
+    InlineMap<RefPtr<StringImpl>, unsigned, 5, StringHash> map;
 
     for (unsigned i = 1; i <= 20; ++i)
         map.add(makeString("key"_s, i), i);

@@ -63,13 +63,13 @@ public:
     // Resolves the relative URL with the given base URL. If provided, the
     // URLTextEncoding is used to encode non-ASCII characters. The base URL can be
     // null or empty, in which case the relative URL will be interpreted as absolute.
-    WTF_EXPORT_PRIVATE URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
+    WTF_EXPORT_PRIVATE URL(const URL& base, StringImpl* relative, const URLTextEncoding* = nullptr);
 
     // Parses the input string as an absolute URL. If you need to parse a relative URL, call the constructor above
     // taking a base URL and a relative URL string.
-    WTF_EXPORT_PRIVATE explicit URL(String&& absoluteURL, const URLTextEncoding* = nullptr);
-    explicit URL(const String& absoluteURL, const URLTextEncoding* encoding = nullptr)
-        : URL(String { absoluteURL }, encoding)
+    WTF_EXPORT_PRIVATE explicit URL(RefPtr<StringImpl>&& absoluteURL, const URLTextEncoding* = nullptr);
+    explicit URL(StringImpl* absoluteURL, const URLTextEncoding* encoding = nullptr)
+        : URL(RefPtr<StringImpl> { absoluteURL }, encoding)
     {
     }
 
@@ -118,14 +118,14 @@ public:
     WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
     struct StripResult {
-        String string;
+        RefPtr<StringImpl> string;
         bool stripped { false };
     };
     WTF_EXPORT_PRIVATE StripResult strippedForUseAsReferrer() const;
     WTF_EXPORT_PRIVATE StripResult strippedForUseAsReferrerWithExplicitPort() const;
 
     // Similar to strippedForUseAsReferrer except we also remove the query component.
-    WTF_EXPORT_PRIVATE String strippedForUseAsReport() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> strippedForUseAsReport() const;
 
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
@@ -141,9 +141,9 @@ public:
     // when placing a URL in an if statement.
     operator bool() const = delete;
 
-    const String& string() const & LIFETIME_BOUND { return m_string; }
-    String string() && { m_isValid = false; return WTF::move(m_string); }
-    WTF_EXPORT_PRIVATE String stringCenterEllipsizedToLength(unsigned length = 1024) const;
+    const RefPtr<StringImpl>& string() const & LIFETIME_BOUND { return m_string; }
+    RefPtr<StringImpl> string() && { m_isValid = false; return WTF::move(m_string); }
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
     // Unlike user() and password(), encodedUser() and encodedPassword() don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
@@ -162,13 +162,13 @@ public:
     NODELETE WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND;
     NODELETE WTF_EXPORT_PRIVATE StringView viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND;
     NODELETE WTF_EXPORT_PRIVATE StringView viewWithoutFragmentIdentifier() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE String stringWithoutFragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> stringWithoutFragmentIdentifier() const;
 
-    WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
-    WTF_EXPORT_PRIVATE String hostAndPort() const;
-    WTF_EXPORT_PRIVATE String user() const;
-    WTF_EXPORT_PRIVATE String password() const;
-    WTF_EXPORT_PRIVATE String fileSystemPath() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> protocolHostAndPort() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> hostAndPort() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> user() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> password() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> fileSystemPath() const;
 
     WTF_EXPORT_PRIVATE URL truncatedForUseAsBase() const;
 
@@ -220,7 +220,7 @@ public:
 
     WTF_EXPORT_PRIVATE void setFragmentIdentifier(StringView);
     WTF_EXPORT_PRIVATE void removeFragmentIdentifier();
-    WTF_EXPORT_PRIVATE String consumeFragmentDirective();
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> consumeFragmentDirective();
     WTF_EXPORT_PRIVATE void removeQueryAndFragmentIdentifier();
 
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
@@ -233,7 +233,7 @@ public:
 #if USE(CF)
     WTF_EXPORT_PRIVATE URL(CFURLRef);
     WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> createCFURL() const;
-    WTF_EXPORT_PRIVATE static RetainPtr<CFURLRef> createCFURL(const String&);
+    WTF_EXPORT_PRIVATE static RetainPtr<CFURLRef> createCFURL(StringImpl*);
 #endif
 
 #if USE(FOUNDATION)
@@ -264,8 +264,8 @@ private:
     NODELETE unsigned hostStart() const;
     NODELETE unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);
-    void parse(String&&);
-    void parseAllowingC0AtEnd(String&&);
+    void parse(RefPtr<StringImpl>&&);
+    void parseAllowingC0AtEnd(RefPtr<StringImpl>&&);
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
@@ -273,7 +273,7 @@ private:
     static CFURLRef emptyCFURL();
 #endif
 
-    String m_string;
+    RefPtr<StringImpl> m_string;
 
     unsigned m_isValid : 1;
     unsigned m_protocolIsInHTTPFamily : 1;
@@ -294,20 +294,20 @@ private:
     unsigned m_queryEnd;
 };
 
-static_assert(sizeof(URL) == sizeof(String) + 8 * sizeof(unsigned), "URL should stay small");
+static_assert(sizeof(URL) == sizeof(RefPtr<StringImpl>) + 8 * sizeof(unsigned), "URL should stay small");
 
 bool operator==(const URL&, const URL&);
-bool operator==(const URL&, const String&);
+bool operator==(const URL&, StringImpl*);
 
 NODELETE WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
-WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> differingQueryParameters(const URL&, const URL&);
-WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> queryParameters(const URL&);
+WTF_EXPORT_PRIVATE Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> differingQueryParameters(const URL&, const URL&);
+WTF_EXPORT_PRIVATE Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> queryParameters(const URL&);
 NODELETE WTF_EXPORT_PRIVATE bool isEqualIgnoringQueryAndFragments(const URL&, const URL&);
 
 // Returns the parameters that were removed (including duplicates), in the order that they appear in the URL.
-WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, const HashSet<String>&);
-WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, NOESCAPE const Function<bool(const String&, const String&)>&);
+WTF_EXPORT_PRIVATE Vector<RefPtr<StringImpl>> removeQueryParameters(URL&, const HashSet<RefPtr<StringImpl>>&);
+WTF_EXPORT_PRIVATE Vector<RefPtr<StringImpl>> removeQueryParameters(URL&, NOESCAPE const Function<bool(StringImpl*, StringImpl*)>&);
 
 NODELETE WTF_EXPORT_PRIVATE const URL& aboutBlankURL();
 NODELETE WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
@@ -325,14 +325,14 @@ WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView pro
 WTF_EXPORT_PRIVATE bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
 WTF_EXPORT_PRIVATE bool portAllowed(const URL&); // Disallow ports that should never be used for Web resources.
 
-WTF_EXPORT_PRIVATE void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol);
+WTF_EXPORT_PRIVATE void registerDefaultPortForProtocolForTesting(uint16_t port, StringImpl* protocol);
 WTF_EXPORT_PRIVATE void clearDefaultPortForProtocolMapForTesting();
 
-WTF_EXPORT_PRIVATE String mimeTypeFromDataURL(StringView dataURL);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> mimeTypeFromDataURL(StringView dataURL);
 
 // FIXME: This needs a new, more specific name. The general thing named here can't be implemented correctly, since different parts of a URL need different escaping.
-WTF_EXPORT_PRIVATE String encodeWithURLEscapeSequences(const String&);
-WTF_EXPORT_PRIVATE String percentEncodeFragmentDirectiveSpecialCharacters(const String&);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> encodeWithURLEscapeSequences(StringImpl*);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> percentEncodeFragmentDirectiveSpecialCharacters(StringImpl*);
 
 #ifdef __OBJC__
 
@@ -348,12 +348,12 @@ template<> struct HashTraits<URL>;
 
 inline bool operator==(const URL& a, const URL& b)
 {
-    return a.string() == b.string();
+    return equal(a.string(), b.string());
 }
 
-inline bool operator==(const URL& a, const String& b)
+inline bool operator==(const URL& a, StringImpl* b)
 {
-    return a.string() == b;
+    return equal(a.string(), b);
 }
 
 inline URL::URL(HashTableDeletedValueType)
@@ -363,12 +363,12 @@ inline URL::URL(HashTableDeletedValueType)
 
 inline bool URL::isNull() const
 {
-    return m_string.isNull();
+    return !m_string;
 }
 
 inline bool URL::isEmpty() const
 {
-    return m_string.isEmpty();
+    return WTF::isEmpty(m_string);
 }
 
 inline bool URL::isValid() const
@@ -393,7 +393,7 @@ inline bool URL::hasQuery() const
 
 inline bool URL::hasFragmentIdentifier() const
 {
-    return m_isValid && m_string.length() > m_queryEnd;
+    return m_isValid && length(m_string) > m_queryEnd;
 }
 
 inline unsigned URL::pathEnd() const

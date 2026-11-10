@@ -35,7 +35,7 @@ namespace Inspector {
 
 namespace Protocol {
 
-using ErrorString = String;
+using ErrorString = RefPtr<StringImpl>;
 
 template <typename T>
 using ErrorStringOr = std::expected<T, ErrorString>;
@@ -79,7 +79,7 @@ template<> struct BindingTraits<JSON::Value> {
 
 template<> struct BindingTraits<JSON::Array> : PrimitiveBindingTraits<JSON::Value::Type::Array> { };
 template<> struct BindingTraits<JSON::Object> : PrimitiveBindingTraits<JSON::Value::Type::Object> { };
-template<> struct BindingTraits<String> : PrimitiveBindingTraits<JSON::Value::Type::String> { };
+template<> struct BindingTraits<RefPtr<StringImpl>> : PrimitiveBindingTraits<JSON::Value::Type::String> { };
 template<> struct BindingTraits<bool> : PrimitiveBindingTraits<JSON::Value::Type::Boolean> { };
 template<> struct BindingTraits<double> : PrimitiveBindingTraits<JSON::Value::Type::Double> { };
 template<> struct BindingTraits<int> : PrimitiveBindingTraits<JSON::Value::Type::Integer> { };

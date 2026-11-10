@@ -90,7 +90,7 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, Refer
     return std::nullopt;
 }
 
-String referrerPolicyToString(const ReferrerPolicy& referrerPolicy)
+RefPtr<StringImpl> referrerPolicyToString(const ReferrerPolicy& referrerPolicy)
 {
     return convertEnumerationToString(referrerPolicy);
 }

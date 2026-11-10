@@ -53,7 +53,7 @@ class GStreamerInternalAudioDecoder : public ThreadSafeRefCountedAndCanMakeThrea
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalAudioDecoder);
 
 public:
-    static Ref<GStreamerInternalAudioDecoder> create(const String& codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+    static Ref<GStreamerInternalAudioDecoder> create(StringImpl* codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     {
         return adoptRef(*new GStreamerInternalAudioDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     }
@@ -67,7 +67,7 @@ public:
     GstElement* harnessedElement() const { return m_harness->element(); }
 
 private:
-    GStreamerInternalAudioDecoder(const String& codecName, const AudioDecoder::Config&, AudioDecoder::OutputCallback&&, GRefPtr<GstElement>&&);
+    GStreamerInternalAudioDecoder(StringImpl* codecName, const AudioDecoder::Config&, AudioDecoder::OutputCallback&&, GRefPtr<GstElement>&&);
 
     AudioDecoder::OutputCallback m_outputCallback;
 
@@ -77,7 +77,7 @@ private:
     bool m_isClosed { false };
 };
 
-void GStreamerAudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
+void GStreamerAudioDecoder::create(StringImpl* codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
     if (!ensureGStreamerInitialized()) [[unlikely]] {
         callback(makeUnexpected("GStreamer initialization failed"_s));
@@ -92,7 +92,7 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName);
     if (!lookupResult) {
-        GST_WARNING("No decoder found for codec %s", codecName.utf8());
+        GST_WARNING("No decoder found for codec %s", utf8(codecName));
         callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
         return;
     }
@@ -101,7 +101,7 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
     Ref decoder = adoptRef(*new GStreamerAudioDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
-        GST_WARNING("Internal audio decoder failed to configure for codec %s", codecName.utf8());
+        GST_WARNING("Internal audio decoder failed to configure for codec %s", utf8(codecName));
         callback(makeUnexpected(makeString("Internal audio decoder failed to configure for codec "_s, codecName)));
         return;
     }
@@ -113,7 +113,7 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
     });
 }
 
-GStreamerAudioDecoder::GStreamerAudioDecoder(const String& codecName, const Config& config, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+GStreamerAudioDecoder::GStreamerAudioDecoder(StringImpl* codecName, const Config& config, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     : m_internalDecoder(GStreamerInternalAudioDecoder::create(codecName, config, WTF::move(outputCallback), WTF::move(element)))
 {
 }
@@ -149,22 +149,22 @@ void GStreamerAudioDecoder::close()
     m_internalDecoder->close();
 }
 
-GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(StringImpl* codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     : m_outputCallback(WTF::move(outputCallback))
 {
-    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
+    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", ascii(codecName).data());
 
     ASCIILiteral parser;
-    if (codecName.startsWith("mp4a"_s)) {
+    if (startsWith(codecName, "mp4a"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 4, "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
         auto codecData = wrapSpanData(config.description);
         if (codecData)
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), "stream-format", G_TYPE_STRING, "raw", nullptr);
         else
             gst_caps_set_simple(m_inputCaps.get(), "stream-format", G_TYPE_STRING, "adts", nullptr);
-    } else if (codecName == "mp3"_s) {
+    } else if (equal(codecName, "mp3"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 1, "layer", G_TYPE_INT, 3, "rate", G_TYPE_INT, config.sampleRate, "channels", G_TYPE_INT, config.numberOfChannels, "parsed", G_TYPE_BOOLEAN, TRUE, nullptr));
-    } else if (codecName == "opus"_s) {
+    } else if (equal(codecName, "opus"_s)) {
         int channelMappingFamily = config.numberOfChannels <= 2 ? 0 : 1;
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
         if (config.numberOfChannels > 2) {
@@ -186,11 +186,11 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         m_header = wrapSpanData(config.description);
         if (m_header)
             parser = "opusparse"_s;
-    } else if (codecName == "alaw"_s)
+    } else if (equal(codecName, "alaw"_s))
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-alaw", "rate", G_TYPE_INT, config.sampleRate, "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
-    else if (codecName == "ulaw"_s)
+    else if (equal(codecName, "ulaw"_s))
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-mulaw", "rate", G_TYPE_INT, config.sampleRate, "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
-    else if (codecName == "flac"_s) {
+    else if (equal(codecName, "flac"_s)) {
         m_header = wrapSpanData(config.description);
         if (!m_header) {
             GST_WARNING("Decoder config description for flac codec is mandatory");
@@ -198,7 +198,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         }
         parser = "flacparse"_s;
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-flac", "channels", G_TYPE_INT, config.numberOfChannels, nullptr));
-    } else if (codecName == "vorbis"_s) {
+    } else if (equal(codecName, "vorbis"_s)) {
         m_header = wrapSpanData(config.description);
         if (!m_header) {
             GST_WARNING("Decoder config description for vorbis codec is mandatory");
@@ -206,8 +206,8 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         }
         parser = "oggparse"_s;
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("application/ogg"));
-    } else if (codecName.startsWith("pcm-"_s)) {
-        auto components = codecName.split('-');
+    } else if (startsWith(codecName, "pcm-"_s)) {
+        auto components = split(codecName, '-');
         auto& pcmFormat = components[1];
         GstAudioFormat gstPcmFormat = GST_AUDIO_FORMAT_UNKNOWN;
         if (equalLettersIgnoringASCIICase(pcmFormat, "u8"_s))
@@ -221,7 +221,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         else if (equalLettersIgnoringASCIICase(pcmFormat, "f32"_s))
             gstPcmFormat = GST_AUDIO_FORMAT_F32;
         else {
-            GST_WARNING("Invalid LPCM codec format: %s", pcmFormat.ascii().data());
+            GST_WARNING("Invalid LPCM codec format: %s", ascii(pcmFormat).data());
             return;
         }
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "format", G_TYPE_STRING, gst_audio_format_to_string(gstPcmFormat),
@@ -238,7 +238,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     static Atomic<uint64_t> counter = 0;
     auto binName = makeString("audio-decoder-"_s, unsafeSpan(GST_OBJECT_NAME(element.get())), '-', counter.exchangeAdd(1));
 
-    GRefPtr<GstElement> harnessedElement = gst_bin_new(binName.ascii().data());
+    GRefPtr<GstElement> harnessedElement = gst_bin_new(ascii(binName).data());
     auto audioconvert = gst_element_factory_make("audioconvert", nullptr);
     auto outputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
     GRefPtr outputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "format", G_TYPE_STRING, "F32LE", nullptr));

@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct PublicKeyCredentialDescriptorJSON {
-    String type;
-    String id;
-    Vector<String> transports;
+    RefPtr<StringImpl> type;
+    RefPtr<StringImpl> id;
+    Vector<RefPtr<StringImpl>> transports;
 };
 
 }

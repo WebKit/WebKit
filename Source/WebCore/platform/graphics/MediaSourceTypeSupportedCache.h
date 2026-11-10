@@ -40,12 +40,12 @@ class WEBCORE_EXPORT MediaSourceTypeSupportedCache {
 public:
     NODELETE static MediaSourceTypeSupportedCache& singleton();
 
-    std::optional<bool> lookup(const String& type) const;
-    void store(const String& type, bool isSupported);
+    std::optional<bool> lookup(StringImpl* type) const;
+    void store(StringImpl* type, bool isSupported);
 
-    void initialize(HashMap<String, bool>&&);
+    void initialize(HashMap<RefPtr<StringImpl>, bool>&&);
 
-    using CacheUpdateCallback = std::function<void(const String&, bool)>;
+    using CacheUpdateCallback = std::function<void(StringImpl*, bool)>;
     void setCacheUpdateCallback(CacheUpdateCallback&&);
 
 private:
@@ -53,7 +53,7 @@ private:
     MediaSourceTypeSupportedCache() = default;
 
     mutable Lock m_lock;
-    HashMap<String, bool> m_cache WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<RefPtr<StringImpl>, bool> m_cache WTF_GUARDED_BY_LOCK(m_lock);
     CacheUpdateCallback m_callback WTF_GUARDED_BY_LOCK(m_lock);
 };
 

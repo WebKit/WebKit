@@ -88,7 +88,7 @@ public:
     // restored value is right either way, but it means a caller cannot tell a bad mode from a good
     // one. Fixing that needs BlendMode itself to express failure, which is out of scope here.
     template<typename EnumType>
-    bool parseBaseVal(SVGElement& contextElement, const AtomString& value)
+    bool parseBaseVal(SVGElement& contextElement, AtomStringImpl* value)
     {
         static_assert(std::is_integral<DecorationType>::value, "Restoring the initial value relies on zero meaning \"not a legal enumeration value\", which needs an integral DecorationType.");
 
@@ -120,10 +120,10 @@ public:
     }
 
     // Used when committing a change from the SVGAnimatedProperty to the attribute.
-    String baseValAsString() const override { return m_baseVal->valueAsString(); }
+    RefPtr<StringImpl> baseValAsString() const override { return m_baseVal->valueAsString(); }
 
     // Used to apply the SVGAnimator change to the target element.
-    String animValAsString() const override
+    RefPtr<StringImpl> animValAsString() const override
     {
         ASSERT(this->isAnimating() && !!m_animVal);
         return protect(m_animVal)->valueAsString();
@@ -132,7 +132,7 @@ public:
     // Managing the relationship with the owner.
     void setDirty() override { m_state = SVGPropertyState::Dirty; }
     bool isDirty() const override { return m_state == SVGPropertyState::Dirty; }
-    std::optional<String> synchronize() override
+    std::optional<RefPtr<StringImpl>> synchronize() override
     {
         if (m_state == SVGPropertyState::Clean)
             return std::nullopt;

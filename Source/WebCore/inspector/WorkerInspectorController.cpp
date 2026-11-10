@@ -193,7 +193,7 @@ void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
     inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
 }
 
-void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
+void WorkerInspectorController::dispatchMessageFromFrontend(StringImpl* message)
 {
     m_backendDispatcher->dispatch(message);
 }

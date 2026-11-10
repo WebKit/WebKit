@@ -115,33 +115,33 @@ enum class LiveRegionStatus: uint8_t;
 
 
 struct AXTreeData {
-    String liveTree;
-    String isolatedTree;
+    RefPtr<StringImpl> liveTree;
+    RefPtr<StringImpl> isolatedTree;
     // Captures warnings about the tree state that could result in poor user-facing
     // behavior. These are gathered while capturing the structural tree data stored
     // in the other member variables.
-    Vector<String> warnings;
+    Vector<RefPtr<StringImpl>> warnings;
 
     void dumpToStderr() const
     {
-        for (const String& warning : warnings)
-            SAFE_FPRINTF(stderr, "WARNING: %s\n", warning.utf8());
-        SAFE_FPRINTF(stderr, "==AX Trees (PID %d)==\n%s\n%s\n", getpid(), liveTree.utf8(), isolatedTree.utf8());
+        for (const RefPtr<StringImpl>& warning : warnings)
+            SAFE_FPRINTF(stderr, "WARNING: %s\n", utf8(warning));
+        SAFE_FPRINTF(stderr, "==AX Trees (PID %d)==\n%s\n%s\n", getpid(), utf8(liveTree), utf8(isolatedTree));
     }
 };
 
 #if PLATFORM(COCOA)
 struct AXTextChangeContext {
     AXTextStateChangeIntent intent;
-    String deletedText;
-    String insertedText;
+    RefPtr<StringImpl> deletedText;
+    RefPtr<StringImpl> insertedText;
     VisibleSelection selection;
 };
 
 // Describes text that appeared after a form submission attempt that did not navigate, and that no
 // live region announced. It is a heuristic signal -- the assistive technology decides what to do with it.
 struct PossibleFormValidationErrorData {
-    Vector<String> unannouncedText;
+    Vector<RefPtr<StringImpl>> unannouncedText;
     // How many of the form's fields are wrong.
     unsigned errorFieldCount { 0 };
     // Whether the notification is posted on the button the user pressed to submit, rather than on the form or a field,
@@ -150,9 +150,9 @@ struct PossibleFormValidationErrorData {
     // The form whose submission failed, or the element standing in for one, so its fields can be sent with the notification.
     WeakPtr<Element, WeakPtrImplWithEventTargetData> container;
 
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
-        return makeString("PossibleFormValidationErrorData { unannouncedText: ["_s, makeStringByJoining(unannouncedText, ", "_s),
+        return makeString("PossibleFormValidationErrorData { unannouncedText: ["_s, makeStringByJoining(unannouncedText, ", "_si),
             "], errorFieldCount: "_s, errorFieldCount, ", targetIsSubmitter: "_s, targetIsSubmitter, " }"_s);
     }
 };
@@ -184,17 +184,17 @@ struct AXNotificationWithData {
         : notification(notification), data(WTF::move(data)) { }
 #endif
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 };
 
 class AccessibilityReplacedText {
 public:
     AccessibilityReplacedText() = default;
     AccessibilityReplacedText(const VisibleSelection&);
-    void postTextStateChangeNotification(AXObjectCache*, AXTextEditType, const String&, const VisibleSelection&);
+    void postTextStateChangeNotification(AXObjectCache*, AXTextEditType, StringImpl*, const VisibleSelection&);
     const VisiblePositionIndexRange& replacedRange() LIFETIME_BOUND { return m_replacedRange; }
 protected:
-    String m_replacedText;
+    RefPtr<StringImpl> m_replacedText;
     VisiblePositionIndexRange m_replacedRange;
 };
 
@@ -239,7 +239,7 @@ public:
     explicit AXObjectCache(LocalFrame&, Document*);
     ~AXObjectCache();
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
     // Returns the root object for a specific frame.
     WEBCORE_EXPORT AXCoreObject* rootObjectForFrame(LocalFrame&);
@@ -373,8 +373,8 @@ public:
     void onDraggingEnteredDropZone(Element&);
     void onDraggingExitedDropZone(Element&);
     void onDraggingDropped(Element&);
-    void onEventListenerAdded(Node&, const AtomString& eventType);
-    void onEventListenerRemoved(Node&, const AtomString& eventType);
+    void onEventListenerAdded(Node&, AtomStringImpl* eventType);
+    void onEventListenerRemoved(Node&, AtomStringImpl* eventType);
     void onFocusChange(Element* oldElement, Element* newElement);
     void onFrameSelectionFocusedOrActiveStateChanged(Document&);
     void onInertOrVisibilityChange(RenderElement&);
@@ -439,7 +439,7 @@ public:
     // their error messages from inside those same listeners.
     void onTrustedUserInputWillDispatch(Node&, Event&);
 
-    void onTextCompositionChange(Node&, CompositionState, bool, const String&, size_t, bool);
+    void onTextCompositionChange(Node&, CompositionState, bool, StringImpl*, size_t, bool);
     void onWidgetVisibilityChanged(RenderWidget&);
     void onPostRenderingUpdate();
     void valueChanged(Element&);
@@ -479,8 +479,8 @@ public:
     struct AttributeChange {
         WeakPtr<Element, WeakPtrImplWithEventTargetData> element { nullptr };
         QualifiedName attrName;
-        AtomString oldValue;
-        AtomString newValue;
+        RefPtr<AtomStringImpl> oldValue;
+        RefPtr<AtomStringImpl> newValue;
     };
     struct DeferredRemoteFrameFocus {
         WeakPtr<RemoteFrame> remoteFrame;
@@ -494,7 +494,7 @@ public:
         WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> canvas;
         FloatRect bounds;
     };
-    using DeferredCollection = Variant<HashMap<Element*, String>
+    using DeferredCollection = Variant<HashMap<Element*, RefPtr<StringImpl>>
         , HashSet<AXID>
         , ListHashSet<Node*>
         , ListHashSet<Ref<AccessibilityObject>>
@@ -507,7 +507,7 @@ public:
         , WeakHashSet<AccessibilityNodeObject>
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
         , WeakListHashSet<Element, WeakPtrImplWithEventTargetData>
-        , WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>>;
+        , WeakHashMap<Element, RefPtr<StringImpl>, WeakPtrImplWithEventTargetData>>;
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element&);
     void deferMenuListValueChange(Element*);
@@ -519,7 +519,7 @@ public:
     bool isRetrievingCurrentModalNode() { return m_isRetrievingCurrentModalNode; }
     Node* modalNode();
 
-    void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, const AtomString&, const AtomString&);
+    void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, AtomStringImpl*, AtomStringImpl*);
 
     // True for the attributes in relationAttributes() (aria-labelledby, aria-owns, etc.).
     NODELETE static bool isRelationAttribute(const QualifiedName&);
@@ -673,26 +673,26 @@ public:
     }
     void postNotification(AccessibilityObject&, AXNotification);
     void postDeferredNotification(RenderObject&, AXNotification);
-    void postARIANotifyNotification(Node&, const String&, const AriaNotifyOptions&);
+    void postARIANotifyNotification(Node&, StringImpl*, const AriaNotifyOptions&);
 #if PLATFORM(IOS_FAMILY)
     // Tells assistive technology which captions or subtitles are currently displayed for a media element.
-    void postCaptionsDisplayedNotification(const Vector<String>&);
+    void postCaptionsDisplayedNotification(const Vector<RefPtr<StringImpl>>&);
 #endif
 #if PLATFORM(COCOA)
     void postLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
-    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter, Element* container);
+    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<RefPtr<StringImpl>>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter, Element* container);
     // Records text an announcement carried, so the form-activity monitor does not report it as unannounced.
-    void onAnnouncedText(const String&);
+    void onAnnouncedText(StringImpl*);
 #else
-    void onAnnouncedText(const String&) { }
+    void onAnnouncedText(StringImpl*) { }
 #endif
     // Requests clients to announce to the user the given message in the way they deem appropriate.
-    WEBCORE_EXPORT void announce(const String&);
+    WEBCORE_EXPORT void announce(StringImpl*);
 
     // Invokes `assemble` exactly once, either synchronously if the page is not translated and no
     // other announcements are queued ahead, or when the translated text arrives (or times out).
     // The `language` argument is the target language when the text was translated and empty otherwise.
-    void translateAnnouncementThenAssemble(Ref<AccessibilityObject>&&, Vector<String>&& segments, Function<void(Vector<String>&&, const String& language)>&& assemble);
+    void translateAnnouncementThenAssemble(Ref<AccessibilityObject>&&, Vector<RefPtr<StringImpl>>&& segments, Function<void(Vector<RefPtr<StringImpl>>&&, StringImpl* language)>&& assemble);
 
     // Records a node whose descendant text is about to be swapped out for a re-rendering of the same
     // content, e.g. when page-level translation replaces text.
@@ -712,9 +712,9 @@ public:
     void beginSuppressingFocusChange(Element* target) { m_suppressedFocusChange = WeakPtr { target }; }
     void endSuppressingFocusChange() { m_suppressedFocusChange = std::nullopt; }
 
-    void postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&);
-    void postTextReplacementNotification(Node*, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition&);
-    void postTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& deletedText, const String& insertedText);
+    void postTextStateChangeNotification(Node*, AXTextEditType, StringImpl*, const VisiblePosition&);
+    void postTextReplacementNotification(Node*, AXTextEditType deletionType, StringImpl* deletedText, AXTextEditType insertionType, StringImpl* insertedText, const VisiblePosition&);
+    void postTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, StringImpl* deletedText, StringImpl* insertedText);
     void postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postTextStateChangeNotification(const Position&, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postLiveRegionChangeNotification(AccessibilityObject&);
@@ -792,9 +792,9 @@ public:
     void deferTextChangedIfNeeded(Node*);
     void deferSelectedChildrenChanged(Element&);
     WEBCORE_EXPORT void performDeferredCacheUpdate(ForceLayout);
-    void deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& previousValue);
+    void deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, StringImpl* previousValue);
 
-    std::optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, const String&);
+    std::optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, StringImpl*);
 
     static ASCIILiteral notificationPlatformName(AXNotification);
 
@@ -807,7 +807,7 @@ public:
     bool hasAriaOwnsRelations() const { return m_relationsNeedUpdate || m_hasAriaOwnsRelations; }
 
 #if PLATFORM(IOS_FAMILY)
-    void relayNotification(String&&, RetainPtr<NSData>&&);
+    void relayNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&);
 
     void setWillPresentDatePopover(bool willPresent) { m_willPresentDatePopover = willPresent; }
     bool willPresentDatePopover() const { return m_willPresentDatePopover; }
@@ -871,12 +871,12 @@ protected:
 
 #if PLATFORM(COCOA) || USE(ATSPI)
     void postTextSelectionChangePlatformNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
-    void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&);
-    void postTextReplacementPlatformNotification(AccessibilityObject*, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&);
-    void postTextReplacementPlatformNotificationForTextControl(AccessibilityObject*, const String& deletedText, const String& insertedText);
+    void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, StringImpl*, const VisiblePosition&);
+    void postTextReplacementPlatformNotification(AccessibilityObject*, AXTextEditType, StringImpl*, AXTextEditType, StringImpl*, const VisiblePosition&);
+    void postTextReplacementPlatformNotificationForTextControl(AccessibilityObject*, StringImpl* deletedText, StringImpl* insertedText);
 #else // PLATFORM(COCOA) || USE(ATSPI)
     static AXTextChange textChangeForEditType(AXTextEditType);
-    void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&);
+    void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, StringImpl*);
 #endif
 
 #if PLATFORM(MAC)
@@ -884,12 +884,12 @@ protected:
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT void postPlatformAnnouncementNotification(const String&);
+    WEBCORE_EXPORT void postPlatformAnnouncementNotification(StringImpl*);
     WEBCORE_EXPORT void postPlatformARIANotifyNotification(AccessibilityObject&, const AriaNotifyData&);
     WEBCORE_EXPORT void postPlatformLiveRegionNotification(AccessibilityObject&, const LiveRegionAnnouncementData&);
     WEBCORE_EXPORT void postPlatformPossibleFormValidationErrorNotification(AccessibilityObject&, const PossibleFormValidationErrorData&);
 #else
-    void postPlatformAnnouncementNotification(const String&) { }
+    void postPlatformAnnouncementNotification(StringImpl*) { }
     void postPlatformARIANotifyNotification(AccessibilityObject&, const AriaNotifyData&) { }
 #endif
 
@@ -933,7 +933,7 @@ private:
     void notificationPostTimerFired();
     void enqueueNotificationToPost(Ref<AccessibilityObject>&&, AXNotificationWithData&&);
 
-    void announcementTranslationDidComplete(uint64_t requestID, Vector<String>&& translatedSegments);
+    void announcementTranslationDidComplete(uint64_t requestID, Vector<RefPtr<StringImpl>>&& translatedSegments);
     bool isReRenderedContent(const AccessibilityObject&) const;
     void flushPendingAnnouncements();
     void pendingAnnouncementTimeoutTimerFired();
@@ -969,7 +969,7 @@ private:
     void handleChildrenChanged(AccessibilityObject&);
     void handleAllDeferredChildrenChanged();
     void handleInputTypeChanged(Element&);
-    void handleRoleChanged(Element&, const AtomString&, const AtomString&);
+    void handleRoleChanged(Element&, AtomStringImpl*, AtomStringImpl*);
     void handleARIARoleDescriptionChanged(Element&);
     void handleMenuOpened(Element&);
     void handleLiveRegionCreated(Element&);
@@ -979,13 +979,13 @@ private:
     void handleMenuItemSelected(Element*);
     void handleTabPanelSelected(Element*, Element*);
     void handleRowCountChanged(AccessibilityObject*, Document*);
-    void handleAttributeChange(Element*, const QualifiedName&, const AtomString&, const AtomString&);
-    void handleClickHandlerChanged(Node&, const AtomString& eventType);
+    void handleAttributeChange(Element*, const QualifiedName&, AtomStringImpl*, AtomStringImpl*);
+    void handleClickHandlerChanged(Node&, AtomStringImpl* eventType);
     bool shouldProcessAttributeChange(Element*, const QualifiedName&);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
     void handleScrollbarUpdate(ScrollView&);
-    void handleActiveDescendantChange(Element&, const AtomString&, const AtomString&);
+    void handleActiveDescendantChange(Element&, AtomStringImpl*, AtomStringImpl*);
     void handleAriaExpandedChange(Element&);
     void handleAriaHiddenChange(Element&);
     enum class UpdateModal : bool { No, Yes };
@@ -1034,7 +1034,7 @@ private:
     void updateLabeledBy(Element*);
     void updateRelationsIfNeeded();
     void updateRelationsForTree(ContainerNode&);
-    bool idChangeCanAffectRelations(Element*, const AtomString& oldID, const AtomString& newID) const;
+    bool idChangeCanAffectRelations(Element*, AtomStringImpl* oldID, AtomStringImpl* newID) const;
     void relationsNeedUpdate(bool);
     void dirtyIsolatedTreeRelations();
     HashMap<AXID, AXRelations> relations();
@@ -1107,14 +1107,14 @@ private:
     // is presented as a machine translation.
     struct PendingAnnouncement {
         Ref<AccessibilityObject> object;
-        Vector<String> segments;
-        String targetLocale;
+        Vector<RefPtr<StringImpl>> segments;
+        RefPtr<StringImpl> targetLocale;
         // Zero once this entry is no longer awaiting a reply, whether it succeeded, failed, or timed out.
         uint64_t translationRequestID { 0 };
         MonotonicTime deadline;
         // Rebuilds the payload from the (possibly translated) segments and enqueues it to post. The
         // language argument is empty when the segments were left untranslated.
-        Function<void(Vector<String>&&, const String& language)> assembleAndEnqueue;
+        Function<void(Vector<RefPtr<StringImpl>>&&, StringImpl* language)> assembleAndEnqueue;
     };
 
     Deque<PendingAnnouncement> m_pendingAnnouncements;
@@ -1178,7 +1178,7 @@ private:
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     SingleThreadWeakHashSet<ScrollView> m_deferredScrollbarUpdateChangeList;
-    WeakHashMap<Element, String, WeakPtrImplWithEventTargetData> m_deferredTextFormControlValue;
+    WeakHashMap<Element, RefPtr<StringImpl>, WeakPtrImplWithEventTargetData> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
     Vector<CanvasFocusPathBoundsChange> m_deferredCanvasFocusPathBoundsChanges;
     std::optional<std::pair<WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
@@ -1252,10 +1252,10 @@ private:
     // Ids referenced by a relation attribute (e.g. aria-labelledby) whose target didn't exist when
     // relations were last built. If an element with one of these ids is later inserted, we must
     // re-resolve relations.
-    HashSet<AtomString> m_unresolvedRelationTargetIds;
+    HashSet<RefPtr<AtomStringImpl>> m_unresolvedRelationTargetIds;
     // All ids referenced by a relation attribute (resolved or not) as of the last relations build.
     // Used to decide whether an id-attribute change can affect any relation.
-    HashSet<AtomString> m_referencedRelationTargetIds;
+    HashSet<RefPtr<AtomStringImpl>> m_referencedRelationTargetIds;
 
 #if USE(ATSPI)
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredParentChangedList;

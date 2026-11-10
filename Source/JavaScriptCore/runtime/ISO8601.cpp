@@ -1522,7 +1522,7 @@ uint8_t daysInMonth(uint8_t month)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
-String formatTimeZoneOffsetString(int64_t offset)
+RefPtr<StringImpl> formatTimeZoneOffsetString(int64_t offset)
 {
     bool negative = false;
     if (offset < 0) {
@@ -1557,7 +1557,7 @@ String formatTimeZoneOffsetString(int64_t offset)
     return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes));
 }
 
-String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned> precision)
+RefPtr<StringImpl> temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned> precision)
 {
     auto [precisionType, precisionValue] = precision;
     ASSERT(precisionType == Precision::Auto || precisionValue < 10);
@@ -1597,12 +1597,12 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()), '.', pad('0', paddingLength, emptyString()), fraction);
 }
 
-static String temporalDateToString(int32_t year, int32_t month)
+static RefPtr<StringImpl> temporalDateToString(int32_t year, int32_t month)
 {
     // If we're printing a date, it should be within range
     ASSERT(isYearWithinLimits(year));
 
-    String prefix;
+    RefPtr<StringImpl> prefix;
     auto yearDigits = 4;
     if (year < 0 || year > 9999) {
         prefix = year < 0 ? "-"_s : "+"_s;
@@ -1613,24 +1613,24 @@ static String temporalDateToString(int32_t year, int32_t month)
     return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, month));
 }
 
-static String temporalDateToString(int32_t year, int32_t month, int32_t day)
+static RefPtr<StringImpl> temporalDateToString(int32_t year, int32_t month, int32_t day)
 {
     auto first = temporalDateToString(year, month);
     return makeString(first, '-', pad('0', 2, day));
 }
 
-String temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::tuple<Precision, unsigned> precision)
+RefPtr<StringImpl> temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::tuple<Precision, unsigned> precision)
 {
     return makeString(temporalDateToString(plainDate), 'T', temporalTimeToString(plainTime, precision));
 }
 
-String temporalDateToString(PlainDate plainDate)
+RefPtr<StringImpl> temporalDateToString(PlainDate plainDate)
 {
     return temporalDateToString(plainDate.year(), plainDate.month(), plainDate.day());
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalyearmonthtostring
-String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName, unsigned calendarId)
+RefPtr<StringImpl> temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName, unsigned calendarId)
 {
     auto calId = TemporalCore::calendarIDToString(calendarId);
     bool isNonISO = calendarId != iso8601CalendarID();
@@ -1649,7 +1649,7 @@ String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calen
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalmonthdaytostring
-String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName, unsigned calendarId)
+RefPtr<StringImpl> temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName, unsigned calendarId)
 {
     auto calId = TemporalCore::calendarIDToString(calendarId);
     bool isNonISO = calendarId != iso8601CalendarID();
@@ -1667,7 +1667,7 @@ String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendar
     return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
 }
 
-String monthCode(uint32_t month)
+RefPtr<StringImpl> monthCode(uint32_t month)
 {
     return makeString('M', pad('0', 2, month));
 }
@@ -1964,7 +1964,7 @@ static Int128 roundTimeDurationToIncrement(JSGlobalObject* globalObject, Int128 
 
     Int128 rounded = TemporalCore::roundNumberToIncrementInt128(d, increment, roundingMode);
     if (absInt128(rounded) > InternalDuration::maxTimeDuration) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Rounded time duration exceeds maximum"_s);
+        throwRangeError(globalObject, scope, "Rounded time duration exceeds maximum"_si);
         return 0;
     }
     return rounded;

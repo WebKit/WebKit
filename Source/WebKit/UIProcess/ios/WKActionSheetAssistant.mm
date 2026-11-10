@@ -366,13 +366,13 @@ static bool isJavaScriptURL(NSURL *url)
     RetainPtr<NSString> titleString;
     if (showLinkTitle && [[targetURL absoluteString] length]) {
         if (isJavaScriptURL(targetURL.get()))
-            titleString = WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link").createNSString();
+            titleString = createNSString(WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link"));
         else
             titleString = WTF::userVisibleString(targetURL.get());
     } else if (defaultTitle)
         titleString = defaultTitle;
     else
-        titleString = _positionInformation->title.createNSString();
+        titleString = createNSString(_positionInformation->title);
 
     if ([titleString length]) {
         [_interactionSheet setTitle:titleString.get()];
@@ -391,7 +391,7 @@ static bool isJavaScriptURL(NSURL *url)
         }];
     }
 
-    [_interactionSheet addAction:[UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Cancel", "Cancel button label in button bar", "Title for Cancel button label in button bar").createNSString().get()
+    [_interactionSheet addAction:[UIAlertAction actionWithTitle:createNSString(WEB_UI_STRING_KEY("Cancel", "Cancel button label in button bar", "Title for Cancel button label in button bar")).get()
                                                           style:UIAlertActionStyleCancel
                                                         handler:^(UIAlertAction *action) {
                                                             [self cleanupSheet];
@@ -507,7 +507,7 @@ static bool isJavaScriptURL(NSURL *url)
     if (!appLink)
         return NO;
 
-    RetainPtr openInDefaultBrowserTitle = WEB_UI_STRING("Open in Safari", "Title for Open in Safari Link action button").createNSString();
+    RetainPtr openInDefaultBrowserTitle = createNSString(WEB_UI_STRING("Open in Safari", "Title for Open in Safari Link action button"));
     RetainPtr openInDefaultBrowserAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInDefaultBrowser title:openInDefaultBrowserTitle.get() actionHandler:^(_WKActivatedElementInfo *) {
 #if HAVE(APP_LINKS_WITH_ISENABLED)
         appLink.get().enabled = NO;
@@ -852,7 +852,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    RetainPtr dataDetectorsActions = [controller actionsForURL:targetURL.get() identifier:_positionInformation->dataDetectorIdentifier.createNSString().get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context];
+    RetainPtr dataDetectorsActions = [controller actionsForURL:targetURL.get() identifier:createNSString(_positionInformation->dataDetectorIdentifier).get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context];
     if ([dataDetectorsActions count] == 0)
         return;
 
@@ -888,20 +888,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSArray<UIMenuElement *> *)_uiMenuElementsForMediaControlContextMenuItems:(Vector<WebCore::MediaControlsContextMenuItem>&&)items
 {
     return createNSArray(items, [&] (WebCore::MediaControlsContextMenuItem& item) -> UIMenuElement * {
-        if (item.id == WebCore::MediaControlsContextMenuItem::invalidID && item.title.isEmpty() && item.icon.isEmpty() && item.children.isEmpty())
+        if (item.id == WebCore::MediaControlsContextMenuItem::invalidID && isEmpty(item.title) && isEmpty(item.icon) && item.children.isEmpty())
             return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[]];
 
-        RetainPtr image = !item.icon.isEmpty() ? [UIImage systemImageNamed:item.icon.createNSString().get()] : nil;
+        RetainPtr image = !isEmpty(item.icon) ? [UIImage systemImageNamed:createNSString(item.icon).get()] : nil;
 
         if (!item.children.isEmpty())
-            return [UIMenu menuWithTitle:item.title.createNSString().get() image:image.get() identifier:nil options:0 children:[self _uiMenuElementsForMediaControlContextMenuItems:WTF::move(item.children)]];
+            return [UIMenu menuWithTitle:createNSString(item.title).get() image:image.get() identifier:nil options:0 children:[self _uiMenuElementsForMediaControlContextMenuItems:WTF::move(item.children)]];
 
         auto selectedItemID = item.id;
 
         if (selectedItemID == WebCore::ContextMenuItemCaptionDisplayStyleSubmenu)
             return [_captionStyleMenuController captionStyleMenu];
 
-        RetainPtr action = [UIAction actionWithTitle:item.title.createNSString().get() image:image.get() identifier:nil handler:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self), selectedItemID] (UIAction *) {
+        RetainPtr action = [UIAction actionWithTitle:createNSString(item.title).get() image:image.get() identifier:nil handler:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self), selectedItemID] (UIAction *) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
@@ -920,7 +920,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_mediaControlsContextMenu);
     ASSERT(!_mediaControlsContextMenuCallback);
 
-    String menuTitle;
+    RefPtr<StringImpl> menuTitle;
     Vector<WebCore::MediaControlsContextMenuItem> itemsToPresent;
     if (items.size() == 1) {
         menuTitle = WTF::move(items[0].title);
@@ -944,7 +944,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSArray<UIMenuElement *> *menuItems = [self _uiMenuElementsForMediaControlContextMenuItems:WTF::move(itemsToPresent)];
     menuItems = [menuItems arrayByAddingObjectsFromArray:additionalItems];
 
-    _mediaControlsContextMenu = [UIMenu menuWithTitle:menuTitle.createNSString().get() children:menuItems];
+    _mediaControlsContextMenu = [UIMenu menuWithTitle:createNSString(menuTitle).get() children:menuItems];
     _mediaControlsContextMenuTargetFrame = WTF::move(targetFrame);
     _frameInfo = makeUnique<WebKit::FrameInfoData>(frameInfo);
     _mediaElementIdentifier = identifier;
@@ -1062,7 +1062,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
             textAtSelection = [protectedDelegate selectedTextForActionSheetAssistant:self];
 
         NSDictionary *newContext = nil;
-        RetainPtr ddResult = [controller resultForURL:_positionInformation->url.createNSURL().get() identifier:_positionInformation->dataDetectorIdentifier.createNSString().get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context extendedContext:&newContext];
+        RetainPtr ddResult = [controller resultForURL:_positionInformation->url.createNSURL().get() identifier:createNSString(_positionInformation->dataDetectorIdentifier).get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context extendedContext:&newContext];
 
         CGRect sourceRect;
         if (_positionInformation->isLink && _positionInformation->textIndicator)

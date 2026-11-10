@@ -38,9 +38,9 @@ class FragmentedSharedBuffer;
 
 class ArchiveFactory {
 public:
-    static bool isArchiveMIMEType(const String&);
-    static RefPtr<Archive> create(const URL&, FragmentedSharedBuffer* data, const String& mimeType);
-    static void registerKnownArchiveMIMETypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static bool isArchiveMIMEType(StringImpl*);
+    static RefPtr<Archive> create(const URL&, FragmentedSharedBuffer* data, StringImpl* mimeType);
+    static void registerKnownArchiveMIMETypes(HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>&);
 };
 
 } // namespace WebCore

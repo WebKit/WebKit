@@ -40,12 +40,12 @@ class Store : public ThreadSafeRefCounted<Store> {
 public:
     virtual ~Store() = default;
 
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     virtual void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&) = 0;
     virtual void attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&, WebCore::PCM::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&) = 0;
 
-    virtual void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const = 0;
+    virtual void privateClickMeasurementToStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&&) const = 0;
     virtual void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() = 0;
     virtual void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) = 0;
 

@@ -41,7 +41,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCPUProfilerAgent);
 
 InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(PageAgentContext& context)
-    : InspectorAgentBase("CPUProfiler"_s, context)
+    : InspectorAgentBase("CPUProfiler"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::CPUProfilerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CPUProfilerBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
@@ -106,7 +106,7 @@ static Ref<Inspector::Protocol::CPUProfiler::ThreadInfo> buildThreadInfo(const T
     else if (thread.type == ThreadCPUInfo::Type::WebKit)
         threadInfo->setType(Inspector::Protocol::CPUProfiler::ThreadInfo::Type::WebKit);
 
-    if (!thread.identifier.isEmpty())
+    if (!isEmpty(thread.identifier))
         threadInfo->setTargetId(thread.identifier);
 
     return threadInfo;

@@ -76,14 +76,14 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     RetainPtr creationTime = dynamic_objc_cast<NSNumber>(dictionary[WebNotificationCreationTimeKey]);
     RetainPtr notificationData = dynamic_objc_cast<NSData>(dictionary[WebNotificationDataKey]);
 
-    String uuidString = dynamic_objc_cast<NSString>(dictionary[WebNotificationUUIDStringKey]);
+    RefPtr<StringImpl> uuidString = StringImpl::create(dynamic_objc_cast<NSString>(dictionary[WebNotificationUUIDStringKey]));
     auto uuid = WTF::UUID::parseVersion4(uuidString);
     if (!uuid)
         return std::nullopt;
 
     std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
-    String contextUUIDString = dynamic_objc_cast<NSString>(dictionary[WebNotificationContextUUIDStringKey]);
-    if (!contextUUIDString.isEmpty()) {
+    RefPtr<StringImpl> contextUUIDString = StringImpl::create(dynamic_objc_cast<NSString>(dictionary[WebNotificationContextUUIDStringKey]));
+    if (!isEmpty(contextUUIDString)) {
         auto contextUUID = WTF::UUID::parseVersion4(contextUUIDString);
         if (!contextUUID)
             return std::nullopt;
@@ -103,7 +103,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
         return std::nullopt;
     }
 
-    NotificationData data { URL { String { defaultActionURL.get() } }, title.get(), body.get(), iconURL.get(), tag.get(), language.get(), direction, originString.get(), URL { String { serviceWorkerRegistrationURL.get() } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.get().unsignedLongLongValue }, WallTime::fromSecondsSinceEpoch(Seconds { creationTime.get().doubleValue }), makeVector(notificationData.get()), nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
+    NotificationData data { URL { StringImpl::create(defaultActionURL.get()) }, StringImpl::create(title.get()), StringImpl::create(body.get()), StringImpl::create(iconURL.get()), StringImpl::create(tag.get()), StringImpl::create(language.get()), direction, StringImpl::create(originString.get()), URL { StringImpl::create(serviceWorkerRegistrationURL.get()) }, *uuid, contextIdentifier, PAL::SessionID { sessionID.get().unsignedLongLongValue }, WallTime::fromSecondsSinceEpoch(Seconds { creationTime.get().doubleValue }), makeVector(notificationData.get()), nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
     return WTF::move(data);
 }
 
@@ -112,23 +112,23 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
     using namespace NotificationDataKeys;
 
     RetainPtr result = adoptNS(@{
-        WebNotificationDefaultActionURLKey : navigateURL.string().createNSString().get(),
-        WebNotificationTitleKey : title.createNSString().get(),
-        WebNotificationBodyKey : body.createNSString().get(),
-        WebNotificationIconURLKey : iconURL.createNSString().get(),
-        WebNotificationTagKey : tag.createNSString().get(),
-        WebNotificationLanguageKey : language.createNSString().get(),
-        WebNotificationOriginKey : originString.createNSString().get(),
+        WebNotificationDefaultActionURLKey : createNSString(navigateURL.string()).get(),
+        WebNotificationTitleKey : createNSString(title).get(),
+        WebNotificationBodyKey : createNSString(body).get(),
+        WebNotificationIconURLKey : createNSString(iconURL).get(),
+        WebNotificationTagKey : createNSString(tag).get(),
+        WebNotificationLanguageKey : createNSString(language).get(),
+        WebNotificationOriginKey : createNSString(originString).get(),
         WebNotificationDirectionKey : @((unsigned long)direction),
-        WebNotificationServiceWorkerRegistrationURLKey : serviceWorkerRegistrationURL.string().createNSString().get(),
-        WebNotificationUUIDStringKey : notificationID.toString().createNSString().get(),
+        WebNotificationServiceWorkerRegistrationURLKey : createNSString(serviceWorkerRegistrationURL.string()).get(),
+        WebNotificationUUIDStringKey : createNSString(notificationID.toString()).get(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
         WebNotificationCreationTimeKey : @(creationTime.secondsSinceEpoch().value()),
         WebNotificationDataKey: toNSData(data).autorelease(),
     }.mutableCopy);
 
     if (contextIdentifier)
-        result.get()[WebNotificationContextUUIDStringKey] = contextIdentifier->toString().createNSString().get();
+        result.get()[WebNotificationContextUUIDStringKey] = createNSString(contextIdentifier->toString()).get();
 
     if (silent != std::nullopt)
         result.get()[WebNotificationSilentKey] = @(*silent);

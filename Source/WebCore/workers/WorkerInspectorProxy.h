@@ -51,7 +51,7 @@ class WorkerInspectorProxy : public RefCounted<WorkerInspectorProxy>, public Can
     WTF_MAKE_TZONE_ALLOCATED(WorkerInspectorProxy);
     WTF_MAKE_NONCOPYABLE(WorkerInspectorProxy);
 public:
-    static Ref<WorkerInspectorProxy> create(const String& identifier)
+    static Ref<WorkerInspectorProxy> create(StringImpl* identifier)
     {
         return adoptRef(*new WorkerInspectorProxy(identifier));
     }
@@ -68,29 +68,29 @@ public:
 
         virtual void ref() const = 0;
         virtual void deref() const = 0;
-        virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&&) = 0;
+        virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, RefPtr<StringImpl>&&) = 0;
     };
 
     static Vector<Ref<WorkerInspectorProxy>> proxiesForPage(PageIdentifier);
     static Vector<Ref<WorkerInspectorProxy>> proxiesForWorkerGlobalScope(ScriptExecutionContextIdentifier);
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
 
     WorkerThreadStartMode workerStartMode(ScriptExecutionContext&);
-    void workerStarted(ScriptExecutionContext&, WorkerThread*, const URL&, const String& name);
+    void workerStarted(ScriptExecutionContext&, WorkerThread*, const URL&, StringImpl* name);
     void workerTerminated();
 
     void resumeWorkerIfPaused();
     void connectToWorkerInspectorController(PageChannel&);
     void disconnectFromWorkerInspectorController();
-    void sendMessageToWorkerInspectorController(const String&);
-    void sendMessageFromWorkerToFrontend(String&&);
+    void sendMessageToWorkerInspectorController(StringImpl*);
+    void sendMessageFromWorkerToFrontend(RefPtr<StringImpl>&&);
 
 private:
-    explicit WorkerInspectorProxy(const String& identifier);
+    explicit WorkerInspectorProxy(StringImpl* identifier);
 
     using PageOrWorkerGlobalScopeIdentifier = Variant<PageIdentifier, ScriptExecutionContextIdentifier>;
     static std::optional<PageOrWorkerGlobalScopeIdentifier> pageOrWorkerGlobalScopeIdentifier(ScriptExecutionContext&);
@@ -101,9 +101,9 @@ private:
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     std::optional<PageOrWorkerGlobalScopeIdentifier> m_contextIdentifier;
     RefPtr<WorkerThread> m_workerThread;
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     URL m_url;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     CheckedPtr<PageChannel> m_pageChannel;
 };
 

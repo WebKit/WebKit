@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-AutomationSessionClient::AutomationSessionClient(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+AutomationSessionClient::AutomationSessionClient(StringImpl* sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
     : m_sessionIdentifier(sessionIdentifier)
     , m_capabilities(capabilities)
 {
@@ -107,7 +107,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
             };
 
             auto userInitiatedActivity = API::UserInitiatedAction::create();
-            Ref navigationAction = API::NavigationAction::create(WTF::move(navigationActionData), nullptr, nullptr, String(), WebCore::ResourceRequest(), URL(), false, WTF::move(userInitiatedActivity));
+            Ref navigationAction = API::NavigationAction::create(WTF::move(navigationActionData), nullptr, nullptr, nullptr, WebCore::ResourceRequest(), URL(), false, WTF::move(userInitiatedActivity));
 
             firstPage->uiClient().createNewPage(firstPage, WTF::move(configuration), WTF::move(navigationAction), [completionHandler = WTF::move(completionHandler)](auto&& newPage) mutable {
                 if (newPage) {

@@ -215,7 +215,7 @@ enum class RefreshControllerEligibility : bool { Ineligible, Eligible };
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
-typedef HashMap<String, ValidationVector> ValidationMap;
+typedef HashMap<RefPtr<StringImpl>, ValidationVector> ValidationMap;
 
 class WebViewImpl final : public CanMakeWeakPtr<WebViewImpl>, public CanMakeCheckedPtr<WebViewImpl> {
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
@@ -405,7 +405,7 @@ public:
     bool inSecureInputState() const { return m_inSecureInputState; }
     void notifyInputContextAboutDiscardedComposition();
     
-    void handleAcceptedAlternativeText(const String&);
+    void handleAcceptedAlternativeText(StringImpl*);
     NSInteger spellCheckerDocumentTag();
 
     void pressureChangeWithEvent(NSEvent *);
@@ -421,7 +421,7 @@ public:
 
     NODELETE bool isEditable() const;
     bool executeSavedCommandBySelector(SEL);
-    void executeEditCommandForSelector(SEL, const String& argument = String());
+    void executeEditCommandForSelector(SEL, StringImpl* argument = nullptr);
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
     void clearAllEditCommands();
     bool writeSelectionToPasteboard(NSPasteboard *, NSArray *types);
@@ -546,7 +546,7 @@ public:
     void removeTrackingRect(NSTrackingRectTag);
     void removeTrackingRects(std::span<NSTrackingRectTag>);
     NSString *stringForToolTip(NSToolTipTag tag);
-    void toolTipChanged(const String& oldToolTip, const String& newToolTip);
+    void toolTipChanged(StringImpl* oldToolTip, StringImpl* newToolTip);
 
     void setAcceleratedCompositingRootLayer(CALayer *);
     CALayer *acceleratedCompositingRootLayer() const LIFETIME_BOUND { return m_rootLayer.get(); }
@@ -596,7 +596,7 @@ public:
     void startWindowDrag();
 
     void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image, const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
-    void setPromisedDataForImage(Ref<WebCore::BitmapImage>&&, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& pasteboardName, const String& pasteboardOrigin);
+    void setPromisedDataForImage(Ref<WebCore::BitmapImage>&&, StringImpl* filename, StringImpl* extension, StringImpl* title, StringImpl* url, StringImpl* visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, StringImpl* pasteboardName, StringImpl* pasteboardOrigin);
     void writePromisedImageDragDataToPasteboard(NSPasteboard *);
     void pasteboardChangedOwner(NSPasteboard *);
     void provideDataForPasteboard(NSPasteboard *, NSString *type);
@@ -720,7 +720,7 @@ public:
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void computeHasVisualSearchResults(const URL& imageURL, WebCore::ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
     int32_t processImageAnalyzerRequest(VKCImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<VKCImageAnalysis>&&, NSError *)>&&);
 
@@ -787,7 +787,7 @@ public:
     void takeFocus(WebCore::FocusDirection);
     void clearPromisedImageDragData() { m_promisedImageDragData.reset(); }
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
     void handleDOMPasteRequestForCategoryWithResult(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteAccessResponse);
     NSMenu *domPasteMenu() const LIFETIME_BOUND { return m_domPasteState ? m_domPasteState->menu.get() : nullptr; }
     void hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse);
@@ -1116,14 +1116,14 @@ private:
 
     struct PromisedImageDragData {
         Ref<WebCore::BitmapImage> image;
-        String filename;
-        String extension;
-        String title;
-        String url;
-        String visibleURL;
-        String imageUTI;
+        RefPtr<StringImpl> filename;
+        RefPtr<StringImpl> extension;
+        RefPtr<StringImpl> title;
+        RefPtr<StringImpl> url;
+        RefPtr<StringImpl> visibleURL;
+        RefPtr<StringImpl> imageUTI;
         RefPtr<WebCore::FragmentedSharedBuffer> archiveBuffer;
-        String originIdentifier;
+        RefPtr<StringImpl> originIdentifier;
     };
     std::optional<PromisedImageDragData> m_promisedImageDragData;
 
@@ -1150,7 +1150,7 @@ private:
     Deque<PendingMouseEvent> m_pendingMouseEvents;
     uint64_t m_lastPendingMouseEventIdentifier { 0 };
 
-    String m_lastStringForCandidateRequest;
+    RefPtr<StringImpl> m_lastStringForCandidateRequest;
     NSInteger m_lastCandidateRequestSequenceNumber;
     NSRange m_softSpaceRange { NSNotFound, 0 };
     bool m_isHandlingAcceptedCandidate { false };

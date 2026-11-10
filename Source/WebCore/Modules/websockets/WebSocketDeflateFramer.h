@@ -48,14 +48,14 @@ public:
     WEBCORE_EXPORT ~DeflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
-    String failureReason() const { return m_failureReason; }
+    RefPtr<StringImpl> failureReason() const { return m_failureReason; }
 
-    void fail(const String& failureReason);
+    void fail(StringImpl* failureReason);
 
 private:
     WebSocketDeflateFramer& m_framer;
     bool m_succeeded { true };
-    String m_failureReason;
+    RefPtr<StringImpl> m_failureReason;
 };
 
 class InflateResultHolder {
@@ -65,14 +65,14 @@ public:
     WEBCORE_EXPORT ~InflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
-    String failureReason() const { return m_failureReason; }
+    RefPtr<StringImpl> failureReason() const { return m_failureReason; }
 
-    void fail(const String& failureReason);
+    void fail(StringImpl* failureReason);
 
 private:
     WebSocketDeflateFramer& m_framer;
     bool m_succeeded { true };
-    String m_failureReason;
+    RefPtr<StringImpl> m_failureReason;
 };
 
 class WebSocketDeflateFramer {

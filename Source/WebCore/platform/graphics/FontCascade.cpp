@@ -201,7 +201,7 @@ FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, co
     return startPoint - point;
 }
 
-void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to) const
+void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, AtomStringImpl* mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to) const
 {
     if (isLoadingCustomFonts())
         return;
@@ -532,7 +532,7 @@ bool FontCascade::hasValidAverageCharWidth() const
     ASSERT(isMainThread());
 
     const auto& family = firstFamily().name;
-    if (family.isEmpty())
+    if (isEmpty(family))
         return false;
 
 #if PLATFORM(COCOA)
@@ -642,7 +642,7 @@ int FontCascade::offsetForPosition(const TextRun& run, float x, bool includePart
 }
 
 template <typename CharacterType>
-static inline String normalizeSpacesInternal(std::span<const CharacterType> characters)
+static inline RefPtr<StringImpl> normalizeSpacesInternal(std::span<const CharacterType> characters)
 {
     StringBuilder normalized;
     normalized.reserveCapacity(characters.size());
@@ -653,17 +653,17 @@ static inline String normalizeSpacesInternal(std::span<const CharacterType> char
     return normalized.toString();
 }
 
-String FontCascade::normalizeSpaces(std::span<const Latin1Character> characters)
+RefPtr<StringImpl> FontCascade::normalizeSpaces(std::span<const Latin1Character> characters)
 {
     return normalizeSpacesInternal(characters);
 }
 
-String FontCascade::normalizeSpaces(std::span<const char16_t> characters)
+RefPtr<StringImpl> FontCascade::normalizeSpaces(std::span<const char16_t> characters)
 {
     return normalizeSpacesInternal(characters);
 }
 
-String FontCascade::normalizeSpaces(StringView stringView)
+RefPtr<StringImpl> FontCascade::normalizeSpaces(StringView stringView)
 {
     if (stringView.is8Bit())
         return normalizeSpacesInternal(stringView.span8());
@@ -1435,25 +1435,25 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
 
 // FIXME: This function may not work if the emphasis mark uses a complex script, but none of the
 // standard emphasis marks do so.
-std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString& mark) const
+std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(AtomStringImpl* mark) const
 {
-    if (mark.isEmpty())
+    if (isEmpty(mark))
         return std::nullopt;
 
     char32_t character;
-    if (!mark.is8Bit()) {
+    if (!is8Bit(mark)) {
         size_t i = 0;
-        auto span = mark.span16();
+        auto span = span16(mark);
         U16_NEXT(span, i, span.size(), character);
         ASSERT(U16_IS_SINGLE(character)); // The CSS parser replaces unpaired surrogates with the object replacement character.
     } else
-        character = mark[0];
+        character = codeUnitAt(mark, 0);
 
     std::optional<GlyphData> glyphData(glyphDataForCharacter(character, false, FontVariant::EmphasisMark));
     return glyphData.value().isValid() ? glyphData : std::nullopt;
 }
 
-int FontCascade::emphasisMarkAscent(const AtomString& mark) const
+int FontCascade::emphasisMarkAscent(AtomStringImpl* mark) const
 {
     std::optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1467,7 +1467,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     return markFontData->fontMetrics().intAscent();
 }
 
-int FontCascade::emphasisMarkDescent(const AtomString& mark) const
+int FontCascade::emphasisMarkDescent(AtomStringImpl* mark) const
 {
     std::optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1481,7 +1481,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     return markFontData->fontMetrics().intDescent();
 }
 
-const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
+const Font* FontCascade::fontForEmphasisMark(AtomStringImpl* mark) const
 {
     auto markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1491,7 +1491,7 @@ const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
     return markGlyphData->font.get();
 }
 
-float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
+float FontCascade::floatEmphasisMarkHeight(AtomStringImpl* mark) const
 {
     if (RefPtr font = fontForEmphasisMark(mark))
         return font->fontMetrics().height();
@@ -1630,7 +1630,7 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
     return offsetToMiddleOfGlyph(protect(glyphBuffer.fontAt(i)), glyphBuffer.glyphAt(i));
 }
 
-void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer& glyphBuffer, const AtomString& mark, const FloatPoint& point) const
+void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer& glyphBuffer, AtomStringImpl* mark, const FloatPoint& point) const
 {
     ASSERT(glyphBuffer.isFlattened());
     std::optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);

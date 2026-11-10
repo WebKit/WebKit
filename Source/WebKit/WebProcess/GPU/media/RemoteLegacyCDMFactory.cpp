@@ -69,10 +69,10 @@ void RemoteLegacyCDMFactory::registerFactory()
         [protectedThis = Ref { *this }] (LegacyCDM& privateCDM) -> std::unique_ptr<WebCore::CDMPrivateInterface> {
             return protectedThis->createCDM(privateCDM);
         },
-        [protectedThis = Ref { *this }] (const String& keySystem) {
+        [protectedThis = Ref { *this }] (StringImpl* keySystem) {
             return protectedThis->supportsKeySystem(keySystem);
         },
-        [protectedThis = Ref { *this }] (const String& keySystem, const String& mimeType) {
+        [protectedThis = Ref { *this }] (StringImpl* keySystem, StringImpl* mimeType) {
             return protectedThis->supportsKeySystemAndMimeType(keySystem, mimeType);
         }
     );
@@ -88,7 +88,7 @@ GPUProcessConnection& RemoteLegacyCDMFactory::gpuProcessConnection()
     return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
-bool RemoteLegacyCDMFactory::supportsKeySystem(const String& keySystem)
+bool RemoteLegacyCDMFactory::supportsKeySystem(StringImpl* keySystem)
 {
     auto foundInCache = m_supportsKeySystemCache.find(keySystem);
     if (foundInCache != m_supportsKeySystemCache.end())
@@ -100,7 +100,7 @@ bool RemoteLegacyCDMFactory::supportsKeySystem(const String& keySystem)
     return supported;
 }
 
-bool RemoteLegacyCDMFactory::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+bool RemoteLegacyCDMFactory::supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType)
 {
     auto key = std::make_pair(keySystem, mimeType);
     auto foundInCache = m_supportsKeySystemAndMimeTypeCache.find(key);

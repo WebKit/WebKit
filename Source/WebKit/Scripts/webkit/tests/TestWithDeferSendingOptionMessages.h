@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -43,7 +44,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class NoOptions {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoOptions; }
     static constexpr bool isSync = false;
@@ -51,7 +52,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit NoOptions(const String& url)
+    explicit NoOptions(StringView url)
         : m_url(url)
     {
     }
@@ -63,12 +64,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class NoIndices {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoIndices; }
     static constexpr bool isSync = false;
@@ -76,7 +77,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = true;
 
-    explicit NoIndices(const String& url)
+    explicit NoIndices(StringView url)
         : m_url(url)
     {
     }
@@ -92,12 +93,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class OneIndex {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_OneIndex; }
     static constexpr bool isSync = false;
@@ -105,7 +106,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = true;
 
-    explicit OneIndex(const String& url)
+    explicit OneIndex(StringView url)
         : m_url(url)
     {
     }
@@ -122,12 +123,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class MultipleIndices {
 public:
-    using Arguments = std::tuple<String, int, int, int>;
+    using Arguments = std::tuple<RefPtr<StringImpl>, int, int, int>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_MultipleIndices; }
     static constexpr bool isSync = false;
@@ -135,7 +136,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = true;
 
-    MultipleIndices(const String& url, const int& foo, const int& bar, const int& baz)
+    MultipleIndices(StringView url, const int& foo, const int& bar, const int& baz)
         : m_url(url)
         , m_foo(foo)
         , m_bar(bar)
@@ -160,7 +161,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
     SUPPRESS_FORWARD_DECL_MEMBER const int& m_foo;
     SUPPRESS_FORWARD_DECL_MEMBER const int& m_bar;
     SUPPRESS_FORWARD_DECL_MEMBER const int& m_baz;

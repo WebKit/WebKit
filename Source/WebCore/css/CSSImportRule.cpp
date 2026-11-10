@@ -52,7 +52,7 @@ CSSImportRule::~CSSImportRule()
         protect(m_mediaCSSOMWrapper)->detachFromParent();
 }
 
-String CSSImportRule::href() const
+RefPtr<StringImpl> CSSImportRule::href() const
 {
     return m_importRule.get().href();
 }
@@ -65,7 +65,7 @@ MediaList& CSSImportRule::media() const
     return *m_mediaCSSOMWrapper;
 }
 
-String CSSImportRule::layerName() const
+RefPtr<StringImpl> CSSImportRule::layerName() const
 {
     auto name = m_importRule->cascadeLayerName();
     if (!name)
@@ -74,26 +74,26 @@ String CSSImportRule::layerName() const
     return stringFromCascadeLayerName(*name);
 }
 
-String CSSImportRule::supportsText() const
+RefPtr<StringImpl> CSSImportRule::supportsText() const
 {
     return m_importRule->supportsText();
 }
 
-String CSSImportRule::cssTextInternal(const String& urlString, const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSImportRule::cssTextInternal(StringImpl* urlString, const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     builder.append("@import "_s);
     CSS::serializationForCSS(builder, context, CSS::URL { .specified = urlString, .resolved = { }, .modifiers = { } });
 
-    if (auto layerName = this->layerName(); !layerName.isNull()) {
-        if (layerName.isEmpty())
+    if (auto layerName = this->layerName(); layerName) {
+        if (isEmpty(layerName))
             builder.append(" layer"_s);
         else
             builder.append(" layer("_s, layerName, ')');
     }
 
     auto supports = supportsText();
-    if (!supports.isNull())
+    if (supports)
         builder.append(" supports("_s, WTF::move(supports), ')');
 
     if (!mediaQueries().isEmpty()) {
@@ -105,22 +105,22 @@ String CSSImportRule::cssTextInternal(const String& urlString, const CSS::Serial
     return builder.toString();
 }
 
-String CSSImportRule::cssText() const
+RefPtr<StringImpl> CSSImportRule::cssText() const
 {
     return cssTextInternal(m_importRule->href(), CSS::defaultSerializationContext());
 }
 
-String CSSImportRule::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSImportRule::cssText(const CSS::SerializationContext& context) const
 {
     if (RefPtr sheet = styleSheet()) {
         auto urlString = context.replacementURLStringsForCSSStyleSheet.get(*sheet);
-        if (!urlString.isEmpty())
+        if (!isEmpty(urlString))
             return cssTextInternal(urlString, context);
     }
 
     auto urlString = m_importRule->href();
     auto replacementURLString = context.replacementURLStrings.get(urlString);
-    return cssTextInternal(replacementURLString.isEmpty() ? urlString : replacementURLString, context);
+    return cssTextInternal(isEmpty(replacementURLString) ? urlString : replacementURLString, context);
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const

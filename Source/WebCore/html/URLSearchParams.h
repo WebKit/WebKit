@@ -39,28 +39,28 @@ class URLSearchParams : public RefCounted<URLSearchParams> {
 public:
     ~URLSearchParams();
 
-    static ExceptionOr<Ref<URLSearchParams>> create(Variant<Vector<Vector<String>>, Vector<KeyValuePair<String, String>>, String>&&);
-    static Ref<URLSearchParams> create(const String& string, DOMURL* associatedURL)
+    static ExceptionOr<Ref<URLSearchParams>> create(Variant<Vector<Vector<RefPtr<StringImpl>>>, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>, RefPtr<StringImpl>>&&);
+    static Ref<URLSearchParams> create(StringImpl* string, DOMURL* associatedURL)
     {
         return adoptRef(*new URLSearchParams(string, associatedURL));
     }
 
     size_t size() const { return m_pairs.size(); }
 
-    void append(const String& name, const String& value);
-    void remove(const String& name, const String& value = { });
-    NODELETE String get(const String& name) const;
-    Vector<String> getAll(const String& name) const;
-    NODELETE bool has(const String& name, const String& value = { }) const;
-    void set(const String& name, const String& value);
-    String toString() const;
+    void append(StringImpl* name, StringImpl* value);
+    void remove(StringImpl* name, StringImpl* value = nullptr);
+    NODELETE RefPtr<StringImpl> get(StringImpl* name) const;
+    Vector<RefPtr<StringImpl>> getAll(StringImpl* name) const;
+    NODELETE bool has(StringImpl* name, StringImpl* value = nullptr) const;
+    void set(StringImpl* name, StringImpl* value);
+    RefPtr<StringImpl> toString() const;
     void updateFromAssociatedURL();
     void sort();
 
     class Iterator {
     public:
         explicit Iterator(URLSearchParams&);
-        NODELETE std::optional<KeyValuePair<String, String>> next();
+        NODELETE std::optional<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> next();
 
     private:
         const Ref<URLSearchParams> m_target;
@@ -69,13 +69,13 @@ public:
     Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }
 
 private:
-    const Vector<KeyValuePair<String, String>>& pairs() const LIFETIME_BOUND { return m_pairs; }
-    URLSearchParams(const String&, DOMURL*);
-    URLSearchParams(const Vector<KeyValuePair<String, String>>&);
+    const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& pairs() const LIFETIME_BOUND { return m_pairs; }
+    URLSearchParams(StringImpl*, DOMURL*);
+    URLSearchParams(const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&);
     void updateURL();
 
     WeakPtr<DOMURL> m_associatedURL;
-    using PairType = KeyValuePair<String, String>;
+    using PairType = KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>;
     Vector<PairType> m_pairs;
 };
 

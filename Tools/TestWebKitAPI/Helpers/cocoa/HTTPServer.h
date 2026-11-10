@@ -63,9 +63,9 @@ public:
     };
     enum class DeferListening : bool { No, Yes };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
-    using ResponseMap = HashMap<String, HTTPResponse>;
+    using ResponseMap = HashMap<RefPtr<StringImpl>, HTTPResponse>;
 
-    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, SecIdentityRef = nullptr, std::optional<uint16_t> port = { }, DeferListening = DeferListening::No);
+    HTTPServer(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, SecIdentityRef = nullptr, std::optional<uint16_t> port = { }, DeferListening = DeferListening::No);
     HTTPServer(ResponseMap&& responses, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, SecIdentityRef = nullptr, std::optional<uint16_t> port = { }, DeferListening = DeferListening::No);
     HTTPServer(Function<void(Connection)>&&, Protocol = Protocol::Http);
     enum class UseCoroutines : bool { Yes };
@@ -74,28 +74,28 @@ public:
     HTTPServer& operator=(HTTPServer&&) = default;
     ~HTTPServer() = default;
     uint16_t port() const;
-    String origin() const;
+    RefPtr<StringImpl> origin() const;
     NSURLRequest *request(StringView path = "/"_s) const;
     NSURLRequest *requestWithLocalhost(StringView path = "/"_s) const;
     WKWebViewConfiguration *httpsProxyConfiguration() const;
     size_t totalConnections() const;
     size_t totalRequests() const;
-    String lastRequestCookies() const;
+    RefPtr<StringImpl> lastRequestCookies() const;
     bool sawAuthorizationHeader() const;
     void startListening(CompletionHandler<void()>&&);
     void cancel(CompletionHandler<void()>&&);
     void cancel();
     void terminateAllConnections(CompletionHandler<void()>&&);
 
-    void addResponse(String&& path, HTTPResponse&&);
-    void setResponse(String&& path, HTTPResponse&&);
+    void addResponse(RefPtr<StringImpl>&& path, HTTPResponse&&);
+    void setResponse(RefPtr<StringImpl>&& path, HTTPResponse&&);
 
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
-    static String parseCookies(const Vector<char>& request);
-    static String parseAuthorization(const Vector<char>& request);
-    static String parsePath(const Vector<char>& request);
-    static String parseBody(const Vector<char>&);
+    static RefPtr<StringImpl> parseCookies(const Vector<char>& request);
+    static RefPtr<StringImpl> parseAuthorization(const Vector<char>& request);
+    static RefPtr<StringImpl> parsePath(const Vector<char>& request);
+    static RefPtr<StringImpl> parseBody(const Vector<char>&);
     static Vector<uint8_t> testPrivateKey();
     static Vector<uint8_t> testCertificate();
 
@@ -115,15 +115,15 @@ struct HTTPResponse {
 
     HTTPResponse(Vector<uint8_t>&& body)
         : body(WTF::move(body)) { }
-    HTTPResponse(const String& body)
+    HTTPResponse(StringView body)
         : body(bodyFromString(body)) { }
-    HTTPResponse(Vector<WTF::KeyValuePair<String, String>>&& headerFields, const String& body)
+    HTTPResponse(Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& headerFields, StringView body)
         : headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
-    HTTPResponse(Vector<WTF::KeyValuePair<String, String>>&& headerFields, NSData *data)
+    HTTPResponse(Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& headerFields, NSData *data)
         : headerFields(WTF::move(headerFields))
         , body(makeVector(data)) { }
-    HTTPResponse(unsigned statusCode, Vector<WTF::KeyValuePair<String, String>>&& headerFields = { }, const String& body = { })
+    HTTPResponse(unsigned statusCode, Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& headerFields = { }, StringView body = { })
         : statusCode(statusCode)
         , headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
@@ -138,27 +138,27 @@ struct HTTPResponse {
     HTTPResponse& operator=(const HTTPResponse&) = default;
     HTTPResponse& operator=(HTTPResponse&&) = default;
 
-    void setShouldRespondWith304ToConditionalRequests(HashMap<String, String>&& headerFields = { })
+    void setShouldRespondWith304ToConditionalRequests(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& headerFields = { })
     {
         shouldRespondWith304ToConditionalRequests = true;
         headerFieldsFor304 = WTF::move(headerFields);
     }
 
-    void setHeaderField(String&& name, String&& value)
+    void setHeaderField(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& value)
     {
         headerFields.append({ WTF::move(name), WTF::move(value) });
     }
 
     enum class IncludeContentLength : bool { No, Yes };
     Vector<uint8_t> serialize(IncludeContentLength = IncludeContentLength::Yes) const;
-    static Vector<uint8_t> bodyFromString(const String&);
+    static Vector<uint8_t> bodyFromString(StringView);
 
     unsigned statusCode { 200 };
-    Vector<WTF::KeyValuePair<String, String>> headerFields;
+    Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headerFields;
     Vector<uint8_t> body;
     Behavior behavior { Behavior::SendResponseNormally };
     bool shouldRespondWith304ToConditionalRequests { false };
-    HashMap<String, String> headerFieldsFor304;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> headerFieldsFor304;
 };
 
 } // namespace TestWebKitAPI

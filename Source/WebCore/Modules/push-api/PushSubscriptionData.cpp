@@ -30,12 +30,12 @@ namespace WebCore {
 
 PushSubscriptionData PushSubscriptionData::isolatedCopy() const &
 {
-    return { identifier, endpoint.isolatedCopy(), expirationTime, serverVAPIDPublicKey, clientECDHPublicKey, sharedAuthenticationSecret };
+    return { identifier, WTF::isolatedCopy(endpoint), expirationTime, serverVAPIDPublicKey, clientECDHPublicKey, sharedAuthenticationSecret };
 }
 
 PushSubscriptionData PushSubscriptionData::isolatedCopy() &&
 {
-    return { identifier, WTF::move(endpoint).isolatedCopy(), expirationTime, WTF::move(serverVAPIDPublicKey), WTF::move(clientECDHPublicKey), WTF::move(sharedAuthenticationSecret) };
+    return { identifier, WTF::isolatedCopy(WTF::move(endpoint)), expirationTime, WTF::move(serverVAPIDPublicKey), WTF::move(clientECDHPublicKey), WTF::move(sharedAuthenticationSecret) };
 }
 
 } // namespace WebCore

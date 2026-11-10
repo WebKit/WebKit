@@ -127,9 +127,9 @@ public:
     virtual FrameLoaderClient& loaderClient() = 0;
     virtual URL urlForConsoleLog() const = 0;
 
-    virtual String customUserAgent() const = 0;
-    virtual String customUserAgentAsSiteSpecificQuirks() const = 0;
-    virtual String customNavigatorPlatform() const = 0;
+    virtual RefPtr<StringImpl> customUserAgent() const = 0;
+    virtual RefPtr<StringImpl> customUserAgentAsSiteSpecificQuirks() const = 0;
+    virtual RefPtr<StringImpl> customNavigatorPlatform() const = 0;
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
     virtual bool allowPrivacyProxy() const = 0;
     virtual AutoplayPolicy autoplayPolicy() const = 0;
@@ -147,7 +147,7 @@ public:
 
     virtual void reportMixedContentViolation(bool blocked, const URL& target) const = 0;
 
-    virtual String debugDescription() const = 0;
+    virtual RefPtr<StringImpl> debugDescription() const = 0;
 
     void stopForBackForwardCache();
 
@@ -159,7 +159,7 @@ public:
     WEBCORE_EXPORT virtual SecurityOrigin* frameDocumentSecurityOrigin() const = 0;
     WEBCORE_EXPORT virtual std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const = 0;
     virtual std::optional<AgentClusterIdentifier> frameAgentClusterIdentifier() const = 0;
-    WEBCORE_EXPORT virtual String frameURLProtocol() const = 0;
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> frameURLProtocol() const = 0;
 
     // The scale factor of this frame with respect to its container.
     //

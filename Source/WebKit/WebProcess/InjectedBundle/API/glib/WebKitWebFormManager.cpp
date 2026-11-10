@@ -236,7 +236,7 @@ void webkit_web_form_manager_input_element_auto_fill(JSCValue* element, const ch
         return;
 
     input->setAutofilled(true);
-    input->setValueForUser(String::fromUTF8(value));
+    input->setValueForUser(StringImpl::fromUTF8(value));
 }
 
 /**

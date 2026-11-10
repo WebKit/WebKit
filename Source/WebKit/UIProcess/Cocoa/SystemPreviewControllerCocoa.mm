@@ -137,7 +137,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     _itemProvider = adoptNS([[NSItemProvider alloc] init]);
     // FIXME: We are launching the preview controller before getting a response from the resource, which
     // means we don't actually know the real MIME type yet.
-    RetainPtr contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s).createNSString();
+    RetainPtr contentType = createNSString(WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_si));
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
     RetainPtr previewItem = adoptNS([PAL::allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL.createNSURL().get()]);
@@ -298,7 +298,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     long long _expectedContentLength;
     RetainPtr<NSMutableData> _data;
     FileSystem::FileHandle _fileHandle;
-    String _filePath;
+    RefPtr<StringImpl> _filePath;
 };
 @end
 
@@ -316,12 +316,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)isValidMIMEType:(NSString *)MIMEType
 {
     // We need to be liberal in which MIME types we accept, because some servers are not configured for USD.
-    return WebCore::MIMETypeRegistry::isUSDMIMEType(MIMEType) || [MIMEType isEqualToString:@"application/octet-stream"];
+    return WebCore::MIMETypeRegistry::isUSDMIMEType(StringImpl::create(MIMEType).get()) || [MIMEType isEqualToString:@"application/octet-stream"];
 }
 
 - (BOOL)isValidFileExtension:(NSString *)extension
 {
-    return WebCore::MIMETypeRegistry::isUSDMIMEType(WebCore::MIMETypeRegistry::mimeTypeForExtension(String(extension)));
+    return WebCore::MIMETypeRegistry::isUSDMIMEType(WebCore::MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(extension).get()));
 }
 
 - (void)dataTask:(_WKDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response decisionHandler:(void (^)(_WKDataTaskResponsePolicy))decisionHandler
@@ -518,7 +518,7 @@ void SystemPreviewController::loadStarted(const URL& localFileURL)
     m_localFileURL = localFileURL;
 
     // Take the local URL, but add on the fragment from the original request URL.
-    if (!m_fragmentIdentifier.isEmpty())
+    if (!isEmpty(m_fragmentIdentifier))
         m_localFileURL.setFragmentIdentifier(m_fragmentIdentifier);
 
 #if PLATFORM(VISION)
@@ -637,12 +637,12 @@ void SystemPreviewController::triggerSystemPreviewAction()
     if (!page)
         return;
 
-    page->systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
+    page->systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_si);
 }
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t nodeID, NSString* documentID, uint64_t pageID)
 {
-    auto uuid = WTF::UUID::parseVersion4(String(documentID));
+    auto uuid = WTF::UUID::parseVersion4(StringImpl::create(documentID).get());
     ASSERT(uuid);
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!uuid || !webPageProxy)

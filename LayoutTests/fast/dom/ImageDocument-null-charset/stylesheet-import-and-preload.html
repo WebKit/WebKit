@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/image-document-frame.js"></script>
+</head>
+<body>
+<script>
+description("Tests @import and link preloads in an ImageDocument (a document without a text decoder, so with a null charset). "
+    + "StyleRuleImport and CachedResourceLoader::preload() pass the (null) document charset to the resource request.");
+
+window.jsTestIsAsync = true;
+var frameDocument;
+var image;
+var preloadedScriptRan = false;
+
+function waitForLoad(element)
+{
+    return new Promise((resolve) => {
+        element.onload = () => resolve("load");
+        element.onerror = () => resolve("error");
+    });
+}
+
+loadImageDocumentFrame().then(async (iframe) => {
+    frameDocument = iframe.contentDocument;
+    image = frameDocument.body.firstChild;
+    shouldBeEqualToString("image.tagName", "IMG");
+
+    const style = frameDocument.createElement("style");
+    style.textContent = "@import url(../ImageDocument-null-charset/resources/imported.css);";
+    let styleLoad = waitForLoad(style);
+    frameDocument.head.appendChild(style);
+    debug("style element: " + await styleLoad);
+    shouldBeEqualToString("getComputedStyle(image).outlineColor", "rgb(0, 128, 0)");
+    shouldBeEqualToString("getComputedStyle(image).outlineWidth", "7px");
+
+    const preloadStyle = frameDocument.createElement("link");
+    preloadStyle.rel = "preload";
+    preloadStyle.as = "style";
+    preloadStyle.href = "../ImageDocument-null-charset/resources/preloaded.css";
+    let preloadStyleLoad = waitForLoad(preloadStyle);
+    frameDocument.head.appendChild(preloadStyle);
+    debug("style preload: " + await preloadStyleLoad);
+
+    const stylesheet = frameDocument.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = "../ImageDocument-null-charset/resources/preloaded.css";
+    let stylesheetLoad = waitForLoad(stylesheet);
+    frameDocument.head.appendChild(stylesheet);
+    debug("stylesheet: " + await stylesheetLoad);
+    shouldBeEqualToString("getComputedStyle(image).marginLeft", "11px");
+
+    const preloadScript = frameDocument.createElement("link");
+    preloadScript.rel = "preload";
+    preloadScript.as = "script";
+    preloadScript.href = "../ImageDocument-null-charset/resources/preloaded-script.js";
+    let preloadScriptLoad = waitForLoad(preloadScript);
+    frameDocument.head.appendChild(preloadScript);
+    debug("script preload: " + await preloadScriptLoad);
+
+    const script = frameDocument.createElement("script");
+    script.src = "../ImageDocument-null-charset/resources/preloaded-script.js";
+    let scriptLoad = waitForLoad(script);
+    frameDocument.body.appendChild(script);
+    debug("script: " + await scriptLoad);
+    shouldBeTrue("preloadedScriptRan");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

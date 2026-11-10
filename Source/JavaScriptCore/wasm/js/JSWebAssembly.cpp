@@ -156,7 +156,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, 
         JSValue compileOptionsArgument = callFrame->argument(1);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            auto error = createTypeError(globalObject, "second argument to WebAssembly.compile must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
+            auto error = createTypeError(globalObject, "second argument to WebAssembly.compile must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
             RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, error)));
         }
     }
@@ -298,7 +298,7 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
     Wasm::Name sourceURL;
     if (creationMode == Wasm::CreationMode::FromModuleLoader && sourceProvider) {
         auto sourceURLString = sourceProvider->sourceOrigin().url().string();
-        sourceURL = Wasm::Name(sourceURLString.utf8().span());
+        sourceURL = Wasm::Name(utf8(sourceURLString).span());
     }
     Wasm::Module::validateAsync(vm, WTF::move(source), WTF::move(sourceURL), createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoonIfActive(weakTicket, [importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), result = WTF::move(result), resolveKind, creationMode, &vm](DeferredWorkTimer::Ticket& ticket) mutable {
@@ -366,20 +366,20 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
     }
 
     auto [taintedness, url] = sourceTaintednessFromStack(vm, callFrame);
-    RefPtr<SourceProvider> provider = StringSourceProvider::create("[wasm code]"_s, SourceOrigin(url), String(), taintedness, TextPosition(), SourceProviderSourceType::Program);
+    RefPtr<SourceProvider> provider = StringSourceProvider::create("[wasm code]"_si, SourceOrigin(url), nullString(), taintedness, TextPosition(), SourceProviderSourceType::Program);
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject) [[unlikely]]
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument)))));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiate must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(importArgument)))));
 
     JSObject* compileOptionsObject = nullptr;
     if (Options::useWasmJSStringBuiltins()) {
         JSValue compileOptionsArgument = callFrame->argument(2);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            auto error = createTypeError(globalObject, "third argument to WebAssembly.instantiate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
+            auto error = createTypeError(globalObject, "third argument to WebAssembly.instantiate must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
             RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, error)));
         }
     }
@@ -432,7 +432,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
         JSValue compileOptionsArgument = callFrame->argument(1);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            auto error = createTypeError(globalObject, "second argument to WebAssembly.validate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
+            auto error = createTypeError(globalObject, "second argument to WebAssembly.validate must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
             return JSValue::encode(throwException(globalObject, scope, error));
         }
     }
@@ -476,7 +476,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingFunc, (JSGlobalObject* globa
         JSValue compileOptionsArgument = callFrame->argument(1);
         JSObject* compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            promise->reject(vm, createTypeError(globalObject, "second argument to WebAssembly.compileStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
+            promise->reject(vm, createTypeError(globalObject, "second argument to WebAssembly.compileStreaming must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
             RELEASE_AND_RETURN(scope, JSValue::encode(promise));
         }
         compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
@@ -516,7 +516,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingFunc, (JSGlobalObject* g
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject) [[unlikely]] {
-        promise->reject(vm, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument)));
+        promise->reject(vm, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(importArgument)));
         RELEASE_AND_RETURN(scope, JSValue::encode(promise));
     }
 
@@ -525,7 +525,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingFunc, (JSGlobalObject* g
         JSValue compileOptionsArgument = callFrame->argument(2);
         JSObject* compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            promise->reject(vm, createTypeError(globalObject, "third argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
+            promise->reject(vm, createTypeError(globalObject, "third argument to WebAssembly.instantiateStreaming must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
             RELEASE_AND_RETURN(scope, JSValue::encode(promise));
         }
         compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);

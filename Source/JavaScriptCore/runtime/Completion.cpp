@@ -53,7 +53,7 @@ static inline bool checkSyntaxInternal(VM& vm, const SourceCode& source, ParserE
 static Identifier createEntrypointModuleKey(VM&)
 {
     // Generate the unique key for the source-provided module.
-    PrivateName privateName(PrivateName::Description, "EntrypointModule"_s);
+    PrivateName privateName(PrivateName::Description, "EntrypointModule"_si);
     return Identifier::fromUid(privateName);
 }
 
@@ -90,7 +90,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     if (!moduleProgramNode)
         return false;
 
-    PrivateName privateName(PrivateName::Description, "EntrypointModule"_s);
+    PrivateName privateName(PrivateName::Description, "EntrypointModule"_si);
     ModuleAnalyzer moduleAnalyzer(globalObject, Identifier::fromUid(privateName), source, moduleProgramNode->features());
     return !!moduleAnalyzer.analyze(*moduleProgramNode);
 }
@@ -185,7 +185,7 @@ static JSPromise* rejectPromise(ThrowScope& scope, JSGlobalObject* globalObject)
     return promise->rejectWithCaughtException(vm, scope);
 }
 
-JSPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const String& moduleName, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher)
+JSPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, StringImpl* moduleName, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -301,7 +301,7 @@ JSPromise* importModule(JSGlobalObject* globalObject, const Identifier& moduleNa
     return globalObject->moduleLoader()->requestImportModule(globalObject, moduleName, referrer, WTF::move(parameters), WTF::move(scriptFetcher), deferred);
 }
 
-UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject* globalObject, JSValue options, const Vector<RefPtr<UniquedStringImpl>>& supportedImportAttributes)
+UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<StringImpl>> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject* globalObject, JSValue options, const Vector<RefPtr<UniquedStringImpl>>& supportedImportAttributes)
 {
     // https://tc39.es/proposal-import-attributes/#sec-evaluate-import-call
 
@@ -333,7 +333,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
     attributesObject->methodTable()->getOwnPropertyNames(attributesObject, globalObject, properties, DontEnumPropertiesMode::Exclude);
     RETURN_IF_EXCEPTION(scope, { });
 
-    UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> result;
+    UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<StringImpl>> result;
     for (auto& key : properties) {
         JSValue value = attributesObject->get(globalObject, key);
         RETURN_IF_EXCEPTION(scope, { });
@@ -343,7 +343,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
             return { };
         }
 
-        String valueString = value.toWTFString(globalObject);
+        RefPtr<StringImpl> valueString = value.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
         result.add(key.impl(), WTF::move(valueString));
@@ -359,7 +359,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
     return result;
 }
 
-std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject* globalObject, const UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String>& attributes)
+std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject* globalObject, const UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<StringImpl>>& attributes)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -371,7 +371,7 @@ std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalO
     if (iterator == attributes.end())
         return { };
 
-    String value = iterator->value;
+    RefPtr<StringImpl> value = iterator->value;
     auto result = ScriptFetchParameters::parseType(value);
 
     if (result == ScriptFetchParameters::Type::Text && !Options::useImportText())

@@ -48,7 +48,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpellChecker);
 
-SpellCheckRequest::SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, const String& text, OptionSet<TextCheckingType> options, TextCheckingProcessType type)
+SpellCheckRequest::SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, StringImpl* text, OptionSet<TextCheckingType> options, TextCheckingProcessType type)
     : m_checkingRange(checkingRange)
     , m_automaticReplacementRange(automaticReplacementRange)
     , m_paragraphRange(paragraphRange)
@@ -61,8 +61,8 @@ SpellCheckRequest::~SpellCheckRequest() = default;
 
 RefPtr<SpellCheckRequest> SpellCheckRequest::create(OptionSet<TextCheckingType> options, TextCheckingProcessType type, const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange)
 {
-    String text = plainText(checkingRange);
-    if (text.isEmpty())
+    RefPtr<StringImpl> text = plainText(checkingRange);
+    if (isEmpty(text))
         return nullptr;
     return adoptRef(*new SpellCheckRequest(checkingRange, automaticReplacementRange, paragraphRange, text, options, type));
 }
@@ -239,7 +239,7 @@ static bool containsGrammarResult(TextCheckingResult result, const Vector<TextCh
         for (auto [detail, existingResultDetail] : zippedRange(result.details, existingResult.details)) {
             if (!detailsMatch)
                 break;
-            detailsMatch = std::tie(detail.range.location, detail.range.length, detail.guesses) == std::tie(existingResultDetail.range.location, existingResultDetail.range.length, existingResultDetail.guesses);
+            detailsMatch = contentEquals(std::tie(detail.range.location, detail.range.length, detail.guesses), std::tie(existingResultDetail.range.location, existingResultDetail.range.length, existingResultDetail.guesses));
         }
         if (detailsMatch)
             foundIt = true;

@@ -60,7 +60,7 @@ void RemoteCommandBuffer::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteCommandBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteCommandBuffer::setLabel(String&& label)
+void RemoteCommandBuffer::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

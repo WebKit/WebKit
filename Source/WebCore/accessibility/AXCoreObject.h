@@ -180,7 +180,7 @@ enum class AccessibilityTextSource {
     Heading,
 };
 
-using AXEditingStyleValueVariant = Variant<String, bool, int>;
+using AXEditingStyleValueVariant = Variant<RefPtr<StringImpl>, bool, int>;
 
 enum class AccessibilityObjectInclusion : uint8_t {
     IncludeObject,
@@ -240,7 +240,7 @@ enum class AccessibilitySearchTextDirection {
 };
 
 struct AccessibilitySearchTextCriteria {
-    Vector<String> searchStrings; // Text strings to search for.
+    Vector<RefPtr<StringImpl>> searchStrings; // Text strings to search for.
     AccessibilitySearchTextStartFrom start;
     AccessibilitySearchTextDirection direction;
 
@@ -249,34 +249,34 @@ struct AccessibilitySearchTextCriteria {
         , direction(AccessibilitySearchTextDirection::Forward)
     { }
 
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
-        String startFrom;
+        RefPtr<StringImpl> startFrom;
         switch (start) {
         case AccessibilitySearchTextStartFrom::Begin:
-            startFrom = "begin"_s;
+            startFrom = "begin"_si;
             break;
         case AccessibilitySearchTextStartFrom::Selection:
-            startFrom = "selection"_s;
+            startFrom = "selection"_si;
             break;
         case AccessibilitySearchTextStartFrom::End:
-            startFrom = "end"_s;
+            startFrom = "end"_si;
             break;
         }
 
-        String directionString;
+        RefPtr<StringImpl> directionString;
         switch (direction) {
         case AccessibilitySearchTextDirection::Forward:
-            directionString = "forward"_s;
+            directionString = "forward"_si;
             break;
         case AccessibilitySearchTextDirection::Backward:
-            directionString = "backward"_s;
+            directionString = "backward"_si;
             break;
         case AccessibilitySearchTextDirection::Closest:
-            directionString = "closest"_s;
+            directionString = "closest"_si;
             break;
         case AccessibilitySearchTextDirection::All:
-            directionString = "all"_s;
+            directionString = "all"_si;
             break;
         }
 
@@ -296,15 +296,11 @@ struct AccessibilitySearchTextCriteria {
 };
 
 struct AccessibilityText {
-    String text;
+    RefPtr<StringImpl> text;
     AccessibilityTextSource textSource;
 
-    AccessibilityText(String&& text, AccessibilityTextSource source)
+    AccessibilityText(RefPtr<StringImpl> text, AccessibilityTextSource source)
         : text(WTF::move(text))
-        , textSource(source)
-    { }
-    AccessibilityText(const String& text, AccessibilityTextSource source)
-        : text(text)
         , textSource(source)
     { }
 };
@@ -323,7 +319,7 @@ enum class AccessibilityTextOperationSmartReplace : bool { No, Yes };
 struct AccessibilityTextOperation {
     Vector<SimpleRange> textRanges; // text on which perform the operation.
     AccessibilityTextOperationType type { AccessibilityTextOperationType::Select };
-    Vector<String> replacementStrings; // For type = Replace, ReplacePreserveCase.
+    Vector<RefPtr<StringImpl>> replacementStrings; // For type = Replace, ReplacePreserveCase.
     AccessibilityTextOperationSmartReplace smartReplace { AccessibilityTextOperationSmartReplace::Yes };
 };
 
@@ -376,7 +372,7 @@ struct LineRange {
         , endLineIndex(endIndex)
     { }
 
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
         return makeString("{start: "_s, startLineIndex, ", end: "_s, endLineIndex, '}');
     }
@@ -463,7 +459,7 @@ struct LineDecorationStyle {
     { }
     bool operator==(const LineDecorationStyle&) const = default;
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 };
 
 struct AttributedStringStyle {
@@ -509,8 +505,8 @@ enum class ListBoxInterpretation : uint8_t {
 class AXCoreObject : public RefCountedAndCanMakeWeakPtr<AXCoreObject> {
 public:
     virtual ~AXCoreObject() = default;
-    String debugDescription(bool verbose = false) const { return debugDescriptionInternal(verbose); }
-    String debugDescription(OptionSet<AXDebugStringOption> options) const { return debugDescriptionInternal(false, { options }); }
+    RefPtr<StringImpl> debugDescription(bool verbose = false) const { return debugDescriptionInternal(verbose); }
+    RefPtr<StringImpl> debugDescription(OptionSet<AXDebugStringOption> options) const { return debugDescriptionInternal(false, { options }); }
 
     inline AXID objectID() const { return m_id; }
     virtual std::optional<AXTreeID> treeID() const = 0;
@@ -605,15 +601,15 @@ public:
     virtual bool isRowHeader() const { return false; }
     bool isTableCellInSameRowGroup(AXCoreObject&);
     std::optional<AXID> rowGroupAncestorID() const;
-    virtual String cellScope() const { return { }; }
+    virtual RefPtr<StringImpl> cellScope() const { return { }; }
     // Returns the start location and row span of the cell.
     virtual std::pair<unsigned, unsigned> rowIndexRange() const = 0;
     // Returns the start location and column span of the cell.
     virtual std::pair<unsigned, unsigned> columnIndexRange() const = 0;
     virtual std::optional<unsigned> axColumnIndex() const = 0;
     virtual std::optional<unsigned> axRowIndex() const = 0;
-    virtual String axColumnIndexText() const = 0;
-    virtual String axRowIndexText() const = 0;
+    virtual RefPtr<StringImpl> axColumnIndexText() const = 0;
+    virtual RefPtr<StringImpl> axRowIndexText() const = 0;
 
     // Table column support.
     bool isTableColumn() const { return role() == AccessibilityRole::Column; }
@@ -701,7 +697,7 @@ public:
     virtual bool isEnabled() const = 0;
     virtual bool isSelected() const = 0;
     // The glyph of a selected option's visible ::checkmark (e.g. in a base-appearance select's picker), or the empty string.
-    virtual String selectedOptionCheckmark() const = 0;
+    virtual RefPtr<StringImpl> selectedOptionCheckmark() const = 0;
     virtual bool isFocused() const = 0;
     virtual bool isIndeterminate() const = 0;
     virtual bool isLoaded() const = 0;
@@ -746,7 +742,7 @@ public:
     virtual WallTime dateTimeValue() const = 0;
     virtual DateComponentsType dateTimeComponentsType() const = 0;
     bool supportsDatetimeAttribute() const;
-    virtual String datetimeAttributeValue() const = 0;
+    virtual RefPtr<StringImpl> datetimeAttributeValue() const = 0;
 
     virtual bool canSetFocusAttribute() const = 0;
     bool canSetTextRangeAttributes() const;
@@ -768,7 +764,7 @@ public:
     unsigned headingLevel() const;
     virtual unsigned computedHeadingLevel() const { return 0; }
     virtual AccessibilityButtonState checkboxOrRadioValue() const = 0;
-    virtual String valueDescription() const = 0;
+    virtual RefPtr<StringImpl> valueDescription() const = 0;
     virtual float valueForRange() const = 0;
     virtual float maxValueForRange() const = 0;
     virtual float minValueForRange() const = 0;
@@ -779,13 +775,13 @@ public:
     AXCoreObject* selectedTabItem();
     virtual int layoutCount() const = 0;
     virtual double loadingProgress() const = 0;
-    virtual String brailleLabel() const = 0;
-    virtual String brailleRoleDescription() const = 0;
-    virtual String embeddedImageDescription() const = 0;
+    virtual RefPtr<StringImpl> brailleLabel() const = 0;
+    virtual RefPtr<StringImpl> brailleRoleDescription() const = 0;
+    virtual RefPtr<StringImpl> embeddedImageDescription() const = 0;
     virtual std::optional<AccessibilityChildrenVector> imageOverlayElements() = 0;
     virtual FloatSize imageDataSize() const = 0;
     virtual RefPtr<SharedBuffer> imageData(const AXImageDataParameters&) const = 0;
-    virtual String extendedDescription() const = 0;
+    virtual RefPtr<StringImpl> extendedDescription() const = 0;
 
     NODELETE bool supportsActiveDescendant() const;
     bool isActiveDescendantOfFocusedContainer() const;
@@ -829,28 +825,28 @@ public:
     bool hasPopup() const { return popupValue() != AccessibilityPopupValue::False; }
     bool selfOrAncestorLinkHasPopup() const;
     virtual AccessibilityPopupValue popupValue() const = 0;
-    String popupValueString() const;
+    RefPtr<StringImpl> popupValueString() const;
     virtual bool supportsHasPopup() const = 0;
     virtual bool pressedIsPresent() const = 0;
     // Assembled from aria-invalid, HTML constraint validation and any error message detected beside the
     // field. Prefer this over explicitInvalidStatus() for determining an object's computed / final invalid state.
-    virtual String invalidStatusIncludingInferred() const = 0;
+    virtual RefPtr<StringImpl> invalidStatusIncludingInferred() const = 0;
     virtual bool supportsExpanded() const = 0;
     virtual bool supportsChecked() const = 0;
     virtual AccessibilitySortDirection sortDirection() const = 0;
     AccessibilitySortDirection sortDirectionIncludingAncestors() const;
     bool supportsRangeValue() const;
-    virtual String identifierAttribute() const = 0;
-    virtual String linkRelValue() const = 0;
-    virtual Vector<String> classList() const = 0;
+    virtual RefPtr<StringImpl> identifierAttribute() const = 0;
+    virtual RefPtr<StringImpl> linkRelValue() const = 0;
+    virtual Vector<RefPtr<StringImpl>> classList() const = 0;
     virtual AccessibilityCurrentState currentState() const = 0;
     virtual bool supportsCurrent() const = 0;
-    String currentValue() const;
+    RefPtr<StringImpl> currentValue() const;
     virtual bool supportsKeyShortcuts() const = 0;
-    virtual String keyShortcuts() const = 0;
+    virtual RefPtr<StringImpl> keyShortcuts() const = 0;
 #if PLATFORM(COCOA)
     // keyShortcuts(), with the modifier keys renamed to match the labels printed on Apple keyboards.
-    String keyShortcutsPlatformString() const;
+    RefPtr<StringImpl> keyShortcutsPlatformString() const;
 #endif
 
     virtual bool isModalNode() const = 0;
@@ -865,7 +861,7 @@ public:
     virtual bool supportsDragging() const = 0;
     virtual bool isGrabbed() = 0;
     virtual void setARIAGrabbed(bool) = 0;
-    virtual Vector<String> determineDropEffects() const = 0;
+    virtual Vector<RefPtr<StringImpl>> determineDropEffects() const = 0;
 
     // Called on the root AX object to return the deepest available element.
     virtual RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const = 0;
@@ -929,7 +925,7 @@ public:
 
     // Text selection
     virtual Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const = 0;
-    virtual Vector<String> performTextOperation(const AccessibilityTextOperation&) = 0;
+    virtual Vector<RefPtr<StringImpl>> performTextOperation(const AccessibilityTextOperation&) = 0;
 
     AccessibilityChildrenVector linkedObjects() const;
     virtual AXCoreObject* titleUIElement() const;
@@ -937,13 +933,13 @@ public:
 
     virtual bool inheritsPresentationalRole() const = 0;
 
-    using AXValue = Variant<bool, unsigned, float, String, WallTime, AccessibilityButtonState, AXCoreObject*>;
+    using AXValue = Variant<bool, unsigned, float, RefPtr<StringImpl>, WallTime, AccessibilityButtonState, AXCoreObject*>;
     AXValue value();
 
     // Accessibility Text
     virtual void accessibilityText(Vector<AccessibilityText>&) const = 0;
     // A programmatic way to set a name on an AccessibleObject.
-    virtual void setAccessibleName(const AtomString&) = 0;
+    virtual void setAccessibleName(AtomStringImpl*) = 0;
 
     bool fileUploadButtonReturnsValueInTitle() const
     {
@@ -956,16 +952,16 @@ public:
     // This should be the visible text that's actually on the screen if possible.
     // If there's alternative text (e.g. provided by description()), that can override the title.
     // The `computedText` parameter is a performance optimization for callsites that have already computed the AccessibilityText.
-    virtual String title(Vector<AccessibilityText>* computedText = nullptr) const;
+    virtual RefPtr<StringImpl> title(Vector<AccessibilityText>* computedText = nullptr) const;
     // This is the value of the title HTML / SVG attribute, differing from the above function which refers to
     // the notion of "title" accessibility text, a composite of many different attributes and page text.
-    virtual String titleAttribute() const = 0;
-    virtual String webAreaTitle() const { return emptyString(); }
+    virtual RefPtr<StringImpl> titleAttribute() const = 0;
+    virtual RefPtr<StringImpl> webAreaTitle() const { return emptyString(); }
 
-    virtual String description() const = 0;
+    virtual RefPtr<StringImpl> description() const = 0;
 
-    virtual std::optional<String> textContent() const = 0;
-    virtual String textContentPrefixFromListMarker() const = 0;
+    virtual std::optional<RefPtr<StringImpl>> textContent() const = 0;
+    virtual RefPtr<StringImpl> textContentPrefixFromListMarker() const = 0;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     virtual bool hasTextRuns() = 0;
     virtual TextEmissionBehavior textEmissionBehavior() const = 0;
@@ -983,19 +979,19 @@ public:
     // True when this object's node is in the shadow tree of an <input> or <textarea>, as opposed to
     // an ARIA text control.
     virtual bool isInsideNativeTextControl() const = 0;
-    virtual String listMarkerText() const = 0;
+    virtual RefPtr<StringImpl> listMarkerText() const = 0;
     virtual FontOrientation fontOrientation() const = 0;
 #endif
 
     // Methods for determining accessibility text.
-    virtual String stringValue() const = 0;
-    virtual String textUnderElement(TextUnderElementMode = { }) const = 0;
-    virtual String text() const = 0;
+    virtual RefPtr<StringImpl> stringValue() const = 0;
+    virtual RefPtr<StringImpl> textUnderElement(TextUnderElementMode = { }) const = 0;
+    virtual RefPtr<StringImpl> text() const = 0;
     virtual unsigned textLength() const = 0;
     AccessibilityChildrenVector revealableContainers();
     // Text of objects within revealable containers (e.g. hidden="until-found" or collapsed details elements).
     // Returns empty string for text that is already revealed / visible.
-    virtual String revealableText() const = 0;
+    virtual RefPtr<StringImpl> revealableText() const = 0;
     // The word "container" is significant in this method name. This should only be true for elements / objects
     // that actually have the hidden-until-found markup, not descendants of hidden-until-found elements / objects.
     virtual bool isHiddenUntilFoundContainer() const = 0;
@@ -1011,11 +1007,11 @@ public:
     RetainPtr<NSMutableAttributedString> createAttributedString(StringView text, SpellCheck) const;
 #endif
 
-    virtual const String placeholderValue() const = 0;
+    virtual const RefPtr<StringImpl> placeholderValue() const = 0;
 
     // Abbreviations
-    virtual String abbreviation() const = 0;
-    String expandedTextValue() const;
+    virtual RefPtr<StringImpl> abbreviation() const = 0;
+    RefPtr<StringImpl> expandedTextValue() const;
     bool supportsExpandedTextValue() const;
 
     // Only if isColorWell()
@@ -1024,22 +1020,22 @@ public:
     AccessibilityRole role() const { return m_role; }
 #if PLATFORM(MAC)
     // Non-localized string associated with the object role.
-    String rolePlatformString();
+    RefPtr<StringImpl> rolePlatformString();
 #else
-    String rolePlatformString() { return { }; }
+    RefPtr<StringImpl> rolePlatformString() { return { }; }
 #endif // PLATFORM(MAC)
     // Localized string that describes the object's role.
-    String roleDescription();
+    RefPtr<StringImpl> roleDescription();
 #if PLATFORM(MAC)
-    String rolePlatformDescription();
+    RefPtr<StringImpl> rolePlatformDescription();
 #else
-    String rolePlatformDescription() { return String(); }
+    RefPtr<StringImpl> rolePlatformDescription() { return nullptr; }
 #endif
-    virtual String ariaRoleDescription() const = 0;
+    virtual RefPtr<StringImpl> ariaRoleDescription() const = 0;
     // Localized string that describes ARIA landmark roles.
-    String ariaLandmarkRoleDescription() const;
+    RefPtr<StringImpl> ariaLandmarkRoleDescription() const;
     // Non-localized string associated with the object's subrole.
-    virtual String subrolePlatformString() const = 0;
+    virtual RefPtr<StringImpl> subrolePlatformString() const = 0;
 
     bool supportsPressAction() const;
     virtual Element* actionElement() const = 0;
@@ -1085,10 +1081,10 @@ public:
 
     virtual URL url() const = 0;
     virtual VisibleSelection selection() const = 0;
-    virtual String selectedText() const = 0;
-    virtual String accessKey() const = 0;
-    virtual String localizedActionVerb() const = 0;
-    virtual String actionVerb() const = 0;
+    virtual RefPtr<StringImpl> selectedText() const = 0;
+    virtual RefPtr<StringImpl> accessKey() const = 0;
+    virtual RefPtr<StringImpl> localizedActionVerb() const = 0;
+    virtual RefPtr<StringImpl> actionVerb() const = 0;
 
     // Widget support.
     virtual bool isWidget() const = 0;
@@ -1104,8 +1100,8 @@ public:
     // Should eliminate the need for exposing scrollView().
     AXCoreObject* axScrollView() const;
 
-    virtual String language() const = 0;
-    String languageIncludingAncestors() const;
+    virtual RefPtr<StringImpl> language() const = 0;
+    RefPtr<StringImpl> languageIncludingAncestors() const;
     virtual unsigned ariaLevel() const = 0;
     // True only when the author explicitly set role="group" on this object.
     virtual bool hasExplicitGroupRole() const = 0;
@@ -1114,12 +1110,12 @@ public:
     virtual bool isInlineText() const = 0;
 
     virtual void setFocused(bool) = 0;
-    virtual void setSelectedText(const String&) = 0;
+    virtual void setSelectedText(StringImpl*) = 0;
     virtual void setSelectedTextRange(CharacterRange&&) = 0;
-    virtual bool setValue(const String&) = 0;
-    virtual void setValueIgnoringResult(const String&) = 0;
-    virtual bool replaceTextInRange(const String&, const CharacterRange&) = 0;
-    virtual bool insertText(const String&) = 0;
+    virtual bool setValue(StringImpl*) = 0;
+    virtual void setValueIgnoringResult(StringImpl*) = 0;
+    virtual bool replaceTextInRange(StringImpl*, const CharacterRange&) = 0;
+    virtual bool insertText(StringImpl*) = 0;
 
     virtual bool setValue(float) = 0;
     virtual void setValueIgnoringResult(float) = 0;
@@ -1271,7 +1267,7 @@ public:
     bool isDescendantOfObject(const AXCoreObject&) const;
     bool isAncestorOfObject(const AXCoreObject&) const;
 
-    virtual String nameAttribute() const = 0;
+    virtual RefPtr<StringImpl> nameAttribute() const = 0;
 
     virtual std::optional<SimpleRange> simpleRange() const = 0;
     virtual VisiblePositionRange visiblePositionRange() const = 0;
@@ -1317,13 +1313,13 @@ public:
     virtual CharacterRange doAXRangeForIndex(unsigned) const = 0;
     virtual CharacterRange doAXStyleRangeForIndex(unsigned) const = 0;
 
-    virtual String doAXStringForRange(const CharacterRange&) const = 0;
+    virtual RefPtr<StringImpl> doAXStringForRange(const CharacterRange&) const = 0;
     virtual IntRect doAXBoundsForRange(const CharacterRange&) const = 0;
     virtual IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const = 0;
 
     virtual unsigned doAXLineForIndex(unsigned) = 0;
 
-    virtual String computedRoleString() const = 0;
+    virtual RefPtr<StringImpl> computedRoleString() const = 0;
 
     virtual bool isValueAutofillAvailable() const = 0;
     virtual AutoFillButtonType valueAutofillButtonType() const = 0;
@@ -1335,8 +1331,8 @@ public:
     AccessibilityChildrenVector ariaTreeItemContent();
 
     // ARIA live-region features.
-    static bool liveRegionStatusIsEnabled(const AtomString&);
-    static const String defaultLiveRegionStatusForRole(AccessibilityRole);
+    static bool liveRegionStatusIsEnabled(AtomStringImpl*);
+    static const RefPtr<StringImpl> defaultLiveRegionStatusForRole(AccessibilityRole);
     bool supportsLiveRegion(bool excludeIfOff = true) const;
 #if PLATFORM(MAC)
     virtual AccessibilityChildrenVector allSortedLiveRegions() const = 0;
@@ -1344,14 +1340,14 @@ public:
     AccessibilityChildrenVector crossFrameSortedDescendants(size_t limit, PreSortedObjectType) const;
 #endif // PLATFORM(MAC)
     AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const;
-    virtual const String explicitLiveRegionStatus() const = 0;
-    const String liveRegionStatus() const;
-    virtual const String explicitLiveRegionRelevant() const = 0;
-    const String liveRegionRelevant() const;
+    virtual const RefPtr<StringImpl> explicitLiveRegionStatus() const = 0;
+    const RefPtr<StringImpl> liveRegionStatus() const;
+    virtual const RefPtr<StringImpl> explicitLiveRegionRelevant() const = 0;
+    const RefPtr<StringImpl> liveRegionRelevant() const;
     virtual bool liveRegionAtomic() const = 0;
     virtual bool isBusy() const = 0;
-    virtual String explicitAutoCompleteValue() const = 0;
-    String autoCompleteValue() const;
+    virtual RefPtr<StringImpl> explicitAutoCompleteValue() const = 0;
+    RefPtr<StringImpl> autoCompleteValue() const;
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
     virtual void scrollToMakeVisible() const = 0;
@@ -1396,8 +1392,8 @@ public:
     virtual AXCoreObject* mathSuperscriptObject() = 0;
 
     // Fenced components.
-    virtual String mathFencedOpenString() const = 0;
-    virtual String mathFencedCloseString() const = 0;
+    virtual RefPtr<StringImpl> mathFencedOpenString() const = 0;
+    virtual RefPtr<StringImpl> mathFencedCloseString() const = 0;
     virtual int mathLineThickness() const = 0;
 
     // Multiscripts components.
@@ -1427,11 +1423,11 @@ public:
     virtual bool preventKeyboardDOMEventDispatch() const = 0;
     virtual void setPreventKeyboardDOMEventDispatch(bool) = 0;
     virtual Style::SpeakAs speakAs() const = 0;
-    String speechHint() const;
+    RefPtr<StringImpl> speechHint() const;
 
     // The `computedText` parameter is a performance optimization for callsites that have already computed the AccessibilityText.
-    String descriptionAttributeValue(Vector<AccessibilityText>* computedText = nullptr) const;
-    String helpTextAttributeValue() const;
+    RefPtr<StringImpl> descriptionAttributeValue(Vector<AccessibilityText>* computedText = nullptr) const;
+    RefPtr<StringImpl> helpTextAttributeValue() const;
 
     virtual bool hasApplePDFAnnotationAttribute() const = 0;
 #endif
@@ -1465,14 +1461,14 @@ public:
     virtual bool hasMarkTag() const = 0;
     virtual bool hasRowGroupTag() const = 0;
 
-    virtual String innerHTML() const = 0;
-    virtual String outerHTML() const = 0;
+    virtual RefPtr<StringImpl> innerHTML() const = 0;
+    virtual RefPtr<StringImpl> outerHTML() const = 0;
 
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     virtual ModelPlayerAccessibilityChildren modelElementChildren() = 0;
 #endif
 
-    String infoStringForTesting();
+    RefPtr<StringImpl> infoStringForTesting();
 
 protected:
     AXCoreObject() = delete;
@@ -1494,7 +1490,7 @@ protected:
     std::optional<AXStitchGroup> stitchGroupFromGroups(const Vector<AXStitchGroup>*, IncludeGroupMembers) const;
 
 private:
-    virtual String debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const = 0;
+    virtual RefPtr<StringImpl> debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const = 0;
 
     // Detaches this object from the objects it references and it is referenced by.
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;
@@ -1610,45 +1606,45 @@ void attributedStringSetNeedsSpellCheck(NSMutableAttributedString *, const AXCor
 void attributedStringSetElement(NSMutableAttributedString *, NSString *attribute, const AXCoreObject&, const NSRange&);
 #endif // PLATFORM(MAC)
 
-inline const String AXCoreObject::defaultLiveRegionStatusForRole(AccessibilityRole role)
+inline const RefPtr<StringImpl> AXCoreObject::defaultLiveRegionStatusForRole(AccessibilityRole role)
 {
     switch (role) {
     case AccessibilityRole::ApplicationAlertDialog:
     case AccessibilityRole::ApplicationAlert:
-        return "assertive"_s;
+        return "assertive"_si;
     case AccessibilityRole::ApplicationLog:
     case AccessibilityRole::ApplicationStatus:
-        return "polite"_s;
+        return "polite"_si;
     case AccessibilityRole::ApplicationTimer:
     case AccessibilityRole::ApplicationMarquee:
-        return "off"_s;
+        return "off"_si;
     default:
         return nullAtom();
     }
 }
 
-inline bool AXCoreObject::liveRegionStatusIsEnabled(const AtomString& liveRegionStatus)
+inline bool AXCoreObject::liveRegionStatusIsEnabled(AtomStringImpl* liveRegionStatus)
 {
     return equalLettersIgnoringASCIICase(liveRegionStatus, "polite"_s) || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive"_s);
 }
 
-inline const String AXCoreObject::liveRegionRelevant() const
+inline const RefPtr<StringImpl> AXCoreObject::liveRegionRelevant() const
 {
     auto explicitValue = explicitLiveRegionRelevant();
     // Default aria-relevant = "additions text".
-    return explicitValue.isEmpty() ? "additions text"_s : explicitValue;
+    return isEmpty(explicitValue) ? "additions text"_si : explicitValue;
 }
 
-inline const String AXCoreObject::liveRegionStatus() const
+inline const RefPtr<StringImpl> AXCoreObject::liveRegionStatus() const
 {
     auto explicitStatus = explicitLiveRegionStatus();
-    return explicitStatus.isEmpty() ? defaultLiveRegionStatusForRole(role()) : explicitStatus;
+    return isEmpty(explicitStatus) ? defaultLiveRegionStatusForRole(role()) : explicitStatus;
 }
 
 inline bool AXCoreObject::supportsLiveRegion(bool excludeIfOff) const
 {
     auto liveRegionStatusValue = liveRegionStatus();
-    return excludeIfOff ? liveRegionStatusIsEnabled(AtomString { liveRegionStatusValue }) : !liveRegionStatusValue.isEmpty();
+    return excludeIfOff ? liveRegionStatusIsEnabled(AtomStringImpl::add(liveRegionStatusValue).get()) : !isEmpty(liveRegionStatusValue);
 }
 
 inline SpinButtonType AXCoreObject::spinButtonType()
@@ -2065,11 +2061,11 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 
 NODELETE bool inRenderTreeOrStyleUpdate(const Document&);
 
-using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+using PlatformRoleMap = HashMap<AccessibilityRole, RefPtr<StringImpl>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
 void initializeRoleMap();
 PlatformRoleMap createPlatformRoleMap();
-String roleToPlatformString(AccessibilityRole);
+RefPtr<StringImpl> roleToPlatformString(AccessibilityRole);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 std::optional<AXTextMarkerRange> markerRangeFrom(NSRange, const AXCoreObject&);
 #endif

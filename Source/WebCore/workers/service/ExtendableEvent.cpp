@@ -38,12 +38,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtendableEvent);
 
-ExtendableEvent::ExtendableEvent(enum EventInterfaceType eventInterface, const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted)
+ExtendableEvent::ExtendableEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, const ExtendableEventInit& initializer, IsTrusted isTrusted)
     : Event(eventInterface, type, initializer, isTrusted)
 {
 }
 
-ExtendableEvent::ExtendableEvent(enum EventInterfaceType eventInterface, const AtomString& type, CanBubble canBubble, IsCancelable cancelable)
+ExtendableEvent::ExtendableEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable)
     : Event(eventInterface, type, canBubble, cancelable)
 {
 }
@@ -54,11 +54,11 @@ ExtendableEvent::~ExtendableEvent() = default;
 ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
 {
     if (!isTrusted())
-        return Exception { ExceptionCode::InvalidStateError, "Event is not trusted"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is not trusted"_si };
 
     // If the pending promises count is zero and the dispatch flag is unset, throw an "InvalidStateError" DOMException.
     if (!m_pendingPromiseCount && !isBeingDispatched())
-        return Exception { ExceptionCode::InvalidStateError, "Event is no longer being dispatched and has no pending promises"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is no longer being dispatched and has no pending promises"_si };
 
     addExtendLifetimePromise(WTF::move(promise));
     return { };

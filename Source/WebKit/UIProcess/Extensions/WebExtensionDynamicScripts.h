@@ -52,7 +52,7 @@ namespace WebExtensionDynamicScripts {
 
 using InjectionResults = Vector<WebExtensionScriptInjectionResultParameters>;
 
-using SourcePair = std::pair<String, URL>;
+using SourcePair = std::pair<RefPtr<StringImpl>, URL>;
 using SourcePairs = Vector<SourcePair>;
 
 using InjectionTime = WebExtension::InjectionTime;
@@ -78,9 +78,9 @@ public:
 
     void merge(WebExtensionRegisteredScriptParameters&);
 
-    void addUserScript(const String& identifier, API::UserScript&);
-    void addUserStyleSheet(const String& identifier, API::UserStyleSheet&);
-    void removeUserScriptsAndStyleSheets(const String& identifier);
+    void addUserScript(StringImpl* identifier, API::UserScript&);
+    void addUserStyleSheet(StringImpl* identifier, API::UserStyleSheet&);
+    void removeUserScriptsAndStyleSheets(StringImpl* identifier);
 
     void updateInjectedContent(InjectedContentData& injectedContent) { m_injectedContent = injectedContent; }
     const InjectedContentData& injectedContent() const LIFETIME_BOUND { return m_injectedContent; }
@@ -99,14 +99,14 @@ private:
     WebExtensionRegisteredScriptParameters m_parameters;
     InjectedContentData m_injectedContent;
 
-    HashMap<String, UserScriptVector> m_userScriptsMap;
-    HashMap<String, UserStyleSheetVector> m_userStyleSheetsMap;
+    HashMap<RefPtr<StringImpl>, UserScriptVector> m_userScriptsMap;
+    HashMap<RefPtr<StringImpl>, UserStyleSheetVector> m_userStyleSheetsMap;
 
-    void removeUserStyleSheets(const String& identifier);
-    void removeUserScripts(const String& identifier);
+    void removeUserStyleSheets(StringImpl* identifier);
+    void removeUserScripts(StringImpl* identifier);
 };
 
-std::optional<SourcePair> sourcePairForResource(const String& path, WebExtensionContext&);
+std::optional<SourcePair> sourcePairForResource(StringImpl* path, WebExtensionContext&);
 SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, WebExtensionContext&);
 
 void executeScript(const SourcePairs&, WKWebView *, API::ContentWorld&, WebExtensionTab&, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, bool userGesture, CompletionHandler<void(InjectionResults&&)>&&);

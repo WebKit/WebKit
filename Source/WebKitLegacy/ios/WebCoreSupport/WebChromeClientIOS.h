@@ -48,9 +48,9 @@ private:
     void focus() final;
     void takeFocus(WebCore::FocusDirection) final { }
 
-    void runJavaScriptAlert(WebCore::LocalFrame&, const WTF::String&) final;
-    bool runJavaScriptConfirm(WebCore::LocalFrame&, const WTF::String&) final;
-    bool runJavaScriptPrompt(WebCore::LocalFrame&, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
+    void runJavaScriptAlert(WebCore::LocalFrame&, StringImpl*) final;
+    bool runJavaScriptConfirm(WebCore::LocalFrame&, StringImpl*) final;
+    bool runJavaScriptPrompt(WebCore::LocalFrame&, StringImpl* message, StringImpl* defaultValue, RefPtr<StringImpl>& result) final;
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
@@ -100,13 +100,13 @@ private:
 
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
-    void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final { }
+    void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) const final { }
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&) const final { }
     void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&) const final { }
     void webAppOrientationsUpdated() final;
     void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions) final;
-    void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
-    RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
+    void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, StringImpl*) final;
+    RefPtr<WebCore::Icon> createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames) final;
 
     bool showDataDetectorsUIForElement(const WebCore::Element&, const WebCore::Event&) final { return false; }
 

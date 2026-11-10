@@ -30,7 +30,7 @@ class Path;
 class SVGPathByteStream;
 
 // Path -> String
-String buildStringFromPath(const Path&);
+RefPtr<StringImpl> buildStringFromPath(const Path&);
 
 // String/SVGPathByteStream -> Path
 Path buildPathFromString(StringView);
@@ -40,7 +40,7 @@ Path buildPathFromByteStream(const SVGPathByteStream&);
 bool buildSVGPathByteStreamFromString(StringView, SVGPathByteStream&, PathParsingMode);
 
 // SVGPathByteStream -> String
-bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode, bool checkForInitialMoveTo = true);
+bool buildStringFromByteStream(const SVGPathByteStream&, RefPtr<StringImpl>&, PathParsingMode, bool checkForInitialMoveTo = true);
 
 bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
 

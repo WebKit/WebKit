@@ -239,7 +239,7 @@ void ScrollingStateNode::dump(TextStream& ts, OptionSet<ScrollingStateTreeAsText
     ts << indent << ')';
 }
 
-String ScrollingStateNode::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
+RefPtr<StringImpl> ScrollingStateNode::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 

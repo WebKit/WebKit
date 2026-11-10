@@ -51,8 +51,8 @@ public:
 
     virtual ~IDBIndex();
 
-    NODELETE const String& name() const;
-    ExceptionOr<void> setName(const String&);
+    NODELETE const RefPtr<StringImpl>& name() const;
+    ExceptionOr<void> setName(StringImpl*);
     NODELETE IDBObjectStore& objectStore();
     NODELETE const IDBKeyPath& keyPath() const;
     NODELETE bool unique() const;

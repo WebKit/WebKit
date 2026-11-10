@@ -54,12 +54,12 @@ namespace JSC { namespace Wasm {
 namespace FailureHelper {
 // FIXME We should move this to makeString. It's in its own namespace to enable C++ Argument Dependent Lookup à la std::swap: user code can deblare its own "boxFailure" and the fail() helper will find it.
 template<typename T>
-inline String makeString(const T& failure) { return WTF::toString(failure); }
+inline RefPtr<StringImpl> makeString(const T& failure) { return WTF::toString(failure); }
 }
 
 class ParserBase {
 public:
-    typedef String ErrorType;
+    typedef RefPtr<StringImpl> ErrorType;
     typedef std::unexpected<ErrorType> UnexpectedResult;
     typedef std::expected<void, ErrorType> PartialResult;
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
@@ -795,7 +796,7 @@ TEST_F(StrongSetTest, StrongHandlesSurviveGCAcrossBlocks)
     constexpr unsigned count = StrongBlock::capacity + 100;
     Vector<Strong<JSC::JSString>> handles(ReserveCapacityTag { }, count);
     for (unsigned i = 0; i < count; ++i)
-        handles.append(Strong<JSC::JSString>(vm(), jsString(vm(), String::number(i))));
+        handles.append(Strong<JSC::JSString>(vm(), jsString(vm(), makeString(i))));
 
     // Unreferenced garbage, to make the GC do real work.
     for (unsigned i = 0; i < 1000; ++i)
@@ -806,7 +807,7 @@ TEST_F(StrongSetTest, StrongHandlesSurviveGCAcrossBlocks)
     for (unsigned i = 0; i < count; ++i) {
         ASSERT_TRUE(!!handles[i]);
         auto value = handles[i]->tryGetValue();
-        EXPECT_EQ(static_cast<const String&>(value), String::number(i));
+        EXPECT_EQ(static_cast<const RefPtr<StringImpl>&>(value), makeString(i));
     }
 }
 
@@ -814,12 +815,12 @@ TEST_F(StrongSetTest, StrongHandlesSurviveGCAcrossBlocks)
 // transitions.
 TEST_F(StrongSetTest, SetTransitionsAreMarkedCorrectly)
 {
-    JSC::Strong<JSC::Unknown> handle(vm(), jsString(vm(), String("survivor"_s)));
+    JSC::Strong<JSC::Unknown> handle(vm(), jsString(vm(), "survivor"_si));
     vm().heap.collectSync(JSC::CollectionScope::Full);
     ASSERT_TRUE(handle.get().isCell());
     {
         auto value = JSC::asString(handle.get())->tryGetValue();
-        EXPECT_EQ(static_cast<const String&>(value), "survivor"_s);
+        EXPECT_EQ(static_cast<const RefPtr<StringImpl>&>(value), "survivor"_s);
     }
 
     // cell -> non-cell. appendUnbarriered(JSValue) must discard the non-cell.
@@ -828,12 +829,12 @@ TEST_F(StrongSetTest, SetTransitionsAreMarkedCorrectly)
     EXPECT_TRUE(handle.get() == JSC::jsNumber(7));
 
     // non-cell -> cell.
-    handle.set(vm(), jsString(vm(), String("again"_s)));
+    handle.set(vm(), jsString(vm(), "again"_si));
     vm().heap.collectSync(JSC::CollectionScope::Full);
     ASSERT_TRUE(handle.get().isCell());
     {
         auto value = JSC::asString(handle.get())->tryGetValue();
-        EXPECT_EQ(static_cast<const String&>(value), "again"_s);
+        EXPECT_EQ(static_cast<const RefPtr<StringImpl>&>(value), "again"_s);
     }
 
     // cell -> empty. deallocate() overwrites the slot with a non-cell link.
@@ -847,7 +848,7 @@ TEST_F(StrongSetTest, ChurnDoesNotGrowBlockCount)
     auto churn = [&] {
         Vector<Strong<JSC::JSString>> handles;
         for (unsigned i = 0; i < 500; ++i)
-            handles.append(Strong<JSC::JSString>(vm(), jsString(vm(), String::number(i))));
+            handles.append(Strong<JSC::JSString>(vm(), jsString(vm(), makeString(i))));
     };
 
     // The baseline is measured, not assumed: a real VM has other subsystems

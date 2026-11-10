@@ -170,7 +170,7 @@ static std::optional<ZDTEpochArgs> toEpochArgsFromString(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = item->value(globalObject);
+    RefPtr<StringImpl> string = item->value(globalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     // Step 5.b: Let result be ? ParseISODateTime(item, « TemporalDateTimeString[+Zoned] »).

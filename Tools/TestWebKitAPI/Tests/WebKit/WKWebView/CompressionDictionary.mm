@@ -84,9 +84,9 @@ static constexpr auto mainPage = "<script>"
     "}"
     "</script>"_s;
 
-static String headerValue(const Vector<char>& request, StringView name)
+static RefPtr<StringImpl> headerValue(const Vector<char>& request, StringView name)
 {
-    auto requestString = String::fromLatin1(request.span());
+    auto requestString = StringImpl::fromLatin1(request.span());
     for (auto line : StringView(requestString).split('\n')) {
         auto colon = line.find(':');
         if (colon == notFound)
@@ -94,27 +94,27 @@ static String headerValue(const Vector<char>& request, StringView name)
         if (equalIgnoringASCIICase(line.left(colon), name))
             return line.substring(colon + 1).trim(isASCIIWhitespace<char16_t>).toString();
     }
-    return { };
+    return nullptr;
 }
 
-static HTTPResponse textResponse(const String& text)
+static HTTPResponse textResponse(StringView text)
 {
     return { { { "Content-Type"_s, "text/plain"_s }, { "Cache-Control"_s, "no-store"_s } }, text };
 }
 
-static HTTPResponse redirectResponse(const String& location)
+static HTTPResponse redirectResponse(StringImpl* location)
 {
     return { 302, { { "Location"_s, location }, { "Cache-Control"_s, "no-store"_s } } };
 }
 
 struct ReceivedRequest {
-    String availableDictionary;
-    String dictionaryID;
-    String acceptEncoding;
+    RefPtr<StringImpl> availableDictionary;
+    RefPtr<StringImpl> dictionaryID;
+    RefPtr<StringImpl> acceptEncoding;
 };
 
 struct CompressionDictionaryServer {
-    HashMap<String, ReceivedRequest> requests;
+    HashMap<RefPtr<StringImpl>, ReceivedRequest> requests;
     bool respondWithDCBEvenWithoutDictionary { false };
     std::unique_ptr<HTTPServer> server;
 
@@ -127,11 +127,11 @@ struct CompressionDictionaryServer {
                 auto received = ReceivedRequest { headerValue(request, "Available-Dictionary"_s), headerValue(request, "Dictionary-ID"_s), headerValue(request, "Accept-Encoding"_s) };
                 requests.set(path, received);
 
-                if (path == "/"_s) {
+                if (equal(path, "/"_s)) {
                     co_await connection.awaitableSend(HTTPResponse(mainPage).serialize());
                     continue;
                 }
-                if (path == "/dictionary"_s) {
+                if (equal(path, "/dictionary"_s)) {
                     co_await connection.awaitableSend(HTTPResponse({
                         { "Content-Type"_s, "text/plain"_s },
                         { "Cache-Control"_s, "max-age=3600"_s },
@@ -139,13 +139,13 @@ struct CompressionDictionaryServer {
                     }, dictionary).serialize());
                     continue;
                 }
-                if (path == "/data/dcb"_s || path == "/data/dcz"_s || path == "/unadvertised"_s) {
-                    bool advertised = received.availableDictionary == availableDictionary;
-                    if (!advertised && !(path == "/unadvertised"_s && respondWithDCBEvenWithoutDictionary)) {
+                if (equal(path, "/data/dcb"_s) || equal(path, "/data/dcz"_s) || equal(path, "/unadvertised"_s)) {
+                    bool advertised = equal(received.availableDictionary, availableDictionary);
+                    if (!advertised && !(equal(path, "/unadvertised"_s) && respondWithDCBEvenWithoutDictionary)) {
                         co_await connection.awaitableSend(textResponse(noDictionary).serialize());
                         continue;
                     }
-                    bool isDCZ = path == "/data/dcz"_s;
+                    bool isDCZ = equal(path, "/data/dcz"_s);
                     RetainPtr body = isDCZ ? [NSData dataWithBytes:dczData length:sizeof(dczData)] : [NSData dataWithBytes:dcbData length:sizeof(dcbData)];
                     co_await connection.awaitableSend(HTTPResponse({
                         { "Content-Type"_s, "text/plain"_s },
@@ -155,19 +155,19 @@ struct CompressionDictionaryServer {
                     }, body.get()).serialize());
                     continue;
                 }
-                if (path == "/data/redirect-to-data"_s) {
-                    co_await connection.awaitableSend(redirectResponse("/data/dcb"_s).serialize());
+                if (equal(path, "/data/redirect-to-data"_s)) {
+                    co_await connection.awaitableSend(redirectResponse("/data/dcb"_si).serialize());
                     continue;
                 }
-                if (path == "/data/redirect-to-other"_s) {
-                    co_await connection.awaitableSend(redirectResponse("/other"_s).serialize());
+                if (equal(path, "/data/redirect-to-other"_s)) {
+                    co_await connection.awaitableSend(redirectResponse("/other"_si).serialize());
                     continue;
                 }
-                if (path == "/data/redirect-cross-origin"_s) {
+                if (equal(path, "/data/redirect-cross-origin"_s)) {
                     co_await connection.awaitableSend(redirectResponse(makeString("https://localhost:"_s, server->port(), "/data/dcb"_s)).serialize());
                     continue;
                 }
-                if (path == "/other"_s) {
+                if (equal(path, "/other"_s)) {
                     co_await connection.awaitableSend(textResponse("other"_s).serialize());
                     continue;
                 }
@@ -217,11 +217,11 @@ TEST(CompressionDictionary, DecodeDCBAndDCZ)
     for (NSString *path in @[ @"/data/dcb", @"/data/dcz" ]) {
         EXPECT_WK_STREQ(decodedData, [webView objectByCallingAsyncFunction:@"return await fetchText(path)" withArguments:@{ @"path" : path }]);
 
-        auto received = server.requests.get(path);
+        auto received = server.requests.get(StringImpl::create(path));
         EXPECT_WK_STREQ(availableDictionary, received.availableDictionary);
         EXPECT_WK_STREQ("\"dictionary \\\"one\\\"\"", received.dictionaryID);
-        EXPECT_TRUE(received.acceptEncoding.contains("dcb"_s));
-        EXPECT_TRUE(received.acceptEncoding.contains("dcz"_s));
+        EXPECT_TRUE(contains(received.acceptEncoding, "dcb"_s));
+        EXPECT_TRUE(contains(received.acceptEncoding, "dcz"_s));
     }
 }
 
@@ -237,8 +237,8 @@ TEST(CompressionDictionary, SameOriginRedirectToMatchingURL)
 
     server.requests.clear();
     EXPECT_WK_STREQ(decodedData, [webView objectByCallingAsyncFunction:@"return await fetchText('/data/redirect-to-data')" withArguments:nil]);
-    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/redirect-to-data"_s).availableDictionary);
-    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/dcb"_s).availableDictionary);
+    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/redirect-to-data"_si).availableDictionary);
+    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/dcb"_si).availableDictionary);
 }
 
 TEST(CompressionDictionary, SameOriginRedirectToNonMatchingURL)
@@ -254,11 +254,11 @@ TEST(CompressionDictionary, SameOriginRedirectToNonMatchingURL)
     // CFNetwork keeps the headers on a same-origin redirect, but /other does not match the dictionary.
     server.requests.clear();
     EXPECT_WK_STREQ("other", [webView objectByCallingAsyncFunction:@"return await fetchText('/data/redirect-to-other')" withArguments:nil]);
-    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/redirect-to-other"_s).availableDictionary);
+    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/redirect-to-other"_si).availableDictionary);
 
-    auto other = server.requests.get("/other"_s);
-    EXPECT_TRUE(other.availableDictionary.isNull());
-    EXPECT_TRUE(other.dictionaryID.isNull());
+    auto other = server.requests.get("/other"_si);
+    EXPECT_TRUE(!other.availableDictionary);
+    EXPECT_TRUE(!other.dictionaryID);
 }
 
 TEST(CompressionDictionary, CrossOriginRedirect)
@@ -274,11 +274,11 @@ TEST(CompressionDictionary, CrossOriginRedirect)
     // The dictionary was registered for https://127.0.0.1, so nothing matches after the redirect to https://localhost.
     server.requests.clear();
     [webView objectByCallingAsyncFunction:@"return await fetchText('/data/redirect-cross-origin', { mode: 'no-cors' })" withArguments:nil];
-    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/redirect-cross-origin"_s).availableDictionary);
+    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/data/redirect-cross-origin"_si).availableDictionary);
 
-    auto redirected = server.requests.get("/data/dcb"_s);
-    EXPECT_TRUE(redirected.availableDictionary.isNull());
-    EXPECT_TRUE(redirected.dictionaryID.isNull());
+    auto redirected = server.requests.get("/data/dcb"_si);
+    EXPECT_TRUE(!redirected.availableDictionary);
+    EXPECT_TRUE(!redirected.dictionaryID);
 }
 
 TEST(CompressionDictionary, DictionaryNotAdvertisedByWebKit)
@@ -296,7 +296,7 @@ TEST(CompressionDictionary, DictionaryNotAdvertisedByWebKit)
     // dcb response arrives, and the load has to fail rather than hand the page the still-compressed body.
     NSString *script = [NSString stringWithFormat:@"return await fetchText('/unadvertised', { headers: { 'Available-Dictionary': '%s' } })", availableDictionary.characters()];
     EXPECT_WK_STREQ("error", [webView objectByCallingAsyncFunction:script withArguments:nil]);
-    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/unadvertised"_s).availableDictionary);
+    EXPECT_WK_STREQ(availableDictionary, server.requests.get("/unadvertised"_si).availableDictionary);
 }
 
 TEST(CompressionDictionary, DictionaryNotAdvertisedOverLoopbackHTTP)
@@ -315,8 +315,8 @@ TEST(CompressionDictionary, DictionaryNotAdvertisedOverLoopbackHTTP)
     // WebKit must not send it. The page gets the uncompressed fallback, not a failed load.
     EXPECT_WK_STREQ("This is a test dictionary.\n", [webView objectByCallingAsyncFunction:@"return await fetchText('/dictionary')" withArguments:nil]);
     EXPECT_WK_STREQ(noDictionary, [webView objectByCallingAsyncFunction:@"await new Promise(resolve => setTimeout(resolve, 500)); return await fetchText('/data/dcb')" withArguments:nil]);
-    EXPECT_TRUE(server.requests.get("/data/dcb"_s).availableDictionary.isNull());
-    EXPECT_TRUE(server.requests.get("/data/dcb"_s).dictionaryID.isNull());
+    EXPECT_TRUE(!server.requests.get("/data/dcb"_si).availableDictionary);
+    EXPECT_TRUE(!server.requests.get("/data/dcb"_si).dictionaryID);
 }
 
 } // namespace TestWebKitAPI::CompressionDictionaryTests

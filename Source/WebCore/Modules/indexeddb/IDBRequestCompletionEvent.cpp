@@ -32,7 +32,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBRequestCompletionEvent);
 
-IDBRequestCompletionEvent::IDBRequestCompletionEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IDBRequest& request)
+IDBRequestCompletionEvent::IDBRequestCompletionEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, IDBRequest& request)
     : Event(EventInterfaceType::Event, type, canBubble, cancelable)
     , m_request(request)
 {

@@ -56,7 +56,7 @@ public:
 
     void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, const std::optional<ProcessIdentifier>&, WorkerFetchResult&&);
     void importedScriptsFetchFinished(const ServiceWorkerJobDataIdentifier&, const Vector<std::pair<URL, ScriptBuffer>>&, const std::optional<ProcessIdentifier>&);
-    void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
+    void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, StringImpl* message);
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
     void didFinishInstall(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, bool wasSuccessful);
     void didResolveRegistrationPromise();

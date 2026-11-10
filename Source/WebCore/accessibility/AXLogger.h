@@ -59,9 +59,9 @@ enum class AXStreamOptions : uint16_t {
 class AXLogger final {
 public:
     AXLogger() = default;
-    AXLogger(const String& methodName);
+    AXLogger(StringImpl* methodName);
     ~AXLogger();
-    void log(const String&);
+    void log(StringImpl*);
     void log(const char*);
     void log(const AXCoreObject&);
     void log(RefPtr<AXCoreObject>);
@@ -76,10 +76,10 @@ public:
 #endif
     void log(AXObjectCache&);
     static void add(TextStream&, const RefPtr<AXCoreObject>&, bool recursive = false);
-    void log(const String&, const AXObjectCache::DeferredCollection&);
+    void log(StringImpl*, const AXObjectCache::DeferredCollection&);
 private:
     bool shouldLog();
-    String m_methodName;
+    RefPtr<StringImpl> m_methodName;
     MonotonicTime m_startTime;
 };
 
@@ -112,7 +112,7 @@ decltype(auto) convertAXLogArg(T&& arg)
         return arg.debugDescription().utf8();
     else if constexpr (requires { { *arg } -> std::convertible_to<const AXCoreObject&>; })
         return arg ? arg->debugDescription().utf8() : UTF8CString { "(null)"_s };
-    else if constexpr (std::same_as<std::remove_cvref_t<T>, String>)
+    else if constexpr (std::same_as<std::remove_cvref_t<T>, RefPtr<StringImpl>>)
         return arg.utf8();
     else
         return std::forward<T>(arg);

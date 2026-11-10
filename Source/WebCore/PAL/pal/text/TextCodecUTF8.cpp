@@ -301,7 +301,7 @@ void TextCodecUTF8::handlePartialSequence(std::span<char16_t>& destination, std:
     } while (m_partialSequenceSize);
 }
 
-String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
+RefPtr<StringImpl> TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
     // Each input byte might turn into a character.
     // That includes all bytes in the partial-sequence buffer because
@@ -386,11 +386,11 @@ String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool st
         m_partialSequenceSize = 0;
     if (flush || buffer.length())
         m_shouldStripByteOrderMark = false;
-    if (buffer.length() > String::MaxLength) {
+    if (buffer.length() > StringImpl::MaxLength) {
         sawError = true;
         return { };
     }
-    return String::adopt(WTF::move(buffer));
+    return StringImpl::adopt(WTF::move(buffer));
 
 upConvertTo16Bit:
     StringBuffer<char16_t> buffer16(bufferSize);
@@ -471,11 +471,11 @@ upConvertTo16Bit:
         m_partialSequenceSize = 0;
     if (flush || buffer16.length())
         m_shouldStripByteOrderMark = false;
-    if (buffer16.length() > String::MaxLength) {
+    if (buffer16.length() > StringImpl::MaxLength) {
         sawError = true;
         return { };
     }
-    return String::adopt(WTF::move(buffer16));
+    return StringImpl::adopt(WTF::move(buffer16));
 }
 
 Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string)

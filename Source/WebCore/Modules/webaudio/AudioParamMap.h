@@ -46,14 +46,14 @@ public:
     ~AudioParamMap();
 
     void initializeMapLike(DOMMapAdapter&);
-    void add(const String&, Ref<AudioParam>&&);
+    void add(StringImpl*, Ref<AudioParam>&&);
 
-    const OrderedHashMap<String, Ref<AudioParam>>& map() const LIFETIME_BOUND { return m_map; }
+    const OrderedHashMap<RefPtr<StringImpl>, Ref<AudioParam>>& map() const LIFETIME_BOUND { return m_map; }
 
 private:
     AudioParamMap();
 
-    OrderedHashMap<String, Ref<AudioParam>> m_map;
+    OrderedHashMap<RefPtr<StringImpl>, Ref<AudioParam>> m_map;
 };
 
 } // namespace WebCore

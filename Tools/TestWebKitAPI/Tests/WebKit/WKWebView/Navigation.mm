@@ -1132,7 +1132,7 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
     using namespace TestWebKitAPI;
     HTTPServer server({
         { "/"_s, { mainHTML } },
-        { "/Ahem.svg"_s, { svg } },
+        { "/Ahem.svg"_s, { StringImpl::create(svg) } },
         { "/scriptsrc.js"_s, { "/* js content */"_s } },
         { "/iframesrc.html"_s, { "frame content"_s } },
     });
@@ -1937,7 +1937,7 @@ TEST(WKNavigation, HTTPSFirstLocalHostIPAddress)
         finishedSuccessfully = true;
     };
     [webView setNavigationDelegate:delegate.get()];
-    RetainPtr url = makeString("http://localhost:"_s, httpServer.port(), "/notsecure"_s).createNSString();
+    RetainPtr url = createNSString(makeString("http://localhost:"_s, httpServer.port(), "/notsecure"_s));
     [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:url.get()]).get()]).get()];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
@@ -1951,7 +1951,7 @@ TEST(WKNavigation, HTTPSFirstLocalHostIPAddress)
     finishedSuccessfully = false;
     didReceiveAuthenticationChallenge = false;
     loadCount = 0;
-    url = makeString("http://127.0.0.1:"_s, httpServer.port(), "/notsecure"_s).createNSString();
+    url = createNSString(makeString("http://127.0.0.1:"_s, httpServer.port(), "/notsecure"_s));
     [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:url.get()]).get()]).get()];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
@@ -2351,7 +2351,7 @@ TEST(WKNavigation, HTTPSOnlyLocalHostIPAddress)
         finishedSuccessfully = true;
     };
     [webView setNavigationDelegate:delegate.get()];
-    RetainPtr url = makeString("http://localhost:"_s, httpServer.port(), "/notsecure"_s).createNSString();
+    RetainPtr url = createNSString(makeString("http://localhost:"_s, httpServer.port(), "/notsecure"_s));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
 
     EXPECT_NULL([webView _safeBrowsingWarning]);
@@ -2386,7 +2386,7 @@ TEST(WKNavigation, HTTPSOnlyLocalHostIPAddress)
     failedNavigation = false;
     loadCount = 0;
 
-    url = makeString("http://127.0.0.1:"_s, httpServer.port(), "/notsecure"_s).createNSString();
+    url = createNSString(makeString("http://127.0.0.1:"_s, httpServer.port(), "/notsecure"_s));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
 
     EXPECT_NULL([webView _safeBrowsingWarning]);
@@ -2905,16 +2905,16 @@ TEST(WKNavigation, DISABLED_PreferredHTTPSPolicyAutomaticHTTPFallbackRedirectNo3
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
 
-            if (path == "/redirect"_s) {
-                co_await connection.awaitableSend(HTTPResponse(302, { { "Content-Type"_s, "text/html"_s }, { "Location"_s, "https://bar.com/finalTarget"_s } }, "redirecting..."_s).serialize());
+            if (equal(path, "/redirect"_s)) {
+                co_await connection.awaitableSend(HTTPResponse(302, { { "Content-Type"_s, "text/html"_s }, { "Location"_s, "https://bar.com/finalTarget"_s } }, "redirecting..."_si).serialize());
 
                 continue;
             }
 
-            if (path == "/finalTarget"_s) {
+            if (equal(path, "/finalTarget"_s)) {
                 TestWebKitAPI::Util::runFor(4_s);
 
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, "hello"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, "hello"_si).serialize());
 
                 continue;
             }
@@ -3457,7 +3457,7 @@ TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackLocalHostIPAddress)
     };
     [webView setNavigationDelegate:delegate.get()];
     auto url = makeString("http://localhost:"_s, httpServer.port(), "/notsecure"_s);
-    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:url.createNSString().get()]).get()]).get()];
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(url).get()]).get()]).get()];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
@@ -3471,7 +3471,7 @@ TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackLocalHostIPAddress)
     didReceiveAuthenticationChallenge = false;
     loadCount = 0;
     url = makeString("http://127.0.0.1:"_s, httpServer.port(), "/notsecure"_s);
-    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:url.createNSString().get()]).get()]).get()];
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(url).get()]).get()]).get()];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
@@ -4906,29 +4906,29 @@ PrivateTokenTestSetupState setupWebViewForPrivateTokenTests(bool& didDecideServi
 
             auto path = HTTPServer::parsePath(request);
 
-            if (headerFromRequest(request, "Host: "_s) == "site5.example"_s && (path == "/path1"_s || path == "/path6"_s)) {
+            if (equal(headerFromRequest(request, "Host: "_s), "site5.example"_s) && (equal(path, "/path1"_s) || equal(path, "/path6"_s))) {
                 auto source = headerFromRequest(request, "Source: "_s);
                 EXPECT_WK_STREQ(source, "ServiceWorker"_s);
                 didDecideServiceWorkerRequest = true;
             }
 
-            if (path == "/path1"_s || path == "/path5"_s || path == "/path6"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<body>body</body>"_s).serialize());
+            if (equal(path, "/path1"_s) || equal(path, "/path5"_s) || equal(path, "/path6"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<body>body</body>"_si).serialize());
                 continue;
             }
-            if (path == "/path2"_s || path == "/path4"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script>fetch(\"/path1\").then(r => location = \"/path1\");</script>"_s).serialize());
+            if (equal(path, "/path2"_s) || equal(path, "/path4"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch(\"/path1\").then(r => location = \"/path1\");</script>"_si).serialize());
                 continue;
             }
-            if (path == "/path7"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script>fetch(\"/path6\").then(r => location = \"/path6\");</script>"_s).serialize());
+            if (equal(path, "/path7"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch(\"/path6\").then(r => location = \"/path6\");</script>"_si).serialize());
                 continue;
             }
-            if (path == "/path3"_s) {
+            if (equal(path, "/path3"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainBytes).serialize());
                 continue;
             }
-            if (path == "/service-worker.js"_s) {
+            if (equal(path, "/service-worker.js"_s)) {
                 co_await connection.awaitableSend(HTTPResponse({ { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerBytes }).serialize());
                 continue;
             }
@@ -5382,14 +5382,14 @@ TEST(WKNavigation, PartitionedCookieSentOnTopLevelRedirect)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/page1"_s) {
+        if (equal(path, "/page1"_s)) {
             co_await connection.awaitableSend(
                 "HTTP/1.1 302 Found\r\n"
                 "Location: https://example.com/page2\r\n"
                 "Set-Cookie: PF=value;Secure;HttpOnly;SameSite=None;Partitioned\r\n"
                 "Content-Length: 0\r\n"
                 "\r\n"_s);
-        } else if (path == "/page2"_s) {
+        } else if (equal(path, "/page2"_s)) {
             sawCookieOnRedirectTarget = contains(request.span(), "PF=value"_span);
             co_await connection.awaitableSend(
                 "HTTP/1.1 200 OK\r\n"
@@ -5454,14 +5454,14 @@ TEST(WKNavigation, PartitionedCookieSentWhenNetworkProcessExistsBeforePage)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/page1"_s) {
+        if (equal(path, "/page1"_s)) {
             co_await connection.awaitableSend(
                 "HTTP/1.1 302 Found\r\n"
                 "Location: https://example.com/page2\r\n"
                 "Set-Cookie: PF=value;Secure;HttpOnly;SameSite=None;Partitioned\r\n"
                 "Content-Length: 0\r\n"
                 "\r\n"_s);
-        } else if (path == "/page2"_s) {
+        } else if (equal(path, "/page2"_s)) {
             sawCookieOnRedirectTarget = contains(request.span(), "PF=value"_span);
             co_await connection.awaitableSend(
                 "HTTP/1.1 200 OK\r\n"
@@ -5549,9 +5549,9 @@ TEST(WKNavigation, PartitionedCookieAfterRedirect)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (contains(request.span(), "Host: example.org"_span) && path == "/"_s) {
+        if (contains(request.span(), "Host: example.org"_span) && equal(path, "/"_s)) {
             co_await connection.awaitableSend(HTTPResponse({ { }, initialPageHTML }).serialize());
-        } else if (contains(request.span(), "Host: example.com"_span) && path == "/"_s) {
+        } else if (contains(request.span(), "Host: example.com"_span) && equal(path, "/"_s)) {
             co_await connection.awaitableSend(makeString(
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Type: text/html\r\n"
@@ -5559,7 +5559,7 @@ TEST(WKNavigation, PartitionedCookieAfterRedirect)
                 "Set-Cookie: partitioned_cookie=p1; Path=/; Secure; SameSite=None; Partitioned; Max-Age=300\r\n"
                 "Content-Length: "_s, committedPageBody.length(), "\r\n"
                 "\r\n"_s, committedPageBody));
-        } else if (contains(request.span(), "Host: example.com"_span) && path == "/subresource"_s) {
+        } else if (contains(request.span(), "Host: example.com"_span) && equal(path, "/subresource"_s)) {
             sawNonPartitionedCookieOnSubresource = contains(request.span(), "testcookie=1"_span);
             sawPartitionedCookieOnSubresource = contains(request.span(), "partitioned_cookie=p1"_span);
             co_await connection.awaitableSend(
@@ -5665,8 +5665,8 @@ TEST(Navigation, FormResubmited)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
 
-            if (path == "/main.html"_s) {
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, ""
+            if (equal(path, "/main.html"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, StringImpl::create(""
                     "<html><body>"
                     "<form action='https://example1.com/submit' method='POST' id='form'>"
                     "  <input type='text' id='name' name='name' value='value'/>"
@@ -5680,24 +5680,24 @@ TEST(Navigation, FormResubmited)
                     "  form.submit();"
                     "}"
                     "</script>"
-                    "</body></html>"_s).serialize());
+                    "</body></html>"_s).ptr()).serialize());
                 continue;
             }
 
-            if (path == "/submit"_s) {
+            if (equal(path, "/submit"_s)) {
                 didReceiveForm = true;
                 requestHadSecFetchSiteCrossOrigin = contains(request.span(), "Sec-Fetch-Site: cross-site"_span);
                 if (requestHadSecFetchSiteCrossOrigin) {
-                    co_await connection.awaitableSend(HTTPResponse({ 403, { }, ""_s }).serialize());
+                    co_await connection.awaitableSend(HTTPResponse({ 403, { }, ""_si }).serialize());
                     continue;
                 }
 
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, ""
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, StringImpl::create(""
                     "<html><body>"
                     "<script>"
                     "window.didSubmit = true;"
                     "</script>"
-                    "</body></html>"_s).serialize());
+                    "</body></html>"_s).ptr()).serialize());
                 continue;
             }
 

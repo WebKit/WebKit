@@ -355,13 +355,13 @@ static void testContinueRunsOnlyContinueThread()
         return;
     }
 
-    String runnerThread = makeString(hex(runner->identifier().toUInt64(), Lowercase));
+    RefPtr<StringImpl> runnerThread = makeString(hex(runner->identifier().toUInt64(), Lowercase));
     debugServer->handlePacket(makeString("Hc"_s, runnerThread));
-    CHECK(lastReply().startsWith("$OK#"_s), "Hc should be answered OK, got ", lastReply());
+    CHECK(startsWith(lastReply(), "$OK#"_s), "Hc should be answered OK, got ", lastReply());
 
     // An Hc naming no stopped VM is refused; the debuggee is unchanged.
     debugServer->handlePacket("Hc7fffffff"_s);
-    CHECK(lastReply().startsWith("$E01#"_s), "Hc for an unknown thread should be refused, got ", lastReply());
+    CHECK(startsWith(lastReply(), "$E01#"_s), "Hc for an unknown thread should be refused, got ", lastReply());
     CHECK(executionHandler->debuggeeVM() == runner, "A refused Hc must not change the debuggee");
 
     // A VM that stays stopped keeps the very stop record it has now; one that ran gets a new one.
@@ -375,9 +375,9 @@ static void testContinueRunsOnlyContinueThread()
     // 'c' answers once the runner is running alone; its stop is reported when it reaches a site.
     debugServer->handlePacket("c"_s);
     waitForConditionAndCheck("The runner did not stop"_s, [&] {
-        return lastReply().startsWith("$T"_s);
+        return startsWith(lastReply(), "$T"_s);
     });
-    CHECK(lastReply().startsWith(makeString("$T05thread:"_s, runnerThread, ';')), "The stop should be the runner's, got ", lastReply());
+    CHECK(startsWith(lastReply(), makeString("$T05thread:"_s, runnerThread, ';')), "The stop should be the runner's, got ", lastReply());
     validateStop();
     CHECK(executionHandler->debuggeeVM() == runner, "The runner should be the debuggee after its stop");
     for (auto& [vm, record] : stopRecords)
@@ -386,7 +386,7 @@ static void testContinueRunsOnlyContinueThread()
     // After Hc-1, 'c' runs every VM again.
     executionHandler->breakpointManager()->clearAllBreakpoints();
     debugServer->handlePacket("Hc-1"_s);
-    CHECK(lastReply().startsWith("$OK#"_s), "Hc-1 should be answered OK, got ", lastReply());
+    CHECK(startsWith(lastReply(), "$OK#"_s), "Hc-1 should be answered OK, got ", lastReply());
     debugServer->handlePacket("c"_s);
     CHECK(VMManager::info().worldMode == VMManager::Mode::RunAll, "After Hc-1, 'c' should resume every VM");
 

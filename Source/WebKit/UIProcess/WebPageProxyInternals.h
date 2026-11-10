@@ -134,8 +134,8 @@ namespace WebKit {
 
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
-    String sourceDescription;
-    String purchaser;
+    RefPtr<StringImpl> sourceDescription;
+    RefPtr<StringImpl> purchaser;
 };
 
 struct PendingBackForwardIframeRestore {
@@ -480,7 +480,7 @@ public:
     std::optional<TextManipulationParameters> textManipulationParameters;
 
     // Non-empty while the client has told us it is presenting this page as a machine translation.
-    String displayedTranslationLocaleIdentifier;
+    RefPtr<StringImpl> displayedTranslationLocaleIdentifier;
 
     EnhancedSecurityTracking enhancedSecurityTracker;
 
@@ -525,21 +525,21 @@ public:
 #if ENABLE(APPLE_PAY)
     // WebPaymentCoordinatorProxy::Client
     IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const RefPtr<StringImpl>& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const RefPtr<StringImpl>& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const RefPtr<StringImpl>& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
-    void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
+    void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(StringImpl*)>&&) final;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
+    const RefPtr<StringImpl>& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
     Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
+    void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(StringImpl*, StringImpl*)>&&) final;
     void notifyWillPresentPaymentUI(WebPageProxyIdentifier) final;
 #endif
 #if ENABLE(APPLE_PAY)

@@ -154,7 +154,7 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensio
     }
 
     if (!m_extensionContextBaseURLMap.add(extensionContext.baseURL().protocolHostAndPort(), extensionContext)) {
-        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded with same base URL: %" PRIVATE_LOG_STRING, extensionContext.baseURL().string().utf8());
+        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded with same base URL: %" PRIVATE_LOG_STRING, utf8(extensionContext.baseURL().string()));
         m_extensionContexts.remove(extensionContext);
         return makeUnexpected(extensionContext.createError(WebExtensionContext::Error::BaseURLAlreadyInUse));
     }
@@ -174,7 +174,7 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensio
 
     auto extensionDirectory = storageDirectory(extensionContext);
     if (!!extensionDirectory && !FileSystem::makeAllDirectories(extensionDirectory))
-        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %" PRIVATE_LOG_STRING, extensionDirectory.utf8());
+        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %" PRIVATE_LOG_STRING, utf8(extensionDirectory));
 
     auto loadResult = extensionContext.load(*this, extensionDirectory);
     if (!loadResult) {
@@ -427,7 +427,7 @@ RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebEx
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const UniqueIdentifier& uniqueIdentifier) const
 {
     for (auto& context : m_extensionContexts) {
-        if (context->uniqueIdentifier() == uniqueIdentifier)
+        if (equal(context->uniqueIdentifier(), uniqueIdentifier))
             return context.ptr();
     }
 
@@ -448,44 +448,44 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
     return extensions;
 }
 
-String WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
+RefPtr<StringImpl> WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
 {
     if (m_configuration->storageIsPersistent() && extensionContext.hasCustomUniqueIdentifier())
         return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), extensionContext.uniqueIdentifier());
     return nullString();
 }
 
-String WebExtensionController::storageDirectory(const String& uniqueIdentifier) const
+RefPtr<StringImpl> WebExtensionController::storageDirectory(StringImpl* uniqueIdentifier) const
 {
     return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), uniqueIdentifier);
 }
 
-String WebExtensionController::stateFilePath(const String& uniqueIdentifier) const
+RefPtr<StringImpl> WebExtensionController::stateFilePath(StringImpl* uniqueIdentifier) const
 {
     return FileSystem::pathByAppendingComponent(storageDirectory(uniqueIdentifier), WebExtensionContext::stateFileName());
 }
 
-HashSet<String> WebExtensionController::activeExtensionURLs() const
+HashSet<RefPtr<StringImpl>> WebExtensionController::activeExtensionURLs() const
 {
-    HashSet<String> origins;
+    HashSet<RefPtr<StringImpl>> origins;
 
     for (auto& context : m_extensionContexts)
-        origins.add(context->baseURL().protocolHostAndPort().convertToASCIILowercase());
+        origins.add(convertToASCIILowercase(context->baseURL().protocolHostAndPort()));
 
     if (m_configuration->storageIsPersistent()) {
         for (auto& uniqueIdentifier : FileSystem::listDirectory(m_configuration->storageDirectory())) {
-            if (uniqueIdentifier == "StaleExtensionOriginsCleared"_s)
+            if (equal(uniqueIdentifier, "StaleExtensionOriginsCleared"_s))
                 continue;
             URL lastSeenBaseURL;
             if (WebExtensionContext::readLastBaseURLFromState(stateFilePath(uniqueIdentifier), lastSeenBaseURL))
-                origins.add(lastSeenBaseURL.protocolHostAndPort().convertToASCIILowercase());
+                origins.add(convertToASCIILowercase(lastSeenBaseURL.protocolHostAndPort()));
         }
     }
 
     return origins;
 }
 
-RefPtr<WebExtensionStorageSQLiteStore> WebExtensionController::sqliteStore(const String& storageDirectory, WebExtensionDataType type, RefPtr<WebExtensionContext> extensionContext)
+RefPtr<WebExtensionStorageSQLiteStore> WebExtensionController::sqliteStore(StringImpl* storageDirectory, WebExtensionDataType type, RefPtr<WebExtensionContext> extensionContext)
 {
     if (type == WebExtensionDataType::Session) {
         if (extensionContext)
@@ -499,9 +499,9 @@ RefPtr<WebExtensionStorageSQLiteStore> WebExtensionController::sqliteStore(const
 
 void WebExtensionController::calculateStorageSize(WebExtensionStorageSQLiteStore& storage, WebExtensionDataType type, CompletionHandler<void(std::expected<size_t, WebExtensionError>&&)>&& completionHandler)
 {
-    storage.getStorageSizeForKeys({ }, [completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
+    storage.getStorageSizeForKeys({ }, [completionHandler = WTF::move(completionHandler)](size_t storageSize, StringImpl* errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Add storage size of window.localStorage, window.sessionStorage and indexedDB.
-        if (!errorMessage.isEmpty())
+        if (!isEmpty(errorMessage))
             completionHandler(makeUnexpected(errorMessage));
         else
             completionHandler(storageSize);
@@ -510,9 +510,9 @@ void WebExtensionController::calculateStorageSize(WebExtensionStorageSQLiteStore
 
 void WebExtensionController::removeStorage(WebExtensionStorageSQLiteStore& storage, WebExtensionDataType type, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    storage.deleteDatabase([completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
+    storage.deleteDatabase([completionHandler = WTF::move(completionHandler)](StringImpl* errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Remove window.localStorage, window.sessionStorage, indexedDB.
-        if (!errorMessage.isEmpty())
+        if (!isEmpty(errorMessage))
             completionHandler(makeUnexpected(errorMessage));
         else
             completionHandler({ });

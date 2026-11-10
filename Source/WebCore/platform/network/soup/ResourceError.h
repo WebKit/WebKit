@@ -44,14 +44,14 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type = Type::General, IsSanitized = IsSanitized::No);
+    ResourceError(StringImpl* domain, int errorCode, const URL& failingURL, StringImpl* localizedDescription, Type = Type::General, IsSanitized = IsSanitized::No);
 
     struct IPCData {
         Type type;
-        String domain;
+        RefPtr<StringImpl> domain;
         int errorCode;
         URL failingURL;
-        String localizedDescription;
+        RefPtr<StringImpl> localizedDescription;
         IsSanitized isSanitized;
         CertificateInfo certificateInfo;
     };
@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT std::optional<IPCData> ipcData() const;
 
     static ResourceError httpError(SoupMessage*, GError*);
-    static ResourceError transportError(const URL&, int statusCode, const String& reasonPhrase);
+    static ResourceError transportError(const URL&, int statusCode, StringImpl* reasonPhrase);
     static ResourceError genericGError(const URL&, GError*);
     static ResourceError tlsError(const URL&, unsigned tlsErrors, GTlsCertificate*);
     static ResourceError timeoutError(const URL& failingURL);

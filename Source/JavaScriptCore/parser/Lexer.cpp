@@ -516,23 +516,23 @@ template <typename T>
 Lexer<T>::~Lexer() = default;
 
 template <typename T>
-String Lexer<T>::invalidCharacterMessage() const
+RefPtr<StringImpl> Lexer<T>::invalidCharacterMessage() const
 {
     switch (m_current) {
     case 0:
-        return "Invalid character: '\\0'"_s;
+        return "Invalid character: '\\0'"_si;
     case 10:
-        return "Invalid character: '\\n'"_s;
+        return "Invalid character: '\\n'"_si;
     case 11:
-        return "Invalid character: '\\v'"_s;
+        return "Invalid character: '\\v'"_si;
     case 13:
-        return "Invalid character: '\\r'"_s;
+        return "Invalid character: '\\r'"_si;
     case 35:
-        return "Invalid character: '#'"_s;
+        return "Invalid character: '#'"_si;
     case 64:
-        return "Invalid character: '@'"_s;
+        return "Invalid character: '@'"_si;
     case 96:
-        return "Invalid character: '`'"_s;
+        return "Invalid character: '`'"_si;
     default:
         return makeString("Invalid character '\\u"_s, hex(m_current, 4, Lowercase), '\'');
     }
@@ -564,9 +564,9 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
-    m_lexErrorMessage = String();
-    m_sourceURLDirective = String();
-    m_sourceMappingURLDirective = String();
+    m_lexErrorMessage = nullptr;
+    m_sourceURLDirective = nullptr;
+    m_sourceMappingURLDirective = nullptr;
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
     m_buffer16.reserveInitialCapacity(initialReadBufferCapacity);
@@ -1993,7 +1993,7 @@ ALWAYS_INLINE const Latin1Character* parseCommentDirectiveValueSIMD(const Latin1
 }
 
 IGNORE_WARNINGS_BEGIN("unused-but-set-variable")
-template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::parseCommentDirectiveValue()
+template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> Lexer<CharacterType>::parseCommentDirectiveValue()
 {
     skipWhitespace();
     char16_t mergedCharacterBits = 0;
@@ -2015,13 +2015,14 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
 
     skipWhitespace();
     if (!isLineTerminator(m_current) && !atEnd())
-        return String();
+        return nullptr;
 
     if constexpr (std::is_same_v<CharacterType, char16_t>) {
         if (isLatin1(mergedCharacterBits))
-            return String::make8Bit(commentDirective);
+            return StringImpl::make8Bit(commentDirective);
     }
-    return commentDirective;
+    return StringImpl::create(commentDirective);
+
 }
 IGNORE_WARNINGS_END
 
@@ -3156,9 +3157,9 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, char16_t patternPrefix)
         JSTokenType token = INVALID_IDENTIFIER_UNICODE_ERRORTOK;
         fillTokenInfo(tokenRecord, currentPosition());
         m_error = true;
-        String codePoint = String::fromCodePoint(currentCodePoint());
+        RefPtr<StringImpl> codePoint = StringImpl::fromCodePoint(currentCodePoint());
         if (!codePoint)
-            codePoint = "`invalid unicode character`"_s;
+            codePoint = "`invalid unicode character`"_si;
         m_lexErrorMessage = makeString("Invalid non-latin character in RexExp literal's flags '"_s, getToken(*tokenRecord), codePoint, '\'');
         return token;
     }

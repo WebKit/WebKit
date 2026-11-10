@@ -40,7 +40,7 @@ private:
     {
         GRefPtr<GVariant> variant;
         if (userData) {
-            auto userDataString = downcast<API::String>(userData)->string().utf8();
+            auto userDataString = utf8(downcast<API::String>(userData)->string());
             const auto userDataSpan = byteCast<char>(userDataString.spanIncludingNullTerminator());
             variant = adoptGRef(g_variant_parse(nullptr, userDataSpan.data(), userDataSpan.last(1).data(), nullptr, nullptr));
         }

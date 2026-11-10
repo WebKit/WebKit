@@ -52,7 +52,7 @@ void WebMDNSRegister::deref() const
     m_webRTCNetwork->deref();
 }
 
-void WebMDNSRegister::finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, String&& name, std::optional<MDNSRegisterError> error, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& completionHandler)
+void WebMDNSRegister::finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, StringImpl* ipAddress, RefPtr<StringImpl>&& name, std::optional<MDNSRegisterError> error, CompletionHandler<void(StringImpl*, std::optional<MDNSRegisterError>)>&& completionHandler)
 {
     if (!error) {
         auto iterator = m_registeringDocuments.find(documentIdentifier);
@@ -73,10 +73,10 @@ void WebMDNSRegister::unregisterMDNSNames(ScriptExecutionContextIdentifier ident
     connection->send(Messages::NetworkMDNSRegister::UnregisterMDNSNames { identifier }, 0);
 }
 
-void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& callback)
+void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifier, StringImpl* ipAddress, CompletionHandler<void(StringImpl*, std::optional<MDNSRegisterError>)>&& callback)
 {
     auto& map = m_registeringDocuments.ensure(identifier, [] {
-        return HashMap<String, String> { };
+        return HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> { };
     }).iterator->value;
 
     auto iterator = map.find(ipAddress);
@@ -86,11 +86,11 @@ void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifi
     }
 
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.sendWithAsyncReply(Messages::NetworkMDNSRegister::RegisterMDNSName { identifier, ipAddress }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), identifier, ipAddress] (String&& mdnsName, std::optional<MDNSRegisterError> error) mutable {
+    connection.sendWithAsyncReply(Messages::NetworkMDNSRegister::RegisterMDNSName { identifier, ipAddress }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), identifier, ipAddress = RefPtr { ipAddress }] (RefPtr<StringImpl>&& mdnsName, std::optional<MDNSRegisterError> error) mutable {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->finishedRegisteringMDNSName(identifier, ipAddress, WTF::move(mdnsName), error, WTF::move(callback));
         else
-            callback({ }, MDNSRegisterError::Internal);
+            callback(nullptr, MDNSRegisterError::Internal);
     });
 }
 

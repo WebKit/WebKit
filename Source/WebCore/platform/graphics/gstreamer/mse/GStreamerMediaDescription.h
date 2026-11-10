@@ -51,7 +51,7 @@ private:
     {
     }
 
-    String extractCodecName(const GRefPtr<GstCaps>&) const;
+    RefPtr<StringImpl> extractCodecName(const GRefPtr<GstCaps>&) const;
     const GRefPtr<GstCaps> m_caps;
 };
 

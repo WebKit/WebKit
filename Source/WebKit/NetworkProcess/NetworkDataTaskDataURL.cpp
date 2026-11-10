@@ -104,19 +104,19 @@ NetworkDataTask::State NetworkDataTaskDataURL::state() const
     return m_state;
 }
 
-void NetworkDataTaskDataURL::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void NetworkDataTaskDataURL::setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     NetworkDataTask::setPendingDownloadLocation(filename, WTF::move(sandboxExtensionHandle), allowOverwrite);
     m_allowOverwriteDownload = allowOverwrite;
 }
 
-String NetworkDataTaskDataURL::suggestedFilename() const
+RefPtr<StringImpl> NetworkDataTaskDataURL::suggestedFilename() const
 {
-    if (!m_suggestedFilename.isEmpty())
+    if (!isEmpty(m_suggestedFilename))
         return m_suggestedFilename;
 
-    String suggestedFilename = m_response.suggestedFilename();
-    if (!suggestedFilename.isEmpty())
+    RefPtr<StringImpl> suggestedFilename = m_response.suggestedFilename();
+    if (!isEmpty(suggestedFilename))
         return suggestedFilename;
 
     return PAL::decodeURLEscapeSequences(m_response.url().lastPathComponent());
@@ -164,7 +164,7 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
 #if USE(CURL)
         ResourceError error(CURLE_WRITE_ERROR, m_response.url());
 #elif USE(SOUP)
-        ResourceError error(downloadDestinationError(m_response, "Cannot write destination file."_s));
+        ResourceError error(downloadDestinationError(m_response, "Cannot write destination file."_si));
 #endif
         if (m_client)
             m_client->didCompleteWithError(error);
@@ -183,7 +183,7 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
 #if USE(CURL)
         ResourceError error(CURLE_WRITE_ERROR, m_response.url());
 #elif USE(SOUP)
-        ResourceError error(downloadDestinationError(m_response, "Cannot write destination file."_s));
+        ResourceError error(downloadDestinationError(m_response, "Cannot write destination file."_si));
 #endif
         download->didFail(error, { });
         invalidateAndCancel();

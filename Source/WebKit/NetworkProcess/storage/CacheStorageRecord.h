@@ -34,7 +34,7 @@ namespace WebKit {
 class CacheStorageRecordInformation {
 public:
     CacheStorageRecordInformation() = default;
-    CacheStorageRecordInformation(NetworkCache::Key&&, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&&, bool hasVaryStar, HashMap<String, String>&& varyHeaders);
+    CacheStorageRecordInformation(NetworkCache::Key&&, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&&, bool hasVaryStar, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& varyHeaders);
     void updateVaryHeaders(const WebCore::ResourceRequest&, const WebCore::ResourceResponse::CrossThreadData&);
     CacheStorageRecordInformation isolatedCopy() &&;
     CacheStorageRecordInformation isolatedCopy() const &;
@@ -46,7 +46,7 @@ public:
     uint64_t size() const { return m_size; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
     bool hasVaryStar() const { return m_hasVaryStar; }
-    const HashMap<String, String>& varyHeaders() const LIFETIME_BOUND { return m_varyHeaders; }
+    const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& varyHeaders() const LIFETIME_BOUND { return m_varyHeaders; }
 
     void setKey(const NetworkCache::Key& key) { m_key = key; }
     void setSize(uint64_t size) { m_size = size; }
@@ -63,7 +63,7 @@ private:
     uint64_t m_size { 0 };
     URL m_url;
     bool m_hasVaryStar { false };
-    HashMap<String, String> m_varyHeaders;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_varyHeaders;
 };
 
 struct CacheStorageRecord {
@@ -73,7 +73,7 @@ struct CacheStorageRecord {
     CacheStorageRecord() = default;
     CacheStorageRecord(CacheStorageRecord&&) = default;
     CacheStorageRecord& operator=(CacheStorageRecord&&) = default;
-    CacheStorageRecord(const CacheStorageRecordInformation& info, WebCore::FetchHeaders::Guard requestHeadersGuard, const WebCore::ResourceRequest& request, WebCore::FetchOptions options, const String& referrer, WebCore::FetchHeaders::Guard responseHeadersGuard, WebCore::ResourceResponse::CrossThreadData&& responseData, uint64_t responseBodySize, WebCore::DOMCacheEngine::ResponseBody&& responseBody)
+    CacheStorageRecord(const CacheStorageRecordInformation& info, WebCore::FetchHeaders::Guard requestHeadersGuard, const WebCore::ResourceRequest& request, WebCore::FetchOptions options, StringImpl* referrer, WebCore::FetchHeaders::Guard responseHeadersGuard, WebCore::ResourceResponse::CrossThreadData&& responseData, uint64_t responseBodySize, WebCore::DOMCacheEngine::ResponseBody&& responseBody)
         : info(info)
         , requestHeadersGuard(requestHeadersGuard)
         , request(request)
@@ -104,7 +104,7 @@ struct CacheStorageRecord {
     WebCore::FetchHeaders::Guard requestHeadersGuard;
     WebCore::ResourceRequest request;
     WebCore::FetchOptions options;
-    String referrer;
+    RefPtr<StringImpl> referrer;
     WebCore::FetchHeaders::Guard responseHeadersGuard;
     WebCore::ResourceResponse::CrossThreadData responseData;
     uint64_t responseBodySize;

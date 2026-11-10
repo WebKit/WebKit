@@ -129,7 +129,7 @@ TEST(WKWebExtensionAPITest, MessageEventInWebPage)
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script type='module' src='script.js'></script>"_s } },
-        { "/script.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, pageScript } }
+        { "/script.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, StringImpl::create(pageScript) } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *resources = @{

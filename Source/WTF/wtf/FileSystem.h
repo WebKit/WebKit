@@ -95,51 +95,51 @@ constexpr char pathSeparator = '\\';
 constexpr char pathSeparator = '/';
 #endif
 
-WTF_EXPORT_PRIVATE bool fileExists(const String&);
-WTF_EXPORT_PRIVATE bool deleteFile(const String&);
-WTF_EXPORT_PRIVATE void deleteAllFilesModifiedSince(const String&, WallTime);
-WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
-WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
-WTF_EXPORT_PRIVATE std::optional<uint64_t> fileSize(const String&); // Follows symlinks.
-WTF_EXPORT_PRIVATE std::optional<uint64_t> directorySize(const String&);
-WTF_EXPORT_PRIVATE std::optional<WallTime> fileModificationTime(const String&);
+WTF_EXPORT_PRIVATE bool fileExists(StringImpl*);
+WTF_EXPORT_PRIVATE bool deleteFile(StringImpl*);
+WTF_EXPORT_PRIVATE void deleteAllFilesModifiedSince(StringImpl*, WallTime);
+WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(StringImpl*);
+WTF_EXPORT_PRIVATE bool moveFile(StringImpl* oldPath, StringImpl* newPath);
+WTF_EXPORT_PRIVATE std::optional<uint64_t> fileSize(StringImpl*); // Follows symlinks.
+WTF_EXPORT_PRIVATE std::optional<uint64_t> directorySize(StringImpl*);
+WTF_EXPORT_PRIVATE std::optional<WallTime> fileModificationTime(StringImpl*);
 NODELETE WTF_EXPORT_PRIVATE bool fileIDsAreEqual(std::optional<PlatformFileID>, std::optional<PlatformFileID>);
-WTF_EXPORT_PRIVATE bool updateFileModificationTime(const String& path); // Sets modification time to now.
-WTF_EXPORT_PRIVATE std::optional<WallTime> fileCreationTime(const String&); // Not all platforms store file creation time.
-WTF_EXPORT_PRIVATE bool isHiddenFile(const String&);
-WTF_EXPORT_PRIVATE String pathByAppendingComponent(StringView path, StringView component);
-WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, std::span<const StringView> components);
-WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);
-WTF_EXPORT_PRIVATE void removeTrailingSlash(String& path);
-WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
-WTF_EXPORT_PRIVATE String pathFileName(const String&);
-WTF_EXPORT_PRIVATE String parentPath(const String&);
-WTF_EXPORT_PRIVATE String lexicallyNormal(const String&);
-WTF_EXPORT_PRIVATE bool isAncestor(const String& first, const String& second);
-WTF_EXPORT_PRIVATE std::optional<uint64_t> volumeFreeSpace(const String&);
-WTF_EXPORT_PRIVATE std::optional<uint64_t> volumeCapacity(const String&);
-WTF_EXPORT_PRIVATE std::optional<uint32_t> volumeFileBlockSize(const String&);
-WTF_EXPORT_PRIVATE std::optional<int32_t> getFileDeviceId(const String&);
-WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
-WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
-WTF_EXPORT_PRIVATE String extractTemporaryZipArchive(const String& filePath);
+WTF_EXPORT_PRIVATE bool updateFileModificationTime(StringImpl* path); // Sets modification time to now.
+WTF_EXPORT_PRIVATE std::optional<WallTime> fileCreationTime(StringImpl*); // Not all platforms store file creation time.
+WTF_EXPORT_PRIVATE bool isHiddenFile(StringImpl*);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> pathByAppendingComponent(StringView path, StringView component);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> pathByAppendingComponents(StringView path, std::span<const StringView> components);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> lastComponentOfPathIgnoringTrailingSlash(StringImpl* path);
+WTF_EXPORT_PRIVATE void removeTrailingSlash(RefPtr<StringImpl>& path);
+WTF_EXPORT_PRIVATE bool makeAllDirectories(StringImpl* path);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> pathFileName(StringImpl*);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> parentPath(StringImpl*);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> lexicallyNormal(StringImpl*);
+WTF_EXPORT_PRIVATE bool isAncestor(StringImpl* first, StringImpl* second);
+WTF_EXPORT_PRIVATE std::optional<uint64_t> volumeFreeSpace(StringImpl*);
+WTF_EXPORT_PRIVATE std::optional<uint64_t> volumeCapacity(StringImpl*);
+WTF_EXPORT_PRIVATE std::optional<uint32_t> volumeFileBlockSize(StringImpl*);
+WTF_EXPORT_PRIVATE std::optional<int32_t> getFileDeviceId(StringImpl*);
+WTF_EXPORT_PRIVATE bool createSymbolicLink(StringImpl* targetPath, StringImpl* symbolicLinkPath);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createTemporaryZipArchive(StringImpl* directory);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> extractTemporaryZipArchive(StringImpl* filePath);
 WTF_EXPORT_PRIVATE FileHandle createDumpFile(StringView filename, StringView extension, StringView path = StringView());
 
 enum class FileType { Regular, Directory, SymbolicLink };
-WTF_EXPORT_PRIVATE std::optional<FileType> fileType(const String&);
-WTF_EXPORT_PRIVATE std::optional<FileType> fileTypeFollowingSymlinks(const String&);
+WTF_EXPORT_PRIVATE std::optional<FileType> fileType(StringImpl*);
+WTF_EXPORT_PRIVATE std::optional<FileType> fileTypeFollowingSymlinks(StringImpl*);
 
-WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
-WTF_EXPORT_PRIVATE bool setExcludedFromBackup(const String&, bool); // Returns true if successful.
-WTF_EXPORT_PRIVATE bool markPurgeable(const String&);
+WTF_EXPORT_PRIVATE void setMetadataURL(StringImpl* path, StringImpl* urlString, StringImpl* referrer = nullptr);
+WTF_EXPORT_PRIVATE bool setExcludedFromBackup(StringImpl*, bool); // Returns true if successful.
+WTF_EXPORT_PRIVATE bool markPurgeable(StringImpl*);
 
-WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path); // Returns file names, not full paths.
-WTF_EXPORT_PRIVATE void traverseDirectory(const String& path, NOESCAPE const Function<void(const String& fileName, FileType)>&);
+WTF_EXPORT_PRIVATE Vector<RefPtr<StringImpl>> listDirectory(StringImpl* path); // Returns file names, not full paths.
+WTF_EXPORT_PRIVATE void traverseDirectory(StringImpl* path, NOESCAPE const Function<void(StringImpl* fileName, FileType)>&);
 
-WTF_EXPORT_PRIVATE UTF8CString fileSystemRepresentation(const String&);
+WTF_EXPORT_PRIVATE UTF8CString fileSystemRepresentation(StringImpl*);
 #if !PLATFORM(WIN)
-WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(UTF8CStringView);
-inline String stringFromFileSystemRepresentation(const char* path) { return stringFromFileSystemRepresentation(UTF8CStringView::unsafeFromUTF8(path)); }
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> stringFromFileSystemRepresentation(UTF8CStringView);
+inline RefPtr<StringImpl> stringFromFileSystemRepresentation(const char* path) { return stringFromFileSystemRepresentation(UTF8CStringView::unsafeFromUTF8(path)); }
 #endif
 
 // stat() needs a null-terminated path, so these take the span including the terminator and check for it.
@@ -147,32 +147,32 @@ WTF_EXPORT_PRIVATE int statFile(std::span<const char> pathIncludingNullTerminato
 inline int statFile(std::span<const char8_t> pathIncludingNullTerminator, struct stat& result) { return statFile(byteCast<char>(pathIncludingNullTerminator), result); }
 
 using Salt = std::array<uint8_t, 8>;
-WTF_EXPORT_PRIVATE std::optional<Salt> readOrMakeSalt(const String& path);
-WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(const String& path);
-WTF_EXPORT_PRIVATE std::optional<uint64_t> overwriteEntireFile(const String& path, std::span<const uint8_t>);
+WTF_EXPORT_PRIVATE std::optional<Salt> readOrMakeSalt(StringImpl* path);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(StringImpl* path);
+WTF_EXPORT_PRIVATE std::optional<uint64_t> overwriteEntireFile(StringImpl* path, std::span<const uint8_t>);
 
 // Prefix is what the filename should be prefixed with, not the full path.
-WTF_EXPORT_PRIVATE std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix = { }, const String& temporaryDirectory = { });
-WTF_EXPORT_PRIVATE String createTemporaryFile(StringView prefix, StringView suffix = { });
+WTF_EXPORT_PRIVATE std::pair<RefPtr<StringImpl>, FileHandle> openTemporaryFile(StringView prefix, StringView suffix = { }, StringImpl* temporaryDirectory = nullptr);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createTemporaryFile(StringView prefix, StringView suffix = { });
 #if PLATFORM(COCOA)
-WTF_EXPORT_PRIVATE std::pair<FileHandle, String> createTemporaryFileInDirectory(const String& directory, const String& suffix);
+WTF_EXPORT_PRIVATE std::pair<FileHandle, RefPtr<StringImpl>> createTemporaryFileInDirectory(StringImpl* directory, StringImpl* suffix);
 #endif
-WTF_EXPORT_PRIVATE FileHandle openFile(const String& path, FileOpenMode, FileAccessPermission = FileAccessPermission::All, OptionSet<FileLockMode> = { }, bool failIfFileExists = false);
+WTF_EXPORT_PRIVATE FileHandle openFile(StringImpl* path, FileOpenMode, FileAccessPermission = FileAccessPermission::All, OptionSet<FileLockMode> = { }, bool failIfFileExists = false);
 
-WTF_EXPORT_PRIVATE bool hardLink(const String& targetPath, const String& linkPath);
+WTF_EXPORT_PRIVATE bool hardLink(StringImpl* targetPath, StringImpl* linkPath);
 // Hard links a file if possible, copies it if not.
-WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath);
-WTF_EXPORT_PRIVATE std::optional<uint64_t> hardLinkCount(const String& path);
-WTF_EXPORT_PRIVATE bool copyFile(const String& targetPath, const String& sourcePath);
+WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(StringImpl* targetPath, StringImpl* linkPath);
+WTF_EXPORT_PRIVATE std::optional<uint64_t> hardLinkCount(StringImpl* path);
+WTF_EXPORT_PRIVATE bool copyFile(StringImpl* targetPath, StringImpl* sourcePath);
 
 // Encode a string for use within a file name.
-WTF_EXPORT_PRIVATE String encodeForFileName(const String&);
-WTF_EXPORT_PRIVATE String decodeFromFilename(const String&);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> encodeForFileName(StringImpl*);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> decodeFromFilename(StringImpl*);
 
-WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
+WTF_EXPORT_PRIVATE bool filesHaveSameVolume(StringImpl*, StringImpl*);
 
 #if USE(CF)
-WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
+WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(StringImpl*);
 #endif
 
 // The name of the running executable, as reported by the platform.
@@ -181,28 +181,28 @@ WTF_EXPORT_PRIVATE UTF8CString currentExecutableName();
 #endif
 
 #if USE(GLIB)
-WTF_EXPORT_PRIVATE String filenameForDisplay(const String&);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> filenameForDisplay(StringImpl*);
 WTF_EXPORT_PRIVATE UTF8CString currentExecutablePath();
-WTF_EXPORT_PRIVATE String userCacheDirectory();
-WTF_EXPORT_PRIVATE String userDataDirectory();
-WTF_EXPORT_PRIVATE String createTemporaryDirectory(const String& directoryPrefix = nullString());
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> userCacheDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> userDataDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createTemporaryDirectory(StringImpl* directoryPrefix = nullptr);
 #if ENABLE(DEVELOPER_MODE)
 WTF_EXPORT_PRIVATE UTF8CString webkitTopLevelDirectory();
 #endif
 #endif // USE(GLIB)
 
 #if OS(WINDOWS)
-WTF_EXPORT_PRIVATE String localUserSpecificStorageDirectory();
-WTF_EXPORT_PRIVATE String roamingUserSpecificStorageDirectory();
-WTF_EXPORT_PRIVATE String createTemporaryDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> localUserSpecificStorageDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> roamingUserSpecificStorageDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createTemporaryDirectory();
 #endif
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix = nil);
 WTF_EXPORT_PRIVATE NSString *systemDirectoryPath();
 
-WTF_EXPORT_PRIVATE String darwinCacheDirectory();
-WTF_EXPORT_PRIVATE String darwinTempDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> darwinCacheDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> darwinTempDirectory();
 
 // Allow reading cloud files with no local copy.
 enum class PolicyScope : uint8_t { Process, Thread };
@@ -211,28 +211,28 @@ WTF_EXPORT_PRIVATE std::optional<bool> allowsMaterializingDatalessFiles(PolicySc
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-WTF_EXPORT_PRIVATE std::optional<String> homeDirectory();
+WTF_EXPORT_PRIVATE std::optional<RefPtr<StringImpl>> homeDirectory();
 #endif
 
 // Impl for systems that do not already have createTemporaryDirectory
 #if !OS(WINDOWS) && !PLATFORM(COCOA) && !PLATFORM(PLAYSTATION) && !PLATFORM(GLIB)
-WTF_EXPORT_PRIVATE String createTemporaryDirectory();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createTemporaryDirectory();
 #endif
 
-WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
+WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(StringImpl*);
 
-WTF_EXPORT_PRIVATE String realPath(const String&);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> realPath(StringImpl*);
 
-WTF_EXPORT_PRIVATE bool isSafeToUseMemoryMapForPath(const String&);
-[[nodiscard]] WTF_EXPORT_PRIVATE bool makeSafeToUseMemoryMapForPath(const String&);
+WTF_EXPORT_PRIVATE bool isSafeToUseMemoryMapForPath(StringImpl*);
+[[nodiscard]] WTF_EXPORT_PRIVATE bool makeSafeToUseMemoryMapForPath(StringImpl*);
 
-WTF_EXPORT_PRIVATE std::optional<MappedFileData> mapFile(const String& path, MappedFileMode);
+WTF_EXPORT_PRIVATE std::optional<MappedFileData> mapFile(StringImpl* path, MappedFileMode);
 
 // This creates the destination file, maps it, write the provided data to it and returns the mapped file.
 // This function fails if there is already a file at the destination path.
-WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize, NOESCAPE const Function<void(const Function<bool(std::span<const uint8_t>)>&)>& apply, FileHandle* = nullptr);
+WTF_EXPORT_PRIVATE MappedFileData mapToFile(StringImpl* path, size_t bytesSize, NOESCAPE const Function<void(const Function<bool(std::span<const uint8_t>)>&)>& apply, FileHandle* = nullptr);
 
-WTF_EXPORT_PRIVATE MappedFileData createMappedFileData(const String&, size_t, FileHandle* = nullptr);
+WTF_EXPORT_PRIVATE MappedFileData createMappedFileData(StringImpl*, size_t, FileHandle* = nullptr);
 WTF_EXPORT_PRIVATE void finalizeMappedFileData(MappedFileData&, size_t);
 
 // Purely lexical: unlike isAncestor(), "." and ".." components are not resolved.

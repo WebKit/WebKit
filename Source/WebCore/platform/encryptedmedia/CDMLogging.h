@@ -37,52 +37,52 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::CDMKeySystemConfiguration> {
-    static String toString(const WebCore::CDMKeySystemConfiguration&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMKeySystemConfiguration&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMMediaCapability> {
-    static String toString(const WebCore::CDMMediaCapability&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMMediaCapability&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMRestrictions> {
-    static String toString(const WebCore::CDMRestrictions&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMRestrictions&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMEncryptionScheme> {
-    static String toString(const WebCore::CDMEncryptionScheme&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMEncryptionScheme&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMKeyStatus> {
-    static String toString(const WebCore::CDMKeyStatus&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMKeyStatus&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMMessageType> {
-    static String toString(const WebCore::CDMMessageType&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMMessageType&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMRequirement> {
-    static String toString(const WebCore::CDMRequirement&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMRequirement&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMSessionType> {
-    static String toString(const WebCore::CDMSessionType&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMSessionType&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMKeyID> {
-    static String toString(const WebCore::CDMKeyID&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMKeyID&);
 };
 
 template <>
 struct LogArgument<WebCore::CDMKeyIDs> {
-    static String toString(const WebCore::CDMKeyIDs&);
+    static RefPtr<StringImpl> toString(const WebCore::CDMKeyIDs&);
 };
 
 }

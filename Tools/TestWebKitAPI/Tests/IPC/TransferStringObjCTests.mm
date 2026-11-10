@@ -50,7 +50,7 @@ TEST(TransferStringTests, CreateFromNSString)
     bool bools[] = { false, true };
     for (bool releaseToCopy : bools) {
         for (auto& subcase : subcases) {
-            String wtfString { subcase.get() };
+            RefPtr<StringImpl> wtfString { StringImpl::create(subcase.get()) };
             {
                 SCOPED_TRACE(::testing::Message() << "TransferString(NSString *) releaseToCopy: " << releaseToCopy << " subcase: \"" << wtfString << "\"" << " ptr: " << static_cast<void*>(subcase.get()));
                 auto ts = IPC::TransferString::create(subcase.get());

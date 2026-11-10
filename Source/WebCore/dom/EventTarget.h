@@ -97,35 +97,35 @@ public:
     NODELETE virtual bool isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
-    void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
+    void addEventListenerForBindings(AtomStringImpl* eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
     using EventListenerOptionsOrBoolean = Variant<EventListenerOptions, bool>;
-    void removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, EventListenerOptionsOrBoolean&&);
+    void removeEventListenerForBindings(AtomStringImpl* eventType, RefPtr<EventListener>&&, EventListenerOptionsOrBoolean&&);
     ExceptionOr<bool> dispatchEventForBindings(Event&);
 
-    virtual bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&);
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&);
-    virtual bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions& = { });
+    virtual bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&);
+    bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&);
+    virtual bool removeEventListener(AtomStringImpl* eventType, EventListener&, const EventListenerOptions& = { });
 
     virtual void removeAllEventListeners();
     virtual void dispatchEvent(Event&);
     virtual void uncaughtExceptionInEventHandler();
 
-    static const AtomString& legacyTypeForEvent(const Event&);
+    static const RefPtr<AtomStringImpl>& legacyTypeForEvent(const Event&);
 
     // Used for legacy "onevent" attributes.
     template<typename JSMaybeErrorEventListener>
-    void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
-    bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
-    RefPtr<JSEventListener> attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
+    void setAttributeEventListener(AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
+    bool setAttributeEventListener(AtomStringImpl* eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
+    RefPtr<JSEventListener> attributeEventListener(AtomStringImpl* eventType, DOMWrapperWorld&);
 
     inline bool hasEventListeners() const; // Defined in EventTargetInlines.h
-    inline bool hasEventListeners(const AtomString& eventType) const; // Defined in EventTargetInlines.h
-    NODELETE bool hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
-    inline bool hasCapturingEventListeners(const AtomString& eventType); // Defined in EventTargetInlines.h
-    NODELETE bool hasActiveEventListeners(const AtomString& eventType) const;
+    inline bool hasEventListeners(AtomStringImpl* eventType) const; // Defined in EventTargetInlines.h
+    NODELETE bool hasAnyEventListeners(std::span<const RefPtr<AtomStringImpl>> eventTypes) const;
+    inline bool hasCapturingEventListeners(AtomStringImpl* eventType); // Defined in EventTargetInlines.h
+    NODELETE bool hasActiveEventListeners(AtomStringImpl* eventType) const;
 
-    Vector<AtomString> eventTypes() const;
-    NODELETE const EventListenerVector& eventListeners(const AtomString& eventType);
+    Vector<RefPtr<AtomStringImpl>> eventTypes() const;
+    NODELETE const EventListenerVector& eventListeners(AtomStringImpl* eventType);
 
     enum class EventInvokePhase { Capturing, Bubbling };
     void fireEventListeners(Event&, EventInvokePhase);

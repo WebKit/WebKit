@@ -40,7 +40,7 @@
 namespace WebCore {
 
 // https://www.w3.org/TR/css-counter-styles-3/#cyclic-system
-String CSSRegisteredCounterStyle::counterForSystemCyclic(int value) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemCyclic(int value) const
 {
     auto amountOfSymbols = symbols().size();
     ASSERT(amountOfSymbols > 0);
@@ -55,7 +55,7 @@ String CSSRegisteredCounterStyle::counterForSystemCyclic(int value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#fixed-system
-String CSSRegisteredCounterStyle::counterForSystemFixed(int value) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemFixed(int value) const
 {
     if (value < firstSymbolValueForFixedSystem())
         return { };
@@ -66,7 +66,7 @@ String CSSRegisteredCounterStyle::counterForSystemFixed(int value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#symbolic-system
-String CSSRegisteredCounterStyle::counterForSystemSymbolic(unsigned value) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemSymbolic(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
     ASSERT(amountOfSymbols > 0);
@@ -84,7 +84,7 @@ String CSSRegisteredCounterStyle::counterForSystemSymbolic(unsigned value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#alphabetic-system
-String CSSRegisteredCounterStyle::counterForSystemAlphabetic(unsigned value) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemAlphabetic(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
     ASSERT(amountOfSymbols >= 2);
@@ -92,7 +92,7 @@ String CSSRegisteredCounterStyle::counterForSystemAlphabetic(unsigned value) con
     if (value < 1)
         return { };
 
-    Vector<String> reversed;
+    Vector<RefPtr<StringImpl>> reversed;
     while (value) {
         value -= 1;
         reversed.append(symbols().at(value % amountOfSymbols).text);
@@ -105,7 +105,7 @@ String CSSRegisteredCounterStyle::counterForSystemAlphabetic(unsigned value) con
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#numeric-system
-String CSSRegisteredCounterStyle::counterForSystemNumeric(unsigned value) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemNumeric(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
     ASSERT(amountOfSymbols >= 2);
@@ -113,7 +113,7 @@ String CSSRegisteredCounterStyle::counterForSystemNumeric(unsigned value) const
     if (!value)
         return symbols().at(0).text;
 
-    Vector<String> reversed;
+    Vector<RefPtr<StringImpl>> reversed;
     while (value) {
         reversed.append(symbols().at(value % amountOfSymbols).text);
         value = static_cast<unsigned>(std::floor(value / amountOfSymbols));
@@ -125,7 +125,7 @@ String CSSRegisteredCounterStyle::counterForSystemNumeric(unsigned value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#additive-system
-String CSSRegisteredCounterStyle::counterForSystemAdditive(unsigned value) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemAdditive(unsigned value) const
 {
     auto& additiveSymbols = this->additiveSymbols();
     if (!value) {
@@ -137,7 +137,7 @@ String CSSRegisteredCounterStyle::counterForSystemAdditive(unsigned value) const
     }
 
     StringBuilder result;
-    auto appendToResult = [&](const String& symbol, unsigned frequency) {
+    auto appendToResult = [&](StringImpl* symbol, unsigned frequency) {
         for (unsigned i = 0; i < frequency; ++i)
             result.append(symbol);
     };
@@ -166,7 +166,7 @@ struct CJKCharacters {
 };
 
 // https://drafts.csswg.org/css-counter-styles/#extended-range-optional
-static String counterForSystemCJK(unsigned number, const CJKCharacters& characters, CJKLanguage language, Formality formality)
+static RefPtr<StringImpl> counterForSystemCJK(unsigned number, const CJKCharacters& characters, CJKLanguage language, Formality formality)
 {
     enum AbstractCJKCharacter : uint8_t {
         NoCharacter,
@@ -177,7 +177,7 @@ static String counterForSystemCJK(unsigned number, const CJKCharacters& characte
     };
 
     if (!number)
-        return span(characters.digits[0]);
+        return StringImpl::create(span(characters.digits[0]));
 
     // Slots hold, in output order, the thousands, hundreds and tens digits each followed by its
     // marker, then the ones digit, the group marker, and the separator the Korean styles need.
@@ -292,33 +292,33 @@ static String counterForSystemCJK(unsigned number, const CJKCharacters& characte
         else
             result[length++] = characters.digits[abstractCharacter - Digit0];
     }
-    return std::span<const char16_t> { result }.first(length);
+    return StringImpl::create(std::span<const char16_t> { result }.first(length));
 }
 
-String CSSRegisteredCounterStyle::counterForSystemDisclosureClosed(WritingMode writingMode)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemDisclosureClosed(WritingMode writingMode)
 {
     if (writingMode.isVerticalTypographic())
-        return span(writingMode.isInlineTopToBottom() ? blackDownPointingTriangle : blackUpPointingTriangle);
-    return span(writingMode.isBidiLTR() ? blackRightPointingTriangle : blackLeftPointingTriangle);
+        return StringImpl::create(span(writingMode.isInlineTopToBottom() ? blackDownPointingTriangle : blackUpPointingTriangle));
+    return StringImpl::create(span(writingMode.isBidiLTR() ? blackRightPointingTriangle : blackLeftPointingTriangle));
 }
 
-String CSSRegisteredCounterStyle::counterForSystemDisclosureOpen(WritingMode writingMode)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemDisclosureOpen(WritingMode writingMode)
 {
     switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
-        return span(blackDownPointingTriangle);
+        return StringImpl::create(span(blackDownPointingTriangle));
     case FlowDirection::BottomToTop:
-        return span(blackUpPointingTriangle);
+        return StringImpl::create(span(blackUpPointingTriangle));
     case FlowDirection::LeftToRight:
-        return span(blackRightPointingTriangle);
+        return StringImpl::create(span(blackRightPointingTriangle));
     case FlowDirection::RightToLeft:
-        return span(blackLeftPointingTriangle);
+        return StringImpl::create(span(blackLeftPointingTriangle));
     }
     ASSERT_NOT_REACHED();
     return { };
 }
 
-String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseInformal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseInformal(unsigned value)
 {
     static constexpr CJKCharacters simplifiedChineseInformalTable {
         { 0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
@@ -328,7 +328,7 @@ String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseInformal(unsi
     return counterForSystemCJK(value, simplifiedChineseInformalTable, CJKLanguage::Chinese, Formality::Informal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseFormal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseFormal(unsigned value)
 {
     static constexpr CJKCharacters simplifiedChineseFormalTable {
         { 0x96F6, 0x58F9, 0x8D30, 0x53C1, 0x8086, 0x4F0D, 0x9646, 0x67D2, 0x634C, 0x7396 },
@@ -338,7 +338,7 @@ String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseFormal(unsign
     return counterForSystemCJK(value, simplifiedChineseFormalTable, CJKLanguage::Chinese, Formality::Formal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseInformal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemTraditionalChineseInformal(unsigned value)
 {
     static constexpr CJKCharacters traditionalChineseInformalTable {
         { 0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
@@ -348,7 +348,7 @@ String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseInformal(uns
     return counterForSystemCJK(value, traditionalChineseInformalTable, CJKLanguage::Chinese, Formality::Informal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseFormal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemTraditionalChineseFormal(unsigned value)
 {
     static constexpr CJKCharacters traditionalChineseFormalTable {
         { 0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x8086, 0x4F0D, 0x9678, 0x67D2, 0x634C, 0x7396 },
@@ -358,7 +358,7 @@ String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseFormal(unsig
     return counterForSystemCJK(value, traditionalChineseFormalTable, CJKLanguage::Chinese, Formality::Formal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemJapaneseInformal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemJapaneseInformal(unsigned value)
 {
     static constexpr CJKCharacters japaneseInformalTable {
         { 0x3007, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
@@ -368,7 +368,7 @@ String CSSRegisteredCounterStyle::counterForSystemJapaneseInformal(unsigned valu
     return counterForSystemCJK(value, japaneseInformalTable, CJKLanguage::Japanese, Formality::Informal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemJapaneseFormal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemJapaneseFormal(unsigned value)
 {
     static constexpr CJKCharacters japaneseFormalTable {
         { 0x96F6, 0x58F1, 0x5F10, 0x53C2, 0x56DB, 0x4F0D, 0x516D, 0x4E03, 0x516B, 0x4E5D },
@@ -378,7 +378,7 @@ String CSSRegisteredCounterStyle::counterForSystemJapaneseFormal(unsigned value)
     return counterForSystemCJK(value, japaneseFormalTable, CJKLanguage::Japanese, Formality::Formal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemKoreanHangulFormal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemKoreanHangulFormal(unsigned value)
 {
     static constexpr CJKCharacters koreanHangulFormalTable {
         { 0xC601, 0xC77C, 0xC774, 0xC0BC, 0xC0AC, 0xC624, 0xC721, 0xCE60, 0xD314, 0xAD6C },
@@ -388,7 +388,7 @@ String CSSRegisteredCounterStyle::counterForSystemKoreanHangulFormal(unsigned va
     return counterForSystemCJK(value, koreanHangulFormalTable, CJKLanguage::Korean, Formality::Formal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemKoreanHanjaInformal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemKoreanHanjaInformal(unsigned value)
 {
     static constexpr CJKCharacters koreanHanjaInformalTable {
         { 0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
@@ -398,7 +398,7 @@ String CSSRegisteredCounterStyle::counterForSystemKoreanHanjaInformal(unsigned v
     return counterForSystemCJK(value, koreanHanjaInformalTable, CJKLanguage::Korean, Formality::Informal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemKoreanHanjaFormal(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemKoreanHanjaFormal(unsigned value)
 {
     static constexpr CJKCharacters koreanHanjaFormalTable {
         { 0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
@@ -408,13 +408,13 @@ String CSSRegisteredCounterStyle::counterForSystemKoreanHanjaFormal(unsigned val
     return counterForSystemCJK(value, koreanHanjaFormalTable, CJKLanguage::Korean, Formality::Formal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
 {
     ASSERT(value >= 1);
 
     if (value == 1) {
         char16_t ethiopicDigitOne = 0x1369;
-        return span(ethiopicDigitOne);
+        return StringImpl::create(span(ethiopicDigitOne));
     }
 
     // Split the number into groups of two digits, starting with the least significant decimal digit.
@@ -447,10 +447,10 @@ String CSSRegisteredCounterStyle::counterForSystemEthiopicNumeric(unsigned value
             isMostSignificantGroup = false;
     }
 
-    return std::span<const char16_t> { buffer }.first(length);
+    return StringImpl::create(std::span<const char16_t> { buffer }.first(length));
 }
 
-String CSSRegisteredCounterStyle::initialRepresentation(int value, WritingMode writingMode) const
+RefPtr<StringImpl> CSSRegisteredCounterStyle::initialRepresentation(int value, WritingMode writingMode) const
 {
     unsigned absoluteValue = absoluteValueAsUnsigned(value);
     switch (system()) {
@@ -498,7 +498,7 @@ String CSSRegisteredCounterStyle::initialRepresentation(int value, WritingMode w
     return { };
 }
 
-String CSSRegisteredCounterStyle::fallbackText(int value, WritingMode writingMode)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::fallbackText(int value, WritingMode writingMode)
 {
     if (m_isFallingBack || !fallback().get()) {
         m_isFallingBack = false;
@@ -510,13 +510,13 @@ String CSSRegisteredCounterStyle::fallbackText(int value, WritingMode writingMod
     return fallbackText;
 }
 
-String CSSRegisteredCounterStyle::text(int value, WritingMode writingMode)
+RefPtr<StringImpl> CSSRegisteredCounterStyle::text(int value, WritingMode writingMode)
 {
     if (!isInRange(value))
         return fallbackText(value, writingMode);
 
     auto result = initialRepresentation(value, writingMode);
-    if (result.isNull())
+    if (!result)
         return fallbackText(value, writingMode);
     if (!applyPadSymbols(result, value))
         return fallbackText(value, writingMode);
@@ -556,12 +556,12 @@ bool CSSRegisteredCounterStyle::shouldApplyNegativeSymbols(int value) const
     return false;
 }
 
-void CSSRegisteredCounterStyle::applyNegativeSymbols(String& text) const
+void CSSRegisteredCounterStyle::applyNegativeSymbols(RefPtr<StringImpl>& text) const
 {
-    text = negative().m_suffix.text.isEmpty() ? makeString(negative().m_prefix.text, text) : makeString(negative().m_prefix.text, text, negative().m_suffix.text);
+    text = isEmpty(negative().m_suffix.text) ? makeString(negative().m_prefix.text, text) : makeString(negative().m_prefix.text, text, negative().m_suffix.text);
 }
 
-bool CSSRegisteredCounterStyle::applyPadSymbols(String& text, int value) const
+bool CSSRegisteredCounterStyle::applyPadSymbols(RefPtr<StringImpl>& text, int value) const
 {
     // We limit the max UTF-16 padding length to 150 to match Firefox. This complies with CSS
     // Counter Styles Level 3, which requires us to support counter representations of at least 60
@@ -578,12 +578,12 @@ bool CSSRegisteredCounterStyle::applyPadSymbols(String& text, int value) const
     if (numberOfSymbolsToAdd <= 0)
         return true;
 
-    auto totalPadLength = checkedProduct<unsigned>(numberOfSymbolsToAdd, pad().m_padSymbol.text.length());
+    auto totalPadLength = checkedProduct<unsigned>(numberOfSymbolsToAdd, length(pad().m_padSymbol.text));
     if (totalPadLength.hasOverflowed() || totalPadLength.value() > maxPadLength)
         return false;
 
     StringBuilder result;
-    result.reserveCapacity(totalPadLength + text.length());
+    result.reserveCapacity(totalPadLength + length(text));
     for (int i = 0; i < numberOfSymbolsToAdd; ++i)
         result.append(pad().m_padSymbol.text);
     result.append(text);

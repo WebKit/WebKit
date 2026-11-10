@@ -219,7 +219,7 @@ PipelineLayout::PipelineLayout(Device& device)
 
 PipelineLayout::~PipelineLayout() = default;
 
-void PipelineLayout::setLabel(String&&)
+void PipelineLayout::setLabel(RefPtr<StringImpl>&&)
 {
     // There is no Metal object that represents a pipeline layout.
 }

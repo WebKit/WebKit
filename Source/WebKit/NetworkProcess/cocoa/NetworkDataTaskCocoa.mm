@@ -126,7 +126,7 @@ static void applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, con
 static void setCompressionDictionaryHeaders(WebCore::ResourceRequest& request, const CompressionDictionaryParameters::Match& match)
 {
     request.setHTTPHeaderField(WebCore::HTTPHeaderName::AvailableDictionary, makeString(':', base64EncodeToString(std::span { match.hash }), ':'));
-    if (auto dictionaryID = match.id.isEmpty() ? std::nullopt : RFC8941::escapeString(match.id))
+    if (auto dictionaryID = isEmpty(match.id) ? std::nullopt : RFC8941::escapeString(match.id))
         request.setHTTPHeaderField(WebCore::HTTPHeaderName::DictionaryID, makeString('"', *dictionaryID, '"'));
     else
         request.removeHTTPHeaderField(WebCore::HTTPHeaderName::DictionaryID);
@@ -163,7 +163,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
         && contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Default 
 #endif
-        && boundInterfaceIdentifier.isNull())
+        && !boundInterfaceIdentifier)
         return;
 
     auto mutableRequest = adoptNS([nsRequest mutableCopy]);
@@ -176,8 +176,8 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     if (!shouldContentSniff)
         [mutableRequest _setProperty:@NO forKey:bridge_cast(_kCFURLConnectionPropertyShouldSniff)];
 
-    if (!boundInterfaceIdentifier.isNull())
-        [mutableRequest setBoundInterfaceIdentifier:boundInterfaceIdentifier.createNSString().get()];
+    if (boundInterfaceIdentifier)
+        [mutableRequest setBoundInterfaceIdentifier:createNSString(boundInterfaceIdentifier).get()];
 
     nsRequest = WTF::move(mutableRequest);
 }
@@ -190,14 +190,14 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
     CheckedPtr session = networkSession();
     auto cnameDomain = [this]() {
         if (RetainPtr lastResolvedCNAMEInChain = [[m_task _resolvedCNAMEChain] lastObject])
-            return lastCNAMEDomain(lastResolvedCNAMEInChain.get());
+            return lastCNAMEDomain(StringImpl::create(lastResolvedCNAMEInChain.get()));
         return WebCore::RegistrableDomain { };
     }();
     if (!cnameDomain.isEmpty())
         session->setFirstPartyHostCNAMEDomain(requestURL.host().toString(), WTF::move(cnameDomain));
 
     if (RetainPtr ipAddress = lastRemoteIPAddress(m_task.get()); [ipAddress length])
-        session->setFirstPartyHostIPAddress(requestURL.host().toString(), ipAddress.get());
+        session->setFirstPartyHostIPAddress(requestURL.host().toString(), StringImpl::create(ipAddress.get()).get());
 }
 
 void NetworkDataTaskCocoa::installPendingStreamProbe(WebCore::PendingStreamState& state)
@@ -243,7 +243,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         url = request.url();
     
         if (CheckedPtr storageSession = protect(NetworkDataTask::networkSession())->networkStorageSession()) {
-            if (m_user.isEmpty() && m_password.isEmpty())
+            if (isEmpty(m_user) && isEmpty(m_password))
                 m_initialCredential = storageSession->credentialStorage().get(m_partition, url);
             else
                 storageSession->credentialStorage().set(m_partition, WebCore::Credential(m_user, m_password, WebCore::CredentialPersistence::None), url);
@@ -347,7 +347,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     updateTaskWithStoragePartitionIdentifier(request);
 #endif
 
-    WTFBeginSignpost(m_task.get(), DataTask, "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", request.httpMethod().utf8(), url.string().utf8(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+    WTFBeginSignpost(m_task.get(), DataTask, "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", utf8(request.httpMethod()), utf8(url.string()), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     switch (parameters.storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
@@ -423,7 +423,7 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
 
     if (hasPendingStreamBody() && challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
         if (RefPtr client = m_client) {
-            WebCore::ResourceError error { WebCore::errorDomainWebKitInternal, 0, firstRequest().url(), "Fetch upload streams cannot handle 401"_s, WebCore::ResourceError::Type::Cancellation };
+            WebCore::ResourceError error { StringImpl::create(WebCore::errorDomainWebKitInternal).ptr(), 0, firstRequest().url(), "Fetch upload streams cannot handle 401"_si, WebCore::ResourceError::Type::Cancellation };
             client->didCompleteWithError(error, { });
         }
         completionHandler(AuthenticationChallengeDisposition::Cancel, { });
@@ -476,7 +476,7 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
             session->reportNetworkIssue(*m_webPageProxyID, firstRequest().url());
     }
 #endif
-    auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get()));
+    auto resolvedIPAddress = WebCore::IPAddress::fromString(StringImpl::create(protect(lastRemoteIPAddress(m_task.get())).get()).get());
     if (CheckedPtr session = networkSession())
         response.setIPAddressSpace(session->classifyConnectionAddressSpace(resolvedIPAddress, response.url()));
     NetworkDataTask::didReceiveResponse(WTF::move(response), negotiatedLegacyTLS, privateRelayed, resolvedIPAddress, WTF::move(completionHandler));
@@ -486,7 +486,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 {
     WTFEmitSignpost(m_task.get(), DataTask, "redirect");
 
-    auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get()));
+    auto resolvedIPAddress = WebCore::IPAddress::fromString(StringImpl::create(protect(lastRemoteIPAddress(m_task.get())).get()).get());
     if (CheckedPtr session = networkSession())
         redirectResponse.setIPAddressSpace(session->classifyConnectionAddressSpace(resolvedIPAddress, redirectResponse.url()));
 
@@ -503,20 +503,20 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (shouldPreserveBody) {
         if (status == httpStatus307TemporaryRedirect || status == httpStatus308PermanentRedirect)
-            ASSERT(m_lastHTTPMethod == request.httpMethod());
+            ASSERT(equal(m_lastHTTPMethod, request.httpMethod()));
         RefPtr body = previousRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
             request.setHTTPBody(WTF::move(body));
 
-        String originalContentType = previousRequest.httpContentType();
-        if (!originalContentType.isEmpty())
+        RefPtr<StringImpl> originalContentType = previousRequest.httpContentType();
+        if (!isEmpty(originalContentType))
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
     } else if (status == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
         if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
-            request.setHTTPMethod("HEAD"_s);
+            request.setHTTPMethod("HEAD"_si);
 
-        String originalContentType = previousRequest.httpContentType();
-        if (!originalContentType.isEmpty())
+        RefPtr<StringImpl> originalContentType = previousRequest.httpContentType();
+        if (!isEmpty(originalContentType))
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
     }
     
@@ -545,7 +545,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     } else {
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
-        if (m_user.isEmpty() && m_password.isEmpty() && !redirectResponse.isNull()) {
+        if (isEmpty(m_user) && isEmpty(m_password) && !redirectResponse.isNull()) {
             auto credential = session->networkStorageSession() ? session->networkStorageSession()->credentialStorage().get(m_partition, request.url()) : WebCore::Credential();
             if (!credential.isEmpty()) {
                 m_initialCredential = credential;
@@ -634,10 +634,10 @@ void NetworkDataTaskCocoa::failForUnavailableCompressionDictionary()
 {
     cancel();
     if (RefPtr client = m_client)
-        client->didCompleteWithError(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, URL { [m_task currentRequest].URL }, "The compression dictionary for the response is not available"_s }, { });
+        client->didCompleteWithError(WebCore::ResourceError { StringImpl::create(WebCore::errorDomainWebKitInternal).ptr(), 0, URL { [m_task currentRequest].URL }, "The compression dictionary for the response is not available"_si }, { });
 }
 
-void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void NetworkDataTaskCocoa::setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     NetworkDataTask::setPendingDownloadLocation(filename, { }, allowOverwrite);
 
@@ -646,7 +646,7 @@ void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filenam
     if (RefPtr extention = m_sandboxExtension)
         extention->consume();
 
-    m_task.get()._pathToDownloadTaskFile = m_pendingDownloadLocation.createNSString().get();
+    m_task.get()._pathToDownloadTaskFile = createNSString(m_pendingDownloadLocation).get();
 
     if (allowOverwrite && FileSystem::fileExists(m_pendingDownloadLocation))
         FileSystem::deleteFile(filename);
@@ -657,11 +657,11 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
     if (!challenge.protectionSpace().isPasswordBased())
         return false;
     
-    if (!m_user.isEmpty() || !m_password.isEmpty()) {
+    if (!isEmpty(m_user) || !isEmpty(m_password)) {
         auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistence::ForSession : WebCore::CredentialPersistence::None;
         completionHandler(AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(m_user, m_password, persistence));
-        m_user = String();
-        m_password = String();
+        m_user = nullptr;
+        m_password = nullptr;
         return true;
     }
 
@@ -703,11 +703,11 @@ void NetworkDataTaskCocoa::transferSandboxExtensionToDownload(Download& download
     download.setSandboxExtension(WTF::move(m_sandboxExtension));
 }
 
-String NetworkDataTaskCocoa::suggestedFilename() const
+RefPtr<StringImpl> NetworkDataTaskCocoa::suggestedFilename() const
 {
-    if (!m_suggestedFilename.isEmpty())
+    if (!isEmpty(m_suggestedFilename))
         return m_suggestedFilename;
-    return m_task.get().response.suggestedFilename;
+    return StringImpl::create(m_task.get().response.suggestedFilename);
 }
 
 void NetworkDataTaskCocoa::cancel()
@@ -797,9 +797,9 @@ WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge
     return WebCore::Credential([NSURLCredential credentialForTrust: RetainPtr { protect(challenge.nsURLAuthenticationChallenge()).get().protectionSpace.serverTrust }.get()]);
 }
 
-String NetworkDataTaskCocoa::description() const
+RefPtr<StringImpl> NetworkDataTaskCocoa::description() const
 {
-    return String([m_task description]);
+    return StringImpl::create([m_task description]);
 }
 
 void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)

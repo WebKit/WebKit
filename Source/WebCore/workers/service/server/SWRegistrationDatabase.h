@@ -47,10 +47,10 @@ class SWRegistrationDatabase {
 public:
     static constexpr uint64_t schemaVersion = 8;
 
-    WEBCORE_EXPORT SWRegistrationDatabase(const String& path);
+    WEBCORE_EXPORT SWRegistrationDatabase(StringImpl* path);
     WEBCORE_EXPORT ~SWRegistrationDatabase();
 
-    WEBCORE_EXPORT static String databaseFilePath(const String& directory);
+    WEBCORE_EXPORT static RefPtr<StringImpl> databaseFilePath(StringImpl* directory);
     
     WEBCORE_EXPORT std::optional<Vector<ServiceWorkerContextData>> importRegistrations();
     WEBCORE_EXPORT std::optional<Vector<ServiceWorkerContextData>> importRegistrations(const SecurityOriginData& topOrigin);
@@ -83,7 +83,7 @@ private:
     Vector<ServiceWorkerContextData> collectRegistrationsFromStatement(SQLiteStatement&);
     std::optional<Vector<ServiceWorkerScripts>> updateRegistrationsImpl(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
 
-    String m_directory;
+    RefPtr<StringImpl> m_directory;
     std::unique_ptr<SQLiteDatabase> m_database;
     Vector<std::unique_ptr<SQLiteStatement>> m_cachedStatements;
     std::unique_ptr<SWScriptStorage> m_scriptStorage;
@@ -92,7 +92,7 @@ private:
 
 struct ImportedScriptAttributes {
     URL responseURL;
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
 };
 
 }

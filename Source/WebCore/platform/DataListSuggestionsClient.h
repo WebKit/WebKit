@@ -44,7 +44,7 @@ public:
     virtual Vector<DataListSuggestion> suggestions() = 0;
     virtual std::optional<FrameIdentifier> rootFrameID() const = 0;
 
-    virtual void didSelectDataListOption(const String&) = 0;
+    virtual void didSelectDataListOption(StringImpl*) = 0;
     virtual void didCloseSuggestions() = 0;
 };
 

@@ -33,18 +33,18 @@ namespace WebCore {
 
 class PerformanceServerTiming : public RefCounted<PerformanceServerTiming> {
 public:
-    NODELETE static Ref<PerformanceServerTiming> create(String&& name, double duration, String&& description);
+    NODELETE static Ref<PerformanceServerTiming> create(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description);
     ~PerformanceServerTiming();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     double duration() const { return m_duration; }
-    const String& description() const LIFETIME_BOUND { return m_description; }
+    const RefPtr<StringImpl>& description() const LIFETIME_BOUND { return m_description; }
 
 private:
-    PerformanceServerTiming(String&& name, double duration, String&& description);
-    String m_name;
+    PerformanceServerTiming(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description);
+    RefPtr<StringImpl> m_name;
     double m_duration;
-    String m_description;
+    RefPtr<StringImpl> m_description;
 };
 
 } // namespace WebCore

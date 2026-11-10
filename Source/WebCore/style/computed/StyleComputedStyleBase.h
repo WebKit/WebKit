@@ -618,7 +618,7 @@ public:
     inline std::optional<PseudoElementType> pseudoElementType() const;
     // True for the ::marker style itself and for the styles its content renderers inherit from it.
     inline bool isListMarkerStyle() const;
-    const AtomString& pseudoElementNameArgument() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& pseudoElementNameArgument() const LIFETIME_BOUND;
 
     NODELETE std::optional<PseudoElementIdentifier> pseudoElementIdentifier() const;
     void setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&&);
@@ -639,15 +639,15 @@ public:
 
     inline const CustomPropertyData& inheritedCustomProperties() const LIFETIME_BOUND;
     inline const CustomPropertyData& nonInheritedCustomProperties() const LIFETIME_BOUND;
-    const CustomProperty* customPropertyValue(const AtomString&) const;
+    const CustomProperty* customPropertyValue(AtomStringImpl*) const;
     void setCustomPropertyValue(Ref<const CustomProperty>&&, bool isInherited);
-    bool customPropertyValueEqual(const ComputedStyleBase&, const AtomString&) const;
+    bool customPropertyValueEqual(const ComputedStyleBase&, AtomStringImpl*) const;
     bool customPropertiesEqual(const ComputedStyleBase&) const;
     void deduplicateCustomProperties(const ComputedStyleBase&);
 
     // MARK: - Custom paint
 
-    void addCustomPaintWatchProperty(const AtomString&);
+    void addCustomPaintWatchProperty(AtomStringImpl*);
 
     // MARK: - Zoom
 

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority,  const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy policy, RequestPriority fetchPriority,  AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree, bool isAsync)
     : LoadableScript(nonce, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     , m_integrity(integrity)
     , m_isAsync(isAsync)
@@ -89,7 +89,7 @@ void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const
 {
     ASSERT(m_cachedScript);
     if (resource.resourceError().isAccessControl()) {
-        static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
+        static NeverDestroyed<RefPtr<StringImpl>> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         m_error = Error {
             ErrorType::CrossOriginLoad,
             ConsoleMessage {
@@ -149,19 +149,19 @@ bool LoadableNonModuleScriptBase::load(Document& document, const URL& sourceURL)
     };
 
     m_weakDocument = document;
-    m_cachedScript = downcast<CachedScript>(requestResourceWithCache(document, sourceURL, FetchOptionsDestination::Script, crossOriginMode(), String { integrity() }, priority(), { }));
+    m_cachedScript = downcast<CachedScript>(requestResourceWithCache(document, sourceURL, FetchOptionsDestination::Script, crossOriginMode(), RefPtr<StringImpl> { integrity() }, priority(), { }));
     if (!m_cachedScript)
         return false;
     protect(m_cachedScript)->addClient(*this);
     return true;
 }
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+Ref<LoadableClassicScript> LoadableClassicScript::create(AtomStringImpl* nonce, AtomStringImpl* integrityMetadata, ReferrerPolicy policy, RequestPriority fetchPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree, bool isAsync)
 {
     return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync));
 }
 
-LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+LoadableClassicScript::LoadableClassicScript(AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy policy, RequestPriority fetchPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree, bool isAsync)
     : LoadableNonModuleScriptBase(nonce, integrity, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync)
 {
 }

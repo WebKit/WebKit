@@ -1,0 +1,39 @@
+Tests the inputType of input events for editing commands whose editing action has no input type name (it is the empty string). These go through CompositeEditCommand::inputEventTypeName().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+unlink:
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+    result: Hello link world
+removeFormat:
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+    result: Hello bold world
+formatBlock:
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+    result:
+Hello world
+
+
+Unlink (testRunner):
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+    result: Hello link world
+RemoveFormat (testRunner):
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+    result: Hello italic world
+insertOrderedList:
+    beforeinput: inputType="insertOrderedList" data=null
+    input: inputType="insertOrderedList" data=null
+    result:
+Hello world
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world
+

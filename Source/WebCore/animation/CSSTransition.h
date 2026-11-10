@@ -49,7 +49,7 @@ public:
 
     virtual ~CSSTransition();
 
-    const AtomString transitionProperty() const;
+    const RefPtr<AtomStringImpl> transitionProperty() const;
     AnimatableCSSProperty property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
     const Style::ComputedStyle& targetStyle() const LIFETIME_BOUND { return *m_targetStyle; }
@@ -61,7 +61,7 @@ public:
 private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const Style::ComputedStyle& targetStyle, const Style::ComputedStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
-    Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
+    Ref<StyleOriginatedAnimationEvent> createEvent(AtomStringImpl* eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
 

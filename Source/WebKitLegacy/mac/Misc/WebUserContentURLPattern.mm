@@ -50,7 +50,7 @@
         return nil;
 
     _private = adoptNS([[WebUserContentURLPatternPrivate alloc] init]);
-    _private->pattern = WebCore::UserContentURLPattern(String(patternString));
+    _private->pattern = WebCore::UserContentURLPattern(StringImpl::create(patternString).get());
 
     return self;
 }
@@ -62,12 +62,12 @@
 
 - (NSString *)scheme
 {
-    return _private->pattern.scheme().createNSString().autorelease();
+    return createNSString(_private->pattern.scheme()).autorelease();
 }
 
 - (NSString *)host
 {
-    return _private->pattern.host().createNSString().autorelease();
+    return createNSString(_private->pattern.host()).autorelease();
 }
 
 - (BOOL)matchesSubdomains

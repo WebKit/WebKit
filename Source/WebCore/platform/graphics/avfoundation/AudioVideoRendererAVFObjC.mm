@@ -639,7 +639,7 @@ void AudioVideoRendererAVFObjC::setRate(double rate)
     if (m_rate == rate)
         return;
     m_rate = rate;
-    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch, m_rate).createNSString();
+    RetainPtr algorithm = createNSString(MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch, m_rate));
     applyOnAudioRenderers([&](auto* renderer) {
         setAudioTimePitchAlgorithm(renderer, algorithm.get());
     });
@@ -986,7 +986,7 @@ void AudioVideoRendererAVFObjC::setPreservesPitchAndCorrectionAlgorithm(bool pre
         return;
     m_preservesPitch = preservesPitch;
     m_pitchCorrectionAlgorithm = pitchCorrectionAlgorithm;
-    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), preservesPitch, m_rate).createNSString();
+    RetainPtr algorithm = createNSString(MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), preservesPitch, m_rate));
     applyOnAudioRenderers([&](auto* renderer) {
         setAudioTimePitchAlgorithm(renderer, algorithm.get());
     });
@@ -998,7 +998,7 @@ void AudioVideoRendererAVFObjC::setAudioTimePitchAlgorithm(AVSampleBufferAudioRe
 }
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-void AudioVideoRendererAVFObjC::setOutputDeviceId(const String& outputDeviceId)
+void AudioVideoRendererAVFObjC::setOutputDeviceId(StringImpl* outputDeviceId)
 {
     if (m_isShutdown)
         return;
@@ -1012,7 +1012,7 @@ void AudioVideoRendererAVFObjC::setOutputDeviceId(const String& outputDeviceId)
 
 void AudioVideoRendererAVFObjC::setOutputDeviceIdOnRenderer(AVSampleBufferAudioRenderer *renderer)
 {
-    if (m_audioOutputDeviceId.isEmpty() || m_audioOutputDeviceId == AudioMediaStreamTrackRenderer::defaultDeviceID()) {
+    if (isEmpty(m_audioOutputDeviceId) || equal(m_audioOutputDeviceId, AudioMediaStreamTrackRenderer::defaultDeviceID())) {
         // FIXME(rdar://155986053): Remove the @try/@catch when this exception is resolved.
         @try {
             [renderer setAudioOutputDeviceUniqueID:nil];
@@ -1020,7 +1020,7 @@ void AudioVideoRendererAVFObjC::setOutputDeviceIdOnRenderer(AVSampleBufferAudioR
             ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer setAudioOutputDeviceUniqueID:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         }
     } else
-        [renderer setAudioOutputDeviceUniqueID:m_audioOutputDeviceId.createNSString().get()];
+        [renderer setAudioOutputDeviceUniqueID:createNSString(m_audioOutputDeviceId).get()];
 }
 #endif
 
@@ -1307,7 +1307,7 @@ void AudioVideoRendererAVFObjC::addAudioRenderer(TrackIdentifier trackId)
 
     [renderer setMuted:m_muted];
     [renderer setVolume:m_volume];
-    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch, m_rate).createNSString();
+    RetainPtr algorithm = createNSString(MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch, m_rate));
     setAudioTimePitchAlgorithm(renderer.get(), algorithm.get());
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
@@ -1944,15 +1944,15 @@ void AudioVideoRendererAVFObjC::audioRendererWasAutomaticallyFlushed(AVSampleBuf
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void AudioVideoRendererAVFObjC::setSpatialTrackingInfo(bool prefersSpatialAudioExperience, SoundStageSize soundStage, const String& sceneIdentifier, const String& defaultLabel, const String& label)
+void AudioVideoRendererAVFObjC::setSpatialTrackingInfo(bool prefersSpatialAudioExperience, SoundStageSize soundStage, StringImpl* sceneIdentifier, StringImpl* defaultLabel, StringImpl* label)
 {
     if (m_isShutdown)
         return;
     if (m_prefersSpatialAudioExperience == prefersSpatialAudioExperience
         && m_soundStage == soundStage
-        && m_sceneIdentifier == sceneIdentifier
-        && m_defaultSpatialTrackingLabel == defaultLabel
-        && m_spatialTrackingLabel == label)
+        && equal(m_sceneIdentifier, sceneIdentifier)
+        && equal(m_defaultSpatialTrackingLabel, defaultLabel)
+        && equal(m_spatialTrackingLabel, label))
         return;
 
     m_prefersSpatialAudioExperience = prefersSpatialAudioExperience;
@@ -1987,9 +1987,9 @@ void AudioVideoRendererAVFObjC::updateSpatialTrackingLabel()
     }
 #endif
 
-    if (!m_spatialTrackingLabel.isNull()) {
+    if (m_spatialTrackingLabel) {
         INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);
-        [renderer setSTSLabel:m_spatialTrackingLabel.createNSString().get()];
+        [renderer setSTSLabel:createNSString(m_spatialTrackingLabel).get()];
         return;
     }
 
@@ -2011,9 +2011,9 @@ void AudioVideoRendererAVFObjC::updateSpatialTrackingLabel()
     // renderer.
     AVAudioSession *session = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
     RetainPtr<NSString> defaultLabel;
-    if (!m_defaultSpatialTrackingLabel.isNull()) {
+    if (m_defaultSpatialTrackingLabel) {
         INFO_LOG(LOGIDENTIFIER, "Default STSLabel: ", m_defaultSpatialTrackingLabel);
-        defaultLabel = m_defaultSpatialTrackingLabel.createNSString();
+        defaultLabel = createNSString(m_defaultSpatialTrackingLabel);
     } else {
         INFO_LOG(LOGIDENTIFIER, "AVAudioSession label: ", session.spatialTrackingLabel);
         defaultLabel = session.spatialTrackingLabel;
@@ -2366,7 +2366,7 @@ WTFLogChannel& AudioVideoRendererAVFObjC::logChannel() const
     return LogMedia;
 }
 
-String AudioVideoRendererAVFObjC::toString(TrackIdentifier trackId) const
+RefPtr<StringImpl> AudioVideoRendererAVFObjC::toString(TrackIdentifier trackId) const
 {
     StringBuilder builder;
 
@@ -2390,15 +2390,15 @@ String AudioVideoRendererAVFObjC::toString(TrackIdentifier trackId) const
     return builder.toString();
 }
 
-String AudioVideoRendererAVFObjC::toString(SeekState state) const
+RefPtr<StringImpl> AudioVideoRendererAVFObjC::toString(SeekState state) const
 {
     switch (state) {
     case Seeking:
-        return "Seeking"_s;
+        return "Seeking"_si;
     case WaitingForAvailableFame:
-        return "WaitingForAvailableFame"_s;
+        return "WaitingForAvailableFame"_si;
     case SeekCompleted:
-        return "SeekCompleted"_s;
+        return "SeekCompleted"_si;
     }
 }
 

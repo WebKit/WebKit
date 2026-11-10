@@ -38,22 +38,22 @@ inline ContainerNode& HTMLCollection::rootNode() const
     return ownerNode();
 }
 
-inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::findElementsWithId(const AtomString& id) const
+inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::findElementsWithId(AtomStringImpl* id) const
 {
     return find(m_idMap, id);
 }
 
-inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::findElementsWithName(const AtomString& name) const
+inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::findElementsWithName(AtomStringImpl* name) const
 {
     return find(m_nameMap, name);
 }
 
-inline void CollectionNamedElementCache::appendToIdCache(const AtomString& id, Element& element)
+inline void CollectionNamedElementCache::appendToIdCache(AtomStringImpl* id, Element& element)
 {
     append(m_idMap, id, element);
 }
 
-inline void CollectionNamedElementCache::appendToNameCache(const AtomString& name, Element& element)
+inline void CollectionNamedElementCache::appendToNameCache(AtomStringImpl* name, Element& element)
 {
     append(m_nameMap, name, element);
 }
@@ -67,18 +67,18 @@ inline void CollectionNamedElementCache::didPopulate()
         reportExtraMemoryAllocatedForCollectionIndexCache(cost);
 }
 
-inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::find(const StringToElementsMap& map, const AtomString& key) const
+inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::find(const StringToElementsMap& map, AtomStringImpl* key) const
 {
     ASSERT(m_didPopulate);
-    auto it = map.find(key.impl());
+    auto it = map.find(key);
     return it != map.end() ? &it->value : nullptr;
 }
 
-inline void CollectionNamedElementCache::append(StringToElementsMap& map, const AtomString& key, Element& element)
+inline void CollectionNamedElementCache::append(StringToElementsMap& map, AtomStringImpl* key, Element& element)
 {
-    if (!m_idMap.contains(key.impl()) && !m_nameMap.contains(key.impl()))
+    if (!m_idMap.contains(key) && !m_nameMap.contains(key))
         m_propertyNames.append(key);
-    map.add(key.impl(), Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>()).iterator->value.append(element);
+    map.add(key, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>()).iterator->value.append(element);
 }
 
 inline bool HTMLCollection::isRootedAtTreeScope() const

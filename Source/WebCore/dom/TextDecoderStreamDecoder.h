@@ -30,11 +30,11 @@ namespace WebCore {
 
 class TextDecoderStreamDecoder : public RefCounted<TextDecoderStreamDecoder> {
 public:
-    static ExceptionOr<Ref<TextDecoderStreamDecoder>> create(const String& label, bool fatal, bool ignoreBOM);
+    static ExceptionOr<Ref<TextDecoderStreamDecoder>> create(StringImpl* label, bool fatal, bool ignoreBOM);
 
-    String encoding() const { return m_textDecoder->encoding(); }
-    ExceptionOr<String> decode(BufferSource);
-    ExceptionOr<String> flush();
+    RefPtr<StringImpl> encoding() const { return m_textDecoder->encoding(); }
+    ExceptionOr<RefPtr<StringImpl>> decode(BufferSource);
+    ExceptionOr<RefPtr<StringImpl>> flush();
 
 private:
     explicit TextDecoderStreamDecoder(Ref<TextDecoder>&&);

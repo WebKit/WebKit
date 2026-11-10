@@ -43,7 +43,7 @@ public:
     virtual ~RTCVoidRequest() = default;
 
     virtual void requestSucceeded() = 0;
-    virtual void requestFailed(const String& error) = 0;
+    virtual void requestFailed(StringImpl* error) = 0;
 
 protected:
     RTCVoidRequest() = default;

@@ -33,7 +33,7 @@ class SVGFEMergeNodeElement final : public SVGElement {
 public:
     static Ref<SVGFEMergeNodeElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
     SVGAnimatedString& in1Animated() { return m_in1; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeNodeElement, SVGElement>;
@@ -41,7 +41,7 @@ public:
 private:
     SVGFEMergeNodeElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final { return false; }

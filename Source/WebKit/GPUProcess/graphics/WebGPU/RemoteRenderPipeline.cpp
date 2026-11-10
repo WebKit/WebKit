@@ -70,7 +70,7 @@ void RemoteRenderPipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier i
     objectHeap->addObject(identifier, remoteBindGroupLayout);
 }
 
-void RemoteRenderPipeline::setLabel(String&& label)
+void RemoteRenderPipeline::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

@@ -69,7 +69,7 @@ constexpr bool containsCurrentColor(const KeywordColor&)
 }
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const KeywordColor&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor&);
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const KeywordColor&);
 

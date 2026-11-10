@@ -57,7 +57,7 @@ Ref<CtapDriver> FidoAuthenticator::releaseDriver()
     return m_driver.releaseNonNull();
 }
 
-String FidoAuthenticator::transportForDebugging() const
+RefPtr<StringImpl> FidoAuthenticator::transportForDebugging() const
 {
     return WebCore::toString(driver().transport());
 }

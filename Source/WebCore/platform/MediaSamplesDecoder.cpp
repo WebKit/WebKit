@@ -151,12 +151,12 @@ static bool isHardwareDecodable(const VideoInfo& info)
 }
 
 struct VideoDecoderConfiguration {
-    String codec;
+    RefPtr<StringImpl> codec;
     VideoDecoder::Config config;
 };
 
 #if ENABLE(VP9) || ENABLE(AV1)
-static VideoDecoderConfiguration videoDecoderConfiguration(const VideoInfo& info, String&& codec, FourCC atomType)
+static VideoDecoderConfiguration videoDecoderConfiguration(const VideoInfo& info, RefPtr<StringImpl>&& codec, FourCC atomType)
 {
     RefPtr atom = extensionAtom(info, atomType);
     return { WTF::move(codec), {
@@ -172,13 +172,13 @@ static std::optional<VideoDecoderConfiguration> videoDecoderConfiguration(const 
 
 #if ENABLE(VP9)
     if (codecName == vp8CodecName)
-        return videoDecoderConfiguration(info, "vp8"_s, vpcCAtomType);
+        return videoDecoderConfiguration(info, "vp8"_si, vpcCAtomType);
     if (codecName == vp9CodecName && vp9Profile(info) == 0u)
-        return videoDecoderConfiguration(info, "vp09.00"_s, vpcCAtomType);
+        return videoDecoderConfiguration(info, "vp09.00"_si, vpcCAtomType);
 #endif
 #if ENABLE(AV1)
     if (codecName == av1CodecName && isSoftwareDecodableAV1(info))
-        return videoDecoderConfiguration(info, "av01."_s, av1CAtomType);
+        return videoDecoderConfiguration(info, "av01."_si, av1CAtomType);
 #endif
 
     UNUSED_VARIABLE(codecName);
@@ -318,7 +318,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const A
 
     Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { audioInfo }, WTF::move(outputInfo), filters));
 
-    auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<AudioDecoder::DecodedData, String>&& result) {
+    auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<AudioDecoder::DecodedData, RefPtr<StringImpl>>&& result) {
         RefPtr protectedDecoder = weakDecoder;
         if (!protectedDecoder)
             return;
@@ -348,7 +348,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createVideo(const V
 
     Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { videoInfo }, outputVideoInfo(videoInfo, videoInfo.size()), filters));
 
-    auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<VideoDecoder::DecodedFrame, String>&& result) {
+    auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<VideoDecoder::DecodedFrame, RefPtr<StringImpl>>&& result) {
         RefPtr protectedDecoder = weakDecoder;
         if (!protectedDecoder)
             return;
@@ -385,7 +385,7 @@ bool MediaSamplesDecoder::canContinueWith(const TrackInfo& info) const
             return false;
 
         return videoInfo->codecName() == currentInfo->codecName()
-            && videoInfo->codecString() == currentInfo->codecString()
+            && equal(videoInfo->codecString(), currentInfo->codecString())
             && videoInfo->size() == currentInfo->size()
             && videoInfo->displaySize() == currentInfo->displaySize()
             && videoInfo->bitDepth() == currentInfo->bitDepth()
@@ -399,7 +399,7 @@ bool MediaSamplesDecoder::canContinueWith(const TrackInfo& info) const
         return false;
 
     return audioInfo->codecName() == currentInfo->codecName()
-        && audioInfo->codecString() == currentInfo->codecString()
+        && equal(audioInfo->codecString(), currentInfo->codecString())
         && audioInfo->rate() == currentInfo->rate()
         && audioInfo->channels() == currentInfo->channels()
         && audioInfo->bitDepth() == currentInfo->bitDepth()

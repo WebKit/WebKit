@@ -104,7 +104,7 @@ class Stringifier {
     WTF_MAKE_NONCOPYABLE(Stringifier);
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static String stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space);
+    static RefPtr<StringImpl> stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space);
 
 private:
     class Holder {
@@ -151,11 +151,11 @@ private:
     bool m_usingArrayReplacer { false };
     PropertyNameArrayBuilder m_arrayReplacerPropertyNames;
     CallData m_replacerCallData;
-    String m_gap;
+    RefPtr<StringImpl> m_gap;
 
     MarkedArgumentBufferWithSize<16> m_objectStack;
     Vector<Holder, 16, UnsafeVectorOverflow> m_holderStack;
-    String m_repeatedGap;
+    RefPtr<StringImpl> m_repeatedGap;
     StringView m_indent;
 };
 
@@ -183,7 +183,7 @@ static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSValue
 
 static constexpr unsigned maxGapLength = 10;
 
-static inline String gap(JSGlobalObject* globalObject, JSValue space)
+static inline RefPtr<StringImpl> gap(JSGlobalObject* globalObject, JSValue space)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -196,15 +196,15 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
         unsigned count = clampTo<unsigned>(space.asNumber(), 0, maxGapLength);
         constexpr auto spaces = "          "_s;
         static_assert(spaces.length() == maxGapLength);
-        return String(spaces.span8().first(count));
+        return StringImpl::create(spaces.span8().first(count));
     }
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
-    String spaces = space.getString(globalObject);
+    RefPtr<StringImpl> spaces = space.getString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    if (spaces.length() <= maxGapLength)
+    if (length(spaces) <= maxGapLength)
         return spaces;
-    return spaces.substringSharingImpl(0, maxGapLength);
+    return substringSharingImpl(spaces, 0, maxGapLength);
 }
 
 // ------------------------------ PropertyNameForFunctionCall --------------------------------
@@ -223,7 +223,7 @@ JSValue PropertyNameForFunctionCall::value(VM& vm) const
 {
     if (!m_value) {
         if (!m_propertyName.isNull())
-            m_value = jsString(vm, String { m_propertyName.uid() });
+            m_value = jsString(vm, RefPtr<StringImpl> { m_propertyName.uid() });
         else {
             if (m_number <= 9)
                 return vm.smallStrings.singleCharacterString(m_number + '0');
@@ -276,7 +276,7 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
     m_gap = gap(globalObject, space);
 }
 
-String Stringifier::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
+RefPtr<StringImpl> Stringifier::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
 {
     VM& vm = globalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -376,7 +376,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (value.isObject()) {
         JSObject* object = asObject(value);
         if (object->inherits<JSRawJSONObject>()) {
-            String string = uncheckedDowncast<JSRawJSONObject>(object)->rawJSON(vm)->value(m_globalObject);
+            RefPtr<StringImpl> string = uncheckedDowncast<JSRawJSONObject>(object)->rawJSON(vm)->value(m_globalObject);
             RETURN_IF_EXCEPTION(scope, StringifyFailed);
             builder.append(WTF::move(string));
             return StringifySucceeded;
@@ -402,7 +402,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (value.isString()) {
         auto string = asString(value)->value(m_globalObject);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
-        builder.appendQuotedJSONString(string);
+        builder.appendQuotedJSONString(string->get());
         return StringifySucceeded;
     }
 
@@ -476,23 +476,23 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
 NODELETE inline bool Stringifier::willIndent() const
 {
-    return !m_gap.isEmpty();
+    return !isEmpty(m_gap);
 }
 
 inline void Stringifier::indent()
 {
     // Use a single shared string, m_repeatedGap, so we don't keep allocating new ones as we indent and unindent.
-    unsigned newSize = m_indent.length() + m_gap.length();
-    if (newSize > m_repeatedGap.length())
+    unsigned newSize = m_indent.length() + length(m_gap);
+    if (newSize > length(m_repeatedGap))
         m_repeatedGap = makeString(m_repeatedGap, m_gap);
-    ASSERT(newSize <= m_repeatedGap.length());
+    ASSERT(newSize <= length(m_repeatedGap));
     m_indent = StringView { m_repeatedGap }.left(newSize);
 }
 
 NODELETE inline void Stringifier::unindent()
 {
-    ASSERT(m_indent.length() >= m_gap.length());
-    m_indent = StringView { m_repeatedGap }.left(m_indent.length() - m_gap.length());
+    ASSERT(m_indent.length() >= length(m_gap));
+    m_indent = StringView { m_repeatedGap }.left(m_indent.length() - length(m_gap));
 }
 
 inline void Stringifier::startNewLine(StringBuilder& builder) const
@@ -641,7 +641,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         stringifier.startNewLine(builder);
 
         // Append the property name, colon, and space.
-        builder.appendQuotedJSONString(*propertyName.uid());
+        builder.appendQuotedJSONString(protect(propertyName.uid()).get());
         builder.append(':');
         if (stringifier.willIndent())
             builder.append(' ');
@@ -716,7 +716,7 @@ template<typename CharType, BufferMode bufferMode>
 class FastStringifier {
 public:
     // Returns null string if the fast case fails.
-    static String stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space, std::optional<FailureReason>&);
+    static RefPtr<StringImpl> stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space, std::optional<FailureReason>&);
 
     static constexpr unsigned staticBufferSize = bufferMode == BufferMode::StaticBuffer ? 8192 : 8;
     static constexpr unsigned dynamicBufferInlineCapacity = bufferMode == BufferMode::StaticBuffer ? 0 : 1024;
@@ -748,7 +748,7 @@ private:
     template<HasGap hasGap> bool appendPreparedObjectKey(const PreparedProperty&, bool& wroteProperty, unsigned newLineAndIndent, unsigned valueCapacity, CharType*& out, unsigned& length, unsigned& capacity);
     template<HasGap hasGap> void appendPreparedObject(JSObject&, unsigned structureSlot);
     template<HasGap hasGap> void appendUnpreparedObject(JSObject&, StructureID);
-    String result();
+    RefPtr<StringImpl> result();
 
     static ALWAYS_INLINE unsigned preparedStructureSlot(StructureID structureID)
     {
@@ -769,7 +769,7 @@ private:
         recordFailure(FailureReason::Unknown, std::forward<T>(reason));
     }
     void recordBufferFull();
-    String firstGetterSetterPropertyName(JSObject&) const;
+    RefPtr<StringImpl> firstGetterSetterPropertyName(JSObject&) const;
     void recordFastPropertyEnumerationFailure(JSObject&);
     bool haveFailure() const;
     bool hasRemainingCapacity(unsigned size = 1);
@@ -777,7 +777,7 @@ private:
     bool mayHaveToJSON(JSObject&) const;
 
     static void logOutcome(ASCIILiteral);
-    static void logOutcome(String&&);
+    static void logOutcome(RefPtr<StringImpl>&&);
 
     static unsigned usableBufferSize(unsigned availableBufferSize);
 
@@ -817,13 +817,13 @@ inline void FastStringifier<CharType, bufferMode>::logOutcome(ASCIILiteral)
 
 #else
 
-static void logOutcomeImpl(String&& outcome)
+static void logOutcomeImpl(RefPtr<StringImpl>&& outcome)
 {
-    static NeverDestroyed<HashCountedSet<String>> set;
+    static NeverDestroyed<HashCountedSet<RefPtr<StringImpl>>> set;
     static std::atomic<unsigned> count;
     set->add(outcome);
     if (!(++count % 100)) {
-        Vector<KeyValuePair<String, unsigned>> vector;
+        Vector<KeyValuePair<RefPtr<StringImpl>, unsigned>> vector;
         for (auto& pair : set.get())
             vector.append(pair);
         std::ranges::sort(vector, [](auto& a, auto &b) {
@@ -840,11 +840,11 @@ static void logOutcomeImpl(String&& outcome)
 template<typename CharType, BufferMode bufferMode>
 void FastStringifier<CharType, bufferMode>::logOutcome(ASCIILiteral outcome)
 {
-    logOutcomeImpl(String { outcome });
+    logOutcomeImpl(StringImpl::create(outcome));
 }
 
 template<typename CharType, BufferMode bufferMode>
-void FastStringifier<CharType, bufferMode>::logOutcome(String&& outcome)
+void FastStringifier<CharType, bufferMode>::logOutcome(RefPtr<StringImpl>&& outcome)
 {
     logOutcomeImpl(WTF::move(outcome));
 }
@@ -970,7 +970,7 @@ inline bool FastStringifier<CharType, bufferMode>::haveFailure() const
 }
 
 template<typename CharType, BufferMode bufferMode>
-inline String FastStringifier<CharType, bufferMode>::result()
+inline RefPtr<StringImpl> FastStringifier<CharType, bufferMode>::result()
 {
     if (haveFailure())
         return { };
@@ -990,7 +990,7 @@ inline String FastStringifier<CharType, bufferMode>::result()
             m_dynamicBuffer.shrinkToFit();
         return StringImpl::adopt(WTF::move(m_dynamicBuffer));
     }
-    return std::span { static_cast<const FastStringifier*>(this)->buffer(), m_length };
+    return StringImpl::create(std::span { static_cast<const FastStringifier*>(this)->buffer(), m_length });
 }
 
 template<typename CharType, BufferMode bufferMode>
@@ -1056,7 +1056,7 @@ inline void FastStringifier<CharType, bufferMode>::recordFastPropertyEnumeration
 #else
 
 template<typename CharType, BufferMode bufferMode>
-String FastStringifier<CharType, bufferMode>::firstGetterSetterPropertyName(JSObject& object) const
+RefPtr<StringImpl> FastStringifier<CharType, bufferMode>::firstGetterSetterPropertyName(JSObject& object) const
 {
     auto scope = DECLARE_THROW_SCOPE(m_vm);
     PropertyNameArray names(m_vm, PropertyNameMode::Strings, PrivateSymbolMode::Include);
@@ -1154,9 +1154,9 @@ inline bool FastStringifier<CharType, bufferMode>::setGap(JSValue space)
     }
     if (space.isString()) {
         auto string = asString(space)->tryGetValue();
-        if (string.data.isNull() || !string.data.is8Bit()) [[unlikely]]
+        if (!string.data || !is8Bit(string.data)) [[unlikely]]
             return false;
-        auto span = string.data.span8();
+        auto span = span8(string.data);
         unsigned count = std::min<unsigned>(span.size(), maxGapLength);
         memcpySpan(std::span { m_gap }.first(count), span.first(count));
         m_gapLength = count;
@@ -2176,7 +2176,7 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendInt32Array(JSArra
 }
 
 template<typename CharType, BufferMode bufferMode>
-NEVER_INLINE String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space, std::optional<FailureReason>& failureReason)
+NEVER_INLINE RefPtr<StringImpl> FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space, std::optional<FailureReason>& failureReason)
 {
     if (replacer.isObject()) {
         logOutcome("replacer"_s);
@@ -2205,7 +2205,7 @@ static bool recentResultsOverflowedStaticBuffer(VM& vm)
     return smallerLength > FastStringifier<Latin1Character, BufferMode::StaticBuffer>::staticBufferSize;
 }
 
-static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
+static NEVER_INLINE RefPtr<StringImpl> stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
 {
     VM& vm = globalObject.vm();
     uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
@@ -2214,30 +2214,30 @@ static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value
         bool triedLatin1DynamicBuffer = false;
         if (recentResultsOverflowedStaticBuffer(vm)) {
             triedLatin1DynamicBuffer = true;
-            if (String result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+            if (RefPtr<StringImpl> result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !!result)
                 return result;
             dynamicBufferLengths<Latin1Character>(vm) = 0;
         }
         failureReason = std::nullopt;
-        if (String result = FastStringifier<Latin1Character, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+        if (RefPtr<StringImpl> result = FastStringifier<Latin1Character, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !!result)
             return result;
         if (failureReason == FailureReason::Found16BitEarly) {
             failureReason = std::nullopt;
-            if (String result = FastStringifier<char16_t, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+            if (RefPtr<StringImpl> result = FastStringifier<char16_t, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !!result)
                 return result;
 
             if (failureReason == FailureReason::BufferFull) {
                 failureReason = std::nullopt;
-                if (String result = FastStringifier<char16_t, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+                if (RefPtr<StringImpl> result = FastStringifier<char16_t, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !!result)
                     return result;
             }
         } else if (failureReason == FailureReason::BufferFull && !triedLatin1DynamicBuffer) {
             failureReason = std::nullopt;
-            if (String result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+            if (RefPtr<StringImpl> result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !!result)
                 return result;
         }
     }
-    String result = Stringifier::stringify(globalObject, value, replacer, space);
+    RefPtr<StringImpl> result = Stringifier::stringify(globalObject, value, replacer, space);
 #if FAST_STRINGIFY_LOG_USAGE
     if (!result.isNull())
         dataLogLn("Not fastStringify: ", result);
@@ -2404,7 +2404,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             case ArrayEndVisitMember: {
                 JSObject* array = asObject(markedStack.last());
-                JSValue filteredValue = callReviver(array, jsString(vm, String::number(indexStack.last())), outValue, outValueRange);
+                JSValue filteredValue = callReviver(array, jsString(vm, makeString(indexStack.last())), outValue, outValueRange);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
                     array->methodTable()->deletePropertyByIndex(array, m_globalObject, indexStack.last());
@@ -2605,8 +2605,8 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
 // ECMA-262 v5 15.12.3
 JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncStringify, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    String result = stringify(*globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2));
-    return result.isNull() ? encodedJSUndefined() : JSValue::encode(jsString(globalObject->vm(), WTF::move(result)));
+    RefPtr<StringImpl> result = stringify(*globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2));
+    return !result ? encodedJSUndefined() : JSValue::encode(jsString(globalObject->vm(), WTF::move(result)));
 }
 
 JSValue JSONParse(JSGlobalObject* globalObject, StringView json)
@@ -2648,12 +2648,12 @@ JSValue JSONParseWithException(JSGlobalObject* globalObject, StringView json)
     return result;
 }
 
-String JSONStringify(JSGlobalObject* globalObject, JSValue value, JSValue space)
+RefPtr<StringImpl> JSONStringify(JSGlobalObject* globalObject, JSValue value, JSValue space)
 {
     return stringify(*globalObject, value, jsNull(), space);
 }
 
-String JSONStringify(JSGlobalObject* globalObject, JSValue value, unsigned indent)
+RefPtr<StringImpl> JSONStringify(JSGlobalObject* globalObject, JSValue value, unsigned indent)
 {
     return stringify(*globalObject, value, jsNull(), jsNumber(indent));
 }
@@ -2681,7 +2681,7 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncRawJSON, (JSGlobalObject* globalObject, Ca
     auto view = jsString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (view->isEmpty()) [[unlikely]] {
-        throwSyntaxError(globalObject, scope, "JSON.rawJSON cannot accept empty string"_s);
+        throwSyntaxError(globalObject, scope, "JSON.rawJSON cannot accept empty string"_si);
         return { };
     }
 

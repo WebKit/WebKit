@@ -132,7 +132,7 @@ public:
     FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) final;
     void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode) final;
     void drawGlyphsImmediate(const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode) final;
-    void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) final;
+    void drawEmphasisMarks(const FontCascade&, const TextRun&, AtomStringImpl* mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) final;
     void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady) final;
 
     void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle) final;
@@ -146,8 +146,8 @@ public:
 
     void setURLForRect(const URL&, const FloatRect&) final;
 
-    void setDestinationForRect(const String& name, const FloatRect&) final;
-    void addDestinationAtPoint(const String& name, const FloatPoint&) final;
+    void setDestinationForRect(StringImpl* name, const FloatRect&) final;
+    void addDestinationAtPoint(StringImpl* name, const FloatPoint&) final;
 
     bool supportsInternalLinks() const final;
 

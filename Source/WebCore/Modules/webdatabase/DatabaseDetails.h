@@ -39,7 +39,7 @@ class DatabaseDetails {
 public:
     DatabaseDetails() = default;
 
-    DatabaseDetails(const String& databaseName, const String& displayName, uint64_t expectedUsage, uint64_t currentUsage, std::optional<WallTime> creationTime, std::optional<WallTime> modificationTime)
+    DatabaseDetails(StringImpl* databaseName, StringImpl* displayName, uint64_t expectedUsage, uint64_t currentUsage, std::optional<WallTime> creationTime, std::optional<WallTime> modificationTime)
         : m_name(databaseName)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
@@ -49,8 +49,8 @@ public:
     {
     }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& displayName() const LIFETIME_BOUND { return m_displayName; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& displayName() const LIFETIME_BOUND { return m_displayName; }
     uint64_t expectedUsage() const { return m_expectedUsage; }
     uint64_t currentUsage() const { return m_currentUsage; }
     std::optional<WallTime> creationTime() const { return m_creationTime; }
@@ -60,8 +60,8 @@ public:
 #endif
 
 private:
-    String m_name;
-    String m_displayName;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_displayName;
     uint64_t m_expectedUsage { 0 };
     uint64_t m_currentUsage { 0 };
     Markable<WallTime> m_creationTime;

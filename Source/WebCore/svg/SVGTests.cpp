@@ -56,15 +56,15 @@ SVGTests::SVGTests(SVGElement* contextElement)
 {
 }
 
-bool SVGTests::hasExtension(const String& extension)
+bool SVGTests::hasExtension(StringImpl* extension)
 {
     // We recognize XHTML and MathML, as implemented in Gecko and suggested in the SVG Tiny
     // recommendation (http://www.w3.org/TR/SVG11/struct.html#RequiredExtensionsAttribute).
 #if ENABLE(MATHML)
-    if (extension == MathMLNames::mathmlNamespaceURI)
+    if (equal(extension, MathMLNames::mathmlNamespaceURI.get()))
         return true;
 #endif
-    return extension == HTMLNames::xhtmlNamespaceURI;
+    return equal(extension, HTMLNames::xhtmlNamespaceURI.get());
 }
 
 // FIXME: RFC 4647 Basic Filtering with parent language tags can cause cross-script
@@ -83,7 +83,7 @@ NODELETE static bool matchesLanguageTag(StringView range, StringView tag)
 
 // SVG2 5.6.5 implementation note: try the full user language tag, then iteratively
 // strip subtags to synthesize parent language tags (e.g. "zh-Hans-CN" → "zh-Hans" → "zh").
-NODELETE static bool userLanguageMatchesAnyListedTag(StringView userLanguage, const Vector<String>& listedTags)
+NODELETE static bool userLanguageMatchesAnyListedTag(StringView userLanguage, const Vector<RefPtr<StringImpl>>& listedTags)
 {
     for (StringView range = userLanguage; !range.isEmpty(); ) {
         for (auto& listedTag : listedTags) {
@@ -118,7 +118,7 @@ bool SVGTests::isValid() const
     return true;
 }
 
-void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
+void SVGTests::parseAttribute(const QualifiedName& attributeName, AtomStringImpl* value)
 {
     switch (attributeName.nodeName()) {
     case AttributeNames::requiredExtensionsAttr:

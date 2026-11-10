@@ -28,8 +28,8 @@
 namespace WebCore {
 
 struct MessageForTesting {
-    AtomString type;
-    String data;
+    RefPtr<AtomStringImpl> type;
+    RefPtr<StringImpl> data;
 };
 
 }

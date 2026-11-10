@@ -150,7 +150,7 @@ inline bool symbolTablePut(SymbolTableObjectType* object, JSGlobalObject* global
         ASSERT(!fastEntry.isNull());
         if (fastEntry.isReadOnly() && !ignoreReadOnlyErrors) {
             if (shouldThrowReadOnlyError)
-                throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
+                throwTypeError(globalObject, scope, StringImpl::create(ReadonlyPropertyWriteError).ptr());
             putResult = false;
             return true;
         }

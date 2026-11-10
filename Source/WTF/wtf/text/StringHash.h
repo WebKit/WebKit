@@ -29,21 +29,8 @@
 
 namespace WTF {
 
-    inline bool HashTraits<String>::isEmptyValue(const String& value)
-    {
-        return value.isNull();
-    }
-
-    inline void HashTraits<String>::customDeleteBucket(String& value)
-    {
-        // See unique_ptr's customDeleteBucket() for an explanation.
-        ASSERT(!isDeletedValue(value));
-        String valueToBeDestroyed = WTF::move(value);
-        constructDeletedValue(value);
-    }
-
     // The hash() functions on StringHash and ASCIICaseInsensitiveHash do not support
-    // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
+    // null strings. get(), contains(), and add() on HashMap<RefPtr<StringImpl>,..., StringHash>
     // cause a null-pointer dereference when passed null strings.
 
     // FIXME: We should really figure out a way to put the computeHash function that's
@@ -99,11 +86,20 @@ namespace WTF {
             return equal(a, b.get());
         }
 
-        static unsigned hash(const String& key) { SUPPRESS_UNCOUNTED_ARG return key.impl()->hash(); }
-        static bool equal(const String& a, const String& b)
-        {
-            return equal(a.impl(), b.impl());
-        }
+        // Same as hash(StringImpl::create(literal)), without allocating. Also avoids ambiguity between the
+        // StringImpl* and RefPtr<StringImpl> overloads, since ASCIILiteral converts to RefPtr<StringImpl>.
+        static unsigned hash(ASCIILiteral key) { return StringHasher::computeHashAndMaskTop8Bits(key.span8()); }
+
+        // Content hashing for other StringImpl smart pointer key types.
+        static unsigned hash(const Ref<StringImpl>& key) { return key->hash(); }
+        static unsigned hash(const RefPtr<AtomStringImpl>& key) { return key->hash(); }
+        static unsigned hash(const Ref<AtomStringImpl>& key) { return key->hash(); }
+        static bool equal(const Ref<StringImpl>& a, const Ref<StringImpl>& b) { return equal(a.ptrAllowingHashTableEmptyValue(), b.ptrAllowingHashTableEmptyValue()); }
+        static bool equal(const Ref<StringImpl>& a, const StringImpl* b) { return equal(a.ptrAllowingHashTableEmptyValue(), b); }
+        static bool equal(const StringImpl* a, const Ref<StringImpl>& b) { return equal(a, b.ptrAllowingHashTableEmptyValue()); }
+        static bool equal(const RefPtr<AtomStringImpl>& a, const RefPtr<AtomStringImpl>& b) { return equal(static_cast<const StringImpl*>(a.get()), static_cast<const StringImpl*>(b.get())); }
+        static bool equal(const RefPtr<AtomStringImpl>& a, const StringImpl* b) { return equal(static_cast<const StringImpl*>(a.get()), b); }
+        static bool equal(const StringImpl* a, const RefPtr<AtomStringImpl>& b) { return equal(a, static_cast<const StringImpl*>(b.get())); }
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
         static constexpr bool hasHashInValue = true;
@@ -177,23 +173,15 @@ namespace WTF {
             return equal(a.get(), b.get());
         }
 
-        static unsigned hash(const String& key)
+        static unsigned hash(const RefPtr<AtomStringImpl>& key)
         {
-            return hash(key.impl());
+            return hash(static_cast<const StringImpl*>(key.get()));
         }
-        static unsigned hash(const AtomString& key)
-        {
-            return hash(key.impl());
-        }
-        static bool equal(const String& a, const String& b)
-        {
-            return equal(a.impl(), b.impl());
-        }
-        static bool equal(const AtomString& a, const AtomString& b)
+        static bool equal(const RefPtr<AtomStringImpl>& a, const RefPtr<AtomStringImpl>& b)
         {
             // FIXME: Is the "a == b" here a helpful optimization?
             // It makes all cases where the strings are not identical slightly slower.
-            return a == b || equal(a.impl(), b.impl());
+            return a == b || equal(static_cast<const StringImpl*>(a.get()), static_cast<const StringImpl*>(b.get()));
         }
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
@@ -225,20 +213,20 @@ namespace WTF {
             return key.hash();
         }
 
-        static bool equal(const String& a, StringView b)
+        static bool equal(const RefPtr<StringImpl>& a, StringView b)
         {
-            return a == b;
+            return WTF::equal(StringView { a.get() }, b);
         }
 
-        static void translate(String* location, StringView view, unsigned hash)
+        static void translate(RefPtr<StringImpl>* location, StringView view, unsigned hash)
         {
             std::construct_at(location, view.toString());
-            location->impl()->setHash(hash);
+            (*location)->setHash(hash);
         }
     };
 
     // FIXME: Find a way to incorporate this functionality into ASCIICaseInsensitiveHash and allow
-    // a HashMap whose keys are type String to perform operations when given a key of type StringView.
+    // a HashMap whose keys are type RefPtr<StringImpl> to perform operations when given a key of type StringView.
     struct ASCIICaseInsensitiveStringViewHashTranslator {
         static unsigned hash(StringView key)
         {
@@ -247,12 +235,12 @@ namespace WTF {
             return ASCIICaseInsensitiveHash::hash(key.span16());
         }
 
-        static bool equal(const String& a, StringView b)
+        static bool equal(const RefPtr<StringImpl>& a, StringView b)
         {
-            return equalIgnoringASCIICaseCommon(a, b);
+            return equalIgnoringASCIICaseCommon(StringView { a.get() }, b);
         }
 
-        static void translate(String* location, StringView view, unsigned)
+        static void translate(RefPtr<StringImpl>* location, StringView view, unsigned)
         {
             std::construct_at(location, view.toString());
         }
@@ -264,15 +252,15 @@ namespace WTF {
             return StringHasher::computeHashAndMaskTop8Bits(literal.span8());
         }
 
-        static bool equal(const String& a, ASCIILiteral b)
+        static bool equal(const RefPtr<StringImpl>& a, ASCIILiteral b)
         {
-            return a == b;
+            return WTF::equal(static_cast<const StringImpl*>(a.get()), b);
         }
 
-        static void translate(String* location, ASCIILiteral literal, unsigned hash)
+        static void translate(RefPtr<StringImpl>* location, ASCIILiteral literal, unsigned hash)
         {
             std::construct_at(location, literal);
-            location->impl()->setHash(hash);
+            (*location)->setHash(hash);
         }
     };
 
@@ -282,9 +270,9 @@ namespace WTF {
             return ASCIICaseInsensitiveHash::hash(key.span8());
         }
 
-        static bool equal(const String& a, ASCIILiteral b)
+        static bool equal(const RefPtr<StringImpl>& a, ASCIILiteral b)
         {
-            return equalIgnoringASCIICase(a, b);
+            return equalIgnoringASCIICase(static_cast<const StringImpl*>(a.get()), b);
         }
     };
 
@@ -292,7 +280,8 @@ namespace WTF {
     template<> struct DefaultHash<RefPtr<StringImpl>> : StringHash { };
     template<> struct DefaultHash<PackedPtr<StringImpl>> : StringHash { };
     template<> struct DefaultHash<CompactPtr<StringImpl>> : StringHash { };
-    template<> struct DefaultHash<String> : StringHash { };
+    // Content, like the other string pointer keys (the generic DefaultHash<Ref<T>> is PtrHash, identity).
+    template<> struct DefaultHash<Ref<StringImpl>> : StringHash { };
 }
 
 using WTF::ASCIICaseInsensitiveHash;

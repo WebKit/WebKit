@@ -69,7 +69,7 @@ public:
         bool hashChange { false };
         Ref<AbortSignal> signal;
         RefPtr<DOMFormData> formData;
-        String downloadRequest;
+        RefPtr<StringImpl> downloadRequest;
         JSC::JSValue info;
         bool hasUAVisualTransition { false };
         RefPtr<Element> sourceElement;
@@ -92,8 +92,8 @@ public:
         std::optional<NavigationScrollBehavior> scroll;
     };
 
-    static Ref<NavigateEvent> create(JSC::JSGlobalObject&, const AtomString& type, Init&&);
-    static Ref<NavigateEvent> create(RefPtr<DOMWrapperWorld>&&, const AtomString& type, Init&&, AbortController*);
+    static Ref<NavigateEvent> create(JSC::JSGlobalObject&, AtomStringImpl* type, Init&&);
+    static Ref<NavigateEvent> create(RefPtr<DOMWrapperWorld>&&, AtomStringImpl* type, Init&&, AbortController*);
 
     NavigateEventIdentifier identifier() const { return m_identifier; }
     NavigationNavigationType navigationType() const { return m_navigationType; }
@@ -105,7 +105,7 @@ public:
     NavigationDestination& destination() { return m_destination; }
     AbortSignal& signal() { return m_signal; }
     DOMFormData* formData() { return m_formData.get(); }
-    String downloadRequest() { return m_downloadRequest; }
+    RefPtr<StringImpl> downloadRequest() { return m_downloadRequest; }
     NODELETE JSC::JSValue info();
     void setInfo(JSC::JSGlobalObject&, JSC::JSValue);
     JSValueInWrappedObject& infoWrapper() LIFETIME_BOUND { return m_info; }
@@ -125,8 +125,8 @@ public:
     Vector<Ref<NavigationPrecommitHandler>>& precommitHandlers() LIFETIME_BOUND { return m_precommitHandlers; }
 
 private:
-    NavigateEvent(JSC::JSGlobalObject&, const AtomString& type, Init&&, EventIsTrusted, AbortController*);
-    NavigateEvent(RefPtr<DOMWrapperWorld>&&, const AtomString& type, Init&&, EventIsTrusted, AbortController*);
+    NavigateEvent(JSC::JSGlobalObject&, AtomStringImpl* type, Init&&, EventIsTrusted, AbortController*);
+    NavigateEvent(RefPtr<DOMWrapperWorld>&&, AtomStringImpl* type, Init&&, EventIsTrusted, AbortController*);
 
     void potentiallyProcessScrollBehavior(Document&);
     void processScrollBehavior(Document&);
@@ -136,7 +136,7 @@ private:
     const Ref<NavigationDestination> m_destination;
     const Ref<AbortSignal> m_signal;
     const RefPtr<DOMFormData> m_formData;
-    String m_downloadRequest;
+    RefPtr<StringImpl> m_downloadRequest;
     Vector<Ref<NavigationInterceptHandler>> m_handlers;
     Vector<Ref<NavigationPrecommitHandler>> m_precommitHandlers;
     JSValueInWrappedObject m_info;

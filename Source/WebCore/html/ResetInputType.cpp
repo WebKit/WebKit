@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ResetInputType);
 
-const AtomString& ResetInputType::formControlType() const
+const RefPtr<AtomStringImpl>& ResetInputType::formControlType() const
 {
     return InputTypeNames::reset();
 }
@@ -61,7 +61,7 @@ void ResetInputType::handleDOMActivateEvent(Event& event)
     event.setDefaultHandled();
 }
 
-String ResetInputType::defaultValue() const
+RefPtr<StringImpl> ResetInputType::defaultValue() const
 {
     return resetButtonDefaultLabel();
 }

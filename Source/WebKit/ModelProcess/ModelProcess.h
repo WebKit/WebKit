@@ -77,7 +77,7 @@ public:
 
     void tryExitIfUnusedAndUnderMemoryPressure();
 
-    const String& applicationVisibleName() const LIFETIME_BOUND { return m_applicationVisibleName; }
+    const RefPtr<StringImpl>& applicationVisibleName() const LIFETIME_BOUND { return m_applicationVisibleName; }
 
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS) && HAVE(CORE_RE)
     void requestSharedSimulationConnection(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
@@ -111,14 +111,14 @@ private:
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT) && ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void()>&&) override;
 #endif
-    void createModelConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<String>& attributionTaskID, CompletionHandler<void()>&&);
+    void createModelConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<RefPtr<StringImpl>>& attributionTaskID, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(SecurityFlags::Storage&&);
     void addSession(PAL::SessionID);
     void removeSession(PAL::SessionID);
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
+    void dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key) final;
 #endif
 
     // Connections to WebProcesses.
@@ -128,7 +128,7 @@ private:
     HashSet<PAL::SessionID> m_sessions;
 
     WebCore::Timer m_idleExitTimer;
-    String m_applicationVisibleName;
+    RefPtr<StringImpl> m_applicationVisibleName;
     std::optional<int> m_debugEntityMemoryLimit;
     std::optional<int> m_debugImmersiveEntityMemoryLimit;
 };

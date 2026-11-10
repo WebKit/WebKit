@@ -40,21 +40,21 @@ template<typename IDLStringType>
 struct IdentifierConverter;
 
 template<> struct IdentifierConverter<IDLDOMString> {
-    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
+    static RefPtr<StringImpl> convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
     {
         return identifierToString(lexicalGlobalObject, identifier);
     }
 };
 
 template<> struct IdentifierConverter<IDLByteString> {
-    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
+    static RefPtr<StringImpl> convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
     {
         return identifierToByteString(lexicalGlobalObject, identifier);
     }
 };
 
 template<> struct IdentifierConverter<IDLUSVString> {
-    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
+    static RefPtr<StringImpl> convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
     {
         return identifierToUSVString(lexicalGlobalObject, identifier);
     }
@@ -138,10 +138,10 @@ private:
                 // 4. Set result[typedKey] to typedValue.
                 // Note: It's possible that typedKey is already in result if K is USVString and key contains unpaired surrogates.
                 if constexpr (std::is_same_v<K, IDLUSVString>) {
-                    if (!typedKey.is8Bit()) {
+                    if (!is8Bit(typedKey)) {
                         auto addResult = resultMap.add(typedKey, result.size());
                         if (!addResult.isNewEntry) {
-                            ASSERT(result[addResult.iterator->value].key == typedKey);
+                            ASSERT(equal(result[addResult.iterator->value].key, typedKey));
                             result[addResult.iterator->value].value = typedValue.releaseReturnValue();
                             continue;
                         }

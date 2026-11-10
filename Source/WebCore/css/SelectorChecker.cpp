@@ -72,7 +72,7 @@ enum class VisitedMatchType : unsigned char {
     Disabled, Enabled
 };
 
-static bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<AtomString>& types)
+static bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<RefPtr<AtomStringImpl>>& types)
 {
     // This pseudo class only matches the root element.
     if (&element != element.document().documentElement())
@@ -408,7 +408,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             ASSERT(stringList && !stringList->isEmpty());
             auto part = makeString("picker("_s, stringList->at(0), ')');
             if (context.requestedPseudoElement && context.requestedPseudoElement->type == PseudoElementType::UserAgentPartFallback) {
-                if (part != context.requestedPseudoElement->nameOrPart)
+                if (!equal(part, context.requestedPseudoElement->nameOrPart))
                     return MatchResult::fails(Match::SelectorFailsLocally);
                 collectedPseudoElements.add(PseudoElementType::UserAgentPartFallback);
                 matchType = MatchType::VirtualPseudoElementOnly;
@@ -418,7 +418,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             if (!root || root->mode() != ShadowRootMode::UserAgent)
                 return MatchResult::fails(Match::SelectorFailsLocally);
 
-            if (context.element->userAgentPart() != part)
+            if (!equal(context.element->userAgentPart(), part))
                 return MatchResult::fails(Match::SelectorFailsLocally);
 
             if (RefPtr select = dynamicDowncast<HTMLSelectElement>(root->host()); select && !select->supportsPickerPseudoElement())
@@ -622,10 +622,10 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     return MatchResult::fails(Match::SelectorFailsCompletely);
 }
 
-static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match match, const AtomString& selectorValue, bool caseSensitive)
+static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match match, AtomStringImpl* selectorValue, bool caseSensitive)
 {
-    const AtomString& value = attribute.value();
-    ASSERT(!value.isNull());
+    const RefPtr<AtomStringImpl>& value = attribute.value();
+    ASSERT(value);
 
     switch (match) {
     case CSSSelector::Match::Set:
@@ -637,21 +637,21 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
     case CSSSelector::Match::List:
         {
             // Ignore empty selectors or selectors containing spaces.
-            if (selectorValue.isEmpty() || selectorValue.find(isASCIIWhitespace<char16_t>) != notFound)
+            if (isEmpty(selectorValue) || find(selectorValue, isASCIIWhitespace<char16_t>) != notFound)
                 return false;
 
-            unsigned startSearchAt = 0;
+            size_t startSearchAt = 0;
             while (true) {
                 size_t foundPos;
                 if (caseSensitive)
-                    foundPos = value.find(selectorValue, startSearchAt);
+                    foundPos = find(value, selectorValue, startSearchAt);
                 else
-                    foundPos = value.findIgnoringASCIICase(selectorValue, startSearchAt);
+                    foundPos = findIgnoringASCIICase(value, selectorValue, startSearchAt);
                 if (foundPos == notFound)
                     return false;
-                if (!foundPos || isASCIIWhitespace(value[foundPos - 1])) {
-                    unsigned endStr = foundPos + selectorValue.length();
-                    if (endStr == value.length() || isASCIIWhitespace(value[endStr]))
+                if (!foundPos || isASCIIWhitespace(codeUnitAt(value, foundPos - 1))) {
+                    unsigned endStr = foundPos + length(selectorValue);
+                    if (endStr == length(value) || isASCIIWhitespace(codeUnitAt(value, endStr)))
                         break; // We found a match.
                 }
 
@@ -663,49 +663,49 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
     case CSSSelector::Match::Contain: {
         bool valueContainsSelectorValue;
         if (caseSensitive)
-            valueContainsSelectorValue = value.contains(selectorValue);
+            valueContainsSelectorValue = contains(value, selectorValue);
         else
-            valueContainsSelectorValue = value.containsIgnoringASCIICase(selectorValue);
+            valueContainsSelectorValue = containsIgnoringASCIICase(value, selectorValue);
 
-        if (!valueContainsSelectorValue || selectorValue.isEmpty())
+        if (!valueContainsSelectorValue || isEmpty(selectorValue))
             return false;
 
         break;
     }
     case CSSSelector::Match::Begin:
-        if (selectorValue.isEmpty())
+        if (isEmpty(selectorValue))
             return false;
         if (caseSensitive) {
-            if (!value.startsWith(selectorValue))
+            if (!startsWith(value, selectorValue))
                 return false;
         } else {
-            if (!value.startsWithIgnoringASCIICase(selectorValue))
+            if (!startsWithIgnoringASCIICase(value, selectorValue))
                 return false;
         }
         break;
     case CSSSelector::Match::End:
-        if (selectorValue.isEmpty())
+        if (isEmpty(selectorValue))
             return false;
         if (caseSensitive) {
-            if (!value.endsWith(selectorValue))
+            if (!endsWith(value, selectorValue))
                 return false;
         } else {
-            if (!value.endsWithIgnoringASCIICase(selectorValue))
+            if (!endsWithIgnoringASCIICase(value, selectorValue))
                 return false;
         }
         break;
     case CSSSelector::Match::Hyphen:
-        if (value.length() < selectorValue.length())
+        if (length(value) < length(selectorValue))
             return false;
         if (caseSensitive) {
-            if (!value.startsWith(selectorValue))
+            if (!startsWith(value, selectorValue))
                 return false;
         } else {
-            if (!value.startsWithIgnoringASCIICase(selectorValue))
+            if (!startsWithIgnoringASCIICase(value, selectorValue))
                 return false;
         }
         // It they start the same, check for exact match or following '-':
-        if (value.length() != selectorValue.length() && value[selectorValue.length()] != '-')
+        if (length(value) != length(selectorValue) && codeUnitAt(value, length(selectorValue)) != '-')
             return false;
         break;
     default:
@@ -731,7 +731,7 @@ static bool anyAttributeMatches(const Element& element, const CSSSelector& selec
     return false;
 }
 
-bool SelectorChecker::attributeSelectorMatches(const Element& element, const QualifiedName& attributeName, const AtomString& attributeValue, const CSSSelector& selector)
+bool SelectorChecker::attributeSelectorMatches(const Element& element, const QualifiedName& attributeName, AtomStringImpl* attributeValue, const CSSSelector& selector)
 {
     ASSERT(selector.isAttributeSelector());
     auto& selectorAttribute = selector.attribute();
@@ -821,11 +821,11 @@ NODELETE static inline bool tagMatches(const Element& element, const CSSSelector
     if (tagQName == anyQName())
         return true;
 
-    const AtomString& localName = (element.isHTMLElement() && element.document().isHTMLDocument()) ? simpleSelector.tagLowercaseLocalName() : tagQName.localName();
+    const RefPtr<AtomStringImpl>& localName = (element.isHTMLElement() && element.document().isHTMLDocument()) ? simpleSelector.tagLowercaseLocalName() : tagQName.localName();
 
     if (localName != starAtom() && localName != element.localName())
         return false;
-    const AtomString& namespaceURI = tagQName.namespaceURI();
+    const RefPtr<AtomStringImpl>& namespaceURI = tagQName.namespaceURI();
     return namespaceURI == starAtom() || namespaceURI == element.namespaceURI();
 }
 
@@ -900,7 +900,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         return element->hasClassNamePrefix(selector.value());
 
     if (selector.match() == CSSSelector::Match::Id) {
-        ASSERT(!selector.value().isNull());
+        ASSERT(selector.value());
         return element->idForStyleResolution() == selector.value();
     }
 
@@ -993,7 +993,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                         break;
                     }
                     if (auto* textNode = dynamicDowncast<Text>(*node)) {
-                        if (!textNode->data().isEmpty()) {
+                        if (!isEmpty(textNode->data())) {
                             result = false;
                             break;
                         }
@@ -1454,7 +1454,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             return matchRecursively(checkingContext, subcontext, ignoredPseudoElements).match == Match::SelectorMatches;
         }
         case CSSSelector::PseudoElement::Part: {
-            auto appendTranslatedPartNameToRuleScope = [&](auto& translatedPartNames, AtomString partName) {
+            auto appendTranslatedPartNameToRuleScope = [&](auto& translatedPartNames, RefPtr<AtomStringImpl> partName) {
                 if (checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element) {
                     translatedPartNames.append(partName);
                     return;
@@ -1462,13 +1462,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
 
                 RefPtr ruleScopeHost = Style::hostForScopeOrdinal(protect(*context.element), checkingContext.styleScopeOrdinal);
 
-                Vector<AtomString, 1> mappedNames { partName };
+                Vector<RefPtr<AtomStringImpl>, 1> mappedNames { partName };
                 for (CheckedPtr shadowRoot = element->containingShadowRoot(); shadowRoot; shadowRoot = shadowRoot->host()->containingShadowRoot()) {
                     // Apply mappings up to the scope the rules are coming from.
                     if (shadowRoot->host() == ruleScopeHost.get())
                         break;
 
-                    Vector<AtomString, 1> newMappedNames;
+                    Vector<RefPtr<AtomStringImpl>, 1> newMappedNames;
                     for (auto& name : mappedNames)
                         newMappedNames.appendVector(shadowRoot->partMappings().get(name));
                     mappedNames = newMappedNames;
@@ -1479,7 +1479,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                 translatedPartNames.appendVector(mappedNames);
             };
 
-            Vector<AtomString, 4> translatedPartNames;
+            Vector<RefPtr<AtomStringImpl>, 4> translatedPartNames;
             for (auto& partName : element->partNames())
                 appendTranslatedPartNameToRuleScope(translatedPartNames, partName);
 
@@ -1514,7 +1514,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                 return true;
 
             return std::ranges::all_of(list.span().subspan(1),
-                [&](const AtomString& classSelector) {
+                [&](AtomStringImpl* classSelector) {
                     return checkingContext.classList.contains(classSelector);
                 }
             );

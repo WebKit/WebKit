@@ -50,7 +50,7 @@ private:
     bool appendFormData(DOMFormData&) const override;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) override;
     bool storesValueSeparateFromAttribute() final;
-    void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void setValue(StringImpl*, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
 };
 
 } // namespace WebCore

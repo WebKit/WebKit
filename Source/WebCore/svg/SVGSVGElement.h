@@ -71,7 +71,7 @@ public: // DOM
     static Ref<SVGTransform> createSVGTransform();
     static Ref<SVGTransform> createSVGTransformFromMatrix(DOMMatrix2DInit&&);
 
-    RefPtr<Element> getElementById(const AtomString&);
+    RefPtr<Element> getElementById(AtomStringImpl*);
 
     void pauseAnimations();
     void unpauseAnimations();
@@ -147,7 +147,7 @@ private:
     SVGSVGElement(const QualifiedName&, Document&);
     virtual ~SVGSVGElement();
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) final;
     bool selfHasRelativeLengths() const override;
@@ -175,7 +175,7 @@ private:
     const Ref<SMILTimeContainer> m_timeContainer;
     const RefPtr<SVGViewSpec> m_viewSpec;
     RefPtr<SVGViewElement> m_currentViewElement;
-    String m_currentViewFragmentIdentifier;
+    RefPtr<StringImpl> m_currentViewFragmentIdentifier;
 
     const Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
 
@@ -188,8 +188,8 @@ private:
 
     const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
-    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
-    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
+    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_si) };
+    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_si) };
 };
 
 } // namespace WebCore

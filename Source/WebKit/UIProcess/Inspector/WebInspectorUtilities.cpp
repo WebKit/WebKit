@@ -62,7 +62,7 @@ NODELETE unsigned inspectorLevelForPage(WebPageProxy* page)
     return 1;
 }
 
-String defaultInspectorPageGroupIdentifierForPage(WebPageProxy* page)
+RefPtr<StringImpl> defaultInspectorPageGroupIdentifierForPage(WebPageProxy* page)
 {
     return makeString("__WebInspectorPageGroupLevel"_s, inspectorLevelForPage(page), "__"_s);
 }
@@ -117,9 +117,9 @@ NODELETE bool isInspectorPage(WebPageProxy& webPage)
 #if PLATFORM(COCOA)
 CFStringRef bundleIdentifierForSandboxBrokerSingleton()
 {
-    if (applicationBundleIdentifier() == "com.apple.SafariTechnologyPreview"_s)
+    if (equal(applicationBundleIdentifier(), "com.apple.SafariTechnologyPreview"_s))
         return CFSTR("com.apple.SafariTechnologyPreview.SandboxBroker");
-    if (applicationBundleIdentifier() == "com.apple.Safari.automation"_s)
+    if (equal(applicationBundleIdentifier(), "com.apple.Safari.automation"_s))
         return CFSTR("com.apple.Safari.automation.SandboxBroker");
 
     return CFSTR("com.apple.Safari.SandboxBroker");

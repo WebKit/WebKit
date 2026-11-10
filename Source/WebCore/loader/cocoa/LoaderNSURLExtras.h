@@ -29,6 +29,6 @@
 #import <Foundation/Foundation.h>
 #import <wtf/Forward.h>
 
-WEBCORE_EXPORT NSString *suggestedFilenameWithMIMEType(NSURL *, const String& MIMEType, const String& defaultValue);
-WEBCORE_EXPORT NSString *suggestedFilenameWithMIMEType(NSURL *, const String& MIMEType);
+WEBCORE_EXPORT NSString *suggestedFilenameWithMIMEType(NSURL *, StringImpl* MIMEType, StringImpl* defaultValue);
+WEBCORE_EXPORT NSString *suggestedFilenameWithMIMEType(NSURL *, StringImpl* MIMEType);
 WEBCORE_EXPORT NSString *filenameByFixingIllegalCharacters(NSString *);

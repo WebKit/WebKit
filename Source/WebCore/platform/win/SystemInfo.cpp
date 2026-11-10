@@ -88,18 +88,18 @@ static WORD processorArchitecture()
     return architecture;
 }
 
-static String architectureTokenForUAString()
+static RefPtr<StringImpl> architectureTokenForUAString()
 {
     if (isWOW64())
-        return "; WOW64"_s;
+        return "; WOW64"_si;
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_AMD64)
-        return "; Win64; x64"_s;
+        return "; Win64; x64"_si;
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_IA64)
-        return "; Win64; IA64"_s;
+        return "; Win64; IA64"_si;
     return { };
 }
 
-String windowsVersionForUAString()
+RefPtr<StringImpl> windowsVersionForUAString()
 {
     auto [major, minor] = windowsVersion();
     return makeString("Windows NT "_s, major, '.', minor, architectureTokenForUAString());

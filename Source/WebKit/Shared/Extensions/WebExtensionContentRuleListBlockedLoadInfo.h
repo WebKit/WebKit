@@ -39,9 +39,9 @@ struct WebExtensionContentRuleListBlockedLoadInfo {
     std::optional<WebCore::FrameIdentifier> frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     URL url;
-    String httpMethod;
+    RefPtr<StringImpl> httpMethod;
     ResourceLoadInfo::Type type;
-    Vector<String> blockingContentRuleListIdentifiers;
+    Vector<RefPtr<StringImpl>> blockingContentRuleListIdentifiers;
 };
 
 }

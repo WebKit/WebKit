@@ -48,9 +48,9 @@ std::array<NSCalendarUnit, CoreIPCDateComponents::numberOfComponentIndexes> cale
 CoreIPCDateComponents::CoreIPCDateComponents(NSDateComponents *components)
 {
     if (components.calendar)
-        m_calendarIdentifier = components.calendar.calendarIdentifier;
+        m_calendarIdentifier = StringImpl::create(components.calendar.calendarIdentifier);
     if (components.timeZone)
-        m_timeZoneName = components.timeZone.name;
+        m_timeZoneName = StringImpl::create(components.timeZone.name);
 
     for (size_t i = 0; i < numberOfComponentIndexes; ++i)
         m_componentValues[i] = [components valueForComponent:calendarUnitForComponentIndex[i]];
@@ -63,10 +63,10 @@ RetainPtr<id> CoreIPCDateComponents::toID() const
     for (size_t i = 0; i < numberOfComponentIndexes; ++i)
         [components setValue:m_componentValues[i] forComponent:calendarUnitForComponentIndex[i]];
 
-    if (!m_calendarIdentifier.isEmpty())
-        components.get().calendar = [NSCalendar calendarWithIdentifier:m_calendarIdentifier.createNSString().get()];
-    if (!m_timeZoneName.isEmpty())
-        components.get().timeZone = [NSTimeZone timeZoneWithName:m_timeZoneName.createNSString().get()];
+    if (!isEmpty(m_calendarIdentifier))
+        components.get().calendar = [NSCalendar calendarWithIdentifier:createNSString(m_calendarIdentifier).get()];
+    if (!isEmpty(m_timeZoneName))
+        components.get().timeZone = [NSTimeZone timeZoneWithName:createNSString(m_timeZoneName).get()];
 
     return components;
 }

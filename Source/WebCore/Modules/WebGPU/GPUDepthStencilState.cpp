@@ -35,20 +35,20 @@ namespace WebCore {
 Ref<JSON::Object> GPUDepthStencilState::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("format"_s, convertEnumerationToString(format));
+    json->setString("format"_si, convertEnumerationToString(format));
     if (depthWriteEnabled)
-        json->setBoolean("depthWriteEnabled"_s, *depthWriteEnabled);
+        json->setBoolean("depthWriteEnabled"_si, *depthWriteEnabled);
     if (depthCompare)
-        json->setString("depthCompare"_s, convertEnumerationToString(*depthCompare));
+        json->setString("depthCompare"_si, convertEnumerationToString(*depthCompare));
     if (stencilFront)
-        json->setObject("stencilFront"_s, stencilFront->toJSON());
+        json->setObject("stencilFront"_si, stencilFront->toJSON());
     if (stencilBack)
-        json->setObject("stencilBack"_s, stencilBack->toJSON());
-    json->setDouble("stencilReadMask"_s, stencilReadMask);
-    json->setDouble("stencilWriteMask"_s, stencilWriteMask);
-    json->setDouble("depthBias"_s, depthBias);
-    json->setDouble("depthBiasSlopeScale"_s, depthBiasSlopeScale);
-    json->setDouble("depthBiasClamp"_s, depthBiasClamp);
+        json->setObject("stencilBack"_si, stencilBack->toJSON());
+    json->setDouble("stencilReadMask"_si, stencilReadMask);
+    json->setDouble("stencilWriteMask"_si, stencilWriteMask);
+    json->setDouble("depthBias"_si, depthBias);
+    json->setDouble("depthBiasSlopeScale"_si, depthBiasSlopeScale);
+    json->setDouble("depthBiasClamp"_si, depthBiasClamp);
     return json;
 }
 

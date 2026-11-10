@@ -993,7 +993,7 @@ TEST(NativePromise, MoveOnlyType)
 // A WTFString can be directly returned by a producer. More generically, so long as an object implements an `isolatedCopy()` method, it will be automatically called.
 TEST(NativePromise, WTFString)
 {
-    using MyPromise = NativePromise<String, String>;
+    using MyPromise = NativePromise<RefPtr<StringImpl>, RefPtr<StringImpl>>;
 
     AutoWorkQueue awq2;
     auto queue2 = awq2.queue();
@@ -1002,8 +1002,8 @@ TEST(NativePromise, WTFString)
     auto queue = awq.queue();
 
     MyPromise::createAndResolve("hello"_s)->then(queue,
-        [](String&& val) {
-            EXPECT_EQ(String("hello"_s), val);
+        [](RefPtr<StringImpl>&& val) {
+            EXPECT_EQ("hello"_si, val);
         },
         [] {
             EXPECT_TRUE(false);
@@ -1012,125 +1012,125 @@ TEST(NativePromise, WTFString)
     MyPromise::createAndResolve("hello"_s)->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_EQ(String("hello"_s), val.value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
+            EXPECT_EQ("hello"_si, val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
         });
 
     MyPromise::createAndReject("error"_s)->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_FALSE(val.has_value());
-            EXPECT_EQ(String("error"_s), val.error());
-            EXPECT_TRUE(val.error().isSafeToSendToAnotherThread());
+            EXPECT_EQ("error"_si, val.error());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.error()));
         });
 
-    MyPromise::createAndResolve(String("hello"_s))->then(queue,
-        [](String&& val) {
-            EXPECT_EQ(String("hello"_s), val);
-            EXPECT_TRUE(val.isSafeToSendToAnotherThread());
+    MyPromise::createAndResolve("hello"_si)->then(queue,
+        [](RefPtr<StringImpl>&& val) {
+            EXPECT_EQ("hello"_si, val);
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val));
         },
         [] {
             EXPECT_TRUE(false);
         });
 
     // Check that we can receive the value by const reference too.
-    MyPromise::createAndResolve(String("hello"_s))->then(queue,
-        [](const String& val) {
-            EXPECT_EQ(String("hello"_s), val);
-            EXPECT_TRUE(val.isSafeToSendToAnotherThread());
+    MyPromise::createAndResolve("hello"_si)->then(queue,
+        [](StringImpl* val) {
+            EXPECT_EQ("hello"_si, val);
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val));
         },
         [] {
             EXPECT_TRUE(false);
         });
 
     // Can pass object implecitly convertible to ResolveValueType
-    MyPromise::createAndResolve(AtomString("hello"_s))->then(queue,
-        [](String&& val) {
-            EXPECT_EQ(String("hello"_s), val);
-            EXPECT_TRUE(val.isSafeToSendToAnotherThread());
+    MyPromise::createAndResolve("hello"_atom)->then(queue,
+        [](RefPtr<StringImpl>&& val) {
+            EXPECT_EQ("hello"_si, val);
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val));
         },
         [] {
             EXPECT_TRUE(false);
         });
 
-    MyPromise::createAndResolve(AtomString("hello"_s))->then(queue,
-        [](const String& val) {
-            EXPECT_EQ(String("hello"_s), val);
-            EXPECT_TRUE(val.isSafeToSendToAnotherThread());
+    MyPromise::createAndResolve("hello"_atom)->then(queue,
+        [](StringImpl* val) {
+            EXPECT_EQ("hello"_si, val);
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val));
         },
         [] {
             EXPECT_TRUE(false);
         });
 
-    MyPromise::createAndResolve(AtomString("hello"_s))->then(queue,
-        [](String val) {
-            EXPECT_EQ(String("hello"_s), val);
-            EXPECT_TRUE(val.isSafeToSendToAnotherThread());
+    MyPromise::createAndResolve("hello"_atom)->then(queue,
+        [](RefPtr<StringImpl> val) {
+            EXPECT_EQ("hello"_si, val);
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val));
         },
         [] {
             EXPECT_TRUE(false);
         });
 
-    MyPromise::createAndResolve(String("hello"_s))->whenSettled(queue,
+    MyPromise::createAndResolve("hello"_si)->whenSettled(queue,
         [](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("hello"_s), val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+            EXPECT_EQ("hello"_si, val.value());
         });
 
-    MyPromise::createAndResolve(String("hello"_s))->whenSettled(queue,
+    MyPromise::createAndResolve("hello"_si)->whenSettled(queue,
         [](MyPromise::Result val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("hello"_s), val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+            EXPECT_EQ("hello"_si, val.value());
         });
 
-    MyPromise::createAndResolve(String("hello"_s))->whenSettled(queue,
+    MyPromise::createAndResolve("hello"_si)->whenSettled(queue,
         [](const MyPromise::Result& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("hello"_s), val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+            EXPECT_EQ("hello"_si, val.value());
         });
 
-    MyPromise::createAndReject(String("error"_s))->whenSettled(queue,
+    MyPromise::createAndReject("error"_si)->whenSettled(queue,
         [](MyPromise::Result&& val) {
             EXPECT_FALSE(val.has_value());
-            EXPECT_TRUE(val.error().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("error"_s), val.error());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.error()));
+            EXPECT_EQ("error"_si, val.error());
         });
 
-    MyPromise::createAndResolve(AtomString("hello"_s))->whenSettled(queue,
+    MyPromise::createAndResolve("hello"_atom)->whenSettled(queue,
         [](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("hello"_s), val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+            EXPECT_EQ("hello"_si, val.value());
             return MyPromise::createAndSettle(WTF::move(val));
         })->whenSettled(queue2,
             [](MyPromise::Result val) {
                 EXPECT_TRUE(val.has_value());
-                EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-                EXPECT_EQ(String("hello"_s), val.value());
+                EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+                EXPECT_EQ("hello"_si, val.value());
             });
 
-    MyPromise::createAndResolve(AtomString("hello"_s))->whenSettled(queue,
+    MyPromise::createAndResolve("hello"_atom)->whenSettled(queue,
         [queue](MyPromise::Result val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("hello"_s), val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+            EXPECT_EQ("hello"_si, val.value());
             queue->beginShutdown();
             // Don't move the result to make sure we get a new isolatedCopy.
             return MyPromise::createAndSettle(val);
         })->whenSettled(queue2,
             [queue2](MyPromise::Result val) {
                 EXPECT_TRUE(val.has_value());
-                EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-                EXPECT_EQ(String("hello"_s), val.value());
+                EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+                EXPECT_EQ("hello"_si, val.value());
                 queue2->beginShutdown();
             });
 }
 
 TEST(NativePromise, WTFStringWithDelayedResolve)
 {
-    using MyPromise = NativePromise<String, String>;
+    using MyPromise = NativePromise<RefPtr<StringImpl>, RefPtr<StringImpl>>;
 
     // The following steps runs strictly serially.
     // 1. We create a promise on the main thread.
@@ -1150,8 +1150,8 @@ TEST(NativePromise, WTFStringWithDelayedResolve)
             promise->whenSettled(queue1,
                 [queue1](MyPromise::Result val) {
                     EXPECT_TRUE(val.has_value());
-                    EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
-                    EXPECT_EQ(String("hello"_s), val.value());
+                    EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
+                    EXPECT_EQ("hello"_si, val.value());
                     queue1->beginShutdown();
                 });
             hasRun = true;
@@ -1159,7 +1159,7 @@ TEST(NativePromise, WTFStringWithDelayedResolve)
         });
     }
     EXPECT_TRUE(hasRun);
-    producer.resolve(AtomString("hello"_s));
+    producer.resolve("hello"_atom);
 }
 
 TEST(NativePromise, NonExclusiveWithCrossThreadCopy)
@@ -1169,51 +1169,51 @@ TEST(NativePromise, NonExclusiveWithCrossThreadCopy)
         AutoWorkQueue awq;
         auto queue = awq.queue();
         // If you replace PromiseOption::WithCrossThreadCopy with PromiseOption::WithoutCrossThreadCopy, this test will crash due to the AtomString being deleted on the target queue.
-        using MyPromise = NativePromise<std::expected<String, AtomString>, bool, PromiseOption::NonExclusive | PromiseOption::WithCrossThreadCopy>;
-        static_assert(CrossThreadCopier<std::expected<String, AtomString>>::IsNeeded);
+        using MyPromise = NativePromise<std::expected<RefPtr<StringImpl>, RefPtr<AtomStringImpl>>, bool, PromiseOption::NonExclusive | PromiseOption::WithCrossThreadCopy>;
+        static_assert(CrossThreadCopier<std::expected<RefPtr<StringImpl>, RefPtr<AtomStringImpl>>>::IsNeeded);
         MyPromise::Producer producer;
         Ref<MyPromise> promise = producer;
         promise->whenSettled(queue, [&resolution] (const MyPromise::Result& val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().has_value());
-            EXPECT_TRUE(val.value().value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("that worked"_s), val.value().value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value().value()));
+            EXPECT_EQ("that worked"_si, val.value().value());
             resolution++;
         });
         promise->whenSettled(queue, [&resolution] (MyPromise::Result val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().has_value());
             // Being a non-exclusive promise, the value is passed by const reference, so we copied the object in val.
-            EXPECT_TRUE(!val.value().value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("that worked"_s), val.value().value());
+            EXPECT_TRUE(!isSafeToSendToAnotherThread(val.value().value()));
+            EXPECT_EQ("that worked"_si, val.value().value());
             resolution++;
         });
         promise->whenSettled(queue, [queue, &resolution] (const MyPromise::Result& val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().has_value());
             // The previous whenSettled() has run already, and the object was derefed.
-            EXPECT_TRUE(val.value().value().isSafeToSendToAnotherThread());
-            EXPECT_EQ(String("that worked"_s), val.value().value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value().value()));
+            EXPECT_EQ("that worked"_si, val.value().value());
             resolution++;
             queue->beginShutdown();
         });
-        producer.resolve(String(AtomString("that worked"_s)));
+        producer.resolve(RefPtr<StringImpl>("that worked"_atom));
     }
     EXPECT_EQ(3, resolution);
 }
 
 TEST(NativePromise, WithCrossThreadCopyType)
 {
-    using MyPromiseWithString = NativePromise<String, AtomString>;
+    using MyPromiseWithString = NativePromise<RefPtr<StringImpl>, RefPtr<AtomStringImpl>>;
     static_assert(MyPromiseWithString::WithAutomaticCrossThreadCopy);
     static_assert(CrossThreadCopier<typename MyPromiseWithString::RejectValueType>::IsNeeded);
     // Check that if making a NativePromise with an AtomString, you actually get a String
-    static_assert(std::is_same_v<typename MyPromiseWithString::RejectValueType, String>);
+    static_assert(std::is_same_v<typename MyPromiseWithString::RejectValueType, RefPtr<StringImpl>>);
 
     using MyPromiseWithoutString = NativePromise<int, bool>;
     static_assert(!MyPromiseWithoutString::WithAutomaticCrossThreadCopy);
 
-    using MyPromiseWithArrayOfString = NativePromise<Vector<String>, bool>;
+    using MyPromiseWithArrayOfString = NativePromise<Vector<RefPtr<StringImpl>>, bool>;
     static_assert(MyPromiseWithArrayOfString::WithAutomaticCrossThreadCopy);
 
     using MyNonExclusivePromise = NativePromise<Vector<int>, bool, PromiseOption::Default | PromiseOption::NonExclusive>;
@@ -1223,35 +1223,36 @@ TEST(NativePromise, WithCrossThreadCopyType)
 
 TEST(NativePromise, ExpectedWithString)
 {
-    using MyPromise = NativePromise<std::expected<String, String>, int>;
+    using MyPromise = NativePromise<std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>>, int>;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
 
-    MyPromise::createAndResolve(String("hello"_s))->then(queue,
+    MyPromise::createAndResolve("hello"_si)->then(queue,
         [](MyPromise::ResolveValueType&& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_EQ(String("hello"_s), val.value());
-            EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
+            EXPECT_EQ("hello"_si, val.value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value()));
         },
         [] {
             EXPECT_TRUE(false);
         });
 
-    MyPromise::createAndResolve(String("hello"_s))->whenSettled(queue,
+    MyPromise::createAndResolve("hello"_si)->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_EQ(String("hello"_s), val.value());
-            EXPECT_TRUE(val.value().value().isSafeToSendToAnotherThread());
+            EXPECT_TRUE(val.value().has_value());
+            EXPECT_EQ("hello"_si, val.value().value());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value().value()));
         });
 
-    std::expected<String, String> error = std::unexpected<String>("error"_s);
+    std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>> error = std::unexpected<RefPtr<StringImpl>>("error"_si);
     MyPromise::createAndResolve(WTF::move(error))->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_FALSE(val.value().has_value());
-            EXPECT_EQ(String("error"_s), val.value().error());
-            EXPECT_TRUE(val.value().error().isSafeToSendToAnotherThread());
+            EXPECT_EQ("error"_si, val.value().error());
+            EXPECT_TRUE(isSafeToSendToAnotherThread(val.value().error()));
             queue->beginShutdown();
         });
 }
@@ -1827,7 +1828,7 @@ auto makeMoveableFunction(F&& f)
 
 class PhotoProducer : public ThreadSafeRefCounted<PhotoProducer> {
 public:
-    using PhotoPromise = NativePromise<std::pair<Vector<uint8_t>, String>, int>;
+    using PhotoPromise = NativePromise<std::pair<Vector<uint8_t>, RefPtr<StringImpl>>, int>;
     static Ref<PhotoProducer> create(const PhotoSettings& settings) { return adoptRef(*new PhotoProducer(settings)); }
 
     Ref<PhotoPromise> takePhoto() const
@@ -1855,7 +1856,7 @@ private:
             // Note that you can resolve a NativePromise on any threads. Unlike with a CompletionHandler it is not the responsibility of the producer to resolve the promise
             // on a particular thread.
             // The consumer specifies the thread on which it wants to be called back.
-            producer.resolve(std::make_pair<Vector<uint8_t>, String>(std::span { image }, String::fromLatin1(std::span<const char> { mimeType })));
+            producer.resolve(std::make_pair<Vector<uint8_t>, RefPtr<StringImpl>>(std::span { image }, StringImpl::fromLatin1(std::span<const char> { mimeType })));
         }));
 
         // Return the promise which the producer will resolve at a later stage.
@@ -1871,7 +1872,7 @@ TEST(NativePromise, TakePhotoExample)
     queue->dispatch([queue] {
         auto photoProducer = PhotoProducer::create(PhotoSettings { });
         photoProducer->takePhoto()->whenSettled(queue, [queue] (PhotoProducer::PhotoPromise::Result&& result) mutable {
-            static_assert(std::is_same_v<decltype(result.value()), std::pair<Vector<uint8_t>, String>&>);
+            static_assert(std::is_same_v<decltype(result.value()), std::pair<Vector<uint8_t>, RefPtr<StringImpl>>&>);
             if (result)
                 EXPECT_EQ(result.value().second, "image/jpeg"_s);
             else

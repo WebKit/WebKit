@@ -75,15 +75,15 @@ static RetainPtr<TestWKWebView> createWebViewForLocalNetworkAccessTesting(BOOL l
 // Address-space overrides are fixed when the session is created, so they ride on the data store
 // configuration. Keyed on resolved address and port, so a page staged through one has to be loaded via
 // 127.0.0.1: HTTPServer also listens on IPv6, and localhost resolves to ::1.
-static RetainPtr<WKWebsiteDataStore> dataStoreWithAddressSpaceOverrides(const String& overrides)
+static RetainPtr<WKWebsiteDataStore> dataStoreWithAddressSpaceOverrides(StringImpl* overrides)
 {
     auto configuration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
-    auto overridesString = adoptWK(WKStringCreateWithUTF8CString(overrides.utf8().legacyCStringPointer()));
+    auto overridesString = adoptWK(WKStringCreateWithUTF8CString(utf8(overrides).legacyCStringPointer()));
     WKWebsiteDataStoreConfigurationSetIPAddressSpaceOverridesForTesting(configuration.get(), overridesString.get());
     return adoptNS((WKWebsiteDataStore *)WKWebsiteDataStoreCreateWithConfiguration(configuration.get()));
 }
 
-static RetainPtr<TestWKWebView> createWebViewWithAddressSpaceOverrides(const String& overrides)
+static RetainPtr<TestWKWebView> createWebViewWithAddressSpaceOverrides(StringImpl* overrides)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     setLocalNetworkAccessEnabledForConfiguration(configuration.get(), YES);
@@ -108,12 +108,12 @@ async function doFetch(targetOrigin)
 </script>
 )HTMLRESOURCE"_s;
 
-static String waitForFetchResult(TestWKWebView *webView)
+static RefPtr<StringImpl> waitForFetchResult(TestWKWebView *webView)
 {
     Util::waitForConditionWithLogging([&] -> bool {
         return [[webView stringByEvaluatingJavaScript:@"window.fetchResult || ''"] length] > 0;
     }, 10, @"Timed out waiting for fetch result.");
-    return String { [webView stringByEvaluatingJavaScript:@"window.fetchResult"] };
+    return StringImpl::create([webView stringByEvaluatingJavaScript:@"window.fetchResult"]);
 }
 
 TEST(LocalNetworkAccessTests, DisabledFeatureAllowsLoopbackFetchUnconditionally)
@@ -126,7 +126,7 @@ TEST(LocalNetworkAccessTests, DisabledFeatureAllowsLoopbackFetchUnconditionally)
     auto webView = createWebViewForLocalNetworkAccessTesting(NO);
     [webView synchronouslyLoadRequest:server.requestWithLocalhost("/index.html"_s)];
 
-    RetainPtr targetOrigin = server.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(server.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
@@ -148,7 +148,7 @@ TEST(LocalNetworkAccessTests, CrossOriginLoopbackFetchAllowedWithoutGrant)
     auto webView = createWebViewForLocalNetworkAccessTesting(YES);
     [webView synchronouslyLoadRequest:server.requestWithLocalhost("/index.html"_s)];
 
-    RetainPtr targetOrigin = server.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(server.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
@@ -167,7 +167,7 @@ TEST(LocalNetworkAccessTests, CrossOriginLoopbackFetchSucceedsWithGrant)
 
     answerLoopbackPromptsWith(webView.get(), true);
 
-    RetainPtr targetOrigin = server.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(server.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
@@ -225,10 +225,10 @@ static HTTPServer makeLocalNetworkAccessProxy()
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "http://example.com/index.html"_s)
-                co_await connection.awaitableSend(HTTPResponse(String { crossOriginLoopbackFetchPageBytes }).serialize());
-            else if (path == "http://other.example/target.txt"_s)
-                co_await connection.awaitableSend(HTTPResponse("hello"_s).serialize());
+            if (equal(path, "http://example.com/index.html"_s))
+                co_await connection.awaitableSend(HTTPResponse(crossOriginLoopbackFetchPageBytes).serialize());
+            else if (equal(path, "http://other.example/target.txt"_s))
+                co_await connection.awaitableSend(HTTPResponse("hello"_si).serialize());
             else
                 co_await connection.awaitableSend(HTTPResponse(404, { }, { }).serialize());
         }
@@ -269,7 +269,7 @@ TEST(LocalNetworkAccessTests, ProxiedPublicFetchControlWithFeatureDisabled)
 static HTTPServer makePageServer()
 {
     return HTTPServer({
-        { "/index.html"_s, { String { crossOriginLoopbackFetchPageBytes } } },
+        { "/index.html"_s, { StringImpl::create(crossOriginLoopbackFetchPageBytes) } },
     });
 }
 
@@ -296,10 +296,10 @@ TEST(LocalNetworkAccessTests, PublicPageFetchingLoopbackIsBlockedWithoutGrant)
     auto server = makePageServer();
     auto webView = loadPublicPageOverLoopback(server, NO);
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(waitForFetchResult(webView.get()), "error:"_s));
 }
 
 TEST(LocalNetworkAccessTests, PublicPageFetchingLoopbackIsAllowedWithGrant)
@@ -308,7 +308,7 @@ TEST(LocalNetworkAccessTests, PublicPageFetchingLoopbackIsAllowedWithGrant)
     auto server = makePageServer();
     auto webView = loadPublicPageOverLoopback(server, YES);
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
@@ -339,10 +339,10 @@ TEST(LocalNetworkAccessTests, LocalToLoopbackFetchBlockedWithoutGrant)
 
     auto webView = loadLocalSpacePageReachingLoopback(pageServer, NO);
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(waitForFetchResult(webView.get()), "error:"_s));
 }
 
 TEST(LocalNetworkAccessTests, LocalToLoopbackFetchAllowedWithGrant)
@@ -352,7 +352,7 @@ TEST(LocalNetworkAccessTests, LocalToLoopbackFetchAllowedWithGrant)
 
     auto webView = loadLocalSpacePageReachingLoopback(pageServer, YES);
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
@@ -458,7 +458,7 @@ TEST(LocalNetworkAccessTests, PromptAllowingTheRequestLetsTheFetchThrough)
     auto webView = createWebViewForPromptTesting(delegate.get(), server);
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
@@ -476,10 +476,10 @@ TEST(LocalNetworkAccessTests, PromptDenyingTheRequestBlocksTheFetch)
     auto webView = createWebViewForPromptTesting(delegate.get(), server);
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
 
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(waitForFetchResult(webView.get()), "error:"_s));
     EXPECT_EQ(1u, delegate.get().promptCount);
 }
 
@@ -496,7 +496,7 @@ TEST(LocalNetworkAccessTests, PromptNamesBothOriginsOfThePair)
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
     NSString *pageOrigin = [webView stringByEvaluatingJavaScript:@"location.origin"];
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
 
@@ -516,7 +516,7 @@ TEST(LocalNetworkAccessTests, AnsweredPromptIsNotRaisedASecondTime)
     auto webView = createWebViewForPromptTesting(delegate.get(), server);
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
     EXPECT_EQ(1u, delegate.get().promptCount);
@@ -541,7 +541,7 @@ TEST(LocalNetworkAccessTests, AnsweredPromptSurvivesANetworkProcessCrash)
     auto webView = createWebViewForPromptTesting(delegate.get(), server);
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
     EXPECT_EQ(1u, delegate.get().promptCount);
@@ -562,7 +562,7 @@ TEST(LocalNetworkAccessTests, ConcurrentRequestsRaiseOnePrompt)
         { "/other.txt"_s, { "hello"_s } },
     });
     HTTPServer server({
-        { "/index.html"_s, { String { twoLoopbackFetchesPageBytes } } },
+        { "/index.html"_s, { StringImpl::create(twoLoopbackFetchesPageBytes) } },
     });
 
     RetainPtr delegate = adoptNS([[TestLocalNetworkAccessUIDelegate alloc] init]);
@@ -572,7 +572,7 @@ TEST(LocalNetworkAccessTests, ConcurrentRequestsRaiseOnePrompt)
     auto webView = createWebViewForPromptTesting(delegate.get(), server);
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doTwoFetches('%@'); undefined", targetOrigin.get()]];
 
     Util::waitForConditionWithLogging([&] -> bool {
@@ -592,20 +592,20 @@ TEST(LocalNetworkAccessTests, ConcurrentRequestsRaiseOnePrompt)
 static void revokeLocalNetworkAccessPermissions(WKWebsiteDataStore *store, NSString *topOrigin)
 {
     bool done = false;
-    auto origin = adoptWK(WKStringCreateWithUTF8CString(String(topOrigin).utf8().legacyCStringPointer()));
+    auto origin = adoptWK(WKStringCreateWithUTF8CString(utf8(StringImpl::create(topOrigin)).legacyCStringPointer()));
     WKWebsiteDataStoreRevokeLocalNetworkAccessPermissionsForTesting((WKWebsiteDataStoreRef)store, origin.get(), &done, [](void* context) {
         *static_cast<bool*>(context) = true;
     });
     Util::run(&done);
 }
 
-static String recordedLoopbackPermission(TestWKWebView *webView)
+static RefPtr<StringImpl> recordedLoopbackPermission(TestWKWebView *webView)
 {
     [webView objectByEvaluatingJavaScript:@"window.permissionState = ''; navigator.permissions.query({ name: 'loopback-network' }).then(status => window.permissionState = status.state); undefined"];
     Util::waitForConditionWithLogging([&] -> bool {
         return [[webView stringByEvaluatingJavaScript:@"window.permissionState"] length] > 0;
     }, 10, @"Timed out waiting for the permission query.");
-    return String { [webView stringByEvaluatingJavaScript:@"window.permissionState"] };
+    return StringImpl::create([webView stringByEvaluatingJavaScript:@"window.permissionState"]);
 }
 
 // A revocation that lands while a prompt is still on screen must win: the requests waiting on it are
@@ -622,14 +622,14 @@ TEST(LocalNetworkAccessTests, RevokingDuringAPromptDiscardsTheLateAnswer)
     [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
 
     NSString *pageOrigin = [webView stringByEvaluatingJavaScript:@"location.origin"];
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
     Util::waitForConditionWithLogging([&] -> bool {
         return delegate.get().promptCount >= 1;
     }, 10, @"Timed out waiting for the prompt.");
 
     revokeLocalNetworkAccessPermissions([webView configuration].websiteDataStore, pageOrigin);
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(waitForFetchResult(webView.get()), "error:"_s));
 
     delegate.get().deferDecisions = NO;
     [delegate.get() answerDeferredDecisions];
@@ -644,9 +644,9 @@ TEST(LocalNetworkAccessTests, NoDelegateDeniesTheRequest)
     auto server = makePageServer();
     auto webView = loadPublicPageOverLoopback(server, NO);
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(waitForFetchResult(webView.get()), "error:"_s));
     EXPECT_WK_STREQ(recordedLoopbackPermission(webView.get()), "denied");
 }
 
@@ -656,7 +656,7 @@ TEST(LocalNetworkAccessTests, NoDelegateDeniesTheRequest)
 TEST(LocalNetworkAccessTests, CachedResponseIsStillCheckedAfterTheGrantIsRevoked)
 {
     HTTPServer targetServer({
-        { "/target.txt"_s, HTTPResponse({ { "Cache-Control"_s, "max-age=3600"_s } }, "hello"_s) },
+        { "/target.txt"_s, HTTPResponse({ { "Cache-Control"_s, "max-age=3600"_s } }, "hello"_si) },
     });
     auto server = makePageServer();
 
@@ -665,7 +665,7 @@ TEST(LocalNetworkAccessTests, CachedResponseIsStillCheckedAfterTheGrantIsRevoked
     NSString *pageOrigin = [webView stringByEvaluatingJavaScript:@"location.origin"];
     answerLoopbackPromptsWith(webView.get(), true);
 
-    RetainPtr targetOrigin = targetServer.origin().createNSString();
+    RetainPtr targetOrigin = createNSString(targetServer.origin());
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
     EXPECT_WK_STREQ(waitForFetchResult(webView.get()), "success");
 
@@ -676,7 +676,7 @@ TEST(LocalNetworkAccessTests, CachedResponseIsStillCheckedAfterTheGrantIsRevoked
 
     [webView objectByEvaluatingJavaScript:@"window.fetchResult = ''; undefined"];
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetch('%@'); undefined", targetOrigin.get()]];
-    EXPECT_TRUE(waitForFetchResult(webView.get()).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(waitForFetchResult(webView.get()), "error:"_s));
 
     // Without this the test would pass just as well if the second fetch went to the network and was
     // refused there, which would say nothing about whether a cache hit is checked.
@@ -698,14 +698,14 @@ async function doFetchURL(url)
 // only thing standing between a public page and a local network server that answers with a 302. The
 // redirect is served BY the loopback server here for that reason: it is the 302's own connection that
 // has to be refused, not the request that follows it.
-static String runRedirectFromLoopback(bool grantPermission)
+static RefPtr<StringImpl> runRedirectFromLoopback(bool grantPermission)
 {
     HTTPServer loopbackServer({
         { "/redirect"_s, HTTPResponse(302, { { "Location"_s, "/target.txt"_s } }) },
         { "/target.txt"_s, { "hello"_s } },
     });
 
-    HTTPServer publicServer({ { "/index.html"_s, HTTPResponse { String { fetchURLPageBytes } } } });
+    HTTPServer publicServer({ { "/index.html"_s, HTTPResponse { StringImpl::create(fetchURLPageBytes).ptr() } } });
 
     // Maps the page server public, so the loopback redirect server is less public than it.
     RetainPtr webView = createWebViewWithAddressSpaceOverrides(makeString("127.0.0.1:"_s, publicServer.port(), "=public"_s));
@@ -714,14 +714,14 @@ static String runRedirectFromLoopback(bool grantPermission)
     if (grantPermission)
         answerLoopbackPromptsWith(webView.get(), true);
 
-    RetainPtr redirectURL = makeString(loopbackServer.origin(), "/redirect"_s).createNSString();
+    RetainPtr redirectURL = createNSString(makeString(loopbackServer.origin(), "/redirect"_s));
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"doFetchURL('%@'); undefined", redirectURL.get()]];
     return waitForFetchResult(webView.get());
 }
 
 TEST(LocalNetworkAccessTests, RedirectServedFromLoopbackIsBlockedWithoutGrant)
 {
-    EXPECT_TRUE(runRedirectFromLoopback(false).startsWith("error:"_s));
+    EXPECT_TRUE(startsWith(runRedirectFromLoopback(false), "error:"_s));
 }
 
 TEST(LocalNetworkAccessTests, RedirectServedFromLoopbackIsAllowedWithGrant)

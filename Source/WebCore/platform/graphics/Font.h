@@ -129,11 +129,11 @@ public:
     bool canTakeFixedPitchFastContentMeasuring() const { return m_canTakeFixedPitchFastContentMeasuring; }
 
 #if !LOG_DISABLED
-    String description() const;
+    RefPtr<StringImpl> description() const;
 #endif
 
     bool canRenderCombiningCharacterSequence(StringView) const;
-    GlyphBufferAdvance applyTransforms(GlyphBuffer&, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection) const;
+    GlyphBufferAdvance applyTransforms(GlyphBuffer&, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, AtomStringImpl* locale, StringView text, TextDirection) const;
 
 #if USE(CORE_TEXT)
     WEBCORE_EXPORT static std::optional<Ref<Font>> fromIPCData(IPCFontData&&);

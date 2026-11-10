@@ -35,19 +35,19 @@ namespace WebCore {
 class ApplePayCouponCodeChangedEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ApplePayCouponCodeChangedEvent);
 public:
-    static Ref<ApplePayCouponCodeChangedEvent> create(const AtomString& type, String&& couponCode)
+    static Ref<ApplePayCouponCodeChangedEvent> create(AtomStringImpl* type, RefPtr<StringImpl>&& couponCode)
     {
         return adoptRef(*new ApplePayCouponCodeChangedEvent(type, WTF::move(couponCode)));
     }
 
     virtual ~ApplePayCouponCodeChangedEvent();
 
-    const String& couponCode() const LIFETIME_BOUND { return m_couponCode; }
+    const RefPtr<StringImpl>& couponCode() const LIFETIME_BOUND { return m_couponCode; }
 
 private:
-    ApplePayCouponCodeChangedEvent(const AtomString& type, String&&);
+    ApplePayCouponCodeChangedEvent(AtomStringImpl* type, RefPtr<StringImpl>&&);
 
-    const String m_couponCode;
+    const RefPtr<StringImpl> m_couponCode;
 };
 
 } // namespace WebCore

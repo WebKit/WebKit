@@ -58,7 +58,7 @@ bool BackendDispatcher::CallbackBase::isActive() const
 
 void BackendDispatcher::CallbackBase::sendFailure(const ErrorString& error)
 {
-    ASSERT(error.length());
+    ASSERT(length(error));
 
     if (m_alreadySent)
         return;
@@ -94,7 +94,7 @@ bool BackendDispatcher::isActive() const
     return m_frontendRouter->hasFrontends();
 }
 
-void BackendDispatcher::registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher* dispatcher)
+void BackendDispatcher::registerDispatcherForDomain(StringImpl* domain, SupplementalBackendDispatcher* dispatcher)
 {
     ASSERT_ARG(dispatcher, dispatcher);
 
@@ -103,7 +103,7 @@ void BackendDispatcher::registerDispatcherForDomain(const String& domain, Supple
     m_dispatchers.set(domain, dispatcher);
 }
 
-void BackendDispatcher::dispatch(const String& message)
+void BackendDispatcher::dispatch(StringImpl* message)
 {
     Ref<BackendDispatcher> protect(*this);
 
@@ -119,28 +119,28 @@ void BackendDispatcher::dispatch(const String& message)
 
         auto parsedMessage = JSON::Value::parseJSON(message);
         if (!parsedMessage) {
-            reportProtocolError(ParseError, "Message must be in JSON format"_s);
+            reportProtocolError(ParseError, "Message must be in JSON format"_si);
             sendPendingErrors();
             return;
         }
 
         messageObject = parsedMessage->asObject();
         if (!messageObject) {
-            reportProtocolError(InvalidRequest, "Message must be a JSONified object"_s);
+            reportProtocolError(InvalidRequest, "Message must be a JSONified object"_si);
             sendPendingErrors();
             return;
         }
 
-        auto requestIdValue = messageObject->getValue("id"_s);
+        auto requestIdValue = messageObject->getValue("id"_si);
         if (!requestIdValue) {
-            reportProtocolError(InvalidRequest, "'id' property was not found"_s);
+            reportProtocolError(InvalidRequest, "'id' property was not found"_si);
             sendPendingErrors();
             return;
         }
 
         auto requestIdInt = requestIdValue->asInteger();
         if (!requestIdInt) {
-            reportProtocolError(InvalidRequest, "The type of 'id' property must be integer"_s);
+            reportProtocolError(InvalidRequest, "The type of 'id' property must be integer"_si);
             sendPendingErrors();
             return;
         }
@@ -152,28 +152,28 @@ void BackendDispatcher::dispatch(const String& message)
         // We could be called re-entrantly from a nested run loop, so restore the previous id.
         SetForScope scopedRequestId(m_currentRequestId, requestId);
 
-        auto methodValue = messageObject->getValue("method"_s);
+        auto methodValue = messageObject->getValue("method"_si);
         if (!methodValue) {
-            reportProtocolError(InvalidRequest, "'method' property wasn't found"_s);
+            reportProtocolError(InvalidRequest, "'method' property wasn't found"_si);
             sendPendingErrors();
             return;
         }
 
         auto methodString = methodValue->asString();
         if (!methodString) {
-            reportProtocolError(InvalidRequest, "The type of 'method' property must be string"_s);
+            reportProtocolError(InvalidRequest, "The type of 'method' property must be string"_si);
             sendPendingErrors();
             return;
         }
 
-        Vector<String> domainAndMethod = methodString.splitAllowingEmptyEntries('.');
-        if (domainAndMethod.size() != 2 || !domainAndMethod[0].length() || !domainAndMethod[1].length()) {
-            reportProtocolError(InvalidRequest, "The 'method' property was formatted incorrectly. It should be 'Domain.method'"_s);
+        Vector<RefPtr<StringImpl>> domainAndMethod = splitAllowingEmptyEntries(methodString, '.');
+        if (domainAndMethod.size() != 2 || !length(domainAndMethod[0]) || !length(domainAndMethod[1])) {
+            reportProtocolError(InvalidRequest, "The 'method' property was formatted incorrectly. It should be 'Domain.method'"_si);
             sendPendingErrors();
             return;
         }
 
-        String domain = domainAndMethod[0];
+        RefPtr<StringImpl> domain = domainAndMethod[0];
         RefPtr domainDispatcher = m_dispatchers.get(domain);
         if (!domainDispatcher) {
             if (RefPtr fallback = m_fallbackDispatcher.get()) {
@@ -186,7 +186,7 @@ void BackendDispatcher::dispatch(const String& message)
             return;
         }
 
-        String method = domainAndMethod[1];
+        RefPtr<StringImpl> method = domainAndMethod[1];
         domainDispatcher->dispatch(requestId, method, messageObject.releaseNonNull());
 
         if (m_protocolErrors.size())
@@ -221,12 +221,12 @@ void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result,
     // The JSON-RPC 2.0 specification requires that the "error" member have the value 'null'
     // if no error occurred during an invocation, but we do not include it at all.
     Ref<JSON::Object> responseMessage = JSON::Object::create();
-    responseMessage->setObject("result"_s, WTF::move(result));
-    responseMessage->setInteger("id"_s, requestId);
+    responseMessage->setObject("result"_si, WTF::move(result));
+    responseMessage->setInteger("id"_si, requestId);
     m_frontendRouter->sendResponse(responseMessage->toJSONString());
 }
 
-static String errorMessageForRequest(std::optional<long> requestId, const Vector<std::tuple<BackendDispatcher::CommonErrorCode, String>>& errors)
+static RefPtr<StringImpl> errorMessageForRequest(std::optional<long> requestId, const Vector<std::tuple<BackendDispatcher::CommonErrorCode, RefPtr<StringImpl>>>& errors)
 {
     // These error codes are specified in JSON-RPC 2.0, Section 5.1.
     static constexpr auto errorCodes = WTF::toArray<int>({
@@ -242,7 +242,7 @@ static String errorMessageForRequest(std::optional<long> requestId, const Vector
     // Per JSON-RPC 2.0, Section 5.1, the 'data' member may contain nested errors,
     // but only one top-level Error object should be sent per request.
     auto errorCode = BackendDispatcher::InternalError;
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     Ref<JSON::Array> payload = JSON::Array::create();
     
     for (auto& data : errors) {
@@ -253,23 +253,23 @@ static String errorMessageForRequest(std::optional<long> requestId, const Vector
         ASSERT_ARG(errorCode, errorCodes[errorCode]);
 
         Ref<JSON::Object> error = JSON::Object::create();
-        error->setInteger("code"_s, errorCodes[errorCode]);
-        error->setString("message"_s, errorMessage);
+        error->setInteger("code"_si, errorCodes[errorCode]);
+        error->setString("message"_si, errorMessage);
         payload->pushObject(WTF::move(error));
     }
 
     Ref<JSON::Object> topLevelError = JSON::Object::create();
-    topLevelError->setInteger("code"_s, errorCodes[errorCode]);
-    topLevelError->setString("message"_s, errorMessage);
-    topLevelError->setArray("data"_s, WTF::move(payload));
+    topLevelError->setInteger("code"_si, errorCodes[errorCode]);
+    topLevelError->setString("message"_si, errorMessage);
+    topLevelError->setArray("data"_si, WTF::move(payload));
 
     Ref<JSON::Object> message = JSON::Object::create();
-    message->setObject("error"_s, WTF::move(topLevelError));
+    message->setObject("error"_si, WTF::move(topLevelError));
     if (requestId)
-        message->setInteger("id"_s, requestId.value());
+        message->setInteger("id"_si, requestId.value());
     else {
         // The 'null' value for an unknown id is specified in JSON-RPC 2.0, Section 5.
-        message->setValue("id"_s, JSON::Value::null());
+        message->setValue("id"_si, JSON::Value::null());
     }
 
     return message->toJSONString();
@@ -283,7 +283,7 @@ void BackendDispatcher::sendPendingErrors()
     m_currentRequestId = std::nullopt;
 }
 
-void BackendDispatcher::sendErrorResponse(long requestId, CommonErrorCode errorCode, const String& errorMessage)
+void BackendDispatcher::sendErrorResponse(long requestId, CommonErrorCode errorCode, StringImpl* errorMessage)
 {
     ASSERT_ARG(errorCode, errorCode >= 0);
 
@@ -292,12 +292,12 @@ void BackendDispatcher::sendErrorResponse(long requestId, CommonErrorCode errorC
     m_frontendRouter->sendResponse(errorMessageForRequest(requestId, { { errorCode, errorMessage } }));
 }
     
-void BackendDispatcher::reportProtocolError(CommonErrorCode errorCode, const String& errorMessage)
+void BackendDispatcher::reportProtocolError(CommonErrorCode errorCode, StringImpl* errorMessage)
 {
     reportProtocolError(m_currentRequestId, errorCode, errorMessage);
 }
 
-void BackendDispatcher::reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode errorCode, const String& errorMessage)
+void BackendDispatcher::reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode errorCode, StringImpl* errorMessage)
 {
     ASSERT_ARG(errorCode, errorCode >= 0);
 
@@ -305,11 +305,11 @@ void BackendDispatcher::reportProtocolError(std::optional<long> relatedRequestId
     if (!m_currentRequestId)
         m_currentRequestId = relatedRequestId;
 
-    m_protocolErrors.append(std::tuple<CommonErrorCode, String>(errorCode, errorMessage));
+    m_protocolErrors.append(std::tuple<CommonErrorCode, RefPtr<StringImpl>>(errorCode, errorMessage));
 }
 
 template<typename T>
-T BackendDispatcher::getPropertyValue(JSON::Object* params, const String& name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName)
+T BackendDispatcher::getPropertyValue(JSON::Object* params, StringImpl* name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName)
 {
     T result;
 
@@ -334,45 +334,45 @@ T BackendDispatcher::getPropertyValue(JSON::Object* params, const String& name, 
     return result;
 }
 
-std::optional<bool> BackendDispatcher::getBoolean(JSON::Object* params, const String& name, bool required)
+std::optional<bool> BackendDispatcher::getBoolean(JSON::Object* params, StringImpl* name, bool required)
 {
     return getPropertyValue<std::optional<bool>>(params, name, required, &JSON::Value::asBoolean, "Boolean"_s);
 }
 
-std::optional<int> BackendDispatcher::getInteger(JSON::Object* params, const String& name, bool required)
+std::optional<int> BackendDispatcher::getInteger(JSON::Object* params, StringImpl* name, bool required)
 {
     // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
     std::optional<int> (JSON::Value::*asInteger)() const = &JSON::Value::asInteger;
     return getPropertyValue<std::optional<int>>(params, name, required, asInteger, "Integer"_s);
 }
 
-std::optional<double> BackendDispatcher::getDouble(JSON::Object* params, const String& name, bool required)
+std::optional<double> BackendDispatcher::getDouble(JSON::Object* params, StringImpl* name, bool required)
 {
     // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
     std::optional<double> (JSON::Value::*asDouble)() const = &JSON::Value::asDouble;
     return getPropertyValue<std::optional<double>>(params, name, required, asDouble, "Number"_s);
 }
 
-String BackendDispatcher::getString(JSON::Object* params, const String& name, bool required)
+RefPtr<StringImpl> BackendDispatcher::getString(JSON::Object* params, StringImpl* name, bool required)
 {
     // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
-    const String& (JSON::Value::*asString)() const = &JSON::Value::asString;
-    return getPropertyValue<String>(params, name, required, asString, "String"_s);
+    const RefPtr<StringImpl>& (JSON::Value::*asString)() const = &JSON::Value::asString;
+    return getPropertyValue<RefPtr<StringImpl>>(params, name, required, asString, "String"_s);
 }
 
-RefPtr<JSON::Value> BackendDispatcher::getValue(JSON::Object* params, const String& name, bool required)
+RefPtr<JSON::Value> BackendDispatcher::getValue(JSON::Object* params, StringImpl* name, bool required)
 {
     return getPropertyValue<RefPtr<JSON::Value>>(params, name, required, &JSON::Value::asValue, "Value"_s);
 }
 
-RefPtr<JSON::Object> BackendDispatcher::getObject(JSON::Object* params, const String& name, bool required)
+RefPtr<JSON::Object> BackendDispatcher::getObject(JSON::Object* params, StringImpl* name, bool required)
 {
     return getPropertyValue<RefPtr<JSON::Object>>(params, name, required, [](JSON::Value& value) {
         return value.asObject();
     }, "Object"_s);
 }
 
-RefPtr<JSON::Array> BackendDispatcher::getArray(JSON::Object* params, const String& name, bool required)
+RefPtr<JSON::Array> BackendDispatcher::getArray(JSON::Object* params, StringImpl* name, bool required)
 {
     return getPropertyValue<RefPtr<JSON::Array>>(params, name, required, &JSON::Value::asArray, "Array"_s);
 }

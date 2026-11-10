@@ -87,7 +87,7 @@ public:
 
     void dump(PrintStream&) const;
     void dumpSimpleName(PrintStream&) const;
-    String nameWithHash() const;
+    RefPtr<StringImpl> nameWithHash() const;
 
     static void destroy(Callee*);
 

@@ -88,7 +88,7 @@ void ModelProcess::createModelConnectionToWebProcess(
     PAL::SessionID sessionID,
     IPC::Connection::Handle&& connectionHandle,
     ModelProcessConnectionParameters&& parameters,
-    const std::optional<String>& attributionTaskID,
+    const std::optional<RefPtr<StringImpl>>& attributionTaskID,
     CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - ModelProcess::createModelConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());

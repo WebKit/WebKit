@@ -35,7 +35,7 @@ public:
     using Base = SVGAnimationDiscreteFunction<bool>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, StringImpl* from, StringImpl* to) override
     {
         m_from = SVGPropertyTraits<bool>::fromString(targetElement, from);
         m_to = SVGPropertyTraits<bool>::fromString(targetElement, to);
@@ -52,7 +52,7 @@ class SVGAnimationEnumerationFunction : public SVGAnimationDiscreteFunction<Enum
 public:
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, StringImpl* from, StringImpl* to) override
     {
         m_from = SVGPropertyTraits<EnumType>::fromString(targetElement, from);
         m_to = SVGPropertyTraits<EnumType>::fromString(targetElement, to);
@@ -65,7 +65,7 @@ public:
     using Base = SVGAnimationDiscreteFunction<SVGMarkerOrientType>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement&, const String&, const String&) override
+    bool setFromAndToValues(SVGElement&, StringImpl*, StringImpl*) override
     {
         // Values will be set by SVGAnimatedAngleOrientAnimator.
         ASSERT_NOT_REACHED();
@@ -81,7 +81,7 @@ public:
     using Base = SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue>;
     using Base::Base;
     
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) override
     {
         m_from = SVGPreserveAspectRatioValue(from);
         m_to = SVGPreserveAspectRatioValue(to);
@@ -89,12 +89,12 @@ public:
     }
 };
 
-class SVGAnimationStringFunction : public SVGAnimationDiscreteFunction<String> {
+class SVGAnimationStringFunction : public SVGAnimationDiscreteFunction<RefPtr<StringImpl>> {
 public:
-    using Base = SVGAnimationDiscreteFunction<String>;
+    using Base = SVGAnimationDiscreteFunction<RefPtr<StringImpl>>;
     using Base::Base;
     
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) override
     {
         m_from = from;
         m_to = to;

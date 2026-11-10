@@ -168,7 +168,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ClearVisibilityAdjustmentForScope);
 
-using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
+using ElementSelectorCache = HashMap<Ref<Element>, std::optional<RefPtr<StringImpl>>>;
 
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
@@ -199,7 +199,7 @@ NODELETE static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Ele
     return true;
 }
 
-static inline bool querySelectorMatchesOneElement(const Element& element, const String& selector)
+static inline bool querySelectorMatchesOneElement(const Element& element, StringImpl* selector)
 {
     Ref container = [&]() -> Ref<ContainerNode> {
         if (RefPtr shadowRoot = element.containingShadowRoot())
@@ -230,7 +230,7 @@ static inline ChildElementPosition findChild(const Element& element, const Eleme
         if (child.ptr() == &element)
             index = currentChildIndex;
 
-        if (child->tagName() == elementTagName) {
+        if (equal(child->tagName(), elementTagName)) {
             if (!firstOfType)
                 firstOfType = child.ptr();
             lastOfType = child.ptr();
@@ -240,7 +240,7 @@ static inline ChildElementPosition findChild(const Element& element, const Eleme
     return { index, &element == firstOfType, &element == lastOfType };
 }
 
-static inline String computeIDSelector(const Element& element)
+static inline RefPtr<StringImpl> computeIDSelector(const Element& element)
 {
     if (element.hasID()) {
         auto elementID = element.getIdAttribute();
@@ -250,7 +250,7 @@ static inline String computeIDSelector(const Element& element)
     return emptyString();
 }
 
-static inline String computeTagAndAttributeSelector(const Element& element, const String& suffix = emptyString())
+static inline RefPtr<StringImpl> computeTagAndAttributeSelector(const Element& element, StringImpl* suffix = emptyString())
 {
     if (!element.hasAttributes())
         return emptyString();
@@ -272,7 +272,7 @@ static inline String computeTagAndAttributeSelector(const Element& element, cons
     static constexpr auto maximumValueLengthForExactMatch = 60;
 
     Ref attributes = element.attributesMap();
-    Vector<std::pair<String, String>> attributesToCheck(ReserveCapacityTag { }, attributes->length());
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> attributesToCheck(ReserveCapacityTag { }, attributes->length());
     for (unsigned i = 0; i < attributes->length(); ++i) {
         RefPtr attribute = attributes->item(i);
         auto qualifiedName = attribute->qualifiedName();
@@ -280,17 +280,17 @@ static inline String computeTagAndAttributeSelector(const Element& element, cons
             continue;
 
         auto name = qualifiedName.toString();
-        if (name.length() > maximumNameLength)
+        if (length(name) > maximumNameLength)
             continue;
 
-        if (name.startsWith("on"_s))
+        if (startsWith(name, "on"_s))
             continue;
 
         auto value = attribute->value();
-        if (value.length() > maximumValueLength)
+        if (length(value) > maximumValueLength)
             continue;
 
-        attributesToCheck.append({ WTF::move(name), value.string() });
+        attributesToCheck.append({ WTF::move(name), value });
     }
 
     if (attributesToCheck.isEmpty())
@@ -298,11 +298,11 @@ static inline String computeTagAndAttributeSelector(const Element& element, cons
 
     auto tagName = element.tagName();
     for (auto [name, value] : attributesToCheck) {
-        String selector;
-        if (value.length() > maximumValueLengthForExactMatch) {
-            value = value.left(maximumValueLengthForExactMatch);
+        RefPtr<StringImpl> selector;
+        if (length(value) > maximumValueLengthForExactMatch) {
+            value = left(value, maximumValueLengthForExactMatch);
             selector = makeString(tagName, '[', name, "^='"_s, value, "']"_s, suffix);
-        } else if (value.isEmpty())
+        } else if (isEmpty(value))
             selector = makeString(tagName, '[', name, ']', suffix);
         else
             selector = makeString(tagName, '[', name, "='"_s, value, "']"_s, suffix);
@@ -314,66 +314,66 @@ static inline String computeTagAndAttributeSelector(const Element& element, cons
     return emptyString();
 }
 
-static inline String computeTagAndClassSelector(Element& element)
+static inline RefPtr<StringImpl> computeTagAndClassSelector(Element& element)
 {
     if (!element.hasClass())
         return emptyString();
 
     Ref classList = element.classList();
-    Vector<String> classes(ReserveCapacityTag { }, classList->length());
+    Vector<RefPtr<StringImpl>> classes(ReserveCapacityTag { }, classList->length());
     for (unsigned i = 0; i < std::min<unsigned>(maximumNumberOfClasses, classList->length()); ++i)
         classes.append(classList->item(i));
 
-    auto selector = makeString(element.tagName(), '.', makeStringByJoining(classes, "."_s));
+    auto selector = makeString(element.tagName(), '.', makeStringByJoining(classes, "."_si));
     if (querySelectorMatchesOneElement(element, selector))
         return selector;
 
     return emptyString();
 }
 
-static String siblingRelativeSelectorRecursive(Element&, ElementSelectorCache&);
-static String parentRelativeSelectorRecursive(Element&, ElementSelectorCache&);
+static RefPtr<StringImpl> siblingRelativeSelectorRecursive(Element&, ElementSelectorCache&);
+static RefPtr<StringImpl> parentRelativeSelectorRecursive(Element&, ElementSelectorCache&);
 
-static String shortestSelector(const Vector<String>& selectors)
+static RefPtr<StringImpl> shortestSelector(const Vector<RefPtr<StringImpl>>& selectors)
 {
     auto minLength = std::numeric_limits<size_t>::max();
-    String shortestSelector;
+    RefPtr<StringImpl> shortestSelector;
     for (auto& selector : selectors) {
-        if (selector.length() >= minLength)
+        if (length(selector) >= minLength)
             continue;
 
-        minLength = selector.length();
+        minLength = length(selector);
         shortestSelector = selector;
     }
     return shortestSelector;
 }
 
-static String selectorForElementRecursive(Element& element, ElementSelectorCache& cache)
+static RefPtr<StringImpl> selectorForElementRecursive(Element& element, ElementSelectorCache& cache)
 {
     if (auto selector = cache.get(element))
         return *selector;
 
-    Vector<String> selectors(ReserveCapacityTag { }, 5);
-    if (auto selector = computeIDSelector(element); !selector.isEmpty())
+    Vector<RefPtr<StringImpl>> selectors(ReserveCapacityTag { }, 5);
+    if (auto selector = computeIDSelector(element); !isEmpty(selector))
         selectors.append(WTF::move(selector));
 
     if (querySelectorMatchesOneElement(element, element.tagName()))
         selectors.append(element.tagName());
-    else if (auto selector = computeTagAndClassSelector(element); !selector.isEmpty())
+    else if (auto selector = computeTagAndClassSelector(element); !isEmpty(selector))
         selectors.append(WTF::move(selector));
 
-    if (auto selector = computeTagAndAttributeSelector(element); !selector.isEmpty())
+    if (auto selector = computeTagAndAttributeSelector(element); !isEmpty(selector))
         selectors.append(WTF::move(selector));
 
-    if (auto selector = shortestSelector(selectors); !selector.isEmpty()) {
+    if (auto selector = shortestSelector(selectors); !isEmpty(selector)) {
         cache.add(element, selector);
         return selector;
     }
 
-    if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+    if (auto selector = parentRelativeSelectorRecursive(element, cache); !isEmpty(selector))
         selectors.append(WTF::move(selector));
 
-    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !isEmpty(selector))
         selectors.append(WTF::move(selector));
 
     auto selector = shortestSelector(selectors);
@@ -381,7 +381,7 @@ static String selectorForElementRecursive(Element& element, ElementSelectorCache
     return selector;
 }
 
-static String siblingRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
+static RefPtr<StringImpl> siblingRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
 {
     RefPtr<Element> siblingElement;
     for (RefPtr sibling = element.previousSibling(); sibling; sibling = sibling->previousSibling()) {
@@ -393,19 +393,19 @@ static String siblingRelativeSelectorRecursive(Element& element, ElementSelector
     if (!siblingElement)
         return emptyString();
 
-    if (auto selector = selectorForElementRecursive(*siblingElement, cache); !selector.isEmpty())
+    if (auto selector = selectorForElementRecursive(*siblingElement, cache); !isEmpty(selector))
         return makeString(WTF::move(selector), " + "_s, element.tagName());
 
     return emptyString();
 }
 
-static String parentRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
+static RefPtr<StringImpl> parentRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
 {
     RefPtr parent = element.parentElement();
     if (!parent)
         return emptyString();
 
-    if (auto selector = selectorForElementRecursive(*parent, cache); !selector.isEmpty()) {
+    if (auto selector = selectorForElementRecursive(*parent, cache); !isEmpty(selector)) {
         auto selectorPrefix = makeString(WTF::move(selector), " > "_s, element.tagName());
         auto [childIndex, firstOfType, lastOfType] = findChild(element, *parent);
         if (childIndex == notFound)
@@ -426,7 +426,7 @@ static String parentRelativeSelectorRecursive(Element& element, ElementSelectorC
     return emptyString();
 }
 
-static String computeHasChildSelector(Element& element)
+static RefPtr<StringImpl> computeHasChildSelector(Element& element)
 {
     static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<LocalNameWithNamespace>> tagsToCheckForUniqueAttributes { std::initializer_list<LocalNameWithNamespace> {
         HTMLNames::aTag,
@@ -445,20 +445,20 @@ static String computeHasChildSelector(Element& element)
         HTMLNames::buttonTag
     } };
 
-    String selectorSuffix;
+    RefPtr<StringImpl> selectorSuffix;
     for (Ref child : descendantsOfType<HTMLElement>(element)) {
         if (!tagsToCheckForUniqueAttributes->contains(child->tagQName()))
             continue;
 
         auto selector = computeTagAndAttributeSelector(child);
-        if (selector.isEmpty())
+        if (isEmpty(selector))
             continue;
 
         selectorSuffix = makeString(":has("_s, WTF::move(selector), ')');
         break;
     }
 
-    if (selectorSuffix.isEmpty())
+    if (isEmpty(selectorSuffix))
         return emptyString();
 
     for (Ref ancestor : lineageOfType<HTMLElement>(element)) {
@@ -466,7 +466,7 @@ static String computeHasChildSelector(Element& element)
         if (querySelectorMatchesOneElement(element, selectorWithTag))
             return selectorWithTag;
 
-        if (auto selector = computeTagAndAttributeSelector(ancestor, selectorSuffix); !selector.isEmpty())
+        if (auto selector = computeTagAndAttributeSelector(ancestor, selectorSuffix); !isEmpty(selector))
             return selector;
 
         selectorSuffix = makeString(" > "_s, WTF::move(selectorWithTag));
@@ -476,24 +476,24 @@ static String computeHasChildSelector(Element& element)
 }
 
 // Returns multiple CSS selectors that uniquely match the target element.
-static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelectorCache& cache)
+static Vector<Vector<RefPtr<StringImpl>>> selectorsForTarget(Element& element, ElementSelectorCache& cache)
 {
     if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
         RefPtr host = pseudoElement->hostElement();
         if (!host)
             return { };
 
-        auto pseudoSelector = [&]() -> String {
+        auto pseudoSelector = [&]() -> RefPtr<StringImpl> {
             if (element.isBeforePseudoElement())
-                return "::before"_s;
+                return "::before"_si;
 
             if (element.isAfterPseudoElement())
-                return "::after"_s;
+                return "::after"_si;
 
             return { };
         }();
 
-        if (pseudoSelector.isEmpty())
+        if (isEmpty(pseudoSelector))
             return { };
 
         auto selectors = selectorsForTarget(*host, cache);
@@ -506,45 +506,47 @@ static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelect
         return selectors;
     }
 
-    Vector<Vector<String>> selectorsIncludingShadowHost;
+    Vector<Vector<RefPtr<StringImpl>>> selectorsIncludingShadowHost;
     if (RefPtr shadowHost = element.shadowHost()) {
         selectorsIncludingShadowHost = selectorsForTarget(*shadowHost, cache);
         if (selectorsIncludingShadowHost.isEmpty())
             return { };
     }
 
-    Vector<String> selectors(ReserveCapacityTag { }, 5);
+    Vector<RefPtr<StringImpl>> selectors(ReserveCapacityTag { }, 5);
 
     // First, try to compute a selector using only the target element and its attributes.
-    if (auto selector = computeIDSelector(element); !selector.isEmpty())
+    if (auto selector = computeIDSelector(element); !isEmpty(selector))
         selectors.append(WTF::move(selector));
 
     if (querySelectorMatchesOneElement(element, element.tagName()))
         selectors.append(element.tagName());
     else {
-        if (auto selector = computeTagAndClassSelector(element); !selector.isEmpty())
+        if (auto selector = computeTagAndClassSelector(element); !isEmpty(selector))
             selectors.append(WTF::move(selector));
 
-        if (auto selector = computeTagAndAttributeSelector(element); !selector.isEmpty())
+        if (auto selector = computeTagAndAttributeSelector(element); !isEmpty(selector))
             selectors.append(WTF::move(selector));
     }
 
     if (selectors.isEmpty()) {
         // Next, fall back to using :has(), with a child that can be uniquely identified.
-        if (auto selector = computeHasChildSelector(element); !selector.isEmpty())
+        if (auto selector = computeHasChildSelector(element); !isEmpty(selector))
             selectors.append(WTF::move(selector));
     }
 
     if (selectors.isEmpty()) {
         // Finally, fall back on nth-child or sibling selectors.
-        if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        if (auto selector = parentRelativeSelectorRecursive(element, cache); !isEmpty(selector))
             selectors.append(WTF::move(selector));
 
-        if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        if (auto selector = siblingRelativeSelectorRecursive(element, cache); !isEmpty(selector))
             selectors.append(WTF::move(selector));
     }
 
-    std::ranges::sort(selectors, { }, &String::length);
+    std::ranges::sort(selectors, { }, [](auto& selector) {
+        return WTF::length(selector);
+    });
 
     if (!selectors.isEmpty())
         cache.add(element, selectors.first());
@@ -562,7 +564,7 @@ TargetedElementSelectors ElementTargetingController::selectorsForElement(Element
 {
     ElementSelectorCache cache;
     return WTF::map(selectorsForTarget(element, cache), [](auto&& selectors) {
-        return HashSet<String> { WTF::move(selectors) };
+        return HashSet<RefPtr<StringImpl>> { WTF::move(selectors) };
     });
 }
 
@@ -645,7 +647,7 @@ static Vector<Ref<Element>> collectDocumentElementsFromChildFrames(const Contain
     return documentElements;
 }
 
-static String searchableTextForTarget(Element& target)
+static RefPtr<StringImpl> searchableTextForTarget(Element& target)
 {
     auto longestText = emptyString();
     size_t longestLength = 0;
@@ -661,14 +663,14 @@ static String searchableTextForTarget(Element& target)
 
     auto documentElements = collectDocumentElementsFromChildFrames(target);
     for (auto& documentElement : documentElements) {
-        if (auto text = searchableTextForTarget(documentElement); text.length() > longestLength) {
-            longestLength = text.length();
+        if (auto text = searchableTextForTarget(documentElement); length(text) > longestLength) {
+            longestLength = length(text);
             longestText = WTF::move(text);
         }
     }
 
     if (longestLength >= minimumLengthForSearchableText)
-        return longestText.left(maximumLengthForSearchableText);
+        return left(longestText, maximumLengthForSearchableText);
 
     return emptyString();
 }
@@ -896,7 +898,7 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
 
 NODELETE static bool shouldIgnoreExistingVisibilityAdjustments(const TargetedElementRequest& request)
 {
-    return std::holds_alternative<String>(request.data) || std::holds_alternative<TargetedElementSelectors>(request.data);
+    return std::holds_alternative<RefPtr<StringImpl>>(request.data) || std::holds_alternative<TargetedElementSelectors>(request.data);
 }
 
 static Vector<ClearVisibilityAdjustmentForScope> clearVisibilityAdjustmentsIfNeeded(const TargetedElementRequest& request, WeakHashSet<Element, WeakPtrImplWithEventTargetData>& adjustedElements, Document* mainDocument)
@@ -919,7 +921,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     auto clearVisibilityAdjustmentScopes = clearVisibilityAdjustmentsIfNeeded(request, m_adjustedElements, mainDocument().get());
 
     auto checkViewportAreaRatio = CheckViewportAreaRatio::Yes;
-    auto [nodes, innerElement] = switchOn(request.data, [this](const String& searchText) {
+    auto [nodes, innerElement] = switchOn(request.data, [this](StringImpl* searchText) {
         return findNodes(searchText);
     }, [this, &request](const FloatPoint& point) {
         return findNodes(point, request.shouldIgnorePointerEventsNone);
@@ -1077,7 +1079,7 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
     return { copyToVector(result.listBasedTestResult()), result.innerNonSharedElement() };
 }
 
-static RefPtr<Element> searchForElementContainingTextInContainer(ContainerNode& container, const String& searchText)
+static RefPtr<Element> searchForElementContainingTextInContainer(ContainerNode& container, StringImpl* searchText)
 {
     auto remainingRange = makeRangeSelectingNodeContents(container);
     while (is_lt(treeOrder(remainingRange.start, remainingRange.end))) {
@@ -1107,7 +1109,7 @@ static RefPtr<Element> searchForElementContainingTextInContainer(ContainerNode& 
     return nullptr;
 }
 
-static RefPtr<Element> searchForElementContainingText(ContainerNode& container, const String& searchText)
+static RefPtr<Element> searchForElementContainingText(ContainerNode& container, StringImpl* searchText)
 {
     if (RefPtr target = searchForElementContainingTextInContainer(container, searchText))
         return target;
@@ -1129,7 +1131,7 @@ static Vector<Ref<Node>> elementLineage(Element& element)
     return lineage;
 }
 
-std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const String& searchText)
+std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(StringImpl* searchText)
 {
     RefPtr document = mainDocument();
     if (!document)
@@ -1163,7 +1165,7 @@ TargetedTextSearchResult ElementTargetingController::searchTextInLocalFrames(Tar
 
     auto clearVisibilityAdjustmentScopes = clearVisibilityAdjustmentsIfNeeded(request, m_adjustedElements, mainDocument().get());
     auto includeNearbyElements = request.canIncludeNearbyElements ? IncludeNearbyElements::Yes : IncludeNearbyElements::No;
-    auto& searchText = std::get<String>(request.data);
+    auto& searchText = std::get<RefPtr<StringImpl>>(request.data);
 
     TargetedTextSearchResult result;
     for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -1796,9 +1798,9 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
     dispatchVisibilityAdjustmentStateDidChange();
 }
 
-static std::pair<String, VisibilityAdjustment> resolveSelectorToQuery(const String& selectorIncludingPseudo)
+static std::pair<RefPtr<StringImpl>, VisibilityAdjustment> resolveSelectorToQuery(StringImpl* selectorIncludingPseudo)
 {
-    auto components = selectorIncludingPseudo.splitAllowingEmptyEntries("::"_s);
+    auto components = splitAllowingEmptyEntries(selectorIncludingPseudo, "::"_s);
     if (components.size() == 1)
         return { components.first(), VisibilityAdjustment::Subtree };
 
@@ -1831,7 +1833,7 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors()
 
     auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
     Region adjustmentRegion;
-    Vector<String> matchingSelectors;
+    Vector<RefPtr<StringImpl>> matchingSelectors;
     for (auto& [identifier, selectorsForElementIncludingShadowHosts] : m_visibilityAdjustmentSelectors) {
         auto [element, selectorIncludingPseudo] = findElementFromSelectors(selectorsForElementIncludingShadowHosts);
         if (!element)
@@ -1889,7 +1891,7 @@ ElementTargetingController::FindElementFromSelectorsResult ElementTargetingContr
         RefPtr<Element> currentTarget;
         for (auto& selectorIncludingPseudo : selectorsToQuery) {
             auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
-            if (selector.isEmpty()) {
+            if (isEmpty(selector)) {
                 // FIXME: Handle the case where the full selector is `::after|before`.
                 continue;
             }

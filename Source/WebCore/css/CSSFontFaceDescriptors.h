@@ -41,32 +41,32 @@ public:
 
     StyleDeclarationType styleDeclarationType() const final { return StyleDeclarationType::FontFace; }
 
-    String src() const;
-    ExceptionOr<void> setSrc(const String&);
-    String fontFamily() const;
-    ExceptionOr<void> setFontFamily(const String&);
-    String fontStyle() const;
-    ExceptionOr<void> setFontStyle(const String&);
-    String fontWeight() const;
-    ExceptionOr<void> setFontWeight(const String&);
-    String fontStretch() const;
-    ExceptionOr<void> setFontStretch(const String&);
-    String fontWidth() const;
-    ExceptionOr<void> setFontWidth(const String&);
-    String sizeAdjust() const;
-    ExceptionOr<void> setSizeAdjust(const String&);
-    String unicodeRange() const;
-    ExceptionOr<void> setUnicodeRange(const String&);
-    String fontFeatureSettings() const;
-    ExceptionOr<void> setFontFeatureSettings(const String&);
-    String fontDisplay() const;
-    ExceptionOr<void> setFontDisplay(const String&);
-    String ascentOverride() const;
-    ExceptionOr<void> setAscentOverride(const String&);
-    String descentOverride() const;
-    ExceptionOr<void> setDescentOverride(const String&);
-    String lineGapOverride() const;
-    ExceptionOr<void> setLineGapOverride(const String&);
+    RefPtr<StringImpl> src() const;
+    ExceptionOr<void> setSrc(StringImpl*);
+    RefPtr<StringImpl> fontFamily() const;
+    ExceptionOr<void> setFontFamily(StringImpl*);
+    RefPtr<StringImpl> fontStyle() const;
+    ExceptionOr<void> setFontStyle(StringImpl*);
+    RefPtr<StringImpl> fontWeight() const;
+    ExceptionOr<void> setFontWeight(StringImpl*);
+    RefPtr<StringImpl> fontStretch() const;
+    ExceptionOr<void> setFontStretch(StringImpl*);
+    RefPtr<StringImpl> fontWidth() const;
+    ExceptionOr<void> setFontWidth(StringImpl*);
+    RefPtr<StringImpl> sizeAdjust() const;
+    ExceptionOr<void> setSizeAdjust(StringImpl*);
+    RefPtr<StringImpl> unicodeRange() const;
+    ExceptionOr<void> setUnicodeRange(StringImpl*);
+    RefPtr<StringImpl> fontFeatureSettings() const;
+    ExceptionOr<void> setFontFeatureSettings(StringImpl*);
+    RefPtr<StringImpl> fontDisplay() const;
+    ExceptionOr<void> setFontDisplay(StringImpl*);
+    RefPtr<StringImpl> ascentOverride() const;
+    ExceptionOr<void> setAscentOverride(StringImpl*);
+    RefPtr<StringImpl> descentOverride() const;
+    ExceptionOr<void> setDescentOverride(StringImpl*);
+    RefPtr<StringImpl> lineGapOverride() const;
+    ExceptionOr<void> setLineGapOverride(StringImpl*);
 
 private:
     CSSFontFaceDescriptors(MutableStyleProperties&, CSSFontFaceRule&);

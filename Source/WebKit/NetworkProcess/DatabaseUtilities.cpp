@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-DatabaseUtilities::DatabaseUtilities(String&& storageFilePath)
+DatabaseUtilities::DatabaseUtilities(RefPtr<StringImpl>&& storageFilePath)
     : m_storageFilePath(WTF::move(storageFilePath))
     , m_database(makeUniqueRef<WebCore::SQLiteDatabase>())
     , m_transaction(m_database.get())
@@ -89,14 +89,14 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
     CreatedNewFile createdNewFile = CreatedNewFile::No;
     if (!FileSystem::fileExists(m_storageFilePath)) {
         if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_storageFilePath))) {
-            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, m_storageFilePath.utf8());
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, utf8(m_storageFilePath));
             return createdNewFile;
         }
         createdNewFile = CreatedNewFile::Yes;
     }
 
     if (!m_database->open(m_storageFilePath, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked)) {
-        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), m_storageFilePath.utf8());
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), utf8(m_storageFilePath));
         return createdNewFile;
     }
     
@@ -109,7 +109,7 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
 
     if (createdNewFile == CreatedNewFile::Yes) {
         if (!createSchema()) {
-            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), m_storageFilePath.utf8());
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), utf8(m_storageFilePath));
         }
     }
     return createdNewFile;
@@ -155,7 +155,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
 #else
     constexpr auto safariBundleID = "com.apple.mobilesafari"_s;
 #endif
-    if (bundleID.isEmpty())
+    if (isEmpty(bundleID))
         bundleID = safariBundleID;
 
     WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PCM::SourceSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PCM::AttributionDestinationSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), bundleID, WallTime::fromRawSeconds(timeOfAdClick), WebCore::PCM::AttributionEphemeral::No);
@@ -203,12 +203,12 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
     return attribution;
 }
 
-String DatabaseUtilities::stripIndexQueryToMatchStoredValue(const char* originalQuery)
+RefPtr<StringImpl> DatabaseUtilities::stripIndexQueryToMatchStoredValue(const char* originalQuery)
 {
-    return makeStringByReplacingAll(String::fromLatin1(originalQuery), "CREATE UNIQUE INDEX IF NOT EXISTS"_s, "CREATE UNIQUE INDEX"_s);
+    return makeStringByReplacingAll(StringImpl::fromLatin1(originalQuery), "CREATE UNIQUE INDEX IF NOT EXISTS"_s, "CREATE UNIQUE INDEX"_s);
 }
 
-TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& tableName)
+TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(StringImpl* tableName)
 {
     auto getTableStatement = m_database->prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'table'"_s);
     if (!getTableStatement) {
@@ -226,7 +226,7 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
         return { };
     }
 
-    String createTableQuery = getTableStatement->columnText(0);
+    RefPtr<StringImpl> createTableQuery = getTableStatement->columnText(0);
 
     auto preparedIndexStatement = m_database->prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
     if (!preparedIndexStatement) {
@@ -240,28 +240,28 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
         return { };
     }
 
-    std::optional<String> index;
+    std::optional<RefPtr<StringImpl>> index;
     if (getIndexStatement->step() == SQLITE_ROW) {
-        auto rawIndex = String(getIndexStatement->columnText(0));
-        if (!rawIndex.isEmpty())
+        RefPtr<StringImpl> rawIndex = getIndexStatement->columnText(0);
+        if (!isEmpty(rawIndex))
             index = rawIndex;
     }
 
-    return std::make_pair<String, std::optional<String>>(WTF::move(createTableQuery), WTF::move(index));
+    return std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(WTF::move(createTableQuery), WTF::move(index));
 }
 
-static std::unique_ptr<WebCore::SQLiteStatement> insertDistinctValuesInTableStatement(WebCore::SQLiteDatabase& database, const String& table)
+static std::unique_ptr<WebCore::SQLiteStatement> insertDistinctValuesInTableStatement(WebCore::SQLiteDatabase& database, StringImpl* table)
 {
-    if (table == "SubframeUnderTopFrameDomains"_s)
+    if (equal(table, "SubframeUnderTopFrameDomains"_s))
         return database.prepareStatement("INSERT INTO SubframeUnderTopFrameDomains SELECT subFrameDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubframeUnderTopFrameDomains GROUP BY subFrameDomainID, topFrameDomainID"_s);
 
-    if (table == "SubresourceUnderTopFrameDomains"_s)
+    if (equal(table, "SubresourceUnderTopFrameDomains"_s))
         return database.prepareStatement("INSERT INTO SubresourceUnderTopFrameDomains SELECT subresourceDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubresourceUnderTopFrameDomains GROUP BY subresourceDomainID, topFrameDomainID"_s);
 
-    if (table == "SubresourceUniqueRedirectsTo"_s)
+    if (equal(table, "SubresourceUniqueRedirectsTo"_s))
         return database.prepareStatement("INSERT INTO SubresourceUniqueRedirectsTo SELECT subresourceDomainID, MAX(lastUpdated), toDomainID FROM _SubresourceUniqueRedirectsTo GROUP BY subresourceDomainID, toDomainID"_s);
 
-    if (table == "TopFrameLinkDecorationsFrom"_s)
+    if (equal(table, "TopFrameLinkDecorationsFrom"_s))
         return database.prepareStatement("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID"_s);
 
     return database.prepareStatementSlow(makeString("INSERT INTO "_s, table, " SELECT DISTINCT * FROM _"_s, table));
@@ -291,7 +291,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 
     // Maintain the order of tables to make sure the ObservedDomains table is created first. Other tables have foreign key constraints referencing it.
     for (auto& table : sortedTables()) {
-        if (!evaluateStatementAndExpect(insertDistinctValuesInTableStatement(m_database, table), SQLITE_DONE)) {
+        if (!evaluateStatementAndExpect(insertDistinctValuesInTableStatement(m_database, StringImpl::create(table).ptr()), SQLITE_DONE)) {
             transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.characters(), m_database->lastErrorMsg());
             return;
@@ -316,7 +316,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     transaction.commit();
 }
 
-Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
+Vector<RefPtr<StringImpl>> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
 {
     auto preparedStatement = m_database->prepareStatementSlow(makeString("PRAGMA table_info("_s, tableName, ')'));
 
@@ -325,7 +325,7 @@ Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
         return { };
     }
 
-    Vector<String> columns;
+    Vector<RefPtr<StringImpl>> columns;
     CheckedRef statement = *preparedStatement;
     while (statement->step() == SQLITE_ROW) {
         auto name = statement->columnText(1);

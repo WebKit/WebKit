@@ -36,34 +36,34 @@
 static constexpr auto inspectorStartsAttachedSetting = "inspectorStartsAttached"_s;
 static constexpr auto inspectorAttachDisabledSetting = "inspectorAttachDisabled"_s;
 
-static RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
+static RetainPtr<CFStringRef> createKeyForPreferences(StringImpl* key)
 {
-    return adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), key.createCFString().get()));
+    return adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), createCFString(key).get()));
 }
 
-static String loadSetting(const String& key)
+static RefPtr<StringImpl> loadSetting(StringImpl* key)
 {
     auto value = adoptCF(CFPreferencesCopyAppValue(createKeyForPreferences(key).get(), kCFPreferencesCurrentApplication));
     if (RetainPtr string = dynamic_cf_cast<CFStringRef>(value.get()))
-        return string.get();
+        return StringImpl::create(string.get());
     if (value == kCFBooleanTrue)
-        return "true"_s;
+        return "true"_si;
     if (value == kCFBooleanFalse)
-        return "false"_s;
+        return "false"_si;
     return { };
 }
 
-static void storeSetting(const String& key, const String& setting)
+static void storeSetting(StringImpl* key, StringImpl* setting)
 {
-    CFPreferencesSetAppValue(createKeyForPreferences(key).get(), setting.createCFString().get(), kCFPreferencesCurrentApplication);
+    CFPreferencesSetAppValue(createKeyForPreferences(key).get(), createCFString(setting).get(), kCFPreferencesCurrentApplication);
 }
 
-static void deleteSetting(const String& key)
+static void deleteSetting(StringImpl* key)
 {
     CFPreferencesSetAppValue(createKeyForPreferences(key).get(), nullptr, kCFPreferencesCurrentApplication);
 }
 
-void WebInspectorClient::sendMessageToFrontend(const String& message)
+void WebInspectorClient::sendMessageToFrontend(StringImpl* message)
 {
     ASSERT(m_frontendClient);
     protect(m_frontendClient->frontendAPIDispatcher())->dispatchMessageAsync(message);
@@ -71,41 +71,41 @@ void WebInspectorClient::sendMessageToFrontend(const String& message)
 
 bool WebInspectorClient::inspectorAttachDisabled()
 {
-    return loadSetting(inspectorAttachDisabledSetting) == "true"_s;
+    return equal(loadSetting(StringImpl::create(inspectorAttachDisabledSetting).ptr()), "true"_s);
 }
 
 void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
 {
-    storeSetting(inspectorAttachDisabledSetting, disabled ? "true"_s : "false"_s);
+    storeSetting(StringImpl::create(inspectorAttachDisabledSetting).ptr(), StringImpl::create(disabled ? "true"_s : "false"_s).ptr());
 }
 
 void WebInspectorClient::deleteInspectorStartsAttached()
 {
-    deleteSetting(inspectorAttachDisabledSetting);
+    deleteSetting(StringImpl::create(inspectorAttachDisabledSetting).ptr());
 }
 
 bool WebInspectorClient::inspectorStartsAttached()
 {
-    return loadSetting(inspectorStartsAttachedSetting) == "true"_s;
+    return equal(loadSetting(StringImpl::create(inspectorStartsAttachedSetting).ptr()), "true"_s);
 }
 
 void WebInspectorClient::setInspectorStartsAttached(bool attached)
 {
-    storeSetting(inspectorStartsAttachedSetting, attached ? "true"_s : "false"_s);
+    storeSetting(StringImpl::create(inspectorStartsAttachedSetting).ptr(), StringImpl::create(attached ? "true"_s : "false"_s).ptr());
 }
 
 void WebInspectorClient::deleteInspectorAttachDisabled()
 {
-    deleteSetting(inspectorStartsAttachedSetting);
+    deleteSetting(StringImpl::create(inspectorStartsAttachedSetting).ptr());
 }
 
 std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
     private:
-        String getProperty(const String& name) final { return loadSetting(name); }
-        void setProperty(const String& name, const String& value) final { storeSetting(name, value); }
-        void deleteProperty(const String& name) final { deleteSetting(name); }
+        RefPtr<StringImpl> getProperty(StringImpl* name) final { return loadSetting(name); }
+        void setProperty(StringImpl* name, StringImpl* value) final { storeSetting(name, value); }
+        void deleteProperty(StringImpl* name) final { deleteSetting(name); }
     };
     return makeUnique<InspectorFrontendSettingsCF>();
 }

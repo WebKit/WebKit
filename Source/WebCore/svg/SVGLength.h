@@ -108,7 +108,7 @@ public:
         return { };
     }
     
-    ExceptionOr<void> setValueAsString(const String& value)
+    ExceptionOr<void> setValueAsString(StringImpl* value)
     {
         if (isReadOnly())
             return Exception { ExceptionCode::NoModificationAllowedError };
@@ -136,7 +136,7 @@ public:
     
     ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType);
     
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
         return m_value.valueAsString();
     }

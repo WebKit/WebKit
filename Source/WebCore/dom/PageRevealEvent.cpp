@@ -32,12 +32,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageRevealEvent);
 
-Ref<PageRevealEvent> PageRevealEvent::create(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
+Ref<PageRevealEvent> PageRevealEvent::create(AtomStringImpl* type, Init&& eventInitDict, IsTrusted isTrusted)
 {
     return adoptRef(*new PageRevealEvent(type, WTF::move(eventInitDict), isTrusted));
 }
 
-PageRevealEvent::PageRevealEvent(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
+PageRevealEvent::PageRevealEvent(AtomStringImpl* type, Init&& eventInitDict, IsTrusted isTrusted)
     : Event(EventInterfaceType::PageRevealEvent, type, eventInitDict, isTrusted)
     , m_viewTransition(WTF::move(eventInitDict.viewTransition))
 { }

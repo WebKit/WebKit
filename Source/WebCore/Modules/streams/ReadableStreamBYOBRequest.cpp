@@ -63,11 +63,11 @@ ExceptionOr<void> ReadableStreamBYOBRequest::respond(JSDOMGlobalObject& globalOb
 {
     RefPtr controller = m_controller.get();
     if (!controller)
-        return Exception { ExceptionCode::TypeError, "controller is undefined"_s };
+        return Exception { ExceptionCode::TypeError, "controller is undefined"_si };
 
     RefPtr view = m_view;
     if (!view || view->isDetached())
-        return Exception { ExceptionCode::TypeError, "buffer is detached"_s };
+        return Exception { ExceptionCode::TypeError, "buffer is detached"_si };
 
     ASSERT(view->byteLength() > 0);
     ASSERT(view->possiblySharedBuffer()->byteLength() > 0);
@@ -79,9 +79,9 @@ ExceptionOr<void> ReadableStreamBYOBRequest::respondWithNewView(JSDOMGlobalObjec
 {
     RefPtr controller = m_controller.get();
     if (!controller)
-        return Exception { ExceptionCode::TypeError, "controller is undefined"_s };
+        return Exception { ExceptionCode::TypeError, "controller is undefined"_si };
     if (view.isDetached())
-        return Exception { ExceptionCode::TypeError, "buffer is detached"_s };
+        return Exception { ExceptionCode::TypeError, "buffer is detached"_si };
     return controller->respondWithNewView(globalObject, view);
 }
 

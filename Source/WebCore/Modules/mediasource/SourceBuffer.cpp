@@ -467,13 +467,13 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     }, true);
 }
 
-ExceptionOr<void> SourceBuffer::changeType(const String& type)
+ExceptionOr<void> SourceBuffer::changeType(StringImpl* type)
 {
     // changeType() proposed API. See issue #155: <https://github.com/w3c/media-source/issues/155>
     // https://rawgit.com/wicg/media-source/codec-switching/index.html#dom-sourcebuffer-changetype
 
     // 1. If type is an empty string then throw a TypeError exception and abort these steps.
-    if (type.isEmpty())
+    if (isEmpty(type))
         return Exception { ExceptionCode::TypeError };
 
     // 2. If this object has been removed from the sourceBuffers attribute of the parent media source,
@@ -580,7 +580,7 @@ bool SourceBuffer::isRemoved() const
     return !m_source;
 }
 
-void SourceBuffer::scheduleEvent(const AtomString& eventName)
+void SourceBuffer::scheduleEvent(AtomStringImpl* eventName)
 {
     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }

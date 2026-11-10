@@ -87,7 +87,7 @@ void MediaKeySystemPermissionRequestManagerProxy::invalidatePendingRequests()
     m_pendingRequests.clear();
 }
 
-void MediaKeySystemPermissionRequestManagerProxy::denyRequest(MediaKeySystemPermissionRequestProxy& request, const String& message)
+void MediaKeySystemPermissionRequestManagerProxy::denyRequest(MediaKeySystemPermissionRequestProxy& request, StringImpl* message)
 {
     Ref page = m_page.get();
     if (!page->hasRunningProcess())
@@ -121,7 +121,7 @@ void MediaKeySystemPermissionRequestManagerProxy::grantRequest(MediaKeySystemPer
 #endif
 }
 
-void MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame(MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier frameID, Ref<SecurityOrigin>&& mediaKeyRequestOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem, CompletionHandler<void(Ref<MediaKeySystemPermissionRequestProxy>&&)>&& completionHandler)
+void MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame(MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier frameID, Ref<SecurityOrigin>&& mediaKeyRequestOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, StringImpl* keySystem, CompletionHandler<void(Ref<MediaKeySystemPermissionRequestProxy>&&)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, mediaKeySystemID.toUInt64());
     Ref page = m_page.get();
@@ -130,7 +130,7 @@ void MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame(MediaKey
 
     Ref mediaKeyRequestDocumentSecurityOrigin = request->mediaKeyRequestSecurityOrigin();
     Ref topLevelDocumentSecurityOrigin = request->topLevelDocumentSecurityOrigin();
-    protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(mediaKeyRequestDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [request = WTF::move(request), completionHandler = WTF::move(completionHandler)] (String&& mediaKeysHashSalt) mutable {
+    protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(mediaKeyRequestDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [request = WTF::move(request), completionHandler = WTF::move(completionHandler)] (RefPtr<StringImpl>&& mediaKeysHashSalt) mutable {
         request->setMediaKeysHashSalt(WTF::move(mediaKeysHashSalt));
         completionHandler(WTF::move(request));
     });

@@ -66,7 +66,7 @@ private:
         m_provider.clearNotifications(notificationIDs);
     }
 
-    HashMap<String, bool> notificationPermissions() override
+    HashMap<RefPtr<StringImpl>, bool> notificationPermissions() override
     {
         return m_provider.notificationPermissions();
     }
@@ -140,7 +140,7 @@ void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNo
 
     GRefPtr<WebKitNotification> notification = m_apiNotifications.get(webNotification.identifier());
     if (!notification) {
-        withdrawAnyPreviousAPINotificationMatchingTag(webNotification.tag().utf8());
+        withdrawAnyPreviousAPINotificationMatchingTag(utf8(webNotification.tag()));
         notification = adoptGRef(webkitNotificationCreate(webNotification));
         g_signal_connect(notification.get(), "closed", G_CALLBACK(apiNotificationCloseCallback), this);
         g_signal_connect(notification.get(), "clicked", G_CALLBACK(apiNotificationClickedCallback), this);
@@ -188,14 +188,14 @@ void WebKitNotificationProvider::clearNotifications(const Vector<WebNotification
         cancelNotificationByID(item);
 }
 
-HashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
+HashMap<RefPtr<StringImpl>, bool> WebKitNotificationProvider::notificationPermissions()
 {
     if (m_webContext)
         webkitWebContextInitializeNotificationPermissions(m_webContext);
     return m_notificationPermissions;
 }
 
-void WebKitNotificationProvider::setNotificationPermissions(HashMap<String, bool>&& permissionsMap)
+void WebKitNotificationProvider::setNotificationPermissions(HashMap<RefPtr<StringImpl>, bool>&& permissionsMap)
 {
     m_notificationPermissions = WTF::move(permissionsMap);
 }

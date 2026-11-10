@@ -35,10 +35,10 @@
 namespace WebCore {
 
 struct RTCIceCandidateInit {
-    String candidate;
-    String sdpMid;
+    RefPtr<StringImpl> candidate;
+    RefPtr<StringImpl> sdpMid;
     std::optional<unsigned short> sdpMLineIndex;
-    String usernameFragment;
+    RefPtr<StringImpl> usernameFragment;
 };
 
 } // namespace WebCore

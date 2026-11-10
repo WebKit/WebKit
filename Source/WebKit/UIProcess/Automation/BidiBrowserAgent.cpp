@@ -50,16 +50,16 @@ using UserContextInfo = Inspector::Protocol::BidiBrowser::UserContextInfo;
 
 namespace {
 
-String toUserContextIDProtocolString(const PAL::SessionID& sessionID)
+RefPtr<StringImpl> toUserContextIDProtocolString(const PAL::SessionID& sessionID)
 {
     StringBuilder builder;
     builder.append(hex(sessionID.toUInt64(), 16));
     return builder.toString();
 }
 
-const String& defaultUserContextID()
+const RefPtr<StringImpl>& defaultUserContextID()
 {
-    static NeverDestroyed<const String> contextID(MAKE_STATIC_STRING_IMPL("default"));
+    static NeverDestroyed<const RefPtr<StringImpl>> contextID(MAKE_STATIC_STRING_IMPL("default"));
     return contextID;
 }
 
@@ -91,7 +91,7 @@ BidiBrowserAgent::~BidiBrowserAgent() = default;
 
 void BidiBrowserAgent::didCreatePage(WebPageProxy& page)
 {
-    String userContextID = toUserContextIDProtocolString(page.sessionID());
+    RefPtr<StringImpl> userContextID = toUserContextIDProtocolString(page.sessionID());
     auto it = m_userContextsPendingDeletion.find(userContextID);
     if (it == m_userContextsPendingDeletion.end())
         return;
@@ -102,7 +102,7 @@ void BidiBrowserAgent::didCreatePage(WebPageProxy& page)
 
 void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
 {
-    String userContextID = toUserContextIDProtocolString(page.sessionID());
+    RefPtr<StringImpl> userContextID = toUserContextIDProtocolString(page.sessionID());
     auto it = m_userContextsPendingDeletion.find(userContextID);
     if (it == m_userContextsPendingDeletion.end())
         return;
@@ -115,12 +115,12 @@ void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
     m_userContextsPendingDeletion.remove(it);
 }
 
-bool BidiBrowserAgent::isValidUserContext(const String& userContextID) const
+bool BidiBrowserAgent::isValidUserContext(StringImpl* userContextID) const
 {
-    if (userContextID.isEmpty())
+    if (isEmpty(userContextID))
         return false;
 
-    if (userContextID == defaultUserContextID())
+    if (equal(userContextID, defaultUserContextID()))
         return true;
 
     return m_userContexts.contains(userContextID);
@@ -138,16 +138,16 @@ CommandResult<void> BidiBrowserAgent::close()
     return { };
 }
 
-CommandResult<String> BidiBrowserAgent::createUserContext()
+CommandResult<RefPtr<StringImpl>> BidiBrowserAgent::createUserContext()
 {
-    String error;
+    RefPtr<StringImpl> error;
     auto userContext = platformCreateUserContext(error);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContext, InternalError, error);
 
     ASSERT(!userContext->dataStore().isPersistent());
 
     PAL::SessionID sessionID = userContext->dataStore().sessionID();
-    String userContextID = toUserContextIDProtocolString(sessionID);
+    RefPtr<StringImpl> userContextID = toUserContextIDProtocolString(sessionID);
     m_userContexts.set(userContextID, WTF::move(userContext));
 
     return userContextID;
@@ -167,10 +167,10 @@ CommandResult<Ref<JSON::ArrayOf<UserContextInfo>>> BidiBrowserAgent::getUserCont
     return userContexts;
 }
 
-void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCallback<void>&& callback)
+void BidiBrowserAgent::removeUserContext(StringImpl* userContextID, CommandCallback<void>&& callback)
 {
     // https://www.w3.org/TR/webdriver-bidi/#command-browser-removeUserContext step 2.
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(userContextID == defaultUserContextID(), InvalidParameter, "Cannot delete default user context."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(equal(userContextID, defaultUserContextID()), InvalidParameter, "Cannot delete default user context."_s);
 
     auto it = m_userContexts.find(userContextID);
     // https://www.w3.org/TR/webdriver-bidi/#command-browser-removeUserContext step 4.
@@ -187,9 +187,9 @@ void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCal
 }
 
 #if !USE(GLIB)
-std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(String& error)
+std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(RefPtr<StringImpl>& error)
 {
-    error = "User context creation is not implemented for this platform yet."_s;
+    error = "User context creation is not implemented for this platform yet."_si;
     return nullptr;
 }
 #endif

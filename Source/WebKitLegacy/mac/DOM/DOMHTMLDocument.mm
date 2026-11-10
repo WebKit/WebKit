@@ -71,91 +71,91 @@
 - (NSString *)dir
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->dir().createNSString().autorelease();
+    return createNSString(IMPL->dir()).autorelease();
 }
 
 - (void)setDir:(NSString *)newDir
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setDir(newDir);
+    IMPL->setDir(AtomStringImpl::add((__bridge CFStringRef)newDir).get());
 }
 
 - (NSString *)designMode
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->designMode().createNSString().autorelease();
+    return createNSString(IMPL->designMode()).autorelease();
 }
 
 - (void)setDesignMode:(NSString *)newDesignMode
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setDesignMode(newDesignMode);
+    IMPL->setDesignMode(StringImpl::create(newDesignMode).get());
 }
 
 - (NSString *)compatMode
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->compatMode().createNSString().autorelease();
+    return createNSString(IMPL->compatMode()).autorelease();
 }
 
 - (NSString *)bgColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->bgColor().createNSString().autorelease();
+    return createNSString(IMPL->bgColor()).autorelease();
 }
 
 - (void)setBgColor:(NSString *)newBgColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setBgColor(newBgColor);
+    IMPL->setBgColor(AtomStringImpl::add((__bridge CFStringRef)newBgColor).get());
 }
 
 - (NSString *)fgColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->fgColor().createNSString().autorelease();
+    return createNSString(IMPL->fgColor()).autorelease();
 }
 
 - (void)setFgColor:(NSString *)newFgColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setFgColor(newFgColor);
+    IMPL->setFgColor(AtomStringImpl::add((__bridge CFStringRef)newFgColor).get());
 }
 
 - (NSString *)alinkColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->alinkColor().createNSString().autorelease();
+    return createNSString(IMPL->alinkColor()).autorelease();
 }
 
 - (void)setAlinkColor:(NSString *)newAlinkColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAlinkColor(newAlinkColor);
+    IMPL->setAlinkColor(AtomStringImpl::add((__bridge CFStringRef)newAlinkColor).get());
 }
 
 - (NSString *)linkColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->linkColorForBindings().createNSString().autorelease();
+    return createNSString(IMPL->linkColorForBindings()).autorelease();
 }
 
 - (void)setLinkColor:(NSString *)newLinkColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setLinkColorForBindings(newLinkColor);
+    IMPL->setLinkColorForBindings(AtomStringImpl::add((__bridge CFStringRef)newLinkColor).get());
 }
 
 - (NSString *)vlinkColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->vlinkColor().createNSString().autorelease();
+    return createNSString(IMPL->vlinkColor()).autorelease();
 }
 
 - (void)setVlinkColor:(NSString *)newVlinkColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setVlinkColor(newVlinkColor);
+    IMPL->setVlinkColor(AtomStringImpl::add((__bridge CFStringRef)newVlinkColor).get());
 }
 
 - (void)open
@@ -173,13 +173,13 @@
 - (void)write:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->write(nullptr, FixedVector<String> { String { text } });
+    IMPL->write(nullptr, FixedVector<RefPtr<StringImpl>> { StringImpl::create(text) });
 }
 
 - (void)writeln:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->writeln(nullptr, FixedVector<String> { String { text } });
+    IMPL->writeln(nullptr, FixedVector<RefPtr<StringImpl>> { StringImpl::create(text) });
 }
 
 - (void)clear

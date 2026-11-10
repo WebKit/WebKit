@@ -42,22 +42,22 @@ class CompiledContentExtension;
 class ContentExtension : public RefCounted<ContentExtension> {
 public:
     enum class ShouldCompileCSS : bool { No, Yes };
-    static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
+    static Ref<ContentExtension> create(StringImpl* identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
 
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
     const URL& extensionBaseURL() const LIFETIME_BOUND { return m_extensionBaseURL; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
     NODELETE StyleSheetContents* globalDisplayNoneStyleSheet();
     const DFABytecodeInterpreter::Actions& topURLActions(const URL& topURL) const;
     const DFABytecodeInterpreter::Actions& frameURLActions(const URL& frameURL) const;
     const Vector<uint64_t>& universalActions() const LIFETIME_BOUND { return m_universalActions; }
-    DFABytecodeInterpreter::Actions interpretURLFilters(const String& url, ResourceFlags) const;
+    DFABytecodeInterpreter::Actions interpretURLFilters(StringImpl* url, ResourceFlags) const;
 
 private:
-    ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
+    ContentExtension(StringImpl* identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
     uint32_t findFirstIgnoreRule() const;
     
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     const Ref<CompiledContentExtension> m_compiledExtension;
     URL m_extensionBaseURL;
 

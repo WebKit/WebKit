@@ -3057,11 +3057,11 @@ TEST(WKWebExtension, ContentScriptImport)
     static auto *goodScript = @"browser.test.notifyPass()";
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, @"<script type='module' src='page.js'></script>" } },
-        { "/page.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, pageScript } },
-        { "/service-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScript } },
-        { "/bad.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, badScript } },
-        { "/good.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, goodScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script type='module' src='page.js'></script>"_s } },
+        { "/page.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, StringImpl::create(pageScript) } },
+        { "/service-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, StringImpl::create(serviceWorkerScript) } },
+        { "/bad.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, StringImpl::create(badScript) } },
+        { "/good.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, StringImpl::create(goodScript) } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     static auto *manifest = @{

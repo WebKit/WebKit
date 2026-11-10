@@ -77,7 +77,7 @@ public:
     NODELETE WEBCORE_EXPORT ProcessIdentifier hostingProcessIdentifier() const;
     void setHostingProcessIdentifier(ProcessIdentifier processID) { m_hostingProcessIdentifier = processID; }
 
-    String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
+    RefPtr<StringImpl> renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
     void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
     void updateRemoteFrameOffsetInMainFrame(IntPoint);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -85,13 +85,13 @@ public:
 #endif
     void unbindRemoteAccessibilityFrames(int);
 
-    void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
-    NODELETE String customUserAgent() const final;
-    void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgentAsSiteSpecificQuirks); }
-    NODELETE String customUserAgentAsSiteSpecificQuirks() const final;
+    void setCustomUserAgent(RefPtr<StringImpl>&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
+    NODELETE RefPtr<StringImpl> customUserAgent() const final;
+    void setCustomUserAgentAsSiteSpecificQuirks(RefPtr<StringImpl>&& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgentAsSiteSpecificQuirks); }
+    NODELETE RefPtr<StringImpl> customUserAgentAsSiteSpecificQuirks() const final;
 
-    void setCustomNavigatorPlatform(String&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
-    NODELETE String customNavigatorPlatform() const final;
+    void setCustomNavigatorPlatform(RefPtr<StringImpl>&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
+    NODELETE RefPtr<StringImpl> customNavigatorPlatform() const final;
 
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections) { m_advancedPrivacyProtections = advancedPrivacyProtections; }
     NODELETE OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
@@ -109,7 +109,7 @@ public:
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
     void addResourceTimingFromChild(ResourceTiming&&);
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     WEBCORE_EXPORT const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
     NODELETE bool frameDocumentIsSandboxedOrigin() const;
@@ -127,7 +127,7 @@ private:
     NODELETE SecurityOrigin* frameDocumentSecurityOrigin() const final;
     NODELETE std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const final;
     NODELETE std::optional<AgentClusterIdentifier> frameAgentClusterIdentifier() const final;
-    NODELETE String frameURLProtocol() const final;
+    NODELETE RefPtr<StringImpl> frameURLProtocol() const final;
     float frameOwnerZoomFactorForChild(const Frame&) const final;
 
     NODELETE FrameView* virtualView() const final;
@@ -142,9 +142,9 @@ private:
     const UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
     Markable<ProcessIdentifier> m_hostingProcessIdentifier;
-    String m_customUserAgent;
-    String m_customUserAgentAsSiteSpecificQuirks;
-    String m_customNavigatorPlatform;
+    RefPtr<StringImpl> m_customUserAgent;
+    RefPtr<StringImpl> m_customUserAgentAsSiteSpecificQuirks;
+    RefPtr<StringImpl> m_customNavigatorPlatform;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     bool m_allowPrivacyProxy { true };
     AutoplayPolicy m_autoplayPolicy;

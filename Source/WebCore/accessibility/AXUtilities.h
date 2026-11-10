@@ -103,7 +103,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const AXNotificationWithData&);
 
 void dumpAccessibilityTreeToStderr(Document&);
 
-String roleToString(AccessibilityRole);
+RefPtr<StringImpl> roleToString(AccessibilityRole);
 
 std::optional<CursorType> cursorTypeFrom(const StyleProperties&);
 

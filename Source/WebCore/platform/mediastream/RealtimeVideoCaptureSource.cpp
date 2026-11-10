@@ -624,15 +624,15 @@ Ref<JSON::Object> SizeFrameRateAndZoom::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("width"_s, width ? width.value() : 0);
-    object->setDouble("height"_s, height ? height.value() : 0);
-    object->setDouble("frameRate"_s, frameRate ? frameRate.value() : 0);
-    object->setDouble("zoom"_s, zoom ? zoom.value() : 0);
+    object->setDouble("width"_si, width ? width.value() : 0);
+    object->setDouble("height"_si, height ? height.value() : 0);
+    object->setDouble("frameRate"_si, frameRate ? frameRate.value() : 0);
+    object->setDouble("zoom"_si, zoom ? zoom.value() : 0);
 
     return object;
 }
 
-String SizeFrameRateAndZoom::toJSONString() const
+RefPtr<StringImpl> SizeFrameRateAndZoom::toJSONString() const
 {
     return toJSONObject()->toJSONString();
 }

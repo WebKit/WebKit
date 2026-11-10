@@ -277,8 +277,8 @@ std::optional<SimpleRange> DictionaryLookup::rangeForSelection(const VisibleSele
     NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
 
     auto fullCharacterRange = *makeSimpleRange(paragraphStart, paragraphEnd);
-    String itemString = plainText(fullCharacterRange);
-    NSRange highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:itemString.createNSString().get() selectedRange:rangeToPass]).get().highlightRange;
+    RefPtr<StringImpl> itemString = plainText(fullCharacterRange);
+    NSRange highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:createNSString(itemString).get() selectedRange:rangeToPass]).get().highlightRange;
 
     return { { resolveCharacterRange(fullCharacterRange, highlightRange) } };
 
@@ -351,8 +351,8 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
 
     NSRange selectedRange = [PAL::getRVSelectionClassSingleton() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
 
-    String itemString = plainText(*fullCharacterRange);
-    auto highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:itemString.createNSString().get() selectedRange:selectedRange]).get().highlightRange;
+    RefPtr<StringImpl> itemString = plainText(*fullCharacterRange);
+    auto highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:createNSString(itemString).get() selectedRange:selectedRange]).get().highlightRange;
 
     if (highlightRange.location == NSNotFound || !highlightRange.length)
         return std::nullopt;
@@ -469,7 +469,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:attributedString.get() clearTextIndicatorCallback:WTF::move(clearTextIndicator)]);
     auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
 #else
-    RetainPtr text = dictionaryPopupInfo.text.createNSString();
+    RetainPtr text = createNSString(dictionaryPopupInfo.text);
     RetainPtr webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:adoptNS([[NSAttributedString alloc] initWithString:text.get()]).get() clearTextIndicatorCallback:WTF::move(clearTextIndicator)]);
     RetainPtr item = adoptNS([PAL::allocRVItemInstance() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
 #endif
@@ -495,7 +495,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
     auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
 #else
-    RetainPtr text = dictionaryPopupInfo.text.createNSString();
+    RetainPtr text = createNSString(dictionaryPopupInfo.text);
     RetainPtr item = adoptNS([PAL::allocRVItemInstance() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
 #endif
 

@@ -169,7 +169,7 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     return currentTime < endTime;
 }
 
-String ScrollAnimationSmooth::debugDescription() const
+RefPtr<StringImpl> ScrollAnimationSmooth::debugDescription() const
 {
     TextStream textStream;
     textStream << "ScrollAnimationSmooth " << this << " active " << isActive() << " curve " << m_curve << " from " << m_startOffset << " to " << m_destinationOffset << " current offset " << currentOffset();

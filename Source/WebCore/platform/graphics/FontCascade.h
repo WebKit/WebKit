@@ -119,7 +119,7 @@ public:
     using CustomFontNotReadyAction = FontCascadeCustomFontNotReadyAction;
     WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
     static void drawGlyphs(GraphicsContext&, const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
-    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
+    void drawEmphasisMarks(GraphicsContext&, const TextRun&, AtomStringImpl* mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
 
     Vector<FloatSegment> lineSegmentsForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
@@ -169,9 +169,9 @@ public:
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 
-    int emphasisMarkAscent(const AtomString&) const;
-    int emphasisMarkDescent(const AtomString&) const;
-    float floatEmphasisMarkHeight(const AtomString&) const;
+    int emphasisMarkAscent(AtomStringImpl*) const;
+    int emphasisMarkDescent(AtomStringImpl*) const;
+    float floatEmphasisMarkHeight(AtomStringImpl*) const;
 
     inline const Font& primaryFont() const; // Defined in FontCascadeInlines.h
     inline const FontRanges& fallbackRangesAt(FontCascadeFonts&, unsigned) const; // Defined in FontCascadeInlines.h
@@ -215,7 +215,7 @@ public:
 private:
 
     TextShapingResult layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasis = ForTextEmphasis::No) const;
-    void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
+    void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, AtomStringImpl*, const FloatPoint&) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
@@ -223,8 +223,8 @@ private:
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, DirectionalOverride, GlyphGeometryCacheEntry*) const;
     NODELETE ALWAYS_INLINE bool canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
 
-    std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
-    const Font* fontForEmphasisMark(const AtomString&) const;
+    std::optional<GlyphData> getEmphasisMarkGlyphData(AtomStringImpl*) const;
+    const Font* fontForEmphasisMark(AtomStringImpl*) const;
 
     static constexpr bool canReturnFallbackFontsForComplexText();
     static constexpr bool canExpandAroundIdeographsInComplexText();
@@ -265,9 +265,9 @@ public:
 
     inline static char16_t normalizeSpaces(char16_t); // Defined in FontCascadeInlines.h
 
-    static String normalizeSpaces(std::span<const Latin1Character>);
-    static String normalizeSpaces(std::span<const char16_t>);
-    static String normalizeSpaces(StringView);
+    static RefPtr<StringImpl> normalizeSpaces(std::span<const Latin1Character>);
+    static RefPtr<StringImpl> normalizeSpaces(std::span<const char16_t>);
+    static RefPtr<StringImpl> normalizeSpaces(StringView);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
     FontCascadeFonts* fonts() const { return m_fonts.get(); }

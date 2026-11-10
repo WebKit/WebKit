@@ -128,10 +128,10 @@ MemoryBackingStoreTransaction* MemoryObjectStore::writeTransaction()
 IDBError MemoryObjectStore::addIndex(MemoryBackingStoreTransaction& transaction, const IDBIndexInfo& indexInfo)
 {
     if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
-        return IDBError { ExceptionCode::ConstraintError, "Transaction state is invalid."_s };
+        return IDBError { ExceptionCode::ConstraintError, "Transaction state is invalid."_si };
 
     if (m_indexesByIdentifier.contains(indexInfo.identifier()))
-        return IDBError { ExceptionCode::ConstraintError, "Index identifier already exists"_s };
+        return IDBError { ExceptionCode::ConstraintError, "Index identifier already exists"_si };
 
     auto index = MemoryIndex::create(indexInfo, *this);
     index->writeTransactionStarted(transaction);
@@ -155,11 +155,11 @@ void MemoryObjectStore::revertAddIndex(MemoryBackingStoreTransaction& transactio
 IDBError MemoryObjectStore::updateIndexRecordsWithIndexKey(MemoryBackingStoreTransaction& transaction, const IDBIndexInfo& indexInfo, const IDBKeyData& key, const IndexKey& indexKey)
 {
     if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
-        return IDBError { ExceptionCode::ConstraintError, "Transaction state is invalid."_s };
+        return IDBError { ExceptionCode::ConstraintError, "Transaction state is invalid."_si };
 
     RefPtr index = m_indexesByIdentifier.get(indexInfo.identifier());
     if (!index)
-        return IDBError { ExceptionCode::ConstraintError, "Index does not exist."_s };
+        return IDBError { ExceptionCode::ConstraintError, "Index does not exist."_si };
 
     if (indexKey.isNull())
         return IDBError { };
@@ -338,7 +338,7 @@ IDBError MemoryObjectStore::checkIndexConstraintsForPut(const IDBKeyData& keyDat
         RefPtr index = m_indexesByIdentifier.get(indexID);
         ASSERT(index);
         if (!index)
-            return IDBError { ExceptionCode::InvalidStateError, "Missing index metadata"_s };
+            return IDBError { ExceptionCode::InvalidStateError, "Missing index metadata"_si };
 
         if (!index->info().unique())
             continue;
@@ -353,7 +353,7 @@ IDBError MemoryObjectStore::checkIndexConstraintsForPut(const IDBKeyData& keyDat
             if (!key.isValid())
                 continue;
             if (index->hasRecordForOtherPrimaryKey(key, keyData))
-                return IDBError { ExceptionCode::ConstraintError, "Unable to store record in object store because it does not satisfy the uniqueness requirements of an index"_s };
+                return IDBError { ExceptionCode::ConstraintError, "Unable to store record in object store because it does not satisfy the uniqueness requirements of an index"_si };
         }
     }
 
@@ -420,7 +420,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
         RefPtr index = m_indexesByIdentifier.get(indexID);
         ASSERT(index);
         if (!index) {
-            error = IDBError { ExceptionCode::InvalidStateError, "Missing index metadata"_s };
+            error = IDBError { ExceptionCode::InvalidStateError, "Missing index metadata"_si };
             break;
         }
 
@@ -574,7 +574,7 @@ MemoryObjectStoreCursor* MemoryObjectStore::maybeOpenCursor(const IDBCursorInfo&
     return result.iterator->value.ptr();
 }
 
-void MemoryObjectStore::renameIndex(MemoryIndex& index, const String& newName)
+void MemoryObjectStore::renameIndex(MemoryIndex& index, StringImpl* newName)
 {
     ASSERT(m_indexesByName.get(index.info().name()) == &index);
     ASSERT(!m_indexesByName.contains(newName));

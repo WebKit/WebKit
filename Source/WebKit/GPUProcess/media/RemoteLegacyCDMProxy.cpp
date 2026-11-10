@@ -54,7 +54,7 @@ RemoteLegacyCDMProxy::~RemoteLegacyCDMProxy()
     m_cdm->setClient(nullptr);
 }
 
-void RemoteLegacyCDMProxy::supportsMIMEType(const String& mimeType, SupportsMIMETypeCallback&& callback)
+void RemoteLegacyCDMProxy::supportsMIMEType(StringImpl* mimeType, SupportsMIMETypeCallback&& callback)
 {
     callback(protect(m_cdm)->supportsMIMEType(mimeType));
 }

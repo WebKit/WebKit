@@ -255,14 +255,14 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     if (!imageRepresentsNothing()) {
         if (newImage && newImage->image())
             imageSize = imageSizeForError(newImage);
-        else if (!m_altText.isEmpty() || newImage) {
+        else if (!isEmpty(m_altText) || newImage) {
             // If we'll be displaying either text or an image, add a little padding.
             imageSize = IntSize(paddingWidth, paddingHeight);
         }
     }
 
     // we have an alt and the user meant it (its not a text we invented)
-    if (!m_altText.isEmpty()) {
+    if (!isEmpty(m_altText)) {
         const FontCascade& font = style().fontCascade();
         IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().intHeight(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
@@ -286,7 +286,7 @@ void RenderImage::styleDidChange(Style::Difference diff, const Style::ComputedSt
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_needsToSetSizeForAltText) {
-        if (!m_altText.isEmpty() && setImageSizeForAltText(protect(cachedImage())))
+        if (!isEmpty(m_altText) && setImageSizeForAltText(protect(cachedImage())))
             repaintOrMarkForLayout(ImageSizeChangeForAltText);
         m_needsToSetSizeForAltText = false;
     }
@@ -312,7 +312,7 @@ bool RenderImage::imageRepresentsNothing() const
         return false;
     if (!imageElement->hasAttribute(HTMLNames::altAttr))
         return false;
-    if (!imageResource().errorOccurred() || !m_altText.isEmpty())
+    if (!imageResource().errorOccurred() || !isEmpty(m_altText))
         return false;
     return document().inNoQuirksMode() || (style().logicalWidth().isAuto() && style().logicalHeight().isAuto());
 }
@@ -347,7 +347,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     // Set image dimensions, taking into account the size of the alt text.
     if (imageResource().errorOccurred()) {
-        if (!m_altText.isEmpty() && document().hasPendingStyleRecalc()) {
+        if (!isEmpty(m_altText) && document().hasPendingStyleRecalc()) {
             ASSERT(element());
             if (element()) {
                 m_needsToSetSizeForAltText = true;
@@ -620,10 +620,10 @@ bool RenderImage::isShowingMissingOrImageError() const
 
 bool RenderImage::isShowingAltText() const
 {
-    return isShowingMissingOrImageError() && !m_altText.isEmpty();
+    return isShowingMissingOrImageError() && !isEmpty(m_altText);
 }
 
-String RenderImage::accessibilityDescription() const
+RefPtr<StringImpl> RenderImage::accessibilityDescription() const
 {
     RefPtr styleImage = imageResource().styleImage();
     if (!styleImage)
@@ -716,7 +716,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
         }
     }
 
-    if (m_altText.isEmpty())
+    if (isEmpty(m_altText))
         return;
 
     auto& style = this->style();
@@ -1095,7 +1095,7 @@ void RenderImage::updateAltText()
     else if (RefPtr image = dynamicDowncast<HTMLImageElement>(*element()))
         m_altText = image->altText();
 
-    if (m_altText.isNull()) {
+    if (!m_altText) {
         // We check isNull() and not isEmpty() because we don't want to override empty-string
         // alt text provided by either of the above branches.
         m_altText = style().content().altText();

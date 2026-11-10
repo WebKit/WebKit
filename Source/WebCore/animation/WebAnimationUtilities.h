@@ -66,9 +66,9 @@ const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 bool compareStyleablePositionsInDocumentTreeOrder(const Styleable&, const Styleable&);
 bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&);
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase&, const AnimationEventBase&);
-String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>&);
-std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String&, Document*);
-AtomString animatablePropertyAsString(AnimatableCSSProperty);
+RefPtr<StringImpl> pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>&);
+std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(StringImpl*, Document*);
+RefPtr<AtomStringImpl> animatablePropertyAsString(AnimatableCSSProperty);
 bool animatablePropertiesContainTransformRelatedProperty(const HashSet<AnimatableCSSProperty>&);
 
 // Determines whether a Style::ComputedStyle specifies a transition on `display` property.

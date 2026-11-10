@@ -71,7 +71,7 @@ SearchPopupMenuDB::~SearchPopupMenuDB()
     closeDatabase();
 }
 
-void SearchPopupMenuDB::saveRecentSearches(const String& name, const Vector<RecentSearch>& searches)
+void SearchPopupMenuDB::saveRecentSearches(StringImpl* name, const Vector<RecentSearch>& searches)
 {
     if (!m_database.isOpen()) {
         if (!openDatabase())
@@ -105,7 +105,7 @@ void SearchPopupMenuDB::saveRecentSearches(const String& name, const Vector<Rece
     checkSQLiteReturnCode(stepRet);
 }
 
-void SearchPopupMenuDB::loadRecentSearches(const String& name, Vector<RecentSearch>& searches)
+void SearchPopupMenuDB::loadRecentSearches(StringImpl* name, Vector<RecentSearch>& searches)
 {
     if (!m_database.isOpen()) {
         if (!openDatabase())
@@ -148,10 +148,10 @@ bool SearchPopupMenuDB::checkDatabaseValidity()
         return false;
     }
 
-    String resultText = integrity->columnText(0);
+    RefPtr<StringImpl> resultText = integrity->columnText(0);
 
-    if (resultText != "ok"_s) {
-        LOG_ERROR("Search autosave database integrity check failed - %s", resultText.utf8());
+    if (!equal(resultText, "ok"_s)) {
+        LOG_ERROR("Search autosave database integrity check failed - %s", utf8(resultText));
         return false;
     }
 
@@ -181,7 +181,7 @@ bool SearchPopupMenuDB::openDatabase()
                 existsDatabaseFile = false;
             }
         } else {
-            LOG_ERROR("Failed to open search autosave database: %s, attempting to recreate the database", m_databaseFilename.utf8());
+            LOG_ERROR("Failed to open search autosave database: %s, attempting to recreate the database", utf8(m_databaseFilename));
             deleteAllDatabaseFiles();
             existsDatabaseFile = false;
         }
@@ -189,7 +189,7 @@ bool SearchPopupMenuDB::openDatabase()
 
     if (!existsDatabaseFile) {
         if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_databaseFilename)))
-            LOG_ERROR("Failed to create the search autosave database path %s", m_databaseFilename.utf8());
+            LOG_ERROR("Failed to create the search autosave database path %s", utf8(m_databaseFilename));
 
         m_database.open(m_databaseFilename);
     }

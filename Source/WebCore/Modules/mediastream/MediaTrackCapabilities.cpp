@@ -53,14 +53,14 @@ NODELETE static LongRange capabilityLongRange(const LongCapabilityRange& value)
     return { value.max(), value.min() };
 }
 
-static Vector<String> capabilityStringVector(const Vector<VideoFacingMode>& modes)
+static Vector<RefPtr<StringImpl>> capabilityStringVector(const Vector<VideoFacingMode>& modes)
 {
     return modes.map([](auto& mode) {
         return convertEnumerationToString(mode);
     });
 }
 
-static Vector<String> capabilityStringVector(const Vector<MeteringMode>& modes)
+static Vector<RefPtr<StringImpl>> capabilityStringVector(const Vector<MeteringMode>& modes)
 {
     return modes.map([](auto& mode) {
         return convertEnumerationToString(mode);

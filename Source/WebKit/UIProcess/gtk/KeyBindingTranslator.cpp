@@ -207,7 +207,7 @@ static constexpr auto customKeyBindings = WTF::toArray<KeyCombinationEntry>({
     { GDK_KEY_V,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "PasteAsPlainText"_s }
 });
 
-static Vector<String> handleKeyBindingsForMap(const std::span<const KeyCombinationEntry> mapping, unsigned keyval, GdkModifierType state)
+static Vector<RefPtr<StringImpl>> handleKeyBindingsForMap(const std::span<const KeyCombinationEntry> mapping, unsigned keyval, GdkModifierType state)
 {
     // For keypress events, we want charCode(), but keyCode() does that.
     unsigned mapKey = (state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK)) << 16 | keyval;
@@ -222,13 +222,13 @@ static Vector<String> handleKeyBindingsForMap(const std::span<const KeyCombinati
     return { };
 }
 
-static Vector<String> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)
+static Vector<RefPtr<StringImpl>> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)
 {
     return handleKeyBindingsForMap(std::span(customKeyBindings), keyval, state);
 }
 
 #if USE(GTK4)
-Vector<String> KeyBindingTranslator::commandsForKeyEvent(GtkEventControllerKey* controller)
+Vector<RefPtr<StringImpl>> KeyBindingTranslator::commandsForKeyEvent(GtkEventControllerKey* controller)
 {
     ASSERT(m_pendingEditorCommands.isEmpty());
 
@@ -240,7 +240,7 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GtkEventControllerKey* 
     return handleCustomKeyBindings(gdk_key_event_get_keyval(event), gdk_event_get_modifier_state(event));
 }
 #else
-Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
+Vector<RefPtr<StringImpl>> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 {
     ASSERT(m_pendingEditorCommands.isEmpty());
 
@@ -324,7 +324,7 @@ static constexpr auto predefinedKeyBindings = WTF::toArray<KeyCombinationEntry>(
     { GDK_KEY_KP_Insert,    GDK_SHIFT_MASK,                    "Paste"_s }
 });
 
-Vector<String> KeyBindingTranslator::commandsForKeyval(unsigned keyval, unsigned modifiers)
+Vector<RefPtr<StringImpl>> KeyBindingTranslator::commandsForKeyval(unsigned keyval, unsigned modifiers)
 {
     auto commands = handleKeyBindingsForMap(predefinedKeyBindings, keyval, static_cast<GdkModifierType>(modifiers));
     if (!commands.isEmpty())

@@ -30,8 +30,8 @@
 namespace WebCore {
 
 struct PlatformMediaCapabilitiesAudioConfiguration {
-    String contentType;
-    String channels;
+    RefPtr<StringImpl> contentType;
+    RefPtr<StringImpl> channels;
     std::optional<uint64_t> bitrate;
     std::optional<uint32_t> samplerate;
     std::optional<bool> spatialRendering;
@@ -42,12 +42,12 @@ struct PlatformMediaCapabilitiesAudioConfiguration {
 
 inline PlatformMediaCapabilitiesAudioConfiguration PlatformMediaCapabilitiesAudioConfiguration::isolatedCopy() const &
 {
-    return { contentType.isolatedCopy(), channels.isolatedCopy(), bitrate, samplerate, spatialRendering };
+    return { WTF::isolatedCopy(contentType), WTF::isolatedCopy(channels), bitrate, samplerate, spatialRendering };
 }
 
 inline PlatformMediaCapabilitiesAudioConfiguration PlatformMediaCapabilitiesAudioConfiguration::isolatedCopy() &&
 {
-    return { WTF::move(contentType).isolatedCopy(), WTF::move(channels).isolatedCopy(), bitrate, samplerate, spatialRendering };
+    return { WTF::isolatedCopy(WTF::move(contentType)), WTF::isolatedCopy(WTF::move(channels)), bitrate, samplerate, spatialRendering };
 }
 
 } // namespace WebCore

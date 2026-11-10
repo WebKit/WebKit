@@ -164,13 +164,13 @@
 
 - (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
 {
-    return kit(createFragmentFromMarkup(protect(*core(self)), markupString, [baseURL absoluteString]).ptr());
+    return kit(createFragmentFromMarkup(protect(*core(self)), StringImpl::create(markupString).get(), StringImpl::create([baseURL absoluteString]).get()).ptr());
 }
 
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
 {
     // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
-    return kit(createFragmentFromText(makeRangeSelectingNodeContents(protect(*core(self))), text).ptr());
+    return kit(createFragmentFromText(makeRangeSelectingNodeContents(protect(*core(self))), StringImpl::create(text).get()).ptr());
 }
 
 @end
@@ -179,7 +179,7 @@
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    RetainPtr baseURL = protect(core(self))->encodingParseURL(baseURLString).createNSURL();
+    RetainPtr baseURL = protect(core(self))->encodingParseURL(StringImpl::create(baseURLString).get()).createNSURL();
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL.get()];
 }
 
@@ -278,7 +278,7 @@ static WebAutocapitalizeType webAutocapitalizeType(WebCore::AutocapitalizeType t
 - (void)setValueWithChangeEvent:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    protect(core(self))->setValue(newValue, WebCore::DispatchInputAndChangeEvent);
+    protect(core(self))->setValue(StringImpl::create(newValue).get(), WebCore::DispatchInputAndChangeEvent);
 }
 
 - (void)setValueAsNumberWithChangeEvent:(double)newValueAsNumber

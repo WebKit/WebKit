@@ -44,23 +44,23 @@
 
 namespace WebKit {
 
-static bool isFullWebBrowserOrRunningTest(const String&);
+static bool isFullWebBrowserOrRunningTest(StringImpl*);
 
-static bool treatAsNonBrowser(const String& bundleID)
+static bool treatAsNonBrowser(StringImpl* bundleID)
 {
-    return bundleID == "inAppBrowserPrivacyTestIdentifier"_s;
+    return equal(bundleID, "inAppBrowserPrivacyTestIdentifier"_s);
 }
 
-bool isRunningTest(const String& bundleID)
+bool isRunningTest(StringImpl* bundleID)
 {
-    return bundleID == "com.apple.WebKit.TestWebKitAPI"_s || bundleID == "com.apple.WebKit.WebKitTestRunner"_s || bundleID == "org.webkit.WebKitTestRunnerApp"_s;
+    return equal(bundleID, "com.apple.WebKit.TestWebKitAPI"_s) || equal(bundleID, "com.apple.WebKit.WebKitTestRunner"_s) || equal(bundleID, "org.webkit.WebKitTestRunnerApp"_s);
 }
 
-std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
+std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(StringImpl* bundleID)
 {
-    if (bundleID == "inAppBrowserPrivacyTestIdentifier"_s) {
+    if (equal(bundleID, "inAppBrowserPrivacyTestIdentifier"_s)) {
         static NeverDestroyed domains = std::array {
-            WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1"_s),
+            WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1"_si),
         };
         return domains.get();
     }
@@ -109,7 +109,7 @@ bool hasRequestedCrossWebsiteTrackingPermission()
     return hasRequestedCrossWebsiteTrackingPermission;
 }
 
-static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter, const String& bundleIdentifier)
+static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter, StringImpl* bundleIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(!isInWebKitChildProcess());
@@ -150,7 +150,7 @@ void determineTrackingPreventionState()
 
     Ref queue = WorkQueue::create("com.apple.WebKit.itpCheckQueue"_s);
     itpQueue() = queue.copyRef();
-    queue->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
+    queue->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = isolatedCopy(applicationBundleIdentifier())] {
         currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
         RunLoop::mainSingleton().dispatch([] {
             itpQueue() = nullptr;
@@ -231,8 +231,8 @@ bool hasProhibitedUsageStrings()
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *prohibitedString : prohibitedStrings) {
         if ([infoDictionary objectForKey:prohibitedString]) {
-            String message = adoptNS([[NSString alloc] initWithFormat:@"[In-App Browser Privacy] %@ used prohibited usage string %@.", retainPtr([[NSBundle mainBundle] bundleIdentifier]).get(), prohibitedString]).get();
-            SAFE_WTFLOGALWAYS("%s", message.utf8());
+            RefPtr<StringImpl> message = StringImpl::create(adoptNS([[NSString alloc] initWithFormat:@"[In-App Browser Privacy] %@ used prohibited usage string %@.", retainPtr([[NSBundle mainBundle] bundleIdentifier]).get(), prohibitedString]).get());
+            SAFE_WTFLOGALWAYS("%s", utf8(message));
             hasProhibitedUsageStrings = true;
             break;
         }
@@ -271,7 +271,7 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
     return fullWebBrowser && !treatAsNonBrowser(bundleID);
 }
 
-bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
+bool isFullWebBrowserOrRunningTest(StringImpl* bundleIdentifier)
 {
     ASSERT(!isInWebKitChildProcess());
 
@@ -321,7 +321,7 @@ bool isSystemApplicationOrRunningTest()
 {
     ASSERT(!isInWebKitChildProcess());
 
-    static bool staticIsSystemApplicationOrRunningTest = isRunningTest(retainPtr([[NSBundle mainBundle] bundleIdentifier]).get())
+    static bool staticIsSystemApplicationOrRunningTest = isRunningTest(StringImpl::create(retainPtr([[NSBundle mainBundle] bundleIdentifier]).get()).get())
         || (WTF::CocoaApplication::isAppleApplication() && currentProcessIsPlatformBinary());
     return staticIsSystemApplicationOrRunningTest;
 }

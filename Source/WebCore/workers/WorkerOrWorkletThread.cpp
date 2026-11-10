@@ -59,7 +59,7 @@ static UniqueRef<WorkerRunLoop> constructRunLoop(WorkerThreadMode workerThreadMo
     return makeUniqueRef<WorkerDedicatedRunLoop>();
 }
 
-WorkerOrWorkletThread::WorkerOrWorkletThread(const String& inspectorIdentifier, WorkerThreadMode workerThreadMode)
+WorkerOrWorkletThread::WorkerOrWorkletThread(StringImpl* inspectorIdentifier, WorkerThreadMode workerThreadMode)
     : m_inspectorIdentifier(inspectorIdentifier)
     , m_runLoop(constructRunLoop(workerThreadMode))
 {
@@ -121,7 +121,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
         downcast<WorkerMainRunLoop>(m_runLoop).setGlobalScope(*globalScope());
 
-        String exceptionMessage;
+        RefPtr<StringImpl> exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);
 
         callOnMainThread([evaluateCallback = WTF::move(m_evaluateCallback), message = WTF::move(exceptionMessage)] {
@@ -172,10 +172,10 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
             protect(m_globalScope->script())->forbidExecution();
     }
 
-    String exceptionMessage;
+    RefPtr<StringImpl> exceptionMessage;
     evaluateScriptIfNecessary(exceptionMessage);
 
-    callOnMainThread([evaluateCallback = WTF::move(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
+    callOnMainThread([evaluateCallback = WTF::move(m_evaluateCallback), message = isolatedCopy(exceptionMessage)] {
         if (evaluateCallback)
             evaluateCallback(message);
     });
@@ -236,7 +236,7 @@ void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&
     protector->detach();
 }
 
-void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback)
+void WorkerOrWorkletThread::start(Function<void(StringImpl*)>&& evaluateCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     Locker locker { m_threadCreationAndGlobalScopeLock };

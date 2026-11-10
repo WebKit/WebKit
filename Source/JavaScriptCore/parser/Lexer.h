@@ -79,15 +79,15 @@ public:
     // Functions for use after parsing.
     bool sawError() const { return m_error; }
     void setSawError(bool sawError) { m_error = sawError; }
-    String getErrorMessage() const { return m_lexErrorMessage; }
-    void setErrorMessage(const String& errorMessage) { m_lexErrorMessage = errorMessage; }
-    String sourceURLDirective() const { return m_sourceURLDirective; }
-    String sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
+    RefPtr<StringImpl> getErrorMessage() const { return m_lexErrorMessage; }
+    void setErrorMessage(StringImpl* errorMessage) { m_lexErrorMessage = errorMessage; }
+    RefPtr<StringImpl> sourceURLDirective() const { return m_sourceURLDirective; }
+    RefPtr<StringImpl> sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
     void clear();
     void clearErrorCodeAndBuffers()
     {
         m_error = 0;
-        m_lexErrorMessage = String();
+        m_lexErrorMessage = nullptr;
 
         m_buffer8.shrink(0);
         m_buffer16.shrink(0);
@@ -95,7 +95,7 @@ public:
     void setOffset(int offset)
     {
         m_error = 0;
-        m_lexErrorMessage = String();
+        m_lexErrorMessage = nullptr;
 
         m_code = sourcePtrFromOffset(offset);
 
@@ -141,7 +141,7 @@ private:
     ALWAYS_INLINE int offsetFromSourcePtr(const T* ptr) const { return ptr - m_codeStart; }
     ALWAYS_INLINE const T* sourcePtrFromOffset(int offset) const { return m_codeStart + offset; }
 
-    String invalidCharacterMessage() const;
+    RefPtr<StringImpl> invalidCharacterMessage() const;
     ALWAYS_INLINE const T* currentSourcePtr() const;
 
     ALWAYS_INLINE void setCodeStart(StringView);
@@ -183,7 +183,7 @@ private:
     NEVER_INLINE std::optional<JSTokenType> scanSingleLineComment(JSToken*, bool checkForDirectives);
 
     ALWAYS_INLINE void parseCommentDirective();
-    ALWAYS_INLINE String parseCommentDirectiveValue();
+    ALWAYS_INLINE RefPtr<StringImpl> parseCommentDirectiveValue();
 
     template <unsigned length>
     ALWAYS_INLINE bool consume(const char (&input)[length]);
@@ -202,7 +202,7 @@ private:
     const T* m_code;
     const T* m_codeStart;
     const T* m_codeEnd;
-    String m_lexErrorMessage;
+    RefPtr<StringImpl> m_lexErrorMessage;
     T m_current;
     bool m_hasLineTerminatorBeforeToken;
     bool m_atLineStart;
@@ -215,8 +215,8 @@ private:
     bool m_isReparsingFunction;
     bool m_error;
 
-    String m_sourceURLDirective;
-    String m_sourceMappingURLDirective;
+    RefPtr<StringImpl> m_sourceURLDirective;
+    RefPtr<StringImpl> m_sourceMappingURLDirective;
     JSParserScriptMode m_scriptMode;
     unsigned m_sourceOffset;
     const T* m_codeStartPlusOffset;

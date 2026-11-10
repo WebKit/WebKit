@@ -79,7 +79,7 @@ std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsola
     return siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), rect, true);
 }
 
-HTTPResponse documentIsolationPolicyResponse(const String& body)
+HTTPResponse documentIsolationPolicyResponse(StringImpl* body)
 {
     return { { { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s } }, body };
 }

@@ -153,11 +153,11 @@ GPUProcessProxy* GPUProcessProxy::singletonIfCreated()
 }
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
-static String gpuProcessCachesDirectory()
+static RefPtr<StringImpl> gpuProcessCachesDirectory()
 {
     constexpr ASCIILiteral cacheDirectory = "/Library/Caches/com.apple.WebKit.GPU/"_s;
 
-    String path = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(cacheDirectory);
+    RefPtr<StringImpl> path = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(StringImpl::create(cacheDirectory).ptr());
 
     FileSystem::makeAllDirectories(path);
     
@@ -194,12 +194,12 @@ GPUProcessProxy::GPUProcessProxy()
     parameters.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(gpuProcessCachesDirectory());
     auto containerTemporaryDirectory = WebsiteDataStore::defaultResolvedContainerTemporaryDirectory();
 
-    if (!parameters.containerCachesDirectory.isEmpty()) {
+    if (!isEmpty(parameters.containerCachesDirectory)) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.containerCachesDirectory, SandboxExtension::Type::ReadWrite))
             parameters.containerCachesDirectoryExtensionHandle = WTF::move(*handle);
     }
 
-    if (!containerTemporaryDirectory.isEmpty()) {
+    if (!isEmpty(containerTemporaryDirectory)) {
         auto tempDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::pathByAppendingComponent(containerTemporaryDirectory, gpuServiceName));
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(tempDirectory, SandboxExtension::Type::ReadWrite))
             parameters.containerTemporaryDirectoryExtensionHandle = WTF::move(*handle);
@@ -453,12 +453,12 @@ void GPUProcessProxy::clearMockMediaDevices()
     send(Messages::GPUProcess::ClearMockMediaDevices { }, 0);
 }
 
-void GPUProcessProxy::removeMockMediaDevice(const String& persistentId)
+void GPUProcessProxy::removeMockMediaDevice(StringImpl* persistentId)
 {
     send(Messages::GPUProcess::RemoveMockMediaDevice { persistentId }, 0);
 }
 
-void GPUProcessProxy::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+void GPUProcessProxy::setMockMediaDeviceIsEphemeral(StringImpl* persistentId, bool isEphemeral)
 {
     send(Messages::GPUProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral }, 0);
 }
@@ -626,7 +626,7 @@ void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void
     sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
 }
 
-void GPUProcessProxy::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&& completionHandler)
+void GPUProcessProxy::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<RefPtr<StringImpl>>>&&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::RunDisplayListDataTestsForTesting(WTF::move(webFonts)), WTF::move(completionHandler));
 }
@@ -734,7 +734,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
     auto& resolvedDirectories = const_cast<WebsiteDataStore&>(store).resolvedDirectories();
     parameters.mediaCacheDirectory = resolvedDirectories.mediaCacheDirectory;
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
-    if (!parameters.mediaCacheDirectory.isEmpty()) {
+    if (!isEmpty(parameters.mediaCacheDirectory)) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite))
             parameters.mediaCacheDirectorySandboxExtensionHandle = WTF::move(*handle);
     }
@@ -742,7 +742,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     parameters.mediaKeysStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
-    if (!parameters.mediaKeysStorageDirectory.isEmpty()) {
+    if (!isEmpty(parameters.mediaKeysStorageDirectory)) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeysStorageDirectory, SandboxExtension::Type::ReadWrite))
             parameters.mediaKeysStorageDirectorySandboxExtensionHandle = WTF::move(*handle);
     }
@@ -928,19 +928,19 @@ void GPUProcessProxy::voiceActivityDetected()
         page->voiceActivityDetected();
 }
 
-void GPUProcessProxy::startMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId, RotationMonitoringReason reason)
+void GPUProcessProxy::startMonitoringCaptureDeviceRotation(PageIdentifier pageID, StringImpl* persistentId, RotationMonitoringReason reason)
 {
     if (auto* page = WebProcessProxy::webPage(pageID))
         page->startMonitoringCaptureDeviceRotation(persistentId, reason);
 }
 
-void GPUProcessProxy::stopMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId, RotationMonitoringReason reason)
+void GPUProcessProxy::stopMonitoringCaptureDeviceRotation(PageIdentifier pageID, StringImpl* persistentId, RotationMonitoringReason reason)
 {
     if (auto* page = WebProcessProxy::webPage(pageID))
         page->stopMonitoringCaptureDeviceRotation(persistentId, reason);
 }
 
-void GPUProcessProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+void GPUProcessProxy::rotationAngleForCaptureDeviceChanged(StringImpl* persistentId, WebCore::VideoFrameRotation rotation)
 {
     send(Messages::GPUProcess::RotationAngleForCaptureDeviceChanged(persistentId, rotation), 0);
 }
@@ -1022,12 +1022,12 @@ void GPUProcessProxy::requestSharedSimulationConnection(audit_token_t modelProce
 #endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-void GPUProcessProxy::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<String>&)>&& completionHandler)
+void GPUProcessProxy::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<RefPtr<StringImpl>>&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::CreateMemoryAttributionIDForTask { WTF::move(processIdentity) }, WTF::move(completionHandler));
 }
 
-void GPUProcessProxy::unregisterMemoryAttributionID(const String& attributionID, CompletionHandler<void()>&& completionHandler)
+void GPUProcessProxy::unregisterMemoryAttributionID(StringImpl* attributionID, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::UnregisterMemoryAttributionID { attributionID }, WTF::move(completionHandler));
 }

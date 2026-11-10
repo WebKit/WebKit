@@ -36,10 +36,10 @@ namespace WebKit {
 class EnhancedSecuritySitesPersistence final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EnhancedSecuritySitesPersistence);
 public:
-    explicit EnhancedSecuritySitesPersistence(const String&);
+    explicit EnhancedSecuritySitesPersistence(StringImpl*);
     ~EnhancedSecuritySitesPersistence();
 
-    bool openDatabase(const String& directoryPath);
+    bool openDatabase(StringImpl* directoryPath);
     bool isDatabaseOpen() const { return m_sqliteDB && m_sqliteDB->isOpen(); }
 
     void deleteSites(const Vector<WebCore::RegistrableDomain>&);

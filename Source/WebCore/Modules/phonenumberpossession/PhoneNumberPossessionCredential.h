@@ -52,7 +52,7 @@ public:
     static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
     Ref<ArrayBuffer> encryptedResult() const { return m_encryptedResult; }
-    const String& carrierDomain() const { return m_carrierDomain; }
+    const RefPtr<StringImpl>& carrierDomain() const LIFETIME_BOUND { return m_carrierDomain; }
     uint16_t carrierConfigurationID() const { return m_carrierConfigurationID; }
     RefPtr<ArrayBuffer> encryptedDecryptionKey() const { return m_encryptedDecryptionKey; }
     RefPtr<ArrayBuffer> carrierPubKey() const { return m_carrierPubKey; }
@@ -65,7 +65,7 @@ private:
     Type credentialType() const final { return Type::PhoneNumberPossession; }
 
     const Ref<ArrayBuffer> m_encryptedResult;
-    const String m_carrierDomain;
+    const RefPtr<StringImpl> m_carrierDomain;
     const uint16_t m_carrierConfigurationID;
     const RefPtr<ArrayBuffer> m_encryptedDecryptionKey;
     const RefPtr<ArrayBuffer> m_carrierPubKey;

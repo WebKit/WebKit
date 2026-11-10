@@ -43,9 +43,9 @@ CredentialBase::CredentialBase()
    
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-CredentialBase::CredentialBase(const String& user, const String& password, CredentialPersistence persistence)
-    : m_user(user.length() ? user : emptyString())
-    , m_password(password.length() ? password : emptyString())
+CredentialBase::CredentialBase(StringImpl* user, StringImpl* password, CredentialPersistence persistence)
+    : m_user(length(user) ? user : emptyString().get())
+    , m_password(length(password) ? password : emptyString().get())
     , m_persistence(persistence)
 {
 }
@@ -59,22 +59,22 @@ CredentialBase::CredentialBase(const Credential& original, CredentialPersistence
 
 bool CredentialBase::isEmpty() const
 {
-    return m_user.isEmpty() && m_password.isEmpty();
+    return WTF::isEmpty(m_user) && WTF::isEmpty(m_password);
 }
     
-const String& CredentialBase::user() const
+const RefPtr<StringImpl>& CredentialBase::user() const
 { 
     return m_user; 
 }
 
-const String& CredentialBase::password() const
+const RefPtr<StringImpl>& CredentialBase::password() const
 { 
     return m_password; 
 }
 
 bool CredentialBase::hasPassword() const
 { 
-    return !m_password.isEmpty(); 
+    return !WTF::isEmpty(m_password); 
 }
 
 CredentialPersistence CredentialBase::persistence() const
@@ -88,17 +88,17 @@ bool CredentialBase::compare(const Credential& a, const Credential& b)
     // have the persistence property.
     if (a.persistence() != b.persistence())
         return false;
-    if (a.user() != b.user())
+    if (!equal(a.user(), b.user()))
         return false;
-    if (a.password() != b.password())
+    if (!equal(a.password(), b.password()))
         return false;
         
     return Credential::platformCompare(a, b);
 }
 
-String CredentialBase::serializationForBasicAuthorizationHeader() const
+RefPtr<StringImpl> CredentialBase::serializationForBasicAuthorizationHeader() const
 {
-    auto credentialStringData = makeString(m_user, ':', m_password).utf8();
+    auto credentialStringData = utf8(makeString(m_user, ':', m_password));
     return makeString("Basic "_s, base64Encoded(byteCast<uint8_t>(credentialStringData.span())));
 }
 

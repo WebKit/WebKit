@@ -51,7 +51,7 @@ JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToString);
 JSString* int32ToString(VM&, int32_t value, int32_t radix);
 JSString* int52ToString(VM&, int64_t value, int32_t radix);
 JSString* numberToString(VM&, double value, int32_t radix);
-String toStringWithRadix(double doubleValue, int32_t radix);
+RefPtr<StringImpl> toStringWithRadix(double doubleValue, int32_t radix);
 int32_t extractToStringRadixArgument(JSGlobalObject*, JSValue radixValue, ThrowScope&);
 
 } // namespace JSC

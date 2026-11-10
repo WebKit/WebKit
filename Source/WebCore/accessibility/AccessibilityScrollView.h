@@ -51,8 +51,8 @@ public:
 
     RefPtr<AXRemoteFrame> remoteFrame() const { return m_remoteFrame; }
 
-    String ownerDebugDescription() const;
-    String extraDebugInfo() const final;
+    RefPtr<StringImpl> ownerDebugDescription() const;
+    RefPtr<StringImpl> extraDebugInfo() const final;
 
     AccessibilityObject* parentObject() const final;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -85,7 +85,7 @@ public:
     bool isHostingFrameRenderHidden() const;
     bool isIgnoredFromHostingFrame() const { return isHostingFrameHidden() || isHostingFrameInert() || isHostingFrameRenderHidden(); }
     // The accessible name of the iframe element, which names the hosted frame's web area.
-    String hostingFrameName() const;
+    RefPtr<StringImpl> hostingFrameName() const;
 #endif // ENABLE(ACCESSIBLITY_LOCAL_FRAME)
 
 private:

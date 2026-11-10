@@ -105,7 +105,7 @@ unsigned StorageAreaImpl::length()
     return m_storageMap.length();
 }
 
-String StorageAreaImpl::key(unsigned index)
+RefPtr<StringImpl> StorageAreaImpl::key(unsigned index)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -113,7 +113,7 @@ String StorageAreaImpl::key(unsigned index)
     return m_storageMap.key(index);
 }
 
-String StorageAreaImpl::item(const String& key)
+RefPtr<StringImpl> StorageAreaImpl::item(StringImpl* key)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -121,18 +121,18 @@ String StorageAreaImpl::item(const String& key)
     return m_storageMap.getItem(key);
 }
 
-void StorageAreaImpl::setItem(LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException)
+void StorageAreaImpl::setItem(LocalFrame& sourceFrame, StringImpl* key, StringImpl* value, bool& quotaException)
 {
     ASSERT(!m_isShutdown);
-    ASSERT(!value.isNull());
+    ASSERT(value);
     blockUntilImportComplete();
 
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     m_storageMap.setItem(key, value, oldValue, quotaException);
     if (quotaException)
         return;
 
-    if (oldValue == value)
+    if (equal(oldValue, value))
         return;
 
     if (m_storageAreaSync)
@@ -141,20 +141,20 @@ void StorageAreaImpl::setItem(LocalFrame& sourceFrame, const String& key, const 
     dispatchStorageEvent(key, oldValue, value, sourceFrame);
 }
 
-void StorageAreaImpl::removeItem(LocalFrame& sourceFrame, const String& key)
+void StorageAreaImpl::removeItem(LocalFrame& sourceFrame, StringImpl* key)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     m_storageMap.removeItem(key, oldValue);
-    if (oldValue.isNull())
+    if (!oldValue)
         return;
 
     if (m_storageAreaSync)
-        protect(m_storageAreaSync)->scheduleItemForSync(key, String());
+        protect(m_storageAreaSync)->scheduleItemForSync(key, nullString());
 
-    dispatchStorageEvent(key, oldValue, String(), sourceFrame);
+    dispatchStorageEvent(key, oldValue, nullString(), sourceFrame);
 }
 
 void StorageAreaImpl::clear(LocalFrame& sourceFrame)
@@ -170,10 +170,10 @@ void StorageAreaImpl::clear(LocalFrame& sourceFrame)
     if (m_storageAreaSync)
         protect(m_storageAreaSync)->scheduleClear();
 
-    dispatchStorageEvent(String(), String(), String(), sourceFrame);
+    dispatchStorageEvent(nullString(), nullString(), nullString(), sourceFrame);
 }
 
-bool StorageAreaImpl::contains(const String& key)
+bool StorageAreaImpl::contains(StringImpl* key)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -181,7 +181,7 @@ bool StorageAreaImpl::contains(const String& key)
     return m_storageMap.contains(key);
 }
 
-void StorageAreaImpl::importItems(HashMap<String, String>&& items)
+void StorageAreaImpl::importItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& items)
 {
     ASSERT(!m_isShutdown);
     ASSERT(!isMainThread());
@@ -269,7 +269,7 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     }
 }
 
-void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, LocalFrame& sourceFrame)
+void StorageAreaImpl::dispatchStorageEvent(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, LocalFrame& sourceFrame)
 {
     RefPtr page = sourceFrame.page();
     if (!page)

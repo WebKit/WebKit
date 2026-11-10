@@ -63,7 +63,7 @@ void BlobBuilder::append(Ref<Blob>&& blob)
     m_items.append(blob->url());
 }
 
-void BlobBuilder::append(const String& text)
+void BlobBuilder::append(StringImpl* text)
 {
     auto bytes = PAL::TextCodecUTF8::encodeUTF8(text);
 

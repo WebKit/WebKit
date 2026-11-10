@@ -918,7 +918,7 @@ TEST(WebKit, MigrateIndexedDBDataToGeneralStorageDirectory)
     NSURL *indexedDBDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *indexedDBOriginDirectory = [indexedDBDirectory URLByAppendingPathComponent:@"v1/https_webkit.org_0"];
     static constexpr auto indexedDBDatabaseName = "TestDatabase"_s;
-    RetainPtr hashedIndexedDBDatabaseName = WebCore::SQLiteFileSystem::computeHashForFileName(indexedDBDatabaseName).createNSString();
+    RetainPtr hashedIndexedDBDatabaseName = createNSString(WebCore::SQLiteFileSystem::computeHashForFileName(indexedDBDatabaseName));
     NSURL *indexedDBDatabaseDirectory = [indexedDBOriginDirectory URLByAppendingPathComponent:hashedIndexedDBDatabaseName.get()];
     NSURL *indexedDBFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
     NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
@@ -2045,13 +2045,13 @@ TEST(WKWebsiteDataStore, DeleteEmptyServiceWorkerDirectory)
 TEST(WKWebsiteDataStore, FetchAndDeleteMediaKeysData)
 {
     NSURL *customMediaKeysStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/MediaKeys" stringByExpandingTildeInPath] isDirectory:YES];
-    WebCore::SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    WebCore::SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *customWebKitDirectory = [customMediaKeysStorageDirectory URLByAppendingPathComponent:origin.databaseIdentifier().createNSString().get()];
+    NSURL *customWebKitDirectory = [customMediaKeysStorageDirectory URLByAppendingPathComponent:createNSString(origin.databaseIdentifier()).get()];
     [fileManager createDirectoryAtURL:customWebKitDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *customMediaKeysStorageFile = [customWebKitDirectory URLByAppendingPathComponent:@"SecureStop.plist"];
     [fileManager createFileAtPath:customMediaKeysStorageFile.path contents:nil attributes:nil];
-    FileSystem::updateFileModificationTime(customMediaKeysStorageFile.path);
+    FileSystem::updateFileModificationTime(StringImpl::create(customMediaKeysStorageFile.path).get());
     NSURL *customVersionDirectory = [customMediaKeysStorageDirectory URLByAppendingPathComponent:@"v1"];
     [fileManager createDirectoryAtURL:customVersionDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *resourceSalt = [NSBundle.test_resourcesBundle URLForResource:@"general-storage-directory" withExtension:@"salt"];

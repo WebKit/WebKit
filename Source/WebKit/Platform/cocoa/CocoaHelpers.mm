@@ -407,7 +407,7 @@ NSString *privacyPreservingDescription(NSError *error)
 NSURL *ensureDirectoryExists(NSURL *directory)
 {
     ASSERT(directory.isFileURL);
-    if (!FileSystem::makeAllDirectories(directory.path)) {
+    if (!FileSystem::makeAllDirectories(StringImpl::create(directory.path).get())) {
         RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", directory.absoluteString);
         return nil;
     }
@@ -472,30 +472,30 @@ NSSet *toAPI(const HashSet<URL>& set)
     return [result copy];
 }
 
-NSSet *toAPI(const HashSet<String>& set)
+NSSet *toAPI(const HashSet<RefPtr<StringImpl>>& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)
-        [result addObject:element.createNSString().get()];
+        [result addObject:createNSString(element).get()];
     return [result copy];
 }
 
-NSArray *toAPIArray(const HashSet<String>& set)
+NSArray *toAPIArray(const HashSet<RefPtr<StringImpl>>& set)
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:set.size()];
     for (auto& element : set)
-        [result addObject:element.createNSString().get()];
+        [result addObject:createNSString(element).get()];
     return [result copy];
 }
 
-HashSet<String> toImpl(NSSet *set)
+HashSet<RefPtr<StringImpl>> toImpl(NSSet *set)
 {
-    HashSet<String> result;
+    HashSet<RefPtr<StringImpl>> result;
     result.reserveInitialCapacity(set.count);
 
     for (id element in set) {
         if (auto *string = dynamic_objc_cast<NSString>(element))
-            result.addVoid(string);
+            result.addVoid(StringImpl::create(string));
     }
 
     return result;
@@ -507,15 +507,15 @@ DataMap toDataMap(NSDictionary *dictionary)
     result.reserveInitialCapacity(dictionary.count);
 
     for (id key in dictionary) {
-        String keyString = dynamic_objc_cast<NSString>(key);
-        if (keyString.isEmpty()) {
+        RefPtr<StringImpl> keyString = StringImpl::create(dynamic_objc_cast<NSString>(key));
+        if (isEmpty(keyString)) {
             ASSERT_NOT_REACHED();
             continue;
         }
 
         id value = dictionary[key];
         if (auto *valueString = dynamic_objc_cast<NSString>(value)) {
-            result.add(keyString, valueString);
+            result.add(keyString, StringImpl::create(valueString));
             continue;
         }
 
@@ -530,7 +530,7 @@ DataMap toDataMap(NSDictionary *dictionary)
             if (!jsonString || error)
                 continue;
 
-            result.add(keyString, jsonString);
+            result.add(keyString, StringImpl::create(jsonString));
             continue;
         }
 

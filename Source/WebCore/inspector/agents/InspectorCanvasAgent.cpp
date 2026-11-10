@@ -95,7 +95,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCanvasAgent);
 
 InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
-    : InspectorAgentBase("Canvas"_s, context)
+    : InspectorAgentBase("Canvas"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::CanvasFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CanvasBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
@@ -250,7 +250,7 @@ void InspectorCanvasAgent::internalDisable()
     m_recordingAutoCaptureFrameCount = std::nullopt;
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestContent(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> InspectorCanvasAgent::requestContent(StringImpl* canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
     auto inspectorCanvas = assertInspectorCanvas(errorString, canvasId);
@@ -259,7 +259,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestContent(
     return inspectorCanvas->getContentAsDataURL();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorCanvasAgent::resolveContext(const Inspector::Protocol::Canvas::CanvasId& canvasId, const String& objectGroup)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorCanvasAgent::resolveContext(StringImpl* canvasId, StringImpl* objectGroup)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -298,7 +298,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setRecordingAutoC
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::startRecording(const Inspector::Protocol::Canvas::CanvasId& canvasId, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit)
+Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::startRecording(StringImpl* canvasId, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -319,7 +319,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::startRecording(co
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::stopRecording(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::stopRecording(StringImpl* canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -335,7 +335,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::stopRecording(con
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestShaderSource(const Inspector::Protocol::Canvas::ProgramId& programId, Inspector::Protocol::Canvas::ShaderType shaderType)
+Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> InspectorCanvasAgent::requestShaderSource(StringImpl* programId, Inspector::Protocol::Canvas::ShaderType shaderType)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -350,7 +350,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestShaderSo
     return source;
 }
 
-void InspectorCanvasAgent::updateShader(const Inspector::Protocol::Canvas::ProgramId& programId, Inspector::Protocol::Canvas::ShaderType shaderType, const String& source, Ref<UpdateShaderCallback>&& callback)
+void InspectorCanvasAgent::updateShader(StringImpl* programId, Inspector::Protocol::Canvas::ShaderType shaderType, StringImpl* source, Ref<UpdateShaderCallback>&& callback)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -362,14 +362,14 @@ void InspectorCanvasAgent::updateShader(const Inspector::Protocol::Canvas::Progr
 
     inspectorProgram->updateShader(shaderType, source, [callback = WTF::move(callback)](bool success) mutable {
         if (!success) {
-            callback->sendFailure("Failed to update shader of given shaderType for given programId"_s);
+            callback->sendFailure("Failed to update shader of given shaderType for given programId"_si);
             return;
         }
         callback->sendSuccess();
     });
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId& programId, bool disabled)
+Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramDisabled(StringImpl* programId, bool disabled)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -383,7 +383,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramD
     return { };
 }
 
-void InspectorCanvasAgent::setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId& programId, bool highlighted, Ref<SetShaderProgramHighlightedCallback>&& callback)
+void InspectorCanvasAgent::setShaderProgramHighlighted(StringImpl* programId, bool highlighted, Ref<SetShaderProgramHighlightedCallback>&& callback)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -394,7 +394,7 @@ void InspectorCanvasAgent::setShaderProgramHighlighted(const Inspector::Protocol
     }
 
     if (!inspectorProgram->setHighlighted(highlighted)) {
-        callback->sendFailure("Shader program does not support highlighting"_s);
+        callback->sendFailure("Shader program does not support highlighting"_si);
         return;
     }
 
@@ -613,7 +613,7 @@ void InspectorCanvasAgent::consoleStopRecordingCanvas(GPUDevice& device)
 
 #if ENABLE(WEBGL)
 
-void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
+void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context, StringImpl* extension)
 {
     auto inspectorCanvas = findInspectorCanvas(context);
     ASSERT(inspectorCanvas);
@@ -800,7 +800,7 @@ RefPtr<WebGPU::RenderPipeline> InspectorCanvasAgent::renderPipelineForWebGPUHigh
     return inspectorProgram->renderPipelineForHighlighting(canvasColorAttachmentMask);
 }
 
-void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasRenderingContext.hasActiveInspectorCanvasCallTracer());
 
@@ -816,7 +816,7 @@ void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingC
         didFinishRecordingCanvasFrame(canvasRenderingContext, true);
 }
 
-void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, InspectorCanvasProcessedArgument&& receiver, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, InspectorCanvasProcessedArgument&& receiver, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasRenderingContext.hasActiveInspectorCanvasCallTracer());
 
@@ -832,7 +832,7 @@ void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingC
         didFinishRecordingCanvasFrame(canvasRenderingContext, true);
 }
 
-void InspectorCanvasAgent::recordAction(GPUDevice& device, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasAgent::recordAction(GPUDevice& device, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(device.hasActiveInspectorCanvasCallTracer());
 
@@ -848,7 +848,7 @@ void InspectorCanvasAgent::recordAction(GPUDevice& device, String&& name, Inspec
         didFinishRecordingCanvasFrame(device, true);
 }
 
-void InspectorCanvasAgent::recordAction(GPUDevice& device, InspectorCanvasProcessedArgument&& receiver, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasAgent::recordAction(GPUDevice& device, InspectorCanvasProcessedArgument&& receiver, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(device.hasActiveInspectorCanvasCallTracer());
 
@@ -1012,8 +1012,8 @@ InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& contex
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(context)) {
         auto& contextWebGL = downcast<WebGLRenderingContextBase>(context);
-        if (std::optional<Vector<String>> extensions = contextWebGL.getSupportedExtensions()) {
-            for (const String& extension : *extensions) {
+        if (std::optional<Vector<RefPtr<StringImpl>>> extensions = contextWebGL.getSupportedExtensions()) {
+            for (const RefPtr<StringImpl>& extension : *extensions) {
                 if (contextWebGL.extensionIsEnabled(extension))
                     m_frontendDispatcher->extensionEnabled(inspectorCanvas->identifier(), extension);
             }
@@ -1073,7 +1073,7 @@ void InspectorCanvasAgent::dispatchCSSCanvasClientNodesChanged(InspectorCanvas& 
 
 void InspectorCanvasAgent::dispatchCSSCanvasNamesChanged(InspectorCanvas& inspectorCanvas)
 {
-    Ref cssCanvasNames = JSON::ArrayOf<String>::create();
+    Ref cssCanvasNames = JSON::ArrayOf<RefPtr<StringImpl>>::create();
     for (auto& cssCanvasName : inspectorCanvas.cssCanvasNames())
         cssCanvasNames->addItem(cssCanvasName);
     m_frontendDispatcher->cssCanvasNamesChanged(inspectorCanvas.identifier(), WTF::move(cssCanvasNames));
@@ -1095,7 +1095,7 @@ void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
     for (RefPtr inspectorProgram : programsToRemove)
         unbindProgram(*inspectorProgram);
 
-    String identifier = inspectorCanvas.identifier();
+    RefPtr<StringImpl> identifier = inspectorCanvas.identifier();
     m_identifierToInspectorCanvas.remove(identifier);
 
     // This can be called in response to GC. Due to the single-process model used in WebKit1, the
@@ -1107,11 +1107,11 @@ void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
         m_canvasDestroyedTimer.startOneShot(0_s);
 }
 
-RefPtr<InspectorCanvas> InspectorCanvasAgent::assertInspectorCanvas(Inspector::Protocol::ErrorString& errorString, const String& canvasId)
+RefPtr<InspectorCanvas> InspectorCanvasAgent::assertInspectorCanvas(Inspector::Protocol::ErrorString& errorString, StringImpl* canvasId)
 {
     RefPtr inspectorCanvas = m_identifierToInspectorCanvas.get(canvasId);
     if (!inspectorCanvas) {
-        errorString = "Missing canvas for given canvasId"_s;
+        errorString = "Missing canvas for given canvasId"_si;
         return nullptr;
     }
     return inspectorCanvas;
@@ -1137,7 +1137,7 @@ RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(const GPUDevic
 
 void InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgram)
 {
-    String identifier = inspectorProgram.identifier();
+    RefPtr<StringImpl> identifier = inspectorProgram.identifier();
     m_identifierToInspectorProgram.remove(identifier);
 
     // This can be called in response to GC. Due to the single-process model used in WebKit1, the
@@ -1149,11 +1149,11 @@ void InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgra
         m_programDestroyedTimer.startOneShot(0_s);
 }
 
-RefPtr<InspectorShaderProgram> InspectorCanvasAgent::assertInspectorProgram(Inspector::Protocol::ErrorString& errorString, const String& programId)
+RefPtr<InspectorShaderProgram> InspectorCanvasAgent::assertInspectorProgram(Inspector::Protocol::ErrorString& errorString, StringImpl* programId)
 {
     RefPtr inspectorProgram = m_identifierToInspectorProgram.get(programId);
     if (!inspectorProgram) {
-        errorString = "Missing program for given programId"_s;
+        errorString = "Missing program for given programId"_si;
         return nullptr;
     }
     return inspectorProgram;

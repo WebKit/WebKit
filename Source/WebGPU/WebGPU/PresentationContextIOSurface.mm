@@ -500,7 +500,7 @@ Texture* PresentationContextIOSurface::currentTexture(uint32_t currentIndex)
 {
     if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= currentIndex) {
         if (RefPtr device = m_device)
-            device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
+            device->generateAValidationError("GPUCanvasContext is not configured correctly"_si);
         return m_invalidTexture.get();
     }
 

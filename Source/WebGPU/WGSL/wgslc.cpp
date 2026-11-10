@@ -138,18 +138,18 @@ static int runWGSL(const CommandLine& options)
         .supportedFeatures { "shader-f16"_s, "clip-distances"_s, "subgroups"_s }
     };
 
-    String fileName = String::fromLatin1(options.file());
-    auto readResult = FileSystem::readEntireFile(fileName);
+    RefPtr<StringImpl> fileName = StringImpl::fromLatin1(options.file());
+    auto readResult = FileSystem::readEntireFile(fileName.get());
     if (!readResult) {
         dataLogLn("Failed to open ", fileName);
         return EXIT_FAILURE;
     }
 
-    auto source = emptyString();
+    RefPtr<StringImpl> source = emptyString();
     if (readResult.has_value())
-        source = String::fromUTF8WithLatin1Fallback(readResult->span());
+        source = StringImpl::fromUTF8WithLatin1Fallback(readResult->span());
 
-    auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
+    auto checkResult = WGSL::staticCheck(source.get(), std::nullopt, configuration);
     if (auto* failedCheck = std::get_if<WGSL::FailedCheck>(&checkResult)) {
         for (const auto& error : failedCheck->errors)
             dataLogLn(error);
@@ -160,9 +160,9 @@ static int runWGSL(const CommandLine& options)
     if (options.dumpASTAfterCheck())
         WGSL::AST::dumpAST(shaderModule);
 
-    String entrypointName = String::fromLatin1(options.entrypoint());
-    HashMap<String, WGSL::PipelineLayout*> pipelineLayouts;
-    if (entrypointName != "_"_s)
+    RefPtr<StringImpl> entrypointName = StringImpl::fromLatin1(options.entrypoint());
+    HashMap<RefPtr<StringImpl>, WGSL::PipelineLayout*> pipelineLayouts;
+    if (!equal(entrypointName, "_"_s))
         pipelineLayouts.add(entrypointName, nullptr);
     else {
         for (auto& entryPoint : shaderModule->callGraph().entrypoints())
@@ -176,12 +176,12 @@ static int runWGSL(const CommandLine& options)
     }
 
     auto& result = std::get<WGSL::PrepareResult>(prepareResult);
-    if (entrypointName != "_"_s && !result.entryPoints.contains(entrypointName)) {
+    if (!equal(entrypointName, "_"_s) && !result.entryPoints.contains(entrypointName)) {
         dataLogLn("WGSL source does not contain entrypoint named '", entrypointName, "'");
         return EXIT_FAILURE;
     }
 
-    HashMap<String, WGSL::ConstantValue> userDefinedValues;
+    HashMap<RefPtr<StringImpl>, WGSL::ConstantValue> userDefinedValues;
     auto generationResult = WGSL::generate(shaderModule, result, userDefinedValues, WGSL::DeviceState {
         .appleGPUFamily = options.appleGPUFamily(),
         .shaderValidationEnabled = options.shaderValidationEnabled(),
@@ -192,7 +192,7 @@ static int runWGSL(const CommandLine& options)
         return EXIT_FAILURE;
     }
 
-    auto& msl = std::get<String>(generationResult);
+    auto& msl = std::get<RefPtr<StringImpl>>(generationResult);
 
     if (options.dumpASTAtEnd())
         WGSL::AST::dumpAST(shaderModule);
@@ -200,7 +200,7 @@ static int runWGSL(const CommandLine& options)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
     if (options.dumpGeneratedCode())
-        SAFE_PRINTF("%s", msl.utf8());
+        SAFE_PRINTF("%s", utf8(msl));
 #pragma clang diagnostic pop
 
     return EXIT_SUCCESS;

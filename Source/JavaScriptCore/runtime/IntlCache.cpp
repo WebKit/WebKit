@@ -93,24 +93,24 @@ Vector<char16_t, 32> IntlCache::getFieldDisplayName(const ASCIICString& locale, 
     return buffer;
 }
 
-String IntlCache::canonicalizeUnicodeLocaleID(const String& languageTag)
+RefPtr<StringImpl> IntlCache::canonicalizeUnicodeLocaleID(StringImpl* languageTag)
 {
     constexpr unsigned maxCachedTagLength = 100;
     constexpr unsigned maxCacheEntries = 64;
 
     // A language tag is ASCII, so a tag that is not can never canonicalize.
-    if (!languageTag.containsOnlyASCII())
+    if (!containsOnlyASCII(languageTag))
         return { };
 
-    if (languageTag.isEmpty() || languageTag.length() > maxCachedTagLength)
-        return JSC::canonicalizeUnicodeLocaleID(languageTag.ascii());
+    if (isEmpty(languageTag) || length(languageTag) > maxCachedTagLength)
+        return JSC::canonicalizeUnicodeLocaleID(ascii(languageTag));
 
     auto cached = m_cachedCanonicalizedLocaleIDs.find(languageTag);
     if (cached != m_cachedCanonicalizedLocaleIDs.end())
         return cached->value;
 
-    String canonicalized = JSC::canonicalizeUnicodeLocaleID(languageTag.ascii());
-    if (canonicalized.isNull())
+    RefPtr<StringImpl> canonicalized = JSC::canonicalizeUnicodeLocaleID(ascii(languageTag));
+    if (!canonicalized)
         return canonicalized;
 
     if (m_cachedCanonicalizedLocaleIDs.size() >= maxCacheEntries)
@@ -119,12 +119,12 @@ String IntlCache::canonicalizeUnicodeLocaleID(const String& languageTag)
     return canonicalized;
 }
 
-void IntlCache::cacheLocaleWithoutOptions(const String& tag, const ASCIICString& localeID, const String& nonUnicodeExtensions)
+void IntlCache::cacheLocaleWithoutOptions(StringImpl* tag, const ASCIICString& localeID, StringImpl* nonUnicodeExtensions)
 {
     constexpr unsigned maxCachedTagLength = 100;
     constexpr unsigned maxCacheEntries = 64;
 
-    if (tag.length() > maxCachedTagLength)
+    if (length(tag) > maxCachedTagLength)
         return;
     if (m_cachedLocalesWithoutOptions.size() >= maxCacheEntries)
         m_cachedLocalesWithoutOptions.clear();

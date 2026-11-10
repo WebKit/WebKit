@@ -295,7 +295,7 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorl
 #if ENABLE(USER_MESSAGE_HANDLERS)
 class WebUserMessageHandlerDescriptorProxy : public WebCore::UserMessageHandlerDescriptor {
 public:
-    static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController& controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
+    static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController& controller, AtomStringImpl* name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
     {
         return adoptRef(*new WebUserMessageHandlerDescriptorProxy(controller, name, world, identifier));
     }
@@ -305,7 +305,7 @@ public:
     NODELETE ScriptMessageHandlerIdentifier identifier() { return m_identifier; }
 
 private:
-    WebUserMessageHandlerDescriptorProxy(WebUserContentController& controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
+    WebUserMessageHandlerDescriptorProxy(WebUserContentController& controller, AtomStringImpl* name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
         : WebCore::UserMessageHandlerDescriptor(name, protect(world.coreWorld()))
         , m_controller(controller)
         , m_identifier(identifier)
@@ -325,7 +325,7 @@ private:
     }
 
     // WebCore::UserMessageHandlerDescriptor
-    void didPostMessage(WebCore::UserMessageHandler& handler, JSC::JSGlobalObject& globalObject, JSC::JSValue jsMessage, WTF::Function<void(JSC::JSValue, const String&)>&& completionHandler) const override
+    void didPostMessage(WebCore::UserMessageHandler& handler, JSC::JSGlobalObject& globalObject, JSC::JSValue jsMessage, WTF::Function<void(JSC::JSValue, StringImpl*)>&& completionHandler) const override
     {
         RefPtr frame = handler.frame();
         if (!frame)
@@ -346,11 +346,11 @@ private:
 
         auto frameInfo = frameInfoWithDocumentID(*webFrame, globalObject);
 
-        protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebProcessProxy::DidPostMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), WTF::move(frameInfo), m_identifier, *message), [completionHandler = WTF::move(completionHandler), context](std::expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
+        protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebProcessProxy::DidPostMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), WTF::move(frameInfo), m_identifier, *message), [completionHandler = WTF::move(completionHandler), context](std::expected<WebKit::JavaScriptEvaluationResult, RefPtr<StringImpl>>&& result) {
             JSC::JSLockHolder lock(toJS(context.get()));
             if (!result)
                 return completionHandler(JSC::jsUndefined(), result.error());
-            completionHandler(toJS(toJS(context.get()), result->toJS(context.get()).get()), { });
+            completionHandler(toJS(toJS(context.get()), result->toJS(context.get()).get()), nullptr);
         });
     }
 
@@ -376,7 +376,7 @@ private:
         auto frameInfo = frameInfoWithDocumentID(*webFrame, globalObject);
 
         auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::DidPostLegacySynchronousMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), WTF::move(frameInfo), m_identifier, *message), 0);
-        auto [result] = sendResult.takeReplyOr(makeUnexpected(String()));
+        auto [result] = sendResult.takeReplyOr(makeUnexpected(nullString()));
         if (!result)
             return JSC::jsUndefined();
         JSC::JSLockHolder lock(toJS(context.get()));
@@ -399,7 +399,7 @@ void WebUserContentController::addUserScriptMessageHandlers(Vector<WebScriptMess
             continue;
         }
 
-        addUserScriptMessageHandlerInternal(*world, handler.identifier, AtomString(handler.name));
+        addUserScriptMessageHandlerInternal(*world, handler.identifier, AtomStringImpl::add(handler.name).get());
     }
 #else
     UNUSED_PARAM(scriptMessageHandlers);
@@ -456,7 +456,7 @@ void WebUserContentController::removeAllUserScriptMessageHandlersForWorlds(const
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier, const AtomString& name)
+void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier, AtomStringImpl* name)
 {
     auto& messageHandlersInWorld = m_userMessageHandlers.ensure(world, [] {
         return Vector<std::pair<ScriptMessageHandlerIdentifier, Ref<WebUserMessageHandlerDescriptorProxy>>> { };
@@ -494,13 +494,13 @@ void WebUserContentController::addContentRuleLists(Vector<std::pair<WebCompiledC
 {
     for (auto&& pair : borrow(contentRuleLists)) {
         auto&& contentRuleList = WTF::move(pair.first);
-        String identifier = contentRuleList.identifier;
+        RefPtr<StringImpl> identifier = contentRuleList.identifier;
         if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(contentRuleList)))
             m_contentExtensionBackend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), WTF::move(pair.second));
     }
 }
 
-void WebUserContentController::removeContentRuleList(const String& name)
+void WebUserContentController::removeContentRuleList(StringImpl* name)
 {
     m_contentExtensionBackend.removeContentExtension(name);
 }
@@ -711,11 +711,11 @@ void WebUserContentController::addJSBuffer(WebJSBufferData&& data)
     }
     addContentWorldIfNecessary(data.worldData);
     m_buffers.ensure(data.worldData.identifier, [] {
-        return HashMap<String, Ref<WebCore::WebKitBuffer>>();
+        return HashMap<RefPtr<StringImpl>, Ref<WebCore::WebKitBuffer>>();
     }).iterator->value.set(data.name, SharedMemoryJSBuffer::create(data.data.releaseNonNull()));
 }
 
-void WebUserContentController::removeJSBuffer(ContentWorldIdentifier identifier, const String& name)
+void WebUserContentController::removeJSBuffer(ContentWorldIdentifier identifier, StringImpl* name)
 {
     auto it = m_buffers.find(identifier);
     if (it == m_buffers.end())
@@ -733,7 +733,7 @@ bool WebUserContentController::hasBuffersForWorld(const WebCore::DOMWrapperWorld
     return m_buffers.contains(world->identifier());
 }
 
-WebCore::WebKitBuffer* WebUserContentController::buffer(const WebCore::DOMWrapperWorld& coreWorld, const String& name) const
+WebCore::WebKitBuffer* WebUserContentController::buffer(const WebCore::DOMWrapperWorld& coreWorld, StringImpl* name) const
 {
     RefPtr world = InjectedBundleScriptWorld::get(coreWorld);
     if (!world)

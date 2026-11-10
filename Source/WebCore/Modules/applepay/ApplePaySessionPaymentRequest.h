@@ -68,11 +68,11 @@ public:
     unsigned version() const { return m_version; }
     void setVersion(unsigned version) { m_version = version; }
 
-    const String& countryCode() const LIFETIME_BOUND { return m_countryCode; }
-    void setCountryCode(const String& countryCode) { m_countryCode = countryCode; }
+    const RefPtr<StringImpl>& countryCode() const LIFETIME_BOUND { return m_countryCode; }
+    void setCountryCode(StringImpl* countryCode) { m_countryCode = countryCode; }
 
-    const String& currencyCode() const LIFETIME_BOUND { return m_currencyCode; }
-    void setCurrencyCode(const String& currencyCode) { m_currencyCode = currencyCode; }
+    const RefPtr<StringImpl>& currencyCode() const LIFETIME_BOUND { return m_currencyCode; }
+    void setCurrencyCode(StringImpl* currencyCode) { m_currencyCode = currencyCode; }
 
     using ContactFields = ApplePaySessionPaymentRequestContactFields;
 
@@ -88,8 +88,8 @@ public:
     const PaymentContact& shippingContact() const LIFETIME_BOUND { return m_shippingContact; }
     void setShippingContact(const PaymentContact& shippingContact) { m_shippingContact = shippingContact; }
 
-    const Vector<String>& supportedNetworks() const LIFETIME_BOUND { return m_supportedNetworks; }
-    void setSupportedNetworks(Vector<String>&& supportedNetworks) { m_supportedNetworks = WTF::move(supportedNetworks); }
+    const Vector<RefPtr<StringImpl>>& supportedNetworks() const LIFETIME_BOUND { return m_supportedNetworks; }
+    void setSupportedNetworks(Vector<RefPtr<StringImpl>>&& supportedNetworks) { m_supportedNetworks = WTF::move(supportedNetworks); }
 
     struct MerchantCapabilities {
         bool supports3DS { false };
@@ -117,11 +117,11 @@ public:
     const ApplePayLineItem& total() const LIFETIME_BOUND { return m_total; };
     void setTotal(const ApplePayLineItem& total) { m_total = total; }
 
-    const String& applicationData() const LIFETIME_BOUND { return m_applicationData; }
-    void setApplicationData(const String& applicationData) { m_applicationData = applicationData; }
+    const RefPtr<StringImpl>& applicationData() const LIFETIME_BOUND { return m_applicationData; }
+    void setApplicationData(StringImpl* applicationData) { m_applicationData = applicationData; }
 
-    const Vector<String>& supportedCountries() const LIFETIME_BOUND { return m_supportedCountries; }
-    void setSupportedCountries(Vector<String>&& supportedCountries) { m_supportedCountries = WTF::move(supportedCountries); }
+    const Vector<RefPtr<StringImpl>>& supportedCountries() const LIFETIME_BOUND { return m_supportedCountries; }
+    void setSupportedCountries(Vector<RefPtr<StringImpl>>&& supportedCountries) { m_supportedCountries = WTF::move(supportedCountries); }
 
     enum class Requester : bool {
         ApplePayJS,
@@ -140,8 +140,8 @@ public:
     std::optional<bool> supportsCouponCode() const { return m_supportsCouponCode; }
     void setSupportsCouponCode(std::optional<bool> supportsCouponCode) { m_supportsCouponCode = supportsCouponCode; }
 
-    const String& couponCode() const LIFETIME_BOUND { return m_couponCode; }
-    void setCouponCode(const String& couponCode) { m_couponCode = couponCode; }
+    const RefPtr<StringImpl>& couponCode() const LIFETIME_BOUND { return m_couponCode; }
+    void setCouponCode(StringImpl* couponCode) { m_couponCode = couponCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
@@ -180,8 +180,8 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    const String& merchantCategoryCode() const LIFETIME_BOUND { return m_merchantCategoryCode; }
-    void setMerchantCategoryCode(const String& merchantCategoryCode) { m_merchantCategoryCode = merchantCategoryCode; }
+    const RefPtr<StringImpl>& merchantCategoryCode() const LIFETIME_BOUND { return m_merchantCategoryCode; }
+    void setMerchantCategoryCode(StringImpl* merchantCategoryCode) { m_merchantCategoryCode = merchantCategoryCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
@@ -189,20 +189,20 @@ public:
     void setIsDelegatedRequest(const std::optional<bool> isDelegatedRequest) { m_isDelegatedRequest = isDelegatedRequest; }
 #endif
 
-    ApplePaySessionPaymentRequest(String&& countryCode
-        , String&& currencyCode
+    ApplePaySessionPaymentRequest(RefPtr<StringImpl>&& countryCode
+        , RefPtr<StringImpl>&& currencyCode
         , ContactFields&& requiredBillingContactFields
         , PaymentContact&& billingContact
         , ContactFields&& requiredShippingContactFields
         , PaymentContact&& shippingContact
-        , Vector<String>&& supportedNetworks
+        , Vector<RefPtr<StringImpl>>&& supportedNetworks
         , MerchantCapabilities&& merchantCapabilities
         , ApplePaySessionPaymentRequestShippingType&& shippingType
         , Vector<ApplePayShippingMethod>&& shippingMethods
         , Vector<ApplePayLineItem>&& lineItems
         , ApplePayLineItem&& total
-        , String applicationData
-        , Vector<String>&& supportedCountries
+        , RefPtr<StringImpl> applicationData
+        , Vector<RefPtr<StringImpl>>&& supportedCountries
         , Requester&& requester
 #if HAVE(PASSKIT_INSTALLMENTS)
         , PaymentInstallmentConfiguration&& installmentConfiguration
@@ -212,7 +212,7 @@ public:
 #endif
 #if ENABLE(APPLE_PAY_COUPON_CODE)
         , std::optional<bool> supportsCouponCode
-        , String couponCode
+        , RefPtr<StringImpl> couponCode
 #endif
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
         , std::optional<ApplePayRecurringPaymentRequest>&& recurringPaymentRequest
@@ -233,7 +233,7 @@ public:
         , std::optional<ApplePayLaterAvailability>&& applePayLaterAvailability
 #endif
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-        , String&& merchantCategoryCode
+        , RefPtr<StringImpl>&& merchantCategoryCode
 #endif
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
         , std::optional<bool> isDelegatedRequest
@@ -293,8 +293,8 @@ public:
 private:
     unsigned m_version { 0 };
 
-    String m_countryCode;
-    String m_currencyCode;
+    RefPtr<StringImpl> m_countryCode;
+    RefPtr<StringImpl> m_currencyCode;
 
     ContactFields m_requiredBillingContactFields;
     PaymentContact m_billingContact;
@@ -302,7 +302,7 @@ private:
     ContactFields m_requiredShippingContactFields;
     PaymentContact m_shippingContact;
 
-    Vector<String> m_supportedNetworks;
+    Vector<RefPtr<StringImpl>> m_supportedNetworks;
     MerchantCapabilities m_merchantCapabilities;
 
     ShippingType m_shippingType { ShippingType::Shipping };
@@ -311,8 +311,8 @@ private:
     Vector<ApplePayLineItem> m_lineItems;
     ApplePayLineItem m_total;
 
-    String m_applicationData;
-    Vector<String> m_supportedCountries;
+    RefPtr<StringImpl> m_applicationData;
+    Vector<RefPtr<StringImpl>> m_supportedCountries;
 
     Requester m_requester { Requester::ApplePayJS };
 
@@ -326,7 +326,7 @@ private:
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     std::optional<bool> m_supportsCouponCode;
-    String m_couponCode;
+    RefPtr<StringImpl> m_couponCode;
 #endif
 
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
@@ -354,7 +354,7 @@ private:
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    String m_merchantCategoryCode;
+    RefPtr<StringImpl> m_merchantCategoryCode;
 #endif
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)

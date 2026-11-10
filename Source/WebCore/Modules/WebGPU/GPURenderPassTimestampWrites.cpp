@@ -35,9 +35,9 @@ Ref<JSON::Object> GPURenderPassTimestampWrites::toJSON() const
     Ref json = JSON::Object::create();
     // `GPUQuerySet` is not JSON serializable.
     if (beginningOfPassWriteIndex)
-        json->setDouble("beginningOfPassWriteIndex"_s, *beginningOfPassWriteIndex);
+        json->setDouble("beginningOfPassWriteIndex"_si, *beginningOfPassWriteIndex);
     if (endOfPassWriteIndex)
-        json->setDouble("endOfPassWriteIndex"_s, *endOfPassWriteIndex);
+        json->setDouble("endOfPassWriteIndex"_si, *endOfPassWriteIndex);
     return json;
 }
 

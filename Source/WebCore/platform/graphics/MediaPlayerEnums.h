@@ -156,12 +156,12 @@ public:
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, MediaPlayerEnums::VideoGravity);
-WEBCORE_EXPORT String convertEnumerationToString(MediaPlayerEnums::ReadyState);
-String convertEnumerationToString(MediaPlayerEnums::NetworkState);
-String convertEnumerationToString(MediaPlayerEnums::Preload);
-String convertEnumerationToString(MediaPlayerEnums::SupportsType);
-String convertEnumerationToString(MediaPlayerEnums::BufferingPolicy);
-WEBCORE_EXPORT String convertEnumerationToString(MediaPlayerEnums::ViewportVisibility);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(MediaPlayerEnums::ReadyState);
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayerEnums::NetworkState);
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayerEnums::Preload);
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayerEnums::SupportsType);
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayerEnums::BufferingPolicy);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(MediaPlayerEnums::ViewportVisibility);
 
 enum class VideoRendererPreference : uint8_t {
     PrefersDecompressionSession = 1 << 0,
@@ -204,7 +204,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::MediaPlayerEnums::ReadyState> {
-    static String toString(const WebCore::MediaPlayerEnums::ReadyState state)
+    static RefPtr<StringImpl> toString(const WebCore::MediaPlayerEnums::ReadyState state)
     {
         return convertEnumerationToString(state);
     }
@@ -212,7 +212,7 @@ struct LogArgument<WebCore::MediaPlayerEnums::ReadyState> {
 
 template <>
 struct LogArgument<WebCore::MediaPlayerEnums::NetworkState> {
-    static String toString(const WebCore::MediaPlayerEnums::NetworkState state)
+    static RefPtr<StringImpl> toString(const WebCore::MediaPlayerEnums::NetworkState state)
     {
         return convertEnumerationToString(state);
     }
@@ -220,7 +220,7 @@ struct LogArgument<WebCore::MediaPlayerEnums::NetworkState> {
 
 template <>
 struct LogArgument<WebCore::MediaPlayerEnums::BufferingPolicy> {
-    static String toString(const WebCore::MediaPlayerEnums::BufferingPolicy policy)
+    static RefPtr<StringImpl> toString(const WebCore::MediaPlayerEnums::BufferingPolicy policy)
     {
         return convertEnumerationToString(policy);
     }
@@ -228,7 +228,7 @@ struct LogArgument<WebCore::MediaPlayerEnums::BufferingPolicy> {
 
 template <>
 struct LogArgument<WebCore::MediaPlayerEnums::ViewportVisibility> {
-    static String toString(const WebCore::MediaPlayerEnums::ViewportVisibility visibility)
+    static RefPtr<StringImpl> toString(const WebCore::MediaPlayerEnums::ViewportVisibility visibility)
     {
         return convertEnumerationToString(visibility);
     }

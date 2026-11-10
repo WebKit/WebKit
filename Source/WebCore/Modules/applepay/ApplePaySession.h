@@ -81,8 +81,8 @@ public:
 
     static ExceptionOr<bool> supportsVersion(Document&, unsigned version);
     static ExceptionOr<bool> canMakePayments(Document&);
-    static ExceptionOr<void> canMakePaymentsWithActiveCard(Document&, const String& merchantIdentifier, Ref<DeferredPromise>&&);
-    static ExceptionOr<void> openPaymentSetup(Document&, const String& merchantIdentifier, Ref<DeferredPromise>&&);
+    static ExceptionOr<void> canMakePaymentsWithActiveCard(Document&, StringImpl* merchantIdentifier, Ref<DeferredPromise>&&);
+    static ExceptionOr<void> openPaymentSetup(Document&, StringImpl* merchantIdentifier, Ref<DeferredPromise>&&);
 
     ExceptionOr<void> begin(Document&);
     ExceptionOr<void> abort();
@@ -125,7 +125,7 @@ private:
     void didSelectShippingContact(const PaymentContact&) override;
     void didSelectPaymentMethod(const PaymentMethod&) override;
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    void didChangeCouponCode(String&& couponCode) override;
+    void didChangeCouponCode(RefPtr<StringImpl>&& couponCode) override;
 #endif
     void didCancelPaymentSession(PaymentSessionError&&) override;
 

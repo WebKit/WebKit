@@ -266,17 +266,17 @@ NODELETE static uint64_t toWebCore(UserMediaPermissionRequestProxy::UserMediaAcc
 }
 #endif
 
-void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequestProxy& request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason, const String& message)
+void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequestProxy& request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason, StringImpl* message)
 {
     denyRequest(request, reason, message, WebCore::MediaConstraintType::Unknown);
 }
 
 void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequestProxy& request, WebCore::MediaConstraintType invalidConstraint)
 {
-    denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, { }, invalidConstraint);
+    denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, nullptr, invalidConstraint);
 }
 
-void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequestProxy& request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason, const String& message, WebCore::MediaConstraintType invalidConstraint)
+void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequestProxy& request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason, StringImpl* message, WebCore::MediaConstraintType invalidConstraint)
 {
     RefPtr page = m_page.get();
     if (!page || !page->hasRunningProcess())
@@ -336,7 +336,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 
     Ref userMediaDocumentSecurityOrigin = request.userMediaDocumentSecurityOrigin();
     Ref topLevelDocumentSecurityOrigin = request.topLevelDocumentSecurityOrigin();
-    protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [weakThis = WeakPtr { *this }, request = protect(request)](String&&) mutable {
+    protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [weakThis = WeakPtr { *this }, request = protect(request)](RefPtr<StringImpl>&&) mutable {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->finishGrantingRequest(request);
     });
@@ -361,13 +361,13 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     updateStoredRequests(request);
 
     if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, request)) {
-        denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox."_s);
+        denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox."_si);
         return;
     }
 
     RefPtr page = m_page.get();
     if (!page) {
-        denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "No page."_s);
+        denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "No page."_si);
         return;
     }
 
@@ -513,12 +513,12 @@ auto UserMediaPermissionRequestManagerProxy::previouslySelectedDeviceUIDs(const 
         if (!isGrantedRequestFor(grantedRequest, userMediaDocumentOrigin, topLevelDocumentOrigin, frameID))
             continue;
 
-        if (selected.audioDeviceUID.isEmpty() && grantedRequest->requiresAudioCapture())
+        if (isEmpty(selected.audioDeviceUID) && grantedRequest->requiresAudioCapture())
             selected.audioDeviceUID = grantedRequest->audioDevice().persistentId();
-        if (selected.videoDeviceUID.isEmpty() && grantedRequest->requiresVideoCapture())
+        if (isEmpty(selected.videoDeviceUID) && grantedRequest->requiresVideoCapture())
             selected.videoDeviceUID = grantedRequest->videoDevice().persistentId();
 
-        if (!selected.audioDeviceUID.isEmpty() && !selected.videoDeviceUID.isEmpty())
+        if (!isEmpty(selected.audioDeviceUID) && !isEmpty(selected.videoDeviceUID))
             break;
     }
 
@@ -686,7 +686,7 @@ void UserMediaPermissionRequestManagerProxy::startProcessingUserMediaPermissionR
     });
 }
 
-String UserMediaPermissionRequestManagerProxy::ephemeralDeviceHashSaltForFrame(WebCore::FrameIdentifier frameIdentifier)
+RefPtr<StringImpl> UserMediaPermissionRequestManagerProxy::ephemeralDeviceHashSaltForFrame(WebCore::FrameIdentifier frameIdentifier)
 {
     auto iter = m_frameEphemeralHashSalts.find(frameIdentifier);
     if (iter != m_frameEphemeralHashSalts.end())
@@ -720,7 +720,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 
     Ref userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
     Ref topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
-    protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [weakThis = WeakPtr { *this }, request = m_currentUserMediaRequest] (String&& deviceIDHashSalt) mutable {
+    protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [weakThis = WeakPtr { *this }, request = m_currentUserMediaRequest] (RefPtr<StringImpl>&& deviceIDHashSalt) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -1046,11 +1046,11 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(FrameIde
     Ref gatherer = UserMediaPermissionInfoGatherer::create(WTF::move(handler));
 
     Ref topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
-    page->uiClient().queryPermission("camera"_s, topLevelOrigin, [gatherer](auto result) {
+    page->uiClient().queryPermission("camera"_si, topLevelOrigin, [gatherer](auto result) {
         if (result)
             gatherer->setCameraPermission(*result);
     });
-    page->uiClient().queryPermission("microphone"_s, topLevelOrigin, [gatherer](auto result) {
+    page->uiClient().queryPermission("microphone"_si, topLevelOrigin, [gatherer](auto result) {
         if (result)
             gatherer->setMicrophonePermission(*result);
     });
@@ -1095,9 +1095,9 @@ void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool 
 }
 #endif
 
-static void moveDeviceWithCapabilitiesToFrontOfKind(Vector<CaptureDeviceWithCapabilities>& devices, const String& persistentId, WebCore::CaptureDevice::DeviceType type)
+static void moveDeviceWithCapabilitiesToFrontOfKind(Vector<CaptureDeviceWithCapabilities>& devices, StringImpl* persistentId, WebCore::CaptureDevice::DeviceType type)
 {
-    if (persistentId.isEmpty())
+    if (isEmpty(persistentId))
         return;
 
     size_t firstOfKindIndex = devices.findIf([&](auto& deviceWithCapabilities) {
@@ -1107,7 +1107,7 @@ static void moveDeviceWithCapabilitiesToFrontOfKind(Vector<CaptureDeviceWithCapa
         return;
 
     size_t index = devices.findIf([&](auto& deviceWithCapabilities) {
-        return deviceWithCapabilities.device.type() == type && deviceWithCapabilities.device.persistentId() == persistentId;
+        return deviceWithCapabilities.device.type() == type && equal(deviceWithCapabilities.device.persistentId(), persistentId);
     });
     if (index == notFound || index <= firstOfKindIndex)
         return;
@@ -1218,7 +1218,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
         protectedThis->m_pendingDeviceRequests.add(requestID);
 
         callCompletionHandler.release();
-        protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(userMediaDocumentOrigin, topLevelDocumentOrigin, [weakThis = WTF::move(weakThis), requestID, frameID, userMediaDocumentOrigin, topLevelDocumentOrigin, cameraState, microphoneState, completionHandler = WTF::move(completionHandler)](String&& deviceIDHashSalt) mutable {
+        protect(protect(page->websiteDataStore())->ensureDeviceIdHashSaltStorage())->deviceIdHashSaltForOrigin(userMediaDocumentOrigin, topLevelDocumentOrigin, [weakThis = WTF::move(weakThis), requestID, frameID, userMediaDocumentOrigin, topLevelDocumentOrigin, cameraState, microphoneState, completionHandler = WTF::move(completionHandler)](RefPtr<StringImpl>&& deviceIDHashSalt) mutable {
             auto callCompletionHandler = makeScopeExit([&completionHandler] {
                 completionHandler({ }, { });
             });
@@ -1366,9 +1366,9 @@ const Logger& UserMediaPermissionRequestManagerProxy::logger() const
 }
 #endif
 
-String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values = {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values = {
         MAKE_STATIC_STRING_IMPL("Deny"),
         MAKE_STATIC_STRING_IMPL("Grant"),
         MAKE_STATIC_STRING_IMPL("Prompt"),

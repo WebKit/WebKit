@@ -31,7 +31,7 @@ using namespace WebCore;
 API::ContentWorld& webkitContentWorld(UTF8CStringView worldName)
 {
     static NeverDestroyed<HashMap<UTF8CString, RefPtr<API::ContentWorld>>> map;
-    return *map.get().ensure(UTF8CString { worldName.span() }, [worldName = String::fromUTF8(worldName.span())] {
+    return *map.get().ensure(UTF8CString { worldName.span() }, [worldName = StringImpl::fromUTF8(worldName.span())] {
         return API::ContentWorld::sharedWorldWithName(worldName);
     }).iterator->value;
 }
@@ -75,11 +75,11 @@ static inline UserScriptInjectionTime toUserScriptInjectionTime(WebKitUserScript
     }
 }
 
-static inline Vector<String> toStringVector(const char* const* strv)
+static inline Vector<RefPtr<StringImpl>> toStringVector(const char* const* strv)
 {
     const auto strvSpan = span(strv);
-    return Vector<String> { strvSpan.size(), [&strvSpan](size_t i) {
-        return String::fromUTF8(strvSpan[i]);
+    return Vector<RefPtr<StringImpl>> { strvSpan.size(), [&strvSpan](size_t i) {
+        return StringImpl::fromUTF8(strvSpan[i]);
     }};
 }
 
@@ -94,7 +94,7 @@ static inline Vector<String> toStringVector(const char* const* strv)
 struct _WebKitUserStyleSheet {
     _WebKitUserStyleSheet(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* const* allowList, const char* const* blockList, API::ContentWorld& world)
         : userStyleSheet(adoptRef(new API::UserStyleSheet(UserStyleSheet {
-            String::fromUTF8(source), URL { },
+            StringImpl::fromUTF8(source), URL { },
             toStringVector(allowList), toStringVector(blockList),
             toUserContentInjectedFrames(injectedFrames),
             UserContentMatchParentFrame::Never,
@@ -221,7 +221,7 @@ API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*
 struct _WebKitUserScript {
     _WebKitUserScript(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* allowList, const gchar* const* blockList, API::ContentWorld& world)
         : userScript(adoptRef(new API::UserScript(UserScript {
-            String::fromUTF8(source), URL { },
+            StringImpl::fromUTF8(source), URL { },
             toStringVector(allowList), toStringVector(blockList),
             toUserScriptInjectionTime(injectionTime),
             toUserContentInjectedFrames(injectedFrames) }, world)))
@@ -348,7 +348,7 @@ struct _WebKitUserContentFilter {
     _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
         : contentRuleList(WTF::move(contentRuleList))
 #if ENABLE(CONTENT_EXTENSIONS)
-        , identifier(this->contentRuleList->name().utf8())
+        , identifier(utf8(this->contentRuleList->name()))
 #endif
         , referenceCount(1)
     {

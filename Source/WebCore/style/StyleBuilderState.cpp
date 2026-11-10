@@ -92,7 +92,7 @@ BuilderState::BuilderState(ComputedStyle& style, BuilderContext&& context)
 {
 }
 
-const CSSRegisteredCustomProperty* BuilderState::registeredProperty(const AtomString& name) const
+const CSSRegisteredCustomProperty* BuilderState::registeredProperty(AtomStringImpl* name) const
 {
     // "Only the custom property registrations in registrations are visible" covers the names a custom
     // function introduces. A name it does not introduce arrives by inheritance carrying the calling
@@ -162,7 +162,7 @@ RefPtr<Image> BuilderState::createStyleImage(const CSSValue& value) const
     return nullptr;
 }
 
-void BuilderState::registerSubstitutionAttribute(const AtomString& attributeLocalName, const Scope* targetScope)
+void BuilderState::registerSubstitutionAttribute(AtomStringImpl* attributeLocalName, const Scope* targetScope)
 {
     m_registeredSubstitutionAttributes.append({ attributeLocalName, targetScope });
 }
@@ -305,7 +305,7 @@ CSSPropertyID BuilderState::cssPropertyID() const
 
 // Every custom property shares CSSPropertyID::Custom, so anything keying on cssPropertyID() needs this to
 // tell them apart. Null unless a custom property is being applied.
-AtomString BuilderState::customPropertyName() const
+RefPtr<AtomStringImpl> BuilderState::customPropertyName() const
 {
     if (cssPropertyID() != CSSPropertyID::Custom)
         return nullAtom();

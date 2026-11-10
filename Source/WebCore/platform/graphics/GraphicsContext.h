@@ -303,7 +303,7 @@ public:
     // Text
 
     WEBCORE_EXPORT virtual FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
-    WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
+    WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, AtomStringImpl* mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 
     WEBCORE_EXPORT virtual void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
@@ -362,8 +362,8 @@ public:
 
     virtual void setURLForRect(const URL&, const FloatRect&) { }
 
-    virtual void setDestinationForRect(const String&, const FloatRect&) { }
-    virtual void addDestinationAtPoint(const String&, const FloatPoint&) { }
+    virtual void setDestinationForRect(StringImpl*, const FloatRect&) { }
+    virtual void addDestinationAtPoint(StringImpl*, const FloatPoint&) { }
 
     virtual bool supportsInternalLinks() const { return false; }
 

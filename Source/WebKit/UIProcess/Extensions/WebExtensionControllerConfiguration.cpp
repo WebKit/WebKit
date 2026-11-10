@@ -37,9 +37,9 @@ WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersi
         m_defaultWebsiteDataStore = WebsiteDataStore::createNonPersistent();
 }
 
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(TemporaryTag, const String& storageDirectory)
+WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(TemporaryTag, StringImpl* storageDirectory)
     : m_temporary(true)
-    , m_storageDirectory(!storageDirectory.isEmpty() ? storageDirectory : createTemporaryStorageDirectoryPath())
+    , m_storageDirectory(!isEmpty(storageDirectory) ? RefPtr { storageDirectory } : createTemporaryStorageDirectoryPath())
 {
 }
 
@@ -52,7 +52,7 @@ WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const W
 #if PLATFORM(COCOA)
 bool WebExtensionControllerConfiguration::operator==(const WebExtensionControllerConfiguration& other) const
 {
-    return this == &other || (m_identifier == other.m_identifier && m_storageDirectory == other.m_storageDirectory && m_webViewConfiguration == other.m_webViewConfiguration && m_defaultWebsiteDataStore == other.m_defaultWebsiteDataStore);
+    return this == &other || (m_identifier == other.m_identifier && equal(m_storageDirectory, other.m_storageDirectory) && m_webViewConfiguration == other.m_webViewConfiguration && m_defaultWebsiteDataStore == other.m_defaultWebsiteDataStore);
 }
 #endif
 

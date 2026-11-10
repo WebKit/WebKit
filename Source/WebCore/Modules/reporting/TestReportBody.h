@@ -37,17 +37,17 @@ class FormData;
 class TestReportBody final : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(TestReportBody);
 public:
-    NODELETE WEBCORE_EXPORT static Ref<TestReportBody> create(String&& message);
+    NODELETE WEBCORE_EXPORT static Ref<TestReportBody> create(RefPtr<StringImpl>&& message);
 
-    WEBCORE_EXPORT const String& type() const final;
-    NODELETE WEBCORE_EXPORT const String& message() const;
+    WEBCORE_EXPORT const RefPtr<StringImpl>& type() const final;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& message() const;
 
 private:
-    TestReportBody(String&& message);
+    TestReportBody(RefPtr<StringImpl>&& message);
 
     ViolationReportType reportBodyType() const final { return ViolationReportType::Test; }
 
-    const String m_bodyMessage;
+    const RefPtr<StringImpl> m_bodyMessage;
 };
 
 } // namespace WebCore

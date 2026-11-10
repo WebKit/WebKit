@@ -42,7 +42,7 @@ public:
     static Ref<SVGAElement> create(const QualifiedName&, Document&);
     ~SVGAElement();
 
-    AtomString target() const final { return AtomString { m_target->currentValue() }; }
+    RefPtr<AtomStringImpl> target() const final { return AtomStringImpl::add(m_target->currentValue()); }
     SVGAnimatedString& targetAnimated() { return m_target; }
 
     URL hrefURL() const;
@@ -51,7 +51,7 @@ public:
 
     DOMTokenList& relList();
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
 private:
@@ -59,14 +59,14 @@ private:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAElement, SVGGraphicsElement, SVGURIReference>;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
 
     bool isValid() const final { return SVGTests::isValid(); }
-    String title() const final;
+    RefPtr<StringImpl> title() const final;
     void defaultEventHandler(Event&) final;
 
     bool supportsFocus() const final;

@@ -236,9 +236,9 @@ public:
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
 
-    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility, unsigned length, const String& name);
-    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, ImplementationVisibility, Intrinsic, const DOMJIT::Signature*, unsigned length, const String& name);
-    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, ImplementationVisibility, Intrinsic, unsigned length, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility, unsigned length, StringImpl* name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, ImplementationVisibility, Intrinsic, const DOMJIT::Signature*, unsigned length, StringImpl* name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, ImplementationVisibility, Intrinsic, unsigned length, StringImpl* name);
 
     void initialize(VM&);
 
@@ -256,7 +256,7 @@ private:
     };
     using CTIStubMap = UncheckedKeyHashMap<ThunkGenerator, Entry>;
 
-    using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, unsigned, String>;
+    using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, unsigned, RefPtr<StringImpl>>;
 
     struct WeakNativeExecutableHash {
         NODELETE static inline unsigned hash(const Weak<NativeExecutable>&);
@@ -273,14 +273,14 @@ private:
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
 
     private:
-        static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, const String& name)
+        static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, StringImpl* name)
         {
             Hasher hasher;
             WTF::add(hasher, function);
             WTF::add(hasher, constructor);
             WTF::add(hasher, implementationVisibility);
             WTF::add(hasher, length);
-            if (!name.isNull())
+            if (name)
                 WTF::add(hasher, name);
             return hasher.hash();
         }

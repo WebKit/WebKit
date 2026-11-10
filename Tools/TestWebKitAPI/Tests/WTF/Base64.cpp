@@ -31,9 +31,9 @@ namespace TestWebKitAPI {
 
 #define EXPECT_ENCODE(expected, input) EXPECT_EQ(expected, base64EncodeToString(input, options))
 #define EXPECT_DECODE(expected, input) EXPECT_EQ(expected, base64DecodeToString(input, options))
-// base64DecodeToString() returns a null String when the input cannot be decoded, and a null
-// String does not compare equal to the empty String, so check emptiness rather than equality.
-#define EXPECT_DECODE_EMPTY(input) EXPECT_TRUE(base64DecodeToString(input, options).isEmpty())
+// base64DecodeToString() returns a null string when the input cannot be decoded, and a null
+// string does not compare equal to the empty string, so check emptiness rather than equality.
+#define EXPECT_DECODE_EMPTY(input) EXPECT_TRUE(isEmpty(base64DecodeToString(input, options)))
 
 TEST(Base64, Encode)
 {

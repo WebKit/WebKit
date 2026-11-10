@@ -436,7 +436,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         layer.masksToBounds = properties.masksToBounds;
 
     if (properties.changedProperties & LayerChange::NameChanged)
-        layer.name = properties.name.createNSString().get();
+        layer.name = createNSString(properties.name).get();
 
     if (properties.changedProperties & LayerChange::BackgroundColorChanged) {
         auto colorSpace = [&]() {

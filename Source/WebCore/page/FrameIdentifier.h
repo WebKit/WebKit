@@ -35,6 +35,6 @@ using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 WEBCORE_EXPORT FrameIdentifier generateFrameIdentifier();
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, FrameIdentifier);
-WEBCORE_EXPORT String frameIdentifierString(FrameIdentifier);
+WEBCORE_EXPORT RefPtr<StringImpl> frameIdentifierString(FrameIdentifier);
 
 }

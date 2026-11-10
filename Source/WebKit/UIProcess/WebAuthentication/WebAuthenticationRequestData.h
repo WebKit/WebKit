@@ -58,7 +58,7 @@ struct WebAuthenticationRequestData {
     std::optional<WebCore::GlobalFrameIdentifier> globalFrameID;
     std::optional<WebKit::FrameInfoData> frameInfo;
 
-    String cachedPin; // Only used to improve NFC Client PIN experience.
+    RefPtr<StringImpl> cachedPin; // Only used to improve NFC Client PIN experience.
     WeakPtr<API::WebAuthenticationPanel> weakPanel;
     std::optional<WebCore::MediationRequirement> mediation;
     std::optional<WebCore::SecurityOriginData> parentOrigin;

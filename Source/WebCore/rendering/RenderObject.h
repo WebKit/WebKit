@@ -1109,8 +1109,8 @@ public:
     void resetFragmentedFlowStateOnRemoval();
     void initializeFragmentedFlowStateOnInsertion();
 
-    virtual String description() const;
-    virtual String debugDescription() const;
+    virtual RefPtr<StringImpl> description() const;
+    virtual RefPtr<StringImpl> debugDescription() const;
 
     bool isSkippedContent() const;
 

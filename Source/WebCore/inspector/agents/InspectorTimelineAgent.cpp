@@ -60,7 +60,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTimelineAgent);
 
 InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context)
-    : InspectorAgentBase("Timeline"_s, context)
+    : InspectorAgentBase("Timeline"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
@@ -214,16 +214,16 @@ std::optional<double> InspectorTimelineAgent::timestampFromMonotonicTime(Monoton
     return stopwatchTime->seconds();
 }
 
-void InspectorTimelineAgent::startFromConsole(const String& title)
+void InspectorTimelineAgent::startFromConsole(StringImpl* title)
 {
     // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
-    if (!title.isEmpty()) {
+    if (!isEmpty(title)) {
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
-            auto recordTitle = protect(record.data)->getString("title"_s);
-            if (recordTitle == title) {
+            auto recordTitle = protect(record.data)->getString("title"_si);
+            if (equal(recordTitle, title)) {
                 if (CheckedPtr consoleAgent = Ref { m_instrumentingAgents.get() } -> webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
-                    String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
+                    RefPtr<StringImpl> warning = isEmpty(title) ? "Unnamed Profile already exists"_si : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
                     consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
                 }
                 return;
@@ -237,15 +237,15 @@ void InspectorTimelineAgent::startFromConsole(const String& title)
     m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true));
 }
 
-void InspectorTimelineAgent::stopFromConsole(const String& title)
+void InspectorTimelineAgent::stopFromConsole(StringImpl* title)
 {
     // Stop profiles in reverse order. If the title is empty, then stop the last profile.
     // Otherwise, match the title of the profile to stop.
     for (int i = m_pendingConsoleProfileRecords.size() - 1; i >= 0; --i) {
         const TimelineRecordEntry& record = m_pendingConsoleProfileRecords[i];
 
-        auto recordTitle = protect(record.data)->getString("title"_s);
-        if (title.isEmpty() || recordTitle == title) {
+        auto recordTitle = protect(record.data)->getString("title"_si);
+        if (isEmpty(title) || equal(recordTitle, title)) {
             didCompleteRecordEntry(record);
             m_pendingConsoleProfileRecords.removeAt(i);
 
@@ -258,12 +258,12 @@ void InspectorTimelineAgent::stopFromConsole(const String& title)
 
     if (CheckedPtr consoleAgent = Ref { m_instrumentingAgents.get() }->webConsoleAgent()) {
         // FIXME: Send an enum to the frontend for localization?
-        String warning = title.isEmpty() ? "No profiles exist"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" does not exist"_s);
+        RefPtr<StringImpl> warning = isEmpty(title) ? "No profiles exist"_si : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" does not exist"_s);
         consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
     }
 }
 
-void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, int scriptColumn)
+void InspectorTimelineAgent::willCallFunction(StringImpl* scriptName, int scriptLine, int scriptColumn)
 {
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine, scriptColumn), TimelineRecordType::FunctionCall, true);
 }
@@ -285,7 +285,7 @@ void InspectorTimelineAgent::didDispatchEvent(bool defaultPrevented)
 
     auto& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::EventDispatch);
-    protect(entry.data)->setBoolean("defaultPrevented"_s, defaultPrevented);
+    protect(entry.data)->setBoolean("defaultPrevented"_si, defaultPrevented);
 
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
@@ -310,7 +310,7 @@ void InspectorTimelineAgent::didFireTimer()
     didCompleteCurrentRecord(TimelineRecordType::TimerFire);
 }
 
-void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, int columnNumber)
+void InspectorTimelineAgent::willEvaluateScript(StringImpl* url, int lineNumber, int columnNumber)
 {
     pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber, columnNumber), TimelineRecordType::EvaluateScript, true);
 }
@@ -320,22 +320,22 @@ void InspectorTimelineAgent::didEvaluateScript()
     didCompleteCurrentRecord(TimelineRecordType::EvaluateScript);
 }
 
-void InspectorTimelineAgent::didTimeStamp(const String& message)
+void InspectorTimelineAgent::didTimeStamp(StringImpl* message)
 {
     appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true);
 }
 
-void InspectorTimelineAgent::time(const String& label)
+void InspectorTimelineAgent::time(StringImpl* label)
 {
     appendRecord(TimelineRecordFactory::createTimeStampData(label), TimelineRecordType::Time, true);
 }
 
-void InspectorTimelineAgent::timeEnd(const String& label)
+void InspectorTimelineAgent::timeEnd(StringImpl* label)
 {
     appendRecord(TimelineRecordFactory::createTimeStampData(label), TimelineRecordType::TimeEnd, true);
 }
 
-void InspectorTimelineAgent::didPerformanceMark(const String& label, std::optional<MonotonicTime> timeInMonotonicTime)
+void InspectorTimelineAgent::didPerformanceMark(StringImpl* label, std::optional<MonotonicTime> timeInMonotonicTime)
 {
     std::optional<double> timestamp;
     if (timeInMonotonicTime) {
@@ -517,7 +517,7 @@ void InspectorTimelineAgent::didFireAnimationFrame()
     didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
-void InspectorTimelineAgent::willFireObserverCallback(const String& callbackType)
+void InspectorTimelineAgent::willFireObserverCallback(StringImpl* callbackType)
 {
     pushCurrentRecord(TimelineRecordFactory::createObserverCallbackData(callbackType), TimelineRecordType::ObserverCallback, false);
 }
@@ -672,7 +672,7 @@ bool InspectorTimelineAgent::shouldNestUnder(TimelineRecordType type, TimelineRe
 
 void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, TimelineRecordType type)
 {
-    record->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(toProtocol(type)));
+    record->setString("type"_si, Inspector::Protocol::Helpers::getEnumConstantValue(toProtocol(type)));
 
     const TimelineRecordEntry* previousEntry = m_recordStack.isEmpty() ? nullptr : &m_recordStack.last();
     if (previousEntry && !shouldNestUnder(type, previousEntry->type)) {
@@ -698,10 +698,10 @@ void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, Tim
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)
 {
     Ref entryRecord = entry.record;
-    entryRecord->setObject("data"_s, entry.data.copyRef());
+    entryRecord->setObject("data"_si, entry.data.copyRef());
     if (entry.children)
-        entryRecord->setArray("children"_s, *entry.children);
-    entryRecord->setDouble("endTime"_s, timestamp());
+        entryRecord->setArray("children"_si, *entry.children);
+    entryRecord->setDouble("endTime"_si, timestamp());
     addRecordToTimeline(entry.record.copyRef(), entry.type);
 }
 
@@ -732,7 +732,7 @@ InspectorTimelineAgent::TimelineRecordEntry* InspectorTimelineAgent::lastRecordE
 void InspectorTimelineAgent::appendRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, std::optional<double> startTime)
 {
     Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(startTime.value_or(timestamp()), captureCallStack ? m_maxCallStackDepth : 0);
-    record->setObject("data"_s, WTF::move(data));
+    record->setObject("data"_si, WTF::move(data));
     addRecordToTimeline(WTF::move(record), type);
 }
 

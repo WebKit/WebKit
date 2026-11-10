@@ -331,10 +331,10 @@ static bool isVP8CodecConfigurationRecordSupported(const VPCodecConfigurationRec
 
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
 {
-    if (codecConfiguration.codecName == "vp08"_s || codecConfiguration.codecName == "vp8"_s)
+    if (equal(codecConfiguration.codecName, "vp08"_s) || equal(codecConfiguration.codecName, "vp8"_s))
         return isVP8CodecConfigurationRecordSupported(codecConfiguration);
 
-    if (codecConfiguration.codecName == "vp09"_s || codecConfiguration.codecName == "vp9"_s)
+    if (equal(codecConfiguration.codecName, "vp09"_s) || equal(codecConfiguration.codecName, "vp9"_s))
         return isVP9CodecConfigurationRecordSupported(codecConfiguration);
 
     return false;
@@ -562,7 +562,7 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     auto colorSpace = colorSpaceFromVPCodecConfigurationRecord(record);
     overrideVideoColorSpaceAsNeeded(colorSpace, colorSpaceOverride);
 
-    FourCC codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
+    FourCC codecName = equal(record.codecName, "vp09"_s) ? 'vp09' : 'vp08';
     return VideoInfo::create({
         {
             .codecName = codecName,
@@ -581,7 +581,7 @@ Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderPar
 {
     VPCodecConfigurationRecord record;
 
-    record.codecName = "vp09"_s;
+    record.codecName = "vp09"_si;
     record.profile = parser.profile();
     // CoreMedia does nat care about the VP9 codec level; hard-code to Level 1.0 here:
     record.level = 10;
@@ -679,7 +679,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frame
 Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const webm::Video& video)
 {
     VPCodecConfigurationRecord record;
-    record.codecName = "vp08"_s;
+    record.codecName = "vp08"_si;
     record.profile = 0;
     record.level = 10;
     record.bitDepth = 8;

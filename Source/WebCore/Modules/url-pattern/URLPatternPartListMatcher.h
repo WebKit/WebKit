@@ -52,7 +52,7 @@ public:
 
 private:
     Vector<Part> m_partList;
-    String m_delimiterCodepoint;
+    RefPtr<StringImpl> m_delimiterCodepoint;
     bool m_ignoreCase { false };
 };
 

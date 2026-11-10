@@ -43,32 +43,32 @@ public:
     virtual ~MIMETypeCache() = default;
 
     virtual bool isAvailable() const;
-    virtual MediaPlayerEnums::SupportsType canDecodeType(const String&);
-    virtual HashSet<String> supportedTypes();
+    virtual MediaPlayerEnums::SupportsType canDecodeType(StringImpl*);
+    virtual HashSet<RefPtr<StringImpl>> supportedTypes();
 
     NODELETE bool isEmpty() const;
-    bool supportsContainerType(const String&);
+    bool supportsContainerType(StringImpl*);
 
 protected:
-    void addSupportedTypes(const Vector<String>&);
+    void addSupportedTypes(const Vector<RefPtr<StringImpl>>&);
 
 private:
     void ensureSupportedTypes();
-    std::optional<MediaPlayerEnums::SupportsType> getCachedResult(const String&) const;
-    void addCachedResult(const String&, MediaPlayerEnums::SupportsType);
+    std::optional<MediaPlayerEnums::SupportsType> getCachedResult(StringImpl*) const;
+    void addCachedResult(StringImpl*, MediaPlayerEnums::SupportsType);
 
     virtual bool isStaticContainerType(StringView);
-    virtual bool isUnsupportedContainerType(const String&);
-    virtual void initializeCache(HashSet<String>&);
+    virtual bool isUnsupportedContainerType(StringImpl*);
+    virtual void initializeCache(HashSet<RefPtr<StringImpl>>&);
     virtual bool canDecodeExtendedType(const ContentType&);
 
     bool shouldOverrideExtendedType(const ContentType&);
 
     mutable Lock m_supportedTypesLock;
-    std::optional<HashSet<String>> m_supportedTypes WTF_GUARDED_BY_LOCK(m_supportedTypesLock);
+    std::optional<HashSet<RefPtr<StringImpl>>> m_supportedTypes WTF_GUARDED_BY_LOCK(m_supportedTypesLock);
 
     mutable Lock m_cachedResultsLock;
-    std::optional<HashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults WTF_GUARDED_BY_LOCK(m_cachedResultsLock);
+    std::optional<HashMap<RefPtr<StringImpl>, MediaPlayerEnums::SupportsType>> m_cachedResults WTF_GUARDED_BY_LOCK(m_cachedResultsLock);
 };
 
 } // namespace WebCore

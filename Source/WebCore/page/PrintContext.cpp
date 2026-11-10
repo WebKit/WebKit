@@ -351,7 +351,7 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 void PrintContext::collectLinkedDestinations(Document& document)
 {
     for (RefPtr child = document.documentElement(); child; child = ElementTraversal::next(*child)) {
-        String outAnchorName;
+        RefPtr<StringImpl> outAnchorName;
         if (RefPtr element = child->findAnchorElementForLink(outAnchorName))
             m_linkedDestinations->add(outAnchorName, *element);
     }
@@ -363,7 +363,7 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
         return;
 
     if (!m_linkedDestinations) {
-        m_linkedDestinations = makeUnique<HashMap<String, Ref<Element>>>();
+        m_linkedDestinations = makeUnique<HashMap<RefPtr<StringImpl>, Ref<Element>>>();
         collectLinkedDestinations(document);
     }
 
@@ -382,7 +382,7 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
     }
 }
 
-String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName, int pageNumber)
+RefPtr<StringImpl> PrintContext::pageProperty(LocalFrame* frame, StringImpl* propertyName, int pageNumber)
 {
     ASSERT(frame);
     ASSERT(frame->document());
@@ -396,38 +396,38 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
     auto style = protect(document->styleScope().resolver())->styleForPage(pageNumber);
 
     // Implement formatters for properties we care about.
-    if (propertyName == "margin-left"_s) {
+    if (equal(propertyName, "margin-left"_s)) {
         if (auto marginLeft = style->marginLeft().tryFixed())
             return makeString(marginLeft->resolveZoom(style->usedZoomForLength()));
         return autoAtom();
     }
-    if (propertyName == "line-height"_s) {
+    if (equal(propertyName, "line-height"_s)) {
         return WTF::switchOn(style->textAutosizingAdjustedLineHeight(),
-            [&](const CSS::Keyword::Normal&) -> String {
-                return "0"_s;
+            [&](const CSS::Keyword::Normal&) -> RefPtr<StringImpl> {
+                return "0"_si;
             },
-            [&](const Style::LineHeight::Length& length) -> String {
+            [&](const Style::LineHeight::Length& length) -> RefPtr<StringImpl> {
                 return makeString(length.resolveZoom(style->usedZoomForLength()));
             },
-            [&](const Style::LineHeight::Number& number) -> String {
+            [&](const Style::LineHeight::Number& number) -> RefPtr<StringImpl> {
                 return makeString(number.value);
             }
         );
     }
-    if (propertyName == "font-size"_s)
+    if (equal(propertyName, "font-size"_s))
         return makeString(style->fontDescription().usedSize());
-    if (propertyName == "font-family"_s)
+    if (equal(propertyName, "font-family"_s))
         return style->fontDescription().firstFamily().name;
-    if (propertyName == "size"_s) {
+    if (equal(propertyName, "size"_s)) {
         return WTF::switchOn(style->pageSize(),
-            [&](const CSS::Keyword::Auto&) -> String {
-                return "auto"_s;
+            [&](const CSS::Keyword::Auto&) -> RefPtr<StringImpl> {
+                return "auto"_si;
             },
-            [&](const CSS::Keyword::Landscape&) -> String {
-                return "landscape"_s;
+            [&](const CSS::Keyword::Landscape&) -> RefPtr<StringImpl> {
+                return "landscape"_si;
             },
-            [&](const CSS::Keyword::Portrait&) -> String {
-                return "portrait"_s;
+            [&](const CSS::Keyword::Portrait&) -> RefPtr<StringImpl> {
+                return "portrait"_si;
             },
             [&](const Style::PageSize::Lengths& lengths) {
                 return makeString(
@@ -447,7 +447,7 @@ bool PrintContext::isPageBoxVisible(LocalFrame* frame, int pageNumber)
     return protect(frame->document())->isPageBoxVisible(pageNumber);
 }
 
-String PrintContext::pageSizeAndMarginsInPixels(LocalFrame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+RefPtr<StringImpl> PrintContext::pageSizeAndMarginsInPixels(LocalFrame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     IntSize pageSize(width, height);
     protect(frame->document())->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);

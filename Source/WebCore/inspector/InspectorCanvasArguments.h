@@ -313,12 +313,12 @@ template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<UpdateElementGe
 // MARK: - Strings
 
 template<> struct InspectorCanvasArgumentProcessor<IDLDOMString> {
-    static Ref<JSON::Value> toJSON(const String& value)
+    static Ref<JSON::Value> toJSON(StringImpl* value)
     {
         return JSON::Value::create(value);
     }
 
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const String&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, StringImpl*);
 };
 
 template<typename IDLType>

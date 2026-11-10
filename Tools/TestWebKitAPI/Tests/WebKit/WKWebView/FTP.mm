@@ -138,7 +138,7 @@ TEST(WKWebView, FTPSubresourceRedirect)
     webView.get().UIDelegate = uiDelegate.get();
 
     auto htmlString = makeString("<img src='http://127.0.0.1:"_s, httpServer.port(), "/webkitten.png'>"_s);
-    [webView synchronouslyLoadHTMLString:htmlString.createNSString().get()];
+    [webView synchronouslyLoadHTMLString:createNSString(htmlString).get()];
 
     EXPECT_EQ([consoleMessages count], 2u);
     EXPECT_TRUE([consoleMessages.get()[0] isEqualToString:@"FTP URLs are disabled"]);

@@ -70,7 +70,7 @@ inline auto EndowmentStateTracker::stateFromProcessState(RBSProcessState *proces
         else if ([endowmentNamespace isEqualToString:visibilityEndowment]) {
             state.isVisible = true;
             if (NSString *environment = info.environment)
-                state.visibilityEnvironments.add(String(environment));
+                state.visibilityEnvironments.add(StringImpl::create(environment));
         }
     }
 #else

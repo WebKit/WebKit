@@ -599,13 +599,13 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> vi
 static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, ExpectedFrameTree&& expectedRoot)
 {
     WKFrameInfo *info = actualRoot.info;
-    if (info._isLocalFrame != std::holds_alternative<String>(expectedRoot.remoteOrOrigin))
+    if (info._isLocalFrame != std::holds_alternative<RefPtr<StringImpl>>(expectedRoot.remoteOrOrigin))
         return false;
 
-    if (auto* expectedOrigin = std::get_if<String>(&expectedRoot.remoteOrOrigin)) {
+    if (auto* expectedOrigin = std::get_if<RefPtr<StringImpl>>(&expectedRoot.remoteOrOrigin)) {
         WKSecurityOrigin *origin = info.securityOrigin;
-        auto actualOrigin = makeString(String(origin.protocol), "://"_s, String(origin.host), origin.port ? makeString(':', origin.port) : String());
-        if (actualOrigin != *expectedOrigin)
+        auto actualOrigin = makeString(StringImpl::create(origin.protocol), "://"_s, StringImpl::create(origin.host), origin.port ? makeString(':', origin.port) : nullptr);
+        if (!equal(actualOrigin, *expectedOrigin))
             return false;
     }
 
@@ -693,8 +693,8 @@ static void printTree(_WKFrameTreeNode *n, size_t indent = 0)
 
 static void printTree(const ExpectedFrameTree& n, size_t indent = 0)
 {
-    if (auto* s = std::get_if<String>(&n.remoteOrOrigin))
-        SAFE_WTFLOGALWAYS("%s%s", indentation(indent), s->utf8());
+    if (auto* s = std::get_if<RefPtr<StringImpl>>(&n.remoteOrOrigin))
+        SAFE_WTFLOGALWAYS("%s%s", indentation(indent), utf8(*s));
     else
         SAFE_WTFLOGALWAYS("%s(remote)", indentation(indent));
     for (const auto& c : n.children)
@@ -785,11 +785,11 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/example"_s) {
+            if (equal(path, "/example"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
                 continue;
             }
-            if (path == "/webkit"_s) {
+            if (equal(path, "/webkit"_s)) {
                 size_t contentLength = 2000000 + webkitHTML.length();
                 co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Length: "_s, contentLength, "\r\n\r\n"_s));
 
@@ -1594,7 +1594,7 @@ TEST(SiteIsolation, LoadStringAfterOpen)
     HTTPServer server({
         { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
         { "/webkit"_s, { "hi"_s } },
-        { "/apple"_s, { alertOpener } }
+        { "/apple"_s, { StringImpl::create(alertOpener) } }
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [opener, opened] = openerAndOpenedViews(server);
@@ -1755,10 +1755,10 @@ TEST(SiteIsolation, ReuseUncommittedProcessForMultipleRedirects)
 static HTTPServer::ResponseMap suspendedReusedMainFrameResponses()
 {
     HTTPServer::ResponseMap responses;
-    responses.add("/example"_s, HTTPResponse("<script>w = window.open('https://webkit.org/webkit')</script>"_s));
-    responses.add("/webkit"_s, HTTPResponse("hi"_s));
-    responses.add("/coop"_s, HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "coop"_s));
-    responses.add("/destination"_s, HTTPResponse("destination"_s));
+    responses.add("/example"_si, HTTPResponse("<script>w = window.open('https://webkit.org/webkit')</script>"_si));
+    responses.add("/webkit"_si, HTTPResponse("hi"_si));
+    responses.add("/coop"_si, HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "coop"_si));
+    responses.add("/destination"_si, HTTPResponse("destination"_si));
     return responses;
 }
 
@@ -2046,11 +2046,11 @@ TEST(SiteIsolation, PostMessageWithNotAllowedTargetOrigin)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/example"_s) {
+            if (equal(path, "/example"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
                 continue;
             }
-            if (path == "/webkit"_s) {
+            if (equal(path, "/webkit"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(webkitHTML).serialize());
                 continue;
             }
@@ -2156,7 +2156,7 @@ TEST(SiteIsolation, QueryFramesStateAfterNavigating)
         { "/subframe3.html"_s, { "SubFrame3"_s } },
         { "/subframe4.html"_s, { "SubFrame4"_s } }
     }, HTTPServer::Protocol::Http);
-    server.addResponse("/page1.html"_s, { makeString("<iframe src='subframe1.html'></iframe><iframe src='subframe2.html'></iframe><iframe src='http://localhost:"_s, server.port(), "/subframe3.html'></iframe>"_s) });
+    server.addResponse("/page1.html"_si, { makeString("<iframe src='subframe1.html'></iframe><iframe src='subframe2.html'></iframe><iframe src='http://localhost:"_s, server.port(), "/subframe3.html'></iframe>"_s) });
 
     auto runTest = [&] (bool withSiteIsolation) {
         RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -4107,19 +4107,19 @@ TEST(SiteIsolation, AppKitText)
     [navigationDelegate waitForDidFinishNavigation];
     RetainPtr childFrameInfo = [webView firstChildFrame];
     auto textLocation = NSMakePoint(23, 564);
-    while ("TEST"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+    while ("TEST"_s != StringImpl::create([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]).get()) {
         [webView sendClickAtPoint:textLocation];
         Util::runFor(10_ms);
         [webView uppercaseWord:nil];
         Util::runFor(10_ms);
     }
-    while ("test"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+    while ("test"_s != StringImpl::create([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]).get()) {
         [webView sendClickAtPoint:textLocation];
         Util::runFor(10_ms);
         [webView lowercaseWord:nil];
         Util::runFor(10_ms);
     }
-    while ("Test"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+    while ("Test"_s != StringImpl::create([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]).get()) {
         [webView sendClickAtPoint:textLocation];
         Util::runFor(10_ms);
         [webView capitalizeWord:nil];
@@ -4152,7 +4152,7 @@ TEST(SiteIsolation, HandleAcceptedCandidateInCrossOriginIframe)
     // dropped (the main process has no local focused frame) and the input is never updated.
     // Use WithUserGesture because Element::focus() is a no-op for cross-origin non-main-frame
     // iframes without a user gesture.
-    while ("b"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+    while ("b"_s != StringImpl::create([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]).get()) {
         [webView objectByEvaluatingJavaScriptWithUserGesture:@"input.focus(); input.select()" inFrame:childFrameInfo.get()];
         Util::runFor(10_ms);
         [webView _forceRequestCandidates];
@@ -4251,7 +4251,7 @@ TEST(SiteIsolation, SetMarkedTextInCrossOriginIframe)
         Util::runFor(10_ms);
         [webView setMarkedText:@"hello" selectedRange:NSMakeRange(5, 0) replacementRange:NSMakeRange(NSNotFound, 0)];
         Util::runFor(10_ms);
-        markedTextLanded = "hello"_s == String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]);
+        markedTextLanded = "hello"_s == StringImpl::create([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]).get();
     }
     EXPECT_TRUE(markedTextLanded);
 
@@ -4263,7 +4263,7 @@ TEST(SiteIsolation, SetMarkedTextInCrossOriginIframe)
     EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]);
 }
 
-static void checkFirstRectForCharacterRangeInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeFocusing)(TestWKWebView *, WKFrameInfo *) = nil)
+static void checkFirstRectForCharacterRangeInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, void (^prepareBeforeFocusing)(TestWKWebView *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
         { "/control"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 120px; top: 130px;' value='test'></body>"_s } },
@@ -4324,16 +4324,16 @@ static ASCIILiteral tallCrossOriginIframeInputHTML = "<body style='margin: 0; mi
 TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframe)
 {
     checkFirstRectForCharacterRangeInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeInputHTML
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeInputHTML).ptr()
     );
 }
 
 TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframeWithScrolledMainFrame)
 {
     checkFirstRectForCharacterRangeInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeInputHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeInputHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4347,8 +4347,8 @@ TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframeWithScrolledMai
 TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframe)
 {
     checkFirstRectForCharacterRangeInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeInputHTML,
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeInputHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4362,8 +4362,8 @@ TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframe)
 TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkFirstRectForCharacterRangeInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeInputHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeInputHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4380,7 +4380,7 @@ TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframeWithScr
     );
 }
 
-static void checkValidationMessageAnchorInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeSubmit)(TestWKWebView *, WKFrameInfo *) = nil)
+static void checkValidationMessageAnchorInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, void (^prepareBeforeSubmit)(TestWKWebView *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
         { "/control"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 120px; top: 130px;' required></body>"_s } },
@@ -4441,16 +4441,16 @@ static ASCIILiteral tallCrossOriginIframeRequiredInputHTML = "<body style='margi
 TEST(SiteIsolation, ValidationMessageAnchorInCrossOriginIframe)
 {
     checkValidationMessageAnchorInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeRequiredInputHTML
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeRequiredInputHTML).ptr()
     );
 }
 
 TEST(SiteIsolation, ValidationMessageAnchorInCrossOriginIframeWithScrolledMainFrame)
 {
     checkValidationMessageAnchorInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeRequiredInputHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeRequiredInputHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4464,8 +4464,8 @@ TEST(SiteIsolation, ValidationMessageAnchorInCrossOriginIframeWithScrolledMainFr
 TEST(SiteIsolation, ValidationMessageAnchorInScrolledCrossOriginIframe)
 {
     checkValidationMessageAnchorInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeRequiredInputHTML,
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeRequiredInputHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4479,8 +4479,8 @@ TEST(SiteIsolation, ValidationMessageAnchorInScrolledCrossOriginIframe)
 TEST(SiteIsolation, ValidationMessageAnchorInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkValidationMessageAnchorInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeRequiredInputHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeRequiredInputHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4564,7 +4564,7 @@ static NSRect triggerCorrectionPanelAndCaptureAnchorRect(TestWKWebView<NSTextInp
     return capturedCorrectionPanelAnchorRect;
 }
 
-static void checkCorrectionPanelAnchorInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeTyping)(TestWKWebView<NSTextInputClient> *, WKFrameInfo *) = nil)
+static void checkCorrectionPanelAnchorInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, void (^prepareBeforeTyping)(TestWKWebView<NSTextInputClient> *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
         { "/control"_s, { "<body contenteditable style='margin: 100px 0 0 100px; font-family: monospace; font-size: 24px; width: 500px;'></body>"_s } },
@@ -4626,16 +4626,16 @@ static ASCIILiteral tallCrossOriginIframeEditableBodyHTML = "<body contenteditab
 TEST(SiteIsolation, CorrectionPanelAnchorInCrossOriginIframe)
 {
     checkCorrectionPanelAnchorInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeEditableBodyHTML
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeEditableBodyHTML).ptr()
     );
 }
 
 TEST(SiteIsolation, CorrectionPanelAnchorInCrossOriginIframeWithScrolledMainFrame)
 {
     checkCorrectionPanelAnchorInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeEditableBodyHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeEditableBodyHTML).ptr(),
         ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4649,8 +4649,8 @@ TEST(SiteIsolation, CorrectionPanelAnchorInCrossOriginIframeWithScrolledMainFram
 TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframe)
 {
     checkCorrectionPanelAnchorInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeEditableBodyHTML,
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeEditableBodyHTML).ptr(),
         ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4664,8 +4664,8 @@ TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframe)
 TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkCorrectionPanelAnchorInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeEditableBodyHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeEditableBodyHTML).ptr(),
         ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4712,7 +4712,7 @@ static NSRect triggerDictationAlternativesAndCaptureAnchorRect(TestWKWebView<NST
     return capturedCorrectionPanelAnchorRect;
 }
 
-static void checkDictationAlternativesAnchorInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeTyping)(TestWKWebView<NSTextInputClient> *, WKFrameInfo *) = nil)
+static void checkDictationAlternativesAnchorInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, void (^prepareBeforeTyping)(TestWKWebView<NSTextInputClient> *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
         { "/control"_s, { "<body contenteditable style='margin: 100px 0 0 100px; font-family: monospace; font-size: 24px; width: 500px;'></body>"_s } },
@@ -4762,16 +4762,16 @@ static void checkDictationAlternativesAnchorInCrossOriginIframe(const String& ma
 TEST(SiteIsolation, DictationAlternativesAnchorInCrossOriginIframe)
 {
     checkDictationAlternativesAnchorInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeEditableBodyHTML
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeEditableBodyHTML).ptr()
     );
 }
 
 TEST(SiteIsolation, DictationAlternativesAnchorInCrossOriginIframeWithScrolledMainFrame)
 {
     checkDictationAlternativesAnchorInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        defaultCrossOriginIframeEditableBodyHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(defaultCrossOriginIframeEditableBodyHTML).ptr(),
         ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4785,8 +4785,8 @@ TEST(SiteIsolation, DictationAlternativesAnchorInCrossOriginIframeWithScrolledMa
 TEST(SiteIsolation, DictationAlternativesAnchorInScrolledCrossOriginIframe)
 {
     checkDictationAlternativesAnchorInCrossOriginIframe(
-        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeEditableBodyHTML,
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeEditableBodyHTML).ptr(),
         ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -4800,8 +4800,8 @@ TEST(SiteIsolation, DictationAlternativesAnchorInScrolledCrossOriginIframe)
 TEST(SiteIsolation, DictationAlternativesAnchorInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkDictationAlternativesAnchorInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallCrossOriginIframeEditableBodyHTML,
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallCrossOriginIframeEditableBodyHTML).ptr(),
         ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -6507,21 +6507,21 @@ TEST(SiteIsolation, ApplicationNameForUserAgent)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/mainframe"_s) {
+            if (equal(path, "/mainframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
                 continue;
             }
-            if (path == "/subframe"_s) {
+            if (equal(path, "/subframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
+            if (equal(path, "/request_from_subframe"_s)) {
+                auto headers = split(StringImpl::fromUTF8(request.span()), "\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
-                    return header.startsWith("User-Agent:"_s);
+                    return startsWith(header, "User-Agent:"_s);
                 });
-                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
-                EXPECT_TRUE(headers[userAgentIndex].endsWith(" Custom UserAgent"_s));
+                co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
+                EXPECT_TRUE(endsWith(headers[userAgentIndex], " Custom UserAgent"_s));
                 receivedRequestFromSubframe = true;
                 continue;
             }
@@ -6547,24 +6547,24 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgent)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/mainframe"_s) {
+            if (equal(path, "/mainframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
                 continue;
             }
-            if (path == "/subframe"_s) {
+            if (equal(path, "/subframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
+            if (equal(path, "/request_from_subframe"_s)) {
+                auto headers = split(StringImpl::fromUTF8(request.span()), "\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
-                    return header.startsWith("User-Agent:"_s);
+                    return startsWith(header, "User-Agent:"_s);
                 });
-                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
                 if (firstRequest)
-                    EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent"_s);
+                    EXPECT_TRUE(equal(headers[userAgentIndex], "User-Agent: Custom UserAgent"_s));
                 else
-                    EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent2"_s);
+                    EXPECT_TRUE(equal(headers[userAgentIndex], "User-Agent: Custom UserAgent2"_s));
                 receivedRequestFromSubframe = true;
                 firstRequest = false;
                 continue;
@@ -6608,25 +6608,25 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavi
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/mainframe"_s) {
+            if (equal(path, "/mainframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
                 continue;
             }
-            if (path == "/subframe"_s) {
+            if (equal(path, "/subframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
+            if (equal(path, "/request_from_subframe"_s)) {
+                auto headers = split(StringImpl::fromUTF8(request.span()), "\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
-                    return header.startsWith("User-Agent:"_s);
+                    return startsWith(header, "User-Agent:"_s);
                 });
-                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
-                EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent"_s);
+                co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
+                EXPECT_TRUE(equal(headers[userAgentIndex], "User-Agent: Custom UserAgent"_s));
                 receivedRequestFromSubframe = true;
                 continue;
             }
-            if (path == "/missing"_s)
+            if (equal(path, "/missing"_s))
                 continue;
             EXPECT_FALSE(true);
         }
@@ -6770,7 +6770,7 @@ TEST(SiteIsolation, AlternateHTMLStringIsInTheAgentClusterOfSameOriginFrames)
 TEST(SiteIsolation, AlternateHTMLStringCannotAccessSameOriginFrameWithDocumentIsolationPolicy)
 {
     HTTPServer server({
-        { "/frame"_s, documentIsolationPolicyResponse("frame"_s) }
+        { "/frame"_s, documentIsolationPolicyResponse("frame"_si) }
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -6782,8 +6782,8 @@ TEST(SiteIsolation, MainFrameWithDocumentIsolationPolicyGetsCrossOriginIsolatedP
 {
     HTTPServer server({
         { "/plain"_s, { "plain"_s } },
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
-        { "/isolated-again"_s, documentIsolationPolicyResponse("isolated again"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
+        { "/isolated-again"_s, documentIsolationPolicyResponse("isolated again"_si) },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -6814,8 +6814,8 @@ TEST(SiteIsolation, SubframeWithDocumentIsolationPolicyGetsCrossOriginIsolatedPr
 {
     HTTPServer server({
         { "/main"_s, { "<iframe id='frame' src='https://example.com/isolated'></iframe>"_s } },
-        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_s) },
-        { "/isolated-again"_s, documentIsolationPolicyResponse("<script>alert('isolated again')</script>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_si) },
+        { "/isolated-again"_s, documentIsolationPolicyResponse("<script>alert('isolated again')</script>"_si) },
         { "/plain"_s, { "<script>alert('plain')</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -6851,7 +6851,7 @@ TEST(SiteIsolation, SubframeBackForwardAcrossDocumentIsolationPolicy)
     HTTPServer server({
         { "/main"_s, { "<iframe id='frame' src='https://example.com/plain'></iframe>"_s } },
         { "/plain"_s, { "<script>alert('plain')</script>"_s } },
-        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_si) },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -6879,8 +6879,8 @@ static void testNavigationToPrefetchedDocument(bool destinationHasDocumentIsolat
     auto speculationRules = "<script type='speculationrules'>{\"prefetch\":[{\"source\":\"list\",\"urls\":[\"/destination\"]}]}</script>"_s;
     HTTPServer server({
         { "/plain"_s, { speculationRules } },
-        { "/isolated"_s, documentIsolationPolicyResponse(speculationRules) },
-        { "/destination"_s, destinationHasDocumentIsolationPolicy ? documentIsolationPolicyResponse("destination"_s) : HTTPResponse { "destination"_s } },
+        { "/isolated"_s, documentIsolationPolicyResponse(StringImpl::create(speculationRules).ptr()) },
+        { "/destination"_s, destinationHasDocumentIsolationPolicy ? documentIsolationPolicyResponse("destination"_si) : HTTPResponse { "destination"_si } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -6911,8 +6911,8 @@ static void testPrefetchServesNavigation(bool withDocumentIsolationPolicy)
 {
     auto speculationRules = "<script type='speculationrules'>{\"prefetch\":[{\"source\":\"list\",\"urls\":[\"/destination\"]}]}</script>"_s;
     HTTPServer server({
-        { "/source"_s, withDocumentIsolationPolicy ? documentIsolationPolicyResponse(speculationRules) : HTTPResponse { speculationRules } },
-        { "/destination"_s, withDocumentIsolationPolicy ? documentIsolationPolicyResponse("destination"_s) : HTTPResponse { "destination"_s } },
+        { "/source"_s, withDocumentIsolationPolicy ? documentIsolationPolicyResponse(StringImpl::create(speculationRules).ptr()) : HTTPResponse { StringImpl::create(speculationRules).ptr() } },
+        { "/destination"_s, withDocumentIsolationPolicy ? documentIsolationPolicyResponse("destination"_si) : HTTPResponse { "destination"_si } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -6950,15 +6950,15 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWithDifferentDocumentIsolationPolic
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/isolated"_s) {
-                co_await connection.awaitableSend(documentIsolationPolicyResponse(speculationRules).serialize());
+            if (equal(path, "/isolated"_s)) {
+                co_await connection.awaitableSend(documentIsolationPolicyResponse(StringImpl::create(speculationRules).ptr()).serialize());
                 continue;
             }
-            if (path == "/destination"_s) {
+            if (equal(path, "/destination"_s)) {
                 // Never answer the prefetch, so the navigation finds it still loading.
                 if (!destinationRequests++)
                     continue;
-                co_await connection.awaitableSend(HTTPResponse("destination"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse("destination"_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -6986,7 +6986,7 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWithDifferentDocumentIsolationPolic
 TEST(SiteIsolation, LockdownModeChangeLeavesDocumentIsolationPolicyProcess)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -7007,7 +7007,7 @@ TEST(SiteIsolation, LockdownModeChangeLeavesDocumentIsolationPolicyProcess)
 TEST(SiteIsolation, SubstituteDataLeavesDocumentIsolationPolicyProcess)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
@@ -7026,7 +7026,7 @@ TEST(SiteIsolation, SubstituteDataLeavesDocumentIsolationPolicyProcess)
 TEST(SiteIsolation, SameSiteSubframeWithoutDocumentIsolationPolicyStaysInItsProcess)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("<iframe id='frame' src='https://example.com/plain'></iframe>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<iframe id='frame' src='https://example.com/plain'></iframe>"_si) },
         { "/plain"_s, { "<script>onbeforeunload = () => { sessionStorage.beforeUnloadCount = Number(sessionStorage.beforeUnloadCount || 0) + 1; };</script>"_s } },
         { "/plain-again"_s, { "<script>alert(`beforeunload ${sessionStorage.beforeUnloadCount}`)</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
@@ -7050,7 +7050,7 @@ TEST(SiteIsolation, SameSiteSubframeWithoutDocumentIsolationPolicyStaysInItsProc
 TEST(SiteIsolation, SubframeWithoutDocumentIsolationPolicyLeavesCrossOriginIsolatedProcess)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("<iframe src='https://example.com/plain'></iframe>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<iframe src='https://example.com/plain'></iframe>"_si) },
         { "/plain"_s, { "plain"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -7072,7 +7072,7 @@ TEST(SiteIsolation, TopLevelDataURLNavigationFromFrameWithDocumentIsolationPolic
 {
     HTTPServer server({
         { "/main"_s, { "<iframe src='/isolated'></iframe>"_s } },
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
     }, HTTPServer::Protocol::HttpsProxy);
 
     RetainPtr configuration = server.httpsProxyConfiguration();
@@ -7099,7 +7099,7 @@ TEST(SiteIsolation, TopLevelDataURLNavigationFromFrameWithDocumentIsolationPolic
 TEST(SiteIsolation, TopLevelDataURLNavigationFromFrameWithoutDocumentIsolationPolicy)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("<iframe src='/plain'></iframe>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<iframe src='/plain'></iframe>"_si) },
         { "/plain"_s, { "plain"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -7123,7 +7123,7 @@ TEST(SiteIsolation, TopLevelDataURLNavigationFromFrameWithoutDocumentIsolationPo
 static void testNonReplacingResponseStaysInDocumentIsolationPolicyProcess(unsigned statusCode)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
         { "/no-content"_s, HTTPResponse { statusCode } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -7159,8 +7159,8 @@ TEST(SiteIsolation, ResetContentResponseStaysInDocumentIsolationPolicyProcess)
 TEST(SiteIsolation, SameSiteNavigationStartsInDocumentIsolationPolicyProcess)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
-        { "/isolated-again"_s, documentIsolationPolicyResponse("isolated again"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
+        { "/isolated-again"_s, documentIsolationPolicyResponse("isolated again"_si) },
         { "/plain"_s, { "plain"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -7213,8 +7213,8 @@ TEST(SiteIsolation, SameSiteSubframeNavigationStartsInDocumentIsolationPolicyPro
 {
     HTTPServer server({
         { "/main"_s, { "<iframe id='frame' src='https://example.com/isolated'></iframe>"_s } },
-        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_s) },
-        { "/isolated-again"_s, documentIsolationPolicyResponse("<script>alert('isolated again')</script>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<script>alert('isolated')</script>"_si) },
+        { "/isolated-again"_s, documentIsolationPolicyResponse("<script>alert('isolated again')</script>"_si) },
         { "/plain"_s, { "<script>alert('plain')</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -7248,7 +7248,7 @@ TEST(SiteIsolation, SameSiteSubframeNavigationStartsInDocumentIsolationPolicyPro
 TEST(SiteIsolation, AttachmentWithoutDocumentIsolationPolicyIsShown)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("isolated"_si) },
         { "/report"_s, { { { "Content-Type"_s, "text/plain"_s }, { "Content-Disposition"_s, "attachment; filename=report.txt"_s } }, "report"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -7271,17 +7271,17 @@ TEST(SiteIsolation, RevalidatedNavigationStaysInDocumentIsolationPolicyProcess)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/isolated"_s) {
+            if (equal(path, "/isolated"_s)) {
                 // Like many servers, the 304 doesn't repeat the policy.
-                if (String::fromUTF8(request.span()).containsIgnoringASCIICase("If-None-Match:"_s)) {
-                    co_await connection.awaitableSend("HTTP/1.1 304 Not Modified\r\nETag: \"isolated\"\r\nContent-Length: 0\r\n\r\n"_s);
+                if (containsIgnoringASCIICase(StringImpl::fromUTF8(request.span()), "If-None-Match:"_s)) {
+                    co_await connection.awaitableSend("HTTP/1.1 304 Not Modified\r\nETag: \"isolated\"\r\nContent-Length: 0\r\n\r\n"_si);
                     continue;
                 }
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Cache-Control"_s, "no-cache"_s }, { "ETag"_s, "\"isolated\""_s } }, "isolated"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Cache-Control"_s, "no-cache"_s }, { "ETag"_s, "\"isolated\""_s } }, "isolated"_si).serialize());
                 continue;
             }
-            if (path == "/isolated-again"_s) {
-                co_await connection.awaitableSend(documentIsolationPolicyResponse("isolated again"_s).serialize());
+            if (equal(path, "/isolated-again"_s)) {
+                co_await connection.awaitableSend(documentIsolationPolicyResponse("isolated again"_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -7305,7 +7305,7 @@ TEST(SiteIsolation, RevalidatedNavigationStaysInDocumentIsolationPolicyProcess)
 TEST(SiteIsolation, SharedProcessExcludesSiteWithDocumentIsolationPolicyProcess)
 {
     HTTPServer server({
-        { "/isolated"_s, documentIsolationPolicyResponse("<iframe src='https://webkit.org/third-party'></iframe>"_s) },
+        { "/isolated"_s, documentIsolationPolicyResponse("<iframe src='https://webkit.org/third-party'></iframe>"_si) },
         { "/third-party"_s, { "third party"_s } },
         { "/plain"_s, { "<script>alert('plain')</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
@@ -7372,25 +7372,25 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavig
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/mainframe"_s) {
+            if (equal(path, "/mainframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
                 continue;
             }
-            if (path == "/subframe"_s) {
+            if (equal(path, "/subframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
+            if (equal(path, "/request_from_subframe"_s)) {
+                auto headers = split(StringImpl::fromUTF8(request.span()), "\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
-                    return header.startsWith("User-Agent:"_s);
+                    return startsWith(header, "User-Agent:"_s);
                 });
-                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
-                EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent"_s);
+                co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
+                EXPECT_TRUE(equal(headers[userAgentIndex], "User-Agent: Custom UserAgent"_s));
                 receivedRequestFromSubframe = true;
                 continue;
             }
-            if (path == "/missing"_s)
+            if (equal(path, "/missing"_s))
                 continue;
             EXPECT_FALSE(true);
         }
@@ -8494,11 +8494,11 @@ static void testGoBackToCrossSiteIframeCommittedAfterSameSiteSibling(SessionRest
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/main"_s) {
+            if (equal(path, "/main"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainHTML).serialize());
                 continue;
             }
-            if (path == "/cross"_s) {
+            if (equal(path, "/cross"_s)) {
                 // Make the cross-site iframe commit after its later same-site sibling, so
                 // the UI process adds their back/forward items in reverse frame tree order.
                 if (!sameSiteIframeCommitted) {
@@ -8508,12 +8508,12 @@ static void testGoBackToCrossSiteIframeCommittedAfterSameSiteSibling(SessionRest
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/same"_s) {
+            if (equal(path, "/same"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/other"_s) {
-                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            if (equal(path, "/other"_s)) {
+                co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -8686,7 +8686,7 @@ TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
     HTTPServer server({
         { "/example"_s, { "<iframe src='https://frame.com/frame'></iframe>"_s } },
-        { "/frame"_s, { frameHTML } }
+        { "/frame"_s, { StringImpl::create(frameHTML) } }
     }, HTTPServer::Protocol::HttpsProxy);
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
@@ -9194,7 +9194,7 @@ TEST(SiteIsolation, SandboxFlags)
     HTTPServer server({
         { "/example"_s, { "<iframe sandbox='allow-scripts' id='testiframe' src='https://webkit.org/iframe'></iframe>"_s } },
         { "/iframe"_s, { "hi"_s } },
-        { "/check-when-loaded"_s, { [NSString stringWithFormat:@"<script>onload = ()=>{ %@ }</script>", checkAlertJS] } },
+        { "/check-when-loaded"_s, { StringImpl::create([NSString stringWithFormat:@"<script>onload = ()=>{ %@ }</script>", checkAlertJS]) } },
         { "/csp-forbids-alert"_s, { { { "Content-Security-Policy"_s, "sandbox allow-scripts"_s } }, "<script>alert('alerted');window.webkit.messageHandlers.testHandler.postMessage('testHandler')</script>"_s } },
         { "/opened"_s, { "hi"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
@@ -9323,15 +9323,15 @@ TEST(SiteIsolation, SandboxFlagsDuringNavigation)
     HTTPServer server { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto path = HTTPServer::parsePath(co_await connection.awaitableReceiveHTTPRequest());
-            if (path == "/example"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<iframe sandbox='allow-scripts' id='testiframe' src='https://webkit.org/iframe1'></iframe>"_s).serialize());
+            if (equal(path, "/example"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe sandbox='allow-scripts' id='testiframe' src='https://webkit.org/iframe1'></iframe>"_si).serialize());
                 continue;
             }
-            if (path == "/iframe1"_s) {
-                co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+            if (equal(path, "/iframe1"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("hi"_si).serialize());
                 continue;
             }
-            if (path == "/iframe2"_s) {
+            if (equal(path, "/iframe2"_s)) {
                 receivedIframe2Request = true;
                 // Never respond.
                 continue;
@@ -9380,7 +9380,7 @@ TEST(SiteIsolation, SandboxFlagsRemovedBeforeSameSiteNavigation)
     HTTPServer server({
         { "/example"_s, { "<iframe sandbox='allow-scripts allow-modals' id='testiframe' src='https://webkit.org/iframe1'></iframe>"_s } },
         { "/iframe1"_s, { "hi"_s } },
-        { "/iframe2"_s, { [NSString stringWithFormat:@"<script>onload = ()=>{ %@ }</script>", checkAlertJS] } },
+        { "/iframe2"_s, { StringImpl::create([NSString stringWithFormat:@"<script>onload = ()=>{ %@ }</script>", checkAlertJS]) } },
         { "/opened"_s, { "hi"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -9474,20 +9474,20 @@ TEST(SiteIsolation, NavigateFrameWithSiblingsBackForwardWhenSiblingCommitsLate)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/example"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/a'></iframe> <iframe src='https://webkit.org/b'></iframe>"_s).serialize());
+            if (equal(path, "/example"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/a'></iframe> <iframe src='https://webkit.org/b'></iframe>"_si).serialize());
                 continue;
             }
-            if (path == "/a"_s) {
+            if (equal(path, "/a"_s)) {
                 connectionForA = connection;
                 continue;
             }
-            if (path == "/b"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script> alert('b'); </script>"_s).serialize());
+            if (equal(path, "/b"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<script> alert('b'); </script>"_si).serialize());
                 continue;
             }
-            if (path == "/c"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script> alert('c'); </script>"_s).serialize());
+            if (equal(path, "/c"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<script> alert('c'); </script>"_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -9516,7 +9516,7 @@ TEST(SiteIsolation, NavigateFrameWithSiblingsBackForwardWhenSiblingCommitsLate)
     EXPECT_FALSE(aCommitted);
     while (!connectionForA)
         Util::spinRunLoop();
-    connectionForA->send(HTTPResponse(""_s).serialize());
+    connectionForA->send(HTTPResponse(""_si).serialize());
     Util::run(&aCommitted);
 
     [webView goBack];
@@ -10203,14 +10203,14 @@ TEST(SiteIsolation, HistoryTraversalAfterProvisionalProcessTerminatesBeforeCommi
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/a"_s) {
+            if (equal(path, "/a"_s)) {
                 // Only the first load of a gets an answer.
                 if (++requestsForA == 1)
-                    co_await connection.awaitableSend(HTTPResponse({ { "Cache-Control"_s, "no-store"_s } }, "a"_s).serialize());
+                    co_await connection.awaitableSend(HTTPResponse({ { "Cache-Control"_s, "no-store"_s } }, "a"_si).serialize());
                 continue;
             }
-            if (path == "/b"_s) {
-                co_await connection.awaitableSend(HTTPResponse("b"_s).serialize());
+            if (equal(path, "/b"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("b"_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -10884,7 +10884,7 @@ TEST(SiteIsolation, PlayAudioInMultipleFrames)
 
     RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
     HTTPResponse videoResponse { videoData.get() };
-    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+    videoResponse.setHeaderField("Content-Type"_si, "video/mp4"_si);
 
     HTTPServer server({
         { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
@@ -10918,7 +10918,7 @@ TEST(SiteIsolation, PlayAudioInRemoteFrameThenRemove)
 
     RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
     HTTPResponse videoResponse { videoData.get() };
-    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+    videoResponse.setHeaderField("Content-Type"_si, "video/mp4"_si);
 
     HTTPServer server({
         { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
@@ -10996,7 +10996,7 @@ TEST(SiteIsolation, MutesAndSetsAudioInMultipleFrames)
 
     RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
     HTTPResponse videoResponse { videoData.get() };
-    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+    videoResponse.setHeaderField("Content-Type"_si, "video/mp4"_si);
 
     HTTPServer server({
         { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
@@ -13351,7 +13351,7 @@ TEST(SiteIsolation, WebProcessCacheCrashWithZeroSharedProcess)
     unsigned cacheSize = webView.get().configuration.processPool._processCacheCapacity;
     for (unsigned i = 0; i <= cacheSize + 1; ++i) {
         auto url = makeString("https://domain-"_s, i, ".com/page"_s);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url.createNSString().get()]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:createNSString(url).get()]]];
         [navigationDelegate waitForDidFinishNavigation];
         pid_t currentPID = [webView mainFrame].info._processIdentifier;
         EXPECT_NE(currentPID, previousPID);
@@ -13481,7 +13481,7 @@ TEST(SiteIsolation, SharedProcessWithResourceLoadStatistics)
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:itpDatabaseFile.path]);
 
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(itpDatabaseFile.path));
+    EXPECT_TRUE(database->open(StringImpl::create(itpDatabaseFile.path).get()));
     EXPECT_TRUE(database->executeCommand("UPDATE ObservedDomains SET hadUserInteraction = 1 WHERE registrableDomain = 'webkit.org'"_s));
     database->close();
 
@@ -13888,7 +13888,7 @@ TEST(SiteIsolation, StorageAccessUnderOpenerWithRemoteFrameOpener)
 
     // Mark webkit.org as prevalent so its third-party cookies are blocked by ITP.
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(itpDatabaseFile.path));
+    EXPECT_TRUE(database->open(StringImpl::create(itpDatabaseFile.path).get()));
     EXPECT_TRUE(database->executeCommand("UPDATE ObservedDomains SET isPrevalent = 1 WHERE registrableDomain = 'webkit.org'"_s));
     database->close();
 
@@ -14921,12 +14921,12 @@ TEST(SiteIsolation, SubmitFormWithFileDroppedInCrossOriginSubframe)
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/mainframe"_s || path == "/subframe"_s) {
-                auto html = path == "/mainframe"_s ? mainframeHTML : subframeHTML;
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, html).serialize());
+            if (equal(path, "/mainframe"_s) || equal(path, "/subframe"_s)) {
+                auto html = equal(path, "/mainframe"_s) ? mainframeHTML : subframeHTML;
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, StringImpl::create(html).ptr()).serialize());
                 continue;
             }
-            if (path == "/upload"_s) {
+            if (equal(path, "/upload"_s)) {
                 auto result = contains(request.span(), "filename=\"apple.gif\""_span) ? "uploaded"_s : "uploaded-without-file"_s;
                 auto html = makeString("<script>window.webkit.messageHandlers.testHandler.postMessage('"_s, result, "')</script>"_s);
                 co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, html).serialize());
@@ -15098,7 +15098,7 @@ TEST(SiteIsolation, CrossSiteIframeOpenWindowWithBlobURL)
 
 #if PLATFORM(MAC)
 
-NSPoint testColorPickerPopoverLocation(const String& mainPageSource, const String& iframeSource)
+NSPoint testColorPickerPopoverLocation(StringImpl* mainPageSource, StringImpl* iframeSource)
 {
     HTTPServer server({
         { "/mainframe"_s, { mainPageSource } },
@@ -15139,7 +15139,7 @@ TEST(SiteIsolation, ColorInputPickerLocationInCrossSiteIframe)
         "<!DOCTYPE html>"_s
         "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s;
 
-    auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
+    auto pickerLocation = testColorPickerPopoverLocation(StringImpl::create(mainPageSource).ptr(), StringImpl::create(iframeSource).ptr());
     EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
 }
 
@@ -15156,7 +15156,7 @@ TEST(SiteIsolation, ColorInputPickerLocationInScrolledCrossSiteIframe)
         "<div style='height: 1000px'></div>"_s
         "<script>onload = () => window.scroll(0, 1000);</script>"_s;
 
-    auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
+    auto pickerLocation = testColorPickerPopoverLocation(StringImpl::create(mainPageSource).ptr(), StringImpl::create(iframeSource).ptr());
     EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
 }
 
@@ -15182,7 +15182,7 @@ TEST(SiteIsolation, ColorInputPickerLocationInDelayLoadedCrossSiteIframe)
         "<!DOCTYPE html>"_s
         "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s;
 
-    auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
+    auto pickerLocation = testColorPickerPopoverLocation(StringImpl::create(mainPageSource).ptr(), StringImpl::create(iframeSource).ptr());
     EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
 }
 
@@ -15872,7 +15872,7 @@ static void swizzledRequestDOMPasteAccess(id, SEL,
     WebCore::DOMPasteRequiresInteraction,
     WebCore::FrameIdentifier,
     const WebCore::IntRect& elementRect,
-    const String&,
+    StringImpl*,
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     capturedElementRect = CGRectMake(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
@@ -15888,7 +15888,7 @@ static ASCIILiteral defaultDOMPasteMainframeHTML = "<body style='margin: 0'><ifr
 static ASCIILiteral defaultDOMPasteSubframeHTML = "<!DOCTYPE html><body style='margin: 0'><textarea style='margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'></textarea></body>"_s;
 static ASCIILiteral tallDOMPasteSubframeHTML = "<!DOCTYPE html><body style='margin: 0; min-height: 1000px'><textarea style='margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'></textarea></body>"_s;
 
-static CGPoint checkDOMPasteAccessRectInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeFocusing)(TestWKWebView *, WKFrameInfo *) = nil)
+static CGPoint checkDOMPasteAccessRectInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, void (^prepareBeforeFocusing)(TestWKWebView *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
         { "/mainframe"_s, { mainframeHTML } },
@@ -15925,14 +15925,14 @@ static CGPoint checkDOMPasteAccessRectInCrossOriginIframe(const String& mainfram
 
 TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframe)
 {
-    CGPoint origin = checkDOMPasteAccessRectInCrossOriginIframe(defaultDOMPasteMainframeHTML, defaultDOMPasteSubframeHTML);
+    CGPoint origin = checkDOMPasteAccessRectInCrossOriginIframe(StringImpl::create(defaultDOMPasteMainframeHTML).ptr(), StringImpl::create(defaultDOMPasteSubframeHTML).ptr());
     EXPECT_EQ(origin.x, 100);
     EXPECT_EQ(origin.y, 100);
 }
 
 TEST(SiteIsolation, DOMPasteAccessRectInScrolledCrossOriginIframe)
 {
-    CGPoint origin = checkDOMPasteAccessRectInCrossOriginIframe(defaultDOMPasteMainframeHTML, tallDOMPasteSubframeHTML,
+    CGPoint origin = checkDOMPasteAccessRectInCrossOriginIframe(StringImpl::create(defaultDOMPasteMainframeHTML).ptr(), StringImpl::create(tallDOMPasteSubframeHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
             EXPECT_TRUE(Util::waitFor([&] {
@@ -17782,7 +17782,7 @@ static CGRect loadAndRequestRectForFoundTextRange(TestWKWebView *webView, TestNa
     return receivedRect;
 }
 
-static void checkRectForFoundTextRangeInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepare)(TestWKWebView *, WKFrameInfo *) = nil)
+static void checkRectForFoundTextRangeInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, void (^prepare)(TestWKWebView *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
         { "/control"_s, { makeStringByReplacingAll(mainframeHTML, "domain2.com"_s, "domain1.com"_s) } },
@@ -17811,16 +17811,16 @@ static ASCIILiteral tallFoundTextRangeSubframeHTML = "<body style='margin: 0; pa
 TEST(SiteIsolation, RequestRectForFoundTextRangeInCrossOriginIframeIOS)
 {
     checkRectForFoundTextRangeInCrossOriginIframe(
-        "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        foundTextRangeSubframeHTML
+        "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(foundTextRangeSubframeHTML).ptr()
     );
 }
 
 TEST(SiteIsolation, RequestRectForFoundTextRangeInCrossOriginIframeWithScrolledMainFrameIOS)
 {
     checkRectForFoundTextRangeInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        foundTextRangeSubframeHTML,
+        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(foundTextRangeSubframeHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
             EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
@@ -17834,8 +17834,8 @@ TEST(SiteIsolation, RequestRectForFoundTextRangeInCrossOriginIframeWithScrolledM
 TEST(SiteIsolation, RequestRectForFoundTextRangeInScrolledCrossOriginIframeIOS)
 {
     checkRectForFoundTextRangeInCrossOriginIframe(
-        "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        tallFoundTextRangeSubframeHTML,
+        "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        StringImpl::create(tallFoundTextRangeSubframeHTML).ptr(),
         ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
             [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
             EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
@@ -20484,11 +20484,11 @@ TEST(SiteIsolation, HistoryTraversalSupersedesUncommittedCrossDocumentTraversal)
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
-            if (HTTPServer::parsePath(request) == "/b"_s && ++requestsForB > 1) {
+            if (equal(HTTPServer::parsePath(request), "/b"_s) && ++requestsForB > 1) {
                 heldConnectionForB = connection;
                 continue;
             }
-            co_await connection.awaitableSend(HTTPResponse({ { "Cache-Control"_s, "no-store"_s } }, "x"_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse({ { "Cache-Control"_s, "no-store"_s } }, "x"_si).serialize());
         }
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -20675,8 +20675,8 @@ static RetainPtr<WKFrameInfo> loadAndWaitForCrossSiteChildFrame(TestWKWebView *w
 static HTTPServer::ResponseMap mainAndSubframeResponses()
 {
     HTTPServer::ResponseMap responses;
-    responses.add("/mainframe"_s, HTTPResponse("<!DOCTYPE html><iframe src='https://b.com/subframe'></iframe>"_s));
-    responses.add("/subframe"_s, HTTPResponse("<!DOCTYPE html>subframe"_s));
+    responses.add("/mainframe"_si, HTTPResponse("<!DOCTYPE html><iframe src='https://b.com/subframe'></iframe>"_si));
+    responses.add("/subframe"_si, HTTPResponse("<!DOCTYPE html>subframe"_si));
     return responses;
 }
 
@@ -20740,22 +20740,22 @@ TEST(SiteIsolation, GlobalPrivacyControlInheritedByCrossSiteIframe)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
             bool hasGPCHeader = contains(request.span(), "Sec-GPC"_span);
-            if (path == "/mainframe"_s) {
+            if (equal(path, "/mainframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
                 continue;
             }
-            if (path == "/subframe"_s) {
+            if (equal(path, "/subframe"_s)) {
                 co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
                 continue;
             }
-            if (path == "/mainframe-subresource"_s) {
+            if (equal(path, "/mainframe-subresource"_s)) {
                 mainFrameSubresourceHadGPCHeader = hasGPCHeader;
                 receivedMainFrameSubresource = true;
-            } else if (path == "/subframe-subresource"_s) {
+            } else if (equal(path, "/subframe-subresource"_s)) {
                 subframeSubresourceHadGPCHeader = hasGPCHeader;
                 receivedSubframeSubresource = true;
             }
-            co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
         }
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -20805,8 +20805,8 @@ TEST(SiteIsolation, AdvancedPrivacyProtectionsInheritedByCrossSiteIframeDocument
         "</script>"_s;
 
     HTTPServer::ResponseMap responses;
-    responses.add("/mainframe"_s, HTTPResponse(makeString("<!DOCTYPE html>"_s, renderScript, "<iframe src='https://b.com/subframe'></iframe>"_s)));
-    responses.add("/subframe"_s, HTTPResponse(makeString("<!DOCTYPE html>"_s, renderScript)));
+    responses.add("/mainframe"_si, HTTPResponse(makeString("<!DOCTYPE html>"_s, renderScript, "<iframe src='https://b.com/subframe'></iframe>"_s)));
+    responses.add("/subframe"_si, HTTPResponse(makeString("<!DOCTYPE html>"_s, renderScript)));
     HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = mainFrameOnlyPolicyViewAndDelegate(server, ^(WKWebpagePreferences *preferences) {
@@ -20854,7 +20854,7 @@ TEST(SiteIsolation, NotificationFromCrossSiteIframeIsShown)
     setFeatureEnabled(configuration.get(), @"BuiltInNotificationsEnabled", false);
 
     TestNotificationProvider provider({ [[configuration processPool] _notificationManagerForTesting] });
-    provider.setPermission("https://b.com"_s, true);
+    provider.setPermission("https://b.com"_si, true);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
     RetainPtr childFrame = loadAndWaitForCrossSiteChildFrame(webView.get(), navigationDelegate.get(), @"https://a.com/mainframe", @"b.com");
@@ -20914,7 +20914,7 @@ TEST(SiteIsolation, ProcessLimitUnloadsAllProcessesOfLeastRecentlyVisiblePage)
     [WKProcessPool _setWebProcessCountLimit:maxProcessCount];
 
     HTTPServer::ResponseMap responses;
-    responses.add("/subframe"_s, HTTPResponse("<body>subframe</body>"_s));
+    responses.add("/subframe"_si, HTTPResponse("<body>subframe</body>"_si));
     for (unsigned i = 0; i < maxViewsToCreate; ++i)
         responses.add(makeString("/mainframe"_s, i), HTTPResponse(makeString("<iframe src='https://frame"_s, i, ".com/subframe'></iframe>"_s)));
     HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
@@ -21179,7 +21179,7 @@ TEST(SiteIsolation, SharedProcessIgnoresHighValueFraudTargetDomainsWhenDisabled)
 // frame's. Each test below asserts the command took effect *inside* the cross-site iframe; a
 // version that only checks the main frame passes without the fix.
 
-static String notifyScriptForTag(ASCIILiteral tag)
+static RefPtr<StringImpl> notifyScriptForTag(ASCIILiteral tag)
 {
     return makeString("<script>"
         "const tag = '"_s, tag, "';"
@@ -21197,11 +21197,11 @@ TEST(SiteIsolation, StopLoadingStopsCrossSiteIframe)
         "</script>"_s;
 
     HTTPServer::ResponseMap responses;
-    responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), pendingLoadScript,
+    responses.add("/mainframe"_si, HTTPResponse(makeString(notifyScriptForTag("main"_s), pendingLoadScript,
         "<iframe src='https://b.com/subframe'></iframe><script src='/hang'></script>"_s)));
-    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), pendingLoadScript,
+    responses.add("/subframe"_si, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), pendingLoadScript,
         "<script src='/hang'></script>"_s)));
-    responses.add("/hang"_s, HTTPResponse(HTTPResponse::Behavior::NeverSendResponse));
+    responses.add("/hang"_si, HTTPResponse(HTTPResponse::Behavior::NeverSendResponse));
     HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
@@ -21252,15 +21252,15 @@ static HTTPServer::ResponseMap crossSiteVideoResponses(MainFrameVideo mainFrameV
 
     HTTPServer::ResponseMap responses;
     if (mainFrameVideo == MainFrameVideo::Yes) {
-        responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), playVideoScript,
+        responses.add("/mainframe"_si, HTTPResponse(makeString(notifyScriptForTag("main"_s), playVideoScript,
             "<body onload='playVideo()'>"_s, videoElement, iframeElement, "</body>"_s)));
     } else {
-        responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s),
+        responses.add("/mainframe"_si, HTTPResponse(makeString(notifyScriptForTag("main"_s),
             "<body>"_s, iframeElement, "</body>"_s)));
     }
-    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), playVideoScript,
+    responses.add("/subframe"_si, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), playVideoScript,
         "<body onload='playVideo()'>"_s, videoElement, "</body>"_s)));
-    responses.add("/video-with-audio.mp4"_s, HTTPResponse(videoData.get()));
+    responses.add("/video-with-audio.mp4"_si, HTTPResponse(videoData.get()));
     return responses;
 }
 
@@ -21360,11 +21360,11 @@ TEST(SiteIsolation, ResumeAllMediaPlaybackResumesCrossSiteIframe)
     RetainPtr videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
 
     HTTPServer::ResponseMap responses;
-    responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), "<body></body>"_s)));
-    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), videoScript,
+    responses.add("/mainframe"_si, HTTPResponse(makeString(notifyScriptForTag("main"_s), "<body></body>"_s)));
+    responses.add("/subframe"_si, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), videoScript,
         "<body onload='notify(\"loaded\"); playVideo()'>"
         "<video id='video' webkit-playsinline src='/video-with-audio.mp4'></video></body>"_s)));
-    responses.add("/video-with-audio.mp4"_s, HTTPResponse(videoData.get()));
+    responses.add("/video-with-audio.mp4"_si, HTTPResponse(videoData.get()));
     HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = autoplayingCrossSiteVideoView(server);
@@ -21442,9 +21442,9 @@ TEST(SiteIsolation, SuspendPageSuspendsCrossSiteIframeProcess)
     auto tickScript = "<script>setInterval(() => notify('tick'), 10);</script>"_s;
 
     HTTPServer::ResponseMap responses;
-    responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), tickScript,
+    responses.add("/mainframe"_si, HTTPResponse(makeString(notifyScriptForTag("main"_s), tickScript,
         "<iframe src='https://b.com/subframe'></iframe>"_s)));
-    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), tickScript)));
+    responses.add("/subframe"_si, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), tickScript)));
     HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
@@ -21912,12 +21912,12 @@ static void collectImageBitsPerComponent(CGPDFDictionaryRef resources, Vector<CG
         const char* subtypeName = nullptr;
         if (!CGPDFObjectGetValue(object, kCGPDFObjectTypeStream, &stream) || !CGPDFDictionaryGetName(CGPDFStreamGetDictionary(stream), "Subtype", &subtypeName))
             return true;
-        auto subtype = String::fromUTF8(subtypeName);
-        if (subtype == "Image"_s) {
+        auto subtype = StringImpl::fromUTF8(subtypeName);
+        if (equal(subtype, "Image"_s)) {
             CGPDFInteger value = 0;
             if (CGPDFDictionaryGetInteger(CGPDFStreamGetDictionary(stream), "BitsPerComponent", &value))
                 bitsPerComponent.append(value);
-        } else if (subtype == "Form"_s) {
+        } else if (equal(subtype, "Form"_s)) {
             CGPDFDictionaryRef formResources = nullptr;
             if (CGPDFDictionaryGetDictionary(CGPDFStreamGetDictionary(stream), "Resources", &formResources))
                 collectImageBitsPerComponent(formResources, bitsPerComponent, depth + 1);
@@ -22779,21 +22779,21 @@ static void runRelaxThirdPartyCookieBlockingSubframeTest(bool shouldRelax)
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/main"_s) {
+            if (equal(path, "/main"_s)) {
                 // Top document (example.com) embeds a cross-origin webkit.org subframe (separate process).
-                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/subframe'></iframe>"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/subframe'></iframe>"_si).serialize());
                 continue;
             }
-            if (path == "/subframe"_s) {
+            if (equal(path, "/subframe"_s)) {
                 // The subframe (webkit.org) issues a credentialed request back to webkit.org. Relative to the
                 // example.com top document this is a third-party cookie context, blocked by ITP unless relaxed.
-                co_await connection.awaitableSend(HTTPResponse("<script>fetch('https://webkit.org/resource', { credentials: 'include' }).then(() => { alert('fetched'); }).catch(() => { alert('error'); });</script>"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch('https://webkit.org/resource', { credentials: 'include' }).then(() => { alert('fetched'); }).catch(() => { alert('error'); });</script>"_si).serialize());
                 continue;
             }
-            if (path == "/resource"_s) {
+            if (equal(path, "/resource"_s)) {
                 sawSubframeResourceRequest = true;
                 thirdPartySubframeRequestSawCookie = contains(request.span(), "Cookie: a=b"_span);
-                co_await connection.awaitableSend(HTTPResponse({ { { "Access-Control-Allow-Origin"_s, "https://webkit.org"_s } }, "hi"_s }).serialize());
+                co_await connection.awaitableSend(HTTPResponse({ { { "Access-Control-Allow-Origin"_s, "https://webkit.org"_s } }, "hi"_si }).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -22849,29 +22849,29 @@ TEST(SiteIsolation, ThirdPartyCookieBlockingSpoofedWebPageProxyID)
     RetainPtr coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
     RetainPtr coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL.get()];
     RetainPtr coreIPCString = adoptNS([[NSString alloc] initWithData:coreIPCData.get() encoding:NSUTF8StringEncoding]);
-    String coreIPC { coreIPCString.get() };
+    RefPtr<StringImpl> coreIPC { StringImpl::create(coreIPCString.get()) };
 
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/victim"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/sub'></iframe>"_s).serialize());
+            if (equal(path, "/victim"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/sub'></iframe>"_si).serialize());
                 continue;
             }
-            if (path == "/sub"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<script>fetch('https://webkit.org/ping', { credentials: 'include' }).then(() => alert('victim-fetched')).catch(() => alert('victim-error'));</script>"_s).serialize());
+            if (equal(path, "/sub"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch('https://webkit.org/ping', { credentials: 'include' }).then(() => alert('victim-fetched')).catch(() => alert('victim-error'));</script>"_si).serialize());
                 continue;
             }
-            if (path == "/ping"_s) {
-                co_await connection.awaitableSend(HTTPResponse({ { { "Access-Control-Allow-Origin"_s, "https://webkit.org"_s } }, "hi"_s }).serialize());
+            if (equal(path, "/ping"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { { "Access-Control-Allow-Origin"_s, "https://webkit.org"_s } }, "hi"_si }).serialize());
                 continue;
             }
-            if (path == "/attacker"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<!DOCTYPE html><script src='/coreipc.js'></script><body></body>"_s).serialize());
+            if (equal(path, "/attacker"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<!DOCTYPE html><script src='/coreipc.js'></script><body></body>"_si).serialize());
                 continue;
             }
-            if (path == "/coreipc.js"_s) {
+            if (equal(path, "/coreipc.js"_s)) {
                 co_await connection.awaitableSend(HTTPResponse({ { { "Content-Type"_s, "text/javascript"_s } }, coreIPC }).serialize());
                 continue;
             }

@@ -42,7 +42,7 @@ CSSStringValue::CSSStringValue(CSS::String&& string)
 {
 }
 
-String CSSStringValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSStringValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_string);
 }

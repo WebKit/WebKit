@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct PublicKeyCredentialRpEntity : public PublicKeyCredentialEntity {
-    mutable String id;
+    mutable RefPtr<StringImpl> id;
 };
 
 }

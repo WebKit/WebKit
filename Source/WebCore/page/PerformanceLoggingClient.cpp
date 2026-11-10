@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceLoggingClient);
 
-String PerformanceLoggingClient::synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason> reasons)
+RefPtr<StringImpl> PerformanceLoggingClient::synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason> reasons)
 {
     if (reasons.isEmpty())
         return emptyString();
@@ -45,7 +45,7 @@ String PerformanceLoggingClient::synchronousScrollingReasonsAsString(OptionSet<S
         reasons.contains(SynchronousScrollingReason::IsImageDocument) ? "image document,"_s : ""_s);
 
     // Strip the trailing comma.
-    return string.left(string.length() - 1);
+    return left(string, length(string) - 1);
 }
 
 } // namespace WebCore

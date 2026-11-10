@@ -53,19 +53,19 @@ public:
     WEBCORE_EXPORT void setColSpan(unsigned);
     WEBCORE_EXPORT void setRowSpan(unsigned);
 
-    NODELETE String abbr() const;
-    NODELETE String axis() const;
-    NODELETE String headers() const;
-    WEBCORE_EXPORT const AtomString& scope() const;
+    NODELETE RefPtr<StringImpl> abbr() const;
+    NODELETE RefPtr<StringImpl> axis() const;
+    NODELETE RefPtr<StringImpl> headers() const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& scope() const;
 
     WEBCORE_EXPORT HTMLTableCellElement* cellAbove() const;
 
 private:
     HTMLTableCellElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
     const MutableStyleProperties* additionalPresentationalHintStyle() const override;
 
     NODELETE bool isURLAttribute(const Attribute&) const override;

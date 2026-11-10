@@ -54,7 +54,7 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPr
     auto& lexicalGlobalObject = *globalObject;
     auto& vm = lexicalGlobalObject.vm();
     JSLockHolder lock(vm);
-    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTF::move(callback), shouldCallCallbackOnRegistrationFailure] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
+    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, nullString(), [callback = WTF::move(callback), shouldCallCallbackOnRegistrationFailure] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
         if (shouldCallCallbackOnRegistrationFailure == ShouldCallCallbackOnRegistrationFailure::Yes && !callFrame) {
             std::exchange(callback, { })(downcast<JSDOMGlobalObject>(globalObject), false, { });
             return JSC::JSValue::encode(JSC::jsUndefined());
@@ -73,7 +73,7 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPr
         boundArgs.append(protectedWrapper);
     ASSERT(!boundArgs.hasOverflowed());
 
-    auto* thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, boundArgs, protectedWrapper ? 1 : 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
+    auto* thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, boundArgs, protectedWrapper ? 1 : 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_si, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
     if (!thisHandler) [[unlikely]] {
         if (shouldCallCallbackOnRegistrationFailure == ShouldCallCallbackOnRegistrationFailure::Yes)
             handler->function()(globalObject, nullptr);

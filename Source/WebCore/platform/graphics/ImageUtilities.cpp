@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-Vector<uint8_t> encodeData(const NativeImage& source, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(const NativeImage& source, StringImpl* mimeType, std::optional<double> quality)
 {
     RefPtr<const NativeImage> image;
     if (source.hasAlpha() && MIMETypeRegistry::isJPEGMIMEType(mimeType)) {
@@ -60,39 +60,39 @@ Vector<uint8_t> encodeData(const NativeImage& source, const String& mimeType, st
     return platformEncodeData(*image, mimeType, quality);
 }
 
-Vector<uint8_t> encodeData(const RefPtr<NativeImage>& image, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(const RefPtr<NativeImage>& image, StringImpl* mimeType, std::optional<double> quality)
 {
     if (!image)
         return { };
     return encodeData(*image, mimeType, quality);
 }
 
-Vector<uint8_t> encodeData(RefPtr<ImageBuffer>&& buffer, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(RefPtr<ImageBuffer>&& buffer, StringImpl* mimeType, std::optional<double> quality)
 {
     if (!buffer)
         return { };
     return encodeData(buffer->copyNativeImage(), mimeType, quality);
 }
 
-String encodeDataURL(const NativeImage& image, const String& mimeType, std::optional<double> quality)
+RefPtr<StringImpl> encodeDataURL(const NativeImage& image, StringImpl* mimeType, std::optional<double> quality)
 {
     auto encodedData = encodeData(image, mimeType, quality);
     if (encodedData.isEmpty())
-        return "data:,"_s;
+        return "data:,"_si;
     return makeString("data:"_s, mimeType, ";base64,"_s, base64Encoded(encodedData));
 }
 
-String encodeDataURL(const RefPtr<NativeImage>& image, const String& mimeType, std::optional<double> quality)
+RefPtr<StringImpl> encodeDataURL(const RefPtr<NativeImage>& image, StringImpl* mimeType, std::optional<double> quality)
 {
     if (!image)
-        return "data:,"_s;
+        return "data:,"_si;
     return encodeDataURL(*image, mimeType, quality);
 }
 
-String encodeDataURL(RefPtr<ImageBuffer>&& buffer, const String& mimeType, std::optional<double> quality)
+RefPtr<StringImpl> encodeDataURL(RefPtr<ImageBuffer>&& buffer, StringImpl* mimeType, std::optional<double> quality)
 {
     if (!buffer)
-        return "data:,"_s;
+        return "data:,"_si;
     return encodeDataURL(buffer->copyNativeImage(), mimeType, quality);
 }
 

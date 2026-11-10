@@ -59,8 +59,8 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const
         auto archiver = adoptNS([WKKeyedCoder new]);
         [downcast<MediaPlaybackTargetCocoa>(target).outputContext() encodeWithCoder:archiver.get()];
         RetainPtr dictionary = [archiver accumulatedDictionary];
-        m_contextID = checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"]);
-        m_contextType = checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"]);
+        m_contextID = StringImpl::create(checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"]));
+        m_contextType = StringImpl::create(checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"]));
 #endif
     } else if (is<MediaPlaybackTargetMock>(target))
         m_state = downcast<MediaPlaybackTargetMock>(target).state();
@@ -81,7 +81,7 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const
 }
 
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, String&& routeName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, CoreIPCAVOutputContext&& context, std::optional<WTF::UUID>&& identifier)
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(RefPtr<StringImpl>&& deviceName, RefPtr<StringImpl>&& routeName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, CoreIPCAVOutputContext&& context, std::optional<WTF::UUID>&& identifier)
     : m_deviceName { WTF::move(deviceName) }
     , m_routeName { WTF::move(routeName) }
     , m_hasActiveRoute { hasActiveRoute }
@@ -93,7 +93,7 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(Strin
 {
 }
 #else
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, String&& routeName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, String&& contextID, String&& contextType, std::optional<WTF::UUID>&& identifier)
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(RefPtr<StringImpl>&& deviceName, RefPtr<StringImpl>&& routeName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, RefPtr<StringImpl>&& contextID, RefPtr<StringImpl>&& contextType, std::optional<WTF::UUID>&& identifier)
     : m_deviceName(WTF::move(deviceName))
     , m_routeName(WTF::move(routeName))
     , m_hasActiveRoute(hasActiveRoute)
@@ -123,8 +123,8 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetContextSerialized::playbackTarget() 
     return MediaPlaybackTargetCocoa::create(dynamic_objc_cast<AVOutputContext>(m_context.toID()));
 #else
     auto propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
-    propertyList[@"AVOutputContextSerializationKeyContextID"] = m_contextID.createNSString().get();
-    propertyList[@"AVOutputContextSerializationKeyContextType"] = m_contextType.createNSString().get();
+    propertyList[@"AVOutputContextSerializationKeyContextID"] = createNSString(m_contextID).get();
+    propertyList[@"AVOutputContextSerializationKeyContextType"] = createNSString(m_contextType).get();
     auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
     auto outputContext = adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] initWithCoder:unarchiver.get()]);
     return MediaPlaybackTargetCocoa::create(WTF::move(outputContext));

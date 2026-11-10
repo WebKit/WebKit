@@ -42,18 +42,18 @@
 
 namespace WebCore {
 
-bool WebContentReader::readFilePath(const String& path, PresentationSize, const String&)
+bool WebContentReader::readFilePath(StringImpl* path, PresentationSize, StringImpl*)
 {
-    if (path.isEmpty() || !frame().document())
+    if (isEmpty(path) || !frame().document())
         return false;
 
     auto markup = urlToMarkup(URL({ }, path), path);
-    addFragment(createFragmentFromMarkup(*protect(frame().document()), markup, "file://"_s, { }));
+    addFragment(createFragmentFromMarkup(*protect(frame().document()), markup, "file://"_si, { }));
 
     return true;
 }
 
-bool WebContentReader::readHTML(const String& string)
+bool WebContentReader::readHTML(StringImpl* string)
 {
     if (frame().settings().preferMIMETypeForImages() || !frame().document())
         return false;
@@ -62,7 +62,7 @@ bool WebContentReader::readHTML(const String& string)
     return true;
 }
 
-bool WebContentReader::readPlainText(const String& text)
+bool WebContentReader::readPlainText(StringImpl* text)
 {
     if (!m_allowPlainText)
         return false;
@@ -73,7 +73,7 @@ bool WebContentReader::readPlainText(const String& text)
     return true;
 }
 
-bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
+bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, StringImpl* type, PresentationSize preferredPresentationSize)
 {
     ASSERT(frame().document());
     Ref document = *frame().document();
@@ -82,7 +82,7 @@ bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const Str
     return m_fragment;
 }
 
-bool WebContentReader::readURL(const URL&, const String&)
+bool WebContentReader::readURL(const URL&, StringImpl*)
 {
     return false;
 }
@@ -92,7 +92,7 @@ static bool shouldReplaceSubresourceURL(const URL& url)
     return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
 }
 
-bool WebContentMarkupReader::readHTML(const String& string)
+bool WebContentMarkupReader::readHTML(StringImpl* string)
 {
     if (!frame().document())
         return false;
@@ -106,7 +106,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
     } else
         m_markup = string;
 
-    return !m_markup.isEmpty();
+    return !isEmpty(m_markup);
 }
 
 } // namespace WebCore

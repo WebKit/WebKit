@@ -61,7 +61,7 @@ public:
 
     DECLARE_VISIT_AGGREGATE;
 
-    RegExp* lookup(VM&, const WTF::String& patternString, OptionSet<Yarr::Flags>);
+    RegExp* lookup(VM&, StringImpl* patternString, OptionSet<Yarr::Flags>);
 
 private:
     static constexpr unsigned maxStrongCacheablePatternLength = 256;
@@ -72,7 +72,7 @@ private:
 
     RegExp* ensureEmptyRegExpSlow(VM&);
 
-    RegExp* lookupOrCreate(VM&, const WTF::String& patternString, OptionSet<Yarr::Flags>);
+    RegExp* lookupOrCreate(VM&, StringImpl* patternString, OptionSet<Yarr::Flags>);
     void addToStrongCache(RegExp*);
 
     unsigned m_nextEntryInStrongCache { 0 };

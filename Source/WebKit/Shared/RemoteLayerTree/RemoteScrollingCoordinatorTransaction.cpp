@@ -296,7 +296,7 @@ static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool chang
         recursiveDumpNodes(ts, Ref { *stateTree.rootStateNode() }, changedPropertiesOnly);
 }
 
-String RemoteScrollingCoordinatorTransaction::description() const
+RefPtr<StringImpl> RemoteScrollingCoordinatorTransaction::description() const
 {
     TextStream ts;
 
@@ -321,7 +321,7 @@ String RemoteScrollingCoordinatorTransaction::description() const
 
 void RemoteScrollingCoordinatorTransaction::dump() const
 {
-    SAFE_WTFLOGALWAYS("%s", description().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(description()));
 }
 #endif // !defined(NDEBUG) || !LOG_DISABLED
 

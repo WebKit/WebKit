@@ -227,7 +227,7 @@ static gboolean webkitWebExtensionContextInitableInit(GInitable* initable, GCanc
         for (Ref internalError : context->errors()) {
             if (internalError->domain() == WEBKIT_CONTEXT_ERROR_DOMAIN) {
                 g_set_error_literal(error, webkit_web_extension_context_error_quark(),
-                    toWebKitWebExtensionContextError(internalError->errorCode()), internalError->localizedDescription().utf8().legacyCStringPointer());
+                    toWebKitWebExtensionContextError(internalError->errorCode()), utf8(internalError->localizedDescription()).legacyCStringPointer());
                 return FALSE;
             }
         }
@@ -314,13 +314,13 @@ const gchar* webkit_web_extension_context_get_base_uri(WebKitWebExtensionContext
     g_return_val_if_fail(context->priv->extension, nullptr);
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
-    if (!priv->baseURI.isNull() && (priv->baseURI == priv->context->baseURL()))
+    if (!priv->baseURI.isNull() && (priv->context->baseURL() == StringImpl::create(priv->baseURI.span()).get()))
         return priv->baseURI.legacyCStringPointer();
 
     auto baseURI = priv->context->baseURL();
     g_return_val_if_fail(!baseURI.isEmpty(), nullptr);
 
-    priv->baseURI = baseURI.string().utf8();
+    priv->baseURI = utf8(baseURI.string());
     return priv->baseURI.legacyCStringPointer();
 }
 
@@ -341,7 +341,7 @@ void webkit_web_extension_context_set_base_uri(WebKitWebExtensionContext* contex
     g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
     g_return_if_fail(context->priv->extension);
     g_return_if_fail(baseURI);
-    auto baseURL = URL { String::fromUTF8(baseURI) };
+    auto baseURL = URL { StringImpl::fromUTF8(baseURI) };
     g_return_if_fail(baseURL.isValid());
     g_return_if_fail(WTF::URLParser::maybeCanonicalizeScheme(baseURL.protocol()));
     g_return_if_fail(WebKit::WebExtensionMatchPattern::extensionSchemes().contains(baseURL.protocol().toStringWithoutCopying()));
@@ -372,14 +372,14 @@ const gchar* webkit_web_extension_context_get_options_page_uri(WebKitWebExtensio
     g_return_val_if_fail(context->priv->extension, nullptr);
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
-    if (!priv->optionsPageURI.isNull() && (priv->optionsPageURI == priv->context->optionsPageURL()))
+    if (!priv->optionsPageURI.isNull() && (priv->context->optionsPageURL() == StringImpl::create(priv->optionsPageURI.span()).get()))
         return priv->optionsPageURI.legacyCStringPointer();
 
     auto optionsPageURI = priv->context->optionsPageURL();
     if (optionsPageURI.isEmpty())
         return nullptr;
 
-    priv->optionsPageURI = optionsPageURI.string().utf8();
+    priv->optionsPageURI = utf8(optionsPageURI.string());
     return priv->optionsPageURI.legacyCStringPointer();
 }
 
@@ -424,7 +424,7 @@ gboolean webkit_web_extension_context_has_injected_content_for_uri(WebKitWebExte
     g_return_val_if_fail(uri, FALSE);
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
-    return priv->context->hasInjectedContentForURL(URL { String::fromUTF8(uri) });
+    return priv->context->hasInjectedContentForURL(URL { StringImpl::fromUTF8(uri) });
 }
 
 /**
@@ -448,14 +448,14 @@ const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWe
     g_return_val_if_fail(context->priv->extension, nullptr);
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
-    if (!priv->overrideNewTabPageURI.isNull() && (priv->overrideNewTabPageURI == priv->context->overrideNewTabPageURL()))
+    if (!priv->overrideNewTabPageURI.isNull() && (priv->context->overrideNewTabPageURL() == StringImpl::create(priv->overrideNewTabPageURI.span()).get()))
         return priv->overrideNewTabPageURI.legacyCStringPointer();
 
     auto overrideNewTabPageURI = priv->context->overrideNewTabPageURL();
     if (overrideNewTabPageURI.isEmpty())
         return nullptr;
 
-    priv->overrideNewTabPageURI = overrideNewTabPageURI.string().utf8();
+    priv->overrideNewTabPageURI = utf8(overrideNewTabPageURI.string());
     return priv->overrideNewTabPageURI.legacyCStringPointer();
 }
 
@@ -493,7 +493,7 @@ void webkit_web_extension_context_load_background_content(WebKitWebExtensionCont
     context->priv->context->loadBackgroundContent([task = WTF::move(task)](RefPtr<API::Error> error) {
         if (error) {
             SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), webkit_web_extension_context_error_quark(),
-                toWebKitWebExtensionContextError(error->errorCode()), "%s", error->localizedDescription().utf8());
+                toWebKitWebExtensionContextError(error->errorCode()), "%s", utf8(error->localizedDescription()));
         } else
             g_task_return_boolean(task.get(), TRUE);
     });

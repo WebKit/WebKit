@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT void saveRecentSearchesToFile(const String& name, const Vector<RecentSearch>&, const String& directory);
-WEBCORE_EXPORT Vector<RecentSearch> loadRecentSearchesFromFile(const String& name, const String& directory);
-WEBCORE_EXPORT void removeRecentlyModifiedRecentSearchesFromFile(WallTime, const String& directory);
+WEBCORE_EXPORT void saveRecentSearchesToFile(StringImpl* name, const Vector<RecentSearch>&, StringImpl* directory);
+WEBCORE_EXPORT Vector<RecentSearch> loadRecentSearchesFromFile(StringImpl* name, StringImpl* directory);
+WEBCORE_EXPORT void removeRecentlyModifiedRecentSearchesFromFile(WallTime, StringImpl* directory);
 
 }

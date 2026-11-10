@@ -774,7 +774,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSlice, (JSGlobalObject* globalObject, Cal
         result = speciesResult.second;
     else {
         if (end - begin > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
-            throwRangeError(globalObject, scope, LengthExceededTheMaximumArrayLengthError);
+            throwRangeError(globalObject, scope, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr());
             return encodedJSValue();
         }
         result = constructEmptyArray(globalObject, nullptr, static_cast<uint32_t>(end - begin));
@@ -802,7 +802,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSlice, (JSGlobalObject* globalObject, Cal
 using SortJSValueVector = MarkedArgumentBufferWithSize<64>;
 
 struct SortEntry {
-    String string;
+    RefPtr<StringImpl> string;
     uint32_t index;
 };
 using SortEntryVector = Vector<SortEntry>;
@@ -917,7 +917,7 @@ static void sortBucketSort(std::span<SortEntry> entries, std::span<SortEntry> sc
         std::ranges::sort(entries, [&](const auto& a, const auto& b) {
             std::strong_ordering ordering = std::strong_ordering::equal;
             if constexpr (all8Bit == All8Bit::Yes)
-                ordering = codePointCompare(a.string.span8().subspan(depth), b.string.span8().subspan(depth));
+                ordering = codePointCompare(span8(a.string).subspan(depth), span8(b.string).subspan(depth));
             else
                 ordering = codePointCompare(StringView(a.string).substring(depth), StringView(b.string).substring(depth));
             if (is_neq(ordering))
@@ -928,13 +928,13 @@ static void sortBucketSort(std::span<SortEntry> entries, std::span<SortEntry> sc
     }
 
     auto keyOf = [&](const SortEntry& entry) -> unsigned {
-        const String& string = entry.string;
-        if (depth >= string.length())
+        const RefPtr<StringImpl>& string = entry.string;
+        if (depth >= length(string))
             return 0;
         if constexpr (all8Bit == All8Bit::Yes)
-            return string.span8()[depth] + 1;
+            return span8(string)[depth] + 1;
         else {
-            char16_t codeUnit = string.codeUnitAt(depth);
+            char16_t codeUnit = codeUnitAt(string, depth);
             return ((level & 1) ? (codeUnit & 0xFF) : (codeUnit >> 8)) + 1;
         }
     };
@@ -1091,9 +1091,9 @@ static ALWAYS_INLINE void sortImpl(JSGlobalObject* globalObject, JSObject* thisO
         }
         bool all8Bit = true;
         for (uint32_t index = 0; index < compacted.size(); ++index) {
-            String string = JSValue::decode(compacted[index]).toWTFString(globalObject);
+            RefPtr<StringImpl> string = JSValue::decode(compacted[index]).toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
-            all8Bit &= string.is8Bit();
+            all8Bit &= is8Bit(string);
             entries.append({ WTF::move(string), index });
         }
         SortEntryVector scratchEntries;
@@ -1208,7 +1208,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
             result = speciesResult.second;
         else {
             if (actualDeleteCount > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
-                throwRangeError(globalObject, scope, LengthExceededTheMaximumArrayLengthError);
+                throwRangeError(globalObject, scope, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr());
                 return encodedJSValue();
             }
             result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), static_cast<uint32_t>(actualDeleteCount));
@@ -1975,7 +1975,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToReversed, (JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
 
     if (length > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_s);
+        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_si);
         return { };
     }
 
@@ -2022,7 +2022,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToSorted, (JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, { });
 
     if (length > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_s);
+        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_si);
         return { };
     }
 
@@ -2071,12 +2071,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncWith, (JSGlobalObject* globalObject, Call
     RETURN_IF_EXCEPTION(scope, { });
 
     if (actualIndex >= static_cast<int64_t>(length) || actualIndex < 0) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Array index out of range"_s);
+        throwRangeError(globalObject, scope, "Array index out of range"_si);
         return { };
     }
 
     if (length > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_s);
+        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_si);
         return { };
     }
     JSValue value = callFrame->argument(1);
@@ -2261,7 +2261,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToSpliced, (JSGlobalObject* globalObject,
     }
 
     if (newLen > std::numeric_limits<uint32_t>::max()) {
-        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_s);
+        throwRangeError(globalObject, scope, "Array length must be a positive integer of safe magnitude."_si);
         return { };
     }
 

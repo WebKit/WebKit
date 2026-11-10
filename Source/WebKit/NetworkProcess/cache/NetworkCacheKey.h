@@ -38,8 +38,8 @@ template<typename> struct Coder;
 namespace WebKit::NetworkCache {
 
 struct DataKey {
-    String partition;
-    String type;
+    RefPtr<StringImpl> partition;
+    RefPtr<StringImpl> type;
     SHA1::Digest identifier;
 
     template <class Encoder> void encodeForPersistence(Encoder& encoder) const
@@ -60,7 +60,7 @@ public:
     Key() { }
     Key(const Key&);
     Key(Key&&) = default;
-    Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt&);
+    Key(StringImpl* partition, StringImpl* type, StringImpl* range, StringImpl* identifier, const Salt&);
     Key(const DataKey&, const Salt&);
 
     Key& operator=(const Key&);
@@ -69,25 +69,25 @@ public:
     Key(WTF::HashTableDeletedValueType);
     bool isHashTableDeletedValue() const { return m_identifier.isHashTableDeletedValue(); }
 
-    bool isNull() const { return m_identifier.isNull(); }
+    bool isNull() const { return !m_identifier; }
 
-    const String& partition() const LIFETIME_BOUND { return m_partition; }
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
-    const String& type() const LIFETIME_BOUND { return m_type; }
-    const String& range() const LIFETIME_BOUND { return m_range; }
+    const RefPtr<StringImpl>& partition() const LIFETIME_BOUND { return m_partition; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND { return m_type; }
+    const RefPtr<StringImpl>& range() const LIFETIME_BOUND { return m_range; }
 
     const HashType& hash() const LIFETIME_BOUND { return m_hash; }
     const HashType& partitionHash() const LIFETIME_BOUND { return m_partitionHash; }
 
-    NODELETE static bool stringToHash(const String&, HashType&);
+    NODELETE static bool stringToHash(StringImpl*, HashType&);
 
     static size_t hashStringLength() { return 2 * sizeof(m_hash); }
-    String hashAsString() const { return hashAsString(m_hash); }
-    String partitionHashAsString() const { return hashAsString(m_partitionHash); }
+    RefPtr<StringImpl> hashAsString() const { return hashAsString(m_hash); }
+    RefPtr<StringImpl> partitionHashAsString() const { return hashAsString(m_partitionHash); }
 
     bool operator==(const Key&) const;
 
-    static String partitionToPartitionHashAsString(const String& partition, const Salt&);
+    static RefPtr<StringImpl> partitionToPartitionHashAsString(StringImpl* partition, const Salt&);
 
     Key isolatedCopy() && { return {
         crossThreadCopy(WTF::move(m_partition)),
@@ -109,11 +109,11 @@ public:
 
 private:
     friend struct WTF::Persistence::Coder<Key>;
-    static String hashAsString(const HashType&);
+    static RefPtr<StringImpl> hashAsString(const HashType&);
     HashType computeHash(const Salt&) const;
     HashType computePartitionHash(const Salt&) const;
-    static HashType partitionToPartitionHash(const String& partition, const Salt&);
-    Key(String&& partition, String&& type, String&& identifier, String&& range, HashType hash, HashType partitionHash)
+    static HashType partitionToPartitionHash(StringImpl* partition, const Salt&);
+    Key(RefPtr<StringImpl>&& partition, RefPtr<StringImpl>&& type, RefPtr<StringImpl>&& identifier, RefPtr<StringImpl>&& range, HashType hash, HashType partitionHash)
         : m_partition(WTF::move(partition))
         , m_type(WTF::move(type))
         , m_identifier(WTF::move(identifier))
@@ -121,10 +121,10 @@ private:
         , m_hash(hash)
         , m_partitionHash(partitionHash) { }
 
-    String m_partition;
-    String m_type;
-    String m_identifier;
-    String m_range;
+    RefPtr<StringImpl> m_partition;
+    RefPtr<StringImpl> m_type;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_range;
     HashType m_hash;
     HashType m_partitionHash;
 };

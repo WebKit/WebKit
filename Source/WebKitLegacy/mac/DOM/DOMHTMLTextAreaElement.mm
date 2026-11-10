@@ -74,13 +74,13 @@ SUPPRESS_NODELETE DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* valu
 - (NSString *)dirName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(WebCore::HTMLNames::dirnameAttr).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(WebCore::HTMLNames::dirnameAttr)).autorelease();
 }
 
 - (void)setDirName:(NSString *)newDirName
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr, newDirName);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr, AtomStringImpl::add((__bridge CFStringRef)newDirName).get());
 }
 
 - (BOOL)disabled
@@ -116,25 +116,25 @@ SUPPRESS_NODELETE DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* valu
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getNameAttribute().createNSString().autorelease();
+    return createNSString(unwrap(*self)->getNameAttribute()).autorelease();
 }
 
 - (void)setName:(NSString *)newName
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::add((__bridge CFStringRef)newName).get());
 }
 
 - (NSString *)placeholder
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(WebCore::HTMLNames::placeholderAttr).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(WebCore::HTMLNames::placeholderAttr)).autorelease();
 }
 
 - (void)setPlaceholder:(NSString *)newPlaceholder
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr, newPlaceholder);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr, AtomStringImpl::add((__bridge CFStringRef)newPlaceholder).get());
 }
 
 - (BOOL)readOnly
@@ -188,43 +188,43 @@ SUPPRESS_NODELETE DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* valu
 - (NSString *)wrap
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(WebCore::HTMLNames::wrapAttr).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(WebCore::HTMLNames::wrapAttr)).autorelease();
 }
 
 - (void)setWrap:(NSString *)newWrap
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::wrapAttr, newWrap);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::wrapAttr, AtomStringImpl::add((__bridge CFStringRef)newWrap).get());
 }
 
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->type().createNSString().autorelease();
+    return createNSString(unwrap(*self)->type()).autorelease();
 }
 
 - (NSString *)defaultValue
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->defaultValue().createNSString().autorelease();
+    return createNSString(unwrap(*self)->defaultValue()).autorelease();
 }
 
 - (void)setDefaultValue:(NSString *)newDefaultValue
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setDefaultValue(newDefaultValue);
+    unwrap(*self)->setDefaultValue(StringImpl::create(newDefaultValue));
 }
 
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->value()->createNSString().autorelease();
+    return createNSString(unwrap(*self)->value().get()).autorelease();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setValue(newValue);
+    unwrap(*self)->setValue(StringImpl::create(newValue).get());
 }
 
 - (unsigned)textLength
@@ -272,37 +272,37 @@ SUPPRESS_NODELETE DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* valu
 - (NSString *)selectionDirection
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->selectionDirection().createNSString().autorelease();
+    return createNSString(unwrap(*self)->selectionDirection()).autorelease();
 }
 
 - (void)setSelectionDirection:(NSString *)newSelectionDirection
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setSelectionDirection(newSelectionDirection);
+    unwrap(*self)->setSelectionDirection(StringImpl::create(newSelectionDirection).get());
 }
 
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(WebCore::HTMLNames::accesskeyAttr)).autorelease();
 }
 
 - (void)setAccessKey:(NSString *)newAccessKey
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, AtomStringImpl::add((__bridge CFStringRef)newAccessKey).get());
 }
 
 - (NSString *)autocomplete
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->autocomplete().createNSString().autorelease();
+    return createNSString(unwrap(*self)->autocomplete()).autorelease();
 }
 
 - (void)setAutocomplete:(NSString *)newAutocomplete
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, newAutocomplete);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, AtomStringImpl::add((__bridge CFStringRef)newAutocomplete).get());
 }
 
 - (void)select
@@ -314,13 +314,13 @@ SUPPRESS_NODELETE DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* valu
 - (void)setRangeText:(NSString *)replacement
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self)->setRangeText(String { replacement }));
+    raiseOnDOMError(unwrap(*self)->setRangeText(StringImpl::create(replacement).get()));
 }
 
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self)->setRangeText(String { replacement }, start, end, selectionMode));
+    raiseOnDOMError(unwrap(*self)->setRangeText(StringImpl::create(replacement).get(), start, end, StringImpl::create(selectionMode).get()));
 }
 
 - (void)setSelectionRange:(int)start end:(int)end

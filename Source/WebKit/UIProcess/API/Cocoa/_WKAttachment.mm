@@ -57,9 +57,9 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
         return nil;
 
     lazyInitialize(_attachment, Ref { attachment });
-    _filePath = attachment.filePath().createNSString();
-    _mimeType = attachment.mimeType().createNSString();
-    _utiType = attachment.utiType().createNSString();
+    _filePath = createNSString(attachment.filePath());
+    _mimeType = createNSString(attachment.mimeType());
+    _utiType = createNSString(attachment.utiType());
     return self;
 }
 
@@ -156,7 +156,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
     // This file path member is only populated when the attachment is generated upon dropping files. When data is specified via NSFileWrapper
     // from the SPI client, the corresponding file path of the data is unknown, if it even exists at all.
-    attachment->setFilePath({ });
+    attachment->setFilePath(nullptr);
     attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
     attachment->updateAttributes([capturedBlock = makeBlockPtr(completionHandler)] {
         if (capturedBlock)
@@ -180,7 +180,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
 - (NSString *)uniqueIdentifier
 {
-    return _attachment->identifier().createNSString().autorelease();
+    return createNSString(_attachment->identifier()).autorelease();
 }
 
 - (NSString *)description

@@ -1878,7 +1878,7 @@ ScrollView::ProhibitScrollingWhenChangingContentSizeForScope::~ProhibitScrolling
         protect(m_scrollView)->decrementProhibitsScrollingWhenChangingContentSizeCount();
 }
 
-String ScrollView::debugDescription() const
+RefPtr<StringImpl> ScrollView::debugDescription() const
 {
     return makeString("ScrollView 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }

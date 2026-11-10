@@ -36,13 +36,13 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 struct ApplePayDeferredPaymentRequest final {
-    String billingAgreement;
+    RefPtr<StringImpl> billingAgreement;
     ApplePayLineItem deferredBilling; // required, must be `paymentTiming: "deferred"
     WallTime freeCancellationDate { WallTime::nan() };
-    String freeCancellationDateTimeZone;
-    String managementURL; // required
-    String paymentDescription; // required
-    String tokenNotificationURL;
+    RefPtr<StringImpl> freeCancellationDateTimeZone;
+    RefPtr<StringImpl> managementURL; // required
+    RefPtr<StringImpl> paymentDescription; // required
+    RefPtr<StringImpl> tokenNotificationURL;
 
     ExceptionOr<void> validate() const;
     ExceptionOr<ApplePayDeferredPaymentRequest> convertAndValidate() &&;

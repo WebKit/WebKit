@@ -46,7 +46,7 @@ Ref<CSSClipValue> CSSClipValue::create(CSS::Clip&& clip)
     return adoptRef(*new CSSClipValue(WTF::move(clip)));
 }
 
-String CSSClipValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSClipValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_clip);
 }

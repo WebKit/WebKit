@@ -71,7 +71,7 @@ auto DeclaredStylePropertyMap::entries(ScriptExecutionContext* context) const ->
         return StylePropertyMapEntry {
             propertyReference.cssName(),
             propertyReference.id() == CSSPropertyID::Custom
-                ? reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, AtomString { propertyReference.cssName() })
+                ? reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, RefPtr<AtomStringImpl> { propertyReference.cssName() })
                 : reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, propertyReference.id()),
         };
     });
@@ -85,7 +85,7 @@ RefPtr<CSSValue> DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyI
     return protect(styleRule->properties())->getPropertyCSSValue(propertyID);
 }
 
-String DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
+RefPtr<StringImpl> DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
 {
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
@@ -93,15 +93,15 @@ String DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID pr
     return protect(styleRule->properties())->getPropertyValue(propertyID);
 }
 
-RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString& propertyName) const
+RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(AtomStringImpl* propertyName) const
 {
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
         return nullptr;
-    return protect(styleRule->properties())->getCustomPropertyCSSValue(propertyName.string());
+    return protect(styleRule->properties())->getCustomPropertyCSSValue(propertyName);
 }
 
-bool DeclaredStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, const String& value)
+bool DeclaredStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, StringImpl* value)
 {
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
@@ -125,7 +125,7 @@ bool DeclaredStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValu
     return !didFailParsing;
 }
 
-bool DeclaredStylePropertyMap::setCustomProperty(Document&, const AtomString& property, Ref<CSSSubstitutionValue>&& value)
+bool DeclaredStylePropertyMap::setCustomProperty(Document&, AtomStringImpl* property, Ref<CSSSubstitutionValue>&& value)
 {
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
@@ -147,14 +147,14 @@ void DeclaredStylePropertyMap::removeProperty(CSSPropertyID propertyID)
     protect(styleRule->mutableProperties())->removeProperty(propertyID);
 }
 
-void DeclaredStylePropertyMap::removeCustomProperty(const AtomString& property)
+void DeclaredStylePropertyMap::removeCustomProperty(AtomStringImpl* property)
 {
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(protect(m_ownerRule));
-    protect(styleRule->mutableProperties())->removeCustomProperty(property.string());
+    protect(styleRule->mutableProperties())->removeCustomProperty(property);
 }
 
 StyleRule* DeclaredStylePropertyMap::styleRule() const

@@ -622,7 +622,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (!parameters.mediaMIMETypes.isEmpty())
         setMediaMIMETypes(parameters.mediaMIMETypes);
     else {
-        AVAssetMIMETypeCache::singleton().setCacheMIMETypesCallback([connection = protect(parentProcessConnection())](const Vector<String>& types) {
+        AVAssetMIMETypeCache::singleton().setCacheMIMETypesCallback([connection = protect(parentProcessConnection())](const Vector<RefPtr<StringImpl>>& types) {
             connection->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
         });
     }
@@ -632,7 +632,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (!parameters.mediaSourceTypesSupported.isEmpty())
         MediaSourceTypeSupportedCache::singleton().initialize(WTF::move(parameters.mediaSourceTypesSupported));
 
-    MediaSourceTypeSupportedCache::singleton().setCacheUpdateCallback([connection = protect(parentProcessConnection())](const String& type, bool isSupported) {
+    MediaSourceTypeSupportedCache::singleton().setCacheUpdateCallback([connection = protect(parentProcessConnection())](StringImpl* type, bool isSupported) {
         connection->send(Messages::WebProcessProxy::CacheMediaSourceTypeSupported(type, isSupported), 0);
     });
 #endif
@@ -741,9 +741,9 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 #endif // ENABLE(LLVM_PROFILE_GENERATION)
 #endif // PLATFORM(IOS_FAMILY)
 
-    if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
+    if (!isEmpty(parameters.javaScriptConfigurationDirectory)) {
         auto javaScriptConfigFile = makeString(parameters.javaScriptConfigurationDirectory, "/JSC.config"_s);
-        JSC::processConfigFile(javaScriptConfigFile.utf8().data(), "com.apple.WebKit.WebContent"_s, m_uiProcessBundleIdentifier.utf8());
+        JSC::processConfigFile(utf8(javaScriptConfigFile).data(), "com.apple.WebKit.WebContent"_s, utf8(m_uiProcessBundleIdentifier));
     }
 }
 
@@ -793,19 +793,19 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
     RetainPtr<NSString> applicationName;
     switch (m_processType) {
     case ProcessType::Inspector:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), createNSString(m_uiProcessName).get()]).get();
         break;
     case ProcessType::ServiceWorker:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), m_uiProcessName.createNSString().get(), m_registrableDomain.string().createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), createNSString(m_uiProcessName).get(), createNSString(m_registrableDomain.string()).get()]).get();
         break;
     case ProcessType::PrewarmedWebContent:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Prewarmed)", "Visible name of the web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Prewarmed)", "Visible name of the web process. The argument is the application name."), createNSString(m_uiProcessName).get()]).get();
         break;
     case ProcessType::CachedWebContent:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Cached)", "Visible name of the web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Cached)", "Visible name of the web process. The argument is the application name."), createNSString(m_uiProcessName).get()]).get();
         break;
     case ProcessType::WebContent:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content", "Visible name of the web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content", "Visible name of the web process. The argument is the application name."), createNSString(m_uiProcessName).get()]).get();
         break;
     }
 
@@ -814,7 +814,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
     // via the NetworkProcess. Prewarmed WebProcesses also do not have a network process connection until they are actually used by
     // a page, and the print process never has one.
 
-    String displayName = applicationName.get();
+    RefPtr<StringImpl> displayName = StringImpl::create(applicationName.get());
     if (m_sessionID && !m_isPrintProcess) {
         auto auditToken = auditTokenForSelf();
         if (!auditToken)
@@ -838,8 +838,8 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
     }
 #if ASSERT_ENABLED
     // It is possible for _LSSetApplicationInformationItem() to return 0 and yet fail to set the display name so we make sure the display name has actually been set.
-    String actualApplicationName = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, RetainPtr { _LSGetCurrentApplicationASN() }.get(), _kLSDisplayNameKey)).get();
-    ASSERT(!actualApplicationName.isEmpty());
+    RefPtr actualApplicationName = StringImpl::create(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, RetainPtr { _LSGetCurrentApplicationASN() }.get(), _kLSDisplayNameKey)).get());
+    ASSERT(!isEmpty(actualApplicationName));
 #endif
 #endif
 #else
@@ -963,15 +963,15 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
 #endif // PLATFORM(MAC)
 
-    if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("inspector-process"_s) == "1"_s)
+    if (equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("inspector-process"_s), "1"_s))
         m_processType = ProcessType::Inspector;
-    else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("service-worker-process"_s) == "1"_s) {
+    else if (equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("service-worker-process"_s), "1"_s)) {
         m_processType = ProcessType::ServiceWorker;
 #if PLATFORM(MAC)
         m_registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("registrable-domain"_s));
 #endif
     }
-    else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("is-prewarmed"_s) == "1"_s)
+    else if (equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("is-prewarmed"_s), "1"_s))
         m_processType = ProcessType::PrewarmedWebContent;
     else
         m_processType = ProcessType::WebContent;
@@ -1030,15 +1030,15 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
     auto webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
 #if CPU(ARM64)
-    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"_s));
+    sandboxParameters.setOverrideSandboxProfilePath(makeString(StringImpl::create([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"_s));
 #else
-    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.x86.sb"_s));
+    sandboxParameters.setOverrideSandboxProfilePath(makeString(StringImpl::create([webKitBundle resourcePath]), "/com.apple.WebProcess.x86.sb"_s));
 #endif
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 #elif ENABLE(SIMULATOR_SANDBOX)
     auto webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-    String path = makeString(String([webKitBundle bundlePath]), "/com.apple.WebKit.WebContent.simulator"_s);
+    RefPtr path = makeString(StringImpl::create([webKitBundle bundlePath]), "/com.apple.WebKit.WebContent.simulator"_s);
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read, FileSystem::FileAccessPermission::All, { FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking });
     if (auto data = handle.readAll()) {
         int rv = sandbox_apply_bytecode(data->mutableSpan().data(), data->size(), nullptr);
@@ -1054,13 +1054,13 @@ static NSURL *origin(WebPage& page)
     auto rootFrameOriginString = page.rootFrameOriginString();
     // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear when we would have a malformed URL here,
     // but it happens in practice according to <rdar://problem/14173389>. Leaving an assertion in to catch a reproducible case.
-    ASSERT([NSURL URLWithString:rootFrameOriginString.createNSString().get()]);
-    return [NSURL URLWithString:rootFrameOriginString.createNSString().get()];
+    ASSERT([NSURL URLWithString:createNSString(rootFrameOriginString).get()]);
+    return [NSURL URLWithString:createNSString(rootFrameOriginString).get()];
 }
 
-static Vector<String> activePagesOrigins(const HashMap<PageIdentifier, Ref<WebPage>>& pageMap)
+static Vector<RefPtr<StringImpl>> activePagesOrigins(const HashMap<PageIdentifier, Ref<WebPage>>& pageMap)
 {
-    Vector<String> origins;
+    Vector<RefPtr<StringImpl>> origins;
     for (auto& page : pageMap.values()) {
         if (page->usesEphemeralSession())
             continue;
@@ -1069,13 +1069,13 @@ static Vector<String> activePagesOrigins(const HashMap<PageIdentifier, Ref<WebPa
         if (!originAsURL)
             continue;
 
-        origins.append(WTF::userVisibleString(originAsURL.get()));
+        origins.append(StringImpl::create(protect(WTF::userVisibleString(originAsURL.get())).get()));
     }
     return origins;
 }
 #endif
 
-void WebProcess::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
+void WebProcess::getProcessDisplayName(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     auto auditToken = auditTokenForSelf();
@@ -1087,7 +1087,7 @@ void WebProcess::getProcessDisplayName(CompletionHandler<void(String&&)>&& compl
 #endif
 }
 
-void WebProcess::updateActivePages(const String& overrideDisplayName)
+void WebProcess::updateActivePages(StringImpl* overrideDisplayName)
 {
 #if PLATFORM(MAC)
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
@@ -1109,7 +1109,7 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
 #endif
 }
 
-void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     completionHandler(activePagesOrigins(m_pageMap));
@@ -1337,7 +1337,7 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode, const Vector<String>& preferredLanguages)
+void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode, const Vector<RefPtr<StringImpl>>& preferredLanguages)
 {
     WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(captionDisplayMode);
     WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
@@ -1348,7 +1348,7 @@ void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreference
     }
 }
 
-void WebProcess::setMediaAccessibilityPreferredLanguages(const Vector<String>& preferredLanguages)
+void WebProcess::setMediaAccessibilityPreferredLanguages(const Vector<RefPtr<StringImpl>>& preferredLanguages)
 {
     WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
 
@@ -1401,7 +1401,7 @@ void WebProcess::enableRemoteWebInspector()
 }
 #endif
 
-void WebProcess::setMediaMIMETypes(const Vector<String> types)
+void WebProcess::setMediaMIMETypes(const Vector<RefPtr<StringImpl>> types)
 {
     auto& cache = AVAssetMIMETypeCache::singleton();
     if (cache.isEmpty())
@@ -1411,53 +1411,53 @@ void WebProcess::setMediaMIMETypes(const Vector<String> types)
 #if ENABLE(CFPREFS_DIRECT_MODE)
 
 #if USE(APPKIT)
-static const WTF::String& userAccentColorPreferenceKey()
+static const RefPtr<StringImpl>& userAccentColorPreferenceKey()
 {
-    static NeverDestroyed<WTF::String> userAccentColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleAccentColor"));
+    static NeverDestroyed<RefPtr<StringImpl>> userAccentColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleAccentColor"));
     return userAccentColorPreferenceKey;
 }
 
-static const WTF::String& userHighlightColorPreferenceKey()
+static const RefPtr<StringImpl>& userHighlightColorPreferenceKey()
 {
-    static NeverDestroyed<WTF::String> userHighlightColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleHighlightColor"));
+    static NeverDestroyed<RefPtr<StringImpl>> userHighlightColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleHighlightColor"));
     return userHighlightColorPreferenceKey;
 }
 #endif
 
-static const WTF::String& captionProfilePreferenceKey()
+static const RefPtr<StringImpl>& captionProfilePreferenceKey()
 {
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("MACaptionActiveProfile"));
+    static NeverDestroyed<RefPtr<StringImpl>> key(MAKE_STATIC_STRING_IMPL("MACaptionActiveProfile"));
     return key;
 }
 
-void WebProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
+void WebProcess::dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key)
 {
 #if USE(APPKIT)
     // Ordinarily, other parts of the system ensure that this notification is posted after this default is changed.
     // However, since we synchronize defaults to the Web Content process using a mechanism not known to the rest
     // of the system, we must re-post the notification in the Web Content process after updating the default.
     
-    if (key == userAccentColorPreferenceKey()) {
+    if (equal(key, userAccentColorPreferenceKey())) {
         RetainPtr notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter postNotificationName:@"kCUINotificationAquaColorVariantChanged" object:nil];
         [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
         [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
-    } else if (key == userHighlightColorPreferenceKey()) {
+    } else if (equal(key, userHighlightColorPreferenceKey())) {
         RetainPtr notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
         [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
-    } else if (key == increaseContrastPreferenceKey()) {
+    } else if (equal(key, increaseContrastPreferenceKey())) {
         RetainPtr notificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
         [notificationCenter postNotificationName:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil];
     }
 #endif
-    if (key == captionProfilePreferenceKey())
+    if (equal(key, captionProfilePreferenceKey()))
         CFNotificationCenterPostNotification(CFNotificationCenterGetLocalCenterSingleton(), kMAXCaptionAppearanceSettingsChangedNotification, nullptr, nullptr, true);
 }
 
-void WebProcess::handlePreferenceChange(const String& domain, const String& key, id value)
+void WebProcess::handlePreferenceChange(StringImpl* domain, StringImpl* key, id value)
 {
-    if (key == "AppleLanguages"_s) {
+    if (equal(key, "AppleLanguages"_s)) {
         // We need to set AppleLanguages for the volatile domain, similarly to what we do in XPCServiceMain.mm.
         RetainPtr<NSDictionary> existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
         RetainPtr<NSMutableDictionary> newArguments = adoptNS([existingArguments mutableCopy]);
@@ -1578,17 +1578,17 @@ void WebProcess::powerSourceDidChange(bool hasAC)
     setSystemHasAC(hasAC);
 }
 
-void WebProcess::willWriteToPasteboardAsynchronously(const String& pasteboardName)
+void WebProcess::willWriteToPasteboardAsynchronously(StringImpl* pasteboardName)
 {
     m_pendingPasteboardWriteCounts.add(pasteboardName);
 }
 
-void WebProcess::didWriteToPasteboardAsynchronously(const String& pasteboardName)
+void WebProcess::didWriteToPasteboardAsynchronously(StringImpl* pasteboardName)
 {
     m_pendingPasteboardWriteCounts.remove(pasteboardName);
 }
 
-void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboardName)
+void WebProcess::waitForPendingPasteboardWritesToFinish(StringImpl* pasteboardName)
 {
     while (m_pendingPasteboardWriteCounts.contains(pasteboardName)) {
         if (protect(parentProcessConnection())->waitForAndDispatchImmediately<Messages::WebProcess::DidWriteToPasteboardAsynchronously>(0, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) != IPC::Error::NoError) {
@@ -1647,19 +1647,19 @@ void WebProcess::revokeLaunchServicesSandboxExtension()
 #endif
 
 #if ENABLE(NOTIFY_BLOCKING)
-void WebProcess::postNotification(const String& message, std::optional<uint64_t> state)
+void WebProcess::postNotification(StringImpl* message, std::optional<uint64_t> state)
 {
     if (state)
         setNotifyState(message, state.value());
-    notify_post(message.ascii().data());
+    notify_post(ascii(message).data());
 }
 
-void WebProcess::postObserverNotification(const String& message)
+void WebProcess::postObserverNotification(StringImpl* message)
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:message.createNSString().get() object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:createNSString(message).get() object:nil];
 }
 
-void WebProcess::setNotifyState(const String& name, uint64_t state)
+void WebProcess::setNotifyState(StringImpl* name, uint64_t state)
 {
     // FIXME: explain why caching the token for a non-zero state value is necessary
     if (!state) {
@@ -1674,23 +1674,23 @@ void WebProcess::setNotifyState(const String& name, uint64_t state)
     int status = NOTIFY_STATUS_OK;
     if (auto maybeToken = m_notifyTokens.getOptional(name))
         token = maybeToken.value();
-    else if ((status = notify_register_check(name.ascii().data(), &token)) == NOTIFY_STATUS_OK)
+    else if ((status = notify_register_check(ascii(name).data(), &token)) == NOTIFY_STATUS_OK)
         m_notifyTokens.set(name, token);
 
     if (token == NOTIFY_TOKEN_INVALID) {
-        WEBPROCESS_RELEASE_LOG_ERROR(Process, "setNotifyState: Couldn't create token for %" PUBLIC_LOG_STRING ": %d", name.utf8(), status);
+        WEBPROCESS_RELEASE_LOG_ERROR(Process, "setNotifyState: Couldn't create token for %" PUBLIC_LOG_STRING ": %d", utf8(name), status);
         return;
     }
 
     notify_set_state(token, state);
 }
 
-void WebProcess::getNotifyStateForTesting(const String& name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+void WebProcess::getNotifyStateForTesting(StringImpl* name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
 {
     int token = NOTIFY_TOKEN_INVALID;
     uint64_t state = 0;
 
-    if (notify_register_check(name.ascii().data(), &token) != NOTIFY_STATUS_OK)
+    if (notify_register_check(ascii(name).data(), &token) != NOTIFY_STATUS_OK)
         completionHandler(std::nullopt);
     else if (notify_get_state(token, &state) != NOTIFY_STATUS_OK)
         completionHandler(std::nullopt);
@@ -1721,7 +1721,7 @@ void WebProcess::registerAdditionalFonts(AdditionalFonts&& fonts)
     CTFontManagerRegisterFontURLs((__bridge CFArrayRef)fontURLs.get(), kCTFontManagerScopeProcess, true, blockPtr.get());
 }
 
-void WebProcess::registerFontMap(HashMap<String, URL>&& fontMap, HashMap<String, Vector<String>>&& fontFamilyMap, Vector<SandboxExtension::Handle>&& sandboxExtensions)
+void WebProcess::registerFontMap(HashMap<RefPtr<StringImpl>, URL>&& fontMap, HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>&& fontFamilyMap, Vector<SandboxExtension::Handle>&& sandboxExtensions)
 {
     RELEASE_LOG(Process, "WebProcess::registerFontMap");
     SandboxExtension::consumePermanently(sandboxExtensions);

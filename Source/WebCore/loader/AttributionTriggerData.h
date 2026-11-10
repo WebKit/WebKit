@@ -55,7 +55,7 @@ struct AttributionTriggerData {
         return data <= MaxEntropy && priority <= Priority::MaxEntropy;
     }
 
-    void setDestinationUnlinkableTokenValue(const String& value)
+    void setDestinationUnlinkableTokenValue(StringImpl* value)
     {
         if (!destinationUnlinkableToken)
             destinationUnlinkableToken = DestinationUnlinkableToken { };

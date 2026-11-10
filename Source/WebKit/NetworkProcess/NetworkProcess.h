@@ -224,12 +224,12 @@ public:
 
     CacheModel cacheModel() const { return m_cacheModel; }
 
-    const HashSet<String>& localhostAliasesForTesting() const LIFETIME_BOUND { return m_localhostAliasesForTesting; }
+    const HashSet<RefPtr<StringImpl>>& localhostAliasesForTesting() const LIFETIME_BOUND { return m_localhostAliasesForTesting; }
 
     // Diagnostic messages logging.
-    void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
-    void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
-    void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
+    void logDiagnosticMessage(WebPageProxyIdentifier, StringImpl* message, StringImpl* description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithResult(WebPageProxyIdentifier, StringImpl* message, StringImpl* description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValue(WebPageProxyIdentifier, StringImpl* message, StringImpl* description, double value, unsigned significantFigures, WebCore::ShouldSample);
 #if PLATFORM(MAC)
     void systemDidWake();
 #endif
@@ -238,15 +238,15 @@ public:
     std::optional<audit_token_t> sourceApplicationAuditToken() const;
 #endif
 #if PLATFORM(COCOA) || USE(SOUP)
-    HashSet<String> hostNamesWithHSTSCache(PAL::SessionID) const;
-    void deleteHSTSCacheForHostNames(PAL::SessionID, const Vector<String>&);
+    HashSet<RefPtr<StringImpl>> hostNamesWithHSTSCache(PAL::SessionID) const;
+    void deleteHSTSCacheForHostNames(PAL::SessionID, const Vector<RefPtr<StringImpl>>&);
     void clearHSTSCache(PAL::SessionID, WallTime modifiedSince);
 #endif
 
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);
 
 #if USE(SOUP)
-    void prefetchDNS(const String&);
+    void prefetchDNS(StringImpl*);
 #endif
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
@@ -259,7 +259,7 @@ public:
     void clearUserInteraction(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::SessionID, OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     void deleteCookiesForTesting(PAL::SessionID, RegistrableDomain, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);
-    void dumpResourceLoadStatistics(PAL::SessionID, CompletionHandler<void(String)>&&);
+    void dumpResourceLoadStatistics(PAL::SessionID, CompletionHandler<void(RefPtr<StringImpl>)>&&);
     void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&&);
     void isGrandfathered(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void(bool)>&&);
@@ -277,7 +277,7 @@ public:
     void isRelationshipOnlyInDatabaseOnce(PAL::SessionID, RegistrableDomain&& subDomain, RegistrableDomain&& topDomain, CompletionHandler<void(bool)>&&);
     void hasLocalStorageOrCookies(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void hasLocalStorage(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
-    void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
+    void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<RefPtr<StringImpl>> domains)>&&);
     void logFrameNavigation(PAL::SessionID, NavigatedToDomain&&, TopFrameDomain&&, NavigatedFromDomain&&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
     void logUserInteraction(PAL::SessionID, TopFrameDomain&&, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
@@ -331,7 +331,7 @@ public:
     void setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID, WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
     void setExemptAllowlistedCookiesFromITP(PAL::SessionID, bool, CompletionHandler<void()>&&);
     void setToSameSiteStrictCookiesForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
-    void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&&);
+    void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, RefPtr<StringImpl>&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
 
     void notifyMediaStreamingActivity(bool);
@@ -374,7 +374,7 @@ public:
     void cloneSessionStorageForWebPage(PAL::SessionID, WebPageProxyIdentifier fromIdentifier, WebPageProxyIdentifier toIdentifier);
     void didIncreaseQuota(PAL::SessionID, WebCore::ClientOrigin&&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
     void renameOriginInWebsiteData(PAL::SessionID, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
-    void websiteDataOriginDirectoryForTesting(PAL::SessionID, WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(const String&)>&&);
+    void websiteDataOriginDirectoryForTesting(PAL::SessionID, WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(StringImpl*)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;
@@ -384,14 +384,14 @@ public:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-    const String& uiProcessBundleIdentifier() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& uiProcessBundleIdentifier() const LIFETIME_BOUND;
 
     void ref() const final { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
     void simulatePrivateClickMeasurementConversion(PAL::SessionID, int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
-    void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);
+    void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(RefPtr<StringImpl>)>&&);
     void clearPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void()>&&);
     NODELETE bool allowsPrivateClickMeasurementTestFunctionality() const;
     void setPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID, bool value, CompletionHandler<void()>&&);
@@ -403,8 +403,8 @@ public:
     void setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID, URL&& sourceURL, URL&& destinationURL, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
-    void setPCMFraudPreventionValuesForTesting(PAL::SessionID, String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAppBundleIDForTesting(PAL::SessionID, String&& appBundleIDForTesting, CompletionHandler<void()>&&);
+    void setPCMFraudPreventionValuesForTesting(PAL::SessionID, RefPtr<StringImpl>&& unlinkableToken, RefPtr<StringImpl>&& secretToken, RefPtr<StringImpl>&& signature, RefPtr<StringImpl>&& keyID, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAppBundleIDForTesting(PAL::SessionID, RefPtr<StringImpl>&& appBundleIDForTesting, CompletionHandler<void()>&&);
 
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
@@ -433,12 +433,12 @@ public:
     void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
-    void broadcastConsoleMessage(PAL::SessionID, JSC::MessageSource, JSC::MessageLevel, const String& message);
-    void updateBundleIdentifier(String&&, CompletionHandler<void()>&&);
+    void broadcastConsoleMessage(PAL::SessionID, JSC::MessageSource, JSC::MessageLevel, StringImpl* message);
+    void updateBundleIdentifier(RefPtr<StringImpl>&&, CompletionHandler<void()>&&);
     void clearBundleIdentifier(CompletionHandler<void()>&&);
 
     bool shouldDisableCORSForRequestTo(WebCore::PageIdentifier, const URL&) const;
-    void setCORSDisablingPatternsForPage(WebCore::ProcessIdentifier, WebCore::PageIdentifier, Vector<String>&&);
+    void setCORSDisablingPatternsForPage(WebCore::ProcessIdentifier, WebCore::PageIdentifier, Vector<RefPtr<StringImpl>>&&);
 
     void recordMessagePortTransferDestinationsForSiteIsolation(Vector<WebCore::MessagePortIdentifier>&&, WebCore::ProcessIdentifier destination, CompletionHandler<void()>&&);
 
@@ -450,7 +450,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String containerTemporaryDirectory() const { return m_containerTemporaryDirectory; }
+    RefPtr<StringImpl> containerTemporaryDirectory() const { return m_containerTemporaryDirectory; }
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -464,12 +464,12 @@ public:
     void processPushMessage(PAL::SessionID, WebPushMessage&&, WebCore::PushPermissionState, bool builtInNotificationsEnabled, CompletionHandler<void(bool, std::optional<WebCore::NotificationPayload>&&)>&&);
     void processNotificationEvent(WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&);
 
-    void getAllBackgroundFetchIdentifiers(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
-    void getBackgroundFetchState(PAL::SessionID, const String&, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
-    void abortBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
-    void pauseBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
-    void resumeBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
-    void clickBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void getAllBackgroundFetchIdentifiers(PAL::SessionID, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
+    void getBackgroundFetchState(PAL::SessionID, StringImpl*, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
+    void abortBackgroundFetch(PAL::SessionID, StringImpl*, CompletionHandler<void()>&&);
+    void pauseBackgroundFetch(PAL::SessionID, StringImpl*, CompletionHandler<void()>&&);
+    void resumeBackgroundFetch(PAL::SessionID, StringImpl*, CompletionHandler<void()>&&);
+    void clickBackgroundFetch(PAL::SessionID, StringImpl*, CompletionHandler<void()>&&);
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
     void removePushSubscriptionsForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
@@ -480,7 +480,7 @@ public:
 #endif
 
     void deleteWebsiteDataForOrigin(PAL::SessionID, OptionSet<WebsiteDataType>, const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
-    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostnames, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
+    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<RefPtr<StringImpl>>& cookieHostNames, const Vector<RefPtr<StringImpl>>& HSTSCacheHostnames, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
 
     enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
@@ -513,16 +513,16 @@ public:
 
     void getAppBadgeForTesting(PAL::SessionID, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
-    void allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier, const Vector<String>&, CompletionHandler<void()>&&);
-    void allowFileAccessFromWebProcess(WebCore::ProcessIdentifier, const String&, std::optional<WebKit::SandboxExtensionHandle>, CompletionHandler<void()>&&);
+    void allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier, const Vector<RefPtr<StringImpl>>&, CompletionHandler<void()>&&);
+    void allowFileAccessFromWebProcess(WebCore::ProcessIdentifier, StringImpl*, std::optional<WebKit::SandboxExtensionHandle>, CompletionHandler<void()>&&);
 
     bool enableModernDownloadProgress() const { return m_enableModernDownloadProgress; }
 
-    void fetchLocalStorage(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&&)>&&);
-    void restoreLocalStorage(PAL::SessionID, HashMap<WebCore::ClientOrigin, HashMap<String, String>>&&, CompletionHandler<void(bool)>&&);
+    void fetchLocalStorage(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<WebCore::ClientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>>>&&)>&&);
+    void restoreLocalStorage(PAL::SessionID, HashMap<WebCore::ClientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>>&&, CompletionHandler<void(bool)>&&);
 
-    void fetchSessionStorage(PAL::SessionID, WebPageProxyIdentifier, CompletionHandler<void(std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&&)>&&);
-    void restoreSessionStorage(PAL::SessionID, WebPageProxyIdentifier, HashMap<WebCore::ClientOrigin, HashMap<String, String>>&&, CompletionHandler<void(bool)>&&);
+    void fetchSessionStorage(PAL::SessionID, WebPageProxyIdentifier, CompletionHandler<void(std::optional<HashMap<WebCore::ClientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>>>&&)>&&);
+    void restoreSessionStorage(PAL::SessionID, WebPageProxyIdentifier, HashMap<WebCore::ClientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>>&&, CompletionHandler<void(bool)>&&);
 
     NODELETE WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlockingForPage(std::optional<WebPageProxyIdentifier>) const;
 
@@ -575,7 +575,7 @@ private:
     void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&,  CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, WebCore::HTTPCookieAcceptPolicy)>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(SecurityFlags::Storage&&);
-    void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
+    void isSecurityFlagEnabledForTesting(StringImpl*, CompletionHandler<void(std::optional<bool>)>&&);
 
     void fetchWebsitesWithUserInteractions(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&&);
 
@@ -585,8 +585,8 @@ private:
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
-    void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, OptionSet<WebCore::AdvancedPrivacyProtections>, const String& suggestedFilename);
-    void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart, std::span<const uint8_t> activityAccessToken);
+    void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, OptionSet<WebCore::AdvancedPrivacyProtections>, StringImpl* suggestedFilename);
+    void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, StringImpl* path, SandboxExtensionHandle&&, CallDownloadDidStart, std::span<const uint8_t> activityAccessToken);
     void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
@@ -603,7 +603,7 @@ private:
     void setCacheModel(CacheModel);
     void setCacheModelSynchronouslyForTesting(CacheModel, CompletionHandler<void()>&&);
 #if !PLATFORM(COCOA)
-    void allowSpecificHTTPSCertificateForHost(PAL::SessionID, const WebCore::CertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(PAL::SessionID, const WebCore::CertificateInfo&, StringImpl* host);
 #endif
     void allowTLSCertificateChainForLocalPCMTesting(PAL::SessionID, const WebCore::CertificateInfo&);
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
@@ -620,7 +620,7 @@ private:
     
 #if USE(SOUP)
     void setIgnoreTLSErrors(PAL::SessionID, bool);
-    void userPreferredLanguagesChanged(const Vector<String>&);
+    void userPreferredLanguagesChanged(const Vector<RefPtr<StringImpl>>&);
     void setNetworkProxySettings(PAL::SessionID, WebCore::SoupNetworkProxySettings&&);
     void setPersistentCredentialStorageEnabled(PAL::SessionID, bool);
 #endif
@@ -638,11 +638,11 @@ private:
     void loadersAwaitingWebProcessTransferCountForTesting(PAL::SessionID, CompletionHandler<void(uint64_t)>&&) const;
     void platformFlushCookies(PAL::SessionID, CompletionHandler<void()>&&);
     
-    void registerURLSchemeAsSecure(const String&) const;
-    void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
-    void registerURLSchemeAsLocal(const String&) const;
+    void registerURLSchemeAsSecure(StringImpl*) const;
+    void registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl*) const;
+    void registerURLSchemeAsLocal(StringImpl*) const;
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-    void registerURLSchemeAsNoAccess(const String&) const;
+    void registerURLSchemeAsNoAccess(StringImpl*) const;
 #endif
 
 #if USE(RUNNINGBOARD)
@@ -670,7 +670,7 @@ private:
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
     bool m_suppressMemoryPressureHandler { false };
-    mutable String m_uiProcessBundleIdentifier;
+    mutable RefPtr<StringImpl> m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
     using NetworkProcessSupplementMap = HashMap<ASCIILiteral, std::unique_ptr<NetworkProcessSupplement>>;
@@ -686,7 +686,7 @@ private:
         HashSet<WebCore::Site> sites;
     };
     HashMap<WebCore::ProcessIdentifier, AllowedFirstParties> m_allowedFirstPartiesForCookies;
-    HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
+    HashMap<WebCore::ProcessIdentifier, HashSet<RefPtr<StringImpl>>> m_pendingAllowedFilePathsByProcess;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };
     HashMap<WebCore::ProcessIdentifier, HashSet<WebPageProxyIdentifier>> m_allowedWebPageProxyIdentifiers;
     HashMap<DownloadID, WebCore::ProcessIdentifier> m_authorizedDownloads;
@@ -725,7 +725,7 @@ private:
 
     HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
     HashSet<Ref<NetworkStorageManager>> m_closingStorageManagers;
-    HashSet<String> m_localhostAliasesForTesting;
+    HashSet<RefPtr<StringImpl>> m_localhostAliasesForTesting;
     HashSet<WebPageProxyIdentifier> m_pagesWithRelaxedThirdPartyCookieBlocking;
 
     bool m_privateClickMeasurementEnabled { true };
@@ -741,7 +741,7 @@ private:
     bool m_isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
 #if PLATFORM(IOS_FAMILY)
-    String m_containerTemporaryDirectory;
+    RefPtr<StringImpl> m_containerTemporaryDirectory;
 #endif
     bool m_enableModernDownloadProgress { false };
 #if HAVE(ENHANCED_SECURITY_LINKS)
@@ -762,7 +762,7 @@ private:
 };
 
 #if !PLATFORM(COCOA)
-inline const String& NetworkProcess::uiProcessBundleIdentifier() const
+inline const RefPtr<StringImpl>& NetworkProcess::uiProcessBundleIdentifier() const
 {
     return m_uiProcessBundleIdentifier;
 }

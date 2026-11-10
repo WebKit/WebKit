@@ -159,17 +159,17 @@ enum class SerializationArguments : uint8_t {
 };
 
 struct AssociatedProperty {
-    Variant<AtomString, CSSPropertyID> property;
+    Variant<RefPtr<AtomStringImpl>, CSSPropertyID> property;
 
-    AssociatedProperty(AtomString&& customPropertyName) : property { WTF::move(customPropertyName) } { }
-    AssociatedProperty(const AtomString& customPropertyName) : property { customPropertyName } { }
+    AssociatedProperty(RefPtr<AtomStringImpl>&& customPropertyName) : property { WTF::move(customPropertyName) } { }
+    AssociatedProperty(AtomStringImpl* customPropertyName) : property { customPropertyName } { }
     AssociatedProperty(CSSPropertyID propertyID) : property { propertyID } { ASSERT(propertyID != CSSPropertyID::Custom); }
 
-    const AtomString& nameString() const LIFETIME_BOUND
+    const RefPtr<AtomStringImpl>& nameString() const LIFETIME_BOUND
     {
         return WTF::switchOn(property,
-            [](const AtomString& customPropertyName) -> const AtomString& { return customPropertyName; },
-            [](CSSPropertyID propertyID) -> const AtomString& { return WebCore::nameString(propertyID); }
+            [](const RefPtr<AtomStringImpl>& customPropertyName) -> const RefPtr<AtomStringImpl>& { return customPropertyName; },
+            [](CSSPropertyID propertyID) -> const RefPtr<AtomStringImpl>& { return WebCore::nameString(propertyID); }
         );
     }
 
@@ -182,9 +182,9 @@ struct AssociatedProperty {
 
     bool operator==(const AssociatedProperty&) const = default;
 
-    bool operator==(const AtomString& otherCustomPropertyName) const
+    bool operator==(AtomStringImpl* otherCustomPropertyName) const
     {
-        if (auto* customPropertyName = std::get_if<AtomString>(&property))
+        if (auto* customPropertyName = std::get_if<RefPtr<AtomStringImpl>>(&property))
             return *customPropertyName == otherCustomPropertyName;
         return false;
     }
@@ -200,7 +200,7 @@ struct AssociatedProperty {
 class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
     WTF_MAKE_TZONE_ALLOCATED(CSSStyleValue);
 public:
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     virtual void serialize(StringBuilder&, OptionSet<SerializationArguments> = { }) const;
 
 IGNORE_GCC_WARNINGS_BEGIN("mismatched-new-delete")
@@ -210,8 +210,8 @@ IGNORE_GCC_WARNINGS_END
 
     virtual CSSStyleValueType styleValueType() const { return CSSStyleValueType::CSSStyleValue; }
 
-    static ExceptionOr<Ref<CSSStyleValue>> parse(Document&, const AtomString&, const String&);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseAll(Document&, const AtomString&, const String&);
+    static ExceptionOr<Ref<CSSStyleValue>> parse(Document&, AtomStringImpl*, StringImpl*);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseAll(Document&, AtomStringImpl*, StringImpl*);
 
     static Ref<CSSStyleValue> create(RefPtr<CSSValue>&&, AssociatedProperty&&);
 

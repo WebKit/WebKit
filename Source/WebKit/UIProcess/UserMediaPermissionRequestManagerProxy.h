@@ -86,11 +86,11 @@ public:
 #if ENABLE(MEDIA_STREAM)
     static void forEach(NOESCAPE const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
 #if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
-    bool isMonitoringCaptureDeviceRotation(const String&);
-    void startMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
-    void stopMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
+    bool isMonitoringCaptureDeviceRotation(StringImpl*);
+    void startMonitoringCaptureDeviceRotation(StringImpl*, RotationMonitoringReason);
+    void stopMonitoringCaptureDeviceRotation(StringImpl*, RotationMonitoringReason);
     void stopMonitoringCaptureDeviceRotationForCapturePreview();
-    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void rotationAngleForCaptureDeviceChanged(StringImpl*, WebCore::VideoFrameRotation);
 #endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 #endif
     static bool permittedToCaptureAudio();
@@ -105,7 +105,7 @@ public:
     void viewIsBecomingVisible();
 
     void grantRequest(UserMediaPermissionRequestProxy&);
-    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& message = { });
+    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, StringImpl* message = nullptr);
     void denyRequest(UserMediaPermissionRequestProxy&, WebCore::MediaConstraintType);
 
     void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
@@ -168,7 +168,7 @@ private:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& message, WebCore::MediaConstraintType);
+    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, StringImpl* message, WebCore::MediaConstraintType);
 
     Ref<UserMediaPermissionRequestProxy> createPermissionRequest(WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
 #if ENABLE(MEDIA_STREAM)
@@ -210,7 +210,7 @@ private:
     void askDelegateAboutNextWaitingRequest();
     void updateStoredRequests(UserMediaPermissionRequestProxy&);
 
-    String ephemeralDeviceHashSaltForFrame(WebCore::FrameIdentifier);
+    RefPtr<StringImpl> ephemeralDeviceHashSaltForFrame(WebCore::FrameIdentifier);
 
     Seconds inactiveMediaCaptureStreamDuration() const;
 
@@ -227,7 +227,7 @@ private:
 
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
-    HashMap<WebCore::FrameIdentifier, String> m_frameEphemeralHashSalts;
+    HashMap<WebCore::FrameIdentifier, RefPtr<StringImpl>> m_frameEphemeralHashSalts;
 
     Vector<DeniedRequest> m_deniedRequests;
 
@@ -251,7 +251,7 @@ private:
     std::optional<MonotonicTime> m_lastCaptureTime;
 };
 
-String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);
+RefPtr<StringImpl> convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);
 
 } // namespace WebKit
 
@@ -263,7 +263,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebKit::UserMediaPermissionRequestManagerProxy::RequestAction> {
-    static String toString(const WebKit::UserMediaPermissionRequestManagerProxy::RequestAction type)
+    static RefPtr<StringImpl> toString(const WebKit::UserMediaPermissionRequestManagerProxy::RequestAction type)
     {
         return convertEnumerationToString(type);
     }

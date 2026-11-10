@@ -55,8 +55,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageCapture);
 
 ExceptionOr<Ref<ImageCapture>> ImageCapture::create(Document& document, Ref<MediaStreamTrack> track)
 {
-    if (track->kind() != "video"_s)
-        return Exception { ExceptionCode::NotSupportedError, "Invalid track kind"_s };
+    if (!equal(track->kind(), "video"_s))
+        return Exception { ExceptionCode::NotSupportedError, "Invalid track kind"_si };
 
     auto imageCapture = adoptRef(*new ImageCapture(document, track));
     imageCapture->suspendIfNeeded();
@@ -90,7 +90,7 @@ void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInt
     // and abort these steps.
     if (m_track->readyState() == MediaStreamTrack::State::Ended) {
         ERROR_LOG(identifier, "rejecting promise, track has ended");
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_si });
         return;
     }
 
@@ -157,7 +157,7 @@ static void createImageBitmap(VideoFrame& videoFrame, CompletionHandler<void(Ref
 
 static Exception createImageCaptureException()
 {
-    return Exception { WebCore::ExceptionCode::UnknownError, "Unable to create ImageBitmap"_s };
+    return Exception { WebCore::ExceptionCode::UnknownError, "Unable to create ImageBitmap"_si };
 }
 
 static void createImageBitmapOrException(VideoFrame& videoFrame, CompletionHandler<void(ExceptionOr<Ref<ImageBitmap>>&&)>&& callback)
@@ -194,7 +194,7 @@ public:
             m_source->removeVideoFrameObserver(*this);
 
         while (!m_callbacks.isEmpty())
-            m_callbacks.takeFirst()(WebCore::Exception { WebCore::ExceptionCode::OperationError, "grabFrame is stopped"_s });
+            m_callbacks.takeFirst()(WebCore::Exception { WebCore::ExceptionCode::OperationError, "grabFrame is stopped"_si });
     }
 
 private:
@@ -251,7 +251,7 @@ void ImageCapture::grabFrame(DOMPromiseDeferred<IDLInterface<ImageBitmap>>&& pro
     ALWAYS_LOG(identifier);
 
     if (m_track->readyState() == MediaStreamTrack::State::Ended) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_si });
         return;
     }
 
@@ -313,7 +313,7 @@ void ImageCapture::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCa
     // and abort these steps.
     if (m_track->readyState() == MediaStreamTrack::State::Ended) {
         ERROR_LOG(identifier, "rejecting promise, track has ended");
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_si });
         return;
     }
 
@@ -342,7 +342,7 @@ void ImageCapture::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettin
     // and abort these steps.
     if (m_track->readyState() == MediaStreamTrack::State::Ended) {
         ERROR_LOG(identifier, "rejecting promise, track has ended");
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_si });
         return;
     }
 

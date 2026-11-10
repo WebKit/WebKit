@@ -38,18 +38,18 @@ class MediaStreamTrackEvent final : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 
-    NODELETE static Ref<MediaStreamTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
+    NODELETE static Ref<MediaStreamTrackEvent> create(AtomStringImpl* type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
 
     struct Init : EventInit {
         Ref<MediaStreamTrack> track;
     };
-    NODELETE static Ref<MediaStreamTrackEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<MediaStreamTrackEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
 
     NODELETE MediaStreamTrack& track() const;
 
 private:
-    MediaStreamTrackEvent(const AtomString& type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
-    MediaStreamTrackEvent(const AtomString& type, Init&&, IsTrusted);
+    MediaStreamTrackEvent(AtomStringImpl* type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
+    MediaStreamTrackEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     const Ref<MediaStreamTrack> m_track;
 };

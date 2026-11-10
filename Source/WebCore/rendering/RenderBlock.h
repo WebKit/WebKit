@@ -67,7 +67,7 @@ protected:
     RenderBlock(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
 
 public:
-    String debugDescription() const override;
+    RefPtr<StringImpl> debugDescription() const override;
 
     virtual void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu);
 
@@ -122,10 +122,6 @@ public:
     bool createsNewFormattingContext() const;
 
     static TextRun constructTextRun(StringView, const Style::ComputedStyle&,
-        ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const String&, const Style::ComputedStyle&,
-        ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const AtomString&, const Style::ComputedStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
     static TextRun constructTextRun(const RenderText&, const Style::ComputedStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
@@ -217,7 +213,7 @@ public:
     bool hasDefiniteLogicalHeight() const;
     bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const final;
 
-    static String updateSecurityDiscCharacters(const Style::ComputedStyle&, String&&);
+    static RefPtr<StringImpl> updateSecurityDiscCharacters(const Style::ComputedStyle&, RefPtr<StringImpl>&&);
 
     virtual bool hasLineIfEmpty() const;
 

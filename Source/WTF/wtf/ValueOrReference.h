@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -69,6 +70,11 @@ public:
     operator const T&() const LIFETIME_BOUND { return m_reference; }
     const T& get() const LIFETIME_BOUND { return m_reference; }
     const T* operator->() const LIFETIME_BOUND { return &m_reference; }
+
+    // Like RefPtr itself, a ValueOrReference<RefPtr<X>> converts to X*, so that it can be passed to X* parameters
+    // without a second user-defined conversion.
+    using RawPointerType = typename Detail::RefPtrRawPointer<std::remove_const_t<T>>::Type;
+    operator RawPointerType() const LIFETIME_BOUND requires Detail::RefPtrRawPointer<std::remove_const_t<T>>::isRefPtr { return m_reference.get(); }
 
 private:
     T m_value;

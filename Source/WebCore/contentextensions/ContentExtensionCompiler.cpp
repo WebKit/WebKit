@@ -74,7 +74,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 
     using ActionLocation = uint32_t;
     using ActionMap = HashMap<ResourceFlags, ActionLocation, DefaultHash<ResourceFlags>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>;
-    using StringActionMap = HashMap<std::pair<String, ResourceFlags>, ActionLocation, DefaultHash<std::pair<String, ResourceFlags>>, PairHashTraits<HashTraits<String>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
+    using StringActionMap = HashMap<std::pair<RefPtr<StringImpl>, ResourceFlags>, ActionLocation, DefaultHash<std::pair<RefPtr<StringImpl>, ResourceFlags>>, PairHashTraits<HashTraits<RefPtr<StringImpl>>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
     using RedirectActionMap = HashMap<std::pair<RedirectAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<RedirectAction, ResourceFlags>>, PairHashTraits<HashTraits<RedirectAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
     using ModifyHeadersActionMap = HashMap<std::pair<ModifyHeadersAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<ModifyHeadersAction, ResourceFlags>>, PairHashTraits<HashTraits<ModifyHeadersAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
     ActionMap blockLoadActionsMap;
@@ -282,10 +282,10 @@ static bool compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
     return true;
 }
 
-std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleJSON, Vector<ContentExtensionRule>&& parsedRuleList)
+std::error_code compileRuleList(ContentExtensionCompilationClient& client, RefPtr<StringImpl>&& ruleJSON, Vector<ContentExtensionRule>&& parsedRuleList)
 {
 #if ASSERT_ENABLED
-    callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = crossThreadCopy(parsedRuleList)] {
+    callOnMainThread([ruleJSON = isolatedCopy(ruleJSON), parsedRuleList = crossThreadCopy(parsedRuleList)] {
         ASSERT(parseRuleList(ruleJSON, WebCore::ContentExtensions::CSSSelectorsAllowed::Yes).value() == parsedRuleList);
     });
 #endif
@@ -294,7 +294,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     MonotonicTime patternPartitioningStart = MonotonicTime::now();
 #endif
 
-    client.writeSource(std::exchange(ruleJSON, String()));
+    client.writeSource(std::exchange(ruleJSON, nullString()));
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
@@ -317,7 +317,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     for (unsigned ruleIndex = 0; ruleIndex < parsedRuleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = parsedRuleList[ruleIndex];
         const Trigger& trigger = contentExtensionRule.trigger();
-        ASSERT(trigger.urlFilter.length());
+        ASSERT(length(trigger.urlFilter));
 
         // High bits are used for flags. This should match how they are used in DFABytecodeCompiler::compileNode.
         ASSERT(!(~ActionFlagMask & (static_cast<uint64_t>(trigger.flags) << 32)));
@@ -333,7 +333,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
             return ContentExtensionError::JSONInvalidRegex;
         }
 
-        for (const String& condition : trigger.conditions) {
+        for (const RefPtr<StringImpl>& condition : trigger.conditions) {
             switch (static_cast<ActionCondition>(trigger.flags & ActionConditionMask)) {
             case ActionCondition::None:
                 ASSERT_NOT_REACHED();

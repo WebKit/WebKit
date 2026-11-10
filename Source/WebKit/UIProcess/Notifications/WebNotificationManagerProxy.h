@@ -66,7 +66,7 @@ public:
     virtual ~WebNotificationManagerProxy();
 
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
-    HashMap<String, bool> notificationPermissions();
+    HashMap<RefPtr<StringImpl>, bool> notificationPermissions();
 
     void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     bool showPersistent(const WebsiteDataStore&, IPC::Connection*, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
@@ -75,7 +75,7 @@ public:
     void clearNotifications(WebPageProxy*, const Vector<WTF::UUID>& pageNotificationIDs);
     void didDestroyNotification(WebPageProxy*, const WTF::UUID& pageNotificationID);
 
-    void getNotifications(const URL&, const String&, PAL::SessionID, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void getNotifications(const URL&, StringImpl*, PAL::SessionID, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
 
     void providerDidShowNotification(WebNotificationIdentifier);
     void providerDidClickNotification(WebNotificationIdentifier);

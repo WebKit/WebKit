@@ -31,10 +31,10 @@
 
 namespace WebKit {
 
-static String programName()
+static RefPtr<StringImpl> programName()
 {
     if (auto* prgname = g_get_prgname())
-        return String::fromUTF8(prgname);
+        return StringImpl::fromUTF8(prgname);
 
 #if PLATFORM(GTK)
     return "webkitgtk"_s;
@@ -45,9 +45,9 @@ static String programName()
 #endif
 }
 
-const String& WebsiteDataStore::defaultBaseCacheDirectory()
+const RefPtr<StringImpl>& WebsiteDataStore::defaultBaseCacheDirectory()
 {
-    static NeverDestroyed<String> baseCacheDirectory;
+    static NeverDestroyed<RefPtr<StringImpl>> baseCacheDirectory;
     static std::once_flag once;
     std::call_once(once, [] {
 
@@ -56,9 +56,9 @@ const String& WebsiteDataStore::defaultBaseCacheDirectory()
     return baseCacheDirectory;
 }
 
-const String& WebsiteDataStore::defaultBaseDataDirectory()
+const RefPtr<StringImpl>& WebsiteDataStore::defaultBaseDataDirectory()
 {
-    static NeverDestroyed<String> baseDataDirectory;
+    static NeverDestroyed<RefPtr<StringImpl>> baseDataDirectory;
     static std::once_flag once;
     std::call_once(once, [] {
         baseDataDirectory.get() = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), programName());
@@ -66,14 +66,14 @@ const String& WebsiteDataStore::defaultBaseDataDirectory()
     return baseDataDirectory;
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::cacheDirectoryFileSystemRepresentation(StringImpl* directoryName, StringImpl* baseCacheDirectory, ShouldCreateDirectory)
 {
-    return FileSystem::pathByAppendingComponent(baseCacheDirectory.isNull() ? defaultBaseCacheDirectory() : baseCacheDirectory, directoryName);
+    return FileSystem::pathByAppendingComponent(!baseCacheDirectory ? defaultBaseCacheDirectory() : RefPtr { baseCacheDirectory }, directoryName);
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String& baseDataDirectory, ShouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(StringImpl* directoryName, StringImpl* baseDataDirectory, ShouldCreateDirectory)
 {
-    return FileSystem::pathByAppendingComponent(baseDataDirectory.isNull() ? defaultBaseDataDirectory() : baseDataDirectory, directoryName);
+    return FileSystem::pathByAppendingComponent(!baseDataDirectory ? defaultBaseDataDirectory() : RefPtr { baseDataDirectory }, directoryName);
 }
 
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()

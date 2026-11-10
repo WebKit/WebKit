@@ -144,7 +144,7 @@ void ProcessLauncher::launchProcess()
     }
 #endif
 
-    String executablePath;
+    RefPtr<StringImpl> executablePath;
     UTF8CString realExecutablePath;
     switch (m_launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
@@ -168,9 +168,9 @@ void ProcessLauncher::launchProcess()
 
 #if ENABLE(DEVELOPER_MODE)
     Vector<UTF8CString> prefixArgs;
-    if (!m_launchOptions.processCmdPrefix.isNull()) {
-        for (auto& arg : m_launchOptions.processCmdPrefix.split(' '))
-            prefixArgs.append(arg.utf8());
+    if (m_launchOptions.processCmdPrefix) {
+        for (auto& arg : split(m_launchOptions.processCmdPrefix, ' '))
+            prefixArgs.append(utf8(arg));
         nargs += prefixArgs.size();
     }
 
@@ -243,7 +243,7 @@ void ProcessLauncher::launchProcess()
     GRefPtr<GSubprocess> process;
 
 #if OS(LINUX)
-    bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
+    bool sandboxEnabled = equal(m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s), "true"_s);
 
     if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
         flatpakSpawn(m_launchOptions, argv, flatpakInheritedFDs.span());
@@ -309,7 +309,7 @@ void ProcessLauncher::launchProcess()
     });
 }
 
-void ProcessLauncher::terminateProcess(const String&)
+void ProcessLauncher::terminateProcess(StringImpl*)
 {
     if (m_isLaunching) {
         invalidate();

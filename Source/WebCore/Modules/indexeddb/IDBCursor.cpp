@@ -111,20 +111,20 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue va
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 
     if (sourcesDeleted())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor's source or effective object store has been deleted."_si };
 
     Ref transaction = this->transaction();
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'update' on 'IDBCursor': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'update' on 'IDBCursor': The transaction is inactive or finished."_si };
 
     if (transaction->isReadOnly())
-        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction."_s };
+        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction."_si };
 
     if (!m_gotValue)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_si };
 
     if (!isKeyCursorWithValue())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor."_si };
 
     VM& vm = state.vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -136,7 +136,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue va
     transaction->activate();
 
     if (scope.exception()) [[unlikely]]
-        return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
+        return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_si };
 
 
     auto& optionalKeyPath = objectStore->info().keyPath();
@@ -146,7 +146,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue va
         RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, clonedValue, optionalKeyPath.value());
         IDBKeyData keyPathKeyData(keyPathKey.get());
         if (!keyPathKey || keyPathKeyData != m_primaryKeyData)
-            return Exception { ExceptionCode::DataError, "Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key."_s };
+            return Exception { ExceptionCode::DataError, "Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key."_si };
     }
 
     auto putResult = objectStore->putForCursorUpdate(state, value, m_primaryKey.copyRef(), WTF::move(serializedValue));
@@ -168,16 +168,16 @@ ExceptionOr<void> IDBCursor::advance(unsigned count)
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!count)
-        return Exception { ExceptionCode::TypeError, "Failed to execute 'advance' on 'IDBCursor': A count argument with value 0 (zero) was supplied, must be greater than 0."_s };
+        return Exception { ExceptionCode::TypeError, "Failed to execute 'advance' on 'IDBCursor': A count argument with value 0 (zero) was supplied, must be greater than 0."_si };
 
     if (!transaction().isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'advance' on 'IDBCursor': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'advance' on 'IDBCursor': The transaction is inactive or finished."_si };
 
     if (sourcesDeleted())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'advance' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'advance' on 'IDBCursor': The cursor's source or effective object store has been deleted."_si };
 
     if (!m_gotValue)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'advance' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'advance' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_si };
 
     m_gotValue = false;
 
@@ -192,43 +192,43 @@ ExceptionOr<void> IDBCursor::continuePrimaryKey(JSGlobalObject& state, JSValue k
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!transaction().isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The transaction is inactive or finished."_si };
 
     if (sourcesDeleted())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source or effective object store has been deleted."_si };
 
     if (!std::holds_alternative<Ref<IDBIndex>>(m_source))
-        return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source is not an index."_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source is not an index."_si };
 
     auto direction = m_info.cursorDirection();
     if (direction != IndexedDB::CursorDirection::Next && direction != IndexedDB::CursorDirection::Prev)
-        return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's direction must be either \"next\" or \"prev\"."_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's direction must be either \"next\" or \"prev\"."_si };
 
     if (!m_gotValue)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_si };
 
     RefPtr<IDBKey> key = scriptValueToIDBKey(state, keyValue);
     if (!key->isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The first parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The first parameter is not a valid key."_si };
 
     RefPtr<IDBKey> primaryKey = scriptValueToIDBKey(state, primaryKeyValue);
     if (!primaryKey->isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The second parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The second parameter is not a valid key."_si };
 
     IDBKeyData keyData = { key.get() };
     IDBKeyData primaryKeyData = { primaryKey.get() };
 
     if (keyData < m_keyData && direction == IndexedDB::CursorDirection::Next)
-        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The first parameter is less than this cursor's position and this cursor's direction is \"next\"."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The first parameter is less than this cursor's position and this cursor's direction is \"next\"."_si };
 
     if (keyData > m_keyData && direction == IndexedDB::CursorDirection::Prev)
-        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The first parameter is greater than this cursor's position and this cursor's direction is \"prev\"."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The first parameter is greater than this cursor's position and this cursor's direction is \"prev\"."_si };
 
     if (keyData == m_keyData) {
         if (primaryKeyData <= m_primaryKeyData && direction == IndexedDB::CursorDirection::Next)
-            return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The key parameters represent a position less-than-or-equal-to this cursor's position and this cursor's direction is \"next\"."_s };
+            return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The key parameters represent a position less-than-or-equal-to this cursor's position and this cursor's direction is \"next\"."_si };
         if (primaryKeyData >= m_primaryKeyData && direction == IndexedDB::CursorDirection::Prev)
-            return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The key parameters represent a position greater-than-or-equal-to this cursor's position and this cursor's direction is \"prev\"."_s };
+            return Exception { ExceptionCode::DataError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The key parameters represent a position greater-than-or-equal-to this cursor's position and this cursor's direction is \"prev\"."_si };
     }
 
     m_gotValue = false;
@@ -256,23 +256,23 @@ ExceptionOr<void> IDBCursor::continueFunction(const IDBKeyData& key)
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!transaction().isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'continue' on 'IDBCursor': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'continue' on 'IDBCursor': The transaction is inactive or finished."_si };
 
     if (sourcesDeleted())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continue' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continue' on 'IDBCursor': The cursor's source or effective object store has been deleted."_si };
 
     if (!m_gotValue)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_si };
 
     if (!key.isNull() && !key.isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'continue' on 'IDBCursor': The parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'continue' on 'IDBCursor': The parameter is not a valid key."_si };
 
     if (m_info.isDirectionForward()) {
         if (!key.isNull() && key <= m_keyData)
-            return Exception { ExceptionCode::DataError, "Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position."_s };
+            return Exception { ExceptionCode::DataError, "Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position."_si };
     } else {
         if (!key.isNull() && key >= m_keyData)
-            return Exception { ExceptionCode::DataError, "Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position."_s };
+            return Exception { ExceptionCode::DataError, "Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position."_si };
     }
 
     m_gotValue = false;
@@ -308,19 +308,19 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction()
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 
     if (sourcesDeleted())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor's source or effective object store has been deleted."_si };
 
     if (!transaction().isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'delete' on 'IDBCursor': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'delete' on 'IDBCursor': The transaction is inactive or finished."_si };
 
     if (transaction().isReadOnly())
-        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'delete' on 'IDBCursor': The record may not be deleted inside a read-only transaction."_s };
+        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'delete' on 'IDBCursor': The record may not be deleted inside a read-only transaction."_si };
 
     if (!m_gotValue)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor is being iterated or has iterated past its end."_si };
 
     if (!isKeyCursorWithValue())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor is a key cursor."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor is a key cursor."_si };
 
     auto result = protect(effectiveObjectStore())->deleteFunction(IDBKeyRange::create(m_primaryKey.copyRef()).ptr());
     if (result.hasException())
@@ -334,7 +334,7 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction()
 
 bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult, uint64_t operationID)
 {
-    LOG_WITH_STREAM(IndexedDB, stream << "IDBCursor::setGetResult - current key "_s << getResult.keyData().loggingString().left(100));
+    LOG_WITH_STREAM(IndexedDB, stream << "IDBCursor::setGetResult - current key "_s << left(getResult.keyData().loggingString(), 100));
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 
     RefPtr context = request.scriptExecutionContext();

@@ -139,15 +139,15 @@ ExceptionOr<RectifiedCSSColorRGBComp> CSSRGB::rectifyCSSColorRGBComp(CSSColorRGB
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
             if (numericValue->type().matchesNumber() || numericValue->type().matches<CSSNumericBaseType::Percent>())
                 return { WTF::move(numericValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_si };
         },
-        [](String&& string) -> ExceptionOr<RectifiedCSSColorRGBComp> {
+        [](RefPtr<StringImpl>&& string) -> ExceptionOr<RectifiedCSSColorRGBComp> {
             return { CSSOMKeywordValue::rectifyKeywordish(WTF::move(string)) };
         },
         [](Ref<CSSOMKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
             if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
                 return { WTF::move(keywordValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_si };
         }
     );
 }

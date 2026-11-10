@@ -56,7 +56,7 @@ public:
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
 #endif
 
-    virtual String sourceApplicationIdentifier() const { return emptyString(); }
+    virtual RefPtr<StringImpl> sourceApplicationIdentifier() const { return emptyString(); }
 
 #if PLATFORM(WIN)
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;

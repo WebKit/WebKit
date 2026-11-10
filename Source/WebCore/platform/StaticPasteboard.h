@@ -45,17 +45,17 @@ public:
     bool isStatic() const final { return true; }
 
     bool hasData() final;
-    Vector<String> typesSafeForBindings(const String&) final;
-    Vector<String> typesForLegacyUnsafeBindings() final;
-    String readOrigin() final { return { }; }
-    String readString(const String& type) final;
-    String readStringInCustomData(const String& type) final;
+    Vector<RefPtr<StringImpl>> typesSafeForBindings(StringImpl*) final;
+    Vector<RefPtr<StringImpl>> typesForLegacyUnsafeBindings() final;
+    RefPtr<StringImpl> readOrigin() final { return { }; }
+    RefPtr<StringImpl> readString(StringImpl* type) final;
+    RefPtr<StringImpl> readStringInCustomData(StringImpl* type) final;
 
-    void writeString(const String& type, const String& data) final;
-    void writeData(const String& type, Ref<SharedBuffer>&& data);
-    void writeStringInCustomData(const String& type, const String& data);
+    void writeString(StringImpl* type, StringImpl* data) final;
+    void writeData(StringImpl* type, Ref<SharedBuffer>&& data);
+    void writeStringInCustomData(StringImpl* type, StringImpl* data);
     void clear() final;
-    void clear(const String& type) final;
+    void clear(StringImpl* type) final;
 
     void read(PasteboardPlainText&, PlainTextURLReadingPolicy = PlainTextURLReadingPolicy::AllowURL, std::optional<size_t> = std::nullopt) final { }
     void read(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<size_t> = std::nullopt) final { }
@@ -63,8 +63,8 @@ public:
     void write(const PasteboardURL&) final;
     void write(PasteboardImage&&) final;
     void write(const PasteboardWebContent&) final;
-    void writeMarkup(const String&) final;
-    void writePlainText(const String&, SmartReplaceOption) final;
+    void writeMarkup(StringImpl*) final;
+    void writePlainText(StringImpl*, SmartReplaceOption) final;
 
     void writeCustomData(const Vector<PasteboardCustomData>&, PasteboardWriteType = PasteboardWriteType::General) final { }
 
@@ -77,7 +77,7 @@ public:
 
 private:
     PasteboardCustomData m_customData;
-    MemoryCompactRobinHoodHashSet<String> m_nonDefaultDataTypes;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_nonDefaultDataTypes;
     Pasteboard::FileContentState m_fileContentState { Pasteboard::FileContentState::NoFileOrImageData };
 };
 

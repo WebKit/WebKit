@@ -32,10 +32,12 @@
 #include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/FlipBytes.h>
+#include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -48,6 +50,11 @@
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
+#endif
+
+#if OS(WINDOWS)
+#include <wchar.h>
+#include <wtf/text/win/WCharStringExtras.h>
 #endif
 
 #ifdef __OBJC__
@@ -87,6 +94,8 @@ template<typename> struct HashAndCharactersTranslator;
 #define STRING_STATS 0
 
 template<bool isSpecialCharacter(char16_t), typename CharacterType, std::size_t Extent = std::dynamic_extent> NODELETE bool containsOnly(std::span<const CharacterType, Extent>);
+
+enum class TrailingZerosPolicy : bool { Keep, Truncate };
 
 #if STRING_STATS
 
@@ -178,6 +187,9 @@ protected:
 // Right now we use a mix of both, which makes code more confusing and has no benefit.
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+
+// Swift imports StringImpl (and its subclasses) as a shared reference type, retained and released with ref() and deref().
+// That is also correct for static strings, which ref() and deref() never free. Raw StringImpl* returns are +0.
 class StringImpl : private StringImplShape, public NoVirtualDestructorBase {
     WTF_MAKE_NONCOPYABLE(StringImpl);
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl, StringImpl);
@@ -265,6 +277,64 @@ public:
 
     // Construct a string with UTF-8 data, null if it contains invalid UTF-8 sequences.
     WTF_EXPORT_PRIVATE static RefPtr<StringImpl> create(std::span<const char8_t>);
+
+#if USE(CF)
+    // Null CFStringRef results in a null RefPtr.
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> create(CFStringRef);
+#endif
+#ifdef __OBJC__
+    // Null NSString results in a null RefPtr.
+    static RefPtr<StringImpl> create(NSString *string) { return create((__bridge CFStringRef)string); }
+#endif
+#if OS(WINDOWS)
+    // Construct a string with UTF-16 data; null pointer results in null.
+    static RefPtr<StringImpl> create(const wchar_t* characters, size_t length)
+    {
+        static_assert(sizeof(wchar_t) == sizeof(char16_t));
+        if (!characters)
+            return nullptr;
+        return create(unsafeMakeSpan(ucharFrom(characters), length));
+    }
+    static RefPtr<StringImpl> create(const wchar_t* characters) { return create(characters, characters ? wcslen(characters) : 0); }
+#endif
+
+    // Same as create(), except that null data (or a null literal) results in null, like the String constructors did.
+    static RefPtr<StringImpl> createOrNull(std::span<const Latin1Character>);
+    static RefPtr<StringImpl> createOrNull(std::span<const char16_t>);
+    static RefPtr<StringImpl> createOrNull(std::span<const char> characters) { return createOrNull(byteCast<Latin1Character>(characters)); }
+    static RefPtr<StringImpl> createOrNull(ASCIILiteral);
+
+    // Factories with the same semantics (including null vs. empty results) as the String static functions of the same names.
+    // Construct a string with Latin-1 data; null pointer results in null.
+    static RefPtr<StringImpl> fromLatin1(const char*);
+    static RefPtr<StringImpl> fromLatin1(std::span<const char>);
+
+    // Returns null if the input data contains invalid UTF-8 sequences.
+    static RefPtr<StringImpl> fromUTF8(std::span<const char8_t> characters) { return create(characters); }
+    static RefPtr<StringImpl> fromUTF8(std::span<const Latin1Character> characters) { return create(byteCast<char8_t>(characters)); }
+    static RefPtr<StringImpl> fromUTF8(std::span<const uint8_t> characters) { return create(byteCast<char8_t>(characters)); }
+    static RefPtr<StringImpl> fromUTF8(std::span<const char> characters) { return create(byteCast<char8_t>(characters)); }
+    static RefPtr<StringImpl> fromUTF8(const char* string) { return create(byteCast<char8_t>(unsafeSpan(string))); }
+
+    // Convert each invalid UTF-8 sequence into a replacement character.
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
+    static RefPtr<StringImpl> fromUTF8ReplacingInvalidSequences(std::span<const Latin1Character> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
+    static RefPtr<StringImpl> fromUTF8ReplacingInvalidSequences(std::span<const uint8_t> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
+
+    // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> fromUTF8WithLatin1Fallback(std::span<const char8_t>);
+    static RefPtr<StringImpl> fromUTF8WithLatin1Fallback(std::span<const Latin1Character> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
+    static RefPtr<StringImpl> fromUTF8WithLatin1Fallback(std::span<const uint8_t> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
+    static RefPtr<StringImpl> fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
+
+    // Null if the code point is invalid.
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> fromCodePoint(char32_t codePoint);
+
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> make8Bit(std::span<const char16_t>);
+
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> numberToStringFixedPrecision(float, unsigned precision = 6, TrailingZerosPolicy = TrailingZerosPolicy::Truncate);
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> numberToStringFixedPrecision(double, unsigned precision = 6, TrailingZerosPolicy = TrailingZerosPolicy::Truncate);
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> numberToStringFixedWidth(double, unsigned decimalPlaces);
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
@@ -471,8 +541,8 @@ public:
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocale();
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocaleStartingAtFailingIndex16Bit(unsigned);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithLocale(const AtomString& localeIdentifier);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithLocale(const AtomString& localeIdentifier);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithLocale(AtomStringImpl* localeIdentifier);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithLocale(AtomStringImpl* localeIdentifier);
 
     Ref<StringImpl> foldCase();
 
@@ -593,11 +663,37 @@ private:
 
 public:
     void assertHashIsCorrect() const;
-};
+} SWIFT_SHARED_REFERENCE(.ref, .deref) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 using StaticStringImpl = StringImpl::StaticStringImpl;
 
 static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
+// Required for constant-initialized StaticStringImpls without exit-time destructors (e.g. operator""_si).
+static_assert(std::is_trivially_destructible_v<StaticStringImpl>);
+
+// Smart pointers to strings are memcpy-movable and memset-initializable like String. Unlike other
+// smart pointers, Vector comparisons don't use memcmp, so that they use operator== (which can be
+// deleted with WTF_DELETE_STRINGIMPL_POINTER_COMPARISONS); use contentEquals() to compare contents.
+template<> struct VectorTraits<RefPtr<StringImpl>> : VectorTraitsBase<false, void> {
+    static constexpr bool canInitializeWithMemset = true;
+    static constexpr bool canMoveWithMemcpy = true;
+};
+
+template<> struct VectorTraits<Ref<StringImpl>> : VectorTraitsBase<false, void> {
+    static constexpr bool canInitializeWithMemset = true;
+    static constexpr bool canMoveWithMemcpy = true;
+};
+
+// Like MarkableTraits<String>: the null pointer is the empty value.
+template<> struct MarkableTraits<RefPtr<StringImpl>> {
+    static bool isEmptyValue(const RefPtr<StringImpl>& string) { return !string; }
+    static RefPtr<StringImpl> emptyValue() { return nullptr; }
+};
+
+template<> struct MarkableTraits<RefPtr<AtomStringImpl>> {
+    static bool isEmptyValue(const RefPtr<AtomStringImpl>& string) { return !string; }
+    static RefPtr<AtomStringImpl> emptyValue() { return nullptr; }
+};
 
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {
@@ -679,10 +775,12 @@ template<> struct DefaultHash<StringImpl*>;
 template<> struct DefaultHash<RefPtr<StringImpl>>;
 template<> struct DefaultHash<PackedPtr<StringImpl>>;
 template<> struct DefaultHash<CompactPtr<StringImpl>>;
+template<> struct DefaultHash<Ref<StringImpl>>;
 
+// Yields a StringImpl* to an immortal StaticStringImpl, so that it can initialize a RefPtr<StringImpl>.
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
         static StaticStringImpl impl(characters); \
-        return &impl; \
+        return &static_cast<StringImpl&>(impl); \
     }())
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<Latin1Character>(StringImpl& string, unsigned length)
@@ -1342,12 +1440,12 @@ inline bool equalIgnoringASCIICase(const StringImpl* a, ASCIILiteral b)
     return a && equalIgnoringASCIICase(*a, b);
 }
 
-inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, ASCIILiteral literal)
+NODELETE inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, ASCIILiteral literal)
 {
     return startsWithLettersIgnoringASCIICaseCommon(string, literal);
 }
 
-inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral literal)
+NODELETE inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral literal)
 {
     return string && startsWithLettersIgnoringASCIICase(*string, literal);
 }
@@ -1515,6 +1613,229 @@ inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8C
     return function(bufferVector.span().first(*convertedSize));
 }
 
+inline RefPtr<StringImpl> StringImpl::createOrNull(std::span<const Latin1Character> characters)
+{
+    if (!characters.data())
+        return nullptr;
+    return create(characters);
+}
+
+inline RefPtr<StringImpl> StringImpl::createOrNull(std::span<const char16_t> characters)
+{
+    if (!characters.data())
+        return nullptr;
+    return create(characters);
+}
+
+inline RefPtr<StringImpl> StringImpl::createOrNull(ASCIILiteral literal)
+{
+    if (literal.isNull())
+        return nullptr;
+    return create(literal);
+}
+
+inline RefPtr<StringImpl> StringImpl::fromLatin1(const char* characters)
+{
+    if (!characters)
+        return nullptr;
+    return create(byteCast<Latin1Character>(unsafeSpan(characters)));
+}
+
+inline RefPtr<StringImpl> StringImpl::fromLatin1(std::span<const char> characters)
+{
+    if (!characters.data())
+        return nullptr;
+    return create(byteCast<Latin1Character>(characters));
+}
+
+#if WTF_STRINGIMPL_HASHTRAITS_OWNING_PEEK
+inline RefPtr<StringImpl> HashTraits<RefPtr<StringImpl>>::peek(const RefPtr<StringImpl>& value) { return value; }
+inline RefPtr<StringImpl> HashTraits<RefPtr<StringImpl>>::peek(StringImpl* value) { return value; }
+#endif
+
+// Same semantics as String(ASCIILiteral): a null literal results in a null RefPtr.
+inline ASCIILiteral::operator RefPtr<StringImpl>() const
+{
+    if (isNull())
+        return nullptr;
+    return StringImpl::create(*this);
+}
+
+// StringImplPointerLike: X*, const X*, RefPtr<X, ...>, Ref<X, ...> where X derives from StringImpl.
+// The free string functions (see StringFunctions.h) are templates constrained on this concept so that
+// calls with smart pointer arguments are exact matches, and never ambiguous with StringView overloads.
+// Implemented with std::is_convertible on pointers so that it is false (rather than an error) for incomplete types.
+template<typename> struct StringImplPointerLikeTraits {
+    static constexpr bool value = false;
+};
+
+template<typename X> requires std::is_convertible_v<X*, const StringImpl*>
+struct StringImplPointerLikeTraits<X*> {
+    static constexpr bool value = true;
+    using PointeeType = std::remove_const_t<X>;
+    static StringImpl* toImpl(X* pointer) { return const_cast<StringImpl*>(static_cast<const StringImpl*>(pointer)); }
+};
+
+template<typename X, typename PtrTraits, typename RefDerefTraits> requires std::is_convertible_v<X*, const StringImpl*>
+struct StringImplPointerLikeTraits<RefPtr<X, PtrTraits, RefDerefTraits>> {
+    static constexpr bool value = true;
+    using PointeeType = std::remove_const_t<X>;
+    static StringImpl* toImpl(const RefPtr<X, PtrTraits, RefDerefTraits>& pointer) { return const_cast<StringImpl*>(static_cast<const StringImpl*>(pointer.get())); }
+};
+
+template<typename X, typename PtrTraits, typename RefDerefTraits> requires std::is_convertible_v<X*, const StringImpl*>
+struct StringImplPointerLikeTraits<Ref<X, PtrTraits, RefDerefTraits>> {
+    static constexpr bool value = true;
+    using PointeeType = std::remove_const_t<X>;
+    static StringImpl* toImpl(const Ref<X, PtrTraits, RefDerefTraits>& pointer) { return const_cast<StringImpl*>(static_cast<const StringImpl*>(pointer.ptr())); }
+};
+
+template<typename T> concept StringImplPointerLike = StringImplPointerLikeTraits<std::remove_cvref_t<T>>::value;
+
+template<StringImplPointerLike T> using StringImplPointeeType = typename StringImplPointerLikeTraits<std::remove_cvref_t<T>>::PointeeType;
+
+// Pointer-likes whose pointee is exactly AtomStringImpl.
+template<typename T> concept AtomStringImplPointerLike = StringImplPointerLike<T> && std::same_as<StringImplPointeeType<T>, AtomStringImpl>;
+
+// Pointer-likes whose pointee is exactly StringImpl.
+template<typename T> concept PlainStringImplPointerLike = StringImplPointerLike<T> && std::same_as<StringImplPointeeType<T>, StringImpl>;
+
+template<StringImplPointerLike T> ALWAYS_INLINE StringImpl* CLANG_POINTER_CONVERSION toStringImplPointer(const T& pointer LIFETIME_BOUND)
+{
+    return StringImplPointerLikeTraits<std::remove_cvref_t<T>>::toImpl(pointer);
+}
+
+// Vector<RefPtr<StringImpl>> etc.: find(), contains(), removeFirst(), ... compare contents, like Vector<String> (see
+// HasVectorElementEquals in Vector.h), also for raw pointer arguments, which would otherwise compare identity.
+// Items that are atom smart pointers compare contents with plain StringImpl values (like AtomString == String) and
+// identity with atoms. Vectors of raw atom pointers keep comparing pointers.
+template<StringImplPointerLike T, StringImplPointerLike U>
+    requires PlainStringImplPointerLike<T> || (PlainStringImplPointerLike<U> && AtomStringImplPointerLike<T> && !std::is_pointer_v<std::remove_cvref_t<T>>)
+inline bool vectorElementEquals(const T& item, const U& value)
+{
+    return equal(toStringImplPointer(item), toStringImplPointer(value));
+}
+
+template<StringImplPointerLike T, std::same_as<ASCIILiteral> Literal> requires PlainStringImplPointerLike<T> || AtomStringImplPointerLike<T>
+inline bool vectorElementEquals(const T& item, Literal value)
+{
+    return equal(toStringImplPointer(item), value);
+}
+
+// Comparing string pointers where one side is a plain StringImpl is almost always a mistake
+// (it compares identity, not content). Use equal() for content and isSameImpl() for identity.
+// Comparisons between atoms (AtomStringImpl, UniquedStringImpl, SymbolImpl) remain legal, as do
+// comparisons with nullptr. Raw pointer comparisons (T* == T*) cannot be deleted.
+#ifndef WTF_DELETE_STRINGIMPL_POINTER_COMPARISONS
+#define WTF_DELETE_STRINGIMPL_POINTER_COMPARISONS 1
+#endif
+
+#if WTF_DELETE_STRINGIMPL_POINTER_COMPARISONS
+
+template<typename A, typename B> concept StringImplPointerComparisonIsForbidden = StringImplPointerLike<A> && StringImplPointerLike<B>
+    && (std::same_as<StringImplPointeeType<A>, StringImpl> || std::same_as<StringImplPointeeType<B>, StringImpl>);
+
+// These have the same template heads and parameter types as the operators in RefPtr.h / Ref.h and are more constrained, so they win.
+template<typename T, typename U, typename V, typename X, typename Y, typename Z>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, RefPtr<X, Y, Z>>
+bool operator==(const RefPtr<T, U, V>&, const RefPtr<X, Y, Z>&) = delete;
+
+template<typename T, typename U, typename V, typename X>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, X*>
+bool operator==(const RefPtr<T, U, V>&, X*) = delete;
+
+template<typename X, typename APtrTraits, typename ARefDerefTraits, typename Y, typename BPtrTraits, typename BRefDerefTraits>
+    requires StringImplPointerComparisonIsForbidden<Ref<X, APtrTraits, ARefDerefTraits>, Ref<Y, BPtrTraits, BRefDerefTraits>>
+bool operator==(const Ref<X, APtrTraits, ARefDerefTraits>&, const Ref<Y, BPtrTraits, BRefDerefTraits>&) = delete;
+
+template<typename T, typename U, typename V, typename X, typename Y, typename Z>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, RefPtr<X, Y, Z>>
+bool operator<(const RefPtr<T, U, V>&, const RefPtr<X, Y, Z>&) = delete;
+
+template<typename T, typename U, typename V, typename X>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, X*>
+bool operator<(const RefPtr<T, U, V>&, X*) = delete;
+
+template<typename T, typename U, typename V, typename X>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, X*>
+bool operator<(X*, const RefPtr<T, U, V>&) = delete;
+
+template<typename T, typename U, typename V, typename X, typename Y, typename Z>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, RefPtr<X, Y, Z>>
+std::strong_ordering operator<=>(const RefPtr<T, U, V>&, const RefPtr<X, Y, Z>&) = delete;
+
+template<typename T, typename U, typename V, typename X>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, X*>
+std::strong_ordering operator<=>(const RefPtr<T, U, V>&, X*) = delete;
+
+// Ref has no comparisons with raw pointers or RefPtr, so without these, mixed comparisons would compile through
+// StringView conversions (comparing contents but ignoring nullity, unlike String == String).
+template<typename X, typename PtrTraits, typename RefDerefTraits, typename Y>
+    requires StringImplPointerComparisonIsForbidden<Ref<X, PtrTraits, RefDerefTraits>, Y*>
+bool operator==(const Ref<X, PtrTraits, RefDerefTraits>&, Y*) = delete;
+
+template<typename T, typename U, typename V, typename X, typename PtrTraits, typename RefDerefTraits>
+    requires StringImplPointerComparisonIsForbidden<RefPtr<T, U, V>, Ref<X, PtrTraits, RefDerefTraits>>
+bool operator==(const RefPtr<T, U, V>&, const Ref<X, PtrTraits, RefDerefTraits>&) = delete;
+
+#endif // WTF_DELETE_STRINGIMPL_POINTER_COMPARISONS
+
+// String smart pointers compare with literals by contents, respecting nullity like String == ASCIILiteral and
+// AtomString == ASCIILiteral did (a null string is not equal to ""_s). Without these, the comparisons would compile
+// through StringView conversions, which ignore nullity. (Raw pointers keep comparing through StringView, as before.)
+// The literal is a constrained template parameter so that these are exact matches only (e.g. not for nullptr).
+template<typename T, typename U, typename V, std::same_as<ASCIILiteral> Literal> requires StringImplClass<T>
+inline bool operator==(const RefPtr<T, U, V>& a, Literal b)
+{
+    return equal(static_cast<const StringImpl*>(a.get()), b);
+}
+
+template<typename T, typename PtrTraits, typename RefDerefTraits, std::same_as<ASCIILiteral> Literal> requires StringImplClass<T>
+inline bool operator==(const Ref<T, PtrTraits, RefDerefTraits>& a, Literal b)
+{
+    return equal(static_cast<const StringImpl*>(a.ptr()), b);
+}
+
+namespace Detail {
+
+// A string literal as a structural type, so it can be a template argument of operator""_si.
+template<size_t characterCountIncludingNullTerminator>
+struct StaticStringImplLiteral {
+    consteval StaticStringImplLiteral(const char (&literal)[characterCountIncludingNullTerminator])
+    {
+        static_assert(characterCountIncludingNullTerminator >= 1);
+        std::span<const char, characterCountIncludingNullTerminator> source { literal };
+        for (size_t i = 0; i + 1 < characterCountIncludingNullTerminator; ++i) {
+            // _si literals must be ASCII without embedded null characters.
+            if (!source[i] || static_cast<unsigned char>(source[i]) >= 0x80)
+                stringImplLiteralMustBeASCIIWithoutNullCharacters();
+            characters[i] = source[i];
+        }
+        if (source[characterCountIncludingNullTerminator - 1])
+            stringImplLiteralMustBeASCIIWithoutNullCharacters();
+    }
+
+    // Intentionally not constexpr: calling it makes the literal operator ill-formed.
+    static void stringImplLiteralMustBeASCIIWithoutNullCharacters();
+
+    std::array<char, characterCountIncludingNullTerminator> characters { };
+};
+
+} // namespace Detail
+
+inline namespace StringLiterals {
+
+// "foo"_si is a RefPtr<StringImpl> to an immortal, constant-initialized StaticStringImpl, unique per literal
+// (per linkage unit). It does not allocate; the hash is computed at compile time.
+template<Detail::StaticStringImplLiteral literal>
+ALWAYS_INLINE RefPtr<StringImpl> operator""_si()
+{
+    static constinit StaticStringImpl impl { ASCIILiteral::fromLiteralUnsafe(literal.characters.data()) };
+    return static_cast<StringImpl&>(impl);
+}
+
+} // inline StringLiterals
+
 } // namespace WTF
 
 using WTF::StaticStringImpl;
@@ -1523,3 +1844,4 @@ using WTF::equal;
 using WTF::isUnicodeWhitespace;
 using WTF::deprecatedIsSpaceOrNewline;
 using WTF::deprecatedIsNotSpaceOrNewline;
+using WTF::TrailingZerosPolicy;

@@ -62,10 +62,10 @@ public:
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
-    void close(int32_t code, const String& reason);
+    void close(int32_t code, StringImpl* reason);
 
-    void didConnect(const String&);
-    void didClose(unsigned short code, const String& reason);
+    void didConnect(StringImpl*);
+    void didClose(unsigned short code, StringImpl* reason);
 
     void cancel();
     void resume();
@@ -80,7 +80,7 @@ public:
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     std::optional<WebPageProxyIdentifier> webPageProxyID() const final { return m_webProxyPageID; }
     bool isInitiatedByWorker() const final;
-    String partition() const { return m_partition; }
+    RefPtr<StringImpl> partition() const { return m_partition; }
     const WebCore::SecurityOriginData& topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
 
 private:
@@ -101,7 +101,7 @@ private:
     std::optional<WebCore::FrameIdentifier> m_frameID;
     std::optional<WebCore::PageIdentifier> m_pageID;
     WeakPtr<SessionWrapper> m_sessionWrapper;
-    String m_partition;
+    RefPtr<StringImpl> m_partition;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::DoNotUse };
     WebCore::SecurityOriginData m_topOrigin;
     WebCore::IsInitiatedByWorker m_isInitiatedByWorker;

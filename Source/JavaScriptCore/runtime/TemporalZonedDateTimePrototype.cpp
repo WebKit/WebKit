@@ -330,7 +330,7 @@ static EncodedJSValue differenceTemporalZonedDateTime(JSGlobalObject* globalObje
     // Step 2: If CalendarEquals(zonedDateTime.[[Calendar]], other.[[Calendar]]) is false, throw RangeError.
     //         CalendarID is already canonical (from isBuiltinCalendar); direct comparison = CalendarEquals.
     if (zdt->calendarID() != other->calendarID()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "cannot compute difference between ZonedDateTimes with different calendars"_s);
+        throwRangeError(globalObject, scope, "cannot compute difference between ZonedDateTimes with different calendars"_si);
         return { };
     }
 
@@ -350,7 +350,7 @@ static EncodedJSValue differenceTemporalZonedDateTime(JSGlobalObject* globalObje
     // Step 7: If TimeZoneEquals(zdt.[[TimeZone]], other.[[TimeZone]]) is false, throw RangeError.
     if (largestUnit <= TemporalUnit::Day) {
         if (!TemporalCore::timeZoneEquals(zdt->timeZone(), other->timeZone())) {
-            throwRangeError(globalObject, scope, "cannot compute day-or-larger difference between ZonedDateTimes with different time zones"_s);
+            throwRangeError(globalObject, scope, "cannot compute day-or-larger difference between ZonedDateTimes with different time zones"_si);
             return { };
         }
     }
@@ -509,7 +509,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncRound, (JSGlobalObjec
         // Step 19.g: dayLengthNs = endNs - startNs.
         Int128 dayLength = nextNs - startNs;
         if (!dayLength || epochNs < startNs) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Rounding result is outside the supported range of Temporal.ZonedDateTime"_s);
+            throwRangeError(globalObject, scope, "Rounding result is outside the supported range of Temporal.ZonedDateTime"_si);
             return { };
         }
         // Step 19.f: Assert: thisNs < endNs.
@@ -568,7 +568,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncGetTimeZoneTransition
     // Step 4: If directionParam is undefined, throw TypeError.
     // Steps 5-6: String shorthand → synthetic object with "direction"; else GetOptionsObject.
     JSValue dirArg = callFrame->argument(0);
-    String dirStr;
+    RefPtr<StringImpl> dirStr;
     if (dirArg.isString()) {
         dirStr = asString(dirArg)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
@@ -582,18 +582,18 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncGetTimeZoneTransition
         JSValue dirVal = options->get(globalObject, Identifier::fromString(vm, "direction"_s));
         RETURN_IF_EXCEPTION(scope, { });
         if (dirVal.isUndefined())
-            return throwVMRangeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.getTimeZoneTransition requires a 'direction' option"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.getTimeZoneTransition requires a 'direction' option"_si);
         dirStr = dirVal.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
     }
     // Step 7: Let direction be ? GetDirectionOption(directionParam).
     TransitionDirection direction;
-    if (dirStr == "next"_s)
+    if (equal(dirStr, "next"_s))
         direction = TransitionDirection::Next;
-    else if (dirStr == "previous"_s)
+    else if (equal(dirStr, "previous"_s))
         direction = TransitionDirection::Previous;
     else
-        return throwVMRangeError(globalObject, scope, "direction must be \"next\" or \"previous\""_s);
+        return throwVMRangeError(globalObject, scope, "direction must be \"next\" or \"previous\""_si);
 
     // Step 8: If IsOffsetTimeZoneIdentifier(timeZone) is true, return null.
     // Steps 9-10: GetNamedTimeZoneNextTransition / GetNamedTimeZonePreviousTransition.
@@ -852,7 +852,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToPlainDateTime, (JSG
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalzoneddatetimetostring
-static String temporalZonedDateTimeToString(JSGlobalObject* globalObject, const TemporalZonedDateTime* zdt,
+static RefPtr<StringImpl> temporalZonedDateTimeToString(JSGlobalObject* globalObject, const TemporalZonedDateTime* zdt,
     const PrecisionData& precision, RoundingMode roundingMode,
     StringView showOffset, // ~auto~ | ~never~
     StringView showTimeZone, // ~auto~ | ~never~ | ~critical~
@@ -939,7 +939,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToJSON, (JSGlobalObje
 
     // Step 3: Return TemporalZonedDateTimeToString(zonedDateTime, ~auto~, ~auto~, ~auto~, ~auto~).
     PrecisionData precision { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 };
-    String result = temporalZonedDateTimeToString(globalObject, zdt, precision, RoundingMode::Trunc, /* showOffset */ "auto"_s, /* showTimeZone */ "auto"_s, /* showCalendar */ "auto"_s, zdt->calendarID());
+    RefPtr<StringImpl> result = temporalZonedDateTimeToString(globalObject, zdt, precision, RoundingMode::Trunc, /* showOffset */ "auto"_s, /* showTimeZone */ "auto"_s, /* showCalendar */ "auto"_s, zdt->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(jsString(vm, WTF::move(result)));
 }
@@ -962,7 +962,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToString, (JSGlobalOb
 
     // Step 4: NOTE: The following steps read options in alphabetical order.
     // Step 5: Let showCalendar be ? GetTemporalShowCalendarNameOption(resolvedOptions).
-    String calendarOpt = options ? temporalShowCalendarName(globalObject, options) : "auto"_s;
+    RefPtr<StringImpl> calendarOpt = options ? temporalShowCalendarName(globalObject, options) : "auto"_si;
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 6: fractionalSecondDigits (read before smallestUnit per spec alphabetical order).
@@ -970,7 +970,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToString, (JSGlobalOb
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 7: Let showOffset be ? GetTemporalShowOffsetOption(resolvedOptions).
-    String offsetOpt = "auto"_s;
+    RefPtr<StringImpl> offsetOpt = "auto"_si;
     if (options) {
         offsetOpt = intlStringOption(globalObject, options, vm.propertyNames->offset,
             { "auto"_s, "never"_s }, "offset must be \"auto\" or \"never\""_s, "auto"_s);
@@ -986,7 +986,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToString, (JSGlobalOb
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 10: Let showTimeZone be ? GetTemporalShowTimeZoneNameOption(resolvedOptions).
-    String tzNameOpt = "auto"_s;
+    RefPtr<StringImpl> tzNameOpt = "auto"_si;
     if (options) {
         tzNameOpt = intlStringOption(globalObject, options, Identifier::fromString(vm, "timeZoneName"_s),
             { "auto"_s, "never"_s, "critical"_s }, "timeZoneName must be \"auto\", \"never\", or \"critical\""_s, "auto"_s);
@@ -999,7 +999,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToString, (JSGlobalOb
     std::optional<TemporalUnit> smallestUnit = std::get<std::optional<TemporalUnit>>(smallestUnitResult);
     // Step 12: If smallestUnit is ~hour~, throw a RangeError exception.
     if (smallestUnit == TemporalUnit::Hour) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for ZonedDateTime.toString"_s);
+        throwRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for ZonedDateTime.toString"_si);
         return { };
     }
 
@@ -1007,7 +1007,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToString, (JSGlobalOb
     auto precision = toSecondsStringPrecisionRecord(smallestUnit, digits);
 
     // Step 14: Return TemporalZonedDateTimeToString(zonedDateTime, precision, showCalendar, showTimeZone, showOffset, ...).
-    String result = temporalZonedDateTimeToString(globalObject, zdt, precision, roundingMode,
+    RefPtr<StringImpl> result = temporalZonedDateTimeToString(globalObject, zdt, precision, roundingMode,
         offsetOpt, tzNameOpt, calendarOpt, zdt->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(jsString(vm, WTF::move(result)));
@@ -1036,7 +1036,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToLocaleString, (JSGl
     // Step 4: If calendar ≠ "iso8601" and CalendarEquals(calendar, dateTimeFormat.[[Calendar]]) is false, throw RangeError.
     if (!TemporalCore::calendarIsISO(zdt->calendarID())
         && !IntlDateTimeFormat::calendarMatchesICU(zdt->calendarId(), formatter->ensureCalendar()))
-        return throwVMRangeError(globalObject, scope, "ZonedDateTime calendar does not match locale calendar"_s);
+        return throwVMRangeError(globalObject, scope, "ZonedDateTime calendar does not match locale calendar"_si);
 
     // Steps 5-6: instant = ! CreateTemporalInstant(epochNanoseconds); Return ? FormatDateTime(dateTimeFormat, instant).
     // ICU formats the "+00:00" offset timezone as "UTC" but the spec requires "GMT"; fix it up.
@@ -1045,11 +1045,11 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToLocaleString, (JSGl
     JSValue formatted = formatter->format(globalObject, zdt->exactTime().epochMilliseconds());
     RETURN_IF_EXCEPTION(scope, { });
     if (isZeroOffset && formatted.isString()) {
-        String str = asString(formatted)->value(globalObject);
+        RefPtr<StringImpl> str = asString(formatted)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        size_t pos = str.find("UTC"_s);
+        size_t pos = find(str, "UTC"_s);
         if (pos != WTF::notFound)
-            return JSValue::encode(jsString(vm, makeString(str.substring(0, pos), "GMT"_s, str.substring(pos + 3))));
+            return JSValue::encode(jsString(vm, makeString(substring(str, 0, pos), "GMT"_s, substring(str, pos + 3))));
     }
     return JSValue::encode(formatted);
 }
@@ -1369,7 +1369,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGloba
     // Step 4: Return 𝔽(CalendarISOToDate(calendar, isoDateTime.[[ISODate]]).[[DayOfYear]]).
     auto result = TemporalCore::calendarDayOfYear(zdt->calendarID(), date);
     if (!result) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, String(result.error().message));
+        return throwVMRangeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
     return JSValue::encode(jsNumber(*result));
 }
 

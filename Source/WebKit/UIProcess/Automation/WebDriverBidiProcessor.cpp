@@ -79,15 +79,15 @@ WebDriverBidiProcessor::~WebDriverBidiProcessor()
     m_frontendRouter->disconnectFrontend(*this);
 }
 
-void WebDriverBidiProcessor::processBidiMessage(const String& message)
+void WebDriverBidiProcessor::processBidiMessage(StringImpl* message)
 {
     RefPtr session = m_session.get();
     if (!session) {
-        LOG(Automation, "processBidiMessage of length %d not delivered, session is gone!", message.length());
+        LOG(Automation, "processBidiMessage of length %d not delivered, session is gone!", length(message));
         return;
     }
 
-    LOG_WITH_STREAM(Automation, stream << "[s:"_s << session->sessionIdentifier() << "] processBidiMessage of length "_s << message.length());
+    LOG_WITH_STREAM(Automation, stream << "[s:"_s << session->sessionIdentifier() << "] processBidiMessage of length "_s << length(message));
     LOG_WITH_STREAM(Automation, stream << message);
 
     m_backendDispatcher->dispatch(message);
@@ -96,7 +96,7 @@ void WebDriverBidiProcessor::processBidiMessage(const String& message)
 Inspector::CommandResult<void> WebDriverBidiProcessor::validateSerializationOptions(const JSON::Object& serializationOptions)
 {
     RefPtr<JSON::Value> maxDomDepthValue;
-    if (serializationOptions.getValue("maxDomDepth"_s, maxDomDepthValue)) {
+    if (serializationOptions.getValue("maxDomDepth"_si, maxDomDepthValue)) {
         if (auto maxDomDepth = maxDomDepthValue->asDouble()) {
             if (*maxDomDepth < 0)
                 return makeUnexpected("serializationOptions.maxDomDepth must be non-negative"_s);
@@ -108,7 +108,7 @@ Inspector::CommandResult<void> WebDriverBidiProcessor::validateSerializationOpti
     }
 
     RefPtr<JSON::Value> maxObjectDepthValue;
-    if (serializationOptions.getValue("maxObjectDepth"_s, maxObjectDepthValue)) {
+    if (serializationOptions.getValue("maxObjectDepth"_si, maxObjectDepthValue)) {
         if (auto maxObjectDepth = maxObjectDepthValue->asDouble()) {
             if (*maxObjectDepth < 0)
                 return makeUnexpected("serializationOptions.maxObjectDepth must be non-negative"_s);
@@ -126,7 +126,7 @@ Inspector::CommandResult<void> WebDriverBidiProcessor::validateSerializationOpti
 
 // Translate internal error messages that come from the inspector protocol payload.
 // See the list of allowed bidi errors in https://w3c.github.io/webdriver-bidi/#errors
-static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
+static RefPtr<StringImpl> toBidiErrorCode(int errorCode, StringImpl* inspectorInternalMsg)
 {
     // These error codes are specified in JSON-RPC 2.0, Section 5.1.
     switch (errorCode) {
@@ -135,135 +135,135 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     case -32700: // Parse error
     case -32600: // Invalid request
     case -32603: // Internal error
-        return "unknown error"_s;
+        return "unknown error"_si;
     case -32601: // Method not found
-        return "unknown command"_s;
+        return "unknown command"_si;
     case -32602: // Invalid params
-        return "invalid argument"_s;
+        return "invalid argument"_si;
     }
 
     auto errorMessage = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(inspectorInternalMsg);
     if (!errorMessage)
-        return "unknown error"_s;
+        return "unknown error"_si;
 
     switch (*errorMessage) {
     case Inspector::Protocol::Automation::ErrorMessage::InternalError:
-        return "unknown error"_s;
+        return "unknown error"_si;
     case Inspector::Protocol::Automation::ErrorMessage::Timeout:
-        return "timeout"_s;
+        return "timeout"_si;
     case Inspector::Protocol::Automation::ErrorMessage::JavaScriptError:
-        return "javascript error"_s;
+        return "javascript error"_si;
     case Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout:
-        return "script timeout"_s;
+        return "script timeout"_si;
     case Inspector::Protocol::Automation::ErrorMessage::WindowNotFound:
-        return "no such browsing context"_s;
+        return "no such browsing context"_si;
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
-        return "no such frame"_s;
+        return "no such frame"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:
-        return "no such node"_s;
+        return "no such node"_si;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier:
-        return "no such element"_s;
+        return "no such element"_si;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidElementState:
-        return "invalid element state"_s;
+        return "invalid element state"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NoJavaScriptDialog:
-        return "no such alert"_s;
+        return "no such alert"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NotImplemented:
-        return "unsupported operation"_s;
+        return "unsupported operation"_si;
     case Inspector::Protocol::Automation::ErrorMessage::MissingParameter:
     case Inspector::Protocol::Automation::ErrorMessage::InvalidParameter:
-        return "invalid argument"_s;
+        return "invalid argument"_si;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidSelector:
-        return "invalid selector"_s;
+        return "invalid selector"_si;
     case Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable:
-        return "element not interactable"_s;
+        return "element not interactable"_si;
     case Inspector::Protocol::Automation::ErrorMessage::ElementNotSelectable:
-        return "element not selectable"_s;
+        return "element not selectable"_si;
     case Inspector::Protocol::Automation::ErrorMessage::ScreenshotError:
-        return "unable to capture screen"_s;
+        return "unable to capture screen"_si;
     case Inspector::Protocol::Automation::ErrorMessage::UnexpectedAlertOpen:
-        return "unexpected alert open"_s;
+        return "unexpected alert open"_si;
     case Inspector::Protocol::Automation::ErrorMessage::TargetOutOfBounds:
-        return "move target out of bounds"_s;
+        return "move target out of bounds"_si;
     case Inspector::Protocol::Automation::ErrorMessage::UnableToLoadExtension:
-        return "unable to load extension"_s;
+        return "unable to load extension"_si;
     case Inspector::Protocol::Automation::ErrorMessage::UnableToUnloadExtension:
-        return "unable to unload extension"_s;
+        return "unable to unload extension"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NoSuchExtension:
-        return "no such web extension"_s;
+        return "no such web extension"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NoSuchUserContext:
-        return "no such user context"_s;
+        return "no such user context"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NoSuchScript:
-        return "no such script"_s;
+        return "no such script"_si;
     case Inspector::Protocol::Automation::ErrorMessage::NoSuchHistoryEntry:
-        return "no such history entry"_s;
+        return "no such history entry"_si;
     default:
-        return "unknown error"_s;
+        return "unknown error"_si;
     }
 }
 
-void WebDriverBidiProcessor::sendBidiMessage(const String& message)
+void WebDriverBidiProcessor::sendBidiMessage(StringImpl* message)
 {
     RefPtr session = m_session.get();
     if (!session) {
-        LOG(Automation, "sendBidiMessage of length %d not delivered, session is gone!", message.length());
+        LOG(Automation, "sendBidiMessage of length %d not delivered, session is gone!", length(message));
         return;
     }
 
-    LOG_WITH_STREAM(Automation, stream << "[s:"_s << session->sessionIdentifier() << "] sendBidiMessage of length "_s << message.length());
+    LOG_WITH_STREAM(Automation, stream << "[s:"_s << session->sessionIdentifier() << "] sendBidiMessage of length "_s << length(message));
     LOG_WITH_STREAM(Automation, stream << message);
 
     auto msgValue = JSON::Object::parseJSON(message);
     if (!msgValue) {
-        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON: %s", session->sessionIdentifier().utf8(), message.utf8());
+        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON: %s", utf8(session->sessionIdentifier()), utf8(message));
         return;
     }
     auto msgObj = msgValue->asObject();
     if (!msgObj) {
-        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON object: %s", session->sessionIdentifier().utf8(), message.utf8());
+        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON object: %s", utf8(session->sessionIdentifier()), utf8(message));
         return;
     }
 
-    if (auto internalErrorObj = msgObj->getObject("error"_s)) {
-        if (auto codeField = internalErrorObj->getInteger("code"_s)) {
-            RELEASE_LOG(Automation, "[s:%s] sendBidiMessage converting internal error into BiDi error: %s", session->sessionIdentifier().utf8(), message.utf8());
+    if (auto internalErrorObj = msgObj->getObject("error"_si)) {
+        if (auto codeField = internalErrorObj->getInteger("code"_si)) {
+            RELEASE_LOG(Automation, "[s:%s] sendBidiMessage converting internal error into BiDi error: %s", utf8(session->sessionIdentifier()), utf8(message));
 
             auto bidiErrorObj = JSON::Object::create();
-            bidiErrorObj->setString("type"_s, "error"_s);
-            auto internalMsg = internalErrorObj->getString("message"_s);
-            auto divot = internalMsg.find(';');
+            bidiErrorObj->setString("type"_si, "error"_si);
+            auto internalMsg = internalErrorObj->getString("message"_si);
+            auto divot = find(internalMsg, ';');
             if (divot != notFound) {
-                auto errorName = internalMsg.substring(0, divot);
-                auto errorDetail = internalMsg.substring(divot + 1);
-                if (errorDetail.isEmpty())
-                    errorDetail = "An error occurred."_s;
-                bidiErrorObj->setString("message"_s, errorDetail);
-                bidiErrorObj->setString("error"_s, toBidiErrorCode(*codeField, errorName));
+                auto errorName = substring(internalMsg, 0, divot);
+                auto errorDetail = substring(internalMsg, divot + 1);
+                if (isEmpty(errorDetail))
+                    errorDetail = "An error occurred."_si;
+                bidiErrorObj->setString("message"_si, errorDetail);
+                bidiErrorObj->setString("error"_si, toBidiErrorCode(*codeField, errorName));
             } else {
-                bidiErrorObj->setString("message"_s, internalMsg);
-                bidiErrorObj->setString("error"_s, toBidiErrorCode(*codeField, internalMsg));
+                bidiErrorObj->setString("message"_si, internalMsg);
+                bidiErrorObj->setString("error"_si, toBidiErrorCode(*codeField, internalMsg));
             }
-            if (auto commandId = msgObj->getInteger("id"_s))
-                bidiErrorObj->setInteger("id"_s, *commandId);
+            if (auto commandId = msgObj->getInteger("id"_si))
+                bidiErrorObj->setInteger("id"_si, *commandId);
 
             session->sendBidiMessage(bidiErrorObj->toJSONString());
             return;
         }
         // FIXME should we forward some unknown error?
-        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse error code: %s", session->sessionIdentifier().utf8(), message.utf8());
-    } else if (msgObj->getInteger("id"_s))
-        msgObj->setString("type"_s, "success"_s);
+        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse error code: %s", utf8(session->sessionIdentifier()), utf8(message));
+    } else if (msgObj->getInteger("id"_si))
+        msgObj->setString("type"_si, "success"_si);
     else
-        msgObj->setString("type"_s, "event"_s);
+        msgObj->setString("type"_si, "event"_si);
 
     session->sendBidiMessage(msgObj->toJSONString());
 }
 
-bool WebDriverBidiProcessor::eventIsEnabled(const String& eventName, const HashSet<String>& contexts)
+bool WebDriverBidiProcessor::eventIsEnabled(StringImpl* eventName, const HashSet<RefPtr<StringImpl>>& contexts)
 {
     return m_sessionAgent->eventIsEnabled(eventName, contexts);
 }
 
-void WebDriverBidiProcessor::emitEventIfEnabled(const String& eventName, const HashSet<String>& browsingContexts, NOESCAPE const Function<void()>& callback)
+void WebDriverBidiProcessor::emitEventIfEnabled(StringImpl* eventName, const HashSet<RefPtr<StringImpl>>& browsingContexts, NOESCAPE const Function<void()>& callback)
 {
     if (m_sessionAgent->eventIsEnabled(eventName, browsingContexts)) [[unlikely]]
         callback();
@@ -271,7 +271,7 @@ void WebDriverBidiProcessor::emitEventIfEnabled(const String& eventName, const H
 
 // MARK: Inspector::FrontendChannel methods.
 
-void WebDriverBidiProcessor::sendMessageToFrontend(const String& message)
+void WebDriverBidiProcessor::sendMessageToFrontend(StringImpl* message)
 {
     sendBidiMessage(message);
 }

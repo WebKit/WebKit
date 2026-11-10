@@ -202,8 +202,8 @@ TEST(WTF_StringCommon, Equal)
     EXPECT_FALSE(WTF::equal(u8"Water🍉Melon"_span, std::span<const char8_t>()));
     EXPECT_FALSE(WTF::equal(u8"Water🍉Melon"_span, u8""_span));
     // EXPECT_TRUE(WTF::equal("test"_span, "test"_span8)); // This should not compile.
-    String string(u8"Water🍉Melon"_span);
-    EXPECT_FALSE(string.is8Bit());
+    RefPtr<StringImpl> string(StringImpl::create(u8"Water🍉Melon"_span));
+    EXPECT_FALSE(is8Bit(string));
     EXPECT_TRUE(WTF::equal(string, u8"Water🍉Melon"_span));
     EXPECT_FALSE(WTF::equal(string, u8"🍉WaterMelon🍉"_span));
 }

@@ -52,17 +52,17 @@ public:
 
     bool isDiscrete() const override { return m_function.isDiscrete(); }
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, StringImpl* from, StringImpl* to) override
     {
         return m_function.setFromAndToValues(targetElement, from, to);
     }
 
-    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    bool setFromAndByValues(SVGElement& targetElement, StringImpl* from, StringImpl* by) override
     {
         return m_function.setFromAndByValues(targetElement, from, by);
     }
 
-    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement& targetElement, StringImpl* toAtEndOfDuration) override
     {
         return m_function.setToAtEndOfDurationValue(targetElement, toAtEndOfDuration);
     }
@@ -95,7 +95,7 @@ public:
             removeAnimatedStyleProperty(targetElement);
     }
 
-    std::optional<float> calculateDistance(SVGElement& targetElement, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement& targetElement, StringImpl* from, StringImpl* to) const override
     {
         return m_function.calculateDistance(targetElement, from, to);
     }

@@ -50,12 +50,12 @@ JSValue JSKeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject, Call
         auto keyframeObject = convertDictionaryToJS(lexicalGlobalObject, domGlobalObject, { computedKeyframe });
         for (auto& [customProperty, propertyValue] : computedKeyframe.customStyleStrings) {
             auto value = toJS<IDLDOMString>(lexicalGlobalObject, propertyValue);
-            JSObject::defineOwnProperty(keyframeObject, &lexicalGlobalObject, customProperty.impl(), PropertyDescriptor(value, 0), false);
+            JSObject::defineOwnProperty(keyframeObject, &lexicalGlobalObject, customProperty.get(), PropertyDescriptor(value, 0), false);
         }
         for (auto& [propertyID, propertyValue] : computedKeyframe.styleStrings) {
             auto propertyName = KeyframeEffect::CSSPropertyIDToIDLAttributeName(propertyID);
             auto value = toJS<IDLDOMString>(lexicalGlobalObject, propertyValue);
-            JSObject::defineOwnProperty(keyframeObject, &lexicalGlobalObject, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+            JSObject::defineOwnProperty(keyframeObject, &lexicalGlobalObject, AtomStringImpl::add(propertyName.get()).get(), PropertyDescriptor(value, 0), false);
         }
         return { lexicalGlobalObject.vm(), keyframeObject };
     });

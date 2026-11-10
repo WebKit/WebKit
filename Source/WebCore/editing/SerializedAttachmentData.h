@@ -36,8 +36,8 @@ namespace WebCore {
 class SharedBuffer;
 
 struct SerializedAttachmentData {
-    String identifier;
-    String mimeType;
+    RefPtr<StringImpl> identifier;
+    RefPtr<StringImpl> mimeType;
     Ref<SharedBuffer> data;
 };
 

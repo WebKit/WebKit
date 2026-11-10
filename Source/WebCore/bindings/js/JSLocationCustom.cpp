@@ -50,7 +50,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
 
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.
-    String message;
+    RefPtr<StringImpl> message;
     if (BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, window, message))
         return false;
 
@@ -121,7 +121,7 @@ bool JSLocation::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Property
     // Always allow assigning to the whole location.
     // However, allowing assigning of pieces might inadvertently disclose parts of the original location.
     // So fall through to the access check for those.
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, protect(thisObject->wrapped().window()), errorMessage)) {
         if (propertyName == builtinNames(vm).hrefPublicName()) {
             auto setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();

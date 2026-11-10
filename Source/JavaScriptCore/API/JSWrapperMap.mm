@@ -190,7 +190,7 @@ inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *proper
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSC::JSObject* baseObject = JSC::asObject(toJS(globalObject, [base JSValueRef]));
-    auto name = OpaqueJSString::tryCreate(propertyName);
+    auto name = OpaqueJSString::tryCreate(StringImpl::create(propertyName));
     if (!name)
         return;
 
@@ -430,7 +430,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         return constructorWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
 
     // For each protocol that the class implements, gather all of the init family methods into a hash table.
-    __block UncheckedKeyHashMap<String, CFTypeRef> initTable;
+    __block UncheckedKeyHashMap<RefPtr<StringImpl>, CFTypeRef> initTable;
     RetainPtr exportProtocol = getJSExportProtocol();
     for (RetainPtr currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass.get())) {
         forEachProtocolImplementingProtocol(currentClass.get(), exportProtocol.get(), ^(Protocol *protocol, bool&) {
@@ -438,7 +438,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
                 const char* name = sel_getName(selector);
                 if (!isInitFamilyMethod(@(name)))
                     return;
-                initTable.set(String::fromLatin1(name), (__bridge CFTypeRef)protocol);
+                initTable.set(StringImpl::fromLatin1(name), (__bridge CFTypeRef)protocol);
             });
         });
     }
@@ -451,7 +451,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         forEachMethodInClass(currentClass.get(), ^(Method method) {
             SEL selector = method_getName(method);
             const char* name = sel_getName(selector);
-            auto iter = initTable.find(String::fromLatin1(name));
+            auto iter = initTable.find(StringImpl::fromLatin1(name));
 
             if (iter == initTable.end())
                 return;

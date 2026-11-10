@@ -62,8 +62,8 @@ using HTMLNames::htmlTag;
 struct DOMPatchSupport::Digest {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DOMPatchSupport);
 
-    String sha1;
-    String attrsSHA1;
+    RefPtr<StringImpl> sha1;
+    RefPtr<StringImpl> attrsSHA1;
     CheckedPtr<Node> node;
     Vector<std::unique_ptr<Digest>> children;
 };
@@ -74,7 +74,7 @@ DOMPatchSupport::DOMPatchSupport(DOMEditor& domEditor, Document& document)
 {
 }
 
-void DOMPatchSupport::patchDocument(const String& markup)
+void DOMPatchSupport::patchDocument(StringImpl* markup)
 {
     RefPtr<Document> newDocument;
     if (m_document->isHTMLDocument())
@@ -112,7 +112,7 @@ void DOMPatchSupport::patchDocument(const String& markup)
     }
 }
 
-ExceptionOr<Node*> DOMPatchSupport::patchNode(Node& node, const String& markup)
+ExceptionOr<Node*> DOMPatchSupport::patchNode(Node& node, StringImpl* markup)
 {
     // Don't parse <html> as a fragment.
     if (node.isDocumentNode() || (node.parentNode() && node.parentNode()->isDocumentNode())) {
@@ -142,9 +142,9 @@ ExceptionOr<Node*> DOMPatchSupport::patchNode(Node& node, const String& markup)
     for (RefPtr child = parentNode->firstChild(); child != &node; child = child->nextSibling())
         newList.append(createDigest(*child, nullptr));
     for (RefPtr child = fragment->firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(headTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</head>"_s))
+        if (child->hasTagName(headTag) && !child->firstChild() && !containsIgnoringASCIICase(markup, "</head>"_s))
             continue; // HTML5 parser inserts empty <head> tag whenever it parses <body>
-        if (child->hasTagName(bodyTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</body>"_s))
+        if (child->hasTagName(bodyTag) && !child->firstChild() && !containsIgnoringASCIICase(markup, "</body>"_s))
             continue; // HTML5 parser inserts empty <body> tag whenever it parses </head>
         newList.append(createDigest(*child, &m_unusedNodesMap));
     }
@@ -162,16 +162,16 @@ ExceptionOr<Node*> DOMPatchSupport::patchNode(Node& node, const String& markup)
 
 ExceptionOr<void> DOMPatchSupport::innerPatchNode(Digest& oldDigest, Digest& newDigest)
 {
-    if (oldDigest.sha1 == newDigest.sha1)
+    if (equal(oldDigest.sha1, newDigest.sha1))
         return { };
 
     Ref oldNode = *oldDigest.node;
     Ref newNode = *newDigest.node;
 
-    if (newNode->nodeType() != oldNode->nodeType() || newNode->nodeName() != oldNode->nodeName())
+    if (newNode->nodeType() != oldNode->nodeType() || !equal(newNode->nodeName(), oldNode->nodeName()))
         return m_domEditor.replaceChild(*protect(oldNode->parentNode()), newNode.get(), oldNode);
 
-    if (oldNode->nodeValue() != newNode->nodeValue()) {
+    if (!equal(oldNode->nodeValue(), newNode->nodeValue())) {
         auto result = m_domEditor.setNodeValue(oldNode, newNode->nodeValue());
         if (result.hasException())
             return result.releaseException();
@@ -183,7 +183,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchNode(Digest& oldDigest, Digest& new
 
     // Patch attributes
     Ref newElement = downcast<Element>(newNode);
-    if (oldDigest.attrsSHA1 != newDigest.attrsSHA1) {
+    if (!equal(oldDigest.attrsSHA1, newDigest.attrsSHA1)) {
         // FIXME: Create a function in Element for removing all properties. Take in account whether did/willModifyAttribute are important.
         if (oldElement->hasAttributesWithoutUpdate()) {
             while (oldElement->attributeCount()) {
@@ -225,13 +225,13 @@ DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vect
     }
 
     // Trim head and tail.
-    for (size_t i = 0; i < oldList.size() && i < newList.size() && oldList[i]->sha1 == newList[i]->sha1; ++i) {
+    for (size_t i = 0; i < oldList.size() && i < newList.size() && equal(oldList[i]->sha1, newList[i]->sha1); ++i) {
         oldMap[i].first = oldList[i].get();
         oldMap[i].second = i;
         newMap[i].first = newList[i].get();
         newMap[i].second = i;
     }
-    for (size_t i = 0; i < oldList.size() && i < newList.size() && oldList[oldList.size() - i - 1]->sha1 == newList[newList.size() - i - 1]->sha1; ++i) {
+    for (size_t i = 0; i < oldList.size() && i < newList.size() && equal(oldList[oldList.size() - i - 1]->sha1, newList[newList.size() - i - 1]->sha1); ++i) {
         size_t oldIndex = oldList.size() - i - 1;
         size_t newIndex = newList.size() - i - 1;
         oldMap[oldIndex].first = oldList[oldIndex].get();
@@ -240,7 +240,7 @@ DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vect
         newMap[newIndex].second = oldIndex;
     }
 
-    using DiffTable = HashMap<String, Vector<size_t>>;
+    using DiffTable = HashMap<RefPtr<StringImpl>, Vector<size_t>>;
     DiffTable newTable;
     DiffTable oldTable;
 
@@ -267,7 +267,7 @@ DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vect
             continue;
 
         size_t j = newMap[i].second + 1;
-        if (j < oldMap.size() && !oldMap[j].first && newList[i + 1]->sha1 == oldList[j]->sha1) {
+        if (j < oldMap.size() && !oldMap[j].first && equal(newList[i + 1]->sha1, oldList[j]->sha1)) {
             newMap[i + 1] = std::make_pair(newList[i + 1].get(), j);
             oldMap[j] = std::make_pair(oldList[j].get(), i + 1);
         }
@@ -278,15 +278,15 @@ DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vect
             continue;
 
         size_t j = newMap[i].second - 1;
-        if (!oldMap[j].first && newList[i - 1]->sha1 == oldList[j]->sha1) {
+        if (!oldMap[j].first && equal(newList[i - 1]->sha1, oldList[j]->sha1)) {
             newMap[i - 1] = std::make_pair(newList[i - 1].get(), j);
             oldMap[j] = std::make_pair(oldList[j].get(), i - 1);
         }
     }
 
 #ifdef DEBUG_DOM_PATCH_SUPPORT
-    dumpMap(oldMap, "OLD");
-    dumpMap(newMap, "NEW");
+    dumpMap(oldMap, "OLD"_si);
+    dumpMap(newMap, "NEW"_si);
 #endif
 
     return std::make_pair(oldMap, newMap);
@@ -402,7 +402,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchChildren(ContainerNode& parentNode,
     return { };
 }
 
-static void addStringToSHA1(SHA1& sha1, const String& string)
+static void addStringToSHA1(SHA1& sha1, StringImpl* string)
 {
     sha1.addUTF8Bytes(string);
 }
@@ -504,18 +504,18 @@ void DOMPatchSupport::markNodeAsUsed(Digest& digest)
 
 #ifdef DEBUG_DOM_PATCH_SUPPORT
 
-static String nodeName(Node* node)
+static RefPtr<StringImpl> nodeName(Node* node)
 {
     if (node->document().isXHTMLDocument())
          return node->nodeName();
-    return node->nodeName().convertToASCIILowercase();
+    return convertToASCIILowercase(node->nodeName());
 }
 
-void DOMPatchSupport::dumpMap(const ResultMap& map, const String& name)
+void DOMPatchSupport::dumpMap(const ResultMap& map, StringImpl* name)
 {
     fprintf(stderr, "\n\n");
     for (size_t i = 0; i < map.size(); ++i)
-        SAFE_FPRINTF(stderr, "%s[%lu]: %s (%p) - [%lu]\n", name.utf8(), i, map[i].first ? nodeName(map[i].first->m_node).utf8() : ""_s, map[i].first, map[i].second);
+        SAFE_FPRINTF(stderr, "%s[%lu]: %s (%p) - [%lu]\n", utf8(name), i, map[i].first ? utf8(nodeName(map[i].first->m_node)) : ""_s, map[i].first, map[i].second);
 }
 
 #endif

@@ -70,7 +70,7 @@ void RemoteExternalTexture::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteExternalTexture::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteExternalTexture::setLabel(String&& label)
+void RemoteExternalTexture::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

@@ -54,7 +54,7 @@ struct DetectedBarcode {
     }
 
     Ref<DOMRectReadOnly> boundingBox;
-    String rawValue;
+    RefPtr<StringImpl> rawValue;
     BarcodeFormat format { BarcodeFormat::Unknown };
     Vector<Point2D> cornerPoints;
 };

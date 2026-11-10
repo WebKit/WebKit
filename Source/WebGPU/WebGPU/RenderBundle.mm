@@ -91,9 +91,9 @@ bool RenderBundle::isValid() const
     return m_renderBundleEncoder || m_renderBundlesResources;
 }
 
-void RenderBundle::setLabel(String&& label)
+void RenderBundle::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label.createNSString().get();
+    m_renderBundlesResources.firstObject.indirectCommandBuffer.label = createNSString(label).get();
 }
 
 void RenderBundle::replayCommands(RenderPassEncoder& renderPassEncoder) const

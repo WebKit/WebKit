@@ -56,7 +56,7 @@ FrameTree::~FrameTree()
     ASSERT(!m_remoteFrameDescendantCount);
 }
 
-void FrameTree::setSpecifiedName(const AtomString& specifiedName)
+void FrameTree::setSpecifiedName(AtomStringImpl* specifiedName)
 {
     m_specifiedName = specifiedName;
 }
@@ -257,7 +257,7 @@ RefPtr<Frame> FrameTree::scopedChild(unsigned index) const
     return scopedChild(index, protect(localFrame->document()).get());
 }
 
-RefPtr<Frame> FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) const
+RefPtr<Frame> FrameTree::scopedChildByUniqueName(AtomStringImpl* uniqueName) const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
@@ -267,7 +267,7 @@ RefPtr<Frame> FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) c
     }, protect(localFrame->document()).get());
 }
 
-RefPtr<Frame> FrameTree::scopedChildBySpecifiedName(const AtomString& specifiedName) const
+RefPtr<Frame> FrameTree::scopedChildBySpecifiedName(AtomStringImpl* specifiedName) const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
@@ -319,7 +319,7 @@ Frame* FrameTree::descendantByFrameID(FrameIdentifier frameID) const
     return nullptr;
 }
 
-Frame* FrameTree::childBySpecifiedName(const AtomString& name) const
+Frame* FrameTree::childBySpecifiedName(AtomStringImpl* name) const
 {
     for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
         if (child->tree().specifiedName() == name)
@@ -343,7 +343,7 @@ NODELETE static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
 }
 
 template<typename F>
-inline RefPtr<Frame> FrameTree::find(const AtomString& name, NOESCAPE const F& nameGetter, Frame& activeFrame) const
+inline RefPtr<Frame> FrameTree::find(AtomStringImpl* name, NOESCAPE const F& nameGetter, Frame& activeFrame) const
 {
     if (isSelfTargetFrameName(name))
         return m_thisFrame.ptr();
@@ -389,16 +389,16 @@ inline RefPtr<Frame> FrameTree::find(const AtomString& name, NOESCAPE const F& n
     return nullptr;
 }
 
-RefPtr<Frame> FrameTree::findByUniqueName(const AtomString& uniqueName, Frame& activeFrame) const
+RefPtr<Frame> FrameTree::findByUniqueName(AtomStringImpl* uniqueName, Frame& activeFrame) const
 {
-    return find(uniqueName, [&](auto& frameTree) -> AtomString {
+    return find(uniqueName, [&](auto& frameTree) -> RefPtr<AtomStringImpl> {
         return frameTree.uniqueName();
     }, activeFrame);
 }
 
-RefPtr<Frame> FrameTree::findBySpecifiedName(const AtomString& specifiedName, Frame& activeFrame) const
+RefPtr<Frame> FrameTree::findBySpecifiedName(AtomStringImpl* specifiedName, Frame& activeFrame) const
 {
-    return find(specifiedName, [&](auto& frameTree) -> const AtomString& {
+    return find(specifiedName, [&](auto& frameTree) -> const RefPtr<AtomStringImpl>& {
         return frameTree.specifiedName();
     }, activeFrame);
 }
@@ -651,16 +651,16 @@ unsigned FrameTree::depth() const
     return depth;
 }
 
-AtomString FrameTree::uniqueName() const
+RefPtr<AtomStringImpl> FrameTree::uniqueName() const
 {
-    if (m_thisFrame->isMainFrame() || !m_specifiedName.isEmpty())
+    if (m_thisFrame->isMainFrame() || !isEmpty(m_specifiedName))
         return m_specifiedName;
 
     auto frameIndex { 0u };
     for (Ref frame : descendantFrames(top())) {
         bool frameMatch = frame->frameID() == m_thisFrame->frameID();
         auto frameName = frame->tree().specifiedName();
-        if (frameName.isEmpty() || isBlankTargetFrameName(frameName) || frame->tree().childBySpecifiedName(frameName)) {
+        if (isEmpty(frameName) || isBlankTargetFrameName(frameName) || frame->tree().childBySpecifiedName(frameName)) {
             frameIndex++;
             if (frameMatch)
                 return makeAtomString("<!--frame"_s, frameIndex, "-->"_s);
@@ -738,7 +738,7 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
         printIndent(indent);
         printf("  document=%p (needs style recalc %d)\n", localFrame->document(), localFrame->document() ? localFrame->document()->childNeedsStyleRecalc() : false);
         printIndent(indent);
-        SAFE_PRINTF("  uri=%s\n", localFrame->document()->documentURI().utf8());
+        SAFE_PRINTF("  uri=%s\n", utf8(localFrame->document()->documentURI()));
     }
     for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         printFrames(*child, targetFrame, indent + 1);

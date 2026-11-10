@@ -51,9 +51,9 @@ public:
     NODELETE uint64_t databaseVersion() final;
     void setDatabaseInfo(const IDBDatabaseInfo&);
     bool hasObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier) { return !!infoForObjectStore(objectStoreIdentifier); }
-    MemoryObjectStore* objectStoreForName(const String& name) const;
+    MemoryObjectStore* objectStoreForName(StringImpl* name) const;
 
-    void renameObjectStoreForVersionChangeAbort(MemoryObjectStore&, const String& oldName);
+    void renameObjectStoreForVersionChangeAbort(MemoryObjectStore&, StringImpl* oldName);
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
     void handleLowMemoryWarning() final { };
@@ -64,10 +64,10 @@ private:
     IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) final;
     IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) final;
     IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) final;
-    IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const String& newName) final;
+    IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, StringImpl* newName) final;
     IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier) final;
     IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier) final;
-    IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) final;
+    IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName) final;
     IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyData&, bool& keyExists) final;
     IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, const IDBKeyRangeData&) final;
     IDBError overwriteRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IndexIDToIndexKeyMap&, const IDBValue&) final;
@@ -86,7 +86,7 @@ private:
 
     bool supportsSimultaneousReadWriteTransactions() final { return true; }
     bool isEphemeral() final { return true; }
-    String fullDatabasePath() const final { return nullString(); }
+    RefPtr<StringImpl> fullDatabasePath() const final { return nullString(); }
 
     bool hasTransaction(const IDBResourceIdentifier& identifier) const final { return m_transactions.contains(identifier); }
 
@@ -107,7 +107,7 @@ private:
 
     HashMap<IDBResourceIdentifier, Ref<MemoryBackingStoreTransaction>> m_transactions;
     HashMap<IDBObjectStoreIdentifier, Ref<MemoryObjectStore>> m_objectStoresByIdentifier;
-    HashMap<String, Ref<MemoryObjectStore>> m_objectStoresByName;
+    HashMap<RefPtr<StringImpl>, Ref<MemoryObjectStore>> m_objectStoresByName;
 };
 
 } // namespace IDBServer

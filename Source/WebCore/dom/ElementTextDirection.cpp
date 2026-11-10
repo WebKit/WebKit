@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-TextDirectionState parseTextDirectionState(const AtomString& value)
+TextDirectionState parseTextDirectionState(AtomStringImpl* value)
 {
     if (equalLettersIgnoringASCIICase(value, "ltr"_s))
         return TextDirectionState::LTR;
@@ -109,9 +109,9 @@ static void updateElementHasDirAutoFlag(Element& element, TextDirectionState tex
 }
 
 // Specs: https://html.spec.whatwg.org/multipage/dom.html#text-node-directionality
-static std::optional<TextDirection> computeTextDirectionFromText(const String& text)
+static std::optional<TextDirection> computeTextDirectionFromText(StringImpl* text)
 {
-    if (auto direction = text.defaultWritingDirection())
+    if (auto direction = defaultWritingDirection(text))
         return *direction == U_LEFT_TO_RIGHT ? TextDirection::LTR : TextDirection::RTL;
     return std::nullopt;
 }
@@ -232,8 +232,8 @@ std::optional<TextDirection> computeAutoDirectionality(const Element& element)
         // Specs: The directionality of the auto-directionality form-associated
         // element is calculated from its value() text.
         // Specs: If element's value is not the empty string, then return 'ltr'.
-        if (auto value = textFormControl->value(); !value->isEmpty())
-            return computeTextDirectionFromText(value).value_or(TextDirection::LTR);
+        if (auto value = textFormControl->value(); !isEmpty(value.get()))
+            return computeTextDirectionFromText(protect(value.get())).value_or(TextDirection::LTR);
         return std::nullopt;
     }
 

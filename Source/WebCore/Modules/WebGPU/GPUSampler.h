@@ -38,13 +38,13 @@ class GPUDevice;
 
 class GPUSampler : public RefCountedAndCanMakeWeakPtr<GPUSampler> {
 public:
-    static Ref<GPUSampler> create(Ref<::WebGPU::Sampler>&& backing, String&& label, GPUDevice& device)
+    static Ref<GPUSampler> create(Ref<::WebGPU::Sampler>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     {
         return adoptRef(*new GPUSampler(WTF::move(backing), WTF::move(label), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     ::WebGPU::Sampler& backing() { return m_backing; }
     const ::WebGPU::Sampler& backing() const { return m_backing; }
@@ -54,10 +54,10 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUSampler(Ref<::WebGPU::Sampler>&&, String&& label, GPUDevice&);
+    GPUSampler(Ref<::WebGPU::Sampler>&&, RefPtr<StringImpl>&& label, GPUDevice&);
 
     const Ref<::WebGPU::Sampler> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

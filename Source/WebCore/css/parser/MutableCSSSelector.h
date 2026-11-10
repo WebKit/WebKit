@@ -55,12 +55,12 @@ public:
     const CSSSelector& selector() const LIFETIME_BOUND { return m_selector; };
     CSSSelector& selector() LIFETIME_BOUND { return m_selector; }
 
-    void setValue(const AtomString& value, bool matchLowerCase = false) { m_selector.setValue(value, matchLowerCase); }
-    const AtomString& value() const LIFETIME_BOUND { return m_selector.value(); }
+    void setValue(AtomStringImpl* value, bool matchLowerCase = false) { m_selector.setValue(value, matchLowerCase); }
+    const RefPtr<AtomStringImpl>& value() const LIFETIME_BOUND { return m_selector.value(); }
 
     void setAttribute(const QualifiedName& value, CSSSelector::AttributeMatchType type) { m_selector.setAttribute(value, type); }
 
-    void setArgument(const AtomString& value) { m_selector.setArgument(value); }
+    void setArgument(AtomStringImpl* value) { m_selector.setArgument(value); }
     void setNth(int a, int b) { m_selector.setNth(a, b); }
     void setMatch(CSSSelector::Match value) { m_selector.setMatch(value); }
     void setRelation(CSSSelector::Relation value) { m_selector.setRelation(value); }
@@ -76,7 +76,7 @@ public:
 
     void adoptSelectorVector(MutableCSSSelectorList&&);
     void setIntegerList(FixedVector<int>);
-    void setStringList(FixedVector<AtomString>);
+    void setStringList(FixedVector<RefPtr<AtomStringImpl>>);
     void setLangList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 

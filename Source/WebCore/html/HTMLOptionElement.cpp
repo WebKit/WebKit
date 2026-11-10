@@ -83,17 +83,17 @@ Ref<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLOptionElement(tagName, document));
 }
 
-ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFunction(Document& document, String&& text, const AtomString& value, bool defaultSelected, bool selected)
+ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFunction(Document& document, RefPtr<StringImpl>&& text, AtomStringImpl* value, bool defaultSelected, bool selected)
 {
     Ref element = create(document);
 
-    if (!text.isEmpty()) {
+    if (!isEmpty(text)) {
         auto appendResult = element->appendChild(Text::create(document, WTF::move(text)));
         if (appendResult.hasException())
             return appendResult.releaseException();
     }
 
-    if (!value.isNull())
+    if (value)
         element->setAttributeWithoutSynchronization(valueAttr, value);
     if (defaultSelected)
         element->setAttributeWithoutSynchronization(selectedAttr, emptyAtom());
@@ -141,7 +141,7 @@ void HTMLOptionElement::updateUserAgentShadowTree()
         return;
 
     if (!userAgentShadowRoot()) {
-        if (attributeWithoutSynchronization(labelAttr).isNull())
+        if (!attributeWithoutSynchronization(labelAttr))
             return;
         ensureUserAgentShadowRoot();
     }
@@ -153,8 +153,8 @@ void HTMLOptionElement::updateUserAgentShadowTree()
     ScriptDisallowedScope::EventAllowedScope labelContainerScope { labelContainer };
     ScriptDisallowedScope::EventAllowedScope slotScope { slot };
 
-    labelContainer->setTextContent(String { labelValue });
-    if (m_ownerSelect && !labelValue.isNull()) {
+    labelContainer->setTextContent(RefPtr<StringImpl> { labelValue });
+    if (m_ownerSelect && labelValue) {
         labelContainer->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Inline);
         slot->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
     } else {
@@ -328,14 +328,14 @@ bool HTMLOptionElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-String HTMLOptionElement::text() const
+RefPtr<StringImpl> HTMLOptionElement::text() const
 {
     // FIXME: Is displayStringModifiedByEncoding helpful here?
     // If it's correct here, then isn't it needed in the value and label functions too?
     return protect(document())->displayStringModifiedByEncoding(htmlAwareTextContent(*this, IncludeAltText::No));
 }
 
-void HTMLOptionElement::setText(String&& text)
+void HTMLOptionElement::setText(RefPtr<StringImpl>&& text)
 {
     Ref protectedThis { *this };
 
@@ -382,10 +382,10 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
         if (!keyboardEvent)
             return HTMLElement::defaultEventHandler(event);
 
-        const String& keyIdentifier = keyboardEvent->keyIdentifier();
+        const RefPtr<StringImpl>& keyIdentifier = keyboardEvent->keyIdentifier();
 
         // [Shift+]Tab closes the picker; fall through to move focus.
-        if (keyIdentifier == "U+0009"_s) {
+        if (equal(keyIdentifier, "U+0009"_s)) {
             if (select->usesBaseAppearancePicker())
                 select->hidePickerPopoverElement();
             return HTMLElement::defaultEventHandler(event);
@@ -461,7 +461,7 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLOptionElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::disabledAttr:
@@ -469,12 +469,12 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
     case AttributeNames::selectedAttr: {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
-        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClass::Default, !newValue.isNull());
-        m_isDefault = !newValue.isNull();
+        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClass::Default, !!newValue);
+        m_isDefault = !!newValue;
 
         // https://html.spec.whatwg.org/multipage/form-elements.html#concept-option-selectedness
-        if (oldValue.isNull() != newValue.isNull() && !m_isDirty)
-            setSelected(!newValue.isNull());
+        if (!oldValue != !newValue && !m_isDirty)
+            setSelected(!!newValue);
         break;
     }
     case AttributeNames::labelAttr: {
@@ -493,9 +493,9 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
     }
 }
 
-void HTMLOptionElement::parseDisabledAttribute(const AtomString& value)
+void HTMLOptionElement::parseDisabledAttribute(AtomStringImpl* value)
 {
-    bool newDisabled = !value.isNull();
+    bool newDisabled = !!value;
     if (m_disabled == newDisabled)
         return;
 
@@ -510,10 +510,10 @@ void HTMLOptionElement::parseDisabledAttribute(const AtomString& value)
         select->resetSelectedness(oldSelectedOption.get());
 }
 
-String HTMLOptionElement::value() const
+RefPtr<StringImpl> HTMLOptionElement::value() const
 {
-    const AtomString& value = attributeWithoutSynchronization(valueAttr);
-    if (!value.isNull())
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(valueAttr);
+    if (value)
         return value;
     return htmlAwareTextContent(*this, IncludeAltText::No);
 }
@@ -619,23 +619,23 @@ bool HTMLOptionElement::isKeyboardFocusable(const FocusEventData& focusEventData
     return HTMLElement::isKeyboardFocusable(focusEventData);
 }
 
-String HTMLOptionElement::label() const
+RefPtr<StringImpl> HTMLOptionElement::label() const
 {
-    String label = attributeWithoutSynchronization(labelAttr);
-    if (!label.isNull())
+    RefPtr<StringImpl> label = attributeWithoutSynchronization(labelAttr);
+    if (label)
         return label;
     return htmlAwareTextContent(*this, IncludeAltText::No);
 }
 
-String HTMLOptionElement::displayLabel() const
+RefPtr<StringImpl> HTMLOptionElement::displayLabel() const
 {
-    String label = attributeWithoutSynchronization(labelAttr);
-    if (label.isEmpty())
+    RefPtr<StringImpl> label = attributeWithoutSynchronization(labelAttr);
+    if (isEmpty(label))
         return htmlAwareTextContent(*this, IncludeAltText::Yes);
     return label;
 }
 
-String HTMLOptionElement::textIndentedToRespectGroupLabel() const
+RefPtr<StringImpl> HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     for (Ref ancestor : ancestorsOfType<HTMLElement>(*this)) {
         if (is<HTMLOptGroupElement>(ancestor))

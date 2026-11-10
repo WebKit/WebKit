@@ -48,7 +48,7 @@ namespace WebCore {
 class VTTScanner {
     WTF_MAKE_NONCOPYABLE(VTTScanner);
 public:
-    NODELETE explicit VTTScanner(const String& line);
+    NODELETE explicit VTTScanner(StringImpl* line);
 
     using Position = const void*;
 
@@ -129,18 +129,18 @@ public:
 
     // Scan the string |toMatch|, using the specified |run| as the sequence to
     // match against.
-    NODELETE bool scanRun(const Run&, const String& toMatch);
+    NODELETE bool scanRun(const Run&, StringImpl* toMatch);
 
     // Skip to the end of the specified |run|.
     NODELETE void skipRun(const Run&);
 
     // Return the String made up of the characters in |run|, and advance the
     // input pointer to the end of the run.
-    String extractString(const Run&);
+    RefPtr<StringImpl> extractString(const Run&);
 
     // Return a String constructed from the rest of the input (between input
     // pointer and end of input), and advance the input pointer accordingly.
-    String restOfInputAsString();
+    RefPtr<StringImpl> restOfInputAsString();
 
     // Scan a set of ASCII digits from the input. Return the number of digits
     // scanned, and set |number| to the computed value. If the digits make up a
@@ -175,7 +175,7 @@ protected:
         std::span<const Latin1Character> characters8;
         std::span<const char16_t> characters16;
     } m_data;
-    const String m_source;
+    const RefPtr<StringImpl> m_source;
     bool m_is8Bit;
 };
 
@@ -226,12 +226,12 @@ inline VTTScanner::Run VTTScanner::collectUntil()
 inline void VTTScanner::seekTo(Position position)
 {
     if (m_is8Bit) {
-        auto span8 = m_source.span8();
+        auto span8 = WTF::span8(m_source);
         auto* position8 = static_cast<const Latin1Character*>(position);
         RELEASE_ASSERT(position8 >= span8.data());
         m_data.characters8 = span8.subspan(position8 - span8.data());
     } else {
-        auto span16 = m_source.span16();
+        auto span16 = WTF::span16(m_source);
         auto* position16 = static_cast<const char16_t*>(position);
         RELEASE_ASSERT(position16 >= span16.data());
         m_data.characters16 = span16.subspan(position16 - span16.data());

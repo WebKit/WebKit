@@ -42,9 +42,9 @@ public:
     }
 
     const CSS::URL& url() const LIFETIME_BOUND { return m_url; }
-    WTF::String stringValue() const { return m_url.specified; }
+    RefPtr<StringImpl> stringValue() const { return m_url.specified; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSURLValue&) const;
 
     NODELETE IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;

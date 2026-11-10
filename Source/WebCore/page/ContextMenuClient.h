@@ -48,7 +48,7 @@ public:
     virtual void searchWithGoogle(const LocalFrame*) = 0;
     virtual void lookUpInDictionary(LocalFrame*) = 0;
     virtual bool isSpeaking() const = 0;
-    virtual void speak(const String&) = 0;
+    virtual void speak(StringImpl*) = 0;
     virtual void stopSpeaking() = 0;
 
 #if ENABLE(IMAGE_ANALYSIS)

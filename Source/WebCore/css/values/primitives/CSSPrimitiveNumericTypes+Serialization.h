@@ -37,10 +37,10 @@ struct SerializableNumber {
 };
 
 void formatNonfiniteCSSNumberValue(StringBuilder&, const SerializableNumber&);
-WTF::String formatNonfiniteCSSNumberValue(const SerializableNumber&);
+RefPtr<StringImpl> formatNonfiniteCSSNumberValue(const SerializableNumber&);
 
 void formatCSSNumberValue(StringBuilder&, const SerializableNumber&);
-WTF::String formatCSSNumberValue(const SerializableNumber&);
+RefPtr<StringImpl> formatCSSNumberValue(const SerializableNumber&);
 
 template<> struct Serialize<SerializableNumber> {
     void operator()(StringBuilder&, const SerializationContext&, const SerializableNumber&);

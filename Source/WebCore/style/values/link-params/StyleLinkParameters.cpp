@@ -67,12 +67,12 @@ static CSS::ParamSpec toCSSParamSpec(const ParamSpec& spec)
     );
 }
 
-const AtomString& ParamSpec::name() const
+const RefPtr<AtomStringImpl>& ParamSpec::name() const
 {
     return WTF::switchOn(value,
-        [](CSS::Keyword::Color) -> const AtomString& { return nameStringForSerialization(CSSValueID::Color); },
-        [](CSS::Keyword::AccentColor) -> const AtomString& { return nameStringForSerialization(CSSValueID::AccentColor); },
-        [](const Custom& custom) -> const AtomString& { return custom.name.value; }
+        [](CSS::Keyword::Color) -> const RefPtr<AtomStringImpl>& { return nameStringForSerialization(CSSValueID::Color); },
+        [](CSS::Keyword::AccentColor) -> const RefPtr<AtomStringImpl>& { return nameStringForSerialization(CSSValueID::AccentColor); },
+        [](const Custom& custom) -> const RefPtr<AtomStringImpl>& { return custom.name.value; }
     );
 }
 
@@ -113,13 +113,13 @@ static LinkParameter::ResolvedValue resolveTypedValue(const ParamSpec& spec, con
 
     // A computed <color> can still reference the element, through currentcolor or a function
     // containing it, so it is absolutized here.
-    WTF::String serialization;
+    RefPtr<StringImpl> serialization;
     if (auto* typedValue = std::get_if<CustomProperty::Value>(&property->value())) {
         if (auto* color = std::get_if<Color>(typedValue))
             serialization = WebCore::serializationForCSS(ColorResolver { state.style() }.colorResolvingCurrentColor(*color));
     }
 
-    if (serialization.isNull())
+    if (!serialization)
         return Ref { CSSVariableData::create(CSSParserTokenRange { property->tokens().span() }) };
 
     CSSTokenizer tokenizer { StringView { serialization } };

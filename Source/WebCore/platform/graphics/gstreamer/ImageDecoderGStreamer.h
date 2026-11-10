@@ -42,22 +42,22 @@ class ImageDecoderGStreamer final : public ImageDecoder {
     WTF_MAKE_TZONE_ALLOCATED(ImageDecoderGStreamer);
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:
-    static RefPtr<ImageDecoderGStreamer> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
-    ImageDecoderGStreamer(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoderGStreamer> create(FragmentedSharedBuffer&, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoderGStreamer(FragmentedSharedBuffer&, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption);
     ~ImageDecoderGStreamer();
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Video; }
-    static bool supportsContainerType(const String&);
+    static bool supportsContainerType(StringImpl*);
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
-    static bool canDecodeType(const String& mimeType);
+    static bool canDecodeType(StringImpl* mimeType);
 
     void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTF::move(callback); }
     EncodedDataStatus encodedDataStatus() const final;
     IntSize size() const final;
     size_t frameCount() const final { return m_sampleData.size(); }
     RepetitionCount repetitionCount() const final;
-    String filenameExtension() const final { return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType); }
+    RefPtr<StringImpl> filenameExtension() const final { return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType); }
     std::optional<IntPoint> hotSpot() const final { return std::nullopt; }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final { return size(); }
@@ -87,7 +87,7 @@ private:
     bool m_eos { false };
     bool m_error { false };
     std::optional<IntSize> m_size;
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
 
     RefPtr<GStreamerElementHarness> m_parserHarness;
     RefPtr<GStreamerElementHarness> m_decoderHarness;

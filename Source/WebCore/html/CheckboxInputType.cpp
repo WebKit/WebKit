@@ -71,7 +71,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CheckboxInputType);
 
-const AtomString& CheckboxInputType::formControlType() const
+const RefPtr<AtomStringImpl>& CheckboxInputType::formControlType() const
 {
     return InputTypeNames::checkbox();
 }
@@ -82,7 +82,7 @@ bool CheckboxInputType::valueMissing(StringView) const
     return element()->isRequired() && !element()->checked();
 }
 
-String CheckboxInputType::valueMissingText() const
+RefPtr<StringImpl> CheckboxInputType::valueMissingText() const
 {
     if (isSwitch())
         return validationMessageValueMissingForSwitchText();
@@ -115,8 +115,8 @@ void CheckboxInputType::createShadowSubtree()
 
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
 {
-    const String& key = event.keyIdentifier();
-    if (key != "U+0020"_s)
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (!equal(key, "U+0020"_s))
         return;
     dispatchSimulatedClickIfActive(event);
 }
@@ -184,7 +184,7 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
         return;
     }
 
-    const AtomString& eventType = event.type();
+    const RefPtr<AtomStringImpl>& eventType = event.type();
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.touchstartEvent) {
         RefPtr targetTouches = event.targetTouches();

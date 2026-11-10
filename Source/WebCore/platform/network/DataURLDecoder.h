@@ -38,9 +38,9 @@ class FragmentedSharedBuffer;
 namespace DataURLDecoder {
 
 struct Result {
-    String mimeType;
-    String charset;
-    String contentType;
+    RefPtr<StringImpl> mimeType;
+    RefPtr<StringImpl> charset;
+    RefPtr<StringImpl> contentType;
     Vector<uint8_t> data;
 };
 

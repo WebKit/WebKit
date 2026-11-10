@@ -118,7 +118,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 
         callData = JSC::getCallData(function);
         if (callData.type == CallData::Type::None) {
-            returnedException = JSC::Exception::create(vm, createTypeError(lexicalGlobalObject, makeString('\'', String(functionName.uid()), "' property of callback interface should be callable"_s)));
+            returnedException = JSC::Exception::create(vm, createTypeError(lexicalGlobalObject, makeString('\'', RefPtr<StringImpl>(functionName.uid()), "' property of callback interface should be callable"_s)));
             return JSValue();
         }
 

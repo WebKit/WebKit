@@ -102,7 +102,7 @@ public:
     virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const = 0;
 
-    virtual void registerServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent) = 0;
+    virtual void registerServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, RefPtr<StringImpl>&& userAgent) = 0;
     virtual void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) = 0;
 
     virtual void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationKey&&, WorkerFetchResult&&) = 0;
@@ -124,13 +124,13 @@ public:
 
 #if ENABLE(NOTIFICATION_EVENT)
     using GetNotificationsCallback = CompletionHandler<void(ExceptionOr<Vector<NotificationData>>&&)>;
-    virtual void getNotifications(const URL&, const String&, GetNotificationsCallback&&) = 0;
+    virtual void getNotifications(const URL&, StringImpl*, GetNotificationsCallback&&) = 0;
 #endif
 
     using ExceptionOrVoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     virtual void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) = 0;
     virtual void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) = 0;
-    virtual void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) = 0;
+    virtual void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&&, ExceptionOrVoidCallback&&) = 0;
     using ExceptionOrNavigationPreloadStateCallback = CompletionHandler<void(ExceptionOr<NavigationPreloadState>&&)>;
     virtual void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) = 0;
 
@@ -138,14 +138,14 @@ public:
     bool isClosed() const { return m_isClosed; }
 
     using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(ExceptionOr<std::optional<BackgroundFetchInformation>>&&)>;
-    virtual void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
-    virtual void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
-    using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;
+    virtual void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, StringImpl*, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
+    virtual void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, StringImpl*, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
+    using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>;
     virtual void backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier, BackgroundFetchIdentifiersCallback&&) = 0;
     using AbortBackgroundFetchCallback = CompletionHandler<void(bool)>;
-    virtual void abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&&) = 0;
+    virtual void abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, StringImpl*, AbortBackgroundFetchCallback&&) = 0;
     using MatchBackgroundFetchCallback = CompletionHandler<void(Vector<BackgroundFetchRecordInformation>&&)>;
-    virtual void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) = 0;
+    virtual void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, StringImpl*, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) = 0;
     using RetrieveRecordResponseCallback = CompletionHandler<void(ExceptionOr<ResourceResponse>&&)>;
     virtual void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) = 0;
     using RetrieveRecordResponseBodyCallback = Function<void(std::expected<RefPtr<SharedBuffer>, ResourceError>&&)>;

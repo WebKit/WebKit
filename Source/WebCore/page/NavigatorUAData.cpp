@@ -124,21 +124,21 @@ SUPPRESS_NODELETE bool NavigatorUAData::mobile() const
 #endif
 }
 
-String NavigatorUAData::platform() const
+RefPtr<StringImpl> NavigatorUAData::platform() const
 {
     if (overrideFromUserAgentString)
         return platformOverride;
 
 #if OS(LINUX)
-    static NeverDestroyed<String> platformName = [] {
+    static NeverDestroyed<RefPtr<StringImpl>> platformName = [] {
         struct utsname osname;
         return uname(&osname) >= 0 ? makeString(unsafeSpan(osname.sysname)) : emptyString();
     }();
-    return platformName->isolatedCopy();
+    return isolatedCopy(platformName.get());
 #elif PLATFORM(IOS_FAMILY)
     return (PAL::currentUserInterfaceIdiomIsDesktop() || PAL::currentUserInterfaceIdiomIsVision()) ? "macOS"_s : "iOS"_s;
 #elif OS(MACOS)
-    return "macOS"_s;
+    return "macOS"_si;
 #else
     return ""_s;
 #endif
@@ -153,7 +153,7 @@ UALowEntropyJSON NavigatorUAData::toJSON() const
     };
 }
 
-void NavigatorUAData::getHighEntropyValues(const Vector<String>& hints, NavigatorUAData::ValuesPromise&& promise) const
+void NavigatorUAData::getHighEntropyValues(const Vector<RefPtr<StringImpl>>& hints, NavigatorUAData::ValuesPromise&& promise) const
 {
     UADataValues values {
         { },
@@ -176,41 +176,41 @@ void NavigatorUAData::getHighEntropyValues(const Vector<String>& hints, Navigato
     }
 
     for (auto& hint : hints) {
-        if (hint == "architecture")
-            values.architecture = ""_s;
-        else if (hint == "bitness")
-            values.bitness = "64"_s;
-        else if (hint == "formFactors")
-            values.formFactors = Vector<String> { };
-        else if (hint == "fullVersionList")
+        if (equal(hint, "architecture"))
+            values.architecture = ""_si;
+        else if (equal(hint, "bitness"))
+            values.bitness = "64"_si;
+        else if (equal(hint, "formFactors"))
+            values.formFactors = Vector<RefPtr<StringImpl>> { };
+        else if (equal(hint, "fullVersionList"))
             values.fullVersionList = brands();
-        else if (hint == "model")
-            values.model = ""_s;
-        else if (hint == "platformVersion") {
+        else if (equal(hint, "model"))
+            values.model = ""_si;
+        else if (equal(hint, "platformVersion")) {
 #if OS(LINUX)
             values.platformVersion = ""_s;
 #elif PLATFORM(IOS_FAMILY)
             values.platformVersion = systemMarketingVersionForUserAgentString();
 #elif OS(MACOS)
-            values.platformVersion = "10.15.7"_s;
+            values.platformVersion = "10.15.7"_si;
 #else
             values.platformVersion = ""_s;
 #endif
-        } else if (hint == "uaFullVersion")
-            values.uaFullVersion = "605.1.15"_s;
-        else if (hint == "wow64")
+        } else if (equal(hint, "uaFullVersion"))
+            values.uaFullVersion = "605.1.15"_si;
+        else if (equal(hint, "wow64"))
             values.wow64 = false;
     }
 
     promise.resolve(WTF::move(values));
 }
 
-String NavigatorUAData::createArbitraryVersion()
+RefPtr<StringImpl> NavigatorUAData::createArbitraryVersion()
 {
     return makeString(weakRandomNumber<unsigned>() % 10000, '.', weakRandomNumber<unsigned>() % 10000, '.', weakRandomNumber<unsigned>() % 10000);
 }
 
-String NavigatorUAData::createArbitraryBrand()
+RefPtr<StringImpl> NavigatorUAData::createArbitraryBrand()
 {
     auto greasyChars = unsafeSpan(" ()-./:;=?_");
     return makeString("The"_s, greasyChars[weakRandomNumber<unsigned>() % greasyChars.size()], "Best"_s, greasyChars[weakRandomNumber<unsigned>() % greasyChars.size()], "Browser"_s);

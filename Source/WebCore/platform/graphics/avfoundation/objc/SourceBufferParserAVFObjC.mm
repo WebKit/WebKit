@@ -124,7 +124,7 @@
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)sample forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType flags:(AVStreamDataParserOutputMediaDataFlags)flags
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
-    _parent.get()->didProvideMediaDataForTrackID(trackID, sample, nsMediaType, flags);
+    _parent.get()->didProvideMediaDataForTrackID(trackID, sample, StringImpl::create(nsMediaType).get(), flags);
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -181,7 +181,7 @@ private:
         m_isText = [mediaType isEqualToString:AVMediaTypeText] || [mediaType isEqualToString:AVMediaTypeClosedCaption] || [mediaType isEqualToString:AVMediaTypeSubtitle];
     }
 
-    String extractCodecName(AVAssetTrack* track)
+    RefPtr<StringImpl> extractCodecName(AVAssetTrack* track)
     {
         NSArray* formatDescriptions = [track formatDescriptions];
         CMFormatDescriptionRef description = [formatDescriptions count] ? (__bridge CMFormatDescriptionRef)[formatDescriptions objectAtIndex:0] : 0;
@@ -191,7 +191,7 @@ private:
         CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::kCMFormatDescriptionExtension_ProtectedContentOriginalFormat : CFSTR("CommonEncryptionOriginalFormat");
         if (RetainPtr originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
             CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &originalCodec.value);
-        return String::fromLatin1(originalCodec.string().data());
+        return StringImpl::fromLatin1(originalCodec.string().data());
     }
     bool m_isVideo { false };
     bool m_isAudio { false };
@@ -203,10 +203,10 @@ private:
 
 MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported(const ContentType& type)
 {
-    String extendedType = type.raw();
-    String outputCodecs = type.parameter(ContentType::codecsParameter());
-    if (!outputCodecs.isEmpty()) {
-        outputCodecs = [PAL::getAVStreamDataParserClassSingleton() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs.createNSString().get()];
+    RefPtr<StringImpl> extendedType = type.raw();
+    RefPtr<StringImpl> outputCodecs = type.parameter(ContentType::codecsParameter());
+    if (!isEmpty(outputCodecs)) {
+        outputCodecs = StringImpl::create([PAL::getAVStreamDataParserClassSingleton() outputMIMECodecParameterForInputMIMECodecParameter:createNSString(outputCodecs).get()]);
         extendedType = makeString(type.containerType(), "; codecs=\""_s, outputCodecs, "\""_s);
     }
 
@@ -345,14 +345,14 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
                 SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
                 Ref description = MediaDescriptionAVFObjC::create(track);
                 info.description = description.copyRef();
-                if (description->codec().toString() != "wvtt"_s) {
+                if (!equal(description->codec().toString(), "wvtt"_s)) {
                     ALWAYS_LOG_IF_POSSIBLE(identifier, "Ignoring text track of type ", description->codec());
                     break;
                 }
                 info.track = TextTrackPrivateMediaSourceAVFObjC::create(track, InbandTextTrackPrivate::CueFormat::WebVTT);
                 segment.textTracks.append(WTF::move(info));
             } else {
-                ALWAYS_LOG_IF_POSSIBLE(identifier, "Ignoring track of type ", String(mediaType));
+                ALWAYS_LOG_IF_POSSIBLE(identifier, "Ignoring track of type ", StringImpl::create(mediaType).get());
             }
         }
 
@@ -366,7 +366,7 @@ void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error
     m_lastErrorCode.emplace([error code]);
 }
 
-void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(TrackID trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
+void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(TrackID trackID, CMSampleBufferRef sampleBuffer, StringImpl* mediaType, unsigned flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "trackID = ", trackID, ", mediaType = ", mediaType);
     UNUSED_PARAM(flags);
@@ -375,7 +375,7 @@ void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(TrackID trackID, C
     if (auto it = m_emptyEditOffsetForTrackID.find(trackID); it != m_emptyEditOffsetForTrackID.end())
         emptyEditOffset = it->value;
 
-    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, sampleBuffer = retainPtr(sampleBuffer), trackID, mediaType = mediaType, emptyEditOffset] {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, sampleBuffer = retainPtr(sampleBuffer), trackID, mediaType = RefPtr { mediaType }, emptyEditOffset] {
         if (!m_didProvideMediaDataCallback)
             return;
 

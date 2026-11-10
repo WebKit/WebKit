@@ -53,7 +53,7 @@ public:
     bool isDefault() const override;
     size_t inbandTrackIndex();
 
-    String inBandMetadataTrackDispatchType() const override;
+    RefPtr<StringImpl> inBandMetadataTrackDispatchType() const override;
 
     void setPrivate(InbandTextTrackPrivate&);
 #if !RELEASE_LOG_DISABLED
@@ -73,14 +73,14 @@ protected:
 private:
     bool isInband() const final { return true; }
     void idChanged(TrackID) override;
-    void labelChanged(const String&) override;
-    void languageChanged(const String&) override;
+    void labelChanged(StringImpl*) override;
+    void languageChanged(StringImpl*) override;
     void willRemove() override;
 
     void addDataCue(const MediaTime&, const MediaTime&, std::span<const uint8_t>) override { ASSERT_NOT_REACHED(); }
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, const String&) override { ASSERT_NOT_REACHED(); }
+    void addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, StringImpl*) override { ASSERT_NOT_REACHED(); }
     void updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override { ASSERT_NOT_REACHED(); }
     void removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override { ASSERT_NOT_REACHED(); }
 #endif
@@ -89,7 +89,7 @@ private:
     void updateGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
     void removeGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
 
-    void parseWebVTTFileHeader(String&&) override { ASSERT_NOT_REACHED(); }
+    void parseWebVTTFileHeader(RefPtr<StringImpl>&&) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(std::span<const uint8_t>) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(ISOWebVTTCue&&) override { ASSERT_NOT_REACHED(); }
 };

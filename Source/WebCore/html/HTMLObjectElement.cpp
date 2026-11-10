@@ -90,7 +90,7 @@ bool HTMLObjectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLPlugInElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == borderAttr)
         applyBorderAttributeToStyle(value, style);
@@ -98,7 +98,7 @@ void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLPlugInElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLObjectElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLPlugInElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -107,13 +107,13 @@ void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomSt
 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:
-        m_serviceType = newValue.string().left(newValue.find(';')).convertToASCIILowercase();
+        m_serviceType = convertToASCIILowercase(left(newValue, find(newValue, ';')));
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
         break;
     case AttributeNames::dataAttr:
         // FIXME: trimming whitespace is probably redundant with the URL parser
-        m_url = newValue.string().trim(isASCIIWhitespace);
+        m_url = trim(newValue, isASCIIWhitespace);
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
         updateImageLoaderWithNewURLSoon();
@@ -139,24 +139,24 @@ void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomSt
     invalidateStyleAndRenderersForSubtree();
 }
 
-static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
+static void mapDataParamToSrc(Vector<RefPtr<AtomStringImpl>>& paramNames, Vector<RefPtr<AtomStringImpl>>& paramValues)
 {
     // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP require "src" attribute).
     bool foundSrcParam = false;
-    AtomString dataParamValue;
+    RefPtr<AtomStringImpl> dataParamValue;
     for (unsigned i = 0; i < paramNames.size(); ++i) {
         if (equalLettersIgnoringASCIICase(paramNames[i], "src"_s))
             foundSrcParam = true;
         else if (equalLettersIgnoringASCIICase(paramNames[i], "data"_s))
             dataParamValue = paramValues[i];
     }
-    if (!foundSrcParam && !dataParamValue.isNull()) {
-        paramNames.append(AtomString { "src"_s });
+    if (!foundSrcParam && dataParamValue) {
+        paramNames.append("src"_atom);
         paramValues.append(WTF::move(dataParamValue));
     }
 }
 
-void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
+void HTMLObjectElement::parametersForPlugin(Vector<RefPtr<AtomStringImpl>>& paramNames, Vector<RefPtr<AtomStringImpl>>& paramValues)
 {
     if (hasAttributes()) {
         for (auto& attribute : attributes()) {
@@ -203,8 +203,8 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     }
 
     // FIXME: These should be joined into a PluginParameters class.
-    Vector<AtomString> paramNames;
-    Vector<AtomString> paramValues;
+    Vector<RefPtr<AtomStringImpl>> paramNames;
+    Vector<RefPtr<AtomStringImpl>> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
     auto url = this->url();
@@ -228,7 +228,7 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     //
     // Dispatching a beforeLoad event could have executed code that changed the document.
     // Make sure the URL is still safe to load.
-    bool success = attributeWithoutSynchronization(classidAttr).isEmpty() && canLoadURL(url);
+    bool success = isEmpty(attributeWithoutSynchronization(classidAttr)) && canLoadURL(url);
     if (success)
         success = requestObject(url, serviceType, paramNames, paramValues);
     if (!success && hasFallbackContent())
@@ -270,7 +270,7 @@ bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == dataAttr || attribute.name() == codebaseAttr || HTMLPlugInElement::isURLAttribute(attribute);
 }
 
-String HTMLObjectElement::imageSourceURL() const
+RefPtr<StringImpl> HTMLObjectElement::imageSourceURL() const
 {
     return attributeWithoutSynchronization(dataAttr);
 }

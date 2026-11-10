@@ -1,0 +1,63 @@
+Symbol property lookups on same-origin and cross-origin windows that have child frames named like the symbols' descriptions. A symbol never matches a child frame name.
+
+
+Same-origin window:
+  window.child: window.frames[0]
+  window["Symbol(child)"]: window.frames[1]
+  window["Symbol.toPrimitive"]: window.frames[2]
+  String(window): "[object Window]"
+  window + "": "[object Window]"
+  `${window}`: "[object Window]"
+  window[Symbol("child")]: undefined
+  Symbol("child") in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol("child")): undefined
+  window[Symbol.for("child")]: undefined
+  Symbol.for("child") in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol.for("child")): undefined
+  window[Symbol("Symbol(child)")]: undefined
+  Symbol("Symbol(child)") in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol("Symbol(child)")): undefined
+  window[Symbol.toPrimitive]: undefined
+  Symbol.toPrimitive in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol.toPrimitive): undefined
+  window[Symbol.toStringTag]: "Window"
+  Symbol.toStringTag in window: true
+  Object.getOwnPropertyDescriptor(window, Symbol.toStringTag): undefined
+  window[Symbol.iterator]: undefined
+  Symbol.iterator in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol.iterator): undefined
+  window[Symbol.hasInstance]: undefined
+  Symbol.hasInstance in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol.hasInstance): undefined
+  window[Symbol.isConcatSpreadable]: undefined
+  Symbol.isConcatSpreadable in window: false
+  Object.getOwnPropertyDescriptor(window, Symbol.isConcatSpreadable): undefined
+Cross-origin window:
+  crossOriginWindow.child: object
+  crossOriginWindow["Symbol(child)"]: object
+  crossOriginWindow.length: 3
+  crossOriginWindow[Symbol("child")]: threw SecurityError
+  Symbol("child") in crossOriginWindow: threw SecurityError
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol("child")): threw SecurityError
+  crossOriginWindow[Symbol.for("child")]: threw SecurityError
+  Symbol.for("child") in crossOriginWindow: threw SecurityError
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol.for("child")): threw SecurityError
+  crossOriginWindow[Symbol("Symbol(child)")]: threw SecurityError
+  Symbol("Symbol(child)") in crossOriginWindow: threw SecurityError
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol("Symbol(child)")): threw SecurityError
+  crossOriginWindow[Symbol.toPrimitive]: threw SecurityError
+  Symbol.toPrimitive in crossOriginWindow: threw SecurityError
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol.toPrimitive): threw SecurityError
+  crossOriginWindow[Symbol.toStringTag]: undefined
+  Symbol.toStringTag in crossOriginWindow: true
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol.toStringTag): object
+  crossOriginWindow[Symbol.iterator]: threw SecurityError
+  Symbol.iterator in crossOriginWindow: threw SecurityError
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol.iterator): threw SecurityError
+  crossOriginWindow[Symbol.hasInstance]: undefined
+  Symbol.hasInstance in crossOriginWindow: true
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol.hasInstance): object
+  crossOriginWindow[Symbol.isConcatSpreadable]: undefined
+  Symbol.isConcatSpreadable in crossOriginWindow: true
+  Object.getOwnPropertyDescriptor(crossOriginWindow, Symbol.isConcatSpreadable): object
+

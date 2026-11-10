@@ -84,8 +84,8 @@ void WebPage::platformInitialize(const WebPageCreationParameters&)
     // object there specifically placed for that purpose (the socket).
     if (RefPtr page = corePage()) {
         lazyInitialize(m_accessibilityRootObject, AccessibilityRootAtspi::create(*page));
-        m_accessibilityRootObject->registerObject([&](const String& plugID) {
-            if (!plugID.isEmpty())
+        m_accessibilityRootObject->registerObject([&](StringImpl* plugID) {
+            if (!isEmpty(plugID))
                 send(Messages::WebPageProxy::BindAccessibilityTree(plugID));
         });
     }
@@ -149,7 +149,7 @@ static RefPtr<LocalFrame> targetFrameForEditing(WebPage& page)
     return targetFrame;
 }
 
-void WebPage::cancelComposition(const String& compositionString)
+void WebPage::cancelComposition(StringImpl* compositionString)
 {
     if (RefPtr targetFrame = targetFrameForEditing(*this))
         protect(targetFrame->editor())->confirmComposition(compositionString);
@@ -164,7 +164,7 @@ static BoundaryPoint moveOutOfSurrogatePair(const BoundaryPoint& point, Surrogat
     if (!text || !point.offset || point.offset >= text->length())
         return point;
     auto& data = text->data();
-    if (!U16_IS_LEAD(data[point.offset - 1]) || !U16_IS_TRAIL(data[point.offset]))
+    if (!U16_IS_LEAD(codeUnitAt(data, point.offset - 1)) || !U16_IS_TRAIL(codeUnitAt(data, point.offset)))
         return point;
     return { point.container.copyRef(), direction == SurrogatePairDirection::Backward ? point.offset - 1 : point.offset + 1 };
 }
@@ -254,22 +254,22 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 #if PLATFORM(GTK)
     const Editor& editor = frame.editor();
     if (selection.isRange()) {
-        if (editor.selectionHasStyle(CSSPropertyID::FontWeight, "bold"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyID::FontWeight, "bold"_si) == TriState::True)
             postLayoutData.typingAttributes.add(TypingAttribute::Bold);
-        if (editor.selectionHasStyle(CSSPropertyID::FontStyle, "italic"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyID::FontStyle, "italic"_si) == TriState::True)
             postLayoutData.typingAttributes.add(TypingAttribute::Italics);
-        if (editor.selectionHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_si) == TriState::True)
             postLayoutData.typingAttributes.add(TypingAttribute::Underline);
-        if (editor.selectionHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "line-through"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "line-through"_si) == TriState::True)
             postLayoutData.typingAttributes.add(TypingAttribute::StrikeThrough);
     } else if (selection.isCaret()) {
-        if (editor.selectionStartHasStyle(CSSPropertyID::FontWeight, "bold"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyID::FontWeight, "bold"_si))
             postLayoutData.typingAttributes.add(TypingAttribute::Bold);
-        if (editor.selectionStartHasStyle(CSSPropertyID::FontStyle, "italic"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyID::FontStyle, "italic"_si))
             postLayoutData.typingAttributes.add(TypingAttribute::Italics);
-        if (editor.selectionStartHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_si))
             postLayoutData.typingAttributes.add(TypingAttribute::Underline);
-        if (editor.selectionStartHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "line-through"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "line-through"_si))
             postLayoutData.typingAttributes.add(TypingAttribute::StrikeThrough);
     }
 #endif
@@ -283,7 +283,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
             auto surroundingEnd = surroundingTextEnd(compositionRange->end, editableRange->end);
             auto beforeText = plainText({ surroundingStart, compositionRange->start });
             postLayoutData.surroundingContext = makeString(beforeText, plainText({ compositionRange->end, surroundingEnd }));
-            postLayoutData.surroundingContextCursorPosition = beforeText.length();
+            postLayoutData.surroundingContextCursorPosition = length(beforeText);
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else if (auto selectionRange = makeSimpleRange(selectionStart, selection.visibleEnd()); editableRange && selectionRange) {
             auto surroundingStart = surroundingTextStart(editableRange->start, selectionRange->start);
@@ -405,10 +405,10 @@ void WebPage::focusedElementDidChangeType(Element& element)
     setInputMethodState(&element);
 }
 
-String WebPage::platformUserAgent(const URL& url) const
+RefPtr<StringImpl> WebPage::platformUserAgent(const URL& url) const
 {
     if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
-        return String();
+        return nullptr;
 
     return WebCore::standardUserAgentForURL(url);
 }

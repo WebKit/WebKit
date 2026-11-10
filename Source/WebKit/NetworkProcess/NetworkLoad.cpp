@@ -377,7 +377,7 @@ void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
         task->setPendingDownloadID(downloadID);
 }
 
-void NetworkLoad::setSuggestedFilename(const String& suggestedName)
+void NetworkLoad::setSuggestedFilename(StringImpl* suggestedName)
 {
     if (!m_task)
         return;
@@ -385,7 +385,7 @@ void NetworkLoad::setSuggestedFilename(const String& suggestedName)
     protect(m_task)->setSuggestedFilename(suggestedName);
 }
 
-void NetworkLoad::setPendingDownloadLocation(const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void NetworkLoad::setPendingDownloadLocation(StringImpl* path, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     if (RefPtr task = m_task)
         task->setPendingDownloadLocation(path, WTF::move(sandboxExtensionHandle), allowOverwrite);
@@ -413,12 +413,12 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
     };
 
     if (!m_networkProcess->ftpEnabled() && request.url().protocolIsInFTPFamily()) {
-        errorCallback({ errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl });
+        errorCallback({ StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url(), "FTP URLs are disabled"_si, ResourceError::Type::AccessControl });
         return;
     }
 
     if (redirectResponse.httpStatusCode() != httpStatus303SeeOther && protect(m_task)->hasPendingStreamBody()) {
-        errorCallback({ errorDomainWebKitInternal, 0, url(), "Fetch upload streams cannot handle redirections other than 303"_s, ResourceError::Type::Cancellation });
+        errorCallback({ StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url(), "Fetch upload streams cannot handle redirections other than 303"_si, ResourceError::Type::Cancellation });
         return;
     }
 
@@ -598,7 +598,7 @@ void NetworkLoad::didNegotiateModernTLS(const URL& url)
         m_networkProcess->send(Messages::NetworkProcessProxy::DidNegotiateModernTLS(*m_parameters.webPageProxyID, url));
 }
 
-String NetworkLoad::description() const
+RefPtr<StringImpl> NetworkLoad::description() const
 {
     if (RefPtr task = m_task.get())
         return task->description();
@@ -619,7 +619,7 @@ void NetworkLoad::setTimingAllowFailedFlag()
         task->setTimingAllowFailedFlag();
 }
 
-String NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
+RefPtr<StringImpl> NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
 {
     if (RefPtr task = m_task)
         return task->attributedBundleIdentifier(pageID);

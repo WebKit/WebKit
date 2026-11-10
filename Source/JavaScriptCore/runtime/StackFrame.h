@@ -96,10 +96,10 @@ public:
     }
 
     LineColumn computeLineAndColumn() const;
-    String functionName(VM&) const;
+    RefPtr<StringImpl> functionName(VM&) const;
     SourceID sourceID() const;
-    JS_EXPORT_PRIVATE String sourceURL(VM&, AllowURLOverride = AllowURLOverride::Yes) const;
-    String sourceURLStripped(VM&) const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> sourceURL(VM&, AllowURLOverride = AllowURLOverride::Yes) const;
+    RefPtr<StringImpl> sourceURLStripped(VM&) const;
     void appendTo(VM&, StringBuilder&) const;
 
     bool hasBytecodeIndex() const;

@@ -368,7 +368,7 @@ bool GPUProcess::updatePreference(std::optional<bool>& oldPreference, std::optio
     return false;
 }
 
-void GPUProcess::userPreferredLanguagesChanged(Vector<String>&& languages)
+void GPUProcess::userPreferredLanguagesChanged(Vector<RefPtr<StringImpl>>&& languages)
 {
     overrideUserPreferredLanguages(languages);
 }
@@ -877,7 +877,7 @@ void GPUProcess::enableMicrophoneMuteStatusAPI()
 #endif
 }
 
-void GPUProcess::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+void GPUProcess::rotationAngleForCaptureDeviceChanged(StringImpl* persistentId, WebCore::VideoFrameRotation rotation)
 {
 #if PLATFORM(COCOA)
     if (RefPtr manager = m_capturePreviewManager)
@@ -888,7 +888,7 @@ void GPUProcess::rotationAngleForCaptureDeviceChanged(const String& persistentId
 }
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-void GPUProcess::startCapturePreview(std::optional<WebCore::CaptureDevice>&& videoDevice, std::optional<WebCore::CaptureDevice>&& audioDevice, WebCore::PageIdentifier pageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, Vector<SandboxExtension::Handle>&& sandboxExtensions, String&& applicationBundleIdentifier, WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
+void GPUProcess::startCapturePreview(std::optional<WebCore::CaptureDevice>&& videoDevice, std::optional<WebCore::CaptureDevice>&& audioDevice, WebCore::PageIdentifier pageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, Vector<SandboxExtension::Handle>&& sandboxExtensions, RefPtr<StringImpl>&& applicationBundleIdentifier, WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
 {
     // FIXME: The manager is per process while requests are per page, so for now fail a second page's
     // prompt while another is up until we figure out a better solution.
@@ -956,7 +956,7 @@ bool GPUProcess::setUpCapturePreviewEnvironment(WebCore::PageIdentifier pageIden
             return true;
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
-        if (!connection.mediaPlaybackEnvironment(pageIdentifier).isEmpty())
+        if (!isEmpty(connection.mediaPlaybackEnvironment(pageIdentifier)))
             return true;
 #endif
         UNUSED_PARAM(connection);
@@ -972,8 +972,8 @@ bool GPUProcess::setUpCapturePreviewEnvironment(WebCore::PageIdentifier pageIden
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    String mediaEnvironment = pageConnection ? pageConnection->mediaPlaybackEnvironment(pageIdentifier) : String { };
-    bool hasMediaEnvironment = !mediaEnvironment.isEmpty();
+    RefPtr<StringImpl> mediaEnvironment = pageConnection ? pageConnection->mediaPlaybackEnvironment(pageIdentifier) : nullptr;
+    bool hasMediaEnvironment = !isEmpty(mediaEnvironment);
     WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(WTF::move(mediaEnvironment));
     if (!hasMediaEnvironment && !WebCore::RealtimeMediaSourceCenter::singleton().hasIdentity() && hasCamera
         && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
@@ -1078,12 +1078,12 @@ void GPUProcess::clearMockMediaDevices()
     WebCore::MockRealtimeMediaSourceCenter::setDevices({ });
 }
 
-void GPUProcess::removeMockMediaDevice(const String& persistentId)
+void GPUProcess::removeMockMediaDevice(StringImpl* persistentId)
 {
     WebCore::MockRealtimeMediaSourceCenter::removeDevice(persistentId);
 }
 
-void GPUProcess::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+void GPUProcess::setMockMediaDeviceIsEphemeral(StringImpl* persistentId, bool isEphemeral)
 {
     WebCore::MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
 }
@@ -1157,7 +1157,7 @@ void GPUProcess::removeSession(PAL::SessionID sessionID)
     m_sessions.remove(findResult);
 }
 
-const String& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
+const RefPtr<StringImpl>& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
 {
     auto findResult = m_sessions.find(sessionID);
     if (findResult == m_sessions.end()) {
@@ -1168,7 +1168,7 @@ const String& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) const
+const RefPtr<StringImpl>& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) const
 {
     auto findResult = m_sessions.find(sessionID);
     if (findResult == m_sessions.end()) {
@@ -1218,7 +1218,7 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
 }
 
-void GPUProcess::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&& completionHandler)
+void GPUProcess::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<RefPtr<StringImpl>>>&&)>&& completionHandler)
 {
     completionHandler(testDisplayListData(webFonts));
 }

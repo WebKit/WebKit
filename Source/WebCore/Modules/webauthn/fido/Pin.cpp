@@ -61,9 +61,9 @@ using namespace cbor;
 // hasAtLeastFourCodepoints returns true if |pin| contains
 // four or more code points. This reflects the "4 Unicode characters"
 // requirement in CTAP2.
-NODELETE static bool hasAtLeastFourCodepoints(const String& pin)
+NODELETE static bool hasAtLeastFourCodepoints(StringImpl* pin)
 {
-    return pin.length() >= 4;
+    return length(pin) >= 4;
 }
 
 static Vector<uint8_t> decryptForProtocol(PINUVAuthProtocol protocol, const CryptoKeyAES& key, const Vector<uint8_t>& ciphertext)
@@ -105,11 +105,11 @@ static Vector<uint8_t> authenticateForProtocol(PINUVAuthProtocol protocol, const
     return signature;
 }
 
-std::optional<UTF8CString> validateAndConvertToUTF8(const String& pin)
+std::optional<UTF8CString> validateAndConvertToUTF8(StringImpl* pin)
 {
     if (!hasAtLeastFourCodepoints(pin))
         return std::nullopt;
-    auto result = pin.utf8();
+    auto result = utf8(pin);
     if (result.length() < kMinBytes || result.length() > kMaxBytes)
         return std::nullopt;
     return result;
@@ -200,7 +200,7 @@ std::optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CB
 
     const auto& x = xIt->second.getByteString();
     const auto& y = yIt->second.getByteString();
-    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
+    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
     if (!peerKey)
         return std::nullopt;
 
@@ -287,7 +287,7 @@ static Vector<uint8_t> deriveProtocolSharedSecret(PINUVAuthProtocol protocol, Ve
 
         auto hmacHkdfParamsInit = CryptoAlgorithmHkdfParamsInit {
             CryptoAlgorithmParametersInit { "HKDF"_s },
-            String(),
+            nullString(),
             toBufferSource(std::span { hkdfSalt }),
             toBufferSource(std::span { kHKDFInfoHMACKey }),
         };
@@ -300,7 +300,7 @@ static Vector<uint8_t> deriveProtocolSharedSecret(PINUVAuthProtocol protocol, Ve
 
         auto aesHkdfParamsInit = CryptoAlgorithmHkdfParamsInit {
             CryptoAlgorithmParametersInit { "HKDF"_s },
-            String(),
+            nullString(),
             toBufferSource(std::span { hkdfSalt }),
             toBufferSource(std::span { kHKDFInfoAESKey }),
         };
@@ -345,7 +345,7 @@ std::optional<TokenRequest> TokenRequest::tryCreate(PINUVAuthProtocol protocol, 
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -404,7 +404,7 @@ const Vector<uint8_t>& SetPinRequest::pinAuth() const
     return m_pinUvAuthParam;
 }
 
-std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol, const String& inputPin, const WebCore::CryptoKeyEC& peerKey)
+std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol, StringImpl* inputPin, const WebCore::CryptoKeyEC& peerKey)
 {
     std::optional<UTF8CString> newPin = validateAndConvertToUTF8(inputPin);
     if (!newPin)
@@ -413,7 +413,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -445,7 +445,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol
 
     const size_t minPaddedPinLength = 64;
     Vector<uint8_t> paddedPin(ReserveCapacityTag { }, minPaddedPinLength);
-    paddedPin.append(inputPin.utf8().span());
+    paddedPin.append(utf8(inputPin).span());
     for (int i = paddedPin.size(); i < 64; i++)
         paddedPin.append('\0');
 
@@ -495,7 +495,7 @@ std::optional<HmacSecretRequest> HmacSecretRequest::create(PINUVAuthProtocol pro
         return std::nullopt;
 
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_si, true, CryptoKeyUsageDeriveBits);
     if (keyPairResult.hasException())
         return std::nullopt;
     auto keyPair = keyPairResult.releaseReturnValue();

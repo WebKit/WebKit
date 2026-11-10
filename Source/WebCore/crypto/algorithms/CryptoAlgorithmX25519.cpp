@@ -141,7 +141,7 @@ void CryptoAlgorithmX25519::importKey(CryptoKeyFormat format, KeyData&& data, co
         JsonWebKey key = WTF::move(std::get<JsonWebKey>(data));
 
         bool isUsagesAllowed = false;
-        if (!key.d.isNull()) {
+        if (key.d) {
             isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDeriveKey);
             isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDeriveBits);
             isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits));
@@ -152,7 +152,7 @@ void CryptoAlgorithmX25519::importKey(CryptoKeyFormat format, KeyData&& data, co
             return;
         }
 
-        if (usages && !key.use.isNull() && key.use != "enc"_s) {
+        if (usages && !!key.use && !equal(key.use, "enc"_s)) {
             exceptionCallback(ExceptionCode::DataError);
             return;
         }

@@ -80,7 +80,7 @@ public:
     void canPlayFastReverseChanged(bool) override = 0;
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override = 0;
     void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override = 0;
-    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override = 0;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl* localizedDeviceName, StringImpl* localizedRouteName) override = 0;
     void wirelessVideoPlaybackDisabledChanged(bool) override = 0;
     void mutedChanged(bool) override = 0;
     void volumeChanged(double) override = 0;
@@ -122,8 +122,8 @@ protected:
 private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String m_spatialTrackingLabel;
-    String m_defaultSpatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel;
 #endif
 };
 

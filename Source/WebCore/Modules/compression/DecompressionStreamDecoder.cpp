@@ -131,7 +131,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
     bool shouldDecompress = true;
 
     if (!m_zstream.initializeIfNecessary(decompressionAlgorithm(m_format), ZStream::Operation::Decompression))
-        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
+        return Exception { ExceptionCode::TypeError, "Initialization Failed."_si };
 
     m_zstream.getPlatformStream().next_in = const_cast<z_const Bytef*>(input.data());
     m_zstream.getPlatformStream().avail_in = input.size();
@@ -155,10 +155,10 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
         result = inflate(&m_zstream.getPlatformStream(), m_didFinish ? Z_FINISH : Z_NO_FLUSH);
         
         if (didInflateFail(result))
-            return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
+            return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_si };
 
         if (didInflateIncompleteInput(result, m_didFinish))
-            return Exception { ExceptionCode::TypeError, "Incomplete compressed input."_s };
+            return Exception { ExceptionCode::TypeError, "Incomplete compressed input."_si };
 
         if (didInflateContainExtraBytes(result)) {
             m_didDetectExtraBytes = true;

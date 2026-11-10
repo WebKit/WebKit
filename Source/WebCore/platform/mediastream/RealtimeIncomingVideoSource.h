@@ -49,7 +49,7 @@ class RealtimeIncomingVideoSource
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingVideoSource, WTF::DestructionThread::MainRunLoop>
 {
 public:
-    static Ref<RealtimeIncomingVideoSource> create(Ref<webrtc::VideoTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingVideoSource> create(Ref<webrtc::VideoTrackInterface>&&, RefPtr<StringImpl>&&);
     ~RealtimeIncomingVideoSource();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
@@ -57,7 +57,7 @@ public:
     void requestKeyFrame();
 
 protected:
-    RealtimeIncomingVideoSource(Ref<webrtc::VideoTrackInterface>&&, String&&);
+    RealtimeIncomingVideoSource(Ref<webrtc::VideoTrackInterface>&&, RefPtr<StringImpl>&&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "RealtimeIncomingVideoSource"_s; }

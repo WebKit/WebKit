@@ -50,7 +50,7 @@ static const int weekDefaultStep = 1;
 static const int weekStepScaleFactor = 604800000;
 static const StepRange::StepDescription weekStepDescription { weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::StepValueShouldBe::ParsedInteger };
 
-const AtomString& WeekInputType::formControlType() const
+const RefPtr<AtomStringImpl>& WeekInputType::formControlType() const
 {
     return InputTypeNames::week();
 }
@@ -97,7 +97,7 @@ bool WeekInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> res
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasWeek });
 }
 
-String WeekInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+RefPtr<StringImpl> WeekInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
 {
     return emptyString();
 }

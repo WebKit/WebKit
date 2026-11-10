@@ -38,7 +38,7 @@ class AttachmentElementClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AttachmentElementClient);
 public:
     virtual ~AttachmentElementClient() { }
-    virtual void requestAttachmentIcon(const String& identifier, const FloatSize&) = 0;
+    virtual void requestAttachmentIcon(StringImpl* identifier, const FloatSize&) = 0;
 };
 
 } // namespace WebCore

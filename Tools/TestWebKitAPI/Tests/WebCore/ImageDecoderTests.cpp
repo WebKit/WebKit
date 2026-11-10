@@ -175,7 +175,7 @@ static Ref<SharedBuffer> makeTwoFrameAPNG()
 
 static RefPtr<ImageDecoder> createDecoder(SharedBuffer& buffer, bool allDataReceived = true)
 {
-    RefPtr decoder = ImageDecoder::create(buffer, "image/png"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(buffer, "image/png"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     if (decoder)
         decoder->setData(buffer, allDataReceived);
     return decoder;
@@ -321,7 +321,7 @@ TEST(ImageDecoder, PartialDataThenFullData)
     auto full = makeAnimatedPNG(2);
     auto partial = SharedBuffer::create(full->span().first(full->size() / 2));
 
-    RefPtr decoder = ImageDecoder::create(partial.get(), "image/png"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(partial.get(), "image/png"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     ASSERT_TRUE(decoder);
 
     decoder->setData(partial.get(), false);
@@ -375,7 +375,7 @@ TEST(ImageDecoder, ICOWithPartiallyReceivedPNGSubImage)
     // Past the icon directory and the PNG signature, but short of the sub-image's IHDR.
     auto partial = SharedBuffer::create(full->span().first(30));
 
-    RefPtr decoder = ImageDecoder::create(partial.get(), "image/vnd.microsoft.icon"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(partial.get(), "image/vnd.microsoft.icon"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     ASSERT_TRUE(decoder);
 
     decoder->setData(partial.get(), false);
@@ -469,7 +469,7 @@ static Ref<SharedBuffer> makeSubRectGIF(size_t frameCount)
 TEST(ImageDecoder, GIFSubRectFrameWithEvictedPreviousFrame)
 {
     auto buffer = makeSubRectGIF(4);
-    RefPtr decoder = ImageDecoder::create(buffer.get(), "image/gif"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(buffer.get(), "image/gif"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     ASSERT_TRUE(decoder);
     decoder->setData(buffer.get(), true);
     ASSERT_EQ(4u, decoder->frameCount());
@@ -585,7 +585,7 @@ TEST(ImageDecoder, WEBPFrameIndexBeyondCacheAfterFailedDecode)
 
     // Enough to count frames, and nothing decoded, so the cache is still empty.
     auto prefix = SharedBuffer::create(full->span().first(full->size() / 2));
-    RefPtr decoder = ImageDecoder::create(prefix.get(), "image/webp"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(prefix.get(), "image/webp"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     ASSERT_TRUE(decoder);
     decoder->setData(prefix.get(), false);
 
@@ -634,7 +634,7 @@ static Ref<SharedBuffer> makeAnimatedJPEGXL()
 TEST(ImageDecoder, JPEGXLClearFrameBufferCachePastEnd)
 {
     auto buffer = makeAnimatedJPEGXL();
-    RefPtr decoder = ImageDecoder::create(buffer.get(), "image/jxl"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(buffer.get(), "image/jxl"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     ASSERT_TRUE(decoder);
     decoder->setData(buffer.get(), true);
 
@@ -711,7 +711,7 @@ TEST(ImageDecoder, EvictRestoreToPreviousFrameMidStream)
     auto full = SharedBuffer::create(Vector<uint8_t>(bytes));
     auto partial = SharedBuffer::create(bytes.span().first(cut));
 
-    RefPtr decoder = ImageDecoder::create(partial.get(), "image/png"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr decoder = ImageDecoder::create(partial.get(), "image/png"_si, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     ASSERT_TRUE(decoder);
 
     decoder->setData(partial.get(), false);

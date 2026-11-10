@@ -85,7 +85,7 @@ static constexpr auto startAutomationSessionTimeout = 30_s;
 static constexpr auto browserTerminationGracePeriod = 2_s;
 
 // minidriver drives the MiniBrowser that's built with it, in the same build directory.
-static std::optional<String> buildDirectory()
+static std::optional<RefPtr<StringImpl>> buildDirectory()
 {
     std::array<char, PATH_MAX> executablePath;
     uint32_t size = executablePath.size();
@@ -94,7 +94,7 @@ static std::optional<String> buildDirectory()
     std::array<char, PATH_MAX> resolvedPath;
     if (!realpath(executablePath.data(), resolvedPath.data()))
         return std::nullopt;
-    return FileSystem::parentPath(String::fromUTF8(unsafeSpan(resolvedPath.data())));
+    return FileSystem::parentPath(StringImpl::fromUTF8(unsafeSpan(resolvedPath.data())));
 }
 
 static void terminateProcess(pid_t processID)
@@ -127,14 +127,14 @@ bool SessionHost::isConnected() const
     return !!m_channel;
 }
 
-void SessionHost::connectToBrowser(Function<void(std::optional<String> error)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void(std::optional<RefPtr<StringImpl>> error)>&& completionHandler)
 {
     if (m_channel) {
         completionHandler("Already connected to the browser."_s);
         return;
     }
 
-    if (!m_targetIp.isEmpty() || m_capabilities.targetAddr) {
+    if (!isEmpty(m_targetIp) || m_capabilities.targetAddr) {
         completionHandler("minidriver can't connect to a browser that is already running."_s);
         return;
     }
@@ -148,7 +148,7 @@ void SessionHost::connectToBrowser(Function<void(std::optional<String> error)>&&
     completionHandler(std::nullopt);
 }
 
-std::optional<String> SessionHost::launchBrowser()
+std::optional<RefPtr<StringImpl>> SessionHost::launchBrowser()
 {
     auto buildDirectory = WebDriver::buildDirectory();
     if (!buildDirectory)
@@ -156,13 +156,13 @@ std::optional<String> SessionHost::launchBrowser()
 
     std::array<StringView, 4> browserPathComponents { "MiniBrowser.app"_s, "Contents"_s, "MacOS"_s, "MiniBrowser"_s };
     auto browserPathString = FileSystem::pathByAppendingComponents(*buildDirectory, browserPathComponents);
-    auto browserPath = browserPathString.utf8();
+    auto browserPath = utf8(browserPathString);
     if (posixAccess(browserPath, X_OK))
         return makeString("There is no MiniBrowser next to minidriver, at "_s, browserPathString);
 
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets))
-        return makeString("Failed to create the browser connection: "_s, String::fromUTF8(safeStrerror(errno).span()));
+        return makeString("Failed to create the browser connection: "_s, StringImpl::fromUTF8(safeStrerror(errno).span()));
     int driverSocket = sockets[0];
     int browserSocket = sockets[1];
     fcntl(driverSocket, F_SETFD, FD_CLOEXEC);
@@ -182,15 +182,15 @@ std::optional<String> SessionHost::launchBrowser()
     arguments.append(browserPath);
     // AppKit opens arguments that aren't options as documents. Each option has to be followed
     // by its value as a separate argument, or AppKit pairs the next option with it.
-    arguments.append(String("--automation-fd"_s).utf8());
-    arguments.append(String::number(browserConnectionFileDescriptor).utf8());
+    arguments.append(utf8("--automation-fd"_si));
+    arguments.append(utf8(makeString(browserConnectionFileDescriptor)));
     // AppKit window-state restoration can show a modal "reopen windows?" alert after an
     // abnormal exit, which automation can't dismiss. Turn it off for this launch only.
     for (auto argument : { "-NSQuitAlwaysKeepsWindows"_s, "NO"_s, "-ApplePersistenceIgnoreState"_s, "YES"_s })
-        arguments.append(String(argument).utf8());
+        arguments.append(utf8(StringImpl::create(argument)));
     if (m_capabilities.browserArguments) {
         for (auto& argument : *m_capabilities.browserArguments)
-            arguments.append(argument.utf8());
+            arguments.append(utf8(argument));
     }
 
     auto argv = arguments.map([](auto& argument) {
@@ -210,7 +210,7 @@ std::optional<String> SessionHost::launchBrowser()
             envp.append(*variable);
     }
     auto dyldPaths = WTF::map(dyldPathAssignments, [&](auto assignment) {
-        return makeString(assignment, *buildDirectory).utf8();
+        return utf8(makeString(assignment, *buildDirectory));
     });
     for (auto& variable : dyldPaths)
         envp.append(const_cast<char*>(variable.legacyCStringPointer()));
@@ -243,7 +243,7 @@ std::optional<String> SessionHost::launchBrowser()
 
     if (result) {
         close(driverSocket);
-        return makeString("Failed to launch the browser: "_s, String::fromUTF8(safeStrerror(result).span()));
+        return makeString("Failed to launch the browser: "_s, StringImpl::fromUTF8(safeStrerror(result).span()));
     }
 
     m_browserProcessID = processID;
@@ -329,7 +329,7 @@ void SessionHost::didReceiveData(dispatch_data_t data)
         if (m_receiveBuffer.size() - offset - messageHeaderSize < messageSize)
             break;
 
-        auto message = String::fromUTF8(m_receiveBuffer.subspan(offset + messageHeaderSize, messageSize));
+        auto message = StringImpl::fromUTF8(m_receiveBuffer.subspan(offset + messageHeaderSize, messageSize));
         offset += messageHeaderSize + messageSize;
 
         auto value = JSON::Value::parseJSON(message);
@@ -351,7 +351,7 @@ void SessionHost::sendEvent(const JSON::Object& event)
     if (!m_channel)
         return;
 
-    auto payload = event.toJSONString().utf8();
+    auto payload = utf8(event.toJSONString());
     auto size = static_cast<uint32_t>(payload.length());
     Vector<uint8_t> message(ReserveCapacityTag { }, messageHeaderSize + size);
     message.appendList({ static_cast<uint8_t>(size >> 24), static_cast<uint8_t>(size >> 16), static_cast<uint8_t>(size >> 8), static_cast<uint8_t>(size) });
@@ -366,24 +366,24 @@ void SessionHost::sendEvent(const JSON::Object& event)
 
 void SessionHost::didReceiveEvent(const JSON::Object& event)
 {
-    auto name = event.getString("event"_s);
-    auto message = event.getString("message"_s);
-    auto connectionID = event.getInteger("connectionID"_s);
+    auto name = event.getString("event"_si);
+    auto message = event.getString("message"_si);
+    auto connectionID = event.getInteger("connectionID"_si);
 
-    if (name == "StartAutomationSession_Return"_s) {
+    if (equal(name, "StartAutomationSession_Return"_s)) {
         didReceiveStartAutomationSessionReturn(message);
         return;
     }
 
-    if (name == "SetTargetList"_s) {
-        if (connectionID && !message.isNull())
+    if (equal(name, "SetTargetList"_s)) {
+        if (connectionID && !!message)
             didReceiveSetTargetList(*connectionID, message);
         return;
     }
 
-    if (name == "SendMessageToFrontend"_s) {
-        auto targetID = event.getInteger("targetID"_s);
-        if (!connectionID || !targetID || message.isNull())
+    if (equal(name, "SendMessageToFrontend"_s)) {
+        auto targetID = event.getInteger("targetID"_si);
+        if (!connectionID || !targetID || !message)
             return;
         if (static_cast<uint64_t>(*connectionID) != m_connectionID || static_cast<uint64_t>(*targetID) != m_target.id)
             return;
@@ -391,10 +391,10 @@ void SessionHost::didReceiveEvent(const JSON::Object& event)
         return;
     }
 
-    RELEASE_LOG_ERROR(SessionHost, "Received an unknown event from the browser: %s", name.utf8());
+    RELEASE_LOG_ERROR(SessionHost, "Received an unknown event from the browser: %s", utf8(name));
 }
 
-void SessionHost::didReceiveStartAutomationSessionReturn(const String& message)
+void SessionHost::didReceiveStartAutomationSessionReturn(StringImpl* message)
 {
     auto value = JSON::Value::parseJSON(message);
     auto browserInfo = value ? value->asObject() : nullptr;
@@ -402,22 +402,22 @@ void SessionHost::didReceiveStartAutomationSessionReturn(const String& message)
         return;
 
     // Match the requested browser name and version against the browser's, and report the browser's.
-    auto browserName = browserInfo->getString("browserName"_s);
-    if (!browserName.isEmpty()) {
+    auto browserName = browserInfo->getString("browserName"_si);
+    if (!isEmpty(browserName)) {
         if (m_capabilities.browserName && !equalIgnoringASCIICase(*m_capabilities.browserName, browserName))
             m_browserMatchesCapabilities = false;
         m_capabilities.browserName = browserName;
     }
 
-    auto browserVersion = browserInfo->getString("browserVersion"_s);
-    if (!browserVersion.isEmpty()) {
+    auto browserVersion = browserInfo->getString("browserVersion"_si);
+    if (!isEmpty(browserVersion)) {
         if (m_capabilities.browserVersion && !WebDriverService::platformCompareBrowserVersions(*m_capabilities.browserVersion, browserVersion))
             m_browserMatchesCapabilities = false;
         m_capabilities.browserVersion = browserVersion;
     }
 }
 
-void SessionHost::didReceiveSetTargetList(uint64_t connectionID, const String& message)
+void SessionHost::didReceiveSetTargetList(uint64_t connectionID, StringImpl* message)
 {
     auto value = JSON::Value::parseJSON(message);
     auto targetArray = value ? value->asArray() : nullptr;
@@ -427,12 +427,12 @@ void SessionHost::didReceiveSetTargetList(uint64_t connectionID, const String& m
     Vector<Target> targetList;
     for (auto& targetValue : *targetArray) {
         auto targetObject = targetValue->asObject();
-        if (!targetObject || targetObject->getString("type"_s) != "automation"_s)
+        if (!targetObject || !equal(targetObject->getString("type"_si), "automation"_s))
             continue;
-        auto targetID = targetObject->getInteger("targetID"_s);
+        auto targetID = targetObject->getInteger("targetID"_si);
         if (!targetID)
             continue;
-        targetList.append({ static_cast<uint64_t>(*targetID), targetObject->getString("name"_s).utf8(), targetObject->getBoolean("isPaired"_s).value_or(false) });
+        targetList.append({ static_cast<uint64_t>(*targetID), utf8(targetObject->getString("name"_si)), targetObject->getBoolean("isPaired"_si).value_or(false) });
     }
     setTargetList(connectionID, WTF::move(targetList));
 }
@@ -455,16 +455,16 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     m_connectionID = connectionID;
 
     auto setupEvent = JSON::Object::create();
-    setupEvent->setString("event"_s, "Setup"_s);
-    setupEvent->setInteger("connectionID"_s, m_connectionID);
-    setupEvent->setInteger("targetID"_s, m_target.id);
+    setupEvent->setString("event"_si, "Setup"_si);
+    setupEvent->setInteger("connectionID"_si, m_connectionID);
+    setupEvent->setInteger("targetID"_si, m_target.id);
     sendEvent(setupEvent);
 
     auto completionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
     completionHandler(m_browserMatchesCapabilities, std::nullopt);
 }
 
-void SessionHost::startAutomationSession(Function<void(bool, std::optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(Function<void(bool, std::optional<RefPtr<StringImpl>>)>&& completionHandler)
 {
     ASSERT(!m_startSessionCompletionHandler);
     if (!m_channel) {
@@ -476,15 +476,15 @@ void SessionHost::startAutomationSession(Function<void(bool, std::optional<Strin
     m_sessionID = createVersion4UUIDString();
 
     auto capabilitiesObject = JSON::Object::create();
-    capabilitiesObject->setBoolean("acceptInsecureCerts"_s, m_capabilities.acceptInsecureCerts.value_or(false));
+    capabilitiesObject->setBoolean("acceptInsecureCerts"_si, m_capabilities.acceptInsecureCerts.value_or(false));
 
     auto messageObject = JSON::Object::create();
-    messageObject->setString("sessionID"_s, m_sessionID);
-    messageObject->setObject("capabilities"_s, WTF::move(capabilitiesObject));
+    messageObject->setString("sessionID"_si, m_sessionID);
+    messageObject->setObject("capabilities"_si, WTF::move(capabilitiesObject));
 
     auto startEvent = JSON::Object::create();
-    startEvent->setString("event"_s, "StartAutomationSession"_s);
-    startEvent->setString("message"_s, messageObject->toJSONString());
+    startEvent->setString("event"_si, "StartAutomationSession"_si);
+    startEvent->setString("message"_si, messageObject->toJSONString());
     sendEvent(startEvent);
 
     RunLoop::mainSingleton().dispatchAfter(startAutomationSessionTimeout, [weakThis = WeakPtr { *this }] {
@@ -496,13 +496,13 @@ void SessionHost::startAutomationSession(Function<void(bool, std::optional<Strin
     });
 }
 
-void SessionHost::sendMessageToBackend(const String& message)
+void SessionHost::sendMessageToBackend(StringImpl* message)
 {
     auto messageEvent = JSON::Object::create();
-    messageEvent->setString("event"_s, "SendMessageToBackend"_s);
-    messageEvent->setInteger("connectionID"_s, m_connectionID);
-    messageEvent->setInteger("targetID"_s, m_target.id);
-    messageEvent->setString("message"_s, message);
+    messageEvent->setString("event"_si, "SendMessageToBackend"_si);
+    messageEvent->setInteger("connectionID"_si, m_connectionID);
+    messageEvent->setInteger("targetID"_si, m_target.id);
+    messageEvent->setString("message"_si, message);
     sendEvent(messageEvent);
 }
 

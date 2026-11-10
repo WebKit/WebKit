@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-InputMode inputModeForAttributeValue(const AtomString& value)
+InputMode inputModeForAttributeValue(AtomStringImpl* value)
 {
     if (equalIgnoringASCIICase(value, InputModeNames::none()))
         return InputMode::None;
@@ -53,7 +53,7 @@ InputMode inputModeForAttributeValue(const AtomString& value)
     return InputMode::Unspecified;
 }
 
-const AtomString& stringForInputMode(InputMode mode)
+const RefPtr<AtomStringImpl>& stringForInputMode(InputMode mode)
 {
     switch (mode) {
     case InputMode::Unspecified:
@@ -81,44 +81,44 @@ const AtomString& stringForInputMode(InputMode mode)
 
 namespace InputModeNames {
 
-const AtomString& none()
+const RefPtr<AtomStringImpl>& none()
 {
     return noneAtom();
 }
 
-const AtomString& text()
+const RefPtr<AtomStringImpl>& text()
 {
     return textAtom();
 }
 
-const AtomString& tel()
+const RefPtr<AtomStringImpl>& tel()
 {
     return telAtom();
 }
 
-const AtomString& url()
+const RefPtr<AtomStringImpl>& url()
 {
     return urlAtom();
 }
 
-const AtomString& email()
+const RefPtr<AtomStringImpl>& email()
 {
     return emailAtom();
 }
 
-const AtomString& numeric()
+const RefPtr<AtomStringImpl>& numeric()
 {
-    static MainThreadNeverDestroyed<const AtomString> mode("numeric"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> mode("numeric"_s);
     return mode;
 }
 
-const AtomString& decimal()
+const RefPtr<AtomStringImpl>& decimal()
 {
-    static MainThreadNeverDestroyed<const AtomString> mode("decimal"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> mode("decimal"_s);
     return mode;
 }
 
-const AtomString& search()
+const RefPtr<AtomStringImpl>& search()
 {
     return searchAtom();
 }

@@ -36,6 +36,6 @@ class SecurityOrigin;
 
 namespace WebKit {
 
-String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
+RefPtr<StringImpl> uniqueDatabaseIdentifier(StringImpl* databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
     
 } // namespace WebKit

@@ -106,8 +106,8 @@ protected:
 
     RefPtr<ScrollingTree> releaseScrollingTree() { return WTF::move(m_scrollingTree); }
 
-    WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
-    WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
+    WEBCORE_EXPORT RefPtr<StringImpl> scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
+    WEBCORE_EXPORT RefPtr<StringImpl> scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
     WEBCORE_EXPORT bool haveScrollingTree() const override;
 
     WEBCORE_EXPORT void willCommitTree(FrameIdentifier rootFrameID) override;

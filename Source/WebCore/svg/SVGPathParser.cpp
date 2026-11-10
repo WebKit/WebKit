@@ -49,7 +49,7 @@ bool SVGPathParser::parseToByteStream(SVGPathSource& source, SVGPathByteStream& 
     return result;
 }
 
-bool SVGPathParser::parseToString(SVGPathSource& source, String& result, PathParsingMode mode, bool checkForInitialMoveTo)
+bool SVGPathParser::parseToString(SVGPathSource& source, RefPtr<StringImpl>& result, PathParsingMode mode, bool checkForInitialMoveTo)
 {
     SVGPathStringBuilder builder;
     SVGPathParser parser(builder, source, mode);

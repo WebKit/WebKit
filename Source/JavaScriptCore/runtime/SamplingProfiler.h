@@ -151,12 +151,12 @@ public:
         }
 
         // These are function-level data.
-        String nameFromCallee(VM&);
-        String displayName(VM&);
+        RefPtr<StringImpl> nameFromCallee(VM&);
+        RefPtr<StringImpl> displayName(VM&);
         int functionStartLine();
         unsigned functionStartColumn();
         std::tuple<SourceProvider*, SourceID> sourceProviderAndID();
-        String url();
+        RefPtr<StringImpl> url();
     };
 
     struct UnprocessedStackTrace {

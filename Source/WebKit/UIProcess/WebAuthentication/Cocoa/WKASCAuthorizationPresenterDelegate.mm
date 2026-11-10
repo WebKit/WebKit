@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
             return;
         }
 
-        String loginChoiceName = platformLoginChoice.get().name;
+        RefPtr<StringImpl> loginChoiceName = StringImpl::create(platformLoginChoice.get().name);
         [self dispatchCoordinatorCallback:[loginChoiceName = WTF::move(loginChoiceName), context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
             coordinator.didSelectAssertionResponse(loginChoiceName, context.get());
         }];
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
         RetainPtr securityKeyLoginChoice = (ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice;
 
         if ([securityKeyLoginChoice credentialKind] == ASCSecurityKeyPublicKeyCredentialKindAssertion) {
-            String loginChoiceName = securityKeyLoginChoice.get().name;
+            RefPtr<StringImpl> loginChoiceName = StringImpl::create(securityKeyLoginChoice.get().name);
             [self dispatchCoordinatorCallback:[loginChoiceName = WTF::move(loginChoiceName)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
                 coordinator.didSelectAssertionResponse(loginChoiceName, nil);
             }];
@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
         coordinator.setCredentialRequestHandler(WTF::move(requestHandler));
     }];
 
-    String pinString = pin;
+    RefPtr<StringImpl> pinString = StringImpl::create(pin);
     [self dispatchCoordinatorCallback:[pinString = WTF::move(pinString)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
         coordinator.setPin(pinString);
     }];

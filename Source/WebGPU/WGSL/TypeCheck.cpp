@@ -248,7 +248,7 @@ private:
     [[nodiscard]] Result<AddressSpace> addressSpace(AST::Expression&);
 
     template<typename CallArguments>
-    [[nodiscard]] Result<const Type*> chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
+    [[nodiscard]] Result<const Type*> chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, StringImpl*, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     template<typename Node>
     [[nodiscard]] Result<void> setConstantValue(Node&, const Type*, const ConstantValue&);
@@ -279,12 +279,12 @@ private:
 
     TypeStore& m_types;
     Vector<BreakTarget> m_breakTargetStack;
-    HashMap<String, AST::IdentifierExpression*> m_arrayCountOverrides;
+    HashMap<RefPtr<StringImpl>, AST::IdentifierExpression*> m_arrayCountOverrides;
 
     // The names declared at module scope, collected before any of them is visited. Module scope has
     // no declaration order, so a rule about what those names hide cannot be answered by the scope
     // built up as the declarations are visited one after another.
-    HashSet<String> m_moduleScopeNames;
+    HashSet<RefPtr<StringImpl>> m_moduleScopeNames;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -295,22 +295,22 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
 Result<void> TypeChecker::declareBuiltins()
 {
-    CHECK(introduceType(AST::Identifier::make("bool"_s), m_types.boolType()));
-    CHECK(introduceType(AST::Identifier::make("i32"_s), m_types.i32Type()));
-    CHECK(introduceType(AST::Identifier::make("u32"_s), m_types.u32Type()));
-    CHECK(introduceType(AST::Identifier::make("f32"_s), m_types.f32Type()));
-    CHECK(introduceType(AST::Identifier::make("f16"_s), m_types.f16Type()));
-    CHECK(introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType()));
-    CHECK(introduceType(AST::Identifier::make("sampler_comparison"_s), m_types.samplerComparisonType()));
-    CHECK(introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType()));
+    CHECK(introduceType(AST::Identifier::make("bool"_si), m_types.boolType()));
+    CHECK(introduceType(AST::Identifier::make("i32"_si), m_types.i32Type()));
+    CHECK(introduceType(AST::Identifier::make("u32"_si), m_types.u32Type()));
+    CHECK(introduceType(AST::Identifier::make("f32"_si), m_types.f32Type()));
+    CHECK(introduceType(AST::Identifier::make("f16"_si), m_types.f16Type()));
+    CHECK(introduceType(AST::Identifier::make("sampler"_si), m_types.samplerType()));
+    CHECK(introduceType(AST::Identifier::make("sampler_comparison"_si), m_types.samplerComparisonType()));
+    CHECK(introduceType(AST::Identifier::make("texture_external"_si), m_types.textureExternalType()));
 
-    CHECK(introduceType(AST::Identifier::make("texture_depth_2d"_s), m_types.textureDepth2dType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_2d_array"_s), m_types.textureDepth2dArrayType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_cube"_s), m_types.textureDepthCubeType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_cube_array"_s), m_types.textureDepthCubeArrayType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_multisampled_2d"_s), m_types.textureDepthMultisampled2dType()));
+    CHECK(introduceType(AST::Identifier::make("texture_depth_2d"_si), m_types.textureDepth2dType()));
+    CHECK(introduceType(AST::Identifier::make("texture_depth_2d_array"_si), m_types.textureDepth2dArrayType()));
+    CHECK(introduceType(AST::Identifier::make("texture_depth_cube"_si), m_types.textureDepthCubeType()));
+    CHECK(introduceType(AST::Identifier::make("texture_depth_cube_array"_si), m_types.textureDepthCubeArrayType()));
+    CHECK(introduceType(AST::Identifier::make("texture_depth_multisampled_2d"_si), m_types.textureDepthMultisampled2dType()));
 
-    CHECK(introduceType(AST::Identifier::make("ptr"_s), m_types.typeConstructorType(
+    CHECK(introduceType(AST::Identifier::make("ptr"_si), m_types.typeConstructorType(
         "ptr"_s,
         [this](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
             auto argumentCount = type.arguments().size();
@@ -374,7 +374,7 @@ Result<void> TypeChecker::declareBuiltins()
         }
     )));
 
-    CHECK(introduceType(AST::Identifier::make("atomic"_s), m_types.typeConstructorType(
+    CHECK(introduceType(AST::Identifier::make("atomic"_si), m_types.typeConstructorType(
         "atomic"_s,
         [this](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
             if (type.arguments().size() != 1) [[unlikely]]
@@ -389,7 +389,7 @@ Result<void> TypeChecker::declareBuiltins()
         }
     )));
 
-    const auto& validateVector = [&](const Type* element) -> std::optional<String> {
+    const auto& validateVector = [&](const Type* element) -> std::optional<RefPtr<StringImpl>> {
         if (!satisfies(element, Constraints::Scalar))
             return { "vector element type must be a scalar type"_s };
         return std::nullopt;
@@ -399,7 +399,7 @@ Result<void> TypeChecker::declareBuiltins()
     CHECK(allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, validateVector, 3));
     CHECK(allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, validateVector, 4));
 
-    const auto& validateMatrix = [&](const Type* element) -> std::optional<String> {
+    const auto& validateMatrix = [&](const Type* element) -> std::optional<RefPtr<StringImpl>> {
         if (!satisfies(element, Constraints::Float))
             return { "matrix element type must be a floating point type"_s };
         return std::nullopt;
@@ -414,7 +414,7 @@ Result<void> TypeChecker::declareBuiltins()
     CHECK(allocateSimpleConstructor("mat4x3"_s, &TypeStore::matrixType, validateMatrix, 4, 3));
     CHECK(allocateSimpleConstructor("mat4x4"_s, &TypeStore::matrixType, validateMatrix, 4, 4));
 
-    const auto& validateTexture = [&](const Type* element) -> std::optional<String> {
+    const auto& validateTexture = [&](const Type* element) -> std::optional<RefPtr<StringImpl>> {
         if (!satisfies(element, Constraints::Concrete32BitNumber))
             return { "texture sampled type must be one 'i32', 'u32' or 'f32'"_s };
         return std::nullopt;
@@ -432,57 +432,57 @@ Result<void> TypeChecker::declareBuiltins()
     CHECK(allocateTextureStorageConstructor("texture_storage_2d_array"_s, Types::TextureStorage::Kind::TextureStorage2dArray));
     CHECK(allocateTextureStorageConstructor("texture_storage_3d"_s, Types::TextureStorage::Kind::TextureStorage3d));
 
-    CHECK(introduceValue(AST::Identifier::make("read"_s), m_types.accessModeType()));
-    CHECK(introduceValue(AST::Identifier::make("write"_s), m_types.accessModeType()));
-    CHECK(introduceValue(AST::Identifier::make("read_write"_s), m_types.accessModeType()));
+    CHECK(introduceValue(AST::Identifier::make("read"_si), m_types.accessModeType()));
+    CHECK(introduceValue(AST::Identifier::make("write"_si), m_types.accessModeType()));
+    CHECK(introduceValue(AST::Identifier::make("read_write"_si), m_types.accessModeType()));
 
-    CHECK(introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r32float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r32sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r32uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg32float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg32sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg32uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba32float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba32sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba32uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8unorm"_s), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("bgra8unorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r32float"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r32sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r32uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg32float"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg32sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg32uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba16float"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba16sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba16uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba32float"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba32sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba32uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba8sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba8snorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba8uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba8unorm"_si), m_types.texelFormatType()));
 
-    CHECK(introduceValue(AST::Identifier::make("r16float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgb10a2uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgb10a2unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg11b10ufloat"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16unorm"_s), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r16float"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r16sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r16uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r8sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r8snorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r8uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r8unorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg16float"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg8sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg8snorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg8uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg8unorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgb10a2uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgb10a2unorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg16sint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg16uint"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg11b10ufloat"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r16unorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("r16snorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg16snorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rg16unorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba16snorm"_si), m_types.texelFormatType()));
+    CHECK(introduceValue(AST::Identifier::make("rgba16unorm"_si), m_types.texelFormatType()));
 
-    CHECK(introduceValue(AST::Identifier::make("function"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("private"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("workgroup"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("uniform"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("storage"_s), m_types.addressSpaceType()));
+    CHECK(introduceValue(AST::Identifier::make("function"_si), m_types.addressSpaceType()));
+    CHECK(introduceValue(AST::Identifier::make("private"_si), m_types.addressSpaceType()));
+    CHECK(introduceValue(AST::Identifier::make("workgroup"_si), m_types.addressSpaceType()));
+    CHECK(introduceValue(AST::Identifier::make("uniform"_si), m_types.addressSpaceType()));
+    CHECK(introduceValue(AST::Identifier::make("storage"_si), m_types.addressSpaceType()));
 
     // This file contains the declarations generated from `TypeDeclarations.rb`, which refer to the
     // type store as `types`.
@@ -548,7 +548,7 @@ Result<void> TypeChecker::visit(AST::Declaration& declaration)
 
 Result<void> TypeChecker::visit(AST::Structure& structure)
 {
-    HashMap<String, const Type*> fields;
+    HashMap<RefPtr<StringImpl>, const Type*> fields;
     for (unsigned i = 0; i < structure.members().size(); ++i) {
         auto& member = structure.members()[i];
         CHECK(visitAttributes(member.attributes()));
@@ -652,7 +652,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
             // https://www.w3.org/TR/WGSL/#access-mode - the access mode is named by a predeclared
             // enumerant, so a module-scope declaration of that name hides it and leaves the
             // qualifier naming a value that is not an access mode at all.
-            if (maybeQualifier->hasExplicitAccessMode() && m_moduleScopeNames.contains(String { toString(accessMode) })) [[unlikely]]
+            if (maybeQualifier->hasExplicitAccessMode() && m_moduleScopeNames.contains(StringImpl::create(toString(accessMode)).ptr())) [[unlikely]]
                 TYPE_ERROR(maybeQualifier->span(), "cannot use '"_s, toString(accessMode), "' as access mode because it is shadowed by a module-scope declaration"_s);
         } else if (!isModuleScope()) {
             addressSpace = AddressSpace::Function;
@@ -1203,7 +1203,7 @@ Result<void> TypeChecker::visit(AST::SwitchStatement& statement)
             if (auto& constantValue = selector.constantValue(); constantValue.has_value()) {
                 auto value = constantValue->integerValue();
                 if (selectorValues.contains(value)) [[unlikely]]
-                    TYPE_ERROR(selector.span(), "the case selector value '"_s, String::number(value), "' appears more than once in the switch statement"_s);
+                    TYPE_ERROR(selector.span(), "the case selector value '"_s, makeString(value), "' appears more than once in the switch statement"_s);
                 selectorValues.append(value);
             }
             if (unify(valueType, selectorType)) {
@@ -1368,7 +1368,7 @@ Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
 
         auto index = constantIndex->integerValue();
         if (index < 0 || (size && static_cast<size_t>(index) >= size)) [[unlikely]] {
-            String bounds = size ?  makeString(" [0.."_s, size - 1, "]"_s) : ""_s;
+            RefPtr<StringImpl> bounds = size ?  makeString(" [0.."_s, size - 1, "]"_s) : ""_si;
             TYPE_ERROR(access.span(), "index "_s, index, " is out of bounds"_s, bounds);
         }
 
@@ -1467,7 +1467,7 @@ Result<void> TypeChecker::binaryExpression(const SourceSpan& span, AST::Expressi
         }
     }
 
-    CHECK(chooseOverload("operator"_s, span, expression, toASCIILiteral(operation), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { }));
+    CHECK(chooseOverload("operator"_s, span, expression, StringImpl::create(toASCIILiteral(operation)).ptr(), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { }));
 
     ASCIILiteral operationName;
     if (operation == AST::BinaryOperation::Divide)
@@ -1495,7 +1495,7 @@ Result<void> TypeChecker::binaryExpression(const SourceSpan& span, AST::Expressi
 
 Result<void> TypeChecker::visit(AST::IdentifierExpression& identifier)
 {
-    auto* binding = readVariable(identifier.identifier());
+    auto* binding = readVariable(protect(identifier.identifier().id()));
     if (!binding) [[unlikely]]
         TYPE_ERROR(identifier.span(), "unresolved identifier '"_s, identifier.identifier(), '\'');
 
@@ -1525,9 +1525,9 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
     bool isArrayType = is<AST::ArrayTypeExpression>(target);
 
     Vector<const Type*> typeArguments;
-    UNWRAP(targetName, [&]() -> Result<String> {
+    UNWRAP(targetName, [&]() -> Result<RefPtr<StringImpl>> {
         if (isNamedType)
-            return { downcast<AST::IdentifierExpression>(target).identifier() };
+            return { downcast<AST::IdentifierExpression>(target).identifier().id() };
         if (isArrayType)
             return { "array"_s };
         auto& elaborated = downcast<AST::ElaboratedTypeExpression>(target);
@@ -1535,7 +1535,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
             UNWRAP(argumentType, resolve(argument));
             typeArguments.append(argumentType);
         }
-        return { elaborated.base() };
+        return { elaborated.base().id() };
     }());
 
     auto* targetBinding = readVariable(targetName);
@@ -1559,7 +1559,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
                     TYPE_ERROR(call.span(), "struct initializer has too "_s, errorKind, " inputs: expected "_s, numberOfFields, ", found "_s, numberOfArguments);
                 }
 
-                HashMap<String, ConstantValue> constantFields;
+                HashMap<RefPtr<StringImpl>, ConstantValue> constantFields;
                 bool isConstant = true;
                 Evaluation evaluation = Evaluation::Constant;
                 for (unsigned i = 0; i < numberOfArguments; ++i) {
@@ -1595,13 +1595,13 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
                 typeArguments.append(vectorType->element);
                 switch (vectorType->size) {
                 case 2:
-                    targetName = "vec2"_s;
+                    targetName = "vec2"_si;
                     break;
                 case 3:
-                    targetName = "vec3"_s;
+                    targetName = "vec3"_si;
                     break;
                 case 4:
-                    targetName = "vec4"_s;
+                    targetName = "vec4"_si;
                     break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
@@ -1669,49 +1669,49 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
             target.m_inferredType = result;
 
             // Subgroup and quad built-in functions require the 'subgroups' extension to be enabled.
-            if ((targetName.startsWith("subgroup"_s) || targetName.startsWith("quad"_s)) && !m_shaderModule.enabledExtensions().contains(Extension::Subgroups)) [[unlikely]]
+            if ((startsWith(targetName, "subgroup"_s) || startsWith(targetName, "quad"_s)) && !m_shaderModule.enabledExtensions().contains(Extension::Subgroups)) [[unlikely]]
                 TYPE_ERROR(call.span(), "'"_s, targetName, "' requires the 'subgroups' extension to be enabled"_s);
 
             // FIXME: <rdar://150366527> this will go away once we track used intrinsics properly
-            if (targetName == "workgroupUniformLoad"_s) {
+            if (equal(targetName, "workgroupUniformLoad"_s)) {
                 auto* argument = call.arguments()[0].inferredType();
                 if (std::holds_alternative<Types::Atomic>(*std::get<Types::Pointer>(*argument).element))
                     m_shaderModule.setUsesWorkgroupUniformLoadAtomic();
                 else
                     m_shaderModule.setUsesWorkgroupUniformLoad();
-            } else if (targetName == "frexp"_s)
+            } else if (equal(targetName, "frexp"_s))
                 m_shaderModule.setUsesFrexp();
-            else if (targetName == "modf"_s)
+            else if (equal(targetName, "modf"_s))
                 m_shaderModule.setUsesModf();
-            else if (targetName == "atomicCompareExchangeWeak"_s)
+            else if (equal(targetName, "atomicCompareExchangeWeak"_s))
                 m_shaderModule.setUsesAtomicCompareExchange();
-            else if (targetName == "dot"_s)
+            else if (equal(targetName, "dot"_s))
                 m_shaderModule.setUsesDot();
-            else if (targetName == "firstLeadingBit"_s)
+            else if (equal(targetName, "firstLeadingBit"_s))
                 m_shaderModule.setUsesFirstLeadingBit();
-            else if (targetName == "firstTrailingBit"_s)
+            else if (equal(targetName, "firstTrailingBit"_s))
                 m_shaderModule.setUsesFirstTrailingBit();
-            else if (targetName == "sign"_s)
+            else if (equal(targetName, "sign"_s))
                 m_shaderModule.setUsesSign();
-            else if (targetName == "dot4I8Packed"_s)
+            else if (equal(targetName, "dot4I8Packed"_s))
                 m_shaderModule.setUsesDot4I8Packed();
-            else if (targetName == "dot4U8Packed"_s)
+            else if (equal(targetName, "dot4U8Packed"_s))
                 m_shaderModule.setUsesDot4U8Packed();
-            else if (targetName == "extractBits"_s)
+            else if (equal(targetName, "extractBits"_s))
                 m_shaderModule.setUsesExtractBits();
-            else if (targetName == "insertBits"_s)
+            else if (equal(targetName, "insertBits"_s))
                 m_shaderModule.setUsesInsertBits();
             else if (
-                targetName == "textureGather"_s
-                || targetName == "textureGatherCompare"_s
-                || targetName == "textureSample"_s
-                || targetName == "textureSampleBias"_s
-                || targetName == "textureSampleCompare"_s
-                || targetName == "textureSampleCompareLevel"_s
-                || targetName == "textureSampleGrad"_s
-                || targetName == "textureSampleLevel"_s
+                equal(targetName, "textureGather"_s)
+                || equal(targetName, "textureGatherCompare"_s)
+                || equal(targetName, "textureSample"_s)
+                || equal(targetName, "textureSampleBias"_s)
+                || equal(targetName, "textureSampleCompare"_s)
+                || equal(targetName, "textureSampleCompareLevel"_s)
+                || equal(targetName, "textureSampleGrad"_s)
+                || equal(targetName, "textureSampleLevel"_s)
             ) {
-                if (targetName == "textureGather"_s) {
+                if (equal(targetName, "textureGather"_s)) {
                     auto& component = call.arguments()[0];
                     if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
                         auto& constant = component.constantValue();
@@ -1720,7 +1720,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
                         else {
                             auto componentValue = constant->integerValue();
                             if (componentValue < 0 || componentValue > 3) [[unlikely]]
-                                TYPE_ERROR(component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+                                TYPE_ERROR(component.span(), "the component argument must be at least 0 and at most 3. component is "_s, makeString(componentValue));
                         }
                     }
                 }
@@ -1740,14 +1740,14 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
                 for (unsigned i = 0; i < vectorType->size; ++i) {
                     auto& i32 = std::get<int32_t>(vector.elements[i]);
                     if (i32 < -8 || i32 > 7) [[unlikely]]
-                        TYPE_ERROR(lastArg.span(), "each component of the offset argument must be at least -8 and at most 7. offset component "_s, String::number(i), " is "_s, String::number(i32));
+                        TYPE_ERROR(lastArg.span(), "each component of the offset argument must be at least -8 and at most 7. offset component "_s, makeString(i), " is "_s, makeString(i32));
                 }
             }
             return { };
         }
 
         // FIXME: <rdar://150366527> similarly to above: this shouldn't be a string check
-        if (targetName == "bitcast"_s) {
+        if (equal(targetName, "bitcast"_s)) {
             CHECK(bitcast(call, typeArguments));
             return { };
         }
@@ -1756,7 +1756,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
     }
 
     RELEASE_ASSERT(isArrayType);
-    call.m_resolvedTarget = "array"_s;
+    call.m_resolvedTarget = "array"_si;
     auto* array = dynamicDowncast<AST::ArrayTypeExpression>(target);
     const Types::Array* arrayType = targetBinding ? std::get_if<Types::Array>(targetBinding->type) : nullptr;
     const Type* elementType = nullptr;
@@ -1870,7 +1870,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
             // https://www.w3.org/TR/WGSL/#limits
             constexpr unsigned maximumConstantArraySize = 2047;
             if (argumentCount > maximumConstantArraySize) [[unlikely]]
-                TYPE_ERROR(call.span(), "constant array cannot have more than "_s, String::number(maximumConstantArraySize), " elements"_s);
+                TYPE_ERROR(call.span(), "constant array cannot have more than "_s, makeString(maximumConstantArraySize), " elements"_s);
             CHECK(setConstantValue(call, result, ConstantArray(WTF::move(arguments))));
         } else
             CHECK(setConstantValue(call, result, zeroValue(result)));
@@ -1975,7 +1975,7 @@ Result<void> TypeChecker::visit(AST::UnaryExpression& unary)
         return { };
     }
 
-    CHECK(chooseOverload("operator"_s, unary.span(), &unary, toASCIILiteral(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { }));
+    CHECK(chooseOverload("operator"_s, unary.span(), &unary, StringImpl::create(toASCIILiteral(unary.operation())).ptr(), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { }));
     return { };
 }
 
@@ -2070,7 +2070,7 @@ Result<void> TypeChecker::visit(AST::ArrayTypeExpression& array)
 
 Result<const Type*> TypeChecker::lookupType(const AST::Identifier& name)
 {
-    auto* binding = readVariable(name);
+    auto* binding = readVariable(protect(name.id()));
     if (!binding) [[unlikely]]
         TYPE_ERROR(name.span(), "unresolved type '"_s, name, '\'');
 
@@ -2145,7 +2145,7 @@ Result<void> TypeChecker::visitAttributes(AST::Attribute::List& attributes)
 Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
 {
     const auto& fieldName = access.fieldName().id();
-    auto length = fieldName.length();
+    auto length = WTF::length(fieldName);
     auto vectorSize = vector.size;
 
     bool isValid = true;
@@ -2183,7 +2183,7 @@ Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, 
     bool hasXYZW = false;
     bool hasRGBA = false;
     for (unsigned i = 0; i < length; ++i) {
-        char c = fieldName[i];
+        char c = codeUnitAt(fieldName, i);
         if (isXYZW(c))
             hasXYZW = true;
         else if (isRGBA(c))
@@ -2219,7 +2219,7 @@ Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, 
     switch (length) {
     case 1:
         if (constantValue)
-            access.setConstantValue(constAccess(std::get<ConstantVector>(*constantValue), fieldName[0]));
+            access.setConstantValue(constAccess(std::get<ConstantVector>(*constantValue), codeUnitAt(fieldName, 0)));
         return vector.element;
     case 2:
     case 3:
@@ -2233,14 +2233,14 @@ Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, 
         const auto& vector = std::get<ConstantVector>(*constantValue);
         ConstantVector result(length);
         for (unsigned i = 0; i < length; ++i)
-            result.elements[i] = constAccess(vector, fieldName[i]);
+            result.elements[i] = constAccess(vector, codeUnitAt(fieldName, i));
         access.setConstantValue(result);
     }
     return { m_types.vectorType(length, vector.element) };
 }
 
 template<typename CallArguments>
-Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
+Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, StringImpl* target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
     auto* overload = m_shaderModule.lookupOverload(target);
     if (!overload)
@@ -2648,7 +2648,7 @@ bool TypeChecker::unify(const Type* lhs, const Type* rhs)
 Result<void> TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
 {
     ASSERT(type);
-    if (!introduceVariable(name, { Binding::Type, type, Evaluation::Runtime, std::nullopt })) [[unlikely]]
+    if (!introduceVariable(protect(name.id()), { Binding::Type, type, Evaluation::Runtime, std::nullopt })) [[unlikely]]
         TYPE_ERROR(name.span(), "redeclaration of '"_s, name, '\'');
     return { };
 }
@@ -2683,7 +2683,7 @@ Result<void> TypeChecker::introduceValue(const AST::Identifier& name, const Type
     ASSERT(type);
     if (shouldDumpConstantValues && value.has_value()) [[unlikely]]
         dataLogLn("> Assigning value: ", name, " => ", value);
-    if (!introduceVariable(name, { Binding::Value, type, evaluation, value, m_declaringAfterContinue })) [[unlikely]]
+    if (!introduceVariable(protect(name.id()), { Binding::Value, type, evaluation, value, m_declaringAfterContinue })) [[unlikely]]
         TYPE_ERROR(name.span(), "redeclaration of '"_s, name, '\'');
     return { };
 }
@@ -2691,7 +2691,7 @@ Result<void> TypeChecker::introduceValue(const AST::Identifier& name, const Type
 Result<void> TypeChecker::introduceFunction(const AST::Identifier& name, const Type* type)
 {
     ASSERT(type);
-    if (!introduceVariable(name, { Binding::Function, type, Evaluation::Runtime , std::nullopt })) [[unlikely]]
+    if (!introduceVariable(protect(name.id()), { Binding::Function, type, Evaluation::Runtime , std::nullopt })) [[unlikely]]
         TYPE_ERROR(name.span(), "redeclaration of '"_s, name, '\'');
     return { };
 }

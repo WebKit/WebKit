@@ -33,8 +33,8 @@ class HTMLTitleElement final : public HTMLElement {
 public:
     static Ref<HTMLTitleElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT String text() const;
-    WEBCORE_EXPORT void setText(String&&);
+    WEBCORE_EXPORT RefPtr<StringImpl> text() const;
+    WEBCORE_EXPORT void setText(RefPtr<StringImpl>&&);
 
     const StringWithDirection& textWithDirection() const LIFETIME_BOUND { return m_title; }
 

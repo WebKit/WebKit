@@ -44,7 +44,7 @@ public:
 
     const WebKit::WebHitTestResultData& hitTestResultData() const LIFETIME_BOUND { return m_hitTestResultData; }
     WebKit::WebPageProxy* page() { return m_page.get(); }
-    const WTF::String& qrCodePayloadString() const LIFETIME_BOUND { return m_qrCodePayloadString; }
+    const RefPtr<StringImpl>& qrCodePayloadString() const LIFETIME_BOUND { return m_qrCodePayloadString; }
     bool hasEntireImage() const { return m_hasEntireImage; }
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }
     bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
@@ -60,7 +60,7 @@ private:
 
     WebKit::WebHitTestResultData m_hitTestResultData;
     WeakPtr<WebKit::WebPageProxy> m_page;
-    WTF::String m_qrCodePayloadString;
+    RefPtr<StringImpl> m_qrCodePayloadString;
     bool m_hasEntireImage { false };
     bool m_allowsFollowingLink { false };
     bool m_allowsFollowingImageURL { false };

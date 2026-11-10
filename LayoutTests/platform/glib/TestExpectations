@@ -3357,6 +3357,7 @@ webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Ski
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]
+webkit.org/b/190991 media/encrypted-media/legacy-createSession-type-outlives-gc.html [ Skip ]
 
 # Web platform tests
 # Disable and selectively pass, since half the tests require a real DRM system.

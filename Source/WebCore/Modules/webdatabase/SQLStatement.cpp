@@ -78,8 +78,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLStatement);
 
-SQLStatement::SQLStatement(Database& database, const String& statement, Vector<SQLValue>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
-    : m_statement(statement.isolatedCopy())
+SQLStatement::SQLStatement(Database& database, StringImpl* statement, Vector<SQLValue>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
+    : m_statement(isolatedCopy(statement))
     , m_arguments(WTF::move(arguments))
     , m_statementCallbackWrapper(WTF::move(callback), &database.document())
     , m_statementErrorCallbackWrapper(WTF::move(errorCallback), &database.document())
@@ -117,7 +117,7 @@ bool SQLStatement::execute(Database& db)
 
     auto statement = database->prepareStatementSlow(m_statement);
     if (!statement) {
-        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.utf8(), database->lastError(), database->lastErrorMsg());
+        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", utf8(m_statement), database->lastError(), database->lastErrorMsg());
         if (database->lastError() == SQLITE_INTERRUPT)
             m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement"_s, database->lastError(), "interrupted"_s);
         else
@@ -129,7 +129,7 @@ bool SQLStatement::execute(Database& db)
     // If this is the case, they might be trying to do something fishy or malicious
     if (statement->bindParameterCount() != m_arguments.size()) {
         LOG(StorageAPI, "Bind parameter count doesn't match number of question marks");
-        m_error = SQLError::create(SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count"_s);
+        m_error = SQLError::create(SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count"_si);
         return false;
     }
 
@@ -141,7 +141,7 @@ bool SQLStatement::execute(Database& db)
         }
 
         if (result != SQLITE_OK) {
-            LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.utf8());
+            LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, utf8(m_statement));
             m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value"_s, result, database->lastErrorMsg());
             return false;
         }
@@ -237,19 +237,19 @@ bool SQLStatement::performCallback(SQLTransaction& transaction)
 void SQLStatement::setDatabaseDeletedError()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database"_s);
+    m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database"_si);
 }
 
 void SQLStatement::setVersionMismatchedError()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_s);
+    m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_si);
 }
 
 void SQLStatement::setFailureDueToQuota()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"_s);
+    m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"_si);
 }
 
 void SQLStatement::clearFailureDueToQuota()

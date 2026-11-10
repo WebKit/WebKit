@@ -73,24 +73,24 @@ public:
     static Ref<NativeWebKeyboardEvent> create(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
     static Ref<NativeWebKeyboardEvent> create(const NativeWebKeyboardEvent&);
-    static Ref<NativeWebKeyboardEvent> create(GdkEvent*, const String&, bool isAutoRepeat, Vector<String>&& commands);
-    static Ref<NativeWebKeyboardEvent> create(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
-    static Ref<NativeWebKeyboardEvent> create(WebEventType, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier>);
+    static Ref<NativeWebKeyboardEvent> create(GdkEvent*, StringImpl*, bool isAutoRepeat, Vector<RefPtr<StringImpl>>&& commands);
+    static Ref<NativeWebKeyboardEvent> create(StringImpl*, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(WebEventType, StringImpl* text, StringImpl* key, StringImpl* code, StringImpl* keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<RefPtr<StringImpl>>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier>);
 #elif PLATFORM(IOS_FAMILY)
     enum class HandledByInputMethod : bool { No, Yes };
     static Ref<NativeWebKeyboardEvent> create(::WebEvent *, HandledByInputMethod);
 #elif PLATFORM(WPE)
 #if USE(LIBWPE)
     enum class HandledByInputMethod : bool { No, Yes };
-    static Ref<NativeWebKeyboardEvent> create(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(struct wpe_input_keyboard_event*, StringImpl*, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
 #endif
 #if ENABLE(WPE_PLATFORM)
-    static Ref<NativeWebKeyboardEvent> create(WPEEvent*, const String&, bool isAutoRepeat);
-    static Ref<NativeWebKeyboardEvent> create(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(WPEEvent*, StringImpl*, bool isAutoRepeat);
+    static Ref<NativeWebKeyboardEvent> create(StringImpl*, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
 #endif
 #elif PLATFORM(PLAYSTATION)
     enum class HandledByInputMethod : bool { No, Yes };
-    static Ref<NativeWebKeyboardEvent> create(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(struct wpe_input_keyboard_event*, StringImpl*, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
 #elif PLATFORM(WIN)
     static Ref<NativeWebKeyboardEvent> create(HWND, UINT message, WPARAM, LPARAM, Vector<MSG>&& pendingCharEvents);
 #endif

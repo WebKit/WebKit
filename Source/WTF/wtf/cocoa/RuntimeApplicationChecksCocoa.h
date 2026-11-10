@@ -172,9 +172,9 @@ WTF_EXPORT_PRIVATE bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior);
 NODELETE WTF_EXPORT_PRIVATE bool processIsExtension();
 NODELETE WTF_EXPORT_PRIVATE void setProcessIsExtension(bool);
 
-WTF_EXPORT_PRIVATE void setApplicationBundleIdentifier(const String&);
-WTF_EXPORT_PRIVATE void setApplicationBundleIdentifierOverride(const String&);
-WTF_EXPORT_PRIVATE String applicationBundleIdentifier();
+WTF_EXPORT_PRIVATE void setApplicationBundleIdentifier(StringImpl*);
+WTF_EXPORT_PRIVATE void setApplicationBundleIdentifierOverride(StringImpl*);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> applicationBundleIdentifier();
 WTF_EXPORT_PRIVATE void clearApplicationBundleIdentifierTestingOverride();
 
 #if USE(SOURCE_APPLICATION_AUDIT_DATA)

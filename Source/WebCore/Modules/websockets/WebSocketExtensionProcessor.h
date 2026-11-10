@@ -40,29 +40,29 @@ class WebSocketExtensionProcessor {
 public:
     virtual ~WebSocketExtensionProcessor() = default;
 
-    String extensionToken() const { return m_extensionToken; }
+    const RefPtr<StringImpl>& extensionToken() const LIFETIME_BOUND { return m_extensionToken; }
 
     // The return value of this method will be a part of the value of
     // Sec-WebSocket-Extensions.
-    virtual String handshakeString() = 0;
+    virtual RefPtr<StringImpl> handshakeString() = 0;
 
     // This should validate the server's response parameters which are passed
     // as HashMap<key, value>. This may also do something for the extension.
     // Note that this method may be called more than once when the server
     // response contains duplicate extension token that matches extensionToken().
-    virtual bool processResponse(const HashMap<String, String>&) = 0;
+    virtual bool processResponse(const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&) = 0;
 
     // If procecssResponse() returns false, this should provide the reason.
-    virtual String failureReason() { return makeString("Extension "_s, m_extensionToken, " failed"_s); }
+    virtual RefPtr<StringImpl> failureReason() { return makeString("Extension "_s, m_extensionToken, " failed"_s); }
 
 protected:
-    explicit WebSocketExtensionProcessor(const String& extensionToken)
+    explicit WebSocketExtensionProcessor(StringImpl* extensionToken)
         : m_extensionToken(extensionToken)
     {
     }
 
 private:
-    String m_extensionToken;
+    RefPtr<StringImpl> m_extensionToken;
 };
 
 } // namespace WebCore

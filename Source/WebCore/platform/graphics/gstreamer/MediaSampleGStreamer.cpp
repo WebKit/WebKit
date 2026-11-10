@@ -107,7 +107,7 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, const
     return adoptRef(*gstreamerMediaSample);
 }
 
-void MediaSampleGStreamer::updateSampleTimestamps([[maybe_unused]] const String& debugMessage)
+void MediaSampleGStreamer::updateSampleTimestamps([[maybe_unused]] StringImpl* debugMessage)
 {
     RELEASE_ASSERT(m_sample);
     GRefPtr buffer = gst_sample_get_buffer(m_sample.get());
@@ -117,15 +117,15 @@ void MediaSampleGStreamer::updateSampleTimestamps([[maybe_unused]] const String&
     if (m_pts >= MediaTime::zeroTime())
         newPts = toGstClockTime(m_pts);
     else
-        GST_WARNING("New PTS is negative: %s", m_pts.toString().ascii().data());
+        GST_WARNING("New PTS is negative: %s", ascii(m_pts.toString()).data());
 
     GstClockTime newDts = 0;
     if (m_dts >= MediaTime::zeroTime())
         newDts = toGstClockTime(m_dts);
     else
-        GST_WARNING("New DTS is negative: %s", m_dts.toString().ascii().data());
+        GST_WARNING("New DTS is negative: %s", ascii(m_dts.toString()).data());
 
-    GST_TRACE("%s, new PTS: %" GST_TIME_FORMAT " (prev: %" GST_TIME_FORMAT "), new DTS: %" GST_TIME_FORMAT " (prev: %" GST_TIME_FORMAT ")", debugMessage.ascii().data(),
+    GST_TRACE("%s, new PTS: %" GST_TIME_FORMAT " (prev: %" GST_TIME_FORMAT "), new DTS: %" GST_TIME_FORMAT " (prev: %" GST_TIME_FORMAT ")", ascii(debugMessage).data(),
         GST_TIME_ARGS(newPts), GST_TIME_ARGS(GST_BUFFER_PTS(buffer.get())),
         GST_TIME_ARGS(newDts), GST_TIME_ARGS(GST_BUFFER_DTS(buffer.get())));
 
@@ -148,7 +148,7 @@ void MediaSampleGStreamer::setTimestamps(const MediaTime& presentationTime, cons
     if (!m_sample)
         return;
 
-    updateSampleTimestamps("Setting timestamps"_s);
+    updateSampleTimestamps("Setting timestamps"_si);
 }
 
 void MediaSampleGStreamer::offsetTimestampsBy(const MediaTime& timestampOffset)

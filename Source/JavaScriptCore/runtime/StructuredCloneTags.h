@@ -422,19 +422,19 @@ enum class SerializableErrorType : uint8_t {
 };
 
 struct ErrorInformation {
-    String errorTypeString;
-    String message;
+    RefPtr<StringImpl> errorTypeString;
+    RefPtr<StringImpl> message;
     unsigned line { 0 };
     unsigned column { 0 };
-    String sourceURL;
-    String stack;
-    String cause;
+    RefPtr<StringImpl> sourceURL;
+    RefPtr<StringImpl> stack;
+    RefPtr<StringImpl> cause;
 };
 
 class ErrorInstance;
 JS_EXPORT_PRIVATE std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSGlobalObject*, ErrorInstance&);
 
-inline SerializableErrorType errorNameToSerializableErrorType(const String& name)
+inline SerializableErrorType errorNameToSerializableErrorType(StringImpl* name)
 {
     if (equalLettersIgnoringASCIICase(name, "evalerror"_s))
         return SerializableErrorType::EvalError;

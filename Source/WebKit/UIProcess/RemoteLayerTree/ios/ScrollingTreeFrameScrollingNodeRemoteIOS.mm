@@ -166,7 +166,7 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionRelatedLayers()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-String ScrollingTreeFrameScrollingNodeRemoteIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+RefPtr<StringImpl> ScrollingTreeFrameScrollingNodeRemoteIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
 {
     if (RetainPtr scrollView = this->scrollView()) {
         TextStream ts(TextStream::LineMode::MultipleLine);
@@ -175,13 +175,13 @@ String ScrollingTreeFrameScrollingNodeRemoteIOS::scrollbarStateForOrientation(Sc
         ts << (showsScrollbar ? ""_s : "none"_s);
 #if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
         if (orientation == ScrollbarOrientation::Horizontal)
-            ts << ([scrollView _horizontalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_s);
+            ts << ([scrollView _horizontalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_si);
         else
-            ts << ([scrollView _verticalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_s);
+            ts << ([scrollView _verticalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_si);
 #endif
         return ts.release();
     }
-    return ""_s;
+    return ""_si;
 }
 
 

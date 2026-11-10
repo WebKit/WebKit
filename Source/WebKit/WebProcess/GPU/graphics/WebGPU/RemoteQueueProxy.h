@@ -64,7 +64,7 @@ public:
 #if PLATFORM(COCOA)
     void copyExternalImageToTexture(const ::WebGPU::ImageCopyExternalImage& source, const ::WebGPU::ImageCopyTextureTagged& destination, const ::WebGPU::Extent3D& copySize) final;
 #endif
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

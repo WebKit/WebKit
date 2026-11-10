@@ -51,8 +51,8 @@ public:
 
     virtual void platformCALayerCustomSublayersChanged(PlatformCALayer*) { }
 
-    virtual void platformCALayerAnimationStarted(const String& /*animationKey*/, MonotonicTime) { }
-    virtual void platformCALayerAnimationEnded(const String& /*animationKey*/) { }
+    virtual void platformCALayerAnimationStarted(StringImpl* /*animationKey*/, MonotonicTime) { }
+    virtual void platformCALayerAnimationEnded(StringImpl* /*animationKey*/) { }
     virtual GraphicsLayerCompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayerCompositingCoordinatesOrientation::TopDown; }
     virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip, OptionSet<GraphicsLayerPaintBehavior>) = 0;
     virtual bool platformCALayerShowDebugBorders() const { return false; }

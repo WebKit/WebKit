@@ -54,7 +54,7 @@ StyleRuleEnvironmentMap::StyleRuleEnvironmentMap(Ref<StyleProperties>&& properti
     , m_properties(WTF::move(properties))
 {
     if (RefPtr name = dynamicDowncast<CSSStringValue>(m_properties->getPropertyCSSValue(CSSPropertyID::Name).get()))
-        m_name = AtomString { name->string().value };
+        m_name = AtomStringImpl::add(name->string().value);
 
     m_format = toEnvironmentMapFormat(m_properties->getPropertyCSSValue(CSSPropertyID::Format).get());
 
@@ -87,12 +87,12 @@ CSSEnvironmentMapRule::CSSEnvironmentMapRule(StyleRuleEnvironmentMap& environmen
 
 CSSEnvironmentMapRule::~CSSEnvironmentMapRule() = default;
 
-String CSSEnvironmentMapRule::name() const
+RefPtr<StringImpl> CSSEnvironmentMapRule::name() const
 {
     return m_environmentMapRule->name();
 }
 
-String CSSEnvironmentMapRule::format() const
+RefPtr<StringImpl> CSSEnvironmentMapRule::format() const
 {
     auto format = m_environmentMapRule->format();
     if (!format)
@@ -106,16 +106,16 @@ String CSSEnvironmentMapRule::format() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String CSSEnvironmentMapRule::src() const
+RefPtr<StringImpl> CSSEnvironmentMapRule::src() const
 {
     return m_environmentMapRule->src().specified;
 }
 
-String CSSEnvironmentMapRule::cssText() const
+RefPtr<StringImpl> CSSEnvironmentMapRule::cssText() const
 {
     auto declarations = m_environmentMapRule->properties().asText(CSS::defaultSerializationContext());
-    if (declarations.isEmpty())
-        return "@environment-map { }"_s;
+    if (isEmpty(declarations))
+        return "@environment-map { }"_si;
 
     return makeString("@environment-map { "_s, declarations, " }"_s);
 }

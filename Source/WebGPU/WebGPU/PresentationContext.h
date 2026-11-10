@@ -72,7 +72,7 @@ public:
     virtual bool isPresentationContextCoreAnimation() const { return false; }
     RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool&) override { return nullptr; }
 
-    void setLabel(String&&) override { }
+    void setLabel(RefPtr<StringImpl>&&) override { }
     bool isValid() const override { return false; }
 protected:
     explicit PresentationContext();

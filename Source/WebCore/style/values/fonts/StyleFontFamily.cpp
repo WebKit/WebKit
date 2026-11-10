@@ -48,12 +48,12 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
         auto valueID = keywordValue->valueID();
         if (valueID == CSSValueID::WebkitBody) {
             return {
-                AtomString { state.document().settings().standardFontFamily() },
+                AtomStringImpl::add(state.document().settings().standardFontFamily()),
                 FontFamilyKind::Specified
             };
         }
 
-        if (auto family = genericFontFamily(valueID); !family.isNull()) {
+        if (auto family = genericFontFamily(valueID); family) {
             return {
                 family,
                 FontFamilyKind::Generic
@@ -62,7 +62,7 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
 
         if (isSystemFontShorthand(valueID)) {
             auto family = SystemFontDatabase::singleton().systemFontShorthandFamily(lowerFontShorthand(valueID));
-            ASSERT(!family.isEmpty());
+            ASSERT(!isEmpty(family));
 
             return {
                 WTF::move(family),
@@ -87,7 +87,7 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
 
     std::optional<FontFamilyKind> firstFontKind;
     auto families = WTF::compactMap(*valueList, [&](auto& contentValue) -> std::optional<WebCore::FontFamily> {
-        auto [family, kind] = [&] -> std::pair<AtomString, FontFamilyKind> {
+        auto [family, kind] = [&] -> std::pair<RefPtr<AtomStringImpl>, FontFamilyKind> {
             if (RefPtr fontFamilyNameContentValue = dynamicDowncast<CSSFontFamilyNameValue>(contentValue)) {
                 return {
                     toStyleFromCSSValue<FontFamilyName>(state, *fontFamilyNameContentValue).value,
@@ -101,12 +101,12 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
 
             auto valueID = keywordValue->valueID();
             if (valueID == CSSValueID::WebkitBody)
-                return { AtomString { state.document().settings().standardFontFamily() }, FontFamilyKind::Specified };
+                return { AtomStringImpl::add(state.document().settings().standardFontFamily()), FontFamilyKind::Specified };
 
             return { genericFontFamily(valueID), FontFamilyKind::Generic };
         }();
 
-        if (family.isNull())
+        if (!family)
             return std::nullopt;
 
         if (!firstFontKind)

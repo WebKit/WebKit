@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(String&& identifier, Ref<WebCore::SharedMemory>&& data, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(RefPtr<StringImpl>&& identifier, Ref<WebCore::SharedMemory>&& data, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize)
         : identifier(WTF::move(identifier))
         , data(WTF::move(data))
         , actionsOffset(actionsOffset)
@@ -49,11 +49,11 @@ public:
     {
     }
 
-    WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& data, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize);
+    WebCompiledContentRuleListData(RefPtr<StringImpl>&& identifier, std::optional<WebCore::SharedMemoryHandle>&& data, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize);
 
     std::optional<WebCore::SharedMemoryHandle> createDataHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadOnly) const;
 
-    String identifier;
+    RefPtr<StringImpl> identifier;
     RefPtr<WebCore::SharedMemory> data;
     uint64_t actionsOffset { 0 };
     uint64_t actionsSize { 0 };

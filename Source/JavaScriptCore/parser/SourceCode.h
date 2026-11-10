@@ -78,7 +78,7 @@ public:
     friend bool operator==(const SourceCode&, const SourceCode&) = default;
 };
 
-inline SourceCode makeSource(const String& source, const SourceOrigin& sourceOrigin, SourceTaintedness sourceTaintedOrigin, String filename = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
+inline SourceCode makeSource(StringImpl* source, const SourceOrigin& sourceOrigin, SourceTaintedness sourceTaintedOrigin, RefPtr<StringImpl> filename = nullptr, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
 {
     // The provider is the only place an inline <script>'s start is recorded; SourceCode reads it
     // back from there so the two cannot disagree.

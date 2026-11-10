@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct MediaDeviceHashSalts {
-    String persistentDeviceSalt;
-    String ephemeralDeviceSalt;
+    RefPtr<StringImpl> persistentDeviceSalt;
+    RefPtr<StringImpl> ephemeralDeviceSalt;
 };
 
 } // namespace WebCore

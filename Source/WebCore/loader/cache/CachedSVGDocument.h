@@ -40,7 +40,7 @@ public:
 
 private:
     bool mayTryReplaceEncodedData() const override { return true; }
-    void setEncoding(const String&) override;
+    void setEncoding(StringImpl*) override;
     ASCIILiteral encoding() const override;
     const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) override;

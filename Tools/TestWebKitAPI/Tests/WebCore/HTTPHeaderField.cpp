@@ -29,33 +29,33 @@
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/text/MakeString.h>
 
-static String canonicalizeHTTPHeader(const String& string)
+static RefPtr<StringImpl> canonicalizeHTTPHeader(StringImpl* string)
 {
-    size_t colonLocation = string.find(':');
+    size_t colonLocation = find(string, ':');
     if (colonLocation == notFound)
         return { };
-    auto field = WebCore::HTTPHeaderField::create(string.left(colonLocation), string.substring(colonLocation + 1));
+    auto field = WebCore::HTTPHeaderField::create(left(string, colonLocation), substring(string, colonLocation + 1));
     if (!field)
         return { };
     return makeString(field->name(), ": "_s, field->value());
 }
 
-static void shouldRemainUnchanged(Vector<String>&& strings)
+static void shouldRemainUnchanged(Vector<RefPtr<StringImpl>>&& strings)
 {
     for (const auto& string : strings)
-        EXPECT_TRUE(canonicalizeHTTPHeader(string) == string);
+        EXPECT_TRUE(equal(canonicalizeHTTPHeader(string), string));
 }
 
-static void shouldBeInvalid(Vector<String>&& strings)
+static void shouldBeInvalid(Vector<RefPtr<StringImpl>>&& strings)
 {
     for (const auto& string : strings)
-        EXPECT_TRUE(canonicalizeHTTPHeader(string) == String());
+        EXPECT_TRUE(equal(canonicalizeHTTPHeader(string), nullString()));
 }
 
-static void shouldBecome(Vector<std::pair<String, String>>&& pairs)
+static void shouldBecome(Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& pairs)
 {
     for (const auto& pair : pairs)
-        EXPECT_TRUE(canonicalizeHTTPHeader(pair.first) == pair.second);
+        EXPECT_TRUE(equal(canonicalizeHTTPHeader(pair.first), pair.second));
 }
 
 TEST(HTTPHeaderField, Parser)
@@ -81,10 +81,10 @@ TEST(HTTPHeaderField, Parser)
         "a: text/html"_s,
         "a: text/html; charset=utf-8"_s,
         "a: foo,bar"_s,
-        String::fromLatin1(nonASCIIComment),
-        String::fromLatin1(nonASCIIQuotedPairInComment),
-        String::fromLatin1(nonASCIIQuotedPairInQuote),
-        String::fromLatin1(obsTextAfterToken),
+        StringImpl::fromLatin1(nonASCIIComment),
+        StringImpl::fromLatin1(nonASCIIQuotedPairInComment),
+        StringImpl::fromLatin1(nonASCIIQuotedPairInQuote),
+        StringImpl::fromLatin1(obsTextAfterToken),
     });
     
     shouldBeInvalid({
@@ -103,9 +103,9 @@ TEST(HTTPHeaderField, Parser)
         "a: (\a)"_s,
         "a: \"\a\""_s,
         "a: \"a\" (b)}((c))"_s,
-        String::fromLatin1(delInQuote),
-        String::fromLatin1(controlAfterToken),
-        String::fromLatin1(delAfterToken),
+        StringImpl::fromLatin1(delInQuote),
+        StringImpl::fromLatin1(controlAfterToken),
+        StringImpl::fromLatin1(delAfterToken),
     });
     
     shouldBecome({

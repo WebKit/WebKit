@@ -42,85 +42,85 @@ struct MIMETypeRegistryThreadGlobalData {
     WTF_MAKE_TZONE_ALLOCATED(MIMETypeRegistryThreadGlobalData);
     WTF_MAKE_NONCOPYABLE(MIMETypeRegistryThreadGlobalData);
 public:
-    MIMETypeRegistryThreadGlobalData(HashSet<String, ASCIICaseInsensitiveHash>&& supportedImageMIMETypesForEncoding)
+    MIMETypeRegistryThreadGlobalData(HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>&& supportedImageMIMETypesForEncoding)
         : m_supportedImageMIMETypesForEncoding(WTF::move(supportedImageMIMETypesForEncoding))
     { }
 
-    const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding() const LIFETIME_BOUND { return m_supportedImageMIMETypesForEncoding; }
+    const HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding() const LIFETIME_BOUND { return m_supportedImageMIMETypesForEncoding; }
 
 private:
-    HashSet<String, ASCIICaseInsensitiveHash> m_supportedImageMIMETypesForEncoding;
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> m_supportedImageMIMETypesForEncoding;
 };
 
 class MIMETypeRegistry {
 public:
-    WEBCORE_EXPORT static String mimeTypeForExtension(StringView);
-    WEBCORE_EXPORT static Vector<String> extensionsForMIMEType(const String& type);
-    WEBCORE_EXPORT static String preferredExtensionForMIMEType(const String& type);
-    WEBCORE_EXPORT static String mediaMIMETypeForExtension(StringView extension);
+    WEBCORE_EXPORT static RefPtr<StringImpl> mimeTypeForExtension(StringView);
+    WEBCORE_EXPORT static Vector<RefPtr<StringImpl>> extensionsForMIMEType(StringImpl* type);
+    WEBCORE_EXPORT static RefPtr<StringImpl> preferredExtensionForMIMEType(StringImpl* type);
+    WEBCORE_EXPORT static RefPtr<StringImpl> mediaMIMETypeForExtension(StringView extension);
 
-    WEBCORE_EXPORT static String mimeTypeForPath(StringView);
+    WEBCORE_EXPORT static RefPtr<StringImpl> mimeTypeForPath(StringView);
 
     static std::unique_ptr<MIMETypeRegistryThreadGlobalData> createMIMETypeRegistryThreadGlobalData();
 
     // Check to see if a MIME type is suitable for being loaded inline as an
     // image (e.g., <img> tags).
-    WEBCORE_EXPORT static bool isSupportedImageMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedImageMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as an image, including SVG and Video (where supported).
-    WEBCORE_EXPORT static bool isSupportedImageVideoOrSVGMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedImageVideoOrSVGMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being encoded.
-    WEBCORE_EXPORT static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedImageMIMETypeForEncoding(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
     NODELETE WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(StringView mimeType);
-    WEBCORE_EXPORT static bool isSupportedJSONMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedJSONMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a WebAssembly module.
-    WEBCORE_EXPORT static bool isSupportedWebAssemblyMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedWebAssemblyMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a style sheet.
-    static bool isSupportedStyleSheetMIMEType(const String& mimeType);
+    static bool isSupportedStyleSheetMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a font.
-    static bool isSupportedFontMIMEType(const String& mimeType);
+    static bool isSupportedFontMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is a text media playlist type, such as an m3u8.
-    static bool isTextMediaPlaylistMIMEType(const String& mimeType);
+    static bool isTextMediaPlaylistMIMEType(StringImpl* mimeType);
 
     // Check to see if a non-image MIME type is suitable for being loaded as a
     // document in a frame. Does not include supported JavaScript and JSON MIME types.
-    WEBCORE_EXPORT static bool isSupportedNonImageMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedNonImageMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded using <video> and <audio>.
-    WEBCORE_EXPORT static bool isSupportedMediaMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedMediaMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being loaded using <track>>.
-    WEBCORE_EXPORT static bool isSupportedTextTrackMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedTextTrackMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is a plugin implemented by the browser.
-    NODELETE static bool isApplicationPluginMIMEType(const String& mimeType);
+    NODELETE static bool isApplicationPluginMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is one of the common PDF/PS types.
-    NODELETE WEBCORE_EXPORT static bool isPDFMIMEType(const String& mimeType);
+    NODELETE WEBCORE_EXPORT static bool isPDFMIMEType(StringImpl* mimeType);
 
-    NODELETE WEBCORE_EXPORT static bool isUSDMIMEType(const String& mimeType);
+    NODELETE WEBCORE_EXPORT static bool isUSDMIMEType(StringImpl* mimeType);
 
-    NODELETE WEBCORE_EXPORT static bool isGLTFMIMEType(const String& mimeType);
+    NODELETE WEBCORE_EXPORT static bool isGLTFMIMEType(StringImpl* mimeType);
 
-    NODELETE WEBCORE_EXPORT static bool isSupportedModelMIMEType(const String& mimeType);
+    NODELETE WEBCORE_EXPORT static bool isSupportedModelMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is suitable for being shown inside a page.
     // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(),
     // isSupportedMediaMIMEType(), isSupportedJavaScriptMIMEType(), isSupportedJSONMIMEType(),
     // returns true or if the given MIME type begins with "text/" and
     // isUnsupportedTextMIMEType() returns false.
-    WEBCORE_EXPORT static bool canShowMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool canShowMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is one where an XML document should be created
     // rather than an HTML document.
-    WEBCORE_EXPORT static bool isXMLMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isXMLMIMEType(StringImpl* mimeType);
 
     // Check to see if a MIME type is for an XML external entity resource.
     WEBCORE_EXPORT static bool isXMLEntityMIMEType(StringView mimeType);
@@ -128,32 +128,32 @@ public:
     // Used in page load algorithm to decide whether to display as a text
     // document in a frame. Not a good idea to use elsewhere, because that code
     // makes this test is after many other tests are done on the MIME type.
-    WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isTextMIMEType(StringImpl* mimeType);
 
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> supportedImageMIMETypes();
-    NODELETE static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
-    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
-    WEBCORE_EXPORT static const HashSet<String>& supportedMediaMIMETypes();
+    NODELETE static HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
+    WEBCORE_EXPORT static HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
+    WEBCORE_EXPORT static const HashSet<RefPtr<StringImpl>>& supportedMediaMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> pdfMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> unsupportedTextMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> usdMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> gltfMIMETypes();
 
-    WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
-    WEBCORE_EXPORT static String correctExtensionForMIMEType(const String& filename, const String& mimeType);
+    WEBCORE_EXPORT static RefPtr<StringImpl> appendFileExtensionIfNecessary(StringImpl* filename, StringImpl* mimeType);
+    WEBCORE_EXPORT static RefPtr<StringImpl> correctExtensionForMIMEType(StringImpl* filename, StringImpl* mimeType);
 
-    WEBCORE_EXPORT static String preferredImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions);
-    WEBCORE_EXPORT static bool containsImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions);
-    WEBCORE_EXPORT static Vector<String> allowedMIMETypes(const Vector<String>& mimeTypes, const Vector<String>& extensions);
-    WEBCORE_EXPORT static Vector<String> allowedFileExtensions(const Vector<String>& mimeTypes, const Vector<String>& extensions);
-    WEBCORE_EXPORT static bool isJPEGMIMEType(const String& mimeType);
-    WEBCORE_EXPORT static bool isWebArchiveMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static RefPtr<StringImpl> preferredImageMIMETypeForEncoding(const Vector<RefPtr<StringImpl>>& mimeTypes, const Vector<RefPtr<StringImpl>>& extensions);
+    WEBCORE_EXPORT static bool containsImageMIMETypeForEncoding(const Vector<RefPtr<StringImpl>>& mimeTypes, const Vector<RefPtr<StringImpl>>& extensions);
+    WEBCORE_EXPORT static Vector<RefPtr<StringImpl>> allowedMIMETypes(const Vector<RefPtr<StringImpl>>& mimeTypes, const Vector<RefPtr<StringImpl>>& extensions);
+    WEBCORE_EXPORT static Vector<RefPtr<StringImpl>> allowedFileExtensions(const Vector<RefPtr<StringImpl>>& mimeTypes, const Vector<RefPtr<StringImpl>>& extensions);
+    WEBCORE_EXPORT static bool isJPEGMIMEType(StringImpl* mimeType);
+    WEBCORE_EXPORT static bool isWebArchiveMIMEType(StringImpl* mimeType);
 private:
     // Check to see if the MIME type is not suitable for being loaded as a text
     // document in a frame. Only valid for MIME types begining with "text/".
-    NODELETE static bool isUnsupportedTextMIMEType(const String& mimeType);
+    NODELETE static bool isUnsupportedTextMIMEType(StringImpl* mimeType);
 };
 
-WEBCORE_EXPORT const String& defaultMIMEType();
+WEBCORE_EXPORT const RefPtr<StringImpl>& defaultMIMEType();
 
 } // namespace WebCore

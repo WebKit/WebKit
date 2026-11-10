@@ -33,14 +33,14 @@
 
 namespace JSC {
 
-static String valueOrDefaultLabelString(JSGlobalObject* globalObject, CallFrame* callFrame)
+static RefPtr<StringImpl> valueOrDefaultLabelString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     if (callFrame->argumentCount() < 1)
-        return "default"_s;
+        return "default"_si;
 
     auto value = callFrame->argument(0);
     if (value.isUndefined())
-        return "default"_s;
+        return "default"_si;
 
     return value.toWTFString(globalObject);
 }
@@ -120,10 +120,10 @@ void ConsoleObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-static String valueToStringWithUndefinedOrNullCheck(JSGlobalObject* globalObject, JSValue value)
+static RefPtr<StringImpl> valueToStringWithUndefinedOrNullCheck(JSGlobalObject* globalObject, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return String();
+        return nullptr;
     return value.toWTFString(globalObject);
 }
 
@@ -268,11 +268,11 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncProfile, (JSGlobalObject* globalObject,
 
     size_t argsCount = callFrame->argumentCount();
     if (!argsCount) {
-        client->profile(globalObject, String());
+        client->profile(globalObject, nullString());
         return JSValue::encode(jsUndefined());
     }
 
-    const String& title(valueToStringWithUndefinedOrNullCheck(globalObject, callFrame->argument(0)));
+    const RefPtr<StringImpl>& title(valueToStringWithUndefinedOrNullCheck(globalObject, callFrame->argument(0)));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     client->profile(globalObject, title);
@@ -289,11 +289,11 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncProfileEnd, (JSGlobalObject* globalObje
 
     size_t argsCount = callFrame->argumentCount();
     if (!argsCount) {
-        client->profileEnd(globalObject, String());
+        client->profileEnd(globalObject, nullString());
         return JSValue::encode(jsUndefined());
     }
 
-    const String& title(valueToStringWithUndefinedOrNullCheck(globalObject, callFrame->argument(0)));
+    const RefPtr<StringImpl>& title(valueToStringWithUndefinedOrNullCheck(globalObject, callFrame->argument(0)));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     client->profileEnd(globalObject, title);
@@ -310,11 +310,11 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTakeHeapSnapshot, (JSGlobalObject* glob
 
     size_t argsCount = callFrame->argumentCount();
     if (!argsCount) {
-        client->takeHeapSnapshot(globalObject, String());
+        client->takeHeapSnapshot(globalObject, nullString());
         return JSValue::encode(jsUndefined());
     }
 
-    const String& title(valueToStringWithUndefinedOrNullCheck(globalObject, callFrame->argument(0)));
+    const RefPtr<StringImpl>& title(valueToStringWithUndefinedOrNullCheck(globalObject, callFrame->argument(0)));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     client->takeHeapSnapshot(globalObject, title);

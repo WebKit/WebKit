@@ -64,19 +64,19 @@ struct PointerProperties {
 
 // One action object from the spec (https://w3c.github.io/webdriver/#dfn-action-object).
 struct Action {
-    String id;
+    RefPtr<StringImpl> id;
     SourceType sourceType { SourceType::None };
     PointerType pointerType { PointerType::Mouse };
     ActionType type { ActionType::Pause };
     std::optional<uint64_t> duration;
-    String value; // keyDown / keyUp: a single grapheme cluster.
+    RefPtr<StringImpl> value; // keyDown / keyUp: a single grapheme cluster.
     uint64_t button { 0 };
     double x { 0 };
     double y { 0 };
     int64_t deltaX { 0 };
     int64_t deltaY { 0 };
     OriginType origin { OriginType::Viewport };
-    String originSharedId; // Only for OriginType::Element.
+    RefPtr<StringImpl> originSharedId; // Only for OriginType::Element.
     PointerProperties properties;
 };
 
@@ -118,12 +118,12 @@ class BidiInputState : public RefCounted<BidiInputState> {
 public:
     static Ref<BidiInputState> create() { return adoptRef(*new BidiInputState); }
 
-    const Source* find(const String& id) const;
-    void add(const String& id, Source);
+    const Source* find(StringImpl* id) const;
+    void add(StringImpl* id, Source);
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     SimulatedInputSource& simulatedSource(const Action&);
-    const HashMap<String, Ref<SimulatedInputSource>>& simulatedSources() const { return m_simulatedSources; }
+    const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>& simulatedSources() const { return m_simulatedSources; }
 #endif
 
     // https://w3c.github.io/webdriver/#dfn-input-cancel-list
@@ -136,9 +136,9 @@ public:
 private:
     BidiInputState() = default;
 
-    HashMap<String, Source> m_inputStateMap;
+    HashMap<RefPtr<StringImpl>, Source> m_inputStateMap;
 #if ENABLE(WEBDRIVER_ACTIONS_API)
-    HashMap<String, Ref<SimulatedInputSource>> m_simulatedSources;
+    HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>> m_simulatedSources;
 #endif
     Vector<Action> m_inputCancelList;
     const Ref<BidiInputActionsQueue> m_actionsQueue { BidiInputActionsQueue::create() };
@@ -156,20 +156,20 @@ public:
     BidiInputAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
     ~BidiInputAgent() override;
 
-    void performActions(const String& context, Ref<JSON::Array>&& actions, Inspector::CommandCallback<void>&&) override;
-    void releaseActions(const String& context, Inspector::CommandCallback<void>&&) override;
-    void setFiles(const String& context, Ref<JSON::Object>&& element, Ref<JSON::Array>&& files, Inspector::CommandCallback<void>&&) override;
+    void performActions(StringImpl* context, Ref<JSON::Array>&& actions, Inspector::CommandCallback<void>&&) override;
+    void releaseActions(StringImpl* context, Inspector::CommandCallback<void>&&) override;
+    void setFiles(StringImpl* context, Ref<JSON::Object>&& element, Ref<JSON::Array>&& files, Inspector::CommandCallback<void>&&) override;
 
-    void willClosePage(const String& pageHandle);
+    void willClosePage(StringImpl* pageHandle);
 
 private:
     // https://w3c.github.io/webdriver/#dfn-get-the-input-state — keyed by top-level context handle.
-    Automation::BidiInputState& inputStateForTopLevelContext(const String& pageHandle);
+    Automation::BidiInputState& inputStateForTopLevelContext(StringImpl* pageHandle);
 
     WeakPtr<WebAutomationSession> m_session;
     Ref<Inspector::BidiInputBackendDispatcher> m_inputDomainDispatcher;
     // Queued commands and in-flight dispatches also hold a Ref, so a state can outlive its entry here after willClosePage().
-    HashMap<String, Ref<Automation::BidiInputState>> m_inputStates;
+    HashMap<RefPtr<StringImpl>, Ref<Automation::BidiInputState>> m_inputStates;
 };
 
 } // namespace WebKit

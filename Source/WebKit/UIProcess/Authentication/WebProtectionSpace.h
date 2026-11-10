@@ -38,10 +38,10 @@ public:
         return adoptRef(*new WebProtectionSpace(protectionSpace));
     }
     
-    const String& protocol() const LIFETIME_BOUND;
-    NODELETE const String& host() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& protocol() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& host() const LIFETIME_BOUND;
     NODELETE int port() const;
-    NODELETE const String& realm() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& realm() const LIFETIME_BOUND;
     NODELETE bool isProxy() const;
     NODELETE WebCore::ProtectionSpace::ServerType serverType() const;
     bool receivesCredentialSecurely() const;

@@ -50,10 +50,10 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     : m_sessionID(WTF::move(sessionID))
     , m_client(client)
     , m_request(request.internalRequest)
-    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
+    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, RefPtr<StringImpl> { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
 {
     if (!m_request.url().protocolIsInHTTPFamily()) {
-        didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });
+        didFinish(ResourceError { nullString(), 0, m_request.url(), "URL is not HTTP(S)"_si, ResourceError::Type::Cancellation });
         return;
     }
 
@@ -134,7 +134,7 @@ void BackgroundFetchLoad::willPerformHTTPRedirection(ResourceResponse&& redirect
         }
         auto request = WTF::move(result->redirectRequest);
         if (!request.url().protocolIsInHTTPFamily()) {
-            protectedThis->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
+            protectedThis->didFinish(ResourceError { nullString(), 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_si, ResourceError::Type::AccessControl });
             completionHandler({ });
             return;
         }
@@ -154,7 +154,7 @@ void BackgroundFetchLoad::didReceiveChallenge(AuthenticationChallenge&& challeng
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
     if (!weakThis)
         return;
-    didFinish(ResourceError { String(), 0, currentURL(), "Failed HTTP authentication"_s, ResourceError::Type::AccessControl });
+    didFinish(ResourceError { nullString(), 0, currentURL(), "Failed HTTP authentication"_si, ResourceError::Type::AccessControl });
 }
 
 void BackgroundFetchLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
@@ -163,7 +163,7 @@ void BackgroundFetchLoad::didReceiveResponse(ResourceResponse&& response, Negoti
 
     auto error = m_networkLoadChecker->validateResponse(m_request, response);
     if (!error.isNull()) {
-        BGLOAD_RELEASE_LOG("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8(), error.errorCode());
+        BGLOAD_RELEASE_LOG("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", utf8(error.domain()), error.errorCode());
 
         WeakPtr weakThis { *this };
         completionHandler(PolicyAction::Ignore);

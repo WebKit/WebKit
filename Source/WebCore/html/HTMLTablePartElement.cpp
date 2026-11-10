@@ -57,7 +57,7 @@ bool HTMLTablePartElement::hasPresentationalHintsForAttribute(const QualifiedNam
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTablePartElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTablePartElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::bgcolorAttr:
@@ -92,7 +92,7 @@ void HTMLTablePartElement::collectPresentationalHintsForAttribute(const Qualifie
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, value);
         break;
     case AttributeNames::heightAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLLengthToStyle(style, CSSPropertyID::Height, value);
         break;
     default:

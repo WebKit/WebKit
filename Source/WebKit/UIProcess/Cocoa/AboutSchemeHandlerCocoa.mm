@@ -39,10 +39,10 @@ public:
 
     void loadContent(URL requestURL, CompletionHandler<void(WebCore::ResourceResponse&&, Ref<WebCore::SharedBuffer>&&)>&& handler) final
     {
-        ResourceMonitorURLsController::singleton().getSource([requestURL = WTF::move(requestURL), handler = WTF::move(handler)](String&& source) mutable {
-            auto data = WebCore::SharedBuffer::create(source.span8());
+        ResourceMonitorURLsController::singleton().getSource([requestURL = WTF::move(requestURL), handler = WTF::move(handler)](RefPtr<StringImpl>&& source) mutable {
+            auto data = WebCore::SharedBuffer::create(span8(source));
 
-            WebCore::ResourceResponse response(WTF::move(requestURL), "text/plain"_s, data->size(), "UTF-8"_s);
+            WebCore::ResourceResponse response(WTF::move(requestURL), "text/plain"_si, data->size(), "UTF-8"_si);
             handler(WTF::move(response), WTF::move(data));
         });
     }
@@ -52,7 +52,7 @@ public:
 void AboutSchemeHandler::platformInitialize()
 {
 #if ENABLE(HEAVY_AD_UNLOADING)
-    registerHandler(AdTaggingListHandler::path, makeUnique<AdTaggingListHandler>());
+    registerHandler(StringImpl::create(AdTaggingListHandler::path).ptr(), makeUnique<AdTaggingListHandler>());
 #endif
 }
 

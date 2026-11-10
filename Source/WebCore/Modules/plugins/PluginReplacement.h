@@ -49,8 +49,8 @@ public:
     virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Style::ComputedStyle&&, const RenderTreePosition&) = 0;
 };
 
-typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
-typedef bool (*PluginReplacementSupportsType)(const String&);
+typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues);
+typedef bool (*PluginReplacementSupportsType)(StringImpl*);
 typedef bool (*PluginReplacementSupportsFileExtension)(StringView);
 typedef bool (*PluginReplacementSupportsURL)(const URL&);
 
@@ -72,8 +72,8 @@ public:
     {
     }
 
-    Ref<PluginReplacement> create(HTMLPlugInElement& element, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues) const { return m_constructor(element, paramNames, paramValues); }
-    bool supportsType(const String& mimeType) const { return m_supportsType(mimeType); }
+    Ref<PluginReplacement> create(HTMLPlugInElement& element, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues) const { return m_constructor(element, paramNames, paramValues); }
+    bool supportsType(StringImpl* mimeType) const { return m_supportsType(mimeType); }
     bool supportsFileExtension(StringView extension) const { return m_supportsFileExtension(extension); }
     bool supportsURL(const URL& url) const { return m_supportsURL(url); }
 

@@ -950,14 +950,14 @@ NSString* Device::addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>
 
     for (auto& bindGroupLayout : pipelineLayout.bindGroupLayouts) {
         auto& entries = pipelineEntries[bindGroupLayout.group];
-        HashMap<String, uint64_t> entryMap;
+        HashMap<RefPtr<StringImpl>, uint64_t> entryMap;
         for (auto& entry : bindGroupLayout.entries) {
             auto visibility = convertVisibility(entry.visibility);
             // The entries of a shader have the visibility of its stage.
             auto stage = static_cast<size_t>(shaderStage(visibility));
             ResolvedBindGroupLayoutEntry newEntry;
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265204 - use a set instead
-            bool isArrayLength = entry.name.length() && entry.name.endsWith("_ArrayLength"_s);
+            bool isArrayLength = length(entry.name) && endsWith(entry.name, "_ArrayLength"_s);
             uint32_t webBinding = entry.webBinding;
             uint64_t bufferSizeForBinding = 0;
             std::optional<BindGroupLayout::BufferBindingType> bufferTypeOverride;
@@ -968,7 +968,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>
                     return @"Binding index overflow in auto-generated layouts";
                 webBinding = checked.value();
                 bufferTypeOverride = BindGroupLayout::BufferBindingType::ArrayLength;
-                auto shortName = entry.name.substring(2, entry.name.length() - (sizeof("_ArrayLength") + 1));
+                auto shortName = substring(entry.name, 2, length(entry.name) - (sizeof("_ArrayLength") + 1));
                 if (auto it = entryMap.find(shortName); it != entryMap.end())
                     bufferSizeForBinding = it->value;
             } else {
@@ -983,7 +983,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>
                     entryMap.set(entry.name, webBinding);
                     continue;
                 }
-                if (entry.name.length())
+                if (length(entry.name))
                     entryMap.set(entry.name, webBinding);
             }
 
@@ -1004,7 +1004,7 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<ResolvedB
     Vector<Ref<WebGPU::BindGroupLayout>> bindGroupLayouts(ReserveCapacityTag { }, bindGroupEntries.size());
     for (auto& entries : bindGroupEntries) {
         auto layoutEntries = entries;
-        auto bindGroupLayout = createBindGroupLayout("getBindGroup() generated layout"_s, WTF::move(layoutEntries), true);
+        auto bindGroupLayout = createBindGroupLayout("getBindGroup() generated layout"_si, WTF::move(layoutEntries), true);
         if (!bindGroupLayout->isValid())
             return PipelineLayout::createInvalid(*this);
         bindGroupLayouts.append(WTF::move(bindGroupLayout));
@@ -1052,9 +1052,9 @@ static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(Web
     return std::make_pair(RenderPipeline::createInvalid(object), error);
 }
 
-static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Metal::Device &object, bool isAsync, String&& error)
+static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Metal::Device &object, bool isAsync, RefPtr<StringImpl>&& error)
 {
-    return returnInvalidRenderPipeline(object, isAsync, error.createNSString().get());
+    return returnInvalidRenderPipeline(object, isAsync, createNSString(error).get());
 }
 
 static constexpr ASCIILiteral name(WebGPU::CompareFunction compare)
@@ -1395,7 +1395,7 @@ static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Metal::Device
             unsignedValue -= componentsPerVariable;
             return true;
         };
-        const auto& fragmentEntryPoint = (fragmentDescriptor && !fragmentDescriptor->stage.entryPoint.isNull()) ? fragmentDescriptor->stage.entryPoint : fragmentModule->defaultFragmentEntryPoint();
+        const auto& fragmentEntryPoint = (fragmentDescriptor && fragmentDescriptor->stage.entryPoint) ? fragmentDescriptor->stage.entryPoint : fragmentModule->defaultFragmentEntryPoint();
         if (fragmentModule->usesFrontFacingInInput(fragmentEntryPoint) && !decrementByVariable(maxFragmentShaderInputComponents))
             return @"maxFragmentShaderInputComponents is less than zero due to front facing";
         if (fragmentModule->usesSampleIndexInInput(fragmentEntryPoint) && !decrementByVariable(maxFragmentShaderInputComponents))
@@ -1481,14 +1481,14 @@ RefPtr<WebGPU::RenderPipeline> Device::createRenderPipeline(const WebGPU::Render
 void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, bool isAsync, const RenderPipeline* pipelineToReplace, LibraryCompilation libraryCompilation, CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)>&& callback)
 {
     if (!validateRenderPipeline(descriptor) || !isValid())
-        return callback(returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_s));
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_si));
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
 #if ENABLE(WEBGPU_BY_DEFAULT)
     mtlRenderPipelineDescriptor.shaderValidation = shaderValidationState();
 #endif
 
-    auto label = descriptor.label.createNSString();
+    auto label = createNSString(descriptor.label);
     auto& deviceLimits = limits();
 
     // The pipeline stores and validates with the C API enums.
@@ -1500,11 +1500,11 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     if (pipelineToReplace) {
         pipelineLayout = &pipelineToReplace->pipelineLayout();
         if (!isValidToUseWithDevice(*pipelineLayout, *this))
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_si));
     } else if (descriptor.layout) {
         Ref layout = metal(*descriptor.layout);
         if (!isValidToUseWithDevice(layout.get(), *this))
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_si));
 
         if (!layout->isAutoLayout())
             pipelineLayout = layout.ptr();
@@ -1523,11 +1523,11 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         Ref vertexModule = metal(descriptor.vertex.stage.module.get());
         vertexAST = vertexModule->ast();
         if (!vertexModule->isValid() || !vertexAST)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_si));
         if (&vertexModule->device() != this)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_si));
 
-        const auto& vertexEntryPoint = descriptor.vertex.stage.entryPoint.isNull() ? vertexModule->defaultVertexEntryPoint() : descriptor.vertex.stage.entryPoint;
+        const auto& vertexEntryPoint = !descriptor.vertex.stage.entryPoint ? vertexModule->defaultVertexEntryPoint() : descriptor.vertex.stage.entryPoint;
         vertexStageIn = vertexModule->stageInTypesForEntryPoint(vertexEntryPoint);
         if (NSString* error = errorValidatingVertexStageIn(vertexStageIn, *this))
             return callback(returnInvalidRenderPipeline(*this, isAsync, error));
@@ -1543,7 +1543,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
                 return callback(returnInvalidRenderPipeline(*this, isAsync, error));
         }
         if (entryPointInformation.specializationConstants.size() != preparedVertexLibrary->wgslConstantValues.size())
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_si));
         vertexOutputs = vertexModule->vertexReturnTypeForEntryPoint(vertexEntryPoint);
         vertexClipDistancesCount = vertexModule->clipDistancesCount(vertexEntryPoint);
     }
@@ -1563,12 +1563,12 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         fragmentModule = &metal(fragmentDescriptor.stage.module.get());
         fragmentAST = fragmentModule->ast();
         if (!fragmentModule->isValid() || !fragmentAST)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_si));
 
         if (&fragmentModule->device() != this)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_si));
 
-        const auto& fragmentEntryPoint = fragmentDescriptor.stage.entryPoint.isNull() ? fragmentModule->defaultFragmentEntryPoint() : fragmentDescriptor.stage.entryPoint;
+        const auto& fragmentEntryPoint = !fragmentDescriptor.stage.entryPoint ? fragmentModule->defaultFragmentEntryPoint() : fragmentDescriptor.stage.entryPoint;
         usesFragDepth = fragmentModule->usesFragDepth(fragmentEntryPoint);
         usesSampleMask = fragmentModule->usesSampleMaskInOutput(fragmentEntryPoint);
         usesDualSourceBlending = fragmentModule->usesDualSourceBlending(fragmentEntryPoint);
@@ -1598,7 +1598,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
             const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
 
             if (Texture::isDepthOrStencilFormat(targetFormat) || !Texture::isRenderableFormat(targetFormat, *this))
-                return callback(returnInvalidRenderPipeline(*this, isAsync, "Depth / stencil format passed to color format"_s));
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "Depth / stencil format passed to color format"_si));
 
             bytesPerSample = roundUpToMultipleOfNonPowerOfTwo(Texture::renderTargetPixelByteAlignment(targetFormat), bytesPerSample);
             bytesPerSample += Texture::renderTargetPixelByteCost(targetFormat);
@@ -1606,15 +1606,15 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
 
             hasAtLeastOneColorTarget = true;
             if (targetDescriptor.writeMask.contains(WebGPU::ColorWrite::Invalid))
-                return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s));
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_si));
             if (fragmentFunctionReturnType == MTLDataTypeNone && !targetDescriptor.writeMask.isEmpty())
-                return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s));
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_si));
             mtlColorAttachment.writeMask = colorWriteMask(targetDescriptor.writeMask);
 
             bool readsAlpha = false;
             if (targetDescriptor.blend) {
                 if (!Texture::supportsBlending(targetFormat, *this))
-                    return callback(returnInvalidRenderPipeline(*this, isAsync, "Color target attempted to use blending on non-blendable format"_s));
+                    return callback(returnInvalidRenderPipeline(*this, isAsync, "Color target attempted to use blending on non-blendable format"_si));
                 mtlColorAttachment.blendingEnabled = YES;
 
                 const auto& alphaBlend = targetDescriptor.blend->alpha;
@@ -1625,14 +1625,14 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
                     return true;
                 };
                 if (!validateBlend(alphaBlend) || !validateBlend(colorBlend))
-                    return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend states are not valid"_s));
+                    return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend states are not valid"_si));
                 if (usesSecondBlendSource(alphaBlend) || usesSecondBlendSource(colorBlend)) {
                     if (!hasFeature(WebGPU::FeatureName::DualSourceBlending))
-                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but the dual-source-blending feature is not enabled"_s));
+                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but the dual-source-blending feature is not enabled"_si));
                     if (fragmentDescriptor.targets.size() != 1)
-                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but there is more than one color target"_s));
+                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but there is more than one color target"_si));
                     if (!usesDualSourceBlending)
-                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but the fragment shader does not use @blend_src"_s));
+                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but the fragment shader does not use @blend_src"_si));
                 }
                 mtlColorAttachment.alphaBlendOperation = blendOperation(alphaBlend.operation);
                 mtlColorAttachment.sourceAlphaBlendFactor = blendFactor(alphaBlend.srcFactor);
@@ -1657,7 +1657,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
             return callback(returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Bytes per sample(%u) exceeded maximum allowed limit(%u)", bytesPerSample, deviceLimits.maxColorAttachmentBytesPerSample]));
 
         NSError *error = nil;
-        const auto& fragmentEntryPoint = fragmentDescriptor.stage.entryPoint.isNull() ? fragmentModule->defaultFragmentEntryPoint() : fragmentDescriptor.stage.entryPoint;
+        const auto& fragmentEntryPoint = !fragmentDescriptor.stage.entryPoint ? fragmentModule->defaultFragmentEntryPoint() : fragmentDescriptor.stage.entryPoint;
         preparedFragmentLibrary = prepareLibrary(*fragmentModule, pipelineLayout.get(), fragmentEntryPoint, label.get(), fragmentDescriptor.stage.constants, minimumBufferSizes, &error);
         if (!preparedFragmentLibrary)
             return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created"));
@@ -1669,7 +1669,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         }
 
         if (entryPointInformation.specializationConstants.size() != preparedFragmentLibrary->wgslConstantValues.size())
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_si));
     }
 
     MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
@@ -1697,32 +1697,32 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         // and lines lack, so for those topologies it has to be left at zero.
         if (primitiveTopology != WebGPU::PrimitiveTopology::TriangleList && primitiveTopology != WebGPU::PrimitiveTopology::TriangleStrip) {
             if (depthBias || depthBiasSlopeScale || depthBiasClamp)
-                return callback(returnInvalidRenderPipeline(*this, isAsync, "depthBias, depthBiasSlopeScale, and depthBiasClamp must be 0 unless primitive.topology is a triangle topology"_s));
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "depthBias, depthBiasSlopeScale, and depthBiasClamp must be 0 unless primitive.topology is a triangle topology"_si));
         }
     }
 
     // A render pipeline needs somewhere to render to. hasAtLeastOneColorTarget can only be set from
     // the fragment state's targets, so a vertex-only pipeline has to bring its own depth-stencil.
     if (!hasAtLeastOneColorTarget && !descriptor.depthStencil)
-        return callback(returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_s));
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_si));
     if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)
-        return callback(returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s));
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_si));
 
     if (descriptor.multisample.count != 1 && descriptor.multisample.count != 4)
-        return callback(returnInvalidRenderPipeline(*this, isAsync, "multisample count must be either 1 or 4"_s));
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "multisample count must be either 1 or 4"_si));
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
     if (descriptor.multisample.alphaToCoverageEnabled) {
         if (usesSampleMask)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Can not use sampleMask with alphaToCoverage"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Can not use sampleMask with alphaToCoverage"_si));
         if (!descriptor.fragment)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_si));
         auto& targets = descriptor.fragment->targets;
         auto* firstTarget = targets.empty() || !targets[0] ? nullptr : &*targets[0];
         if (!firstTarget || !hasAlphaChannel(firstTarget->format) || !Texture::supportsBlending(firstTarget->format, *this))
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_si));
         if (descriptor.multisample.count == 1)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires multisampling"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires multisampling"_si));
     }
 
     RELEASE_ASSERT([mtlRenderPipelineDescriptor respondsToSelector:@selector(setSampleMask:)]);
@@ -1752,7 +1752,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     MTLDepthClipMode mtlDepthClipMode = MTLDepthClipModeClip;
     if (descriptor.primitive.unclippedDepth) {
         if (!hasFeature(WebGPU::FeatureName::DepthClipControl))
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "unclippedDepth used without enabling depth-clip-control feature"_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "unclippedDepth used without enabling depth-clip-control feature"_si));
 
         mtlDepthClipMode = MTLDepthClipModeClamp;
     }
@@ -1764,7 +1764,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     // a pipeline, the render command encoder can get these information out of the render pipeline.
     if (primitiveTopology != WebGPU::PrimitiveTopology::LineStrip && primitiveTopology != WebGPU::PrimitiveTopology::TriangleStrip) {
         if (descriptor.primitive.stripIndexFormat)
-            return callback(returnInvalidRenderPipeline(*this, isAsync, "If primitive.topology is not line-strip or triangle-strip, primitive.stripIndexFormat must be undefined."_s));
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "If primitive.topology is not line-strip or triangle-strip, primitive.stripIndexFormat must be undefined."_si));
     }
 
     auto mtlPrimitiveType = primitiveType(primitiveTopology);
@@ -1779,7 +1779,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
 
     Ref<PipelineLayout> finalPipelineLayout = pipelineLayout ? Ref { *pipelineLayout } : generatePipelineLayout(bindGroupEntries);
     if (!pipelineLayout && !finalPipelineLayout->isValid())
-        return callback(returnInvalidRenderPipeline(*this, isAsync, "Generated pipeline layout is not valid"_s));
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "Generated pipeline layout is not valid"_si));
 
     // The pipeline is created before its shaders have been compiled: it only holds on to
     // mtlRenderPipelineDescriptor, and its MTLRenderPipelineState is installed (or, for the
@@ -1800,7 +1800,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
 
         auto vertexFunction = createFunction(vertexLibrary, vertexLibraryInfo.entryPointInformation, label.get());
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex)
-            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Vertex function could not be created"_s));
+            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Vertex function could not be created"_si));
         renderPipelineDescriptor.get().vertexFunction = vertexFunction;
 
         if (fragmentLibraryInfo) {
@@ -1809,13 +1809,13 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
 
             auto fragmentFunction = createFunction(fragmentLibrary, fragmentLibraryInfo->entryPointInformation, label.get());
             if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment)
-                return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Fragment function failed creation"_s));
+                return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Fragment function failed creation"_si));
             renderPipelineDescriptor.get().fragmentFunction = fragmentFunction;
         }
 
         NSError *error = nil;
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
-        if (dumpMetalReproCaseRenderPSO(WTF::move(vertexLibraryInfo.msl), renderPipelineDescriptor.get().vertexFunction.name, fragmentLibraryInfo ? WTF::move(fragmentLibraryInfo->msl) : String { }, renderPipelineDescriptor.get().fragmentFunction.name, renderPipelineDescriptor.get(), shaderLocations, protectedThis)) {
+        if (dumpMetalReproCaseRenderPSO(WTF::move(vertexLibraryInfo.msl), StringImpl::create(renderPipelineDescriptor.get().vertexFunction.name), fragmentLibraryInfo ? WTF::move(fragmentLibraryInfo->msl) : nullptr, StringImpl::create(renderPipelineDescriptor.get().fragmentFunction.name), renderPipelineDescriptor.get(), shaderLocations, protectedThis)) {
             renderPipelineDescriptor.get().supportIndirectCommandBuffers = YES;
             id<MTLRenderPipelineState> renderPipelineState = [protectedThis->m_device newRenderPipelineStateWithDescriptor:renderPipelineDescriptor.get() error:&error];
             UNUSED_PARAM(renderPipelineState);
@@ -1858,7 +1858,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
 static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyncRenderPipelineCompletion(Device& device, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     return [protectedDevice = protect(device), callback = WTF::move(callback)](std::pair<Ref<RenderPipeline>, NSString*>&& pipelineAndError) mutable {
-        auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = String { pipelineAndError.second }]() mutable {
+        auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = StringImpl::create(pipelineAndError.second)]() mutable {
             // A lost device makes invalid objects without errors.
             if (protectedDevice->isDestroyed() || pipeline->isValid())
                 return callback(Ref<WebGPU::RenderPipeline> { WTF::move(pipeline) });
@@ -1933,14 +1933,14 @@ Ref<WebGPU::BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIn
     auto device = m_device;
 
     if (!isValid()) {
-        device->generateAValidationError("getBindGroupLayout: RenderPipeline is invalid"_s);
+        device->generateAValidationError("getBindGroupLayout: RenderPipeline is invalid"_si);
         pipelineLayout->makeInvalid();
         return BindGroupLayout::createInvalid(device.get());
     }
 
     if (groupIndex >= pipelineLayout->numberOfBindGroupLayouts()) {
         if (groupIndex >= device->limits().maxBindGroups) {
-            device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_s);
+            device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_si);
             pipelineLayout->makeInvalid();
         }
         return BindGroupLayout::createInvalid(device.get());
@@ -1949,7 +1949,7 @@ Ref<WebGPU::BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIn
     return pipelineLayout->bindGroupLayout(groupIndex);
 }
 
-void RenderPipeline::setLabel(String&&)
+void RenderPipeline::setLabel(RefPtr<StringImpl>&&)
 {
     // MTLRenderPipelineState's labels are read-only.
 }
@@ -2086,7 +2086,7 @@ id<MTLRenderPipelineState> RenderPipeline::renderPipelineState() const
 
     m_renderPipelineState = [m_device->device() newRenderPipelineStateWithDescriptor:m_renderPipelineDescriptor error:nil];
     if (!m_renderPipelineState)
-        m_device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+        m_device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_si);
 
     return m_renderPipelineState;
 }
@@ -2105,7 +2105,7 @@ id<MTLRenderPipelineState> RenderPipeline::icbRenderPipelineState() const
     m_renderPipelineDescriptor.supportIndirectCommandBuffers = YES;
     m_renderPipelineState = [m_device->device() newRenderPipelineStateWithDescriptor:m_renderPipelineDescriptor error:nil];
     if (!m_renderPipelineState)
-        m_device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+        m_device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_si);
 
     return m_renderPipelineState;
 }

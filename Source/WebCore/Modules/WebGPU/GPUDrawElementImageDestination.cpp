@@ -34,7 +34,7 @@ Ref<JSON::Object> GPUDrawElementImageDestination::toJSON() const
 {
     Ref json = GPUImageCopyTextureTagged::toJSON();
     if (size)
-        json->setValue("size"_s, WebCore::toJSON(*size));
+        json->setValue("size"_si, WebCore::toJSON(*size));
     return json;
 }
 

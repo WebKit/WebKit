@@ -42,7 +42,7 @@ public:
     enum class PreferredQuality { Low, Medium, High };
     NODELETE ExceptionOr<PreferredQuality> quality() const;
 
-    static bool isTypeSupported(ScriptExecutionContext&, const String& type);
+    static bool isTypeSupported(ScriptExecutionContext&, StringImpl* type);
 
     bool streaming() const final { return m_streaming; }
     bool streamingAllowed() const { return m_streamingAllowed; }

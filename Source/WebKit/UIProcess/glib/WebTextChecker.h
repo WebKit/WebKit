@@ -45,7 +45,7 @@ public:
     void grammarCheckingEnabledStateChanged(bool);
 
     void checkSpelling(WebPageProxy*, bool startBeforeSelection);
-    void changeSpellingToWord(WebPageProxy*, const String&);
+    void changeSpellingToWord(WebPageProxy*, StringImpl*);
 
 private:
     WebTextChecker();

@@ -46,7 +46,7 @@ public:
     NODELETE void popupDidHide();
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
 
-    void updatePopup(const AtomString& name, const Vector<WebCore::RecentSearch>& searchItems);
+    void updatePopup(AtomStringImpl* name, const Vector<WebCore::RecentSearch>& searchItems);
 #if PLATFORM(WIN)
     int clientInsetRight() const;
     int clientInsetLeft() const;
@@ -61,7 +61,7 @@ private:
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     void updateFromElement() override;
     Visibility visibilityForCancelButton() const;
-    NODELETE const AtomString& autosaveName() const;
+    NODELETE const RefPtr<AtomStringImpl>& autosaveName() const;
 
     SearchPopupMenu* searchPopup() const { return m_searchPopup.get(); }
 

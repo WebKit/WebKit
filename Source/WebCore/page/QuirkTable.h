@@ -38,8 +38,8 @@ struct Quirk {
     Vector<QuirkMatchPattern> matches;
     Vector<QuirkMatchPattern> embeddedMatches;
     Vector<QuirkMatchPattern> excludeMatches;
-    String queryContains;
-    String fragmentContains;
+    RefPtr<StringImpl> queryContains;
+    RefPtr<StringImpl> fragmentContains;
     std::optional<URLEnvironment> environment;
 
     Vector<QuirkBehavior> behaviors;
@@ -47,7 +47,16 @@ struct Quirk {
     WEBCORE_EXPORT bool appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument) const;
     void apply(QuirksData&) const;
 
-    friend bool operator==(const Quirk&, const Quirk&) = default;
+    friend bool operator==(const Quirk& a, const Quirk& b)
+    {
+        return a.matches == b.matches
+            && a.embeddedMatches == b.embeddedMatches
+            && a.excludeMatches == b.excludeMatches
+            && contentEquals(a.queryContains, b.queryContains)
+            && contentEquals(a.fragmentContains, b.fragmentContains)
+            && a.environment == b.environment
+            && a.behaviors == b.behaviors;
+    }
 };
 
 // The contents of QuirkTable.json, parsed at runtime; what quirkTable() and setQuirkTable() hold.
@@ -78,17 +87,17 @@ enum class QuirkTableParseErrorKind : uint8_t {
 struct QuirkTableParseError {
     struct Location {
         std::optional<size_t> row;
-        String rowPattern;
+        RefPtr<StringImpl> rowPattern;
         std::optional<size_t> behavior;
         std::optional<QuirkBehaviorID> behaviorID;
     };
 
     Location location;
     QuirkTableParseErrorKind kind;
-    String field;
-    String value;
+    RefPtr<StringImpl> field;
+    RefPtr<StringImpl> value;
 
-    WEBCORE_EXPORT String description() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> description() const;
 };
 
 struct QuirkTableParseResult {
@@ -98,7 +107,7 @@ struct QuirkTableParseResult {
 
 WEBCORE_EXPORT QuirkTableParseResult parseQuirkTable(StringView json);
 
-WEBCORE_EXPORT String loadQuirkTableJSON();
+WEBCORE_EXPORT RefPtr<StringImpl> loadQuirkTableJSON();
 
 WEBCORE_EXPORT const QuirkTable& quirkTable();
 

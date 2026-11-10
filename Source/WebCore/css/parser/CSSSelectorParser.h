@@ -55,7 +55,7 @@ public:
     MutableCSSSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
     MutableCSSSelectorList consumeNestedComplexForgivingSelectorList(CSSParserTokenRange&);
 
-    WEBCORE_EXPORT static std::optional<CSSSelectorList> parseSelectorList(const String&, const CSSParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::NestedContext = { });
+    WEBCORE_EXPORT static std::optional<CSSSelectorList> parseSelectorList(StringImpl*, const CSSParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::NestedContext = { });
 
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList, bool parentRuleIsScope = false);
@@ -90,9 +90,9 @@ private:
     CSSSelector::Match consumeAttributeMatch(CSSParserTokenRange&);
     CSSSelector::AttributeMatchType consumeAttributeFlags(CSSParserTokenRange&);
 
-    NODELETE const AtomString& defaultNamespace() const;
-    NODELETE const AtomString& determineNamespace(const AtomString& prefix);
-    void prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, MutableCSSSelector&);
+    NODELETE const RefPtr<AtomStringImpl>& defaultNamespace() const;
+    NODELETE const RefPtr<AtomStringImpl>& determineNamespace(AtomStringImpl* prefix);
+    void prependTypeSelectorIfNeeded(AtomStringImpl* namespacePrefix, AtomStringImpl* elementName, MutableCSSSelector&);
     static std::unique_ptr<MutableCSSSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<MutableCSSSelector> compoundSelector, const CSSSelectorParserContext&);
     NODELETE static bool containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
 
@@ -114,8 +114,8 @@ private:
 };
 
 struct ParsedQualifiedName {
-    AtomString name;
-    AtomString namespacePrefix;
+    RefPtr<AtomStringImpl> name;
+    RefPtr<AtomStringImpl> namespacePrefix;
 };
 std::optional<ParsedQualifiedName> consumeQualifiedName(CSSParserTokenRange&);
 

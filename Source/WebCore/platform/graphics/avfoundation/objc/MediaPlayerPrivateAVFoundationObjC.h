@@ -96,7 +96,7 @@ public:
     void didStopLoadingRequest(AVAssetResourceLoadingRequest *);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(const String&);
+    RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(StringImpl*);
     void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
@@ -149,12 +149,12 @@ private:
     // engine support
     class Factory;
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
-    static HashSet<SecurityOriginData> originsInMediaCache(const String&);
-    static void clearMediaCache(const String&, WallTime modifiedSince);
-    static void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&);
+    static bool supportsKeySystem(StringImpl* keySystem, StringImpl* mimeType);
+    static HashSet<SecurityOriginData> originsInMediaCache(StringImpl*);
+    static void clearMediaCache(StringImpl*, WallTime modifiedSince);
+    static void clearMediaCacheForOrigins(StringImpl*, const HashSet<SecurityOriginData>&);
 
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) final;
 
@@ -191,8 +191,8 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const final;
-    String accessLog() const final;
-    String errorLog() const final;
+    RefPtr<StringImpl> accessLog() const final;
+    RefPtr<StringImpl> errorLog() const final;
     void sceneIdentifierDidChange() final;
 #endif
 
@@ -284,10 +284,10 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;
-    RefPtr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient&) final;
+    RefPtr<LegacyCDMSession> createSession(StringImpl* keySystem, LegacyCDMSessionClient&) final;
 #endif
 
-    String languageOfPrimaryAudioTrack() const final;
+    RefPtr<StringImpl> languageOfPrimaryAudioTrack() const final;
 
     void processMediaSelectionOptions();
     bool hasLoadedMediaSelectionGroups();
@@ -314,7 +314,7 @@ private:
     bool hasVideo() const final;
     bool hasAudio() const final;
     bool isCurrentPlaybackTargetWireless() const final;
-    String wirelessPlaybackTargetName() const final;
+    RefPtr<StringImpl> wirelessPlaybackTargetName() const final;
     MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     void setWirelessVideoPlaybackDisabled(bool) final;
@@ -331,7 +331,7 @@ private:
     double maxFastForwardRate() const final { return m_cachedCanPlayFastForward ? std::numeric_limits<double>::infinity() : 2.0; }
     double minFastReverseRate() const final { return m_cachedCanPlayFastReverse ? -std::numeric_limits<double>::infinity() : 0.0; }
 
-    Vector<String> preferredAudioCharacteristics() const;
+    Vector<RefPtr<StringImpl>> preferredAudioCharacteristics() const;
 
     void setShouldDisableSleep(bool) final;
     void updateRotationSession();
@@ -382,11 +382,11 @@ private:
     void setVideoTarget(const PlatformVideoTarget&) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String defaultSpatialTrackingLabel() const;
-    void setDefaultSpatialTrackingLabel(const String&) final;
+    RefPtr<StringImpl> defaultSpatialTrackingLabel() const;
+    void setDefaultSpatialTrackingLabel(StringImpl*) final;
 
-    String spatialTrackingLabel() const;
-    void setSpatialTrackingLabel(const String&) final;
+    RefPtr<StringImpl> spatialTrackingLabel() const;
+    void setSpatialTrackingLabel(StringImpl*) final;
 
     void updateSpatialTrackingLabel();
 #endif
@@ -418,7 +418,7 @@ private:
     MediaPlayer::VideoGravity m_videoFullscreenGravity { MediaPlayer::VideoGravity::ResizeAspect };
     const RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
     RetainPtr<id> m_timeObserver;
-    mutable String m_languageOfPrimaryAudioTrack;
+    mutable RefPtr<StringImpl> m_languageOfPrimaryAudioTrack;
     bool m_videoFrameHasDrawn { false };
     bool m_haveCheckedPlayability { false };
     bool m_createAssetPending { false };
@@ -442,7 +442,7 @@ private:
     mutable Lock m_resourceLoaderMapLock;
     HashMap<RetainPtr<AVAssetResourceLoadingRequest>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap WTF_GUARDED_BY_LOCK(m_resourceLoaderMapLock);
     const RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
-    MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
 
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 
@@ -457,7 +457,7 @@ private:
     const RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
 #endif
 
-    MemoryCompactRobinHoodHashMap<String, Ref<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
@@ -545,8 +545,8 @@ private:
     const Ref<PlatformMediaResourceLoader> m_mediaResourceLoader;
     const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String m_defaultSpatialTrackingLabel;
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
 #endif
 #if !RELEASE_LOG_DISABLED
     uint64_t m_childIdentifierSeed { 0 };

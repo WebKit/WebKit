@@ -49,7 +49,7 @@ void TargetedElementRequest::setSelectors(WebCore::TargetedElementSelectors&& se
     m_request.data = WTF::move(selectors);
 }
 
-void TargetedElementRequest::setSearchText(WTF::String&& searchText)
+void TargetedElementRequest::setSearchText(RefPtr<StringImpl>&& searchText)
 {
     m_request.data = WTF::move(searchText);
 }

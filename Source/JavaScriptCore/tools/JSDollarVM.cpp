@@ -834,7 +834,7 @@ public:
 
     static bool getOwnPropertySlot(JSObject* thisObject, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
     {
-        if (String(propertyName.uid()) == "thinAirCustomGetter"_s) {
+        if (equal(RefPtr<StringImpl>(propertyName.uid()), "thinAirCustomGetter"_s)) {
             slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, testStaticAccessorGetter);
             return true;
         }
@@ -1390,7 +1390,7 @@ JSC_DEFINE_CUSTOM_GETTER(domJITGetterComplexCustomGetter, (JSGlobalObject* globa
     if (!thisObject)
         return throwVMTypeError(globalObject, scope);
     if (thisObject->m_enableException)
-        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_s)));
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_si)));
     return JSValue::encode(jsNumber(thisObject->value()));
 }
 
@@ -1405,7 +1405,7 @@ JSC_DEFINE_JIT_OPERATION(domJITGetterComplexSlowCall, EncodedJSValue, (JSGlobalO
     auto* domjitGetterComplex = dynamicDowncast<DOMJITGetterComplex>(object);
     if (domjitGetterComplex) {
         if (domjitGetterComplex->m_enableException)
-            OPERATION_RETURN(scope, JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_s))));
+            OPERATION_RETURN(scope, JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_si))));
     }
     OPERATION_RETURN(scope, JSValue::encode(jsNumber(object->value())));
 }
@@ -2043,7 +2043,7 @@ public:
         return &vm.destructibleObjectSpace();
     }
 
-    WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL = { })
+    WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, RefPtr<StringImpl> wasmSourceURL = { })
         : Base(vm, structure)
         , m_promise(promise, WriteBarrierEarlyInit)
         , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL)))
@@ -2051,7 +2051,7 @@ public:
         DollarVMAssertScope assertScope;
     }
 
-    static WasmStreamingCompiler* create(VM& vm, JSGlobalObject* globalObject, Wasm::CompilerMode compilerMode, JSObject* importObject, const SourceCode& source, String wasmSourceURL = { })
+    static WasmStreamingCompiler* create(VM& vm, JSGlobalObject* globalObject, Wasm::CompilerMode compilerMode, JSObject* importObject, const SourceCode& source, RefPtr<StringImpl> wasmSourceURL = { })
     {
         DollarVMAssertScope assertScope;
         JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
@@ -2308,7 +2308,7 @@ static EncodedJSValue doPrint(JSGlobalObject* globalObject, CallFrame* callFrame
             dataLog(arg);
             continue;
         }
-        String argStr = callFrame->uncheckedArgument(i).toWTFString(globalObject);
+        RefPtr<StringImpl> argStr = callFrame->uncheckedArgument(i).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dataLog(argStr);
     }
@@ -2759,15 +2759,15 @@ JSC_DEFINE_HOST_FUNCTION(functionLineStartTableIsBuilt, (JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (callFrame->argumentCount() < 1)
-        return throwVMError(globalObject, scope, "Not enough arguments"_s);
+        return throwVMError(globalObject, scope, "Not enough arguments"_si);
 
     FunctionExecutable* executable = getExecutableForFunction(callFrame->uncheckedArgument(0));
     if (!executable)
-        return throwVMError(globalObject, scope, "Argument must be a JS function"_s);
+        return throwVMError(globalObject, scope, "Argument must be a JS function"_si);
 
     SourceProvider* provider = executable->source().provider();
     if (!provider)
-        return throwVMError(globalObject, scope, "Function has no source provider"_s);
+        return throwVMError(globalObject, scope, "Function has no source provider"_si);
 
     return JSValue::encode(jsBoolean(provider->lineStartTableIsBuilt()));
 }
@@ -3225,20 +3225,20 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
 #endif
 
     if (!isSupportedByPlatform)
-        return throwVMError(globalObject, throwScope, "Not supported for this platform"_s);
+        return throwVMError(globalObject, throwScope, "Not supported for this platform"_si);
 
 #if ENABLE(ASSEMBLER)
     if (g_jscConfig.isPermanentlyFrozen() || !g_wtfConfig.disabledFreezingForTesting)
-        return throwVMError(globalObject, throwScope, "Options are frozen"_s);
+        return throwVMError(globalObject, throwScope, "Options are frozen"_si);
 
     if (callFrame->argumentCount() < 2)
-        return throwVMError(globalObject, throwScope, "Invalid number of arguments"_s);
+        return throwVMError(globalObject, throwScope, "Invalid number of arguments"_si);
     JSValue arg0 = callFrame->argument(0);
     JSValue arg1 = callFrame->argument(1);
     if (!arg0.isCallable())
-        return throwVMError(globalObject, throwScope, "arg0 should be a function"_s);
+        return throwVMError(globalObject, throwScope, "arg0 should be a function"_si);
     if (!arg1.isNumber())
-        return throwVMError(globalObject, throwScope, "arg1 should be a number"_s);
+        return throwVMError(globalObject, throwScope, "arg1 should be a number"_si);
 
     size_t desiredStackSize = arg1.asNumber();
 
@@ -3247,7 +3247,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     uint8_t* end = std::bit_cast<uint8_t*>(bounds.end());
     uint8_t* desiredStart = end + desiredStackSize;
     if (desiredStart >= currentStackPosition)
-        return throwVMError(globalObject, throwScope, "Unable to setup desired stack size"_s);
+        return throwVMError(globalObject, throwScope, "Unable to setup desired stack size"_si);
 
     JSDollarVMHelper helper(vm);
 
@@ -3447,7 +3447,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGloba
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto [taintedness, url] = sourceTaintedOriginFromStack(vm, callFrame);
-    auto source = makeSource("[wasm code]"_s, SourceOrigin(url), taintedness);
+    auto source = makeSource("[wasm code]"_si, SourceOrigin(url), taintedness);
 
     auto callback = dynamicDowncast<JSFunction>(callFrame->argument(0));
     if (!callback)
@@ -3472,7 +3472,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSG
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto [taintedness, url] = sourceTaintedOriginFromStack(vm, callFrame);
-    auto source = makeSource("[wasm code]"_s, SourceOrigin(url), taintedness);
+    auto source = makeSource("[wasm code]"_si, SourceOrigin(url), taintedness);
 
     auto callback = dynamicDowncast<JSFunction>(callFrame->argument(0));
     if (!callback)
@@ -3506,7 +3506,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiateWithUR
     JSValue urlArgument = callFrame->argument(0);
     if (!urlArgument.isString())
         return throwVMTypeError(globalObject, scope, "First argument must be a URL string"_s);
-    String wasmSourceURL = urlArgument.toWTFString(globalObject);
+    RefPtr<StringImpl> wasmSourceURL = urlArgument.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto callback = dynamicDowncast<JSFunction>(callFrame->argument(1));
@@ -3519,7 +3519,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiateWithUR
         return throwVMTypeError(globalObject, scope);
 
     auto [taintedness, url] = sourceTaintedOriginFromStack(vm, callFrame);
-    auto source = makeSource("[wasm code]"_s, SourceOrigin(url), taintedness);
+    auto source = makeSource("[wasm code]"_si, SourceOrigin(url), taintedness);
 
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject, source, WTF::move(wasmSourceURL));
     auto args = WTF::toArray<EncodedJSValue>({
@@ -3582,7 +3582,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateEmptyFunctionWithName, (JSGlobalObject* g
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const String name = callFrame->argument(0).toWTFString(globalObject);
+    const RefPtr<StringImpl> name = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     RELEASE_AND_RETURN(scope, JSValue::encode(JSFunction::create(vm, globalObject, 1, name, functionCreateEmptyFunctionWithName, ImplementationVisibility::Public)));
@@ -3624,13 +3624,13 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBuiltin, (JSGlobalObject* globalObject, C
 
     ImplementationVisibility visibility = ImplementationVisibility::Public;
     if (callFrame->argumentCount() >= 2 && callFrame->argument(1).isString()) {
-        String visibilityString = asString(callFrame->argument(1))->value(globalObject);
+        RefPtr<StringImpl> visibilityString = asString(callFrame->argument(1))->value(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (visibilityString == "private"_s)
+        if (equal(visibilityString, "private"_s))
             visibility = ImplementationVisibility::Private;
     }
 
-    SourceCode source = makeSource(WTF::move(functionText), { }, SourceTaintedOrigin::Untainted);
+    SourceCode source = makeSource(functionText->get(), { }, SourceTaintedOrigin::Untainted);
     JSFunction* func = JSFunction::create(vm, globalObject, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"_s), visibility, ConstructorKind::None, ConstructAbility::CannotConstruct, InlineAttribute::None)->link(vm, nullptr, source), globalObject);
 
     return JSValue::encode(func);
@@ -3648,7 +3648,7 @@ JSC_DEFINE_HOST_FUNCTION(functionRunTaintedString, (JSGlobalObject* globalObject
     auto functionText = asString(callFrame->argument(0))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    SourceCode source = makeSource(functionText, { }, SourceTaintedOrigin::KnownTainted);
+    SourceCode source = makeSource(functionText->get(), { }, SourceTaintedOrigin::KnownTainted);
     NakedPtr<Exception> error;
     JSValue result = evaluate(globalObject, source, JSValue(), error);
 
@@ -3670,9 +3670,9 @@ JSC_DEFINE_HOST_FUNCTION(functionGetPrivateProperty, (JSGlobalObject* globalObje
     auto str = asString(callFrame->argument(1))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    SymbolImpl* symbol = vm.propertyNames->builtinNames().lookUpPrivateName(str);
+    SymbolImpl* symbol = vm.propertyNames->builtinNames().lookUpPrivateName(str->get());
     if (!symbol)
-        return throwVMError(globalObject, scope, "Unknown private name."_s);
+        return throwVMError(globalObject, scope, "Unknown private name."_si);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(callFrame->argument(0).get(globalObject, symbol)));
 }
@@ -3694,7 +3694,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateElement, (JSGlobalObject* globalObject, C
 
     Root* root = dynamicDowncast<Root>(callFrame->argument(0));
     if (!root)
-        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Cannot create Element without a Root."_s)));
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Cannot create Element without a Root."_si)));
     return JSValue::encode(Element::create(vm, globalObject, root));
 }
 
@@ -3790,7 +3790,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFindTypeForExpression, (JSGlobalObject* globalO
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     RELEASE_ASSERT(vm.typeProfiler());
-    vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionFindTypeForExpression"_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionFindTypeForExpression"_si);
 
     JSValue functionValue = callFrame->argument(0);
     RELEASE_ASSERT(functionValue.isCallable());
@@ -3800,14 +3800,14 @@ JSC_DEFINE_HOST_FUNCTION(functionFindTypeForExpression, (JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto substring = asString(callFrame->argument(1))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    String sourceCodeText = executable->source().view().toString();
-    size_t index = sourceCodeText.find(substring);
+    RefPtr<StringImpl> sourceCodeText = executable->source().view().toString();
+    size_t index = find(sourceCodeText, substring);
     unsigned startOffset = executable->source().startOffset();
     if (index == notFound || index > std::numeric_limits<unsigned>::max() - startOffset)
         return JSValue::encode(jsNull());
     unsigned offset = static_cast<unsigned>(index) + startOffset;
 
-    String jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorNormal, offset, executable->sourceID(), vm);
+    RefPtr<StringImpl> jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorNormal, offset, executable->sourceID(), vm);
     JSValue result = JSONParse(globalObject, jsonString);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);
@@ -3818,14 +3818,14 @@ JSC_DEFINE_HOST_FUNCTION(functionReturnTypeFor, (JSGlobalObject* globalObject, C
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     RELEASE_ASSERT(vm.typeProfiler());
-    vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionReturnTypeFor"_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionReturnTypeFor"_si);
 
     JSValue functionValue = callFrame->argument(0);
     RELEASE_ASSERT(functionValue.isCallable());
     FunctionExecutable* executable = (dynamicDowncast<JSFunction>(functionValue.asCell()->getObject()))->jsExecutable();
 
     unsigned offset = executable->functionStart();
-    String jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID(), vm);
+    RefPtr<StringImpl> jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID(), vm);
     return JSValue::encode(JSONParse(globalObject, jsonString));
 }
 
@@ -3860,9 +3860,9 @@ JSC_DEFINE_HOST_FUNCTION(functionHasBasicBlockExecuted, (JSGlobalObject* globalO
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
     auto substring = asString(callFrame->argument(1))->value(globalObject);
-    String sourceCodeText = executable->source().view().toString();
-    RELEASE_ASSERT(sourceCodeText.contains(substring));
-    int offset = sourceCodeText.find(substring) + executable->source().startOffset();
+    RefPtr<StringImpl> sourceCodeText = executable->source().view().toString();
+    RELEASE_ASSERT(contains(sourceCodeText, substring));
+    int offset = find(sourceCodeText, substring) + executable->source().startOffset();
     
     bool hasExecuted = vm.controlFlowProfiler()->hasBasicBlockAtTextOffsetBeenExecuted(offset, executable->sourceID(), vm);
     return JSValue::encode(jsBoolean(hasExecuted));
@@ -3880,9 +3880,9 @@ JSC_DEFINE_HOST_FUNCTION(functionBasicBlockExecutionCount, (JSGlobalObject* glob
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
     auto substring = asString(callFrame->argument(1))->value(globalObject);
-    String sourceCodeText = executable->source().view().toString();
-    RELEASE_ASSERT(sourceCodeText.contains(substring));
-    int offset = sourceCodeText.find(substring) + executable->source().startOffset();
+    RefPtr<StringImpl> sourceCodeText = executable->source().view().toString();
+    RELEASE_ASSERT(contains(sourceCodeText, substring));
+    int offset = find(sourceCodeText, substring) + executable->source().startOffset();
     
     size_t executionCount = vm.controlFlowProfiler()->basicBlockExecutionCountAtTextOffset(offset, executable->sourceID(), vm);
     return JSValue::encode(JSValue(executionCount));
@@ -3900,7 +3900,7 @@ public:
     }
 
 private:
-    void sourceParsed(JSGlobalObject*, SourceProvider*, int, const WTF::String&) final
+    void sourceParsed(JSGlobalObject*, SourceProvider*, int, StringImpl*) final
     {
         DollarVMAssertScope assertScope;
     }
@@ -4234,9 +4234,9 @@ JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* glo
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String string = callFrame->argument(0).toWTFString(globalObject);
+    RefPtr<StringImpl> string = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    string.convertTo16Bit();
+    convertTo16Bit(string);
     return JSValue::encode(jsString(vm, WTF::move(string)));
 }
 
@@ -4266,7 +4266,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* gl
         result->push(globalObject, JSValue(structure->maxOffset()));
         RETURN_IF_EXCEPTION(scope, { });
         if (structure->transitionPropertyName())
-            result->push(globalObject, jsString(vm, String(*structure->transitionPropertyName())));
+            result->push(globalObject, jsString(vm, RefPtr<StringImpl>(&*structure->transitionPropertyName())));
         else
             result->push(globalObject, jsNull());
         RETURN_IF_EXCEPTION(scope, { });
@@ -4286,7 +4286,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetConcurrently, (JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
     if (!obj)
         return JSValue::encode(jsNull());
-    String property = callFrame->argument(1).toWTFString(globalObject);
+    RefPtr<StringImpl> property = callFrame->argument(1).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     auto name = PropertyName(Identifier::fromString(vm, property));
     auto offset = obj->structure()->getConcurrently(name.uid());
@@ -4344,10 +4344,10 @@ JSC_DEFINE_HOST_FUNCTION(functionSetUserPreferredLanguages, (JSGlobalObject* glo
     if (!array)
         return throwVMTypeError(globalObject, scope, "Expected first argument to be an array"_s);
 
-    Vector<String> languages;
+    Vector<RefPtr<StringImpl>> languages;
     unsigned length = array->length();
     for (unsigned i = 0; i < length; i++) {
-        String language = array->get(globalObject, i).toWTFString(globalObject);
+        RefPtr<StringImpl> language = array->get(globalObject, i).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         languages.append(language);
     }
@@ -4386,7 +4386,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetHostTimeZone, (JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String tz { callFrame->argument(0).toWTFString(globalObject) };
+    RefPtr<StringImpl> tz { callFrame->argument(0).toWTFString(globalObject) };
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsBoolean(WTF::setHostTimeZoneForTesting(tz)));
@@ -4564,7 +4564,7 @@ JSC_DEFINE_HOST_FUNCTION(functionEvaluateWithScopeExtension, (JSGlobalObject* gl
     if (!scriptValue.isString())
         return throwVMTypeError(globalObject, scope, "Expected first argument to be a string"_s);
 
-    String program = asString(scriptValue)->value(globalObject);
+    RefPtr<StringImpl> program = asString(scriptValue)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     SourceCode source = makeSource(WTF::move(program), callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted);
@@ -4654,10 +4654,10 @@ JSC_DEFINE_HOST_FUNCTION(functionSetCrashLogMessage, (JSGlobalObject* globalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String message = callFrame->argument(0).toWTFString(globalObject);
+    RefPtr<StringImpl> message = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    WTF::setCrashLogMessage(message.utf8());
+    WTF::setCrashLogMessage(utf8(message));
 
     return JSValue::encode(jsUndefined());
 }

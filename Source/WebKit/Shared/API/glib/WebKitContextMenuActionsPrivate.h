@@ -26,6 +26,6 @@
 bool webkitContextMenuActionIsCheckable(WebKitContextMenuAction);
 WebCore::ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction);
 WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGlib&);
-String webkitContextMenuActionGetLabel(WebKitContextMenuAction);
+RefPtr<StringImpl> webkitContextMenuActionGetLabel(WebKitContextMenuAction);
 
 #endif // ENABLE(CONTEXT_MENUS)

@@ -65,7 +65,7 @@ Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& centerPoint, float 
 
 CanvasGradient::~CanvasGradient() = default;
 
-ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExecutionContext, double value, const String& colorString)
+ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExecutionContext, double value, StringImpl* colorString)
 {
     if (!(value >= 0 && value <= 1))
         return Exception { ExceptionCode::IndexSizeError };

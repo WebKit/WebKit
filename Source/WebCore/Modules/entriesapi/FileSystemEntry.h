@@ -47,20 +47,20 @@ public:
     virtual bool isFile() const { return false; }
     virtual bool isDirectory() const { return false; }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& virtualPath() const LIFETIME_BOUND { return m_virtualPath; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& virtualPath() const LIFETIME_BOUND { return m_virtualPath; }
     NODELETE DOMFileSystem& filesystem() const;
 
     void getParent(ScriptExecutionContext&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
 protected:
-    FileSystemEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);
+    FileSystemEntry(ScriptExecutionContext&, DOMFileSystem&, StringImpl* virtualPath);
     NODELETE Document* document() const;
 
 private:
     const Ref<DOMFileSystem> m_filesystem;
-    String m_name;
-    String m_virtualPath;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_virtualPath;
 };
 
 } // namespace WebCore

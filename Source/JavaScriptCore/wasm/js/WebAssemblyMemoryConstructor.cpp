@@ -58,12 +58,12 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
         JSValue addressTypeValue = memoryDescriptor->get(globalObject, address);
         RETURN_IF_EXCEPTION(throwScope, { });
         if (!addressTypeValue.isUndefined()) {
-            String addressTypeString = addressTypeValue.toWTFString(globalObject);
+            RefPtr<StringImpl> addressTypeString = addressTypeValue.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });
 
-            if (addressTypeString == "i64")
+            if (equal(addressTypeString, "i64"))
                 addressType = Wasm::AddressType { Wasm::AddressType::I64 };
-            else if (addressTypeString != "i32") {
+            else if (!equal(addressTypeString, "i32")) {
                 throwTypeError(globalObject, throwScope, "WebAssembly.Memory 'address' must be a string of value 'i32' or 'i64'"_s);
                 return { };
             }
@@ -98,7 +98,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
         uint64_t size = addressValueToUint64(globalObject, minSizeValue, addressType);
         RETURN_IF_EXCEPTION(throwScope, { });
         if (size > maxDeclarablePageCount) {
-            throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'initial' page count is too large"_s));
+            throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'initial' page count is too large"_si));
             return { };
         }
         initialPageCount = PageCount(size);
@@ -115,14 +115,14 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
             uint64_t size = addressValueToUint64(globalObject, maxSizeValue, addressType);
             RETURN_IF_EXCEPTION(throwScope, { });
             if (size > maxDeclarablePageCount) {
-                throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'maximum' page count is too large"_s));
+                throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'maximum' page count is too large"_si));
                 return { };
             }
             maximumPageCount = PageCount(size);
 
             if (initialPageCount > maximumPageCount) {
                 throwException(globalObject, throwScope,
-                    createRangeError(globalObject, "'maximum' page count must be than greater than or equal to the 'initial' page count"_s));
+                    createRangeError(globalObject, "'maximum' page count must be than greater than or equal to the 'initial' page count"_si));
                 return { };
             }
         }
@@ -171,7 +171,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     {
         JSValue argument = callFrame->argument(0);
         if (!argument.isObject())
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Memory expects its first argument to be an object"_s)));
+            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Memory expects its first argument to be an object"_si)));
         memoryDescriptor = uncheckedDowncast<JSObject>(argument);
     }
 
@@ -202,7 +202,7 @@ Structure* WebAssemblyMemoryConstructor::createStructure(VM& vm, JSGlobalObject*
 
 void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Memory"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Memory"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

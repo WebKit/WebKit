@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct AudioConfiguration {
-    String contentType;
-    String channels;
+    RefPtr<StringImpl> contentType;
+    RefPtr<StringImpl> channels;
     std::optional<uint64_t> bitrate;
     std::optional<uint32_t> samplerate;
     std::optional<bool> spatialRendering;
@@ -44,8 +44,8 @@ struct AudioConfiguration {
 inline AudioConfiguration AudioConfiguration::isolatedCopy() const &
 {
     return {
-        contentType.isolatedCopy(),
-        channels.isolatedCopy(),
+        WTF::isolatedCopy(contentType),
+        WTF::isolatedCopy(channels),
         bitrate,
         samplerate,
         spatialRendering
@@ -55,8 +55,8 @@ inline AudioConfiguration AudioConfiguration::isolatedCopy() const &
 inline AudioConfiguration AudioConfiguration::isolatedCopy() &&
 {
     return {
-        WTF::move(contentType).isolatedCopy(),
-        WTF::move(channels).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(contentType)),
+        WTF::isolatedCopy(WTF::move(channels)),
         bitrate,
         samplerate,
         spatialRendering

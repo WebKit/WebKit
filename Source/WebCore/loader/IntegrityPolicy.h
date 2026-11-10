@@ -43,11 +43,11 @@ struct IntegrityPolicy {
 
 public:
     // https://w3c.github.io/webappsec-subresource-integrity/#blocked-destinations
-    Vector<String> blockedDestinations;
+    Vector<RefPtr<StringImpl>> blockedDestinations;
     // https://w3c.github.io/webappsec-subresource-integrity/#sources
-    Vector<String> sources;
+    Vector<RefPtr<StringImpl>> sources;
     // https://w3c.github.io/webappsec-subresource-integrity/#endpoints
-    Vector<String> endpoints;
+    Vector<RefPtr<StringImpl>> endpoints;
 };
 
 // https://w3c.github.io/webappsec-subresource-integrity/#processing-an-integrity-policy

@@ -161,17 +161,17 @@ static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDo
             const Vector elements = namespacePair.second;
 
             for (auto&& elementPair : elements) {
-                RetainPtr mappedElementIdentifier = elementPair.first.createNSString();
+                RetainPtr mappedElementIdentifier = createNSString(elementPair.first);
                 RetainPtr mappedElementValue = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentElementInfoInstance() initWithIsRetaining:elementPair.second.isRetaining]);
 
                 [namespaceDictionary setObject:mappedElementValue.get() forKey:mappedElementIdentifier.get()];
             }
 
-            RetainPtr mappedNamespaceIdentifier = namespaceIdentifier.createNSString();
+            RetainPtr mappedNamespaceIdentifier = createNSString(namespaceIdentifier);
             [namespaces setObject:namespaceDictionary.get() forKey:mappedNamespaceIdentifier.get()];
         }
 
-        RetainPtr documentType = validatedDocumentRequest.documentType.createNSString();
+        RetainPtr documentType = createNSString(validatedDocumentRequest.documentType);
 
         RetainPtr issuerIdentifiers = mapIssuerIdentifiersFromX509Identifiers(validatedDocumentRequest.requestInfo ? validatedDocumentRequest.requestInfo->issuerIdentifiers : std::nullopt);
 
@@ -255,16 +255,16 @@ static RetainPtr<NSString> mapTrustedAuthorityType(WebCore::OpenID4VPTrustedAuth
     return nil;
 }
 
-static RetainPtr<NSArray<NSString *>> mapStrings(const Vector<String>& strings)
+static RetainPtr<NSArray<NSString *>> mapStrings(const Vector<RefPtr<StringImpl>>& strings)
 {
-    return createNSArray(strings, [](const String& string) {
-        return string.createNSString();
+    return createNSArray(strings, [](StringImpl* string) {
+        return createNSString(string);
     });
 }
 
-static RetainPtr<NSArray<NSArray<NSString *> *>> mapStringSets(const Vector<Vector<String>>& stringSets)
+static RetainPtr<NSArray<NSArray<NSString *> *>> mapStringSets(const Vector<Vector<RefPtr<StringImpl>>>& stringSets)
 {
-    return createNSArray(stringSets, [](const Vector<String>& strings) {
+    return createNSArray(stringSets, [](const Vector<RefPtr<StringImpl>>& strings) {
         return mapStrings(strings);
     });
 }
@@ -273,8 +273,8 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPClaimsQuery> mapClaimsQue
 {
     RetainPtr path = createNSArray(claim.path, [](const WebCore::OpenID4VPClaimPathComponent& component) {
         return WTF::switchOn(component,
-            [](const String& key) {
-                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimPathComponentInstance() initWithKey:key.createNSString().get() index:nil]);
+            [](StringImpl* key) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimPathComponentInstance() initWithKey:createNSString(key).get() index:nil]);
             },
             [](const WebCore::OpenID4VPAllArrayElements&) {
                 return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimPathComponentInstance() initWithKey:nil index:nil]);
@@ -286,8 +286,8 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPClaimsQuery> mapClaimsQue
 
     RetainPtr values = createNSArray(claim.values, [](const WebCore::OpenID4VPClaimValue& value) {
         return WTF::switchOn(value,
-            [](const String& string) {
-                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimValueInstance() initWithStringValue:string.createNSString().get() integerValue:nil booleanValue:nil]);
+            [](StringImpl* string) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimValueInstance() initWithStringValue:createNSString(string).get() integerValue:nil booleanValue:nil]);
             },
             [](int64_t integer) {
                 return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimValueInstance() initWithStringValue:nil integerValue:@(integer) booleanValue:nil]);
@@ -321,7 +321,7 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
         RetainPtr claims = createNSArray(credential.claims, mapClaimsQuery);
 
         return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPCredentialQueryInstance()
-            initWithIdentifier:credential.identifier.createNSString().get()
+            initWithIdentifier:createNSString(credential.identifier).get()
             format:mapCredentialFormat(credential.format).get()
             allowsMultiple:credential.allowsMultiple
             documentType:nsStringNilIfNull(credential.documentType).get()
@@ -337,7 +337,7 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
     });
 
     RetainPtr verifierIdentities = createNSArray(request.verifierIdentities, [](const WebCore::OpenID4VPVerifierIdentity& identity) {
-        return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPVerifierIdentityInstance() initWithClientIdentifierPrefix:nsStringNilIfNull(identity.clientIdentifierPrefix).get() identifier:identity.identifier.createNSString().get() certificateChain:mapCertificateChain(identity.certificateChain).get()]);
+        return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPVerifierIdentityInstance() initWithClientIdentifierPrefix:nsStringNilIfNull(identity.clientIdentifierPrefix).get() identifier:createNSString(identity.identifier).get() certificateChain:mapCertificateChain(identity.certificateChain).get()]);
     });
 
     RetainPtr requestType = WebCore::digitalCredentialPresentationProtocolToString(validatedRequest.protocol).createNSString();
@@ -415,7 +415,7 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
 
                 auto& [protocol, json] = *protocolAndJSON;
                 RetainPtr requestProtocol = WebCore::digitalCredentialPresentationProtocolToString(protocol).createNSString();
-                RetainPtr requestData = [json.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+                RetainPtr requestData = [createNSString(json) dataUsingEncoding:NSUTF8StringEncoding];
                 if (!requestData) {
                     LOG(DigitalCredentials, "Failed to encode an OpenID4VP raw request as UTF-8.");
                     completionHandler(@[]);
@@ -426,8 +426,8 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
                 [rawRequests addObject:rawRequest.get()];
                 continue;
             }
-            RetainPtr deviceRequest = mobileDocumentRequest->deviceRequest.createNSString();
-            RetainPtr encryptionInfo = mobileDocumentRequest->encryptionInfo.createNSString();
+            RetainPtr deviceRequest = createNSString(mobileDocumentRequest->deviceRequest);
+            RetainPtr encryptionInfo = createNSString(mobileDocumentRequest->encryptionInfo);
 
             RetainPtr<NSDictionary<NSString *, id>> jsonRequest = @{
                 @"deviceRequest" : deviceRequest.get(),
@@ -549,9 +549,9 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
         RetainPtr<NSString> protocol = response.protocolString;
 
         if ([protocol isEqualToString:@"org.iso.mdoc"]) {
-            String responseData = base64URLEncodeToString(span(response.responseData));
+            RefPtr<StringImpl> responseData = base64URLEncodeToString(span(response.responseData));
 
-            if (responseData.isNull()) {
+            if (!responseData) {
                 LOG(DigitalCredentials, "Failed to encode response bytes to URL-safe Base64.");
                 WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
                 [self completeWith:makeUnexpected(exceptionData)];
@@ -560,13 +560,13 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
 
             LOG_WITH_STREAM(DigitalCredentials, stream << "The document provider returned response data: "_s << responseData << "."_s);
             Ref object = JSON::Object::create();
-            object->setString("response"_s, responseData);
+            object->setString("response"_si, responseData);
             WebCore::DigitalCredentialsResponseData responseObject { DigitalCredentialPresentationProtocol::OrgIsoMdoc, object->toJSONString() };
             [self completeWith:WTF::move(responseObject)];
             return;
         }
 
-        auto openID4VPProtocol = WebCore::digitalCredentialPresentationProtocolFromString(String(protocol.get()));
+        auto openID4VPProtocol = WebCore::digitalCredentialPresentationProtocolFromString(StringImpl::create(protocol.get()).get());
         if (openID4VPProtocol && WebCore::isOpenID4VPPresentationProtocol(*openID4VPProtocol)) {
             RetainPtr responseString = adoptNS([[NSString alloc] initWithData:response.responseData encoding:NSUTF8StringEncoding]);
 
@@ -577,7 +577,7 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
                 return;
             }
 
-            WebCore::DigitalCredentialsResponseData responseObject { *openID4VPProtocol, String(responseString.get()) };
+            WebCore::DigitalCredentialsResponseData responseObject { *openID4VPProtocol, StringImpl::create(responseString.get()) };
             [self completeWith:WTF::move(responseObject)];
             return;
         }
@@ -614,10 +614,10 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
     }
 
     if (RefPtr page = _page.get()) {
-        String consoleMessage = exceptionData.message;
+        RefPtr<StringImpl> consoleMessage = exceptionData.message;
         RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
         if ([debugDescription length])
-            consoleMessage = makeString(consoleMessage, " ("_s, String(debugDescription.get()), ")"_s);
+            consoleMessage = makeString(consoleMessage, " ("_s, StringImpl::create(debugDescription.get()), ")"_s);
 
         auto targetFrameID = page->focusedFrame() ? page->focusedFrame()->frameID() : page->mainFrame()->frameID();
         page->addConsoleMessage(targetFrameID, MessageSource::JS, MessageLevel::Error, makeString("Digital Credential request failed: "_s, consoleMessage));

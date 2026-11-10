@@ -86,27 +86,27 @@ bool IDBObjectStore::virtualHasPendingActivity() const
     SUPPRESS_UNCOUNTED_ARG return m_transaction->hasPendingActivity();
 }
 
-const String& IDBObjectStore::name() const
+const RefPtr<StringImpl>& IDBObjectStore::name() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction->database().originThread()));
     return m_info.name();
 }
 
-ExceptionOr<void> IDBObjectStore::setName(const String& name)
+ExceptionOr<void> IDBObjectStore::setName(StringImpl* name)
 {
     Ref transaction = m_transaction.get();
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isVersionChange())
-        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not a version change transaction."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not a version change transaction."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not active."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not active."_si };
 
-    if (m_info.name() == name)
+    if (equal(m_info.name(), name))
         return { };
 
     if (transaction->database().info().hasObjectStore(name))
@@ -155,10 +155,10 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenCursor(IDBCursorDirection dir
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openCursor' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openCursor' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'openCursor' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'openCursor' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -181,7 +181,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(JSGlobalObject& execStat
     return doOpenCursor(direction, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
-            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openCursor' on 'IDBObjectStore': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openCursor' on 'IDBObjectStore': The parameter is not a valid key."_si) };
 
         return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
     });
@@ -194,10 +194,10 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenKeyCursor(IDBCursorDirection 
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -220,7 +220,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(JSGlobalObject& execS
     return doOpenKeyCursor(direction, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
-            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The parameter is not a valid key."_si) };
 
         return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
     });
@@ -233,14 +233,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, JSVa
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'get' on 'IDBObjectStore': The parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'get' on 'IDBObjectStore': The parameter is not a valid key."_si };
 
     return transaction->requestGetRecord(*this, { idbKey.ptr(), IDBGetRecordDataType::KeyAndValue });
 }
@@ -252,7 +252,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(IDBKeyRange* keyRange)
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
         return Exception { ExceptionCode::TransactionInactiveError };
@@ -271,14 +271,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(JSGlobalObject& execState, J
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getKey' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getKey' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getKey' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getKey' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'getKey' on 'IDBObjectStore': The parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'getKey' on 'IDBObjectStore': The parameter is not a valid key."_si };
 
     return transaction->requestGetRecord(*this, { idbKey.ptr(), IDBGetRecordDataType::KeyOnly });
 }
@@ -290,14 +290,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(IDBKeyRange* keyRange)
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getKey' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getKey' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getKey' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getKey' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     IDBKeyRangeData keyRangeData(keyRange);
     if (!keyRangeData.isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'getKey' on 'IDBObjectStore': The parameter is not a valid key range."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'getKey' on 'IDBObjectStore': The parameter is not a valid key range."_si };
 
     return transaction->requestGetRecord(*this, { keyRangeData, IDBGetRecordDataType::KeyOnly });
 }
@@ -333,16 +333,16 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (!scriptExecutionContext())
-        return Exception { ExceptionCode::UnknownError, "Unable to store record in object store because it does not have a valid script execution context"_s };
+        return Exception { ExceptionCode::UnknownError, "Unable to store record in object store because it does not have a valid script execution context"_si };
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to store record in an IDBObjectStore: The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to store record in an IDBObjectStore: The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to store record in an IDBObjectStore: The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to store record in an IDBObjectStore: The transaction is inactive or finished."_si };
 
     if (transaction->isReadOnly())
-        return Exception { ExceptionCode::ReadonlyError, "Failed to store record in an IDBObjectStore: The transaction is read-only."_s };
+        return Exception { ExceptionCode::ReadonlyError, "Failed to store record in an IDBObjectStore: The transaction is read-only."_si };
 
     if (!serializedValue) {
         // Transaction should be inactive during structured clone.
@@ -352,25 +352,25 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
     }
 
     if (scope.exception()) [[unlikely]]
-        return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
+        return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_si };
 
     if (key && !key->isValid())
-        return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The parameter is not a valid key."_si };
 
     bool usesInlineKeys = !!m_info.keyPath();
     bool usesKeyGenerator = autoIncrement();
     if (usesInlineKeys && inlineKeyCheck == InlineKeyCheck::Perform) {
         if (key)
-            return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided."_s };
+            return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided."_si };
 
         auto clonedValue = serializedValue->deserialize(state, &state, SerializationErrorMode::NonThrowing);
         RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, clonedValue, m_info.keyPath().value());
         if (keyPathKey && !keyPathKey->isValid())
-            return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: Evaluating the object store's key path yielded a value that is not a valid key."_s };
+            return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: Evaluating the object store's key path yielded a value that is not a valid key."_si };
 
         if (!keyPathKey) {
             if (!usesKeyGenerator)
-                return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value."_s };
+                return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value."_si };
             if (!canInjectIDBKeyIntoScriptValue(state, clonedValue, m_info.keyPath().value()))
                 return Exception { ExceptionCode::DataError };
         }
@@ -380,7 +380,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
             key = keyPathKey;
         }
     } else if (!usesKeyGenerator && !key)
-        return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided."_s };
+        return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided."_si };
 
     return transaction->requestPutOrAdd(*this, WTF::move(key), *serializedValue, overwriteMode);
 }
@@ -404,13 +404,13 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doDelete(NOESCAPE const Function<Ex
     // Additionally, Chrome and Edge agree with the test, as does Legacy IDB in WebKit.
     // Until this is sorted out, we'll agree with the test and the majority share browsers.
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'delete' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'delete' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     if (transaction->isReadOnly())
-        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'delete' on 'IDBObjectStore': The transaction is read-only."_s };
+        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'delete' on 'IDBObjectStore': The transaction is read-only."_si };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -418,7 +418,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doDelete(NOESCAPE const Function<Ex
 
     IDBKeyRangeData keyRangeData = keyRange.returnValue().get();
     if (!keyRangeData.isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key range."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key range."_si };
 
     return transaction->requestDeleteRecord(*this, keyRangeData);
 }
@@ -428,7 +428,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& exec
     return doDelete([state = &execState, key]() {
         auto idbKey = scriptValueToIDBKey(*state, key);
         if (!idbKey->isValid())
-            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key."_si) };
         return ExceptionOr<RefPtr<IDBKeyRange>> { (IDBKeyRange::create(WTF::move(idbKey))).ptr() };
     });
 }
@@ -445,43 +445,43 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear()
     // Additionally, Chrome and Edge agree with the test, as does Legacy IDB in WebKit.
     // Until this is sorted out, we'll agree with the test and the majority share browsers.
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'clear' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'clear' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'clear' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'clear' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     if (transaction->isReadOnly())
-        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'clear' on 'IDBObjectStore': The transaction is read-only."_s };
+        return Exception { ExceptionCode::ReadonlyError, "Failed to execute 'clear' on 'IDBObjectStore': The transaction is read-only."_si };
 
     return transaction->requestClearObjectStore(*this);
 }
 
-ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(const String& name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
+ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(StringImpl* name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBObjectStore::createIndex "_s << name << " (keyPath: "_s << loggingString(keyPath) << ", unique: "_s << parameters.unique << ", multiEntry: "_s << parameters.multiEntry << ")"_s);
     Ref transaction = m_transaction.get();
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (!transaction->isVersionChange())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'createIndex' on 'IDBObjectStore': The database is not running a version change transaction."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'createIndex' on 'IDBObjectStore': The database is not running a version change transaction."_si };
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'createIndex' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'createIndex' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'createIndex' on 'IDBObjectStore': The transaction is inactive."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'createIndex' on 'IDBObjectStore': The transaction is inactive."_si };
 
     if (m_info.hasIndex(name))
-        return Exception { ExceptionCode::ConstraintError, "Failed to execute 'createIndex' on 'IDBObjectStore': An index with the specified name already exists."_s };
+        return Exception { ExceptionCode::ConstraintError, "Failed to execute 'createIndex' on 'IDBObjectStore': An index with the specified name already exists."_si };
 
     if (!isIDBKeyPathValid(keyPath))
-        return Exception { ExceptionCode::SyntaxError, "Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path."_s };
+        return Exception { ExceptionCode::SyntaxError, "Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path."_si };
 
-    if (name.isNull())
+    if (!name)
         return Exception { ExceptionCode::TypeError };
 
-    if (parameters.multiEntry && std::holds_alternative<Vector<String>>(keyPath))
-        return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true."_s };
+    if (parameters.multiEntry && std::holds_alternative<Vector<RefPtr<StringImpl>>>(keyPath))
+        return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true."_si };
 
     // Install the new Index into the ObjectStore's info.
     IDBIndexInfo info = m_info.createNewIndex(transaction->database().info().generateNextIndexID(), name, WTF::move(keyPath), parameters.unique, parameters.multiEntry);
@@ -498,7 +498,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(const String& name, IDBKe
     return referencedIndex;
 }
 
-ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
+ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(StringImpl* indexName)
 {
     LOG(IndexedDB, "IDBObjectStore::index");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction->database().originThread()));
@@ -507,10 +507,10 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
         return Exception { ExceptionCode::InvalidStateError }; // FIXME: Is this code tested? Is iteven reachable?
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'index' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'index' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (m_transaction->isFinishedOrFinishing())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'index' on 'IDBObjectStore': The transaction is finished."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'index' on 'IDBObjectStore': The transaction is finished."_si };
 
     Locker locker { m_referencedIndexLock };
     auto iterator = m_referencedIndexes.find(indexName);
@@ -519,7 +519,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
 
     auto* info = m_info.infoForExistingIndex(indexName);
     if (!info)
-        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'index' on 'IDBObjectStore': The specified index was not found."_s };
+        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'index' on 'IDBObjectStore': The specified index was not found."_si };
 
     auto index = IDBIndex::create(*protect(scriptExecutionContext()), *info, *this);
 
@@ -530,23 +530,23 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
     return referencedIndex;
 }
 
-ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
+ExceptionOr<void> IDBObjectStore::deleteIndex(StringImpl* name)
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBObjectStore::deleteIndex "_s << name);
     Ref transaction = m_transaction.get();
     ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isVersionChange())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The database is not running a version change transaction."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The database is not running a version change transaction."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError,  "Failed to execute 'deleteIndex' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError,  "Failed to execute 'deleteIndex' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     if (!m_info.hasIndex(name))
-        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found."_s };
+        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found."_si };
 
     auto* info = m_info.infoForExistingIndex(name);
     ASSERT(info);
@@ -595,13 +595,13 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(const IDBKeyRangeData& rang
     // Additionally, Chrome and Edge agree with the test, as does Legacy IDB in WebKit.
     // Until this is sorted out, we'll agree with the test and the majority share browsers.
     if (m_deleted)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'count' on 'IDBObjectStore': The object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'count' on 'IDBObjectStore': The object store has been deleted."_si };
 
     if (!transaction->isActive())
-        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'count' on 'IDBObjectStore': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'count' on 'IDBObjectStore': The transaction is inactive or finished."_si };
 
     if (!range.isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key."_si };
 
     return transaction->requestCount(*this, range);
 }
@@ -609,16 +609,16 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(const IDBKeyRangeData& rang
 // https://w3c.github.io/IndexedDB/#create-a-request-to-retrieve-multiple-items
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAllShared(IndexedDB::GetAllType getAllType, NOESCAPE const Function<ExceptionOr<ParsedGetAllQueryOrOptions>()>& function)
 {
-    String callingFunctionExceptionMessagePrefix;
+    RefPtr<StringImpl> callingFunctionExceptionMessagePrefix;
     switch (getAllType) {
     case IndexedDB::GetAllType::Values:
-        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAll' on IDBObjectStore': "_s;
+        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAll' on IDBObjectStore': "_si;
         break;
     case IndexedDB::GetAllType::Keys:
-        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllKeys' on IDBObjectStore': "_s;
+        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllKeys' on IDBObjectStore': "_si;
         break;
     case IndexedDB::GetAllType::Records:
-        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllRecords' on IDBObjectStore': "_s;
+        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllRecords' on IDBObjectStore': "_si;
         break;
     }
 
@@ -679,7 +679,7 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction->database().originThread()));
 
-    String currentName = m_info.name();
+    RefPtr<StringImpl> currentName = m_info.name();
     m_info = m_originalInfo;
 
     auto& databaseInfo = transaction().database().info();
@@ -742,7 +742,7 @@ void IDBObjectStore::visitReferencedIndexesInGCThread(Visitor& visitor) const
 template void IDBObjectStore::visitReferencedIndexesInGCThread(AbstractSlotVisitor&) const;
 template void IDBObjectStore::visitReferencedIndexesInGCThread(SlotVisitor&) const;
 
-void IDBObjectStore::renameReferencedIndex(IDBIndex& index, const String& newName)
+void IDBObjectStore::renameReferencedIndex(IDBIndex& index, StringImpl* newName)
 {
     Locker locker { m_referencedIndexLock };
     LOG(IndexedDB, "IDBObjectStore::renameReferencedIndex");

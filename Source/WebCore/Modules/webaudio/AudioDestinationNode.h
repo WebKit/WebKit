@@ -51,7 +51,7 @@ public:
     virtual unsigned maxChannelCount() const = 0;
 
     // Enable local/live input for the specified device.
-    virtual void enableInput(const String& inputDeviceId) = 0;
+    virtual void enableInput(StringImpl* inputDeviceId) = 0;
 
     virtual void startRendering(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void restartRendering() { }
@@ -61,7 +61,7 @@ public:
     void deref() const final;
 
 #if PLATFORM(IOS_FAMILY)
-    virtual void setSceneIdentifier(const String&) { }
+    virtual void setSceneIdentifier(StringImpl*) { }
 #endif
 
 protected:

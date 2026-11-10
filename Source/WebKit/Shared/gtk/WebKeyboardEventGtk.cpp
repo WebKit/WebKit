@@ -45,13 +45,13 @@ namespace WebKit {
 // more like what Firefox does, and generate these switch statements
 // at build time.
 // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
-String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
+RefPtr<StringImpl> WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
 {
     switch (keyCode) {
     // Modifier keys.
     case GDK_KEY_Alt_L:
     case GDK_KEY_Alt_R:
-        return "Alt"_s;
+        return "Alt"_si;
     // Firefox uses GDK_KEY_Mode_switch for AltGraph as well.
     case GDK_KEY_ISO_Level3_Shift:
     case GDK_KEY_ISO_Level3_Latch:
@@ -59,30 +59,30 @@ String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
     case GDK_KEY_ISO_Level5_Shift:
     case GDK_KEY_ISO_Level5_Latch:
     case GDK_KEY_ISO_Level5_Lock:
-        return "AltGraph"_s;
+        return "AltGraph"_si;
     case GDK_KEY_Caps_Lock:
-        return "CapsLock"_s;
+        return "CapsLock"_si;
     case GDK_KEY_Control_L:
     case GDK_KEY_Control_R:
-        return "Control"_s;
+        return "Control"_si;
     // Fn: This is typically a hardware key that does not generate a separate code.
     // FnLock.
     case GDK_KEY_Hyper_L:
     case GDK_KEY_Hyper_R:
-        return "Hyper"_s;
+        return "Hyper"_si;
     case GDK_KEY_Meta_L:
     case GDK_KEY_Meta_R:
-        return "Meta"_s;
+        return "Meta"_si;
     case GDK_KEY_Num_Lock:
-        return "NumLock"_s;
+        return "NumLock"_si;
     case GDK_KEY_Scroll_Lock:
-        return "ScrollLock"_s;
+        return "ScrollLock"_si;
     case GDK_KEY_Shift_L:
     case GDK_KEY_Shift_R:
-        return "Shift"_s;
+        return "Shift"_si;
     case GDK_KEY_Super_L:
     case GDK_KEY_Super_R:
-        return "Super"_s;
+        return "Super"_si;
     // Symbol.
     // SymbolLock.
 
@@ -91,133 +91,133 @@ String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
     case GDK_KEY_KP_Enter:
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_3270_Enter:
-        return "Enter"_s;
+        return "Enter"_si;
     case GDK_KEY_Tab:
     case GDK_KEY_KP_Tab:
-        return "Tab"_s;
+        return "Tab"_si;
 
     // Navigation keys.
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-        return "ArrowDown"_s;
+        return "ArrowDown"_si;
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
-        return "ArrowLeft"_s;
+        return "ArrowLeft"_si;
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
-        return "ArrowRight"_s;
+        return "ArrowRight"_si;
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
-        return "ArrowUp"_s;
+        return "ArrowUp"_si;
     case GDK_KEY_End:
     case GDK_KEY_KP_End:
-        return "End"_s;
+        return "End"_si;
     case GDK_KEY_Home:
     case GDK_KEY_KP_Home:
-        return "Home"_s;
+        return "Home"_si;
     case GDK_KEY_Page_Down:
     case GDK_KEY_KP_Page_Down:
-        return "PageDown"_s;
+        return "PageDown"_si;
     case GDK_KEY_Page_Up:
     case GDK_KEY_KP_Page_Up:
-        return "PageUp"_s;
+        return "PageUp"_si;
 
     // Editing keys.
     case GDK_KEY_BackSpace:
-        return "Backspace"_s;
+        return "Backspace"_si;
     case GDK_KEY_Clear:
-        return "Clear"_s;
+        return "Clear"_si;
     case GDK_KEY_Copy:
-        return "Copy"_s;
+        return "Copy"_si;
     case GDK_KEY_3270_CursorSelect:
-        return "CrSel"_s;
+        return "CrSel"_si;
     case GDK_KEY_Cut:
-        return "Cut"_s;
+        return "Cut"_si;
     case GDK_KEY_Delete:
     case GDK_KEY_KP_Delete:
-        return "Delete"_s;
+        return "Delete"_si;
     case GDK_KEY_3270_EraseEOF:
-        return "EraseEof"_s;
+        return "EraseEof"_si;
     case GDK_KEY_3270_ExSelect:
-        return "ExSel"_s;
+        return "ExSel"_si;
     case GDK_KEY_Insert:
     case GDK_KEY_KP_Insert:
-        return "Insert"_s;
+        return "Insert"_si;
     case GDK_KEY_Paste:
-        return "Paste"_s;
+        return "Paste"_si;
     case GDK_KEY_Redo:
-        return "Redo"_s;
+        return "Redo"_si;
     case GDK_KEY_Undo:
-        return "Undo"_s;
+        return "Undo"_si;
 
     // UI keys.
     // Accept.
     // Again.
     case GDK_KEY_3270_Attn:
-        return "Attn"_s;
+        return "Attn"_si;
     case GDK_KEY_Cancel:
-        return "Cancel"_s;
+        return "Cancel"_si;
     case GDK_KEY_Menu:
-        return "ContextMenu"_s;
+        return "ContextMenu"_si;
     case GDK_KEY_Escape:
-        return "Escape"_s;
+        return "Escape"_si;
     case GDK_KEY_Execute:
-        return "Execute"_s;
+        return "Execute"_si;
     case GDK_KEY_Find:
-        return "Find"_s;
+        return "Find"_si;
     case GDK_KEY_Help:
-        return "Help"_s;
+        return "Help"_si;
     case GDK_KEY_Pause:
     case GDK_KEY_Break:
-        return "Pause"_s;
+        return "Pause"_si;
     case GDK_KEY_3270_Play:
-        return "Play"_s;
+        return "Play"_si;
     // Props.
     case GDK_KEY_Select:
-        return "Select"_s;
+        return "Select"_si;
     case GDK_KEY_ZoomIn:
-        return "ZoomIn"_s;
+        return "ZoomIn"_si;
     case GDK_KEY_ZoomOut:
-        return "ZoomOut"_s;
+        return "ZoomOut"_si;
 
     // Device keys.
     case GDK_KEY_MonBrightnessDown:
-        return "BrightnessDown"_s;
+        return "BrightnessDown"_si;
     case GDK_KEY_MonBrightnessUp:
-        return "BrightnessUp"_s;
+        return "BrightnessUp"_si;
     case GDK_KEY_Eject:
-        return "Eject"_s;
+        return "Eject"_si;
     case GDK_KEY_LogOff:
-        return "LogOff"_s;
+        return "LogOff"_si;
     // Power.
     case GDK_KEY_PowerDown:
     case GDK_KEY_PowerOff:
-        return "PowerOff"_s;
+        return "PowerOff"_si;
     case GDK_KEY_3270_PrintScreen:
     case GDK_KEY_Print:
     case GDK_KEY_Sys_Req:
-        return "PrintScreen"_s;
+        return "PrintScreen"_si;
     case GDK_KEY_Hibernate:
-        return "Hibernate"_s;
+        return "Hibernate"_si;
     case GDK_KEY_Standby:
     case GDK_KEY_Suspend:
     case GDK_KEY_Sleep:
-        return "Standby"_s;
+        return "Standby"_si;
     case GDK_KEY_WakeUp:
-        return "WakeUp"_s;
+        return "WakeUp"_si;
 
     // IME keys.
     case GDK_KEY_MultipleCandidate:
-        return "AllCandidates"_s;
+        return "AllCandidates"_si;
     case GDK_KEY_Eisu_Shift:
     case GDK_KEY_Eisu_toggle:
-        return "Alphanumeric"_s;
+        return "Alphanumeric"_si;
     case GDK_KEY_Codeinput:
-        return "CodeInput"_s;
+        return "CodeInput"_si;
     case GDK_KEY_Multi_key:
-        return "Compose"_s;
+        return "Compose"_si;
     case GDK_KEY_Henkan:
-        return "Convert"_s;
+        return "Convert"_si;
     case GDK_KEY_dead_grave:
     case GDK_KEY_dead_acute:
     case GDK_KEY_dead_circumflex:
@@ -262,175 +262,175 @@ String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
     case GDK_KEY_dead_U:
     case GDK_KEY_dead_small_schwa:
     case GDK_KEY_dead_capital_schwa:
-        return "Dead"_s;
+        return "Dead"_si;
     // FinalMode
     case GDK_KEY_ISO_First_Group:
-        return "GroupFirst"_s;
+        return "GroupFirst"_si;
     case GDK_KEY_ISO_Last_Group:
-        return "GroupLast"_s;
+        return "GroupLast"_si;
     case GDK_KEY_ISO_Next_Group:
-        return "GroupNext"_s;
+        return "GroupNext"_si;
     case GDK_KEY_ISO_Prev_Group:
-        return "GroupPrevious"_s;
+        return "GroupPrevious"_si;
     case GDK_KEY_Mode_switch:
-        return "ModeChange"_s;
+        return "ModeChange"_si;
     // NextCandidate.
     case GDK_KEY_Muhenkan:
-        return "NonConvert"_s;
+        return "NonConvert"_si;
     case GDK_KEY_PreviousCandidate:
-        return "PreviousCandidate"_s;
+        return "PreviousCandidate"_si;
     // Process.
     case GDK_KEY_SingleCandidate:
-        return "SingleCandidate"_s;
+        return "SingleCandidate"_si;
 
     // Korean and Japanese keys.
     case GDK_KEY_Hangul:
-        return "HangulMode"_s;
+        return "HangulMode"_si;
     case GDK_KEY_Hangul_Hanja:
-        return "HanjaMode"_s;
+        return "HanjaMode"_si;
     case GDK_KEY_Hangul_Jeonja:
-        return "JunjaMode"_s;
+        return "JunjaMode"_si;
     case GDK_KEY_Hankaku:
-        return "Hankaku"_s;
+        return "Hankaku"_si;
     case GDK_KEY_Hiragana:
-        return "Hiragana"_s;
+        return "Hiragana"_si;
     case GDK_KEY_Hiragana_Katakana:
-        return "HiraganaKatakana"_s;
+        return "HiraganaKatakana"_si;
     case GDK_KEY_Kana_Lock:
     case GDK_KEY_Kana_Shift:
-        return "KanaMode"_s;
+        return "KanaMode"_si;
     case GDK_KEY_Kanji:
-        return "KanjiMode"_s;
+        return "KanjiMode"_si;
     case GDK_KEY_Katakana:
-        return "Katakana"_s;
+        return "Katakana"_si;
     case GDK_KEY_Romaji:
-        return "Romaji"_s;
+        return "Romaji"_si;
     case GDK_KEY_Zenkaku:
-        return "Zenkaku"_s;
+        return "Zenkaku"_si;
     case GDK_KEY_Zenkaku_Hankaku:
-        return "ZenkakuHanaku"_s;
+        return "ZenkakuHanaku"_si;
 
     // Application Keys
     case GDK_KEY_AudioMedia:
-        return "LaunchMediaPlayer"_s;
+        return "LaunchMediaPlayer"_si;
 
     // Browser Keys
     case GDK_KEY_Back:
-        return "BrowserBack"_s;
+        return "BrowserBack"_si;
     case GDK_KEY_Favorites:
-        return "BrowserFavorites"_s;
+        return "BrowserFavorites"_si;
     case GDK_KEY_Forward:
-        return "BrowserForward"_s;
+        return "BrowserForward"_si;
     case GDK_KEY_HomePage:
-        return "BrowserHome"_s;
+        return "BrowserHome"_si;
     case GDK_KEY_Refresh:
-        return "BrowserRefresh"_s;
+        return "BrowserRefresh"_si;
     case GDK_KEY_Search:
-        return "BrowserSearch"_s;
+        return "BrowserSearch"_si;
     case GDK_KEY_Stop:
-        return "BrowserStop"_s;
+        return "BrowserStop"_si;
 
     // ChannelDown.
     // ChannelUp.
     case GDK_KEY_Close:
-        return "Close"_s;
+        return "Close"_si;
     case GDK_KEY_MailForward:
-        return "MailForward"_s;
+        return "MailForward"_si;
     case GDK_KEY_Reply:
-        return "MailReply"_s;
+        return "MailReply"_si;
     case GDK_KEY_Send:
-        return "MailSend"_s;
+        return "MailSend"_si;
     case GDK_KEY_AudioForward:
-        return "MediaFastForward"_s;
+        return "MediaFastForward"_si;
     case GDK_KEY_AudioPause:
-        return "MediaPause"_s;
+        return "MediaPause"_si;
     case GDK_KEY_AudioPlay:
-        return "MediaPlay"_s;
+        return "MediaPlay"_si;
     // MediaPlayPause
     case GDK_KEY_AudioRecord:
-        return "MediaRecord"_s;
+        return "MediaRecord"_si;
     case GDK_KEY_AudioRewind:
-        return "MediaRewind"_s;
+        return "MediaRewind"_si;
     case GDK_KEY_AudioStop:
-        return "MediaStop"_s;
+        return "MediaStop"_si;
     case GDK_KEY_AudioNext:
-        return "MediaTrackNext"_s;
+        return "MediaTrackNext"_si;
     case GDK_KEY_AudioPrev:
-        return "MediaTrackPrevious"_s;
+        return "MediaTrackPrevious"_si;
     case GDK_KEY_New:
-        return "New"_s;
+        return "New"_si;
     case GDK_KEY_Open:
-        return "Open"_s;
+        return "Open"_si;
     case GDK_KEY_AudioLowerVolume:
-        return "AudioVolumeDown"_s;
+        return "AudioVolumeDown"_si;
     case GDK_KEY_AudioRaiseVolume:
-        return "AudioVolumeUp"_s;
+        return "AudioVolumeUp"_si;
     case GDK_KEY_AudioMute:
-        return "AudioVolumeMute"_s;
+        return "AudioVolumeMute"_si;
 
     // Media Controller Keys
     case GDK_KEY_Red:
-        return "ColorF0Red"_s;
+        return "ColorF0Red"_si;
     case GDK_KEY_Green:
-        return "ColorF1Green"_s;
+        return "ColorF1Green"_si;
     case GDK_KEY_Yellow:
-        return "ColorF2Yellow"_s;
+        return "ColorF2Yellow"_si;
     case GDK_KEY_Blue:
-        return "ColorF3Blue"_s;
+        return "ColorF3Blue"_si;
     case GDK_KEY_Display:
-        return "DisplaySwap"_s;
+        return "DisplaySwap"_si;
     case GDK_KEY_Video:
-        return "OnDemand"_s;
+        return "OnDemand"_si;
     case GDK_KEY_Subtitle:
-        return "Subtitle"_s;
+        return "Subtitle"_si;
 
     // Print.
     case GDK_KEY_Save:
-        return "Save"_s;
+        return "Save"_si;
     case GDK_KEY_Spell:
-        return "SpellCheck"_s;
+        return "SpellCheck"_si;
 
     // Function keys.
     case GDK_KEY_F1:
-        return "F1"_s;
+        return "F1"_si;
     case GDK_KEY_F2:
-        return "F2"_s;
+        return "F2"_si;
     case GDK_KEY_F3:
-        return "F3"_s;
+        return "F3"_si;
     case GDK_KEY_F4:
-        return "F4"_s;
+        return "F4"_si;
     case GDK_KEY_F5:
-        return "F5"_s;
+        return "F5"_si;
     case GDK_KEY_F6:
-        return "F6"_s;
+        return "F6"_si;
     case GDK_KEY_F7:
-        return "F7"_s;
+        return "F7"_si;
     case GDK_KEY_F8:
-        return "F8"_s;
+        return "F8"_si;
     case GDK_KEY_F9:
-        return "F9"_s;
+        return "F9"_si;
     case GDK_KEY_F10:
-        return "F10"_s;
+        return "F10"_si;
     case GDK_KEY_F11:
-        return "F11"_s;
+        return "F11"_si;
     case GDK_KEY_F12:
-        return "F12"_s;
+        return "F12"_si;
     case GDK_KEY_F13:
-        return "F13"_s;
+        return "F13"_si;
     case GDK_KEY_F14:
-        return "F14"_s;
+        return "F14"_si;
     case GDK_KEY_F15:
-        return "F15"_s;
+        return "F15"_si;
     case GDK_KEY_F16:
-        return "F16"_s;
+        return "F16"_si;
     case GDK_KEY_F17:
-        return "F17"_s;
+        return "F17"_si;
     case GDK_KEY_F18:
-        return "F18"_s;
+        return "F18"_si;
     case GDK_KEY_F19:
-        return "F19"_s;
+        return "F19"_si;
     case GDK_KEY_F20:
-        return "F20"_s;
+        return "F20"_si;
 
     default: {
         guint32 unicodeCharacter = gdk_keyval_to_unicode(keyCode);
@@ -438,9 +438,9 @@ String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
             // UTF-8 will use up to 6 bytes.
             std::array<char, 7> utf8 = { 0 };
             g_unichar_to_utf8(unicodeCharacter, utf8.data());
-            return String::fromUTF8(utf8.data());
+            return StringImpl::fromUTF8(utf8.data());
         }
-        return "Unidentified"_s;
+        return "Unidentified"_si;
     }
     }
 }
@@ -449,438 +449,438 @@ String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
 // more like what Firefox does, and generate these switch statements
 // at build time.
 // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
-String WebKeyboardEvent::keyCodeStringForGdkKeycode(unsigned keycode)
+RefPtr<StringImpl> WebKeyboardEvent::keyCodeStringForGdkKeycode(unsigned keycode)
 {
     switch (keycode) {
     case 0x0009:
-        return "Escape"_s;
+        return "Escape"_si;
     case 0x000A:
-        return "Digit1"_s;
+        return "Digit1"_si;
     case 0x000B:
-        return "Digit2"_s;
+        return "Digit2"_si;
     case 0x000C:
-        return "Digit3"_s;
+        return "Digit3"_si;
     case 0x000D:
-        return "Digit4"_s;
+        return "Digit4"_si;
     case 0x000E:
-        return "Digit5"_s;
+        return "Digit5"_si;
     case 0x000F:
-        return "Digit6"_s;
+        return "Digit6"_si;
     case 0x0010:
-        return "Digit7"_s;
+        return "Digit7"_si;
     case 0x0011:
-        return "Digit8"_s;
+        return "Digit8"_si;
     case 0x0012:
-        return "Digit9"_s;
+        return "Digit9"_si;
     case 0x0013:
-        return "Digit0"_s;
+        return "Digit0"_si;
     case 0x0014:
-        return "Minus"_s;
+        return "Minus"_si;
     case 0x0015:
-        return "Equal"_s;
+        return "Equal"_si;
     case 0x0016:
-        return "Backspace"_s;
+        return "Backspace"_si;
     case 0x0017:
-        return "Tab"_s;
+        return "Tab"_si;
     case 0x0018:
-        return "KeyQ"_s;
+        return "KeyQ"_si;
     case 0x0019:
-        return "KeyW"_s;
+        return "KeyW"_si;
     case 0x001A:
-        return "KeyE"_s;
+        return "KeyE"_si;
     case 0x001B:
-        return "KeyR"_s;
+        return "KeyR"_si;
     case 0x001C:
-        return "KeyT"_s;
+        return "KeyT"_si;
     case 0x001D:
-        return "KeyY"_s;
+        return "KeyY"_si;
     case 0x001E:
-        return "KeyU"_s;
+        return "KeyU"_si;
     case 0x001F:
-        return "KeyI"_s;
+        return "KeyI"_si;
     case 0x0020:
-        return "KeyO"_s;
+        return "KeyO"_si;
     case 0x0021:
-        return "KeyP"_s;
+        return "KeyP"_si;
     case 0x0022:
-        return "BracketLeft"_s;
+        return "BracketLeft"_si;
     case 0x0023:
-        return "BracketRight"_s;
+        return "BracketRight"_si;
     case 0x0024:
-        return "Enter"_s;
+        return "Enter"_si;
     case 0x0025:
-        return "ControlLeft"_s;
+        return "ControlLeft"_si;
     case 0x0026:
-        return "KeyA"_s;
+        return "KeyA"_si;
     case 0x0027:
-        return "KeyS"_s;
+        return "KeyS"_si;
     case 0x0028:
-        return "KeyD"_s;
+        return "KeyD"_si;
     case 0x0029:
-        return "KeyF"_s;
+        return "KeyF"_si;
     case 0x002A:
-        return "KeyG"_s;
+        return "KeyG"_si;
     case 0x002B:
-        return "KeyH"_s;
+        return "KeyH"_si;
     case 0x002C:
-        return "KeyJ"_s;
+        return "KeyJ"_si;
     case 0x002D:
-        return "KeyK"_s;
+        return "KeyK"_si;
     case 0x002E:
-        return "KeyL"_s;
+        return "KeyL"_si;
     case 0x002F:
-        return "Semicolon"_s;
+        return "Semicolon"_si;
     case 0x0030:
-        return "Quote"_s;
+        return "Quote"_si;
     case 0x0031:
-        return "Backquote"_s;
+        return "Backquote"_si;
     case 0x0032:
-        return "ShiftLeft"_s;
+        return "ShiftLeft"_si;
     case 0x0033:
-        return "Backslash"_s;
+        return "Backslash"_si;
     case 0x0034:
-        return "KeyZ"_s;
+        return "KeyZ"_si;
     case 0x0035:
-        return "KeyX"_s;
+        return "KeyX"_si;
     case 0x0036:
-        return "KeyC"_s;
+        return "KeyC"_si;
     case 0x0037:
-        return "KeyV"_s;
+        return "KeyV"_si;
     case 0x0038:
-        return "KeyB"_s;
+        return "KeyB"_si;
     case 0x0039:
-        return "KeyN"_s;
+        return "KeyN"_si;
     case 0x003A:
-        return "KeyM"_s;
+        return "KeyM"_si;
     case 0x003B:
-        return "Comma"_s;
+        return "Comma"_si;
     case 0x003C:
-        return "Period"_s;
+        return "Period"_si;
     case 0x003D:
-        return "Slash"_s;
+        return "Slash"_si;
     case 0x003E:
-        return "ShiftRight"_s;
+        return "ShiftRight"_si;
     case 0x003F:
-        return "NumpadMultiply"_s;
+        return "NumpadMultiply"_si;
     case 0x0040:
-        return "AltLeft"_s;
+        return "AltLeft"_si;
     case 0x0041:
-        return "Space"_s;
+        return "Space"_si;
     case 0x0042:
-        return "CapsLock"_s;
+        return "CapsLock"_si;
     case 0x0043:
-        return "F1"_s;
+        return "F1"_si;
     case 0x0044:
-        return "F2"_s;
+        return "F2"_si;
     case 0x0045:
-        return "F3"_s;
+        return "F3"_si;
     case 0x0046:
-        return "F4"_s;
+        return "F4"_si;
     case 0x0047:
-        return "F5"_s;
+        return "F5"_si;
     case 0x0048:
-        return "F6"_s;
+        return "F6"_si;
     case 0x0049:
-        return "F7"_s;
+        return "F7"_si;
     case 0x004A:
-        return "F8"_s;
+        return "F8"_si;
     case 0x004B:
-        return "F9"_s;
+        return "F9"_si;
     case 0x004C:
-        return "F10"_s;
+        return "F10"_si;
     case 0x004D:
-        return "NumLock"_s;
+        return "NumLock"_si;
     case 0x004E:
-        return "ScrollLock"_s;
+        return "ScrollLock"_si;
     case 0x004F:
-        return "Numpad7"_s;
+        return "Numpad7"_si;
     case 0x0050:
-        return "Numpad8"_s;
+        return "Numpad8"_si;
     case 0x0051:
-        return "Numpad9"_s;
+        return "Numpad9"_si;
     case 0x0052:
-        return "NumpadSubtract"_s;
+        return "NumpadSubtract"_si;
     case 0x0053:
-        return "Numpad4"_s;
+        return "Numpad4"_si;
     case 0x0054:
-        return "Numpad5"_s;
+        return "Numpad5"_si;
     case 0x0055:
-        return "Numpad6"_s;
+        return "Numpad6"_si;
     case 0x0056:
-        return "NumpadAdd"_s;
+        return "NumpadAdd"_si;
     case 0x0057:
-        return "Numpad1"_s;
+        return "Numpad1"_si;
     case 0x0058:
-        return "Numpad2"_s;
+        return "Numpad2"_si;
     case 0x0059:
-        return "Numpad3"_s;
+        return "Numpad3"_si;
     case 0x005A:
-        return "Numpad0"_s;
+        return "Numpad0"_si;
     case 0x005B:
-        return "NumpadDecimal"_s;
+        return "NumpadDecimal"_si;
     case 0x005E:
-        return "IntlBackslash"_s;
+        return "IntlBackslash"_si;
     case 0x005F:
-        return "F11"_s;
+        return "F11"_si;
     case 0x0060:
-        return "F12"_s;
+        return "F12"_si;
     case 0x0061:
-        return "IntlRo"_s;
+        return "IntlRo"_si;
     case 0x0064:
-        return "Convert"_s;
+        return "Convert"_si;
     case 0x0065:
-        return "KanaMode"_s;
+        return "KanaMode"_si;
     case 0x0066:
-        return "NonConvert"_s;
+        return "NonConvert"_si;
     case 0x0068:
-        return "NumpadEnter"_s;
+        return "NumpadEnter"_si;
     case 0x0069:
-        return "ControlRight"_s;
+        return "ControlRight"_si;
     case 0x006A:
-        return "NumpadDivide"_s;
+        return "NumpadDivide"_si;
     case 0x006B:
-        return "PrintScreen"_s;
+        return "PrintScreen"_si;
     case 0x006C:
-        return "AltRight"_s;
+        return "AltRight"_si;
     case 0x006E:
-        return "Home"_s;
+        return "Home"_si;
     case 0x006F:
-        return "ArrowUp"_s;
+        return "ArrowUp"_si;
     case 0x0070:
-        return "PageUp"_s;
+        return "PageUp"_si;
     case 0x0071:
-        return "ArrowLeft"_s;
+        return "ArrowLeft"_si;
     case 0x0072:
-        return "ArrowRight"_s;
+        return "ArrowRight"_si;
     case 0x0073:
-        return "End"_s;
+        return "End"_si;
     case 0x0074:
-        return "ArrowDown"_s;
+        return "ArrowDown"_si;
     case 0x0075:
-        return "PageDown"_s;
+        return "PageDown"_si;
     case 0x0076:
-        return "Insert"_s;
+        return "Insert"_si;
     case 0x0077:
-        return "Delete"_s;
+        return "Delete"_si;
     case 0x0079:
-        return "AudioVolumeMute"_s;
+        return "AudioVolumeMute"_si;
     case 0x007A:
-        return "AudioVolumeDown"_s;
+        return "AudioVolumeDown"_si;
     case 0x007B:
-        return "AudioVolumeUp"_s;
+        return "AudioVolumeUp"_si;
     case 0x007D:
-        return "NumpadEqual"_s;
+        return "NumpadEqual"_si;
     case 0x007F:
-        return "Pause"_s;
+        return "Pause"_si;
     case 0x0081:
-        return "NumpadComma"_s;
+        return "NumpadComma"_si;
     case 0x0082:
-        return "Lang1"_s;
+        return "Lang1"_si;
     case 0x0083:
-        return "Lang2"_s;
+        return "Lang2"_si;
     case 0x0084:
-        return "IntlYen"_s;
+        return "IntlYen"_si;
     case 0x0085:
-        return "OSLeft"_s;
+        return "OSLeft"_si;
     case 0x0086:
-        return "OSRight"_s;
+        return "OSRight"_si;
     case 0x0087:
-        return "ContextMenu"_s;
+        return "ContextMenu"_si;
     case 0x0088:
-        return "BrowserStop"_s;
+        return "BrowserStop"_si;
     case 0x0089:
-        return "Again"_s;
+        return "Again"_si;
     case 0x008A:
-        return "Props"_s;
+        return "Props"_si;
     case 0x008B:
-        return "Undo"_s;
+        return "Undo"_si;
     case 0x008C:
-        return "Select"_s;
+        return "Select"_si;
     case 0x008D:
-        return "Copy"_s;
+        return "Copy"_si;
     case 0x008E:
-        return "Open"_s;
+        return "Open"_si;
     case 0x008F:
-        return "Paste"_s;
+        return "Paste"_si;
     case 0x0090:
-        return "Find"_s;
+        return "Find"_si;
     case 0x0091:
-        return "Cut"_s;
+        return "Cut"_si;
     case 0x0092:
-        return "Help"_s;
+        return "Help"_si;
     case 0x0094:
-        return "LaunchApp2"_s;
+        return "LaunchApp2"_si;
     case 0x0097:
-        return "WakeUp"_s;
+        return "WakeUp"_si;
     case 0x0098:
-        return "LaunchApp1"_s;
+        return "LaunchApp1"_si;
     case 0x00A3:
-        return "LaunchMail"_s;
+        return "LaunchMail"_si;
     case 0x00A4:
-        return "BrowserFavorites"_s;
+        return "BrowserFavorites"_si;
     case 0x00A6:
-        return "BrowserBack"_s;
+        return "BrowserBack"_si;
     case 0x00A7:
-        return "BrowserForward"_s;
+        return "BrowserForward"_si;
     case 0x00A9:
-        return "Eject"_s;
+        return "Eject"_si;
     case 0x00AB:
-        return "MediaTrackNext"_s;
+        return "MediaTrackNext"_si;
     case 0x00AC:
-        return "MediaPlayPause"_s;
+        return "MediaPlayPause"_si;
     case 0x00AD:
-        return "MediaTrackPrevious"_s;
+        return "MediaTrackPrevious"_si;
     case 0x00AE:
-        return "MediaStop"_s;
+        return "MediaStop"_si;
     case 0x00B3:
-        return "LaunchMediaPlayer"_s;
+        return "LaunchMediaPlayer"_si;
     case 0x00B4:
-        return "BrowserHome"_s;
+        return "BrowserHome"_si;
     case 0x00B5:
-        return "BrowserRefresh"_s;
+        return "BrowserRefresh"_si;
     case 0x00BF:
-        return "F13"_s;
+        return "F13"_si;
     case 0x00C0:
-        return "F14"_s;
+        return "F14"_si;
     case 0x00C1:
-        return "F15"_s;
+        return "F15"_si;
     case 0x00C2:
-        return "F16"_s;
+        return "F16"_si;
     case 0x00C3:
-        return "F17"_s;
+        return "F17"_si;
     case 0x00C4:
-        return "F18"_s;
+        return "F18"_si;
     case 0x00C5:
-        return "F19"_s;
+        return "F19"_si;
     case 0x00C6:
-        return "F20"_s;
+        return "F20"_si;
     case 0x00C7:
-        return "F21"_s;
+        return "F21"_si;
     case 0x00C8:
-        return "F22"_s;
+        return "F22"_si;
     case 0x00C9:
-        return "F23"_s;
+        return "F23"_si;
     case 0x00CA:
-        return "F24"_s;
+        return "F24"_si;
     case 0x00E1:
-        return "BrowserSearch"_s;
+        return "BrowserSearch"_si;
     default:
-        return "Unidentified"_s;
+        return "Unidentified"_si;
     }
 }
 
 // FIXME: This is incomplete. We should change this to mirror
 // more like what Firefox does, and generate these switch statements
 // at build time.
-String WebKeyboardEvent::keyIdentifierForGdkKeyval(unsigned keyval)
+RefPtr<StringImpl> WebKeyboardEvent::keyIdentifierForGdkKeyval(unsigned keyval)
 {
     switch (keyval) {
     case GDK_KEY_Menu:
     case GDK_KEY_Alt_L:
     case GDK_KEY_Alt_R:
-        return "Alt"_s;
+        return "Alt"_si;
     case GDK_KEY_Clear:
-        return "Clear"_s;
+        return "Clear"_si;
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-        return "Down"_s;
+        return "Down"_si;
         // "End"
     case GDK_KEY_End:
     case GDK_KEY_KP_End:
-        return "End"_s;
+        return "End"_si;
         // "Enter"
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_KP_Enter:
     case GDK_KEY_Return:
-        return "Enter"_s;
+        return "Enter"_si;
     case GDK_KEY_Execute:
-        return "Execute"_s;
+        return "Execute"_si;
     case GDK_KEY_F1:
-        return "F1"_s;
+        return "F1"_si;
     case GDK_KEY_F2:
-        return "F2"_s;
+        return "F2"_si;
     case GDK_KEY_F3:
-        return "F3"_s;
+        return "F3"_si;
     case GDK_KEY_F4:
-        return "F4"_s;
+        return "F4"_si;
     case GDK_KEY_F5:
-        return "F5"_s;
+        return "F5"_si;
     case GDK_KEY_F6:
-        return "F6"_s;
+        return "F6"_si;
     case GDK_KEY_F7:
-        return "F7"_s;
+        return "F7"_si;
     case GDK_KEY_F8:
-        return "F8"_s;
+        return "F8"_si;
     case GDK_KEY_F9:
-        return "F9"_s;
+        return "F9"_si;
     case GDK_KEY_F10:
-        return "F10"_s;
+        return "F10"_si;
     case GDK_KEY_F11:
-        return "F11"_s;
+        return "F11"_si;
     case GDK_KEY_F12:
-        return "F12"_s;
+        return "F12"_si;
     case GDK_KEY_F13:
-        return "F13"_s;
+        return "F13"_si;
     case GDK_KEY_F14:
-        return "F14"_s;
+        return "F14"_si;
     case GDK_KEY_F15:
-        return "F15"_s;
+        return "F15"_si;
     case GDK_KEY_F16:
-        return "F16"_s;
+        return "F16"_si;
     case GDK_KEY_F17:
-        return "F17"_s;
+        return "F17"_si;
     case GDK_KEY_F18:
-        return "F18"_s;
+        return "F18"_si;
     case GDK_KEY_F19:
-        return "F19"_s;
+        return "F19"_si;
     case GDK_KEY_F20:
-        return "F20"_s;
+        return "F20"_si;
     case GDK_KEY_F21:
-        return "F21"_s;
+        return "F21"_si;
     case GDK_KEY_F22:
-        return "F22"_s;
+        return "F22"_si;
     case GDK_KEY_F23:
-        return "F23"_s;
+        return "F23"_si;
     case GDK_KEY_F24:
-        return "F24"_s;
+        return "F24"_si;
     case GDK_KEY_Help:
-        return "Help"_s;
+        return "Help"_si;
     case GDK_KEY_Home:
     case GDK_KEY_KP_Home:
-        return "Home"_s;
+        return "Home"_si;
     case GDK_KEY_Insert:
-        return "Insert"_s;
+        return "Insert"_si;
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
-        return "Left"_s;
+        return "Left"_si;
     case GDK_KEY_Page_Down:
     case GDK_KEY_KP_Page_Down:
-        return "PageDown"_s;
+        return "PageDown"_si;
     case GDK_KEY_Page_Up:
     case GDK_KEY_KP_Page_Up:
-        return "PageUp"_s;
+        return "PageUp"_si;
     case GDK_KEY_Pause:
-        return "Pause"_s;
+        return "Pause"_si;
     case GDK_KEY_3270_PrintScreen:
     case GDK_KEY_Print:
-        return "PrintScreen"_s;
+        return "PrintScreen"_si;
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
-        return "Right"_s;
+        return "Right"_si;
     case GDK_KEY_Select:
-        return "Select"_s;
+        return "Select"_si;
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
-        return "Up"_s;
+        return "Up"_si;
         // Standard says that DEL becomes U+007F.
     case GDK_KEY_Delete:
-        return "U+007F"_s;
+        return "U+007F"_si;
     case GDK_KEY_BackSpace:
-        return "U+0008"_s;
+        return "U+0008"_si;
     case GDK_KEY_ISO_Left_Tab:
     case GDK_KEY_3270_BackTab:
     case GDK_KEY_Tab:
-        return "U+0009"_s;
+        return "U+0009"_si;
     default:
         return makeString("U+"_s, hex(gdk_keyval_to_unicode(gdk_keyval_to_upper(keyval)), 4));
     }
@@ -1301,27 +1301,25 @@ int WebKeyboardEvent::windowsKeyCodeForGdkKeyval(unsigned keyval)
 
 }
 
-String WebKeyboardEvent::singleCharacterStringForGdkKeyval(unsigned keyval)
+RefPtr<StringImpl> WebKeyboardEvent::singleCharacterStringForGdkKeyval(unsigned keyval)
 {
     switch (keyval) {
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_KP_Enter:
     case GDK_KEY_Return:
-        return String("\r"_s);
+        return "\r"_si;
     case GDK_KEY_BackSpace:
-        return String("\x8"_s);
+        return "\x8"_si;
     case GDK_KEY_Tab:
-        return String("\t"_s);
+        return "\t"_si;
     default:
         gunichar c = gdk_keyval_to_unicode(keyval);
         glong nwc;
         gunichar2* uchar16 = g_ucs4_to_utf16(&c, 1, 0, &nwc, 0);
 
-        String retVal;
+        RefPtr<StringImpl> retVal;
         if (uchar16)
-            retVal = String(unsafeMakeSpan((char16_t*)uchar16, static_cast<size_t>(nwc)));
-        else
-            retVal = String();
+            retVal = StringImpl::create(unsafeMakeSpan((char16_t*)uchar16, static_cast<size_t>(nwc)));
 
         g_free(uchar16);
 

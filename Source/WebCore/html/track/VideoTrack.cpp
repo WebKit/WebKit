@@ -51,9 +51,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrack);
 
-const AtomString& VideoTrack::signKeyword()
+const RefPtr<AtomStringImpl>& VideoTrack::signKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> sign("sign"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> sign("sign"_s);
     return sign;
 }
 
@@ -91,14 +91,14 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
     setId(trackPrivate.id());
 }
 
-bool VideoTrack::isValidKind(const AtomString& value) const
+bool VideoTrack::isValidKind(AtomStringImpl* value) const
 {
-    return value == "alternative"_s
-        || value == "commentary"_s
-        || value == "captions"_s
-        || value == "main"_s
-        || value == "sign"_s
-        || value == "subtitles"_s;
+    return equal(value, "alternative"_s)
+        || equal(value, "commentary"_s)
+        || equal(value, "captions"_s)
+        || equal(value, "main"_s)
+        || equal(value, "sign"_s)
+        || equal(value, "subtitles"_s);
 }
 
 void VideoTrack::setSelected(const bool selected)
@@ -156,17 +156,17 @@ void VideoTrack::idChanged(TrackID id)
     });
 }
 
-void VideoTrack::labelChanged(const String& label)
+void VideoTrack::labelChanged(StringImpl* label)
 {
-    setLabel(AtomString { label.isolatedCopy() });
+    setLabel(AtomStringImpl::add(isolatedCopy(label)).get());
     m_clients.forEach([this] (auto& client) {
         client.videoTrackLabelChanged(*this);
     });
 }
 
-void VideoTrack::languageChanged(const String& language)
+void VideoTrack::languageChanged(StringImpl* language)
 {
-    setLanguage(AtomString { language.isolatedCopy() });
+    setLanguage(AtomStringImpl::add(isolatedCopy(language)).get());
 }
 
 void VideoTrack::willRemove()
@@ -176,7 +176,7 @@ void VideoTrack::willRemove()
     });
 }
 
-void VideoTrack::setKind(const AtomString& kind)
+void VideoTrack::setKind(AtomStringImpl* kind)
 {
     // 10.1 kind, on setting:
     // 1. If the value being assigned to this attribute does not match one of the video track kinds,
@@ -196,7 +196,7 @@ void VideoTrack::setKind(const AtomString& kind)
     });
 }
 
-void VideoTrack::setLanguage(const AtomString& language)
+void VideoTrack::setLanguage(AtomStringImpl* language)
 {
     // 10.1 language, on setting:
     // 1. If the value being assigned to this attribute is not an empty string or a BCP 47 language
@@ -220,22 +220,22 @@ void VideoTrack::updateKindFromPrivate()
 {
     switch (protect(m_private)->kind()) {
     case VideoTrackPrivate::Kind::Alternative:
-        setKind("alternative"_s);
+        setKind("alternative"_atom);
         return;
     case VideoTrackPrivate::Kind::Captions:
-        setKind("captions"_s);
+        setKind("captions"_atom);
         return;
     case VideoTrackPrivate::Kind::Main:
-        setKind("main"_s);
+        setKind("main"_atom);
         return;
     case VideoTrackPrivate::Kind::Sign:
-        setKind("sign"_s);
+        setKind("sign"_atom);
         return;
     case VideoTrackPrivate::Kind::Subtitles:
-        setKind("subtitles"_s);
+        setKind("subtitles"_atom);
         return;
     case VideoTrackPrivate::Kind::Commentary:
-        setKind("commentary"_s);
+        setKind("commentary"_atom);
         return;
     case VideoTrackPrivate::Kind::None:
         setKind(emptyAtom());

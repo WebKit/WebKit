@@ -69,7 +69,7 @@ WebKitSecurityManager* webkitSecurityManagerCreate(WebKitWebContext* webContext)
 
 static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, const char* scheme, SecurityPolicy policy)
 {
-    String urlScheme = String::fromUTF8(scheme);
+    RefPtr<StringImpl> urlScheme = StringImpl::fromUTF8(scheme);
     Ref processPool = webkitWebContextGetProcessPool(manager->priv->webContext);
 
     // We keep the WebCore::LegacySchemeRegistry of the UI process in sync with the
@@ -105,7 +105,7 @@ static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, c
 
 static bool checkSecurityPolicyForURIScheme(const char* scheme, SecurityPolicy policy)
 {
-    String urlScheme = String::fromUTF8(scheme);
+    RefPtr<StringImpl> urlScheme = StringImpl::fromUTF8(scheme);
 
     switch (policy) {
     case SecurityPolicyLocal:

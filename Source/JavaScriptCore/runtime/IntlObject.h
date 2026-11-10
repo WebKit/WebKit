@@ -89,8 +89,8 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-String defaultLocale(JSGlobalObject*);
-using LocaleSet = MemoryCompactLookupOnlyRobinHoodHashSet<String>;
+RefPtr<StringImpl> defaultLocale(JSGlobalObject*);
+using LocaleSet = MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>;
 const LocaleSet& intlAvailableLocales();
 const LocaleSet& intlCollatorAvailableLocales();
 const LocaleSet& intlSegmenterAvailableLocales();
@@ -103,9 +103,9 @@ inline const LocaleSet& intlListFormatAvailableLocales() { return intlAvailableL
 inline const LocaleSet& intlDurationFormatAvailableLocales() { return intlAvailableLocales(); }
 
 using CalendarID = unsigned;
-JS_EXPORT_PRIVATE const Vector<String>& intlAvailableCalendars();
+JS_EXPORT_PRIVATE const Vector<RefPtr<StringImpl>>& intlAvailableCalendars();
 
-JS_EXPORT_PRIVATE const UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash>& intlAvailableCalendarIndex();
+JS_EXPORT_PRIVATE const UncheckedKeyHashMap<RefPtr<StringImpl>, CalendarID, ASCIICaseInsensitiveHash>& intlAvailableCalendarIndex();
 
 extern CalendarID JS_EXPORT_PRIVATE iso8601CalendarIDStorage;
 CalendarID JS_EXPORT_PRIVATE iso8601CalendarIDSlow();
@@ -162,7 +162,7 @@ JS_EXPORT_PRIVATE std::optional<TimeZoneID> intlResolveTimeZoneID(StringView);
 // primary "Asia/Kolkata"). The identifier is an immortal static string.
 struct AvailableNamedTimeZone {
     TimeZoneID id;
-    String identifier;
+    RefPtr<StringImpl> identifier;
 };
 JS_EXPORT_PRIVATE std::optional<AvailableNamedTimeZone> intlAvailableNamedTimeZone(StringView);
 
@@ -170,36 +170,36 @@ JS_EXPORT_PRIVATE std::optional<AvailableNamedTimeZone> intlAvailableNamedTimeZo
 // using ICU 74's ucal_getIanaTimeZoneID when available and falling back to
 // ucal_getCanonicalTimeZoneID otherwise. UTC-equivalent zones are normalized
 // to "UTC" per ECMA-402.
-JS_EXPORT_PRIVATE String toPrimaryIanaTimeZoneIdentifier(std::span<const char16_t> timeZone);
-JS_EXPORT_PRIVATE String toPrimaryIanaTimeZoneIdentifier(StringView timeZone);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> toPrimaryIanaTimeZoneIdentifier(std::span<const char16_t> timeZone);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> toPrimaryIanaTimeZoneIdentifier(StringView timeZone);
 
 void initializeAvailableTimeZones();
 
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
-String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback);
+RefPtr<StringImpl> intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const ASCIICString&);
-String languageTagForLocaleID(const char*, bool isImmortal = false);
-Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
+RefPtr<StringImpl> languageTagForLocaleID(const char*, bool isImmortal = false);
+Vector<RefPtr<StringImpl>> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
-using ResolveLocaleOptions = std::array<std::optional<String>, numberOfRelevantExtensionKeys>;
-using RelevantExtensions = std::array<String, numberOfRelevantExtensionKeys>;
+using ResolveLocaleOptions = std::array<std::optional<RefPtr<StringImpl>>, numberOfRelevantExtensionKeys>;
+using RelevantExtensions = std::array<RefPtr<StringImpl>, numberOfRelevantExtensionKeys>;
 struct ResolvedLocale {
-    String locale;
-    String dataLocale;
+    RefPtr<StringImpl> locale;
+    RefPtr<StringImpl> dataLocale;
     RelevantExtensions extensions;
 };
 
-ResolvedLocale resolveLocale(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const ResolveLocaleOptions&, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey));
-JSValue supportedLocales(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, JSValue options);
-String removeUnicodeLocaleExtension(StringView locale);
-String extractNonUnicodeBCP47Extensions(StringView locale);
-String bestAvailableLocale(const LocaleSet& availableLocales, const String& requestedLocale);
-template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
-Vector<String> numberingSystemsForLocale(const String& locale);
-String defaultNumberingSystemForLocale(const String& dataLocale);
-String defaultCalendarForLocale(const String& dataLocale);
+ResolvedLocale resolveLocale(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<RefPtr<StringImpl>>& requestedLocales, LocaleMatcher, const ResolveLocaleOptions&, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<RefPtr<StringImpl>> (*localeData)(StringImpl*, RelevantExtensionKey));
+JSValue supportedLocales(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<RefPtr<StringImpl>>& requestedLocales, JSValue options);
+RefPtr<StringImpl> removeUnicodeLocaleExtension(StringView locale);
+RefPtr<StringImpl> extractNonUnicodeBCP47Extensions(StringView locale);
+RefPtr<StringImpl> bestAvailableLocale(const LocaleSet& availableLocales, StringImpl* requestedLocale);
+template<typename Predicate> RefPtr<StringImpl> bestAvailableLocale(StringImpl* requestedLocale, Predicate);
+Vector<RefPtr<StringImpl>> numberingSystemsForLocale(StringImpl* locale);
+RefPtr<StringImpl> defaultNumberingSystemForLocale(StringImpl* dataLocale);
+RefPtr<StringImpl> defaultCalendarForLocale(StringImpl* dataLocale);
 
 Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&&);
 
@@ -211,8 +211,8 @@ NODELETE bool isUnicodeRegionSubtag(StringView);
 NODELETE bool isUnicodeVariantSubtag(StringView);
 bool isUnicodeLanguageId(StringView);
 JS_EXPORT_PRIVATE bool isStructurallyValidLanguageTag(StringView);
-String canonicalizeUnicodeLocaleID(const ASCIICString& languageTag);
-JS_EXPORT_PRIVATE String canonicalizeUnicodeLocaleID(const StringView);
+RefPtr<StringImpl> canonicalizeUnicodeLocaleID(const ASCIICString& languageTag);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> canonicalizeUnicodeLocaleID(const StringView);
 
 NODELETE bool isWellFormedCurrencyCode(StringView);
 
@@ -222,8 +222,8 @@ struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;
 };
 
-std::optional<String> mapICUCollationKeywordToBCP47(const String&);
-std::optional<String> mapICUCalendarKeywordToBCP47(const String&);
-std::optional<String> mapBCP47ToICUCalendarKeyword(const String&);
+std::optional<RefPtr<StringImpl>> mapICUCollationKeywordToBCP47(StringImpl*);
+std::optional<RefPtr<StringImpl>> mapICUCalendarKeywordToBCP47(StringImpl*);
+std::optional<RefPtr<StringImpl>> mapBCP47ToICUCalendarKeyword(StringImpl*);
 
 } // namespace JSC

@@ -241,7 +241,7 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance& utteranc
     if (errorOccurred)
         utterance.errorEventOccurred(eventNames().errorEvent, SpeechSynthesisErrorCode::Canceled);
     else
-        utterance.eventOccurred(eventNames().endEvent, 0, 0, String());
+        utterance.eventOccurred(eventNames().endEvent, 0, 0, nullString());
 
     if (m_utteranceQueue.size()) {
         Ref<SpeechSynthesisUtterance> firstUtterance = m_utteranceQueue.takeFirst();
@@ -255,17 +255,17 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance& utteranc
 
 void SpeechSynthesis::boundaryEventOccurred(PlatformSpeechSynthesisUtterance& platformUtterance, SpeechBoundary boundary, unsigned charIndex, unsigned charLength)
 {
-    static NeverDestroyed<const String> wordBoundaryString(MAKE_STATIC_STRING_IMPL("word"));
-    static NeverDestroyed<const String> sentenceBoundaryString(MAKE_STATIC_STRING_IMPL("sentence"));
+    static NeverDestroyed<const RefPtr<StringImpl>> wordBoundaryString(MAKE_STATIC_STRING_IMPL("word"));
+    static NeverDestroyed<const RefPtr<StringImpl>> sentenceBoundaryString(MAKE_STATIC_STRING_IMPL("sentence"));
 
     RefPtr client = platformUtterance.client();
     ASSERT(client);
     switch (boundary) {
     case SpeechBoundary::SpeechWordBoundary:
-        client->eventOccurred(eventNames().boundaryEvent, charIndex, charLength, wordBoundaryString);
+        client->eventOccurred(eventNames().boundaryEvent, charIndex, charLength, wordBoundaryString.get());
         break;
     case SpeechBoundary::SpeechSentenceBoundary:
-        client->eventOccurred(eventNames().boundaryEvent, charIndex, charLength, sentenceBoundaryString);
+        client->eventOccurred(eventNames().boundaryEvent, charIndex, charLength, sentenceBoundaryString.get());
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -322,21 +322,21 @@ void SpeechSynthesis::voicesChanged()
 void SpeechSynthesis::didStartSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     if (utterance.client())
-        protect(downcast<SpeechSynthesisUtterance>(*utterance.client()))->eventOccurred(eventNames().startEvent, 0, 0, String());
+        protect(downcast<SpeechSynthesisUtterance>(*utterance.client()))->eventOccurred(eventNames().startEvent, 0, 0, nullString());
 }
 
 void SpeechSynthesis::didPauseSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     m_isPaused = true;
     if (utterance.client())
-        protect(downcast<SpeechSynthesisUtterance>(*utterance.client()))->eventOccurred(eventNames().pauseEvent, 0, 0, String());
+        protect(downcast<SpeechSynthesisUtterance>(*utterance.client()))->eventOccurred(eventNames().pauseEvent, 0, 0, nullString());
 }
 
 void SpeechSynthesis::didResumeSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     m_isPaused = false;
     if (utterance.client())
-        protect(downcast<SpeechSynthesisUtterance>(*utterance.client()))->eventOccurred(eventNames().resumeEvent, 0, 0, String());
+        protect(downcast<SpeechSynthesisUtterance>(*utterance.client()))->eventOccurred(eventNames().resumeEvent, 0, 0, nullString());
 }
 
 void SpeechSynthesis::didFinishSpeaking(PlatformSpeechSynthesisUtterance& utterance)

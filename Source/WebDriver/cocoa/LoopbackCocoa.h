@@ -31,10 +31,10 @@ namespace WebDriver {
 
 // Whether a URL, such as the value of an Origin header, is on this machine. Its host must be
 // localhost, an IPv4 address in 127.0.0.0/8, or ::1.
-bool isLoopbackURL(const String&);
+bool isLoopbackURL(StringImpl*);
 
 // minidriver only listens on this machine, so the only host it can listen on is "local", the
 // default. For any other host, this explains that on stderr, and returns false.
-bool validateListeningHost(const String&);
+bool validateListeningHost(StringImpl*);
 
 } // namespace WebDriver

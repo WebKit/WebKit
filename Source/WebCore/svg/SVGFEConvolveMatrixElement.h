@@ -31,15 +31,15 @@ template<>
 struct SVGPropertyTraits<EdgeModeType> {
     static unsigned highestEnumValue() { return static_cast<unsigned>(EdgeModeType::None); }
 
-    static String toString(EdgeModeType type)
+    static RefPtr<StringImpl> toString(EdgeModeType type)
     {
         switch (type) {
         case EdgeModeType::Unknown:
             return emptyString();
         case EdgeModeType::Duplicate:
-            return "duplicate"_s;
+            return "duplicate"_si;
         case EdgeModeType::Wrap:
-            return "wrap"_s;
+            return "wrap"_si;
         case EdgeModeType::None:
             return noneAtom();
         }
@@ -48,13 +48,13 @@ struct SVGPropertyTraits<EdgeModeType> {
         return emptyString();
     }
 
-    static EdgeModeType fromString(SVGElement&, const String& value)
+    static EdgeModeType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "duplicate"_s)
+        if (equal(value, "duplicate"_s))
             return EdgeModeType::Duplicate;
-        if (value == "wrap"_s)
+        if (equal(value, "wrap"_s))
             return EdgeModeType::Wrap;
-        if (value == noneAtom())
+        if (equal(value, noneAtom()))
             return EdgeModeType::None;
         return EdgeModeType::Unknown;
     }
@@ -69,7 +69,7 @@ public:
     void setOrder(float orderX, float orderY);
     void setKernelUnitLength(float kernelUnitLengthX, float kernelUnitLengthY);
 
-    String in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
     int orderX() const { return m_orderX->currentValue(); }
     int orderY() const { return m_orderY->currentValue(); }
     const SVGNumberList& kernelMatrix() const LIFETIME_BOUND { return m_kernelMatrix->currentValue(); }
@@ -103,13 +103,13 @@ private:
     static constexpr int initialOrderValue = 3;
     static constexpr float initialDivisorValue = 1;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool isValidTargetXOffset() const;
     bool isValidTargetYOffset() const;
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()) }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     bool m_hasInvalidOrderAttribute { false };

@@ -192,8 +192,8 @@ enum class ContextMenuItemType : uint8_t {
 class ContextMenuItem {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContextMenuItem, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu* subMenu = nullptr);
-    NODELETE WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked, unsigned indentationLevel = 0);
+    WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, StringImpl*, ContextMenu* subMenu = nullptr);
+    NODELETE WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, StringImpl*, bool enabled, bool checked, unsigned indentationLevel = 0);
 
     WEBCORE_EXPORT ~ContextMenuItem();
 
@@ -214,20 +214,20 @@ public:
 
     void setSubMenu(ContextMenu*);
 
-    WEBCORE_EXPORT ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel = 0);
+    WEBCORE_EXPORT ContextMenuItem(ContextMenuAction, StringImpl*, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel = 0);
     NODELETE ContextMenuItem();
 
     NODELETE bool isNull() const;
 
-    void setTitle(String&& title) { m_title = WTF::move(title); }
-    void setTitle(const String& title) { m_title = title; }
-    const String& title() const LIFETIME_BOUND { return m_title; }
+    void setTitle(RefPtr<StringImpl>&& title) { m_title = WTF::move(title); }
+    void setTitle(StringImpl* title) { m_title = title; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
 
     const Vector<ContextMenuItem>& subMenuItems() const LIFETIME_BOUND { return m_subMenuItems; }
 private:
     ContextMenuItemType m_type;
     ContextMenuAction m_action;
-    String m_title;
+    RefPtr<StringImpl> m_title;
     bool m_enabled;
     bool m_checked;
     unsigned m_indentationLevel;

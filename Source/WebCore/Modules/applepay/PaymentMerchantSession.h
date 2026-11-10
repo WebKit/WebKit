@@ -48,7 +48,7 @@ public:
     {
     }
 
-    static std::optional<PaymentMerchantSession> fromJS(JSC::JSGlobalObject&, JSC::JSValue, String& errorMessage);
+    static std::optional<PaymentMerchantSession> fromJS(JSC::JSGlobalObject&, JSC::JSValue, RefPtr<StringImpl>& errorMessage);
 
     RetainPtr<PKPaymentMerchantSession> pkPaymentMerchantSession() const { return m_pkPaymentMerchantSession; }
 

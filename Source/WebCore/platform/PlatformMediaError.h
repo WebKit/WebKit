@@ -55,7 +55,7 @@ enum class PlatformMediaError : uint8_t {
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;
 
-String convertEnumerationToString(PlatformMediaError);
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaError);
 
 } // namespace WebCore
 
@@ -66,7 +66,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::PlatformMediaError> {
-    static String toString(const WebCore::PlatformMediaError error)
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaError error)
     {
         return convertEnumerationToString(error);
     }

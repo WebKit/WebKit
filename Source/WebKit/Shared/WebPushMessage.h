@@ -45,7 +45,7 @@ namespace WebKit {
 
 struct WebPushMessage {
     std::optional<Vector<uint8_t>> pushData;
-    String pushPartitionString;
+    RefPtr<StringImpl> pushPartitionString;
     URL registrationURL;
     std::optional<WebCore::NotificationPayload> notificationPayload;
 

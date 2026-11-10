@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& /*filenames*/)
+RefPtr<Icon> Icon::createIconForFiles(const Vector<RefPtr<StringImpl>>& /*filenames*/)
 {
     return nullptr;
 }

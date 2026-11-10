@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static std::optional<String> contentTypeLookUpForKnownResource(const char* filename)
+static std::optional<RefPtr<StringImpl>> contentTypeLookUpForKnownResource(const char* filename)
 {
     StringView fileName = StringView::fromLatin1(filename);
     StringView extension;
@@ -82,12 +82,12 @@ void ResourceLoader::loadGResource()
             return;
 
         auto* task = G_TASK(result);
-        URL url({ }, String::fromUTF8(static_cast<const char*>(g_task_get_task_data(task))));
+        URL url({ }, StringImpl::fromUTF8(static_cast<const char*>(g_task_get_task_data(task))));
 
         GUniqueOutPtr<GError> error;
         GRefPtr<GBytes> bytes = adoptGRef(static_cast<GBytes*>(g_task_propagate_pointer(task, &error.outPtr())));
         if (!bytes) {
-            loader->didFail(ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, url, String::fromUTF8(error->message)));
+            loader->didFail(ResourceError(StringImpl::fromLatin1(g_quark_to_string(error->domain)), error->code, url, StringImpl::fromUTF8(error->message)));
             return;
         }
 
@@ -100,22 +100,22 @@ void ResourceLoader::loadGResource()
         auto contentTypeString = contentTypeLookUpForKnownResource(fileName.get());
         if (!contentTypeString) {
             auto contentType = GMallocString::unsafeAdoptFromUTF8(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
-            contentTypeString = String::fromUTF8(contentType.span());
+            contentTypeString = StringImpl::fromUTF8(contentType.span());
         }
         ResourceResponse response { WTF::move(url), extractMIMETypeFromMediaType(*contentTypeString), static_cast<long long>(dataSize), extractCharsetFromMediaType(*contentTypeString).toString() };
         response.setHTTPStatusCode(200);
-        response.setHTTPStatusText("OK"_s);
+        response.setHTTPStatusText("OK"_si);
         response.setHTTPHeaderField(HTTPHeaderName::ContentType, *contentTypeString);
         response.setSource(ResourceResponse::Source::Network);
         loader->deliverResponseAndData(WTF::move(response), SharedBuffer::create(bytes.get()));
     }, protectedThis.leakRef()));
 
     g_task_set_priority(task.get(), RunLoopSourcePriority::AsyncIONetwork);
-    g_task_set_task_data(task.get(), gStrdup(m_request.url().string().utf8()), g_free);
+    g_task_set_task_data(task.get(), gStrdup(utf8(m_request.url().string())), g_free);
     g_task_run_in_thread(task.get(), [](GTask* task, gpointer, gpointer taskData, GCancellable*) {
-        URL url({ }, String::fromUTF8(static_cast<const char*>(taskData)));
+        URL url({ }, StringImpl::fromUTF8(static_cast<const char*>(taskData)));
         GError* error = nullptr;
-        GBytes* bytes = g_resources_lookup_data(url.protocolIs("webkit-pdfjs-viewer"_s) ? makeString("/org/webkit/pdfjs"_s, url.path()).utf8().legacyCStringPointer() : url.path().utf8().legacyCStringPointer(),
+        GBytes* bytes = g_resources_lookup_data(url.protocolIs("webkit-pdfjs-viewer"_s) ? utf8(makeString("/org/webkit/pdfjs"_s, url.path())).legacyCStringPointer() : url.path().utf8().legacyCStringPointer(),
             G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
         if (!bytes)
             g_task_return_error(task, error);

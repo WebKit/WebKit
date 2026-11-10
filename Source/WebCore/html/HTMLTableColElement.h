@@ -38,14 +38,14 @@ public:
     unsigned span() const { return m_span; }
     WEBCORE_EXPORT void setSpan(unsigned);
 
-    NODELETE String width() const;
+    NODELETE RefPtr<StringImpl> width() const;
 
 private:
     HTMLTableColElement(const QualifiedName& tagName, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
     const MutableStyleProperties* additionalPresentationalHintStyle() const final;
 
     unsigned m_span;

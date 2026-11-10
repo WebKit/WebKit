@@ -45,8 +45,8 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
-#define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8(), ##__VA_ARGS__)
-#define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8(), ##__VA_ARGS__)
+#define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, utf8(envID), ##__VA_ARGS__)
+#define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, utf8(envID), ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -109,7 +109,7 @@ static Ref<ExtensionCapabilityGrantsPromise> grantCapabilityInternal(const Exten
 #endif
 }
 
-static bool prepareGrant(const String& environmentIdentifier, AuxiliaryProcessProxy& auxiliaryProcess)
+static bool prepareGrant(StringImpl* environmentIdentifier, AuxiliaryProcessProxy& auxiliaryProcess)
 {
     ExtensionCapabilityGrant grant { environmentIdentifier };
     auto& existingGrants = auxiliaryProcess.extensionCapabilityGrants();
@@ -148,7 +148,7 @@ static Vector<Ref<AuxiliaryProcessProxy>> auxiliaryProcessesForPage(WebPageProxy
     return auxiliaryProcesses;
 }
 
-static Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant(const String& environmentIdentifier, WebPageProxy& page)
+static Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant(StringImpl* environmentIdentifier, WebPageProxy& page)
 {
     Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant;
 
@@ -160,7 +160,7 @@ static Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant(const String& en
     return processesNeedingGrant;
 }
 
-static bool finalizeGrant(const String& environmentIdentifier, AuxiliaryProcessProxy& auxiliaryProcess, ExtensionCapabilityGrant&& grant)
+static bool finalizeGrant(StringImpl* environmentIdentifier, AuxiliaryProcessProxy& auxiliaryProcess, ExtensionCapabilityGrant&& grant)
 {
     auto& existingGrants = auxiliaryProcess.extensionCapabilityGrants();
 
@@ -195,8 +195,8 @@ RefPtr<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create()
 
 void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability, WebPageProxy& page)
 {
-    String environmentIdentifier = capability.environmentIdentifier();
-    if (environmentIdentifier.isEmpty()) {
+    RefPtr<StringImpl> environmentIdentifier = capability.environmentIdentifier();
+    if (isEmpty(environmentIdentifier)) {
         GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "environmentIdentifier must not be empty");
         return;
     }
@@ -226,7 +226,7 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability, We
 
 void ExtensionCapabilityGranter::revoke(const ExtensionCapability& capability, WebPageProxy& page)
 {
-    String environmentIdentifier = capability.environmentIdentifier();
+    RefPtr<StringImpl> environmentIdentifier = capability.environmentIdentifier();
     Vector<ExtensionCapabilityGrant> grants;
 
     grants.append(page.legacyMainFrameProcess().extensionCapabilityGrants().take(environmentIdentifier));

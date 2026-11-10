@@ -41,13 +41,13 @@
 - (NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->text().createNSString().autorelease();
+    return createNSString(IMPL->text()).autorelease();
 }
 
 - (void)setText:(NSString *)newText
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setText(newText);
+    IMPL->setText(StringImpl::create(newText));
 }
 
 @end

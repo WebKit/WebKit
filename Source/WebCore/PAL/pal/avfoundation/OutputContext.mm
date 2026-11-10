@@ -65,10 +65,10 @@ bool OutputContext::supportsMultipleOutputDevices()
     return [m_context supportsMultipleOutputDevices];
 }
 
-String OutputContext::deviceName()
+RefPtr<StringImpl> OutputContext::deviceName()
 {
     if (!supportsMultipleOutputDevices())
-        return [m_context deviceName];
+        return StringImpl::create([m_context deviceName]);
 
     return makeString(interleave(outputDevices(), [](auto& device) {
         return device.name();

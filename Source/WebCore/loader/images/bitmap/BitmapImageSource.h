@@ -170,9 +170,9 @@ private:
     bool hasHDRGainMap() const final { return m_descriptor.hasHDRGainMap(); }
     bool hasHDRContent() const final { return m_descriptor.hasHDRGainMap() || m_descriptor.hasHDRColorSpace() || hasHDRContentForTesting(); }
 
-    String uti() const final { return m_descriptor.uti(); }
-    String filenameExtension() const final { return m_descriptor.filenameExtension(); }
-    String accessibilityDescription() const final { return m_descriptor.accessibilityDescription(); }
+    RefPtr<StringImpl> uti() const final { return m_descriptor.uti(); }
+    RefPtr<StringImpl> filenameExtension() const final { return m_descriptor.filenameExtension(); }
+    RefPtr<StringImpl> accessibilityDescription() const final { return m_descriptor.accessibilityDescription(); }
     std::optional<IntPoint> hotSpot() const final { return m_descriptor.hotSpot(); }
     SubsamplingLevel maximumSubsamplingLevel() const { return m_descriptor.maximumSubsamplingLevel(); }
     SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext& context, const FloatSize& scaleFactor, AllowImageSubsampling allowImageSubsampling) final { return m_descriptor.subsamplingLevelForScaleFactor(context, scaleFactor, allowImageSubsampling); }
@@ -201,7 +201,7 @@ private:
 
     // BitmapImage metadata
     RefPtr<ImageObserver> imageObserver() const;
-    String mimeType() const;
+    RefPtr<StringImpl> mimeType() const;
     long long expectedContentLength() const;
 
     // Testing support

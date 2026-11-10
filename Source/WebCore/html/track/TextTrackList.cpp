@@ -131,7 +131,7 @@ TextTrack* TextTrackList::item(unsigned index) const
     return nullptr;
 }
 
-RefPtr<TextTrack> TextTrackList::getTrackById(const AtomString& id) const
+RefPtr<TextTrack> TextTrackList::getTrackById(AtomStringImpl* id) const
 {
     // 4.8.10.12.5 Text track API
     // The getTrackById(id) method must return the first TextTrack in the

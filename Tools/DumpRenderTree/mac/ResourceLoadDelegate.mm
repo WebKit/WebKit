@@ -183,7 +183,7 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
         if ([lowercaseTestURL hasPrefix:@"http:"] || [lowercaseTestURL hasPrefix:@"https:"])
             testHost = [[NSURL URLWithString:testURL] host];
         if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && !isAllowedHost(host) && (!testHost || isLocalhost(testHost))) {
-            String blockedURL = [url absoluteString];
+            RefPtr<StringImpl> blockedURL = StringImpl::create([url absoluteString]);
             replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
             replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
             auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);

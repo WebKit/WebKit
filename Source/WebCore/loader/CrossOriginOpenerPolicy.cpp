@@ -79,18 +79,18 @@ static ASCIILiteral crossOriginOpenerPolicyValueToEffectivePolicyString(CrossOri
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-to
-static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& reportingClient, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer)
+static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& reportingClient, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, StringImpl* referrer)
 {
     auto& endpoint = coop.reportingEndpointForDisposition(disposition);
-    if (endpoint.isEmpty())
+    if (isEmpty(endpoint))
         return;
 
-    Ref report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
-        body.setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
-        body.setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
-        body.setString("previousResponseURL"_s, coopOrigin.isSameOriginAs(previousResponseOrigin) ? PingLoader::sanitizeURLForReport(previousResponseURL) : String());
-        body.setString("type"_s, "navigation-to-response"_s);
-        body.setString("referrer"_s, referrer);
+    Ref report = Report::createReportFormDataForViolation("coop"_si, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+        body.setString("disposition"_si, disposition == COOPDisposition::Reporting ? "reporting"_si : "enforce"_si);
+        body.setString("effectivePolicy"_si, StringImpl::create(crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value)).ptr());
+        body.setString("previousResponseURL"_si, coopOrigin.isSameOriginAs(previousResponseOrigin) ? PingLoader::sanitizeURLForReport(previousResponseURL) : nullptr);
+        body.setString("type"_si, "navigation-to-response"_si);
+        body.setString("referrer"_si, referrer);
     });
     reportingClient.sendReportToEndpoints(coopURL, { }, singleElementSpan(endpoint), WTF::move(report), ViolationReportType::CrossOriginOpenerPolicy);
 }
@@ -99,14 +99,14 @@ static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& rep
 static void sendViolationReportWhenNavigatingAwayFromCOOPResponse(ReportingClient& reportingClient, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& nextResponseOrigin, bool isCOOPResponseNavigationSource)
 {
     auto& endpoint = coop.reportingEndpointForDisposition(disposition);
-    if (endpoint.isEmpty())
+    if (isEmpty(endpoint))
         return;
 
-    Ref report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
-        body.setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
-        body.setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
-        body.setString("nextResponseURL"_s, coopOrigin.isSameOriginAs(nextResponseOrigin) || isCOOPResponseNavigationSource ? PingLoader::sanitizeURLForReport(nextResponseURL) : String());
-        body.setString("type"_s, "navigation-from-response"_s);
+    Ref report = Report::createReportFormDataForViolation("coop"_si, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+        body.setString("disposition"_si, disposition == COOPDisposition::Reporting ? "reporting"_si : "enforce"_si);
+        body.setString("effectivePolicy"_si, StringImpl::create(crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value)).ptr());
+        body.setString("nextResponseURL"_si, coopOrigin.isSameOriginAs(nextResponseOrigin) || isCOOPResponseNavigationSource ? PingLoader::sanitizeURLForReport(nextResponseURL) : nullptr);
+        body.setString("type"_si, "navigation-from-response"_si);
     });
 
     reportingClient.sendReportToEndpoints(coopURL, { }, singleElementSpan(endpoint), WTF::move(report), ViolationReportType::CrossOriginOpenerPolicy);
@@ -186,7 +186,7 @@ static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOr
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-enforce
-static CrossOriginOpenerPolicyEnforcementResult enforceResponseCrossOriginOpenerPolicy(ReportingClient& reportingClient, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult, const URL& responseURL, SecurityOrigin& responseOrigin, const CrossOriginOpenerPolicy& responseCOOP, const String& referrer, bool isDisplayingInitialEmptyDocument)
+static CrossOriginOpenerPolicyEnforcementResult enforceResponseCrossOriginOpenerPolicy(ReportingClient& reportingClient, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult, const URL& responseURL, SecurityOrigin& responseOrigin, const CrossOriginOpenerPolicy& responseCOOP, StringImpl* referrer, bool isDisplayingInitialEmptyDocument)
 {
     CrossOriginOpenerPolicyEnforcementResult newCOOPEnforcementResult = {
         responseURL,
@@ -240,18 +240,18 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
         if (!policyString)
             return;
 
-        if (policyString->string() == coopSameOriginToken) {
+        if (equal(policyString->string(), coopSameOriginToken)) {
             auto& coep = ensureCOEP();
             if (coep.value == CrossOriginEmbedderPolicyValue::RequireCORP || (headerName == HTTPHeaderName::CrossOriginOpenerPolicyReportOnly && coep.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP))
                 value = CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
             else
                 value = CrossOriginOpenerPolicyValue::SameOrigin;
-        } else if (policyString->string() == coopSameOriginAllowPopupsToken)
+        } else if (equal(policyString->string(), coopSameOriginAllowPopupsToken))
             value = CrossOriginOpenerPolicyValue::SameOriginAllowPopups;
-        else if (policyString->string() == coopNoopenerAllowPopupsToken)
+        else if (equal(policyString->string(), coopNoopenerAllowPopupsToken))
             value = CrossOriginOpenerPolicyValue::NoopenerAllowPopups;
 
-        if (auto* reportToString = coopParsingResult->second.getIf<String>("report-to"_s))
+        if (auto* reportToString = coopParsingResult->second.getIf<RefPtr<StringImpl>>("report-to"_s))
             reportingEndpoint = *reportToString;
     };
 
@@ -266,32 +266,32 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
 
 CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const &
 {
-    return { value, reportOnlyValue, reportingEndpoint.isolatedCopy(), reportOnlyReportingEndpoint.isolatedCopy() };
+    return { value, reportOnlyValue, WTF::isolatedCopy(reportingEndpoint), WTF::isolatedCopy(reportOnlyReportingEndpoint) };
 }
 
 CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() &&
 {
-    return { value, reportOnlyValue, WTF::move(reportingEndpoint).isolatedCopy(), WTF::move(reportOnlyReportingEndpoint).isolatedCopy() };
+    return { value, reportOnlyValue, WTF::isolatedCopy(WTF::move(reportingEndpoint)), WTF::isolatedCopy(WTF::move(reportOnlyReportingEndpoint)) };
 }
 
 void CrossOriginOpenerPolicy::addPolicyHeadersTo(ResourceResponse& response) const
 {
     if (value != CrossOriginOpenerPolicyValue::UnsafeNone) {
-        if (reportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, crossOriginOpenerPolicyToString(value));
+        if (isEmpty(reportingEndpoint))
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, StringImpl::create(crossOriginOpenerPolicyToString(value)).ptr());
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(value), "; report-to=\""_s, reportingEndpoint, '\"'));
     }
     if (reportOnlyValue != CrossOriginOpenerPolicyValue::UnsafeNone) {
-        if (reportOnlyReportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, crossOriginOpenerPolicyToString(reportOnlyValue));
+        if (isEmpty(reportOnlyReportingEndpoint))
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, StringImpl::create(crossOriginOpenerPolicyToString(reportOnlyValue)).ptr());
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(reportOnlyValue), "; report-to=\""_s, reportOnlyReportingEndpoint, '\"'));
     }
 }
 
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 13.5.6)
-std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient& reportingClient, const ResourceResponse& response, const std::optional<NavigationRequester>& requester, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult)
+std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient& reportingClient, const ResourceResponse& response, const std::optional<NavigationRequester>& requester, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, StringImpl* referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult)
 {
     auto [responseOrigin, responseCOOP] = computeResponseOriginAndCOOP(response, requester, responseCSP);
 

@@ -39,10 +39,10 @@ OutputDevice::OutputDevice(RetainPtr<AVOutputDevice>&& device)
 {
 }
 
-String OutputDevice::name() const
+RefPtr<StringImpl> OutputDevice::name() const
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [m_device name];
+    return StringImpl::create([m_device name]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 

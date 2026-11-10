@@ -27,6 +27,8 @@
  */
 
 #include "config.h"
+
+#include "Helpers/Test.h"
 #include <wtf/SafeStrerror.h>
 
 #include <cstring>
@@ -50,7 +52,7 @@ TEST(WTF_SafeStrerror, LengthMatchesMessage)
     for (int i = 0; i < 10; i++) {
         auto message = safeStrerror(i);
         EXPECT_EQ(strlen(strerror(i)), message.length());
-        EXPECT_EQ(String::fromUTF8(strerror(i)), String { message });
+        EXPECT_EQ(StringImpl::fromUTF8(strerror(i)), StringImpl::create((message).span()).get());
     }
 }
 

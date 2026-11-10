@@ -166,7 +166,7 @@ public:
     void attach();
 
     // Test Utility methods
-    using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
+    using SamplesPromise = NativePromise<Vector<RefPtr<StringImpl>>, PlatformMediaError>;
     Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
     WEBCORE_EXPORT virtual Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);

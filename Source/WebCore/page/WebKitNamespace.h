@@ -58,7 +58,7 @@ public:
 
     UserMessageHandlersNamespace* messageHandlers();
     NODELETE WebKitBufferNamespace& buffers();
-    JSC::JSValue evaluateScript(JSC::JSGlobalObject&, const String& source, const String& url);
+    JSC::JSValue evaluateScript(JSC::JSGlobalObject&, StringImpl* source, StringImpl* url);
     Ref<WebKitJSHandle> createJSHandle(JSC::Strong<JSC::JSObject>);
 
     struct NodeSnapshotInit {

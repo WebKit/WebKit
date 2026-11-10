@@ -36,26 +36,26 @@ class ToggleEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ToggleEvent);
 public:
     struct Init : EventInit {
-        String oldState;
-        String newState;
+        RefPtr<StringImpl> oldState;
+        RefPtr<StringImpl> newState;
         RefPtr<Element> source;
     };
 
-    static Ref<ToggleEvent> create(const AtomString& type, const Init&, Event::IsCancelable);
-    static Ref<ToggleEvent> create(const AtomString& type, const Init&);
+    static Ref<ToggleEvent> create(AtomStringImpl* type, const Init&, Event::IsCancelable);
+    static Ref<ToggleEvent> create(AtomStringImpl* type, const Init&);
     static Ref<ToggleEvent> createForBindings();
 
-    String oldState() const { return m_oldState; }
-    String newState() const { return m_newState; }
+    RefPtr<StringImpl> oldState() const { return m_oldState; }
+    RefPtr<StringImpl> newState() const { return m_newState; }
     RefPtr<Element> source() const;
 
 private:
     ToggleEvent();
-    ToggleEvent(const AtomString&, const Init&, Event::IsCancelable);
-    ToggleEvent(const AtomString&, const Init&);
+    ToggleEvent(AtomStringImpl*, const Init&, Event::IsCancelable);
+    ToggleEvent(AtomStringImpl*, const Init&);
 
-    String m_oldState;
-    String m_newState;
+    RefPtr<StringImpl> m_oldState;
+    RefPtr<StringImpl> m_newState;
     const RefPtr<Element> m_source;
 };
 

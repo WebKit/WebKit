@@ -31,6 +31,7 @@
 #include "HTMLEntitySearch.h"
 #include "HTMLEntityTable.h"
 #include "SegmentedString.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -152,7 +153,7 @@ void SegmentedStringSource::advance()
 
 void SegmentedStringSource::pushEverythingBack()
 {
-    m_source.pushBack(m_consumedCharacters.span());
+    m_source.pushBack(StringImpl::create(borrow(m_consumedCharacters)->span()));
     m_consumedCharacters.clear();
 }
 
@@ -160,7 +161,7 @@ void SegmentedStringSource::pushBackButKeep(unsigned keepCount)
 {
     ASSERT(keepCount < m_consumedCharacters.size());
     unsigned length = m_consumedCharacters.size() - keepCount;
-    m_source.pushBack(m_consumedCharacters.subspan(keepCount, length));
+    m_source.pushBack(StringImpl::create(borrow(m_consumedCharacters)->subspan(keepCount, length)));
     m_consumedCharacters.shrink(keepCount);
 }
 

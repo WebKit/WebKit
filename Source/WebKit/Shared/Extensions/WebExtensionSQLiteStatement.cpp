@@ -40,7 +40,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionSQLiteStatement);
 
-WebExtensionSQLiteStatement::WebExtensionSQLiteStatement(Ref<WebExtensionSQLiteDatabase> database, const String& query, RefPtr<API::Error>& outError)
+WebExtensionSQLiteStatement::WebExtensionSQLiteStatement(Ref<WebExtensionSQLiteDatabase> database, StringImpl* query, RefPtr<API::Error>& outError)
     : m_db(database)
 {
     Ref db = m_db;
@@ -49,7 +49,7 @@ WebExtensionSQLiteStatement::WebExtensionSQLiteStatement(Ref<WebExtensionSQLiteD
 
     db->assertQueue();
 
-    int result = WebCore::sqlitePrepare(db->sqlite3Handle(), query.utf8(), &m_handle);
+    int result = WebCore::sqlitePrepare(db->sqlite3Handle(), utf8(query), &m_handle);
     if (result != SQLITE_OK) {
         db->reportErrorWithCode(result, query, outError);
         return;
@@ -163,7 +163,7 @@ void WebExtensionSQLiteStatement::invalidate()
     m_handle = nullptr;
 }
 
-void WebExtensionSQLiteStatement::bind(const String& string, int parameterIndex)
+void WebExtensionSQLiteStatement::bind(StringImpl* string, int parameterIndex)
 {
     Ref db = m_db;
 
@@ -171,7 +171,7 @@ void WebExtensionSQLiteStatement::bind(const String& string, int parameterIndex)
     ASSERT(isValid());
     ASSERT_ARG(parameterIndex, parameterIndex > 0);
 
-    int result = WebCore::sqliteBindText(m_handle, parameterIndex, string.utf8());
+    int result = WebCore::sqliteBindText(m_handle, parameterIndex, utf8(string));
     if (result != SQLITE_OK)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind string: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
@@ -241,7 +241,7 @@ void WebExtensionSQLiteStatement::bind(int parameterIndex)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind null: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
-HashMap<String, int> WebExtensionSQLiteStatement::columnNamesToIndicies()
+HashMap<RefPtr<StringImpl>, int> WebExtensionSQLiteStatement::columnNamesToIndicies()
 {
     Ref db = m_db;
 
@@ -260,7 +260,7 @@ HashMap<String, int> WebExtensionSQLiteStatement::columnNamesToIndicies()
     return m_columnNamesToIndicies;
 }
 
-Vector<String> WebExtensionSQLiteStatement::columnNames()
+Vector<RefPtr<StringImpl>> WebExtensionSQLiteStatement::columnNames()
 {
     Ref db = m_db;
 

@@ -49,8 +49,8 @@ protected:
 private:
     AccessibilityRole determineAccessibilityRole() final;
     void addChildren() final;
-    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
-    String stringValue() const final;
+    RefPtr<StringImpl> textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
+    RefPtr<StringImpl> stringValue() const final;
     bool isIgnoredElementWithinMathTree() const final;
 
     bool isMathElement() const final { return true; }
@@ -96,8 +96,8 @@ private:
     AXCoreObject* mathSuperscriptObject() final;
 
     // Fenced components.
-    String mathFencedOpenString() const final;
-    String mathFencedCloseString() const final;
+    RefPtr<StringImpl> mathFencedOpenString() const final;
+    RefPtr<StringImpl> mathFencedCloseString() const final;
     int mathLineThickness() const final;
     bool isAnonymousMathOperator() const final { return m_isAnonymousOperator; }
 

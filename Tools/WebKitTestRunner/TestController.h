@@ -178,7 +178,7 @@ public:
     void setScreenWakeLockPermission(bool);
 
     // MediaStream.
-    String saltForOrigin(WKFrameRef, String);
+    RefPtr<StringImpl> saltForOrigin(WKFrameRef, RefPtr<StringImpl>);
     void getUserMediaInfoForOrigin(WKFrameRef, WKStringRef originKey, bool&, WKRetainPtr<WKStringRef>&);
     WKStringRef getUserMediaSaltForOrigin(WKFrameRef, WKStringRef originKey);
     void setCameraPermission(bool);
@@ -224,8 +224,8 @@ public:
 
     void setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(bool value) { m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = value; }
     void setHandlesAuthenticationChallenges(bool value) { m_handlesAuthenticationChallenges = value; }
-    void setAuthenticationUsername(String username) { m_authenticationUsername = username; }
-    void setAuthenticationPassword(String password) { m_authenticationPassword = password; }
+    void setAuthenticationUsername(RefPtr<StringImpl> username) { m_authenticationUsername = username; }
+    void setAuthenticationPassword(RefPtr<StringImpl> password) { m_authenticationPassword = password; }
     void setAllowsAnySSLCertificate(bool);
 
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool value) { m_shouldSwapToEphemeralSessionOnNextNavigation = value; }
@@ -235,10 +235,10 @@ public:
     bool globalPrivacyControl() const { return m_globalPrivacyControlEnabled.value_or(false); }
 
     void setBlockAllPlugins(bool shouldBlock);
-    void setPluginSupportedMode(const String&);
+    void setPluginSupportedMode(StringImpl*);
 
     void dumpResourceLoadCallbacks();
-    void dumpResourceResponseMIMETypes(String&&);
+    void dumpResourceResponseMIMETypes(RefPtr<StringImpl>&&);
     void dumpPolicyDelegateCallbacks() { m_dumpPolicyDelegateCallbacks = true; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
     void dumpFullScreenOrigin() { m_dumpFullScreenOrigin = true; }
@@ -288,7 +288,7 @@ public:
     void setStatisticsExpiredStatistic(WKStringRef host, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsPrevalentResource(WKStringRef hostName, bool value, CompletionHandler<void(WKTypeRef)>&&);
     void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value, CompletionHandler<void(WKTypeRef)>&&);
-    String dumpResourceLoadStatistics();
+    RefPtr<StringImpl> dumpResourceLoadStatistics();
     bool isStatisticsPrevalentResource(WKStringRef hostName);
     bool isStatisticsVeryPrevalentResource(WKStringRef hostName);
     bool isStatisticsRegisteredAsSubresourceUnder(WKStringRef subresourceHost, WKStringRef topFrameHost);
@@ -419,9 +419,9 @@ public:
     
     void setServiceWorkerFetchTimeoutForTesting(double seconds);
 
-    void addTestKeyToKeychain(const String& privateKeyBase64, const String& attrLabel, const String& applicationTagBase64);
-    void cleanUpKeychain(const String& attrLabel, const String& applicationLabelBase64);
-    bool keyExistsInKeychain(const String& attrLabel, const String& applicationLabelBase64);
+    void addTestKeyToKeychain(StringImpl* privateKeyBase64, StringImpl* attrLabel, StringImpl* applicationTagBase64);
+    void cleanUpKeychain(StringImpl* attrLabel, StringImpl* applicationLabelBase64);
+    bool keyExistsInKeychain(StringImpl* attrLabel, StringImpl* applicationLabelBase64);
 
     void setResourceMonitorList(WKStringRef rulesText, CompletionHandler<void(WKTypeRef)>&&);
 
@@ -432,7 +432,7 @@ public:
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)
-    void setKeyboardInputModeIdentifier(const String&);
+    void setKeyboardInputModeIdentifier(StringImpl*);
     UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
     void restoreDefaultKeyboardInputModeIfNeeded();
     void setIsInHardwareKeyboardMode(bool value) { m_isInHardwareKeyboardMode = value; }
@@ -440,7 +440,7 @@ public:
     unsigned keyboardUpdateForChangedSelectionCount() const;
 #endif
 
-    void setAllowedMenuActions(const Vector<String>&);
+    void setAllowedMenuActions(const Vector<RefPtr<StringImpl>>&);
 
     uint64_t serverTrustEvaluationCallbackCallsCount() const { return m_serverTrustEvaluationCallbackCallsCount; }
 
@@ -453,7 +453,7 @@ public:
     bool isDoingMediaCapture() const;
     bool isEnhancedSecurity() const;
 
-    String dumpPrivateClickMeasurement();
+    RefPtr<StringImpl> dumpPrivateClickMeasurement();
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
@@ -502,7 +502,7 @@ public:
     WKRetainPtr<WKStringRef> lastUpdatedBackgroundFetchIdentifier() const;
     WKRetainPtr<WKStringRef> backgroundFetchState(WKStringRef);
 
-    void receivedServiceWorkerConsoleMessage(const String&);
+    void receivedServiceWorkerConsoleMessage(StringImpl*);
 
 #if ENABLE(IMAGE_ANALYSIS)
     static uint64_t currentImageAnalysisRequestID();
@@ -532,7 +532,7 @@ public:
     void exitImmersive();
 #endif
 
-    void uiScriptDidComplete(const String& result, unsigned scriptCallbackID);
+    void uiScriptDidComplete(StringImpl* result, unsigned scriptCallbackID);
     void cursorDidChange(WKStringRef cursorInfo);
 
 #if HAVE(TEXT_SCALE_FACTOR)
@@ -617,7 +617,7 @@ private:
     void checkForWorldLeaks();
 
     void didReceiveLiveDocumentsList(WKArrayRef);
-    void dumpResponse(const String&);
+    void dumpResponse(StringImpl*);
     void findAndDumpWebKitProcessIdentifiers();
     void findAndDumpWorldLeaks();
 
@@ -629,7 +629,7 @@ private:
     void didPerformRedirect(WKPageRef, WKURLResponseRef, WKURLRequestRef);
     void didReceiveResponse(WKPageRef, WKURLRef, WKURLResponseRef);
     void didCompleteWithError(WKPageRef, WKURLRef, WKURLResponseRef, WKErrorRef);
-    String platformResponseMIMEType(WKURLResponseRef);
+    RefPtr<StringImpl> platformResponseMIMEType(WKURLResponseRef);
 
 #if PLATFORM(IOS_FAMILY)
     UIPasteboardConsistencyEnforcer *pasteboardConsistencyEnforcer();
@@ -822,10 +822,10 @@ private:
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
 
     WebNotificationProvider m_webNotificationProvider;
-    HashSet<String> m_notificationOriginsToDenyOnPrompt;
+    HashSet<RefPtr<StringImpl>> m_notificationOriginsToDenyOnPrompt;
 
-    HashSet<String> m_geolocationPermissionQueryOrigins;
-    HashMap<String, bool> m_localNetworkAccessPermissions;
+    HashSet<RefPtr<StringImpl>> m_geolocationPermissionQueryOrigins;
+    HashMap<RefPtr<StringImpl>, bool> m_localNetworkAccessPermissions;
 
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;
@@ -886,11 +886,11 @@ private:
 
     bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges { false };
     bool m_handlesAuthenticationChallenges { false };
-    String m_authenticationUsername;
-    String m_authenticationPassword;
+    RefPtr<StringImpl> m_authenticationUsername;
+    RefPtr<StringImpl> m_authenticationPassword;
 
     bool m_shouldBlockAllPlugins { false };
-    String m_unsupportedPluginMode;
+    RefPtr<StringImpl> m_unsupportedPluginMode;
 
     bool m_forceComplexText { false };
     bool m_shouldLogCanAuthenticateAgainstProtectionSpace { false };
@@ -922,17 +922,17 @@ private:
     WorkQueueManager m_workQueueManager;
 
     struct AbandonedDocumentInfo {
-        String testURL;
-        String abandonedDocumentURL;
+        RefPtr<StringImpl> testURL;
+        RefPtr<StringImpl> abandonedDocumentURL;
         bool hasBeenReported { false };
 
         AbandonedDocumentInfo() = default;
-        AbandonedDocumentInfo(String inTestURL, String inAbandonedDocumentURL)
+        AbandonedDocumentInfo(RefPtr<StringImpl> inTestURL, RefPtr<StringImpl> inAbandonedDocumentURL)
             : testURL(inTestURL)
             , abandonedDocumentURL(inAbandonedDocumentURL)
         { }
     };
-    HashMap<String, AbandonedDocumentInfo> m_abandonedDocumentInfo;
+    HashMap<RefPtr<StringImpl>, AbandonedDocumentInfo> m_abandonedDocumentInfo;
     CompletionHandler<void()> m_finishExitFullscreenHandler;
 
     class Callbacks {
@@ -988,7 +988,7 @@ private:
     bool m_dumpPolicyDelegateCallbacks { false };
     bool m_hasResourceLoadClient { false };
     bool m_dumpResourceLoadCallbacks { false };
-    String m_resourceResponseMIMETypesToDump;
+    RefPtr<StringImpl> m_resourceResponseMIMETypesToDump;
     bool m_dumpFullScreenCallbacks { false };
     bool m_dumpAllHTTPRedirectedResponseHeaders { false };
     bool m_dumpFullScreenOrigin { false };

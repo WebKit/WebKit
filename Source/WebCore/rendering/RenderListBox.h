@@ -157,8 +157,8 @@ private:
     bool hasScrollableOrRubberbandableAncestor() final;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
     NODELETE bool mockScrollbarsControllerEnabled() const final;
-    void logMockScrollbarsControllerMessage(const String&) const final;
-    String debugDescription() const final;
+    void logMockScrollbarsControllerMessage(StringImpl*) const final;
+    RefPtr<StringImpl> debugDescription() const final;
     void didStartScrollAnimation() final;
 
     bool useDarkAppearance() const final;

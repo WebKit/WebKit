@@ -54,7 +54,7 @@
 
 namespace WTF::FileSystemImpl {
 
-FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission permission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
+FileHandle openFile(StringImpl* path, FileOpenMode mode, FileAccessPermission permission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
 {
     auto fsRep = fileSystemRepresentation(path);
 
@@ -91,7 +91,7 @@ FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission 
     return FileHandle::adopt(posixOpen(fsRep, platformFlag, permissionFlag), lockMode);
 }
 
-std::optional<WallTime> fileCreationTime(const String& path)
+std::optional<WallTime> fileCreationTime(StringImpl* path)
 {
 #if (OS(LINUX) && HAVE(STATX)) || OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     auto fsRep = fileSystemRepresentation(path);
@@ -124,7 +124,7 @@ bool fileIDsAreEqual(std::optional<PlatformFileID> a, std::optional<PlatformFile
     return a == b;
 }
 
-std::optional<uint32_t> volumeFileBlockSize(const String& path)
+std::optional<uint32_t> volumeFileBlockSize(StringImpl* path)
 {
     struct statvfs fileStat;
     if (!posixStatvfs(fileSystemRepresentation(path), &fileStat))
@@ -134,17 +134,17 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
 }
 
 #if !USE(CF)
-String stringFromFileSystemRepresentation(UTF8CStringView path)
+RefPtr<StringImpl> stringFromFileSystemRepresentation(UTF8CStringView path)
 {
     if (path.isNull())
-        return String();
+        return nullptr;
 
-    return String::fromUTF8(path.span());
+    return StringImpl::fromUTF8(path.span());
 }
 
-UTF8CString fileSystemRepresentation(const String& path)
+UTF8CString fileSystemRepresentation(StringImpl* path)
 {
-    return path.utf8();
+    return utf8(path);
 }
 #endif
 
@@ -172,25 +172,25 @@ static const char* temporaryFileDirectory()
 #endif
 }
 
-std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, const String& temporaryDirectory)
+std::pair<RefPtr<StringImpl>, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, StringImpl* temporaryDirectory)
 {
     // Suffix is not supported because that's incompatible with mkostemp, mkostemps would be needed for that.
     // This is OK for now since the code using it is built on macOS only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    auto directory = !temporaryDirectory.isEmpty() ? temporaryDirectory : String::fromUTF8(temporaryFileDirectory());
+    RefPtr<StringImpl> directory = !isEmpty(temporaryDirectory) ? RefPtr { temporaryDirectory } : StringImpl::fromUTF8(temporaryFileDirectory());
     // mkostemp overwrites the XXXXXX in place, so this needs to be a mutable buffer.
-    auto path = makeString(directory, '/', prefix, "-XXXXXX"_s).utf8();
+    auto path = utf8(makeString(directory, '/', prefix, "-XXXXXX"_s));
 
     auto handle = FileHandle::adopt(mkostemp(byteCast<char>(path.mutableSpan()).data(), O_CLOEXEC));
     if (!handle)
-        return { String(), FileHandle() };
+        return { nullptr, FileHandle() };
 
-    return { String { path }, WTF::move(handle) };
+    return { StringImpl::fromUTF8(path.span()), WTF::move(handle) };
 }
 #endif // !PLATFORM(COCOA)
 
-std::optional<int32_t> getFileDeviceId(const String& path)
+std::optional<int32_t> getFileDeviceId(StringImpl* path)
 {
     auto fsFile = fileSystemRepresentation(path);
     if (fsFile.isNull())
@@ -207,12 +207,12 @@ std::optional<int32_t> getFileDeviceId(const String& path)
 // This fast path exists to avoid calls to stat(). It's not needed on other platforms.
 #if ENABLE(FILESYSTEM_POSIX_FAST_PATH)
 
-bool fileExists(const String& path)
+bool fileExists(StringImpl* path)
 {
     return posixAccess(fileSystemRepresentation(path), F_OK) != -1;
 }
 
-bool deleteFile(const String& path)
+bool deleteFile(StringImpl* path)
 {
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     bool unlinked = !posixUnlink(fileSystemRepresentation(path));
@@ -222,7 +222,7 @@ bool deleteFile(const String& path)
     return unlinked;
 }
 
-bool makeAllDirectories(const String& path)
+bool makeAllDirectories(StringImpl* path)
 {
     auto fullPath = fileSystemRepresentation(path);
     int length = fullPath.length();
@@ -253,14 +253,14 @@ bool makeAllDirectories(const String& path)
     return true;
 }
 
-String pathByAppendingComponent(StringView path, StringView component)
+RefPtr<StringImpl> pathByAppendingComponent(StringView path, StringView component)
 {
     if (path.endsWith('/'))
         return makeString(path, component);
     return makeString(path, '/', component);
 }
 
-String pathByAppendingComponents(StringView path, std::span<const StringView> components)
+RefPtr<StringImpl> pathByAppendingComponents(StringView path, std::span<const StringView> components)
 {
     StringBuilder builder;
     builder.append(path);

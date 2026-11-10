@@ -75,7 +75,7 @@ public:
     struct RequestData {
         RequestData() { }
 
-        RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, String&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<String>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority priority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public, ThirdPartyCookieBlockingDecision latchedThirdPartyCookieBlockingDecision = ThirdPartyCookieBlockingDecision::None)
+        RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, RefPtr<StringImpl>&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<RefPtr<StringImpl>>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority priority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public, ThirdPartyCookieBlockingDecision latchedThirdPartyCookieBlockingDecision = ThirdPartyCookieBlockingDecision::None)
             : m_url(WTF::move(url))
             , m_firstPartyForCookies(WTF::move(firstPartyForCookies))
             , m_timeoutInterval(timeoutInterval)
@@ -108,9 +108,9 @@ public:
         URL m_url;
         URL m_firstPartyForCookies;
         double m_timeoutInterval { s_defaultTimeoutInterval }; // 0 is a magic value for platform default on platforms that have one.
-        String m_httpMethod { "GET"_s };
+        RefPtr<StringImpl> m_httpMethod { "GET"_si };
         HTTPHeaderMap m_httpHeaderFields;
-        Vector<String> m_responseContentDispositionEncodingFallbackArray;
+        Vector<RefPtr<StringImpl>> m_responseContentDispositionEncodingFallbackArray;
         ResourceRequestCachePolicy m_cachePolicy { ResourceRequestCachePolicy::UseProtocolCachePolicy };
         SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
         ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
@@ -177,59 +177,59 @@ public:
     WEBCORE_EXPORT bool isTopSite() const; // Whether this request is for a top-level navigation.
     WEBCORE_EXPORT void setIsTopSite(bool);
 
-    WEBCORE_EXPORT const String& httpMethod() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void setHTTPMethod(const String& httpMethod);
+    WEBCORE_EXPORT const RefPtr<StringImpl>& httpMethod() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setHTTPMethod(StringImpl* httpMethod);
     
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setHTTPHeaderFields(HTTPHeaderMap);
 
-    WEBCORE_EXPORT String httpHeaderField(StringView name) const;
-    WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
-    WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);
-    WEBCORE_EXPORT void addHTTPHeaderField(HTTPHeaderName, const String& value);
-    WEBCORE_EXPORT void addHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void addHTTPHeaderFieldIfNotPresent(HTTPHeaderName, const String&);
-    void removeHTTPHeaderField(const String& name);
+    WEBCORE_EXPORT RefPtr<StringImpl> httpHeaderField(StringView name) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> httpHeaderField(HTTPHeaderName) const;
+    WEBCORE_EXPORT void setHTTPHeaderField(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, StringImpl* value);
+    WEBCORE_EXPORT void addHTTPHeaderField(HTTPHeaderName, StringImpl* value);
+    WEBCORE_EXPORT void addHTTPHeaderField(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void addHTTPHeaderFieldIfNotPresent(HTTPHeaderName, StringImpl*);
+    void removeHTTPHeaderField(StringImpl* name);
     WEBCORE_EXPORT void removeHTTPHeaderField(HTTPHeaderName);
 
     WEBCORE_EXPORT bool hasHTTPHeaderField(HTTPHeaderName) const;
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
-    template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
-    template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
+    template<size_t length> RefPtr<StringImpl> httpHeaderField(ASCIILiteral) const = delete;
+    template<size_t length> void setHTTPHeaderField(ASCIILiteral, StringImpl*) = delete;
+    template<size_t length> void addHTTPHeaderField(ASCIILiteral, StringImpl*) = delete;
 
     WEBCORE_EXPORT void clearHTTPAuthorization();
 
-    WEBCORE_EXPORT String httpContentType() const;
-    WEBCORE_EXPORT void setHTTPContentType(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> httpContentType() const;
+    WEBCORE_EXPORT void setHTTPContentType(StringImpl*);
     WEBCORE_EXPORT void clearHTTPContentType();
 
     bool hasHTTPHeader(HTTPHeaderName) const;
 
-    WEBCORE_EXPORT String httpReferrer() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> httpReferrer() const;
     bool hasHTTPReferrer() const;
-    WEBCORE_EXPORT void setHTTPReferrer(const String&);
+    WEBCORE_EXPORT void setHTTPReferrer(StringImpl*);
     WEBCORE_EXPORT void setExistingHTTPReferrerToOriginString();
     WEBCORE_EXPORT void clearHTTPReferrer();
 
-    WEBCORE_EXPORT String httpOrigin() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> httpOrigin() const;
     bool hasHTTPOrigin() const;
-    void setHTTPOrigin(const String&);
+    void setHTTPOrigin(StringImpl*);
     WEBCORE_EXPORT void clearHTTPOrigin();
 
-    WEBCORE_EXPORT String httpUserAgent() const;
-    WEBCORE_EXPORT void setHTTPUserAgent(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> httpUserAgent() const;
+    WEBCORE_EXPORT void setHTTPUserAgent(StringImpl*);
     void clearHTTPUserAgent();
 
     void clearHTTPAcceptEncoding();
 
     WEBCORE_EXPORT void clearPurpose();
 
-    const Vector<String>& responseContentDispositionEncodingFallbackArray() const LIFETIME_BOUND { return m_requestData.m_responseContentDispositionEncodingFallbackArray; }
-    WEBCORE_EXPORT void setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2 = String(), const String& encoding3 = String());
-    void setResponseContentDispositionEncodingFallbackArray(const Vector<String>& array) { m_requestData.m_responseContentDispositionEncodingFallbackArray = array; }
+    const Vector<RefPtr<StringImpl>>& responseContentDispositionEncodingFallbackArray() const LIFETIME_BOUND { return m_requestData.m_responseContentDispositionEncodingFallbackArray; }
+    WEBCORE_EXPORT void setResponseContentDispositionEncodingFallbackArray(StringImpl* encoding1, StringImpl* encoding2 = nullptr, StringImpl* encoding3 = nullptr);
+    void setResponseContentDispositionEncodingFallbackArray(const Vector<RefPtr<StringImpl>>& array) { m_requestData.m_responseContentDispositionEncodingFallbackArray = array; }
 
     WEBCORE_EXPORT FormData* httpBody() const;
     WEBCORE_EXPORT bool hasUpload() const;
@@ -243,7 +243,7 @@ public:
     WEBCORE_EXPORT ResourceLoadPriority priority() const;
     WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
-    WEBCORE_EXPORT String cachePartition() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> cachePartition() const;
     bool shouldBlockThirdPartyStorage() const { return m_shouldBlockThirdPartyStorage; }
     void setShouldBlockThirdPartyStorage(bool value) { m_shouldBlockThirdPartyStorage = value; }
 
@@ -261,8 +261,8 @@ public:
     void setTargetAddressSpace(IPAddressSpace targetAddressSpace) { m_requestData.m_targetAddressSpace = targetAddressSpace; }
 
     // Who initiated the request so the Inspector can associate it with a context. E.g. a Web Worker.
-    String initiatorIdentifier() const { return m_initiatorIdentifier; }
-    void setInitiatorIdentifier(const String& identifier) { m_initiatorIdentifier = identifier; }
+    RefPtr<StringImpl> initiatorIdentifier() const { return m_initiatorIdentifier; }
+    void setInitiatorIdentifier(StringImpl* identifier) { m_initiatorIdentifier = identifier; }
 
     // Additional information for the Inspector to be able to identify the node that initiated this request.
     const std::optional<int>& inspectorInitiatorNodeIdentifier() const LIFETIME_BOUND { return m_inspectorInitiatorNodeIdentifier; }
@@ -333,7 +333,7 @@ protected:
     static bool platformCompare(const ResourceRequest&, const ResourceRequest&) { return true; }
     
     RequestData m_requestData;
-    String m_initiatorIdentifier;
+    RefPtr<StringImpl> m_initiatorIdentifier;
     RefPtr<FormData> m_httpBody;
     std::optional<int> m_inspectorInitiatorNodeIdentifier;
     mutable bool m_resourceRequestUpdated : 1;

@@ -52,9 +52,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGInlineText);
 
-static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSpace)
+static RefPtr<StringImpl> applySVGWhitespaceRules(StringImpl* string, bool preserveWhiteSpace)
 {
-    String newString = string;
+    RefPtr<StringImpl> newString = string;
     if (preserveWhiteSpace) {
         // Spec: When xml:space="preserve", the SVG user agent will do the following using a
         // copy of the original character data content. It will convert all newline and tab
@@ -77,7 +77,7 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
     return newString;
 }
 
-RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
+RenderSVGInlineText::RenderSVGInlineText(Text& textNode, StringImpl* string)
     : RenderText(Type::SVGInlineText, textNode, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
 {
@@ -86,12 +86,12 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
 
 RenderSVGInlineText::~RenderSVGInlineText() = default;
 
-String RenderSVGInlineText::originalText() const
+RefPtr<StringImpl> RenderSVGInlineText::originalText() const
 {
     return textNode().data();
 }
 
-void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
+void RenderSVGInlineText::setTextInternal(StringImpl* newText, bool force)
 {
     RenderText::setTextInternal(newText, force);
     m_hasValidTextMetrics = false;
@@ -101,10 +101,10 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
         textAncestor->setNeedsLayout();
 }
 
-void RenderSVGInlineText::setRenderedText(const String& text)
+void RenderSVGInlineText::setRenderedText(StringImpl* text)
 {
     bool preservesWhiteSpace = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
-    RenderText::setRenderedText(preservesWhiteSpace ? applySVGWhitespaceRules(text, true) : text);
+    RenderText::setRenderedText(preservesWhiteSpace ? applySVGWhitespaceRules(text, true) : RefPtr { text });
     m_canUseSimplifiedTextMeasuringWithScaledFont = { };
 }
 
@@ -170,7 +170,7 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
 PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
 {
     auto firstTextBox = InlineIterator::lineLeftmostTextBoxFor(*this);
-    if (!firstTextBox || text().isEmpty())
+    if (!firstTextBox || isEmpty(text()))
         return createPositionWithAffinity(0, Affinity::Downstream);
 
     float baseline = m_scaledFont.metricsOfPrimaryFont().ascent();

@@ -247,26 +247,26 @@ void WebInspectorUI::setDockSide(DockSide dockSide)
 
     m_dockSide = dockSide;
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockSide"_s, { JSON::Value::create(String(dockSideString)) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockSide"_si, { JSON::Value::create(StringImpl::create(dockSideString).ptr()) });
 }
 
 void WebInspectorUI::setDockingUnavailable(bool unavailable)
 {
     m_dockingUnavailable = unavailable;
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(unavailable) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_si, { JSON::Value::create(unavailable) });
 }
 
 void WebInspectorUI::setIsVisible(bool visible)
 {
     m_isVisible = visible;
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_s, { JSON::Value::create(visible) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_si, { JSON::Value::create(visible) });
 }
 
-void WebInspectorUI::updateFindString(const String& findString)
+void WebInspectorUI::updateFindString(StringImpl* findString)
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_s, { JSON::Value::create(findString) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_si, { JSON::Value::create(findString) });
 }
 
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)
@@ -284,12 +284,12 @@ void WebInspectorUI::changeSheetRect(const FloatRect& rect)
     sendToParentProcess(Messages::WebInspectorUIProxy::SetSheetRect(rect));
 }
 
-void WebInspectorUI::openURLExternally(const String& url)
+void WebInspectorUI::openURLExternally(StringImpl* url)
 {
     sendToParentProcess(Messages::WebInspectorUIProxy::OpenURLExternally(url));
 }
 
-void WebInspectorUI::revealFileExternally(const String& path)
+void WebInspectorUI::revealFileExternally(StringImpl* path)
 {
     sendToParentProcess(Messages::WebInspectorUIProxy::RevealFileExternally(path));
 }
@@ -301,7 +301,7 @@ void WebInspectorUI::requestDisableSiteIsolation()
 
 void WebInspectorUI::setSiteIsolationDisablingAvailable(bool available)
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setSiteIsolationDisablingAvailable"_s, { JSON::Value::create(available) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setSiteIsolationDisablingAvailable"_si, { JSON::Value::create(available) });
 }
 
 void WebInspectorUI::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -309,7 +309,7 @@ void WebInspectorUI::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas,
     sendToParentProcess(Messages::WebInspectorUIProxy::Save(WTF::move(saveDatas), forceSaveAs));
 }
 
-void WebInspectorUI::load(const WTF::String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUI::load(StringImpl* path, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     sendToParentProcessWithAsyncReply(Messages::WebInspectorUIProxy::Load(path), WTF::move(completionHandler));
 }
@@ -319,7 +319,7 @@ void WebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std::optio
     sendToParentProcessWithAsyncReply(Messages::WebInspectorUIProxy::PickColorFromScreen(), WTF::move(completionHandler));
 }
 
-void WebInspectorUI::inspectedURLChanged(const String& urlString)
+void WebInspectorUI::inspectedURLChanged(StringImpl* urlString)
 {
     sendToParentProcess(Messages::WebInspectorUIProxy::InspectedURLChanged(urlString));
 }
@@ -352,9 +352,9 @@ bool WebInspectorUI::supportsDiagnosticLogging()
     return page && page->corePage()->settings().diagnosticLoggingEnabled();
 }
 
-void WebInspectorUI::logDiagnosticEvent(const String& eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
+void WebInspectorUI::logDiagnosticEvent(StringImpl* eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    protect(protect(protect(m_page)->corePage())->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+    protect(protect(protect(m_page)->corePage())->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_si, dictionary, ShouldSample::No);
 }
 
 void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
@@ -363,13 +363,13 @@ void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     ASSERT(!available || supportsDiagnosticLogging());
     m_diagnosticLoggingAvailable = available;
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_si, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
 #endif // ENABLE(INSPECTOR_TELEMETRY)
 
 void WebInspectorUI::systemAppearanceDidChange()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("systemAppearanceDidChange"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("systemAppearanceDidChange"_si);
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -378,19 +378,19 @@ bool WebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID, const WebCore::FrameIdentifier& frameID)
+void WebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const WebCore::FrameIdentifier& frameID)
 {
     if (RefPtr extensionController = m_extensionController)
         extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
-void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
+void WebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
 {
     if (RefPtr extensionController = m_extensionController)
         extensionController->didHideExtensionTab(extensionID, extensionTabID);
 }
 
-void WebInspectorUI::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const URL& newURL)
+void WebInspectorUI::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const URL& newURL)
 {
     if (RefPtr extensionController = m_extensionController)
         extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
@@ -405,45 +405,45 @@ void WebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
 
 void WebInspectorUI::showConsole()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_si);
 }
 
 void WebInspectorUI::showResources()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_si);
 }
 
-void WebInspectorUI::showMainResourceForFrame(const String& frameIdentifier)
+void WebInspectorUI::showMainResourceForFrame(StringImpl* frameIdentifier)
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameIdentifier) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_si, { JSON::Value::create(frameIdentifier) });
 }
 
 void WebInspectorUI::startPageProfiling()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setTimelineProfilingEnabled"_s, { JSON::Value::create(true) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setTimelineProfilingEnabled"_si, { JSON::Value::create(true) });
 }
 
 void WebInspectorUI::stopPageProfiling()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setTimelineProfilingEnabled"_s, { JSON::Value::create(false) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setTimelineProfilingEnabled"_si, { JSON::Value::create(false) });
 }
 
 void WebInspectorUI::startElementSelection()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_s, { JSON::Value::create(true) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_si, { JSON::Value::create(true) });
 }
 
 void WebInspectorUI::stopElementSelection()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_s, { JSON::Value::create(false) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_si, { JSON::Value::create(false) });
 }
 
-void WebInspectorUI::sendMessageToFrontend(const String& message)
+void WebInspectorUI::sendMessageToFrontend(StringImpl* message)
 {
     m_frontendAPIDispatcher->dispatchMessageAsync(message);
 }
 
-void WebInspectorUI::evaluateInFrontendForTesting(const String& expression)
+void WebInspectorUI::evaluateInFrontendForTesting(StringImpl* expression)
 {
     m_frontendAPIDispatcher->evaluateExpressionForTesting(expression);
 }
@@ -458,22 +458,22 @@ void WebInspectorUI::pageUnpaused()
     m_frontendAPIDispatcher->unsuspend();
 }
 
-void WebInspectorUI::sendMessageToBackend(const String& message)
+void WebInspectorUI::sendMessageToBackend(StringImpl* message)
 {
     sendToParentProcess(Messages::WebInspectorUIProxy::SendMessageToBackend(message));
 }
 
-String WebInspectorUI::targetPlatformName() const
+RefPtr<StringImpl> WebInspectorUI::targetPlatformName() const
 {
     return m_debuggableInfo.targetPlatformName;
 }
 
-String WebInspectorUI::targetBuildVersion() const
+RefPtr<StringImpl> WebInspectorUI::targetBuildVersion() const
 {
     return m_debuggableInfo.targetBuildVersion;
 }
 
-String WebInspectorUI::targetProductVersion() const
+RefPtr<StringImpl> WebInspectorUI::targetProductVersion() const
 {
     return m_debuggableInfo.targetProductVersion;
 }
@@ -502,7 +502,7 @@ bool WebInspectorUI::canPickColorFromScreen()
     return false;
 }
 
-String WebInspectorUI::localizedStringsURL() const
+RefPtr<StringImpl> WebInspectorUI::localizedStringsURL() const
 {
     notImplemented();
     return emptyString();

@@ -67,7 +67,7 @@
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->insertRule(rule, index));
+    return raiseOnDOMError(IMPL->insertRule(StringImpl::create(rule).get(), index));
 }
 
 - (void)deleteRule:(unsigned)index
@@ -79,7 +79,7 @@
 - (int)addRule:(NSString *)selector style:(NSString *)style index:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->addRule(selector, style, index));
+    return raiseOnDOMError(IMPL->addRule(StringImpl::create(selector).get(), StringImpl::create(style).get(), index));
 }
 
 - (void)removeRule:(unsigned)index

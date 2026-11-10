@@ -37,7 +37,7 @@ OBJC_CLASS JSValue;
 namespace WebKit {
 
 struct JSListenerArgument {
-    const String& argument;
+    const RefPtr<StringImpl>& argument;
     bool convertToJSON;
 };
 
@@ -53,8 +53,8 @@ public:
     void invokeListenersWithArgument(id argument1, id argument2);
     void invokeListenersWithArgument(id argument1, id argument2, id argument3);
 #endif
-    void invokeListenersWithJSONArgument(const String& argument1);
-    void invokeListenersWithJSONArgument(const String& argument1, const String& argument2);
+    void invokeListenersWithJSONArgument(StringImpl* argument1);
+    void invokeListenersWithJSONArgument(StringImpl* argument1, StringImpl* argument2);
     void invokeListenersWithJSArgument(JSListenerArgument argument1, JSListenerArgument argument2);
 
     template<typename T>

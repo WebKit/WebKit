@@ -46,7 +46,7 @@ class FileMonitor {
 public:
     enum class FileChangeType { Modification, Removal };
 
-    WEBCORE_EXPORT FileMonitor(const String&, Ref<WorkQueue>&& handlerQueue, Function<void(FileChangeType)>&& modificationHandler);
+    WEBCORE_EXPORT FileMonitor(StringImpl*, Ref<WorkQueue>&& handlerQueue, Function<void(FileChangeType)>&& modificationHandler);
     WEBCORE_EXPORT ~FileMonitor();
 
 private:

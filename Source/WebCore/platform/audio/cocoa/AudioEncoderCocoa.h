@@ -39,7 +39,7 @@ class InternalAudioEncoderCocoa;
 class AudioEncoderCocoa : public AudioEncoder {
     WTF_MAKE_TZONE_ALLOCATED(AudioEncoderCocoa);
 public:
-    static Ref<CreatePromise> create(const String& codecName, const Config&, DescriptionCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl* codecName, const Config&, DescriptionCallback&&, OutputCallback&&);
 
     ~AudioEncoderCocoa();
 

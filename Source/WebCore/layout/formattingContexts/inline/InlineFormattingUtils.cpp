@@ -704,25 +704,25 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
     CheckedRef root = formattingContext().root();
     CheckedRef styleForTruncation = root->isAnonymous() ? IntegrationUtils::firstNonAnonymousAncestorStyle(root) : root->style();
     auto ellipsisText = WTF::switchOn(styleForTruncation->blockEllipsis(),
-        [&](const CSS::Keyword::NoEllipsis&) -> AtomString {
+        [&](const CSS::Keyword::NoEllipsis&) -> RefPtr<AtomStringImpl> {
             return nullAtom();
         },
-        [&](const CSS::Keyword::Ellipsis&) -> AtomString {
+        [&](const CSS::Keyword::Ellipsis&) -> RefPtr<AtomStringImpl> {
             return TextUtil::ellipsisText();
         },
-        [&](const Style::String& string) -> AtomString {
+        [&](const Style::String& string) -> RefPtr<AtomStringImpl> {
             // https://drafts.csswg.org/css-overflow-4/#valdef-block-ellipsis-string
             return TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(string.value);
         }
     );
-    if (ellipsisText.isEmpty())
+    if (isEmpty(ellipsisText))
         return { };
     // The ellipsis is not part of ::first-line, and it is painted with the root style too (see EllipsisBoxPainter).
     // "The ellipsis is subject to the effects of the 'hanging punctuation' property."
     // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
     CheckedRef rootStyle = root->style();
-    auto logicalWidth = std::max(0.f, protect(rootStyle->fontCascade())->width(ellipsisText.string()));
-    auto hangingWidth = TextUtil::hangablePunctuationEndWidth(ellipsisText.string(), rootStyle);
+    auto logicalWidth = std::max(0.f, protect(rootStyle->fontCascade())->width(ellipsisText));
+    auto hangingWidth = TextUtil::hangablePunctuationEndWidth(ellipsisText, rootStyle);
     return BlockOverflowEllipsis { ellipsisText, logicalWidth - hangingWidth, hangingWidth };
 }
 

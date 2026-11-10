@@ -35,7 +35,7 @@ namespace WebCore {
 
 class GPUInternalError final : public GPUError {
 public:
-    static Ref<GPUInternalError> create(String&& message)
+    static Ref<GPUInternalError> create(RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new GPUInternalError(WTF::move(message)));
     }
@@ -48,17 +48,17 @@ public:
     ~GPUInternalError();
 
     Type type() const final { return Type::Internal; }
-    NODELETE const String& message() const LIFETIME_BOUND final;
+    NODELETE const RefPtr<StringImpl>& message() const LIFETIME_BOUND final;
 
     WebGPUInternalError* backing() { return m_backing.get(); }
     const WebGPUInternalError* backing() const { return m_backing.get(); }
-    String stack() const { return "_"_s; }
+    RefPtr<StringImpl> stack() const { return "_"_si; }
 
 private:
-    GPUInternalError(String&& message);
+    GPUInternalError(RefPtr<StringImpl>&& message);
     GPUInternalError(Ref<WebGPUInternalError>&&);
 
-    String m_message;
+    RefPtr<StringImpl> m_message;
     const RefPtr<WebGPUInternalError> m_backing;
 };
 

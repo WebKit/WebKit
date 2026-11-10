@@ -58,9 +58,9 @@ class WebSocket final : public RefCounted<WebSocket>, public EventTarget, public
 public:
     static ASCIILiteral subprotocolSeparator();
 
-    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url);
-    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const String& protocol);
-    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const Vector<String>& protocols);
+    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, StringImpl* url);
+    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, StringImpl* url, StringImpl* protocol);
+    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, StringImpl* url, const Vector<RefPtr<StringImpl>>& protocols);
     virtual ~WebSocket();
 
     // ContextDestructionObserver.
@@ -78,16 +78,16 @@ public:
         CLOSED = 3
     };
 
-    ExceptionOr<void> connect(const String& url);
-    ExceptionOr<void> connect(const String& url, const String& protocol);
-    ExceptionOr<void> connect(const String& url, const Vector<String>& protocols);
+    ExceptionOr<void> connect(StringImpl* url);
+    ExceptionOr<void> connect(StringImpl* url, StringImpl* protocol);
+    ExceptionOr<void> connect(StringImpl* url, const Vector<RefPtr<StringImpl>>& protocols);
 
-    ExceptionOr<void> send(const String& message);
+    ExceptionOr<void> send(StringImpl* message);
     ExceptionOr<void> send(JSC::ArrayBuffer&);
     ExceptionOr<void> send(JSC::ArrayBufferView&);
     ExceptionOr<void> send(Blob&);
 
-    ExceptionOr<void> close(std::optional<unsigned short> code, const String& reason);
+    ExceptionOr<void> close(std::optional<unsigned short> code, StringImpl* reason);
 
     NODELETE RefPtr<ThreadableWebSocketChannel> channel() const;
 
@@ -95,8 +95,8 @@ public:
     NODELETE State readyState() const;
     NODELETE uint64_t bufferedAmount() const;
 
-    NODELETE String protocol() const;
-    NODELETE String extensions() const;
+    NODELETE RefPtr<StringImpl> protocol() const;
+    NODELETE RefPtr<StringImpl> extensions() const;
 
     enum class BinaryType : bool { Blob, Arraybuffer };
     BinaryType binaryType() const { return m_binaryType; }
@@ -122,12 +122,12 @@ private:
     void derefEventTarget() final { deref(); }
 
     void didConnect() final;
-    void didReceiveMessage(String&& message) final;
+    void didReceiveMessage(RefPtr<StringImpl>&& message) final;
     void didReceiveBinaryData(Vector<uint8_t>&&) final;
-    void didReceiveMessageError(String&& reason) final;
+    void didReceiveMessageError(RefPtr<StringImpl>&& reason) final;
     NODELETE void didUpdateBufferedAmount(uint64_t bufferedAmount) final;
     void didStartClosingHandshake() final;
-    void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
+    void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, StringImpl* reason) final;
     void didUpgradeURL() final;
 
     NODELETE size_t getFramingOverhead(size_t payloadSize);
@@ -143,8 +143,8 @@ private:
     uint64_t m_bufferedAmount { 0 };
     uint64_t m_bufferedAmountAfterClose { 0 };
     BinaryType m_binaryType { BinaryType::Blob };
-    String m_subprotocol;
-    String m_extensions;
+    RefPtr<StringImpl> m_subprotocol;
+    RefPtr<StringImpl> m_extensions;
 
     bool m_dispatchedErrorEvent { false };
     RefPtr<PendingActivity<WebSocket>> m_pendingActivity;

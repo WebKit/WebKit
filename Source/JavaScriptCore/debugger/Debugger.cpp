@@ -374,12 +374,12 @@ void Debugger::setProfilingClient(ProfilingClient* client)
     m_profilingClient = client;
 }
 
-bool Debugger::isWebKitInjectedScript(const String& sourceURL)
+bool Debugger::isWebKitInjectedScript(StringImpl* sourceURL)
 {
-    return sourceURL.startsWith("__InjectedScript_"_s) && sourceURL.endsWith(".js"_s);
+    return startsWith(sourceURL, "__InjectedScript_"_s) && endsWith(sourceURL, ".js"_s);
 }
 
-void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
+void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* sourceProvider, int errorLine, StringImpl* errorMessage)
 {
     // Preemptively check whether we can dispatch so that we don't do any unnecessary allocations.
     if (!canDispatchFunctionToObservers())
@@ -393,7 +393,7 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* source
         auto sourceURL = sourceProvider->sourceURL();
         auto data = sourceProvider->source().toString();
         auto firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
-        dispatchFunctionToObservers([&] (Observer& observer) {
+        dispatchFunctionToObservers([&, errorMessage = RefPtr { errorMessage }] (Observer& observer) {
             observer.failedToParseSource(sourceURL, data, firstLine, errorLine, errorMessage);
         });
         return;
@@ -411,11 +411,11 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* source
     script.isInternalScript = isInternalScript(globalObject) || isWebKitInjectedScript(script.sourceURL);
     script.sourceMappingURL = sourceProvider->sourceMappingURLDirective();
 
-    int sourceLength = script.source.length();
+    int sourceLength = length(script.source);
     int lineCount = 1;
     int lastLineStart = 0;
     for (int i = 0; i < sourceLength; ++i) {
-        if (script.source[i] == '\n') {
+        if (codeUnitAt(script.source, i) == '\n') {
             lineCount += 1;
             lastLineStart = i + 1;
         }
@@ -443,7 +443,7 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, JSWebAssemblyModule* m
 
     auto baseURL = sourceURLBase(globalObject);
     auto url = Wasm::makeString(info->sourceURL);
-    if (url.isEmpty()) {
+    if (isEmpty(url)) {
         static std::atomic<uint64_t> nextWasmURLIdentifier { 0 };
         auto identifier = ++nextWasmURLIdentifier;
         URL resolvedURL(baseURL, makeString(identifier, ".wasm"_s));
@@ -770,8 +770,8 @@ bool Debugger::evaluateBreakpointCondition(Breakpoint& breakpoint, JSGlobalObjec
     ASSERT(isAttached(globalObject));
 
     VM& vm = globalObject->vm();
-    const String& condition = breakpoint.condition();
-    if (condition.isEmpty())
+    const RefPtr<StringImpl>& condition = breakpoint.condition();
+    if (isEmpty(condition))
         return true;
 
     NakedPtr<Exception> exception;

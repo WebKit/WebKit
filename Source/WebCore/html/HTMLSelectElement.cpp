@@ -106,15 +106,15 @@ using namespace WTF::Unicode;
 
 using namespace HTMLNames;
 
-static const AtomString& buttonSlotName()
+static const RefPtr<AtomStringImpl>& buttonSlotName()
 {
-    static MainThreadNeverDestroyed<const AtomString> buttonSlot("buttonSlot"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> buttonSlot("buttonSlot"_s);
     return buttonSlot;
 }
 
-static const AtomString& listBoxSlotName()
+static const RefPtr<AtomStringImpl>& listBoxSlotName()
 {
-    static MainThreadNeverDestroyed<const AtomString> listBoxSlot("listBoxSlot"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> listBoxSlot("listBoxSlot"_s);
     return listBoxSlot;
 }
 
@@ -134,10 +134,10 @@ class SelectSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) final;
     void didChangeSlotNamesOfShadowHostChildren(ShadowRoot&) final;
-    NODELETE const AtomString& slotNameForHostChild(const Node&) const final;
+    NODELETE const RefPtr<AtomStringImpl>& slotNameForHostChild(const Node&) const final;
 };
 
-NODELETE SUPPRESS_NODELETE static const AtomString& optionSlotName(const Node* host)
+NODELETE SUPPRESS_NODELETE static const RefPtr<AtomStringImpl>& optionSlotName(const Node* host)
 {
     auto* select = dynamicDowncast<HTMLSelectElement>(host);
     return select && usesListBoxSlot(*select) ? listBoxSlotName() : NamedSlotAssignment::defaultSlotName();
@@ -159,7 +159,7 @@ void SelectSlotAssignment::didChangeSlotNamesOfShadowHostChildren(ShadowRoot& sh
     didChangeSlot(listBoxSlotName(), shadowRoot);
 }
 
-SUPPRESS_NODELETE const AtomString& SelectSlotAssignment::slotNameForHostChild(const Node& child) const
+SUPPRESS_NODELETE const RefPtr<AtomStringImpl>& SelectSlotAssignment::slotNameForHostChild(const Node& child) const
 {
     return isFirstElementChildButton(child) ? buttonSlotName() : optionSlotName(child.parentNode());
 }
@@ -308,10 +308,10 @@ void HTMLSelectElement::didRecalcStyle(OptionSet<Style::Change> styleChange)
     HTMLFormControlElement::didRecalcStyle(styleChange);
 }
 
-const AtomString& HTMLSelectElement::formControlType() const
+const RefPtr<AtomStringImpl>& HTMLSelectElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> selectMultiple("select-multiple"_s);
-    static MainThreadNeverDestroyed<const AtomString> selectOne("select-one"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> selectMultiple("select-multiple"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> selectOne("select-one"_s);
     return m_multiple ? selectMultiple : selectOne;
 }
 
@@ -387,18 +387,18 @@ bool HTMLSelectElement::hasPlaceholderLabelOption() const
     if (listIndex)
         return false;
     Ref option = downcast<HTMLOptionElement>(*listItems()[listIndex]);
-    return option->value().isEmpty();
+    return isEmpty(option->value());
 }
 
-String HTMLSelectElement::validationMessage() const
+RefPtr<StringImpl> HTMLSelectElement::validationMessage() const
 {
     if (!willValidate())
-        return String();
+        return nullptr;
 
     if (customError())
         return customValidationMessage();
 
-    return valueMissing() ? validationMessageValueMissingForSelectText() : String();
+    return valueMissing() ? validationMessageValueMissingForSelectText() : nullptr;
 }
 
 bool HTMLSelectElement::valueMissing() const
@@ -528,7 +528,7 @@ Element* HTMLSelectElement::buttonElement() const
     return is<HTMLButtonElement>(first) ? first : nullptr;
 }
 
-String HTMLSelectElement::buttonLabelText(StringView selectedContentText) const
+RefPtr<StringImpl> HTMLSelectElement::buttonLabelText(StringView selectedContentText) const
 {
     RefPtr button = buttonElement();
     if (!button)
@@ -549,7 +549,7 @@ String HTMLSelectElement::buttonLabelText(StringView selectedContentText) const
             text.append(textNode->data());
         node = NodeTraversal::next(*node, button.get());
     }
-    return text.toString().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+    return simplifyWhiteSpace(trim(text.toString(), isASCIIWhitespace), isASCIIWhitespace);
 }
 
 static size_t selectedOptionCount(const HTMLSelectElement& selectElement)
@@ -562,7 +562,7 @@ static size_t selectedOptionCount(const HTMLSelectElement& selectElement)
     return count;
 }
 
-String HTMLSelectElement::buttonText(ForAccessibility forAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const
+RefPtr<StringImpl> HTMLSelectElement::buttonText(ForAccessibility forAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const
 {
     if (!buttonElement())
         return selectedOptionsText(forAccessibility, selectedOption, optionIndex);
@@ -574,7 +574,7 @@ String HTMLSelectElement::buttonText(ForAccessibility forAccessibility, HTMLOpti
     return buttonLabelText({ });
 }
 
-String HTMLSelectElement::selectedOptionsText(ForAccessibility forAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const
+RefPtr<StringImpl> HTMLSelectElement::selectedOptionsText(ForAccessibility forAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const
 {
     if (m_multiple) {
         size_t count = selectedOptionCount(*this);
@@ -599,10 +599,10 @@ String HTMLSelectElement::selectedOptionsText(ForAccessibility forAccessibility,
     if (forAccessibility == ForAccessibility::Yes) {
         // FIXME: Perhaps reconcile with the text the button shows, which ignores aria-label and uses displayLabel().
         auto ariaLabel = option->attributeTrimmedWithDefaultARIA(aria_labelAttr);
-        return ariaLabel.isEmpty() ? option->label() : ariaLabel;
+        return isEmpty(ariaLabel) ? option->label() : ariaLabel;
     }
 
-    return option->textIndentedToRespectGroupLabel().trim(deprecatedIsSpaceOrNewline);
+    return trim(option->textIndentedToRespectGroupLabel(), deprecatedIsSpaceOrNewline);
 }
 
 void HTMLSelectElement::buttonElementChildrenChanged()
@@ -661,7 +661,7 @@ void HTMLSelectElement::queuePickerClose(PickerCloseReason reason)
         auto message = reason == PickerCloseReason::Appearance
             ? "The select element's appearance property changed while its picker was open. The picker has been closed."_s
             : "The select element stopped being a dropdown box while its picker was open. The picker has been closed."_s;
-        protect(select->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, message);
+        protect(select->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, StringImpl::create(message).ptr());
         select->hidePickerPopoverElement();
     });
 }
@@ -686,36 +686,36 @@ auto HTMLSelectElement::optionNavigationKeyIdentifiers() const -> NavigationKeyI
     return navigationKeyIdentifiersForWritingMode(writingMode);
 }
 
-int HTMLSelectElement::computeNavigationIndex(const String& keyIdentifier, int currentListIndex, NavigationKeyIdentifiers navigationKeys) const
+int HTMLSelectElement::computeNavigationIndex(StringImpl* keyIdentifier, int currentListIndex, NavigationKeyIdentifiers navigationKeys) const
 {
     // Primary axis (writing-mode aware block direction).
-    if (keyIdentifier == navigationKeys.next)
+    if (equal(keyIdentifier, navigationKeys.next))
         return nextSelectableListIndex(currentListIndex);
-    if (keyIdentifier == navigationKeys.previous)
+    if (equal(keyIdentifier, navigationKeys.previous))
         return previousSelectableListIndex(currentListIndex);
 
     // Secondary axis (the other pair of arrow keys, for convenience).
     bool primaryIsVertical = (navigationKeys.next == "Down"_s || navigationKeys.next == "Up"_s);
     if (primaryIsVertical) {
         // Primary is Down/Up, secondary is Right/Left.
-        if (keyIdentifier == "Right"_s)
+        if (equal(keyIdentifier, "Right"_s))
             return nextSelectableListIndex(currentListIndex);
-        if (keyIdentifier == "Left"_s)
+        if (equal(keyIdentifier, "Left"_s))
             return previousSelectableListIndex(currentListIndex);
     } else {
         // Primary is Right/Left, secondary is Down/Up.
-        if (keyIdentifier == "Down"_s)
+        if (equal(keyIdentifier, "Down"_s))
             return nextSelectableListIndex(currentListIndex);
-        if (keyIdentifier == "Up"_s)
+        if (equal(keyIdentifier, "Up"_s))
             return previousSelectableListIndex(currentListIndex);
     }
 
-    if (keyIdentifier == "Home"_s)
+    if (equal(keyIdentifier, "Home"_s))
         return firstSelectableListIndex();
-    if (keyIdentifier == "End"_s)
+    if (equal(keyIdentifier, "End"_s))
         return lastSelectableListIndex();
-    if (keyIdentifier == "PageDown"_s || keyIdentifier == "PageUp"_s) {
-        auto direction = keyIdentifier == "PageDown"_s ? SkipDirection::Forwards : SkipDirection::Backwards;
+    if (equal(keyIdentifier, "PageDown"_s) || equal(keyIdentifier, "PageUp"_s)) {
+        auto direction = equal(keyIdentifier, "PageDown"_s) ? SkipDirection::Forwards : SkipDirection::Backwards;
         if (usesBaseAppearancePicker())
             return nextSelectableListIndexForPickerPageMove(currentListIndex, direction, navigationKeys.writingMode);
         // A base list box shows its preferred size in rows, less one to keep some context.
@@ -768,7 +768,7 @@ void HTMLSelectElement::remove(int optionIndex)
     Ref { *listItems()[listIndex] }->remove();
 }
 
-String HTMLSelectElement::value() const
+RefPtr<StringImpl> HTMLSelectElement::value() const
 {
     if (protect(document())->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls))
         return emptyString();
@@ -781,7 +781,7 @@ String HTMLSelectElement::value() const
     return emptyString();
 }
 
-String HTMLSelectElement::collectOptionInnerText(EmitNewlineForEmptyItems emitNewlineForEmptyItems) const
+RefPtr<StringImpl> HTMLSelectElement::collectOptionInnerText(EmitNewlineForEmptyItems emitNewlineForEmptyItems) const
 {
     StringBuilder builder;
     for (auto& item : listItems()) {
@@ -794,17 +794,17 @@ String HTMLSelectElement::collectOptionInnerText(EmitNewlineForEmptyItems emitNe
     // Even when options/optgroups have no text, their presence as block-level
     // elements should generate a required line break per the innerText spec.
     if (builder.isEmpty() && emitNewlineForEmptyItems == EmitNewlineForEmptyItems::Yes && !listItems().isEmpty())
-        return "\n"_s;
+        return "\n"_si;
     return builder.toString();
 }
 
-void HTMLSelectElement::setValue(const String& value)
+void HTMLSelectElement::setValue(StringImpl* value)
 {
     // Find the option with value() matching the given parameter and make it the current selection.
     unsigned optionIndex = 0;
     for (auto& item : listItems()) {
         if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get())) {
-            if (option->value() == value) {
+            if (equal(option->value(), value)) {
                 selectOption(optionIndex, { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::MakeOptionDirty });
                 return;
             }
@@ -826,7 +826,7 @@ bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLSelectElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::sizeAttr: {
@@ -1115,7 +1115,7 @@ void HTMLSelectElement::setSize(unsigned size)
     setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegative(size));
 }
 
-HTMLOptionElement* HTMLSelectElement::namedItem(const AtomString& name)
+HTMLOptionElement* HTMLSelectElement::namedItem(AtomStringImpl* name)
 {
     return options()->namedItem(name);
 }
@@ -1806,14 +1806,14 @@ FormControlState HTMLSelectElement::saveFormControlState() const
         RefPtr option = dynamicDowncast<HTMLOptionElement>(*element);
         if (!option || !option->selected())
             continue;
-        state.append(option->value());
+        state.append(AtomStringImpl::add(option->value()));
         if (!multiple())
             break;
     }
     return state;
 }
 
-size_t HTMLSelectElement::searchOptionsForValue(const String& value, size_t listIndexStart, size_t listIndexEnd) const
+size_t HTMLSelectElement::searchOptionsForValue(StringImpl* value, size_t listIndexStart, size_t listIndexEnd) const
 {
     auto& items = listItems();
     size_t loopEndIndex = std::min(items.size(), listIndexEnd);
@@ -1821,7 +1821,7 @@ size_t HTMLSelectElement::searchOptionsForValue(const String& value, size_t list
         RefPtr option = dynamicDowncast<HTMLOptionElement>(*items[i]);
         if (!option)
             continue;
-        if (option->value() == value)
+        if (equal(option->value(), value))
             return i;
     }
     return notFound;
@@ -1865,13 +1865,13 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
     updateSelectedContentIfEnabled();
 }
 
-void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
+void HTMLSelectElement::parseMultipleAttribute(AtomStringImpl* value)
 {
     auto oldBoxType = boxType();
     bool oldMultiple = m_multiple;
     bool couldHaveBaseAppearance = canHaveBaseAppearance();
     int oldSelectedIndex = selectedIndex();
-    setSizeAndMultiple(m_size, !value.isNull());
+    setSizeAndMultiple(m_size, !!value);
     if (oldBoxType != boxType() || couldHaveBaseAppearance != canHaveBaseAppearance())
         invalidateStyleAndRenderersForSubtree();
     if (oldMultiple != m_multiple) {
@@ -1890,8 +1890,8 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
 
 bool HTMLSelectElement::appendFormData(DOMFormData& formData)
 {
-    const AtomString& name = this->name();
-    if (name.isEmpty())
+    const RefPtr<AtomStringImpl>& name = this->name();
+    if (isEmpty(name))
         return false;
 
     bool successful = false;
@@ -1953,7 +1953,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
         return false;
 
     if (!document().settings().spatialNavigationEnabled()) {
-        if (event->keyIdentifier() == "Down"_s || event->keyIdentifier() == "Up"_s) {
+        if (equal(event->keyIdentifier(), "Down"_s) || equal(event->keyIdentifier(), "Up"_s)) {
             focus();
             protect(document())->updateStyleIfNeeded();
             // Calling focus() may cause us to lose our renderer. Return true so
@@ -2024,14 +2024,14 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 return;
         }
 
-        const String& keyIdentifier = keyboardEvent->keyIdentifier();
+        const RefPtr<StringImpl>& keyIdentifier = keyboardEvent->keyIdentifier();
         auto& listItems = this->listItems();
         int listIndex = optionToListIndex(selectedIndex());
 
         // When using caret browsing, we want to be able to move the focus
         // out of the select element when user hits a left or right arrow key.
         if (document().settings().caretBrowsingEnabled()) {
-            if (keyIdentifier == "Left"_s || keyIdentifier == "Right"_s)
+            if (equal(keyIdentifier, "Left"_s) || equal(keyIdentifier, "Right"_s))
                 return;
         }
 
@@ -2281,54 +2281,54 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             return renderer ? renderer->writingMode() : WritingMode { };
         }());
 
-        const String& keyIdentifier = keyboardEvent->keyIdentifier();
+        const RefPtr<StringImpl>& keyIdentifier = keyboardEvent->keyIdentifier();
 
         bool handled = false;
         int endIndex = 0;
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index
-            if (keyIdentifier == navigationKeys.next || keyIdentifier == "PageDown"_s) {
+            if (equal(keyIdentifier, navigationKeys.next) || equal(keyIdentifier, "PageDown"_s)) {
                 int startIndex = lastSelectedListIndex();
                 handled = true;
-                if (keyIdentifier == navigationKeys.next)
+                if (equal(keyIdentifier, navigationKeys.next))
                     endIndex = nextSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipDirection::Forwards);
-            } else if (keyIdentifier == navigationKeys.previous || keyIdentifier == "PageUp"_s) {
+            } else if (equal(keyIdentifier, navigationKeys.previous) || equal(keyIdentifier, "PageUp"_s)) {
                 int startIndex = optionToListIndex(selectedIndex());
                 handled = true;
-                if (keyIdentifier == navigationKeys.previous)
+                if (equal(keyIdentifier, navigationKeys.previous))
                     endIndex = previousSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipDirection::Backwards);
             }
         } else {
             // Set the end index based on the current end index.
-            if (keyIdentifier == navigationKeys.next) {
+            if (equal(keyIdentifier, navigationKeys.next)) {
                 endIndex = nextSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == navigationKeys.previous) {
+            } else if (equal(keyIdentifier, navigationKeys.previous)) {
                 endIndex = previousSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == "PageDown"_s) {
+            } else if (equal(keyIdentifier, "PageDown"_s)) {
                 endIndex = nextSelectableListIndexPageAway(m_activeSelectionEndIndex, SkipDirection::Forwards);
                 handled = true;
-            } else if (keyIdentifier == "PageUp"_s) {
+            } else if (equal(keyIdentifier, "PageUp"_s)) {
                 endIndex = nextSelectableListIndexPageAway(m_activeSelectionEndIndex, SkipDirection::Backwards);
                 handled = true;
             }
         }
-        if (keyIdentifier == "Home"_s) {
+        if (equal(keyIdentifier, "Home"_s)) {
             endIndex = firstSelectableListIndex();
             handled = true;
-        } else if (keyIdentifier == "End"_s) {
+        } else if (equal(keyIdentifier, "End"_s)) {
             endIndex = lastSelectableListIndex();
             handled = true;
         }
 
         if (document().settings().spatialNavigationEnabled()) {
             // Check if the selection moves to the boundary.
-            if (keyIdentifier == "Left"_s || keyIdentifier == "Right"_s || ((keyIdentifier == "Down"_s || keyIdentifier == "Up"_s) && endIndex == m_activeSelectionEndIndex))
+            if (equal(keyIdentifier, "Left"_s) || equal(keyIdentifier, "Right"_s) || ((equal(keyIdentifier, "Down"_s) || equal(keyIdentifier, "Up"_s)) && endIndex == m_activeSelectionEndIndex))
                 return;
         }
 
@@ -2479,7 +2479,7 @@ int HTMLSelectElement::optionCount() const
     return listItems().size();
 }
 
-String HTMLSelectElement::optionAtIndex(int index) const
+RefPtr<StringImpl> HTMLSelectElement::optionAtIndex(int index) const
 {
     RefPtr option = dynamicDowncast<HTMLOptionElement>(*listItems()[index]);
     if (!option || option->isDisabledFormControl())
@@ -2629,15 +2629,15 @@ void HTMLSelectElement::openPickerForUserInteraction(std::optional<bool> focusVi
 
 bool HTMLSelectElement::handleNavigationKeydown(KeyboardEvent& event, int currentListIndex)
 {
-    const String& keyIdentifier = event.keyIdentifier();
+    const RefPtr<StringImpl>& keyIdentifier = event.keyIdentifier();
     int listIndex = computeNavigationIndex(keyIdentifier, currentListIndex, optionNavigationKeyIdentifiers());
     if (listIndex < 0)
         return false;
 
     auto scrollMode = OptionScrollMode::Nearest;
-    if (keyIdentifier == "PageDown"_s)
+    if (equal(keyIdentifier, "PageDown"_s))
         scrollMode = OptionScrollMode::AlignBottom;
-    else if (keyIdentifier == "PageUp"_s)
+    else if (equal(keyIdentifier, "PageUp"_s))
         scrollMode = OptionScrollMode::AlignTop;
 
     focusOptionAtIndex(listIndex, std::nullopt, scrollMode);
@@ -2707,16 +2707,16 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
         return { };
 
     if (!isMutable())
-        return Exception { ExceptionCode::InvalidStateError, "Select showPicker() cannot be used on immutable controls."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Select showPicker() cannot be used on immutable controls."_si };
 
     // In cross-origin iframes it should throw a "SecurityError" DOMException. In same-origin iframes it should work fine.
     RefPtr localTopFrame = dynamicDowncast<LocalFrame>(frame->tree().top());
     if (!localTopFrame || !protect(protect(frame->document())->securityOrigin())->isSameOriginAs(protect(protect(localTopFrame->document())->securityOrigin())))
-        return Exception { ExceptionCode::SecurityError, "Select showPicker() called from cross-origin iframe."_s };
+        return Exception { ExceptionCode::SecurityError, "Select showPicker() called from cross-origin iframe."_si };
 
     RefPtr window = frame->window();
     if (!window || !window->consumeTransientActivation())
-        return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_s };
+        return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_si };
 
     protect(document())->updateStyleIfNeeded();
     showPickerInternal(); // showPickerInternal() may run JS and cause the renderer to get destroyed.
@@ -2890,13 +2890,13 @@ void HTMLSelectElement::valueChanged(unsigned listIndex, bool fireOnChange)
     optionSelectedByUser(listToOptionIndex(listIndex), fireOnChange, m_multiple);
 }
 
-String HTMLSelectElement::itemText(unsigned listIndex) const
+RefPtr<StringImpl> HTMLSelectElement::itemText(unsigned listIndex) const
 {
     auto& listItems = this->listItems();
     if (listIndex >= listItems.size())
-        return String();
+        return nullptr;
 
-    String itemString;
+    RefPtr<StringImpl> itemString;
     if (RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(listItems[listIndex].get()))
         itemString = optGroupElement->groupLabelText();
     if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(listItems[listIndex].get()))
@@ -2907,22 +2907,22 @@ String HTMLSelectElement::itemText(unsigned listIndex) const
     return itemString;
 }
 
-String HTMLSelectElement::itemToolTip(unsigned listIndex) const
+RefPtr<StringImpl> HTMLSelectElement::itemToolTip(unsigned listIndex) const
 {
     const auto& listItems = this->listItems();
     if (listIndex >= listItems.size())
-        return String();
+        return nullptr;
 
     RefPtr element = listItems[listIndex].get();
-    return element ? element->title() : String();
+    return element ? element->title() : nullptr;
 }
 
-String HTMLSelectElement::itemAccessibilityText(unsigned listIndex) const
+RefPtr<StringImpl> HTMLSelectElement::itemAccessibilityText(unsigned listIndex) const
 {
     // Allow the accessible name be changed if necessary.
     const auto& listItems = this->listItems();
     if (listIndex >= listItems.size())
-        return String();
+        return nullptr;
     RefPtr element = listItems[listIndex].get();
     return element->attributeWithoutSynchronization(aria_labelAttr);
 }

@@ -59,13 +59,13 @@ public:
     Document& document() { return downcast<Document>(this->ownerNode()); }
 
 protected:
-    HTMLNameCollection(Document&, CollectionType, const AtomString& name);
+    HTMLNameCollection(Document&, CollectionType, AtomStringImpl* name);
 
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
 };
 
 template <typename HTMLCollectionClass>
-HTMLNameCollection<HTMLCollectionClass>::HTMLNameCollection(Document& document, CollectionType type, const AtomString& name)
+HTMLNameCollection<HTMLCollectionClass>::HTMLNameCollection(Document& document, CollectionType type, AtomStringImpl* name)
     : CachedHTMLCollection<HTMLCollectionClass>(document, type)
     , m_name(name)
 {
@@ -74,20 +74,20 @@ HTMLNameCollection<HTMLCollectionClass>::HTMLNameCollection(Document& document, 
 class WindowNameCollection final : public HTMLNameCollection<WindowNameCollection> {
     WTF_MAKE_TZONE_ALLOCATED(WindowNameCollection);
 public:
-    static Ref<WindowNameCollection> create(Document& document, CollectionType type, const AtomString& name)
+    static Ref<WindowNameCollection> create(Document& document, CollectionType type, AtomStringImpl* name)
     {
         return adoptRef(*new WindowNameCollection(document, type, name));
     }
 
     // For CachedHTMLCollection.
-    NODELETE bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
+    NODELETE bool elementMatches(const Element& element) const { return elementMatches(element, m_name.get()); }
 
     static bool elementMatchesIfIdAttributeMatch(const Element&) { return true; }
     NODELETE static bool elementMatchesIfNameAttributeMatch(const Element&);
-    NODELETE static bool elementMatches(const Element&, const AtomString&);
+    NODELETE static bool elementMatches(const Element&, AtomStringImpl*);
 
 private:
-    WindowNameCollection(Document& document, CollectionType type, const AtomString& name)
+    WindowNameCollection(Document& document, CollectionType type, AtomStringImpl* name)
         : HTMLNameCollection<WindowNameCollection>(document, type, name)
     {
         ASSERT(type == CollectionType::WindowNamedItems);
@@ -97,7 +97,7 @@ private:
 class DocumentNameCollection final : public HTMLNameCollection<DocumentNameCollection> {
     WTF_MAKE_TZONE_ALLOCATED(DocumentNameCollection);
 public:
-    static Ref<DocumentNameCollection> create(Document& document, CollectionType type, const AtomString& name)
+    static Ref<DocumentNameCollection> create(Document& document, CollectionType type, AtomStringImpl* name)
     {
         return adoptRef(*new DocumentNameCollection(document, type, name));
     }
@@ -106,12 +106,12 @@ public:
     NODELETE static bool elementMatchesIfNameAttributeMatch(const Element&);
 
     // For CachedHTMLCollection.
-    bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
+    bool elementMatches(const Element& element) const { return elementMatches(element, m_name.get()); }
 
-    NODELETE static bool elementMatches(const Element&, const AtomString&);
+    NODELETE static bool elementMatches(const Element&, AtomStringImpl*);
 
 private:
-    DocumentNameCollection(Document& document, CollectionType type, const AtomString& name)
+    DocumentNameCollection(Document& document, CollectionType type, AtomStringImpl* name)
         : HTMLNameCollection<DocumentNameCollection>(document, type, name)
     {
         ASSERT(type == CollectionType::DocumentNamedItems);

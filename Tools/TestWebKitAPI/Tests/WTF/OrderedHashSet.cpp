@@ -304,12 +304,12 @@ TEST(WTF_OrderedHashSet, ManyDeletesAndInserts)
 
 TEST(WTF_OrderedHashSet, StringValues)
 {
-    OrderedHashSet<String> set;
-    set.add("banana"_s);
-    set.add("apple"_s);
-    set.add("cherry"_s);
+    OrderedHashSet<RefPtr<StringImpl>> set;
+    set.add("banana"_si);
+    set.add("apple"_si);
+    set.add("cherry"_si);
 
-    Vector<String> values;
+    Vector<RefPtr<StringImpl>> values;
     for (auto& v : set)
         values.append(v);
 
@@ -494,25 +494,25 @@ TEST(WTF_OrderedHashSet, CompactInPlaceOnLargerTable)
 TEST(WTF_OrderedHashSet, CompactInPlaceWithStrings)
 {
     // Non-trivial value type exercises move/destroy paths inside compactInPlace.
-    OrderedHashSet<String> set;
-    set.add("zero"_s);
-    set.add("one"_s);
-    set.add("two"_s);
-    set.add("three"_s);
-    set.add("four"_s);
-    set.add("five"_s);
+    OrderedHashSet<RefPtr<StringImpl>> set;
+    set.add("zero"_si);
+    set.add("one"_si);
+    set.add("two"_si);
+    set.add("three"_si);
+    set.add("four"_si);
+    set.add("five"_si);
     unsigned initialCapacity = set.capacity();
 
-    set.remove("one"_s);
-    set.remove("two"_s);
-    set.remove("three"_s);
-    set.remove("four"_s);
+    set.remove("one"_si);
+    set.remove("two"_si);
+    set.remove("three"_si);
+    set.remove("four"_si);
 
-    set.add("new"_s);
+    set.add("new"_si);
     EXPECT_EQ(initialCapacity, set.capacity());
     EXPECT_EQ(3u, set.size());
 
-    Vector<String> values;
+    Vector<RefPtr<StringImpl>> values;
     for (auto& v : set)
         values.append(v);
     EXPECT_EQ(3u, values.size());
@@ -520,11 +520,11 @@ TEST(WTF_OrderedHashSet, CompactInPlaceWithStrings)
     EXPECT_EQ("five"_s, values[1]);
     EXPECT_EQ("new"_s, values[2]);
 
-    EXPECT_TRUE(set.contains("zero"_s));
-    EXPECT_TRUE(set.contains("five"_s));
-    EXPECT_TRUE(set.contains("new"_s));
-    EXPECT_FALSE(set.contains("one"_s));
-    EXPECT_FALSE(set.contains("four"_s));
+    EXPECT_TRUE(set.contains("zero"_si));
+    EXPECT_TRUE(set.contains("five"_si));
+    EXPECT_TRUE(set.contains("new"_si));
+    EXPECT_FALSE(set.contains("one"_si));
+    EXPECT_FALSE(set.contains("four"_si));
 }
 
 TEST(WTF_OrderedHashSet, CompactInPlaceRepeatedCycles)
@@ -634,10 +634,10 @@ TEST(WTF_OrderedHashSet, MoveOnlyValueRehash)
 
 TEST(WTF_OrderedHashSet, HashTranslatorFindContains)
 {
-    OrderedHashSet<String> set;
-    set.add("alpha"_s);
-    set.add("beta"_s);
-    set.add("gamma"_s);
+    OrderedHashSet<RefPtr<StringImpl>> set;
+    set.add("alpha"_si);
+    set.add("beta"_si);
+    set.add("gamma"_si);
 
     auto it = set.find<StringViewHashTranslator>(StringView { "beta"_s });
     EXPECT_TRUE(it != set.end());
@@ -660,14 +660,14 @@ namespace {
 // isn't pre-initialized to an empty value before translate() runs.
 struct AssigningStringViewTranslator {
     static unsigned hash(StringView view) { return StringHash::hash(view.toString()); }
-    static bool equal(const String& a, StringView b) { return a == b; }
-    static void translate(String& location, StringView view, NOESCAPE const auto&)
+    static bool equal(StringImpl* a, StringView b) { return a == b; }
+    static void translate(RefPtr<StringImpl>& location, StringView view, NOESCAPE const auto&)
     {
         location = view.toString();
     }
 };
 
-using StringOrderedHashTable = WTF::OrderedHashTable<String, String, WTF::IdentityExtractor, DefaultHash<String>, HashTraits<String>, HashTraits<String>, WTF::HashTableMalloc>;
+using StringOrderedHashTable = WTF::OrderedHashTable<RefPtr<StringImpl>, RefPtr<StringImpl>, WTF::IdentityExtractor, DefaultHash<RefPtr<StringImpl>>, HashTraits<RefPtr<StringImpl>>, HashTraits<RefPtr<StringImpl>>, WTF::HashTableMalloc>;
 
 // A value type whose operator= asserts the LHS is in a constructed state
 // (one of the known sentinels). Without a pre-translate constructEmptyValue,
@@ -791,7 +791,7 @@ TEST(WTF_OrderedHashSet, HashTranslatorAddIntoRawStorage)
     // so without an in-place empty-value construction before translate, String's
     // assignment operator would deref garbage from the freshly malloc'd slot.
     StringOrderedHashTable table;
-    auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> String { return String(); };
+    auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> RefPtr<StringImpl> { return nullptr; };
 
     auto a = table.add<AssigningStringViewTranslator>(StringView { "alpha"_s }, noFunctor);
     EXPECT_TRUE(a.isNewEntry);
@@ -815,11 +815,11 @@ TEST(WTF_OrderedHashSet, HashTranslatorAddTriggersRehashAndCompact)
     // the entries array and re-placement-newing into it) without disturbing any
     // in-flight empty-value state for the slot still being populated.
     StringOrderedHashTable table;
-    auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> String { return String(); };
+    auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> RefPtr<StringImpl> { return nullptr; };
 
-    Vector<String> keys;
+    Vector<RefPtr<StringImpl>> keys;
     for (unsigned i = 0; i < 64; ++i)
-        keys.append(String::number(i));
+        keys.append(makeString(i));
 
     for (const auto& k : keys)
         table.add<AssigningStringViewTranslator>(StringView { k }, noFunctor);
@@ -853,15 +853,15 @@ TEST(WTF_OrderedHashSet, EqualIgnoringOrder)
     // order-sensitive vs order-insensitive choice is explicit at the call
     // site. equalIgnoringOrder compares contents, matching HashSet::operator==
     // semantics.
-    OrderedHashSet<String> a;
-    a.add("alpha"_s);
-    a.add("beta"_s);
-    a.add("gamma"_s);
+    OrderedHashSet<RefPtr<StringImpl>> a;
+    a.add("alpha"_si);
+    a.add("beta"_si);
+    a.add("gamma"_si);
 
-    OrderedHashSet<String> b;
-    b.add("gamma"_s);
-    b.add("alpha"_s);
-    b.add("beta"_s);
+    OrderedHashSet<RefPtr<StringImpl>> b;
+    b.add("gamma"_si);
+    b.add("alpha"_si);
+    b.add("beta"_si);
 
     EXPECT_TRUE(equalIgnoringOrder(a, b));
     EXPECT_TRUE(equalIgnoringOrder(b, a));
@@ -873,12 +873,12 @@ TEST(WTF_OrderedHashSet, EqualIgnoringOrder)
 
 TEST(WTF_OrderedHashSet, EqualIgnoringOrderDifferentSize)
 {
-    OrderedHashSet<String> a;
-    a.add("alpha"_s);
-    a.add("beta"_s);
+    OrderedHashSet<RefPtr<StringImpl>> a;
+    a.add("alpha"_si);
+    a.add("beta"_si);
 
-    OrderedHashSet<String> b;
-    b.add("alpha"_s);
+    OrderedHashSet<RefPtr<StringImpl>> b;
+    b.add("alpha"_si);
 
     EXPECT_FALSE(equalIgnoringOrder(a, b));
     EXPECT_FALSE(equalIgnoringOrder(b, a));
@@ -886,13 +886,13 @@ TEST(WTF_OrderedHashSet, EqualIgnoringOrderDifferentSize)
 
 TEST(WTF_OrderedHashSet, EqualIgnoringOrderDifferentElements)
 {
-    OrderedHashSet<String> a;
-    a.add("alpha"_s);
-    a.add("beta"_s);
+    OrderedHashSet<RefPtr<StringImpl>> a;
+    a.add("alpha"_si);
+    a.add("beta"_si);
 
-    OrderedHashSet<String> b;
-    b.add("alpha"_s);
-    b.add("delta"_s);
+    OrderedHashSet<RefPtr<StringImpl>> b;
+    b.add("alpha"_si);
+    b.add("delta"_si);
 
     EXPECT_FALSE(equalIgnoringOrder(a, b));
     EXPECT_FALSE(equalIgnoringOrder(b, a));
@@ -900,11 +900,11 @@ TEST(WTF_OrderedHashSet, EqualIgnoringOrderDifferentElements)
 
 TEST(WTF_OrderedHashSet, EqualIgnoringOrderEmpty)
 {
-    OrderedHashSet<String> a;
-    OrderedHashSet<String> b;
+    OrderedHashSet<RefPtr<StringImpl>> a;
+    OrderedHashSet<RefPtr<StringImpl>> b;
     EXPECT_TRUE(equalIgnoringOrder(a, b));
 
-    a.add("key"_s);
+    a.add("key"_si);
     EXPECT_FALSE(equalIgnoringOrder(a, b));
 }
 

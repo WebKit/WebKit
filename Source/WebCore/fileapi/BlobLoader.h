@@ -55,7 +55,7 @@ public:
 
     void cancel();
     bool isLoading() const { return m_loader && m_completeCallback; }
-    String stringResult() const { return m_loader ? m_loader->stringResult() : String(); }
+    RefPtr<StringImpl> stringResult() const { return m_loader ? m_loader->stringResult() : nullptr; }
     RefPtr<JSC::ArrayBuffer> arrayBufferResult() const { return m_loader ? m_loader->arrayBufferResult() : nullptr; }
     std::optional<ExceptionCode> errorCode() const { return m_loader ? m_loader->errorCode() : std::nullopt; }
 

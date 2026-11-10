@@ -40,26 +40,26 @@ namespace Style {
 
 auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, const CSSValue& value) -> FontVariantAlternates
 {
-    auto processSingleItemFunction = [&](const CSSFunctionValue& function, WTF::String& parameterToSet) -> bool {
+    auto processSingleItemFunction = [&](const CSSFunctionValue& function, RefPtr<StringImpl>& parameterToSet) -> bool {
         if (function.size() != 1) {
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return false;
         }
         auto customIdent = toStyleFromCSSValue<CustomIdent>(state, protect(function[0]));
-        if (customIdent.value.isNull())
+        if (!customIdent.value)
             return false;
         parameterToSet = customIdent.value;
         return true;
     };
 
-    auto processListFunction = [&](const CSSFunctionValue& function, Vector<WTF::String>& parameterToSet) -> bool {
+    auto processListFunction = [&](const CSSFunctionValue& function, Vector<RefPtr<StringImpl>>& parameterToSet) -> bool {
         if (!function.size()) {
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return false;
         }
         for (Ref argument : function) {
             auto customIdent = toStyleFromCSSValue<CustomIdent>(state, argument);
-            if (customIdent.value.isNull())
+            if (!customIdent.value)
                 return false;
             parameterToSet.append(customIdent.value);
         }
@@ -145,14 +145,14 @@ Ref<CSSValue> CSSValueCreation<FontVariantAlternates>::operator()(CSSValuePool& 
             valueList.append(createCSSValue(pool, style, name));
     };
     auto appendSingleItemFunction = [&](auto name, const auto& value) {
-        if (!value.isNull())
-            valueList.append(CSSFunctionValue::create(name.value, createCSSValue(pool, style, CustomIdent { AtomString { value } })));
+        if (value)
+            valueList.append(CSSFunctionValue::create(name.value, createCSSValue(pool, style, CustomIdent { AtomStringImpl::add(value.get()) })));
     };
     auto appendListFunction = [&](auto name, const auto& value) {
         if (!value.isEmpty()) {
             CSSValueListBuilder functionArguments;
             for (auto& argument : value)
-                functionArguments.append(createCSSValue(pool, style, CustomIdent { AtomString { argument } }));
+                functionArguments.append(createCSSValue(pool, style, CustomIdent { AtomStringImpl::add(argument.get()) }));
             valueList.append(CSSFunctionValue::create(name.value, WTF::move(functionArguments)));
         }
     };
@@ -188,13 +188,13 @@ void Serialize<FontVariantAlternates>::operator()(StringBuilder& builder, const 
         }
     };
     auto appendSingleItemFunction = [&](auto name, const auto& value) {
-        if (!value.isNull()) {
+        if (value) {
             if (needsSpace)
                 builder.append(' ');
 
             serializationForCSS(builder, context, style, name);
             builder.append('(');
-            serializationForCSS(builder, context, style, CustomIdent { AtomString { value } });
+            serializationForCSS(builder, context, style, CustomIdent { AtomStringImpl::add(value.get()) });
             builder.append(')');
 
             needsSpace = true;
@@ -208,7 +208,7 @@ void Serialize<FontVariantAlternates>::operator()(StringBuilder& builder, const 
             serializationForCSS(builder, context, style, name);
             builder.append('(');
             builder.append(interleave(value, [&](auto& builder, const auto& argument) {
-                serializationForCSS(builder, context, style, CustomIdent { AtomString { argument } });
+                serializationForCSS(builder, context, style, CustomIdent { AtomStringImpl::add(argument.get()) });
             }, ", "_s));
             builder.append(')');
 

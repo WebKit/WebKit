@@ -1144,7 +1144,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         auto& frame = m_renderView.frameView().frame();
         bool isRootFrame = isRootFrameCompositor();
-        LOG_WITH_STREAM(Compositing, stream << "\nUpdate " << m_rootLayerUpdateCount << " of " << (isRootFrame ? "root frame"_s : makeString("frame "_s, frame.frameID().toUInt64())) << " - compositing policy is " << m_compositingPolicy);
+        LOG_WITH_STREAM(Compositing, stream << "\nUpdate " << m_rootLayerUpdateCount << " of " << (isRootFrame ? "root frame"_si : makeString("frame "_s, frame.frameID().toUInt64())) << " - compositing policy is " << m_compositingPolicy);
     }
 #endif
 
@@ -3020,7 +3020,7 @@ void RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump()
     protect(page())->triggerRenderingUpdateForTesting();
 }
 
-String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent)
+RefPtr<StringImpl> RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " layerTreeAsText");
 
@@ -3030,11 +3030,11 @@ String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> 
     RefPtr dumpRootLayer = (options & LayerTreeAsTextOptions::IncludeRootLayers) ? RefPtr { rootGraphicsLayer() } : m_rootContentsLayer;
 
     if (!dumpRootLayer)
-        return String();
+        return nullptr;
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    String layerTreeText = dumpRootLayer->layerTreeAsText(options, baseIndent);
+    RefPtr<StringImpl> layerTreeText = dumpRootLayer->layerTreeAsText(options, baseIndent);
 
     // Dump an empty layer tree only if the only composited layer is the main frame's tiled backing,
     // so that tests expecting us to drop out of accelerated compositing when there are no layers succeed.
@@ -3049,7 +3049,7 @@ String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> 
     return layerTreeText;
 }
 
-std::optional<String> RenderLayerCompositor::platformLayerTreeAsText(Element& element, OptionSet<PlatformLayerTreeAsTextFlags> flags)
+std::optional<RefPtr<StringImpl>> RenderLayerCompositor::platformLayerTreeAsText(Element& element, OptionSet<PlatformLayerTreeAsTextFlags> flags)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " platformLayerTreeAsText");
 
@@ -4923,7 +4923,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangImage(bool wantsL
 
     if (!m_layerForTopOverhangImage) {
         m_layerForTopOverhangImage = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForTopOverhangImage->setName(MAKE_STATIC_STRING_IMPL("top overhang (image)"));
+        m_layerForTopOverhangImage->setName("top overhang (image)"_si);
         RefPtr { m_scrolledContentsLayer }->addChildBelow(*m_layerForTopOverhangImage, m_rootContentsLayer.get());
     }
 
@@ -4942,7 +4942,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangColorExtension(bo
 
     if (!m_layerForTopOverhangColorExtension) {
         m_layerForTopOverhangColorExtension = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForTopOverhangColorExtension->setName(MAKE_STATIC_STRING_IMPL("top overhang (color extension)"));
+        m_layerForTopOverhangColorExtension->setName("top overhang (color extension)"_si);
         m_layerForTopOverhangColorExtension->setDrawsContent(false);
         RefPtr { m_scrolledContentsLayer }->addChildBelow(*m_layerForTopOverhangColorExtension, m_layerForTopOverhangImage.get() ?: m_rootContentsLayer.get());
     }
@@ -4962,7 +4962,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
 
     if (!m_layerForBottomOverhangArea) {
         m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForBottomOverhangArea->setName(MAKE_STATIC_STRING_IMPL("bottom overhang"));
+        m_layerForBottomOverhangArea->setName("bottom overhang"_si);
         RefPtr { m_scrolledContentsLayer }->addChildBelow(*m_layerForBottomOverhangArea, m_rootContentsLayer.get());
     }
 
@@ -4991,7 +4991,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
     if (!m_layerForHeader) {
         m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForHeader->setName(MAKE_STATIC_STRING_IMPL("header"));
+        m_layerForHeader->setName("header"_si);
         RefPtr { m_scrolledContentsLayer }->addChildAbove(*m_layerForHeader, m_rootContentsLayer.get());
     }
 
@@ -5030,7 +5030,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 
     if (!m_layerForFooter) {
         m_layerForFooter = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForFooter->setName(MAKE_STATIC_STRING_IMPL("footer"));
+        m_layerForFooter->setName("footer"_si);
         RefPtr { m_scrolledContentsLayer }->addChildAbove(*m_layerForFooter, m_rootContentsLayer.get());
     }
 
@@ -5214,7 +5214,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresOverhangAreasLayer()) {
         if (!m_layerForOverhangAreas) {
             m_layerForOverhangAreas = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_layerForOverhangAreas->setName(MAKE_STATIC_STRING_IMPL("overhang areas"));
+            m_layerForOverhangAreas->setName("overhang areas"_si);
             RefPtr { m_layerForOverhangAreas }->setDrawsContent(false);
 
             updateSizeAndPositionForOverhangAreaLayer();
@@ -5231,7 +5231,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresContentShadowLayer()) {
         if (!m_contentShadowLayer) {
             m_contentShadowLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_contentShadowLayer->setName(MAKE_STATIC_STRING_IMPL("content shadow"));
+            m_contentShadowLayer->setName("content shadow"_si);
             RefPtr { m_contentShadowLayer }->setSize(m_rootContentsLayer->size());
             m_contentShadowLayer->setPosition(m_rootContentsLayer->position());
             m_contentShadowLayer->setAnchorPoint(FloatPoint3D());
@@ -5249,7 +5249,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForHorizontalScrollbar->setAllowsBackingStoreDetaching(false);
             m_layerForHorizontalScrollbar->setAllowsTiling(false);
             m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
-            m_layerForHorizontalScrollbar->setName(MAKE_STATIC_STRING_IMPL("horizontal scrollbar container"));
+            m_layerForHorizontalScrollbar->setName("horizontal scrollbar container"_si);
 #if USE(CA)
             m_layerForHorizontalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
@@ -5271,7 +5271,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForVerticalScrollbar->setAllowsBackingStoreDetaching(false);
             m_layerForVerticalScrollbar->setAllowsTiling(false);
             m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
-            m_layerForVerticalScrollbar->setName(MAKE_STATIC_STRING_IMPL("vertical scrollbar container"));
+            m_layerForVerticalScrollbar->setName("vertical scrollbar container"_si);
 #if USE(CA)
             m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
@@ -5292,7 +5292,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForScrollCorner = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForScrollCorner->setAllowsBackingStoreDetaching(false);
             m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
-            m_layerForScrollCorner->setName(MAKE_STATIC_STRING_IMPL("scroll corner"));
+            m_layerForScrollCorner->setName("scroll corner"_si);
 #if USE(CA)
             m_layerForScrollCorner->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
@@ -5312,7 +5312,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
     if (!m_rootContentsLayer) {
         m_rootContentsLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_rootContentsLayer->setName(MAKE_STATIC_STRING_IMPL("content root"));
+        m_rootContentsLayer->setName("content root"_si);
         IntRect overflowRect = snappedIntRect(m_renderView.layoutOverflowRect());
         RefPtr { m_rootContentsLayer }->setSize(FloatSize(overflowRect.maxX(), overflowRect.maxY()));
         m_rootContentsLayer->setPosition(FloatPoint());
@@ -5331,17 +5331,17 @@ void RenderLayerCompositor::ensureRootLayer()
 
             // Create a layer to host the clipping layer and the overflow controls layers.
             m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_overflowControlsHostLayer->setName(MAKE_STATIC_STRING_IMPL("overflow controls host"));
+            m_overflowControlsHostLayer->setName("overflow controls host"_si);
 
             m_scrolledContentsLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrolledContents);
-            m_scrolledContentsLayer->setName(MAKE_STATIC_STRING_IMPL("frame scrolled contents"));
+            m_scrolledContentsLayer->setName("frame scrolled contents"_si);
             m_scrolledContentsLayer->setAnchorPoint({ });
 
 #if PLATFORM(IOS_FAMILY)
             if (m_renderView.settings().asyncFrameScrollingEnabled()) {
                 m_scrollContainerLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrollContainer);
 
-                m_scrollContainerLayer->setName(MAKE_STATIC_STRING_IMPL("scroll container"));
+                m_scrollContainerLayer->setName("scroll container"_si);
                 m_scrollContainerLayer->setMasksToBounds(true);
                 m_scrollContainerLayer->setAnchorPoint({ });
 
@@ -5354,7 +5354,7 @@ void RenderLayerCompositor::ensureRootLayer()
             if (!m_scrollContainerLayer) {
                 m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
                 RefPtr clipLayer = m_clipLayer;
-                clipLayer->setName(MAKE_STATIC_STRING_IMPL("frame clipping"));
+                clipLayer->setName("frame clipping"_si);
                 clipLayer->setMasksToBounds(true);
                 clipLayer->setAnchorPoint({ });
 

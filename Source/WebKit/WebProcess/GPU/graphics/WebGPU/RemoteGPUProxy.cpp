@@ -200,7 +200,7 @@ RefPtr<WebKit::Mesh> RemoteGPUProxy::createModelBacking(unsigned width, unsigned
     UNUSED_PARAM(sendResult);
 
     auto result = RemoteMeshProxy::create(root(), m_modelConvertToBackingContext, identifier);
-    result->setLabel("Placeholder model label"_s);
+    result->setLabel("Placeholder model label"_si);
     return result;
 #else
     UNUSED_PARAM(width);

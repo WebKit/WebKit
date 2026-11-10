@@ -73,12 +73,12 @@ void testBoundaries()
     buffer.resize(bufferSize);
 
     const IntegerType min = std::numeric_limits<IntegerType>::min();
-    auto minStringData = String::number(min).ascii();
+    auto minStringData = ascii(makeString(min));
     snprintf(buffer.mutableSpan().data(), bufferSize, PrintfFormatTrait<IntegerType>::format, min);
     ASSERT_STREQ(buffer.span().data(), minStringData.data());
 
     const IntegerType max = std::numeric_limits<IntegerType>::max();
-    auto maxStringData = String::number(max).ascii();
+    auto maxStringData = ascii(makeString(max));
     snprintf(buffer.mutableSpan().data(), bufferSize, PrintfFormatTrait<IntegerType>::format, max);
     ASSERT_STREQ(buffer.span().data(), maxStringData.data());
 }
@@ -92,7 +92,7 @@ void testNumbers()
 
     for (int i = -100; i < 100; ++i) {
         const IntegerType number = static_cast<IntegerType>(i);
-        auto numberStringData = String::number(number).ascii();
+        auto numberStringData = ascii(makeString(number));
         snprintf(buffer.mutableSpan().data(), bufferSize, PrintfFormatTrait<IntegerType>::format, number);
         ASSERT_STREQ(buffer.span().data(), numberStringData.data());
     }

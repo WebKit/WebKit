@@ -37,7 +37,7 @@ namespace WebCore {
 class PreloadRequest {
     WTF_MAKE_TZONE_ALLOCATED(PreloadRequest);
 public:
-    PreloadRequest(ASCIILiteral initiatorType, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy, RequestPriority fetchPriority = RequestPriority::Auto)
+    PreloadRequest(ASCIILiteral initiatorType, StringImpl* resourceURL, const URL& baseURL, CachedResource::Type resourceType, StringImpl* mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy, RequestPriority fetchPriority = RequestPriority::Auto)
         : m_initiatorType(initiatorType)
         , m_resourceURL(resourceURL)
         , m_baseURL(baseURL.isolatedCopy())
@@ -51,12 +51,12 @@ public:
 
     CachedResourceRequest resourceRequest(Document&);
 
-    const String& charset() const LIFETIME_BOUND { return m_charset; }
-    const String& media() const LIFETIME_BOUND { return m_mediaAttribute; }
-    void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
-    void setCrossOriginMode(const String& mode) { m_crossOriginMode = mode; }
-    void setNonce(const String& nonce) { m_nonceAttribute = nonce; }
-    void setIntegrity(const String& integrity) { m_integrityAttribute = integrity; }
+    const RefPtr<StringImpl>& charset() const LIFETIME_BOUND { return m_charset; }
+    const RefPtr<StringImpl>& media() const LIFETIME_BOUND { return m_mediaAttribute; }
+    void setCharset(StringImpl* charset) { m_charset = isolatedCopy(charset); }
+    void setCrossOriginMode(StringImpl* mode) { m_crossOriginMode = mode; }
+    void setNonce(StringImpl* nonce) { m_nonceAttribute = nonce; }
+    void setIntegrity(StringImpl* integrity) { m_integrityAttribute = integrity; }
     void setScriptIsAsync(bool value) { m_scriptIsAsync = value; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
@@ -64,13 +64,13 @@ private:
     URL completeURL(Document&);
 
     ASCIILiteral m_initiatorType;
-    String m_resourceURL;
+    RefPtr<StringImpl> m_resourceURL;
     URL m_baseURL;
-    String m_charset;
-    String m_mediaAttribute;
-    String m_crossOriginMode;
-    String m_nonceAttribute;
-    String m_integrityAttribute;
+    RefPtr<StringImpl> m_charset;
+    RefPtr<StringImpl> m_mediaAttribute;
+    RefPtr<StringImpl> m_crossOriginMode;
+    RefPtr<StringImpl> m_nonceAttribute;
+    RefPtr<StringImpl> m_integrityAttribute;
     bool m_scriptIsAsync { false };
     CachedResource::Type m_resourceType;
     ScriptType m_scriptType;

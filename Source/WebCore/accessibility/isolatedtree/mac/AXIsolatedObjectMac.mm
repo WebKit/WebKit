@@ -61,7 +61,7 @@ void appendPlatformProperties(AXPropertyVector& properties, OptionSet<AXProperty
 
     setProperty(AXProperty::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
     setProperty(AXProperty::SpeakAs, object->speakAs());
-    setProperty(AXProperty::SelectedOptionCheckmark, object->selectedOptionCheckmark().isolatedCopy());
+    setProperty(AXProperty::SelectedOptionCheckmark, isolatedCopy(object->selectedOptionCheckmark()));
     if (object->isStaticText()) {
         auto style = object->stylesForAttributedString();
         // Font and TextColor are handled in initializeBasePlatformProperties, since ignored objects could be "containers" where those styles are set.
@@ -77,7 +77,7 @@ void appendPlatformProperties(AXPropertyVector& properties, OptionSet<AXProperty
     }
 
     if (object->shouldCacheStringValue())
-        setProperty(AXProperty::StringValue, object->stringValue().isolatedCopy());
+        setProperty(AXProperty::StringValue, isolatedCopy(object->stringValue()));
 
     setProperty(AXProperty::RemoteFramePlatformElement, object->remoteFramePlatformElement());
     setProperty(AXProperty::RemoteFrameProcessIdentifier, object->remoteFramePID());
@@ -269,7 +269,7 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
     return finalRange;
 }
 
-std::optional<String> AXIsolatedObject::textContent() const
+std::optional<RefPtr<StringImpl>> AXIsolatedObject::textContent() const
 {
     AX_ASSERT(!isMainThread());
     return textMarkerRange().toString();
@@ -355,10 +355,10 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& ran
     // which don't. Thus only take the fast path when the object actually holds all of the text,
     // leaving anything spanning a block boundary to the walk below.
     const auto* runs = textRuns();
-    if (auto text = runs ? textContent() : std::nullopt; text && runs->totalLength() == text->length()) {
+    if (auto text = runs ? textContent() : std::nullopt; text && runs->totalLength() == length(*text)) {
         unsigned start = range.location;
         unsigned end = range.location + range.length;
-        if (start < text->length() && end <= text->length())
+        if (start < length(*text) && end <= length(*text))
             return { tree().treeID(), objectID(), start, end };
     }
 
@@ -367,7 +367,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& ran
     return { };
 }
 
-std::optional<String> AXIsolatedObject::platformStringValue() const
+std::optional<RefPtr<StringImpl>> AXIsolatedObject::platformStringValue() const
 {
     AX_ASSERT(!isMainThread());
     return textMarkerRange().toString();
@@ -450,15 +450,15 @@ bool AXIsolatedObject::pressedIsPresent() const
     }, Accessibility::GeneralPropertyTimeout, false);
 }
 
-Vector<String> AXIsolatedObject::determineDropEffects() const
+Vector<RefPtr<StringImpl>> AXIsolatedObject::determineDropEffects() const
 {
     AX_ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
 
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> Vector<String> {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> Vector<RefPtr<StringImpl>> {
         if (RefPtr object = context.axObjectOnMainThread())
             return object->determineDropEffects();
         return { };
-    }, Accessibility::GeneralPropertyTimeout, Vector<String> { });
+    }, Accessibility::GeneralPropertyTimeout, Vector<RefPtr<StringImpl>> { });
 }
 
 int AXIsolatedObject::layoutCount() const
@@ -472,24 +472,24 @@ int AXIsolatedObject::layoutCount() const
     }, Accessibility::GeneralPropertyTimeout, 0);
 }
 
-Vector<String> AXIsolatedObject::classList() const
+Vector<RefPtr<StringImpl>> AXIsolatedObject::classList() const
 {
     AX_ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
 
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> Vector<String> {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> Vector<RefPtr<StringImpl>> {
         if (RefPtr object = context.axObjectOnMainThread())
             return object->classList();
         return { };
-    }, Accessibility::GeneralPropertyTimeout, Vector<String> { });
+    }, Accessibility::GeneralPropertyTimeout, Vector<RefPtr<StringImpl>> { });
 }
 
-String AXIsolatedObject::computedRoleString() const
+RefPtr<StringImpl> AXIsolatedObject::computedRoleString() const
 {
     AX_ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
 
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] -> String {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] -> RefPtr<StringImpl> {
         if (RefPtr object = context.axObjectOnMainThread())
-            return object->computedRoleString().isolatedCopy();
+            return isolatedCopy(object->computedRoleString());
         return { };
     }, Accessibility::GeneralPropertyTimeout, const_cast<AXIsolatedObject*>(this)->rolePlatformString());
 }

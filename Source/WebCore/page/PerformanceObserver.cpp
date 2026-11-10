@@ -64,10 +64,10 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     bool isBuffered = false;
     EnumSet<PerformanceEntry::Type> filter;
     if (init.entryTypes) {
-        if (!init.type.isNull())
-            return Exception { ExceptionCode::TypeError, "either entryTypes or type must be provided"_s };
+        if (init.type)
+            return Exception { ExceptionCode::TypeError, "either entryTypes or type must be provided"_si };
         if (m_registered && m_isTypeObserver)
-            return Exception { ExceptionCode::InvalidModificationError, "observer type can't be changed once registered"_s };
+            return Exception { ExceptionCode::InvalidModificationError, "observer type can't be changed once registered"_si };
         for (auto& entryType : *init.entryTypes) {
             if (auto type = PerformanceEntry::parseEntryTypeString(entryType))
                 filter.add(*type);
@@ -76,10 +76,10 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
             return { };
         m_typeFilter = filter;
     } else {
-        if (init.type.isNull())
-            return Exception { ExceptionCode::TypeError, "no type or entryTypes were provided"_s };
+        if (!init.type)
+            return Exception { ExceptionCode::TypeError, "no type or entryTypes were provided"_si };
         if (m_registered && !m_isTypeObserver)
-            return Exception { ExceptionCode::InvalidModificationError, "observer type can't be changed once registered"_s };
+            return Exception { ExceptionCode::InvalidModificationError, "observer type can't be changed once registered"_si };
         m_isTypeObserver = true;
         if (auto type = PerformanceEntry::parseEntryTypeString(init.type))
             filter.add(*type);
@@ -145,15 +145,15 @@ void PerformanceObserver::deliver()
     Vector<Ref<PerformanceEntry>> entries = std::exchange(m_entriesToDeliver, { });
     auto list = PerformanceObserverEntryList::create(WTF::move(entries));
 
-    InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);
+    InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_si);
     m_callback->invoke(*this, list, *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 
-Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& context)
+Vector<RefPtr<StringImpl>> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& context)
 {
     RefPtr document = dynamicDowncast<Document>(context);
-    Vector<String> entryTypes;
+    Vector<RefPtr<StringImpl>> entryTypes;
 
     if (document && document->settings().eventTimingEnabled()) {
         entryTypes.append("event"_s);

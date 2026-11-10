@@ -40,7 +40,7 @@ static void finishConverting(PKPayment *payment, auto& result)
 {
 #if HAVE(PASSKIT_INSTALLMENTS)
     if (RetainPtr<NSString> installmentAuthorizationToken = payment.installmentAuthorizationToken)
-        result.installmentAuthorizationToken = installmentAuthorizationToken.get();
+        result.installmentAuthorizationToken = StringImpl::create(installmentAuthorizationToken.get());
 #else
     UNUSED_PARAM(payment);
     UNUSED_PARAM(result);
@@ -56,9 +56,9 @@ static ApplePayPayment::Token convert(PKPaymentToken *paymentToken)
     result.paymentMethod = PaymentMethod(paymentToken.paymentMethod).toApplePayPaymentMethod();
 
     if (RetainPtr<NSString> transactionIdentifier = paymentToken.transactionIdentifier)
-        result.transactionIdentifier = transactionIdentifier.get();
+        result.transactionIdentifier = StringImpl::create(transactionIdentifier.get());
     if (RetainPtr<NSData> paymentData = paymentToken.paymentData)
-        result.paymentData = String::fromUTF8(span(paymentData.get()));
+        result.paymentData = StringImpl::fromUTF8(span(paymentData.get()));
 
     return result;
 }

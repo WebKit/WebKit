@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IdTargetObserver);
 
-IdTargetObserver::IdTargetObserver(IdTargetObserverRegistry& registry, const AtomString& id)
+IdTargetObserver::IdTargetObserver(IdTargetObserverRegistry& registry, AtomStringImpl* id)
     : m_registry(&registry)
     , m_id(id)
 {

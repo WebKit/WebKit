@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-bool CoreIPCLocale::isValidIdentifier(const String& identifier)
+bool CoreIPCLocale::isValidIdentifier(StringImpl* identifier)
 {
-    if ([[NSLocale availableLocaleIdentifiers] containsObject:identifier.createNSString().get()])
+    if ([[NSLocale availableLocaleIdentifiers] containsObject:createNSString(identifier).get()])
         return true;
     if (canonicalLocaleStringReplacement(identifier))
         return true;
@@ -43,14 +43,14 @@ bool CoreIPCLocale::isValidIdentifier(const String& identifier)
 }
 
 CoreIPCLocale::CoreIPCLocale(NSLocale *locale)
-    : m_identifier([locale localeIdentifier])
+    : m_identifier(StringImpl::create([locale localeIdentifier]))
 {
 }
 
-CoreIPCLocale::CoreIPCLocale(String&& identifier)
-    : m_identifier([[NSLocale currentLocale] localeIdentifier])
+CoreIPCLocale::CoreIPCLocale(RefPtr<StringImpl>&& identifier)
+    : m_identifier(StringImpl::create([[NSLocale currentLocale] localeIdentifier]))
 {
-    if ([[NSLocale availableLocaleIdentifiers] containsObject:identifier.createNSString().get()])
+    if ([[NSLocale availableLocaleIdentifiers] containsObject:createNSString(identifier).get()])
         m_identifier = identifier;
     else if (auto fixedLocale = canonicalLocaleStringReplacement(identifier))
         m_identifier = *fixedLocale;
@@ -58,10 +58,10 @@ CoreIPCLocale::CoreIPCLocale(String&& identifier)
 
 RetainPtr<id> CoreIPCLocale::toID() const
 {
-    return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:m_identifier.createNSString().get()]);
+    return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:createNSString(m_identifier).get()]);
 }
 
-std::optional<String> CoreIPCLocale::canonicalLocaleStringReplacement(const String& identifier)
+std::optional<RefPtr<StringImpl>> CoreIPCLocale::canonicalLocaleStringReplacement(StringImpl* identifier)
 {
     static NeverDestroyed<RetainPtr<NSDictionary>> dictionary = [] {
         RetainPtr dictionary = adoptNS([NSMutableDictionary new]);
@@ -73,8 +73,8 @@ std::optional<String> CoreIPCLocale::canonicalLocaleStringReplacement(const Stri
         }
         return dictionary;
     }();
-    if (RetainPtr entry = checked_objc_cast<NSString>([dictionary.get() objectForKey:identifier.createNSString().get()]))
-        return String(entry.get());
+    if (RetainPtr entry = checked_objc_cast<NSString>([dictionary.get() objectForKey:createNSString(identifier).get()]))
+        return StringImpl::create(entry.get());
     return std::nullopt;
 }
 

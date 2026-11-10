@@ -96,7 +96,7 @@ void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
     m_initiatorMap.remove(resource);
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(CachedResource& resource, const AtomString& initiatorType, LocalFrame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(CachedResource& resource, AtomStringImpl* initiatorType, LocalFrame* frame)
 {
     if (resource.type() == CachedResource::Type::MainResource) {
         ASSERT(frame);

@@ -143,7 +143,7 @@ struct TemplateTypes<TT> {
     static constexpr unsigned maximumCompositeTypeNestingDepth = 15; \
     SetForScope compositeTypeDepthScope(m_compositeTypeDepth, m_compositeTypeDepth + 1); \
     if (m_compositeTypeDepth > maximumCompositeTypeNestingDepth) [[unlikely]] \
-        FAIL(makeString("composite type may not be nested more than "_s, String::number(maximumCompositeTypeNestingDepth), " levels"_s));
+        FAIL(makeString("composite type may not be nested more than "_s, maximumCompositeTypeNestingDepth, " levels"_s));
 
 template<typename Lexer>
 void Parser<Lexer>::splitMinusMinus()
@@ -331,7 +331,7 @@ NODELETE static AST::UnaryOperation toUnaryOperation(const Token& token)
 template<typename CharacterType>
 std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
-    Lexer lexer(shaderModule.source().span<CharacterType>());
+    Lexer lexer(WTF::span<CharacterType>(shaderModule.source()));
     Parser parser(shaderModule, lexer);
     auto result = parser.parseShader();
     Vector<Error> errors;
@@ -345,7 +345,7 @@ std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 
 std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
-    if (shaderModule.source().is8Bit())
+    if (is8Bit(shaderModule.source()))
         return parse<Latin1Character>(shaderModule);
     return parse<char16_t>(shaderModule);
 }
@@ -435,7 +435,7 @@ Result<void> Parser<Lexer>::parseEnableDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* extension = parseExtension(identifier.ident);
         if (!extension)
-            FAIL("Expected 'clip_distances', 'dual_source_blending', 'f16', 'primitive_index', or 'subgroups'"_s);
+            FAIL("Expected 'clip_distances', 'dual_source_blending', 'f16', 'primitive_index', or 'subgroups'"_si);
         m_shaderModule.enabledExtensions().add(*extension);
 
         if (current().type != TokenType::Comma)
@@ -455,7 +455,7 @@ Result<void> Parser<Lexer>::parseRequireDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* languageFeature = parseLanguageFeature(identifier.ident);
         if (!languageFeature)
-            FAIL("Expected 'clip_distances', 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters', 'texture_formats_tier1', 'subgroup_id', 'subgroup_uniformity', or 'pointer_composite_access'"_s);
+            FAIL("Expected 'clip_distances', 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters', 'texture_formats_tier1', 'subgroup_id', 'subgroup_uniformity', or 'pointer_composite_access'"_si);
         m_shaderModule.requiredFeatures().add(*languageFeature);
 
         if (current().type != TokenType::Comma)
@@ -632,7 +632,7 @@ Result<AST::Declaration::Ref> Parser<Lexer>::parseDeclaration()
         return { function };
     }
     default:
-        FAIL("Trying to parse a GlobalDecl, expected 'const', 'fn', 'override', 'struct' or 'var'."_s);
+        FAIL("Trying to parse a GlobalDecl, expected 'const', 'fn', 'override', 'struct' or 'var'."_si);
     }
 }
 
@@ -717,9 +717,9 @@ Result<std::optional<AST::Attribute::Ref>> Parser<Lexer>::parseAttribute()
     if (ident.ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(name, Identifier);
-        auto* builtin = parseBuiltin(name);
+        auto* builtin = parseBuiltin(protect(name.id()));
         if (!builtin)
-            FAIL("Unknown builtin value. Expected 'clip_distances', 'vertex_index', 'instance_index', 'position', 'primitive_index', 'front_facing', 'frag_depth', 'sample_index', 'sample_mask', 'local_invocation_id', 'local_invocation_index', 'global_invocation_id', 'workgroup_id' or 'num_workgroups'"_s);
+            FAIL("Unknown builtin value. Expected 'clip_distances', 'vertex_index', 'instance_index', 'position', 'primitive_index', 'front_facing', 'frag_depth', 'sample_index', 'sample_mask', 'local_invocation_id', 'local_invocation_index', 'global_invocation_id', 'workgroup_id' or 'num_workgroups'"_si);
         switch (*builtin) {
         case Builtin::FragDepth:
             m_shaderModule.setUsesFragDepth();
@@ -782,18 +782,18 @@ Result<std::optional<AST::Attribute::Ref>> Parser<Lexer>::parseAttribute()
     if (ident.ident == "interpolate"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(interpolate, Identifier);
-        auto* interpolationType = parseInterpolationType(interpolate);
+        auto* interpolationType = parseInterpolationType(protect(interpolate.id()));
         if (!interpolationType)
-            FAIL("Unknown interpolation type. Expected 'flat', 'linear' or 'perspective'"_s);
+            FAIL("Unknown interpolation type. Expected 'flat', 'linear' or 'perspective'"_si);
         std::optional<InterpolationSampling> sampleType;
         if (current().type == TokenType::Comma) {
             consume();
 
             if (current().type == TokenType::Identifier) {
                 PARSE(sampling, Identifier);
-                auto* interpolationSampling = parseInterpolationSampling(sampling);
+                auto* interpolationSampling = parseInterpolationSampling(protect(sampling.id()));
                 if (!interpolationSampling)
-                    FAIL("Unknown interpolation sampling. Expected 'center', 'centroid', 'sample', 'first' or 'either"_s);
+                    FAIL("Unknown interpolation sampling. Expected 'center', 'centroid', 'sample', 'first' or 'either"_si);
                 sampleType = *interpolationSampling;
                 if (current().type == TokenType::Comma)
                     consume();
@@ -846,7 +846,7 @@ Result<std::optional<AST::Attribute::Ref>> Parser<Lexer>::parseAttribute()
     if (ident.ident == "fragment"_s)
         RETURN_ARENA_NODE(StageAttribute, ShaderStage::Fragment);
 
-    FAIL("Unknown attribute. Supported attributes are 'align', 'binding', 'builtin', 'compute', 'const', 'diagnostic', 'fragment', 'group', 'id', 'interpolate', 'invariant', 'location', 'must_use', 'size', 'vertex', 'workgroup_size'."_s);
+    FAIL("Unknown attribute. Supported attributes are 'align', 'binding', 'builtin', 'compute', 'const', 'diagnostic', 'fragment', 'group', 'id', 'interpolate', 'invariant', 'location', 'must_use', 'size', 'vertex', 'workgroup_size'."_si);
 }
 
 template<typename Lexer>
@@ -855,9 +855,9 @@ Result<std::optional<AST::Diagnostic>> Parser<Lexer>::parseDiagnostic()
     START_PARSE();
     CONSUME_TYPE(ParenLeft);
     PARSE(severity, Identifier);
-    auto* severityControl = parseSeverityControl(severity);
+    auto* severityControl = parseSeverityControl(protect(severity.id()));
     if (!severityControl)
-        FAIL("Unknown severity control. Expected 'error', 'info', 'off' or 'warning'"_s);
+        FAIL("Unknown severity control. Expected 'error', 'info', 'off' or 'warning'"_si);
     CONSUME_TYPE(Comma);
 
     PARSE(name, Identifier);
@@ -868,7 +868,7 @@ Result<std::optional<AST::Diagnostic>> Parser<Lexer>::parseDiagnostic()
         consume();
         PARSE(suffix, Identifier);
         suffix = WTF::move(suffix);
-    } else if (auto* rule = parseTriggeringRule(name))
+    } else if (auto* rule = parseTriggeringRule(protect(name.id())))
         triggeringRule = *rule;
 
     if (current().type == TokenType::Comma)
@@ -893,7 +893,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure()
     CONSUME_TYPE(BraceLeft);
 
     AST::StructureMember::List members;
-    HashSet<String> seenMembers;
+    HashSet<RefPtr<StringImpl>> seenMembers;
     while (current().type != TokenType::BraceRight) {
         PARSE(member, StructureMember);
         auto result = seenMembers.add(member.get().name());
@@ -904,7 +904,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure()
         // https://www.w3.org/TR/WGSL/#limits
         static constexpr unsigned maximumNumberOfStructMembers = 1023;
         if (members.size() > maximumNumberOfStructMembers) [[unlikely]]
-            FAIL(makeString("struct cannot have more than "_s, String::number(maximumNumberOfStructMembers), " members"_s));
+            FAIL(makeString("struct cannot have more than "_s, makeString(maximumNumberOfStructMembers), " members"_s));
 
         if (current().type == TokenType::Comma)
             consume();
@@ -941,12 +941,12 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseTypeName()
     if (current().type == TokenType::Identifier) {
         PARSE(name, Identifier);
         // FIXME: <rdar://150365759> remove the special case for array
-        if (name == "array"_s)
+        if (equal(name, "array"_s))
             return parseArrayType();
         return parseTypeNameAfterIdentifier(WTF::move(name), _startOfElementPosition);
     }
 
-    FAIL("Tried parsing a type and it did not start with an identifier"_s);
+    FAIL("Tried parsing a type and it did not start with an identifier"_si);
 }
 
 template<typename Lexer>
@@ -1092,7 +1092,7 @@ Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
 
         if (current().type == TokenType::Identifier) {
             if (addressSpace != AddressSpace::Storage)
-                FAIL("only variables in the <storage> address space may specify an access mode"_s);
+                FAIL("only variables in the <storage> address space may specify an access mode"_si);
 
             PARSE(actualAccessMode, AccessMode);
             accessMode = actualAccessMode;
@@ -1114,10 +1114,10 @@ Result<AddressSpace> Parser<Lexer>::parseAddressSpace()
     START_PARSE();
 
     CONSUME_TYPE_NAMED(identifier, Identifier);
-    if (auto* addressSpace = WGSL::parseAddressSpace(identifier.ident); addressSpace && *addressSpace != AddressSpace::Handle)
+    if (auto* addressSpace = WGSL::parseAddressSpace(RefPtr<StringImpl> { identifier.ident }); addressSpace && *addressSpace != AddressSpace::Handle)
         return { *addressSpace };
 
-    FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_s);
+    FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_si);
 }
 
 template<typename Lexer>
@@ -1126,10 +1126,10 @@ Result<AccessMode> Parser<Lexer>::parseAccessMode()
     START_PARSE();
 
     CONSUME_TYPE_NAMED(identifier, Identifier);
-    if (auto* accessMode = WGSL::parseAccessMode(identifier.ident))
+    if (auto* accessMode = WGSL::parseAccessMode(RefPtr<StringImpl> { identifier.ident }))
         return { *accessMode };
 
-    FAIL("Expected one of 'read'/'write'/'read_write'"_s);
+    FAIL("Expected one of 'read'/'write'/'read_write'"_si);
 }
 
 template<typename Lexer>
@@ -1166,7 +1166,7 @@ Result<AST::Function::Ref> Parser<Lexer>::parseFunction(AST::Attribute::List&& a
         // https://www.w3.org/TR/WGSL/#limits
         static constexpr unsigned maximumNumberOfFunctionParameters = 255;
         if (parameters.size() > maximumNumberOfFunctionParameters) [[unlikely]]
-            FAIL(makeString("function cannot have more than "_s, String::number(maximumNumberOfFunctionParameters), " parameters"_s));
+            FAIL(makeString("function cannot have more than "_s, makeString(maximumNumberOfFunctionParameters), " parameters"_s));
 
         if (current().type == TokenType::Comma)
             consume();
@@ -1281,7 +1281,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         return { compoundStmt };
     }
     default:
-        FAIL("Not a valid statement"_s);
+        FAIL("Not a valid statement"_si);
     }
 }
 
@@ -1393,7 +1393,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement(AST::Attribute::Lis
             break;
         }
         default:
-            FAIL("Invalid for-loop initialization clause"_s);
+            FAIL("Invalid for-loop initialization clause"_si);
         }
     }
     CONSUME_TYPE(Semicolon);
@@ -1424,7 +1424,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement(AST::Attribute::Lis
             break;
         }
         default:
-            FAIL("Invalid for-loop update clause"_s);
+            FAIL("Invalid for-loop update clause"_si);
         }
     }
     CONSUME_TYPE(ParenRight);
@@ -1544,10 +1544,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseSwitchStatement(AST::Attribute::
             consume();
             hasDefault = true;
         } else
-            FAIL("Expected either a `case` or `default` switch clause"_s);
+            FAIL("Expected either a `case` or `default` switch clause"_si);
 
         if (hasDefault && defaultClause.has_value())
-            FAIL("Switch statement contains more than one default clause"_s);
+            FAIL("Switch statement contains more than one default clause"_si);
 
         if (current().type == TokenType::Colon)
             consume();
@@ -1561,12 +1561,12 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseSwitchStatement(AST::Attribute::
         // https://www.w3.org/TR/WGSL/#limits
         static constexpr unsigned maximumNumberOfCaseSelectors = 1023;
         if (selectorCount > maximumNumberOfCaseSelectors) [[unlikely]]
-            FAIL(makeString("switch statement cannot have more than "_s, String::number(maximumNumberOfCaseSelectors), " case selector values"_s));
+            FAIL(makeString("switch statement cannot have more than "_s, makeString(maximumNumberOfCaseSelectors), " case selector values"_s));
     }
     CONSUME_TYPE(BraceRight);
 
     if (!defaultClause.has_value())
-        FAIL("Switch statement must have exactly one default clause, but it has none"_s);
+        FAIL("Switch statement must have exactly one default clause, but it has none"_si);
 
     RETURN_ARENA_NODE(SwitchStatement, WTF::move(attributes), WTF::move(value), WTF::move(bodyAttributes), WTF::move(clauses), WTF::move(*defaultClause));
 }
@@ -1629,7 +1629,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseVariableUpdatingStatement(AST::E
     } else if (current().type == TokenType::Equal)
         consume();
     else
-        FAIL("Expected one of `=`, `++`, or `--`"_s);
+        FAIL("Expected one of `=`, `++`, or `--`"_si);
 
     PARSE(rhs, Expression);
 
@@ -1888,7 +1888,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
     case TokenType::Identifier: {
         PARSE(ident, Identifier);
         // FIXME: <rdar://150365759> remove the special case for array
-        if (ident == "array"_s) {
+        if (equal(ident, "array"_s)) {
             PARSE(arrayType, ArrayType);
             PARSE(arguments, ArgumentExpressionList);
             RETURN_ARENA_NODE(CallExpression, WTF::move(arrayType), WTF::move(arguments));
@@ -1930,7 +1930,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
     }
     case TokenType::HalfLiteral: {
         if (!m_shaderModule.enabledExtensions().contains(Extension::F16))
-            FAIL("f16 literal used without f16 extension enabled"_s);
+            FAIL("f16 literal used without f16 extension enabled"_si);
         CONSUME_TYPE_NAMED(lit, HalfLiteral);
         RETURN_ARENA_NODE(Float16Literal, lit.floatValue);
     }
@@ -1940,7 +1940,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         break;
     }
 
-    FAIL("Expected one of '(', a literal, or an identifier"_s);
+    FAIL("Expected one of '(', a literal, or an identifier"_si);
 }
 
 template<typename Lexer>
@@ -1997,7 +1997,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseCoreLHSExpression()
         break;
     }
 
-    FAIL("Tried to parse the left-hand side of an assignment and failed"_s);
+    FAIL("Tried to parse the left-hand side of an assignment and failed"_si);
 }
 
 template<typename Lexer>

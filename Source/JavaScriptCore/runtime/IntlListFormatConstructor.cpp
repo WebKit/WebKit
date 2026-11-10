@@ -72,7 +72,7 @@ IntlListFormatConstructor::IntlListFormatConstructor(VM& vm, Structure* structur
 
 void IntlListFormatConstructor::finishCreation(VM& vm, IntlListFormatPrototype* listFormatPrototype)
 {
-    Base::finishCreation(vm, 0, "ListFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "ListFormat"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, listFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     listFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
@@ -115,7 +115,7 @@ JSC_DEFINE_HOST_FUNCTION(intlListFormatConstructorSupportedLocalesOf, (JSGlobalO
     const auto& availableLocales = intlListFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

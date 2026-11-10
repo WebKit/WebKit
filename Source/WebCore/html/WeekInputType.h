@@ -50,7 +50,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     DateComponentsType dateType() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
@@ -59,7 +59,7 @@ private:
     void showPicker() final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
-    String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
+    RefPtr<StringImpl> formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
     void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const final;
 };
 

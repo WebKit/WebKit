@@ -36,7 +36,7 @@ enum class RTCIceGatheringState {
     Complete
 };
 
-String convertEnumerationToString(RTCIceGatheringState); // in JSCRTCIceGatheringState.cpp
+RefPtr<StringImpl> convertEnumerationToString(RTCIceGatheringState); // in JSCRTCIceGatheringState.cpp
 
 }; // namespace WebCore
 
@@ -47,7 +47,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::RTCIceGatheringState> {
-    static String toString(const WebCore::RTCIceGatheringState state)
+    static RefPtr<StringImpl> toString(const WebCore::RTCIceGatheringState state)
     {
         return convertEnumerationToString(state);
     }

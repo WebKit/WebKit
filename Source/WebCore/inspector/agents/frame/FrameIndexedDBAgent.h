@@ -40,7 +40,7 @@ public:
     ~FrameIndexedDBAgent();
 
 private:
-    Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> frameForSecurityOrigin(const String& securityOrigin) override;
+    Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> frameForSecurityOrigin(StringImpl* securityOrigin) override;
 
     WeakRef<LocalFrame> m_inspectedFrame;
 };

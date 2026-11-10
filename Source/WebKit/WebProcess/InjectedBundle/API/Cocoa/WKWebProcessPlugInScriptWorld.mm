@@ -78,7 +78,7 @@
 
 - (NSString *)name
 {
-    return _world->name().createNSString().autorelease();
+    return createNSString(_world->name()).autorelease();
 }
 
 - (WebKit::InjectedBundleScriptWorld&)_scriptWorld

@@ -142,7 +142,7 @@ void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
 
     m_runLoopNestingLevel = 1;
 #elif USE(GLIB_EVENT_LOOP)
-    m_runLoopObserver = RunLoop::EventObserver::create([weakThis = WeakPtr { *this }](RunLoop::Event event, const String& name) {
+    m_runLoopObserver = RunLoop::EventObserver::create([weakThis = WeakPtr { *this }](RunLoop::Event event, StringImpl* name) {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
             return;
@@ -421,7 +421,7 @@ void PageTimelineAgent::captureScreenshot()
         return;
 
     if (RefPtr snapshot = snapshotFrameRect(*localMainFrame, localMainFrameView->unobscuredContentRect(), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() })) {
-        Ref snapshotRecord = TimelineRecordFactory::createScreenshotData(encodeDataURL(WTF::move(snapshot), "image/png"_s));
+        Ref snapshotRecord = TimelineRecordFactory::createScreenshotData(encodeDataURL(WTF::move(snapshot), "image/png"_si));
         pushCurrentRecord(WTF::move(snapshotRecord), TimelineRecordType::Screenshot, false, snapshotStartTime);
         didCompleteCurrentRecord(TimelineRecordType::Screenshot);
     }

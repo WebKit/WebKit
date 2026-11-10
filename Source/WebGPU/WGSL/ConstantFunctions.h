@@ -36,13 +36,23 @@
 
 namespace WGSL {
 
+// String::number() used to convert half to float; makeString() has no adapter for half.
+template<typename T>
+static RefPtr<StringImpl> numberToString(T value)
+{
+    if constexpr (std::is_same_v<T, half>)
+        return makeString(static_cast<float>(value));
+    else
+        return makeString(value);
+}
+
 // Zero values
 
-using ConstantResult = std::expected<ConstantValue, String>;
+using ConstantResult = std::expected<ConstantValue, RefPtr<StringImpl>>;
 using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<ConstantValue>&);
 
 #define CONSTANT_FUNCTION(name) \
-    [[maybe_unused]] static std::expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+    [[maybe_unused]] static ConstantResult(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 
 #define CALL_(__tmp, __variable, __fnName, ...) \
     auto __tmp = constant##__fnName(__VA_ARGS__); \
@@ -111,7 +121,7 @@ using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<Consta
             return result;
         },
         [&](const Types::Struct& structType) -> ConstantValue {
-            HashMap<String, ConstantValue> constantFields;
+            HashMap<RefPtr<StringImpl>, ConstantValue> constantFields;
             for (auto& [key, type] : structType.fields)
                 constantFields.set(key, zeroValue(type));
             return ConstantStruct { WTF::move(constantFields) };
@@ -968,7 +978,7 @@ UNARY_OPERATION(Ceil, Float, WRAP_STD(ceil))
 
 TERNARY_OPERATION(Clamp, Number, [&]<typename T>(T e, T low, T high) -> ConstantResult {
     if (low > high)
-        return makeUnexpected(makeString("clamp called with low ("_s, String::number(low), ") greater than high ("_s, String::number(high), ")"_s));
+        return makeUnexpected(makeString("clamp called with low ("_s, numberToString(low), ") greater than high ("_s, numberToString(high), ")"_s));
     return { { std::min(std::max(e, low), high) } };
 })
 
@@ -1163,11 +1173,11 @@ UNARY_OPERATION(Exp2, Float, WRAP_STD(exp2));
 // https://www.w3.org/TR/WGSL/#insertBits-builtin
 // offset + count must be at most the bit width of the operand. The sum is taken in 64 bits so that
 // two in-range u32 values cannot wrap past the limit.
-static std::optional<String> validateBitOffsetAndCount(uint64_t offset, uint64_t count)
+static std::optional<RefPtr<StringImpl>> validateBitOffsetAndCount(uint64_t offset, uint64_t count)
 {
     constexpr uint64_t bitWidth = 32;
     if (offset + count > bitWidth)
-        return { makeString("the sum of offset ("_s, String::number(offset), ") and count ("_s, String::number(count), ") must be at most the bit width of the operand, which is "_s, String::number(bitWidth)) };
+        return { makeString("the sum of offset ("_s, makeString(offset), ") and count ("_s, makeString(count), ") must be at most the bit width of the operand, which is "_s, makeString(bitWidth)) };
     return std::nullopt;
 }
 
@@ -1458,9 +1468,9 @@ CONSTANT_FUNCTION(Normalize)
 
 BINARY_OPERATION(Pow, Float, [&]<typename T>(T base, T exp) -> ConstantResult {
     if (base < 0)
-        return makeUnexpected(makeString("pow called with negative base ("_s, String::number(base), ")"_s));
+        return makeUnexpected(makeString("pow called with negative base ("_s, numberToString(base), ")"_s));
     if (!base && exp <= 0)
-        return makeUnexpected(makeString("pow called with base 0 and non-positive exponent ("_s, String::number(exp), ")"_s));
+        return makeUnexpected(makeString("pow called with base 0 and non-positive exponent ("_s, numberToString(exp), ")"_s));
     auto result = std::pow(base, exp);
     if (!std::isfinite(result))
         return makeUnexpected("pow overflow"_s);
@@ -1471,7 +1481,7 @@ UNARY_OPERATION(QuantizeToF16, F32, [&](float arg) -> ConstantResult {
     UNUSED_PARAM(resultType);
     auto converted = convertFloat<half>(arg);
     if (!converted)
-        return makeUnexpected(makeString("value "_s, String::number(arg), " cannot be represented as 'f16'"_s));
+        return makeUnexpected(makeString("value "_s, makeString(arg), " cannot be represented as 'f16'"_s));
     return { { static_cast<float>(*converted) } };
 });
 
@@ -1569,7 +1579,7 @@ UNARY_OPERATION(Sign, Number, [&]<typename T>(T e) -> T {
 
 TERNARY_OPERATION(Smoothstep, Float, [&]<typename T>(T low, T high, T x) -> ConstantResult {
     if (low == high)
-        return makeUnexpected(makeString("smoothstep called with low ("_s, String::number(low), ") equal high ("_s, String::number(high), ")"_s));
+        return makeUnexpected(makeString("smoothstep called with low ("_s, numberToString(low), ") equal high ("_s, numberToString(high), ")"_s));
     auto e = (x - low) / (high - low);
     auto t = std::min(std::max(e, static_cast<decltype(e)>(0)), static_cast<decltype(e)>(1));
     return { { t * t * (3.0 - 2.0 * t) } };
@@ -1795,7 +1805,7 @@ CONSTANT_FUNCTION(Unpack2x16float)
 
 CONSTANT_FUNCTION(Bitcast)
 {
-    const auto& split = [&](ConstantVector& result, const ConstantValue& argument, unsigned offset) -> std::optional<String> {
+    const auto& split = [&](ConstantVector& result, const ConstantValue& argument, unsigned offset) -> std::optional<RefPtr<StringImpl>> {
         uint32_t value;
         if (auto* i32 = std::get_if<int32_t>(&argument))
             value = std::bit_cast<uint32_t>(*i32);
@@ -1806,12 +1816,12 @@ CONSTANT_FUNCTION(Bitcast)
         else if (auto* abstractInt = std::get_if<int64_t>(&argument)) {
             auto i32 = convertInteger<int32_t>(*abstractInt);
             if (!i32)
-                return { makeString("value "_s, String::number(*abstractInt), " cannot be represented as 'i32'"_s) };
+                return { makeString("value "_s, makeString(*abstractInt), " cannot be represented as 'i32'"_s) };
             value = std::bit_cast<uint32_t>(*i32);
         } else if (auto* abstractFloat = std::get_if<double>(&argument)) {
             auto f32 = convertFloat<float>(*abstractFloat);
             if (!f32)
-                return { makeString("value "_s, String::number(*abstractFloat), " cannot be represented as 'f32'"_s) };
+                return { makeString("value "_s, makeString(*abstractFloat), " cannot be represented as 'f32'"_s) };
             value = std::bit_cast<uint32_t>(*f32);
         } else {
             RELEASE_ASSERT_NOT_REACHED();
@@ -1895,7 +1905,7 @@ CONSTANT_FUNCTION(Bitcast)
 
 [[maybe_unused]] static bool containsZero(ConstantValue value, const Type* valueType)
 {
-    auto wrapped = [&]() -> std::expected<bool, String> {
+    auto wrapped = [&]() -> std::expected<bool, RefPtr<StringImpl>> {
         auto zero = zeroValue(valueType);
         CALL(equal, Equal, nullptr, { value, zero });
         CALL(any, Any, nullptr, { equal });
@@ -1914,7 +1924,7 @@ CONSTANT_FUNCTION(Bitcast)
 #undef CONSTANT_FUNCTION
 
 #define VALIDATION_FUNCTION(name) \
-    [[maybe_unused]] static std::optional<String>(validate ## name)(const FixedVector<std::optional<ConstantValue>>& arguments, const FixedVector<const Type*>& parameterTypes)
+    [[maybe_unused]] static std::optional<RefPtr<StringImpl>>(validate ## name)(const FixedVector<std::optional<ConstantValue>>& arguments, const FixedVector<const Type*>& parameterTypes)
 
 #define CALL_(__tmp, __variable, __fnName, ...) \
     auto __tmp = constant##__fnName(__VA_ARGS__); \
@@ -2147,7 +2157,7 @@ VALIDATION_FUNCTION(BitwiseShiftRight)
 // shader-creation error handled by constantExtractBits/constantInsertBits, and as
 // override-expressions the same call is validated again with the override values substituted in at
 // pipeline creation.
-static std::optional<String> validateBitOffsetAndCount(const std::optional<ConstantValue>& offset, const std::optional<ConstantValue>& count)
+static std::optional<RefPtr<StringImpl>> validateBitOffsetAndCount(const std::optional<ConstantValue>& offset, const std::optional<ConstantValue>& count)
 {
     if (!offset || !count)
         return std::nullopt;
@@ -2194,7 +2204,7 @@ VALIDATION_FUNCTION(SubgroupShuffle)
     if (arguments.size() == 2 && arguments[1]) {
         auto id = arguments[1]->integerValue();
         if (id < 0 || id >= 128)
-            return { makeString("the id argument of a subgroup shuffle must be in the range [0, 128), but was "_s, String::number(id)) };
+            return { makeString("the id argument of a subgroup shuffle must be in the range [0, 128), but was "_s, makeString(id)) };
     }
     return std::nullopt;
 }
@@ -2208,7 +2218,7 @@ VALIDATION_FUNCTION(SubgroupBroadcast)
         return { "the id argument of subgroupBroadcast must be a const-expression"_s };
     auto id = arguments[1]->integerValue();
     if (id < 0 || id >= 128)
-        return { makeString("the id argument of subgroupBroadcast must be in the range [0, 128), but was "_s, String::number(id)) };
+        return { makeString("the id argument of subgroupBroadcast must be in the range [0, 128), but was "_s, makeString(id)) };
     return std::nullopt;
 }
 
@@ -2221,7 +2231,7 @@ VALIDATION_FUNCTION(QuadBroadcast)
         return { "the id argument of quadBroadcast must be a const-expression"_s };
     auto id = arguments[1]->integerValue();
     if (id < 0 || id >= 4)
-        return { makeString("the id argument of quadBroadcast must be in the range [0, 4), but was "_s, String::number(id)) };
+        return { makeString("the id argument of quadBroadcast must be in the range [0, 4), but was "_s, makeString(id)) };
     return std::nullopt;
 }
 

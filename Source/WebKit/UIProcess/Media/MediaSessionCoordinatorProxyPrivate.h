@@ -46,19 +46,19 @@ class MediaSessionCoordinatorProxyPrivate
 public:
     virtual ~MediaSessionCoordinatorProxyPrivate() = default;
 
-    virtual String identifier() const = 0;
+    virtual RefPtr<StringImpl> identifier() const = 0;
 
     virtual void join(MediaSessionCommandCompletionHandler&&) = 0;
     virtual void leave() = 0;
     virtual void seekTo(double, MediaSessionCommandCompletionHandler&&) = 0;
     virtual void play(MediaSessionCommandCompletionHandler&&) = 0;
     virtual void pause(MediaSessionCommandCompletionHandler&&) = 0;
-    virtual void setTrack(const String&, MediaSessionCommandCompletionHandler&&) = 0;
+    virtual void setTrack(StringImpl*, MediaSessionCommandCompletionHandler&&) = 0;
 
     virtual void positionStateChanged(const std::optional<WebCore::MediaPositionState>&) = 0;
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(WebCore::MediaSessionPlaybackState) = 0;
-    virtual void trackIdentifierChanged(const String&) = 0;
+    virtual void trackIdentifierChanged(StringImpl*) = 0;
 
     virtual void setClient(WeakPtr<WebCore::MediaSessionCoordinatorClient> client) { m_client = client; }
 

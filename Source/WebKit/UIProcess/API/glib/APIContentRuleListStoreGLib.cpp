@@ -29,7 +29,7 @@
 namespace API {
 
 #if ENABLE(CONTENT_EXTENSIONS)
-WTF::String ContentRuleListStore::defaultStorePath()
+RefPtr<StringImpl> ContentRuleListStore::defaultStorePath()
 {
     ASSERT_NOT_REACHED();
     return { };

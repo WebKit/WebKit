@@ -51,7 +51,7 @@ public:
         return adoptRef(*new WebExtensionMessagePort(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionMessagePort(WebExtensionContext&, String applicationIdentifier, WebExtensionPortChannelIdentifier);
+    explicit WebExtensionMessagePort(WebExtensionContext&, RefPtr<StringImpl> applicationIdentifier, WebExtensionPortChannelIdentifier);
 
     ~WebExtensionMessagePort();
 
@@ -61,11 +61,11 @@ public:
         MessageInvalid,
     };
 
-    using Error = std::optional<std::pair<ErrorType, std::optional<String>>>;
+    using Error = std::optional<std::pair<ErrorType, std::optional<RefPtr<StringImpl>>>>;
 
     NODELETE bool operator==(const WebExtensionMessagePort&) const;
 
-    const String& applicationIdentifier() const LIFETIME_BOUND { return m_applicationIdentifier; }
+    const RefPtr<StringImpl>& applicationIdentifier() const LIFETIME_BOUND { return m_applicationIdentifier; }
     WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
     NODELETE WebExtensionContext* extensionContext() const;
 
@@ -86,7 +86,7 @@ private:
     void remove();
 
     WeakPtr<WebExtensionContext> m_extensionContext;
-    String m_applicationIdentifier;
+    RefPtr<StringImpl> m_applicationIdentifier;
     WebExtensionPortChannelIdentifier m_channelIdentifier;
 };
 

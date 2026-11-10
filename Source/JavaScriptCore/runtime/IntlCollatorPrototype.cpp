@@ -124,7 +124,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlCollatorPrototypeGetterCompare, (JSGlobalObject* gl
         JSGlobalObject* globalObject = collator->realm();
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 2.
-        JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_s, intlCollatorFuncCompare, ImplementationVisibility::Public);
+        JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_si, intlCollatorFuncCompare, ImplementationVisibility::Public);
 
         // c. Let bc be BoundFunctionCreate(F, «this value»).
         boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, collator, { }, 2, jsEmptyString(vm), SourceTaintedOrigin::Untainted);

@@ -37,20 +37,20 @@ public:
         PositionUnavailable
     };
 
-    static Ref<GeolocationError> create(ErrorCode code, const String& message) { return adoptRef(*new GeolocationError(code, message)); }
+    static Ref<GeolocationError> create(ErrorCode code, StringImpl* message) { return adoptRef(*new GeolocationError(code, message)); }
 
     ErrorCode code() const { return m_code; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
 
 private:
-    GeolocationError(ErrorCode code, const String& message)
+    GeolocationError(ErrorCode code, StringImpl* message)
         : m_code(code)
         , m_message(message)
     {
     }
 
     ErrorCode m_code;
-    String m_message; 
+    RefPtr<StringImpl> m_message; 
 };
 
 } // namespace WebCore

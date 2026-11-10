@@ -93,7 +93,7 @@ std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBacke
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
-String ImageBufferShareableMappedIOSurfaceBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferShareableMappedIOSurfaceBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferShareableMappedIOSurfaceBackend " << this << " " << ValueOrNull(m_surface.get());

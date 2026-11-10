@@ -64,7 +64,7 @@ Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const Qualifi
     return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
 }
 
-void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::inAttr:
@@ -73,7 +73,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     case AttributeNames::orderAttr: {
         // An absent or removed order reverts silently; one that parses but is below 1 reverts and
         // disables the filter.
-        if (newValue.isEmpty()) {
+        if (isEmpty(newValue)) {
             m_orderX->setBaseValInternal(std::nullopt);
             m_orderY->setBaseValInternal(std::nullopt);
             m_hasInvalidOrderAttribute = false;
@@ -93,7 +93,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::edgeModeAttr:
-        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && !newValue.isNull())
+        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && newValue)
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     case AttributeNames::kernelMatrixAttr:

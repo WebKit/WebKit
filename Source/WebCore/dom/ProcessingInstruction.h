@@ -37,18 +37,18 @@ class ProcessingInstruction final : public CharacterData, private CachedStyleShe
 public:
     USING_CAN_MAKE_WEAKPTR(CharacterData);
 
-    static Ref<ProcessingInstruction> create(Document&, AtomString target, String data);
+    static Ref<ProcessingInstruction> create(Document&, RefPtr<AtomStringImpl> target, RefPtr<StringImpl> data);
     virtual ~ProcessingInstruction();
 
     // CachedResourceClient.
     void ref() const final { CharacterData::ref(); }
     void deref() const final { CharacterData::deref(); }
 
-    const String& target() const LIFETIME_BOUND { return m_target; }
+    const RefPtr<StringImpl>& target() const LIFETIME_BOUND { return m_target; }
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
-    const String& localHref() const LIFETIME_BOUND { return m_localHref; }
+    const RefPtr<StringImpl>& localHref() const LIFETIME_BOUND { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
 
     bool isCSS() const { return m_isCSS; }
@@ -58,9 +58,9 @@ public:
 
 private:
     friend class CharacterData;
-    ProcessingInstruction(Document&, AtomString target, String data);
+    ProcessingInstruction(Document&, RefPtr<AtomStringImpl> target, RefPtr<StringImpl> data);
 
-    String nodeName() const override;
+    RefPtr<StringImpl> nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
 
@@ -70,9 +70,9 @@ private:
 
     void checkStyleSheet();
     void setSheet(RefPtr<StyleSheet>&&);
-    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&) override;
+    void setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&) override;
 #if ENABLE(XSLT)
-    void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
+    void setXSLStyleSheet(StringImpl* href, const URL& baseURL, StringImpl* sheet) override;
 #endif
 
     bool isLoading() const;
@@ -80,12 +80,12 @@ private:
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const override;
 
-    void parseStyleSheet(const String& sheet);
+    void parseStyleSheet(StringImpl* sheet);
 
-    String m_target;
-    String m_localHref;
-    String m_title;
-    String m_media;
+    RefPtr<StringImpl> m_target;
+    RefPtr<StringImpl> m_localHref;
+    RefPtr<StringImpl> m_title;
+    RefPtr<StringImpl> m_media;
     CachedResourceHandle<CachedResource> m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading { false };

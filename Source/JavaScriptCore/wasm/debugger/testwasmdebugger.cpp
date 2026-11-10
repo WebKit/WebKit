@@ -283,9 +283,9 @@ static void testWASMVirtualAddressOperators()
     TEST_ASSERT(directConversion == expectedValue, "Direct conversion should work");
 
     // Test hex() method consistency
-    String hexStr = addr.hex();
-    String expectedHex = makeString(WTF::hex(expectedValue, WTF::Lowercase));
-    TEST_ASSERT(hexStr == expectedHex, "hex() method should match expected format");
+    RefPtr<StringImpl> hexStr = addr.hex();
+    RefPtr<StringImpl> expectedHex = makeString(WTF::hex(expectedValue, WTF::Lowercase));
+    TEST_ASSERT(equal(hexStr, expectedHex), "hex() method should match expected format");
 
     dataLogLn("VirtualAddress operators tests completed");
 }

@@ -165,7 +165,7 @@
     if (RetainPtr<AVAssetResourceLoadingContentInformationRequest> infoRequest = request.contentInformationRequest) {
         RefPtr parent = _parent.get();
         RELEASE_ASSERT(parent);
-        infoRequest.get().contentType = parent->uti().createNSString().get();
+        infoRequest.get().contentType = createNSString(parent->uti()).get();
         infoRequest.get().byteRangeAccessSupported = YES;
         infoRequest.get().contentLength = _complete ? _data.get().length : _expectedContentSize;
     }
@@ -332,7 +332,7 @@ NODELETE ImageDecoderAVFObjCSample* toSample(Iterator iter)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderAVFObjC);
 
-RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ProcessIdentity resourceOwner)
+RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ProcessIdentity resourceOwner)
 {
     ASSERT(canDecodeType(mimeType));
 
@@ -346,7 +346,7 @@ RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBu
     return adoptRef(*new ImageDecoderAVFObjC(data, mimeType, alphaOption, gammaAndColorProfileOption, WTF::move(resourceOwner)));
 }
 
-ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner)
+ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner)
     : ImageDecoder()
     , m_mimeType(mimeType)
     , m_uti(WebCore::UTIFromMIMEType(mimeType))
@@ -377,12 +377,12 @@ bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
     return type == MediaType::Video && AVAssetMIMETypeCache::singleton().isAvailable();
 }
 
-bool ImageDecoderAVFObjC::supportsContainerType(const String& type)
+bool ImageDecoderAVFObjC::supportsContainerType(StringImpl* type)
 {
     return AVAssetMIMETypeCache::singleton().supportsContainerType(type);
 }
 
-bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
+bool ImageDecoderAVFObjC::canDecodeType(StringImpl* mimeType)
 {
 #if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
@@ -572,12 +572,12 @@ RepetitionCount ImageDecoderAVFObjC::repetitionCount() const
     return frameCount() > 1 ? RepetitionCountInfinite : RepetitionCountNone;
 }
 
-String ImageDecoderAVFObjC::uti() const
+RefPtr<StringImpl> ImageDecoderAVFObjC::uti() const
 {
     return m_uti;
 }
 
-String ImageDecoderAVFObjC::filenameExtension() const
+RefPtr<StringImpl> ImageDecoderAVFObjC::filenameExtension() const
 {
     return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType);
 }

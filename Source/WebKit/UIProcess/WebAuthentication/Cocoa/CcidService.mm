@@ -131,10 +131,10 @@ void CcidService::onCardRemoved()
 
 void CcidService::updateSlots(NSArray *slots)
 {
-    HashSet<String> slotsSet;
+    HashSet<RefPtr<StringImpl>> slotsSet;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *nsName : slots) {
-        auto name = String(nsName);
+        auto name = StringImpl::create(nsName);
         slotsSet.add(name);
         auto it = m_slotObservers.find(name);
         if (it == m_slotObservers.end()) {
@@ -147,14 +147,14 @@ void CcidService::updateSlots(NSArray *slots)
             }).get()];
         }
     }
-    HashSet<String> staleSlots;
+    HashSet<RefPtr<StringImpl>> staleSlots;
     for (auto& slotPair : m_slotObservers) {
         if (!slotsSet.contains(slotPair.key)) {
             staleSlots.add(slotPair.key);
             [protect(slotPair.value) removeObserver];
         }
     }
-    for (const String& slot : staleSlots)
+    for (const RefPtr<StringImpl>& slot : staleSlots)
         m_slotObservers.remove(slot);
 }
 

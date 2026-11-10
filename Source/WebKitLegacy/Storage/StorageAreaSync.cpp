@@ -48,14 +48,14 @@ static const Seconds StorageSyncInterval { 1_s };
 // much harder to starve the rest of LocalStorage and the OS's IO subsystem in general.
 static const int MaxiumItemsToSync = 100;
 
-inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, const String& databaseIdentifier)
+inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, StringImpl* databaseIdentifier)
     : m_syncTimer(*this, &StorageAreaSync::syncTimerFired)
     , m_itemsCleared(false)
     , m_finalSyncScheduled(false)
     , m_storageArea(WTF::move(storageArea))
     , m_syncManager(WTF::move(storageSyncManager))
     , m_database(makeUniqueRef<SQLiteDatabase>())
-    , m_databaseIdentifier(databaseIdentifier.isolatedCopy())
+    , m_databaseIdentifier(isolatedCopy(databaseIdentifier))
     , m_clearItemsWhileSyncing(false)
     , m_syncScheduled(false)
     , m_syncInProgress(false)
@@ -75,7 +75,7 @@ inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSync
     });
 }
 
-Ref<StorageAreaSync> StorageAreaSync::create(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, const String& databaseIdentifier)
+Ref<StorageAreaSync> StorageAreaSync::create(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, StringImpl* databaseIdentifier)
 {
     return adoptRef(*new StorageAreaSync(WTF::move(storageSyncManager), WTF::move(storageArea), databaseIdentifier));
 }
@@ -112,7 +112,7 @@ void StorageAreaSync::scheduleFinalSync()
     });
 }
 
-void StorageAreaSync::scheduleItemForSync(const String& key, const String& value)
+void StorageAreaSync::scheduleItemForSync(StringImpl* key, StringImpl* value)
 {
     ASSERT(isMainThread());
     ASSERT(!m_finalSyncScheduled);
@@ -184,22 +184,22 @@ void StorageAreaSync::syncTimerFired()
             m_itemsCleared = false;
         }
 
-        HashMap<String, String>::iterator changed_it = m_changedItems.begin();
-        HashMap<String, String>::iterator changed_end = m_changedItems.end();
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::iterator changed_it = m_changedItems.begin();
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::iterator changed_end = m_changedItems.end();
         for (int count = 0; changed_it != changed_end; ++count, ++changed_it) {
             if (count >= MaxiumItemsToSync && !m_finalSyncScheduled) {
                 partialSync = true;
                 break;
             }
-            m_itemsPendingSync.set(changed_it->key.isolatedCopy(), changed_it->value.isolatedCopy());
+            m_itemsPendingSync.set(isolatedCopy(changed_it->key), isolatedCopy(changed_it->value));
         }
 
         if (partialSync) {
             // We can't do the fast path of simply clearing all items, so we'll need to manually
             // remove them one by one. Done under lock since m_itemsPendingSync is modified by
             // the background thread.
-            HashMap<String, String>::iterator pending_it = m_itemsPendingSync.begin();
-            HashMap<String, String>::iterator pending_end = m_itemsPendingSync.end();
+            HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::iterator pending_it = m_itemsPendingSync.begin();
+            HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::iterator pending_end = m_itemsPendingSync.end();
             for (; pending_it != pending_end; ++pending_it)
                 m_changedItems.remove(pending_it->key);
         }
@@ -239,12 +239,12 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-    String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+    RefPtr<StringImpl> databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
 
     if (!FileSystem::fileExists(databaseFilename) && openingStrategy == SkipIfNonExistent)
         return;
 
-    if (databaseFilename.isEmpty()) {
+    if (isEmpty(databaseFilename)) {
         LOG_ERROR("Filename for local storage database is empty - cannot open for persistent storage");
         markImported();
         m_databaseOpenFailed = true;
@@ -256,7 +256,7 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
     StorageTracker::tracker().cancelDeletingOrigin(m_databaseIdentifier);
 
     if (!m_database->open(databaseFilename)) {
-        LOG_ERROR("Failed to open database file %s for local storage", databaseFilename.utf8());
+        LOG_ERROR("Failed to open database file %s for local storage", utf8(databaseFilename));
         markImported();
         m_databaseOpenFailed = true;
         return;
@@ -335,7 +335,7 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    HashMap<String, String> itemMap;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> itemMap;
 
     int result = query->step();
     while (result == SQLITE_ROW) {
@@ -382,7 +382,7 @@ void StorageAreaSync::blockUntilImportComplete()
     m_storageArea = nullptr;
 }
 
-void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items)
+void StorageAreaSync::sync(bool clearItems, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& items)
 {
     ASSERT(!isMainThread());
 
@@ -439,18 +439,18 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
         return;
     }
 
-    HashMap<String, String>::const_iterator end = items.end();
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::const_iterator end = items.end();
 
     SQLiteTransaction transaction(m_database);
     transaction.begin();
-    for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
+    for (HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::const_iterator it = items.begin(); it != end; ++it) {
         // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
-        auto& query = it->value.isNull() ? remove : insert;
+        auto& query = !it->value ? remove : insert;
 
         query->bindText(1, it->key);
 
         // If the second argument is non-null, we're doing an insert, so bind it as the value.
-        if (!it->value.isNull())
+        if (it->value)
             query->bindBlob(2, it->value);
 
         int result = query->step();
@@ -469,7 +469,7 @@ void StorageAreaSync::performSync()
     ASSERT(!isMainThread());
 
     bool clearItems;
-    HashMap<String, String> items;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> items;
     {
         Locker locker { m_syncLock };
 
@@ -521,13 +521,13 @@ void StorageAreaSync::deleteEmptyDatabase()
 
     m_database->close();
     if (StorageTracker::tracker().isActive()) {
-        callOnMainThread([databaseIdentifier = m_databaseIdentifier.isolatedCopy()] {
+        callOnMainThread([databaseIdentifier = isolatedCopy(m_databaseIdentifier)] {
             StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifier);
         });
     } else {
-        String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+        RefPtr<StringImpl> databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
         if (!FileSystem::deleteFile(databaseFilename))
-            LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8());
+            LOG_ERROR("Failed to delete database file %s\n", utf8(databaseFilename));
     }
 }
 

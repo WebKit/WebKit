@@ -59,7 +59,7 @@ public:
 private:
     // Implementations of WorkerGlobalScopeProxy.
     // (Only use these functions in the worker object thread.)
-    void startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID, const String& name, WorkerInitializationData&&, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;
+    void startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID, StringImpl* name, WorkerInitializationData&&, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;
     void terminateWorkerGlobalScope() final;
     void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) final;
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) final;
@@ -72,14 +72,14 @@ private:
     // (Only use these functions in the worker context thread.)
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final;
     void postTaskToWorkerObject(Function<void(Worker&)>&&) final;
-    void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
-    void reportErrorToWorkerObject(const String&) final;
+    void postExceptionToWorkerObject(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL) final;
+    void reportErrorToWorkerObject(StringImpl*) final;
     void workerGlobalScopeClosed() final;
     void workerGlobalScopeDestroyed() final;
 
     // Implementation of WorkerDebuggerProxy.
     // (Only use these functions in the worker context thread.)
-    void postMessageToDebugger(const String&) final;
+    void postMessageToDebugger(StringImpl*) final;
     void setResourceCachingDisabledByWebInspector(bool) final;
 
     // Implementation of WorkerLoaderProxy.

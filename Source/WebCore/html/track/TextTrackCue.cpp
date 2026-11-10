@@ -149,8 +149,8 @@ static ExceptionOr<void> tagPseudoObjects(Node& node, OptionSet<RequiredNodes>& 
     }
 
     if (element->hasAttributeWithoutSynchronization(HTMLNames::cueAttr)) {
-        if (!nodeTypes.contains(RequiredNodes::CueBackground) || !element->closest("[cuebackground]"_s).returnValue())
-            return Exception { ExceptionCode::HierarchyRequestError, "Found cue attribute but no cuebackground attribute in hierarchy "_s };
+        if (!nodeTypes.contains(RequiredNodes::CueBackground) || !element->closest("[cuebackground]"_si).returnValue())
+            return Exception { ExceptionCode::HierarchyRequestError, "Found cue attribute but no cuebackground attribute in hierarchy "_si };
 
         element->setUserAgentPart(UserAgentParts::cue());
         nodeTypes.add(RequiredNodes::Cue);
@@ -180,10 +180,10 @@ static void removeUserAgentPartAttributes(Node& node)
 ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double start, double end, DocumentFragment& cueFragment)
 {
     if (!cueFragment.firstChild())
-        return Exception { ExceptionCode::InvalidNodeTypeError, "Empty cue fragment"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Empty cue fragment"_si };
 
     if (cueFragment.firstChild()->nodeType() == NodeType::Text)
-        return Exception { ExceptionCode::InvalidNodeTypeError, "Invalid first child"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Invalid first child"_si };
 
     for (RefPtr node = cueFragment.firstChild(); node; node = node->nextSibling()) {
         auto result = checkForInvalidNodeTypes(*node);
@@ -207,9 +207,9 @@ ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double s
     }
 
     if (!nodeTypes.contains(RequiredNodes::Cue))
-        return Exception { ExceptionCode::InvalidNodeTypeError, "Missing required attribute: cue"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Missing required attribute: cue"_si };
     if (!nodeTypes.contains(RequiredNodes::CueBackground))
-        return Exception { ExceptionCode::InvalidNodeTypeError, "Missing required attribute: cuebackground"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Missing required attribute: cuebackground"_si };
 
     Ref textTrackCue = adoptRef(*new TextTrackCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTF::move(fragment)));
     textTrackCue->suspendIfNeeded();
@@ -293,7 +293,7 @@ void TextTrackCue::setTrack(TextTrack* track)
     m_track = track;
 }
 
-void TextTrackCue::setId(const AtomString& id)
+void TextTrackCue::setId(AtomStringImpl* id)
 {
     if (m_id == id)
         return;
@@ -321,7 +321,7 @@ void TextTrackCue::setStartTime(const MediaTime& value)
 ExceptionOr<void> TextTrackCue::setEndTime(double value)
 {
     if (std::isnan(value) || value == -std::numeric_limits<double>::infinity())
-        return Exception { ExceptionCode::TypeError, "The provided value is NaN or negative Infinity"_s };
+        return Exception { ExceptionCode::TypeError, "The provided value is NaN or negative Infinity"_si };
 
     if (m_endTime.toDouble() == value)
         return { };
@@ -432,12 +432,12 @@ void TextTrackCue::toJSON(JSON::Object& value) const
         break;
     }
 
-    value.setString("type"_s, type);
-    value.setDouble("startTime"_s, startTime());
-    value.setDouble("endTime"_s, endTime());
+    value.setString("type"_si, StringImpl::create(type).ptr());
+    value.setDouble("startTime"_si, startTime());
+    value.setDouble("endTime"_si, endTime());
 }
 
-String TextTrackCue::toJSONString() const
+RefPtr<StringImpl> TextTrackCue::toJSONString() const
 {
     auto object = JSON::Object::create();
     toJSON(object.get());

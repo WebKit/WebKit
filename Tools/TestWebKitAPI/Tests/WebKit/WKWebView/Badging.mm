@@ -638,7 +638,7 @@ async function sendSpoofedBadgeIPC()
 </script>
 )TESTRESOURCE"_s;
 
-static void runAppBadgeSpoofTest(const String& attackerHTML)
+static void runAppBadgeSpoofTest(StringImpl* attackerHTML)
 {
     NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
     NSData *coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL];
@@ -680,7 +680,7 @@ static void runAppBadgeSpoofTest(const String& attackerHTML)
 
 TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
 {
-    runAppBadgeSpoofTest(badgeAttackFromWorkerBytes);
+    runAppBadgeSpoofTest(StringImpl::create(badgeAttackFromWorkerBytes).ptr());
 }
 
 static constexpr auto badgeAttackFromFrameBytes = R"TESTRESOURCE(
@@ -711,7 +711,7 @@ async function sendSpoofedBadgeIPC()
 
 TEST(Badging, SetAppBadgeFromFrameOriginSpoof)
 {
-    runAppBadgeSpoofTest(badgeAttackFromFrameBytes);
+    runAppBadgeSpoofTest(StringImpl::create(badgeAttackFromFrameBytes).ptr());
 }
 
 #endif // ENABLE(IPC_TESTING_API)

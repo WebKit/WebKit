@@ -53,13 +53,13 @@ public:
     // Called by GeolocationPermissionRequestProxy when a decision is made by the user.
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, bool allow);
 
-    bool isValidAuthorizationToken(const String&) const;
-    std::optional<WebCore::RegistrableDomain> registrableDomainForAuthorizationToken(const String&) const;
-    void revokeAuthorizationToken(const String&);
+    bool isValidAuthorizationToken(StringImpl*) const;
+    std::optional<WebCore::RegistrableDomain> registrableDomainForAuthorizationToken(StringImpl*) const;
+    void revokeAuthorizationToken(StringImpl*);
 
 private:
     HashMap<GeolocationIdentifier, Ref<GeolocationPermissionRequestProxy>> m_pendingRequests;
-    HashMap<String, WebCore::RegistrableDomain> m_validAuthorizationTokens;
+    HashMap<RefPtr<StringImpl>, WebCore::RegistrableDomain> m_validAuthorizationTokens;
     WeakRef<WebPageProxy> m_page;
 };
 

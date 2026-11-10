@@ -53,32 +53,32 @@ public:
     static Ref<KeyboardEvent> createForBindings();
 
     struct Init : public EventModifierInit {
-        String key;
-        String code;
+        RefPtr<StringImpl> key;
+        RefPtr<StringImpl> code;
         unsigned location;
         bool repeat;
         bool isComposing;
 
         // Legacy.
-        AtomString keyIdentifier;
+        RefPtr<AtomStringImpl> keyIdentifier;
         unsigned charCode;
         unsigned keyCode;
         unsigned which;
     };
 
-    static Ref<KeyboardEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<KeyboardEvent> create(AtomStringImpl* type, const Init&, IsTrusted = IsTrusted::No);
 
     virtual ~KeyboardEvent();
     
-    WEBCORE_EXPORT void initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
-        const AtomString& keyIdentifier, unsigned location,
+    WEBCORE_EXPORT void initKeyboardEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
+        AtomStringImpl* keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
     static bool isEnterKeyKeydownEvent(Event&);
 
-    const String& key() const LIFETIME_BOUND { return m_key; }
-    const String& code() const LIFETIME_BOUND { return m_code; }
-    const AtomString& keyIdentifier() const LIFETIME_BOUND { return m_keyIdentifier; }
+    const RefPtr<StringImpl>& key() const LIFETIME_BOUND { return m_key; }
+    const RefPtr<StringImpl>& code() const LIFETIME_BOUND { return m_code; }
+    const RefPtr<AtomStringImpl>& keyIdentifier() const LIFETIME_BOUND { return m_keyIdentifier; }
     unsigned location() const { return m_location; }
     bool repeat() const { return m_repeat; }
 
@@ -104,12 +104,12 @@ public:
 private:
     KeyboardEvent();
     KeyboardEvent(const PlatformKeyboardEvent&, RefPtr<WindowProxy>&&);
-    KeyboardEvent(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    KeyboardEvent(AtomStringImpl*, const Init&, IsTrusted = IsTrusted::No);
 
     std::unique_ptr<PlatformKeyboardEvent> m_underlyingPlatformEvent;
-    String m_key;
-    String m_code;
-    AtomString m_keyIdentifier;
+    RefPtr<StringImpl> m_key;
+    RefPtr<StringImpl> m_code;
+    RefPtr<AtomStringImpl> m_keyIdentifier;
     unsigned m_location { DOM_KEY_LOCATION_STANDARD };
     bool m_repeat { false };
     bool m_isComposing { false };

@@ -42,7 +42,7 @@ namespace WebKit {
 // Renders each 64-bit value as a fixed 16-digit (zero-padded) hex string, so a device-ID hash salt
 // built from a fixed number of random values always has a stable, predictable length. hex() without
 // an explicit minimum width would emit only the significant digits, producing shorter salts.
-inline String createDeviceIdHashSaltString(std::span<const uint64_t> randomData)
+inline RefPtr<StringImpl> createDeviceIdHashSaltString(std::span<const uint64_t> randomData)
 {
     StringBuilder builder;
     builder.reserveCapacity(randomData.size() * 16);
@@ -53,10 +53,10 @@ inline String createDeviceIdHashSaltString(std::span<const uint64_t> randomData)
 
 class DeviceIdHashSaltStorage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DeviceIdHashSaltStorage, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<DeviceIdHashSaltStorage> create(const String& deviceIdHashSaltStorageDirectory);
+    static Ref<DeviceIdHashSaltStorage> create(StringImpl* deviceIdHashSaltStorageDirectory);
     ~DeviceIdHashSaltStorage();
 
-    void deviceIdHashSaltForOrigin(const WebCore::SecurityOrigin& documentOrigin, const WebCore::SecurityOrigin& parentOrigin, CompletionHandler<void(String&&)>&&);
+    void deviceIdHashSaltForOrigin(const WebCore::SecurityOrigin& documentOrigin, const WebCore::SecurityOrigin& parentOrigin, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 
     void getDeviceIdHashSaltOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
     void deleteDeviceIdHashSaltForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
@@ -66,37 +66,37 @@ private:
     struct HashSaltForOrigin {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HashSaltForOrigin);
 
-        HashSaltForOrigin(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, String&& deviceIdHashSalt, WallTime lastTimeUsed = WallTime::now())
+        HashSaltForOrigin(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, RefPtr<StringImpl>&& deviceIdHashSalt, WallTime lastTimeUsed = WallTime::now())
             : documentOrigin(WTF::move(documentOrigin))
             , parentOrigin(WTF::move(parentOrigin))
             , deviceIdHashSalt(WTF::move(deviceIdHashSalt))
             , lastTimeUsed(lastTimeUsed)
         { }
 
-        HashSaltForOrigin isolatedCopy() const & { return { documentOrigin.isolatedCopy(), parentOrigin.isolatedCopy(), deviceIdHashSalt.isolatedCopy(), lastTimeUsed }; }
-        HashSaltForOrigin isolatedCopy() && { return { WTF::move(documentOrigin).isolatedCopy(), WTF::move(parentOrigin).isolatedCopy(), WTF::move(deviceIdHashSalt).isolatedCopy(), lastTimeUsed }; }
+        HashSaltForOrigin isolatedCopy() const & { return { documentOrigin.isolatedCopy(), parentOrigin.isolatedCopy(), WTF::isolatedCopy(deviceIdHashSalt), lastTimeUsed }; }
+        HashSaltForOrigin isolatedCopy() && { return { WTF::move(documentOrigin).isolatedCopy(), WTF::move(parentOrigin).isolatedCopy(), WTF::isolatedCopy(WTF::move(deviceIdHashSalt)), lastTimeUsed }; }
 
         WebCore::SecurityOriginData documentOrigin;
         WebCore::SecurityOriginData parentOrigin;
-        String deviceIdHashSalt;
+        RefPtr<StringImpl> deviceIdHashSalt;
         WallTime lastTimeUsed;
     };
 
-    DeviceIdHashSaltStorage(const String& deviceIdHashSaltStorageDirectory);
-    void loadStorageFromDisk(CompletionHandler<void(HashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&&);
+    DeviceIdHashSaltStorage(StringImpl* deviceIdHashSaltStorageDirectory);
+    void loadStorageFromDisk(CompletionHandler<void(HashMap<RefPtr<StringImpl>, std::unique_ptr<HashSaltForOrigin>>&&)>&&);
     void storeHashSaltToDisk(const HashSaltForOrigin&);
     void deleteHashSaltFromDisk(const HashSaltForOrigin&);
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData(const HashSaltForOrigin&) const;
-    std::unique_ptr<HashSaltForOrigin> getDataFromDecoder(WebCore::KeyedDecoder*, String&& deviceIdHashSalt) const;
+    std::unique_ptr<HashSaltForOrigin> getDataFromDecoder(WebCore::KeyedDecoder*, RefPtr<StringImpl>&& deviceIdHashSalt) const;
     void completePendingHandler(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
-    void completeDeviceIdHashSaltForOriginCall(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, CompletionHandler<void(String&&)>&&);
+    void completeDeviceIdHashSaltForOriginCall(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 
     const Ref<WorkQueue> m_queue;
-    HashMap<String, std::unique_ptr<HashSaltForOrigin>> m_deviceIdHashSaltForOrigins;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<HashSaltForOrigin>> m_deviceIdHashSaltForOrigins;
     bool m_isLoaded { false };
     bool m_isClosed { false };
     Vector<CompletionHandler<void()>> m_pendingCompletionHandlers;
-    const String m_deviceIdHashSaltStorageDirectory;
+    const RefPtr<StringImpl> m_deviceIdHashSaltStorageDirectory;
 };
 
 } // namespace WebKit

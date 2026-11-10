@@ -229,7 +229,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 
 - (void)errorOccurred:(NSString *)errorMessage
 {
-    protect(_geolocationManager)->providerDidFailToDeterminePosition(errorMessage);
+    protect(_geolocationManager)->providerDidFailToDeterminePosition(StringImpl::create(errorMessage).get());
 }
 
 - (void)resetGeolocation

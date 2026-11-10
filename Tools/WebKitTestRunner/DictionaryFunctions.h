@@ -37,7 +37,7 @@ void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, uint6
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, double value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, WKStringRef value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, JSStringRef value);
-void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const WTF::String& value);
+void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, StringImpl* value);
 template<typename T> void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const std::optional<T>& value);
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, int value) = delete;
 void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, unsigned value) = delete;
@@ -81,7 +81,7 @@ inline WKStringRef stringValue(WKTypeRef value)
     return dynamic_wk_cast<WKStringRef>(value);
 }
 
-inline WTF::String toWTFString(WKTypeRef value)
+inline RefPtr<StringImpl> toWTFString(WKTypeRef value)
 {
     return toWTFString(stringValue(value));
 }
@@ -157,7 +157,7 @@ inline void setValue(const WKRetainPtr<WKMutableDictionaryRef>& dictionary, cons
     setValue(dictionary, key, toWK(value));
 }
 
-inline void setValue(const WKRetainPtr<WKMutableDictionaryRef>& dictionary, const char* key, const WTF::String& value)
+inline void setValue(const WKRetainPtr<WKMutableDictionaryRef>& dictionary, const char* key, StringImpl* value)
 {
     setValue(dictionary, key, toWK(value));
 }

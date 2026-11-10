@@ -42,7 +42,7 @@ public:
     }
 
     NODELETE GPUDeviceLostReason reason() const;
-    NODELETE const String& message() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& message() const LIFETIME_BOUND;
 
     WebGPUDeviceLostInfo& backing() { return m_backing; }
     const WebGPUDeviceLostInfo& backing() const { return m_backing; }

@@ -55,23 +55,23 @@ public:
     void didCreatePage(WebPageProxy&);
     void willClosePage(const WebPageProxy&);
 
-    bool isValidUserContext(const String& userContextID) const;
+    bool isValidUserContext(StringImpl* userContextID) const;
 
 private:
     struct BidiUserContextDeletionRecord;
 
     // Inspector::BidiBrowserBackendDispatcherHandler methods.
     Inspector::CommandResult<void> close() override;
-    Inspector::CommandResult<String> createUserContext() override;
+    Inspector::CommandResult<RefPtr<StringImpl>> createUserContext() override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowser::UserContextInfo>>> getUserContexts() override;
-    void removeUserContext(const String& userContext, Inspector::CommandCallback<void>&&) override;
+    void removeUserContext(StringImpl* userContext, Inspector::CommandCallback<void>&&) override;
 
-    std::unique_ptr<BidiUserContext> platformCreateUserContext(String& error);
+    std::unique_ptr<BidiUserContext> platformCreateUserContext(RefPtr<StringImpl>& error);
 
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiBrowserBackendDispatcher> m_browserDomainDispatcher;
-    HashMap<String, std::unique_ptr<BidiUserContext>> m_userContexts;
-    HashMap<String, std::unique_ptr<BidiUserContextDeletionRecord>> m_userContextsPendingDeletion;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<BidiUserContext>> m_userContexts;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<BidiUserContextDeletionRecord>> m_userContextsPendingDeletion;
 };
 
 } // namespace WebKit

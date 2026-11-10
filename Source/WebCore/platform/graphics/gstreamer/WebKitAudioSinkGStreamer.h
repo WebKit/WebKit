@@ -50,7 +50,7 @@ GType webkit_audio_sink_get_type(void);
 
 G_END_DECLS
 
-GstElement* webkitAudioSinkNew(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
-bool webkitAudioSinkSetDevice(GstElement*, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+GstElement* webkitAudioSinkNew(StringImpl* role, StringImpl* deviceId = nullptr, const GRefPtr<GstDevice>& = { });
+bool webkitAudioSinkSetDevice(GstElement*, StringImpl* deviceId = nullptr, const GRefPtr<GstDevice>& = { });
 
 #endif // USE(GSTREAMER)

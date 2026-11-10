@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace URLPatternUtilities {
 
-URLPatternParser::URLPatternParser(EncodingCallbackType type, String&& segmentWildcardRegexp)
+URLPatternParser::URLPatternParser(EncodingCallbackType type, RefPtr<StringImpl>&& segmentWildcardRegexp)
     : m_callbackType(type)
     , m_segmentWildcardRegexp(WTF::move(segmentWildcardRegexp))
 {
@@ -51,12 +51,12 @@ ExceptionOr<void> URLPatternParser::performParse(const URLPatternStringOptions& 
         auto regexOrWildcardToken = tryToConsumeRegexOrWildcardToken(nameToken);
 
         if (!nameToken.isNull() || !regexOrWildcardToken.isNull()) {
-            String prefix;
+            RefPtr<StringImpl> prefix;
 
             if (!charToken.isNull())
                 prefix = charToken.value.toString();
 
-            if (!prefix.isEmpty() && prefix != options.prefixCodepoint)
+            if (!isEmpty(prefix) && !equal(prefix, options.prefixCodepoint))
                 m_pendingFixedValue.append(std::exchange(prefix, { }));
 
             maybeFunctionException = maybeAddPartFromPendingFixedValue();
@@ -85,10 +85,10 @@ ExceptionOr<void> URLPatternParser::performParse(const URLPatternStringOptions& 
 
         auto openToken = tryToConsumeToken(TokenType::Open);
         if (!openToken.isNull()) {
-            String prefix = consumeText();
+            RefPtr<StringImpl> prefix = consumeText();
             nameToken = tryToConsumeToken(TokenType::Name);
             regexOrWildcardToken = tryToConsumeRegexOrWildcardToken(nameToken);
-            String suffix = consumeText();
+            RefPtr<StringImpl> suffix = consumeText();
             auto maybeSyntaxError = consumeRequiredToken(TokenType::Close);
             if (maybeSyntaxError.hasException())
                 return maybeSyntaxError.releaseException();
@@ -148,7 +148,7 @@ Token URLPatternParser::tryToConsumeModifierToken()
 }
 
 // https://urlpattern.spec.whatwg.org/#consume-text
-String URLPatternParser::consumeText()
+RefPtr<StringImpl> URLPatternParser::consumeText()
 {
     StringBuilder result;
 
@@ -173,7 +173,7 @@ ExceptionOr<Token> URLPatternParser::consumeRequiredToken(TokenType type)
     auto result = tryToConsumeToken(type);
 
     if (result.isNull())
-        return Exception { ExceptionCode::TypeError, "Null token was produced when consuming a required token."_s };
+        return Exception { ExceptionCode::TypeError, "Null token was produced when consuming a required token."_si };
 
     return result;
 }
@@ -196,7 +196,7 @@ ExceptionOr<void> URLPatternParser::maybeAddPartFromPendingFixedValue()
 }
 
 // https://urlpattern.spec.whatwg.org/#add-a-part
-ExceptionOr<void> URLPatternParser::addPart(String&& prefix, const Token& nameToken, const Token& regexpOrWildcardToken, String&& suffix, const Token& modifierToken)
+ExceptionOr<void> URLPatternParser::addPart(RefPtr<StringImpl>&& prefix, const Token& nameToken, const Token& regexpOrWildcardToken, RefPtr<StringImpl>&& suffix, const Token& modifierToken)
 {
     Modifier modifier = Modifier::None;
 
@@ -220,9 +220,9 @@ ExceptionOr<void> URLPatternParser::addPart(String&& prefix, const Token& nameTo
         return maybeFunctionException.releaseException();
 
     if (nameToken.isNull() && regexpOrWildcardToken.isNull()) {
-        ASSERT(suffix.isEmpty());
+        ASSERT(isEmpty(suffix));
 
-        if (prefix.isEmpty())
+        if (isEmpty(prefix))
             return { };
 
         auto encodedValue = callEncodingCallback(m_callbackType, WTF::move(prefix));
@@ -234,36 +234,36 @@ ExceptionOr<void> URLPatternParser::addPart(String&& prefix, const Token& nameTo
         return { };
     }
 
-    String regexValue;
+    RefPtr<StringImpl> regexValue;
 
     if (regexpOrWildcardToken.isNull())
         regexValue = m_segmentWildcardRegexp;
     else if (regexpOrWildcardToken.type == TokenType::Asterisk)
-        regexValue = ".*"_s;
+        regexValue = ".*"_si;
     else
         regexValue = regexpOrWildcardToken.value.toString();
 
     PartType type = PartType::Regexp;
 
-    if (regexValue == m_segmentWildcardRegexp) {
+    if (equal(regexValue, m_segmentWildcardRegexp)) {
         type = PartType::SegmentWildcard;
-        regexValue = { };
-    } else if (regexValue == ".*"_s) {
+        regexValue = nullptr;
+    } else if (equal(regexValue, ".*"_s)) {
         type = PartType::FullWildcard;
-        regexValue = { };
+        regexValue = nullptr;
     }
 
-    String name;
+    RefPtr<StringImpl> name;
 
     if (!nameToken.isNull())
         name = nameToken.value.toString();
     else if (!regexpOrWildcardToken.isNull()) {
-        name = String::number(m_nextNumericName);
+        name = makeString(m_nextNumericName);
         ++m_nextNumericName;
     }
 
     if (isDuplicateName(name))
-        return Exception { ExceptionCode::TypeError, "Duplicate name token produced when adding to parser part list."_s };
+        return Exception { ExceptionCode::TypeError, "Duplicate name token produced when adding to parser part list."_si };
 
     auto encodedPrefix = callEncodingCallback(m_callbackType, WTF::move(prefix));
     if (encodedPrefix.hasException())
@@ -304,13 +304,13 @@ ExceptionOr<Vector<Part>> URLPatternParser::parse(StringView patternStringInput,
 }
 
 // https://urlpattern.spec.whatwg.org/#generate-a-segment-wildcard-regexp
-String generateSegmentWildcardRegexp(const URLPatternStringOptions& options)
+RefPtr<StringImpl> generateSegmentWildcardRegexp(const URLPatternStringOptions& options)
 {
     return makeString("[^"_s, escapeRegexString(options.delimiterCodepoint), "]+?"_s);
 }
 
 template<typename CharacterType>
-static String escapeRegexStringForCharacters(std::span<const CharacterType> characters)
+static RefPtr<StringImpl> escapeRegexStringForCharacters(std::span<const CharacterType> characters)
 {
     static constexpr auto regexEscapeCharacters = WTF::toArray<CharacterType>({ '.', '+', '*', '?', '^', '$', '{', '}', '(', ')', '[', ']', '|', '/', '\\' }); // NOLINT
 
@@ -328,7 +328,7 @@ static String escapeRegexStringForCharacters(std::span<const CharacterType> char
 }
 
 // https://urlpattern.spec.whatwg.org/#escape-a-regexp-string
-String escapeRegexString(StringView input)
+RefPtr<StringImpl> escapeRegexString(StringView input)
 {
     // FIXME: Ensure input only contains ASCII based on spec after the parser (or tokenizer) knows to filter non-ASCII input.
 
@@ -354,12 +354,12 @@ ASCIILiteral convertModifierToString(Modifier modifier)
 }
 
 // https://urlpattern.spec.whatwg.org/#generate-a-regular-expression-and-name-list
-std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& partList, const URLPatternStringOptions& options)
+std::pair<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> generateRegexAndNameList(const Vector<Part>& partList, const URLPatternStringOptions& options)
 {
     StringBuilder result;
     result.append('^');
 
-    Vector<String> nameList;
+    Vector<RefPtr<StringImpl>> nameList;
 
     for (auto& part : partList) {
         if (part.type == PartType::FixedText) {
@@ -371,20 +371,20 @@ std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& p
             continue;
         }
 
-        ASSERT(!part.name.isEmpty());
+        ASSERT(!isEmpty(part.name));
 
         nameList.append(part.name);
 
-        String regexpValue;
+        RefPtr<StringImpl> regexpValue;
 
         if (part.type == PartType::SegmentWildcard)
             regexpValue = generateSegmentWildcardRegexp(options);
         else if (part.type == PartType::FullWildcard)
-            regexpValue = ".*"_s;
+            regexpValue = ".*"_si;
         else
             regexpValue = part.value;
 
-        if (part.prefix.isEmpty() && part.suffix.isEmpty()) {
+        if (isEmpty(part.prefix) && isEmpty(part.suffix)) {
             if (part.modifier == Modifier::None || part.modifier == Modifier::Optional)
                 result.append('(', regexpValue, ')', convertModifierToString(part.modifier));
             else
@@ -400,7 +400,7 @@ std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& p
         }
 
         ASSERT(part.modifier == Modifier::ZeroOrMore || part.modifier == Modifier::OneOrMore);
-        ASSERT(!part.prefix.isEmpty() || !part.suffix.isEmpty());
+        ASSERT(!isEmpty(part.prefix) || !isEmpty(part.suffix));
 
         result.append("(?:"_s,
             escapeRegexString(part.prefix),
@@ -425,7 +425,7 @@ std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& p
 }
 
 // https://urlpattern.spec.whatwg.org/#generate-a-pattern-string
-String generatePatternString(const Vector<Part>& partList, const URLPatternStringOptions& options)
+RefPtr<StringImpl> generatePatternString(const Vector<Part>& partList, const URLPatternStringOptions& options)
 {
     StringBuilder result;
 
@@ -451,26 +451,26 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
             continue;
         }
 
-        bool hasCustomName = !part.name.isEmpty() && !isASCIIDigit(part.name[0]);
+        bool hasCustomName = !isEmpty(part.name) && !isASCIIDigit(codeUnitAt(part.name, 0));
 
-        bool needsGrouping = !part.suffix.isEmpty() || (!part.prefix.isEmpty() && part.prefix != options.prefixCodepoint);
+        bool needsGrouping = !isEmpty(part.suffix) || (!isEmpty(part.prefix) && !equal(part.prefix, options.prefixCodepoint));
 
         if (!needsGrouping && hasCustomName
             && part.type == PartType::SegmentWildcard && part.modifier == Modifier::None
-            && nextPart && nextPart->prefix.isEmpty() && nextPart->suffix.isEmpty()) {
+            && nextPart && isEmpty(nextPart->prefix) && isEmpty(nextPart->suffix)) {
             if (nextPart->type == PartType::FixedText)
                 needsGrouping = isValidNameCodepoint(*StringView(nextPart->value).codePoints().begin(), IsFirst::No);
             else
-                needsGrouping = !nextPart->name.isEmpty() && isASCIIDigit(nextPart->name[0]);
+                needsGrouping = !isEmpty(nextPart->name) && isASCIIDigit(codeUnitAt(nextPart->name, 0));
         }
 
-        if (!needsGrouping && part.prefix.isEmpty() && previousPart && previousPart->type == PartType::FixedText) {
-            if (options.prefixCodepoint.length() == 1
-                && options.prefixCodepoint.startsWith(*StringView(previousPart->value).codePoints().codePointAt(previousPart->value.length() - 1)))
+        if (!needsGrouping && isEmpty(part.prefix) && previousPart && previousPart->type == PartType::FixedText) {
+            if (length(options.prefixCodepoint) == 1
+                && startsWith(options.prefixCodepoint, *StringView(previousPart->value).codePoints().codePointAt(length(previousPart->value) - 1)))
                 needsGrouping = true;
         }
 
-        ASSERT(!part.name.isEmpty());
+        ASSERT(!isEmpty(part.name));
 
         if (needsGrouping)
             result.append('{');
@@ -487,13 +487,13 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
         else if (part.type == PartType::FullWildcard) {
             if (!hasCustomName
                 && (!previousPart || previousPart->type == PartType::FixedText || previousPart->modifier != Modifier::None
-                    || needsGrouping || !part.prefix.isEmpty()))
+                    || needsGrouping || !isEmpty(part.prefix)))
                 result.append('*');
             else
                 result.append("(.*)"_s);
         }
 
-        if (part.type == PartType::SegmentWildcard && hasCustomName && !part.suffix.isEmpty() && isValidNameCodepoint(*StringView(part.suffix).codePoints().begin(), IsFirst::Yes))
+        if (part.type == PartType::SegmentWildcard && hasCustomName && !isEmpty(part.suffix) && isValidNameCodepoint(*StringView(part.suffix).codePoints().begin(), IsFirst::Yes))
             result.append('\\');
 
         result.append(escapePatternString(part.suffix));
@@ -508,7 +508,7 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
 }
 
 template<typename CharacterType>
-static String escapePatternStringForCharacters(std::span<const CharacterType> characters)
+static RefPtr<StringImpl> escapePatternStringForCharacters(std::span<const CharacterType> characters)
 {
     static constexpr auto escapeCharacters = WTF::toArray<CharacterType>({ '+', '*', '?', ':', '(', ')', '\\', '{', '}' }); // NOLINT
 
@@ -526,7 +526,7 @@ static String escapePatternStringForCharacters(std::span<const CharacterType> ch
 }
 
 // https://urlpattern.spec.whatwg.org/#escape-a-pattern-string
-String escapePatternString(StringView input)
+RefPtr<StringImpl> escapePatternString(StringView input)
 {
     // FIXME: Ensure input only contains ASCII based on spec after the parser (or tokenizer) knows to filter non-ASCII input.
 

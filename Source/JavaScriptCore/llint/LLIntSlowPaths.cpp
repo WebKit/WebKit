@@ -968,7 +968,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_get_next)
     Register& nextRegister = callFrame->uncheckedR(bytecode.m_next);
 
     if (!iterator.isObject())
-        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
+        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_si));
 
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorOpen::getNext), codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
     LLINT_CHECK_EXCEPTION();
@@ -988,7 +988,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_done)
     Register& doneRegister = callFrame->uncheckedR(bytecode.m_done);
 
     if (!iteratorReturn.isObject())
-        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
+        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_si));
 
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorNext::getDone), codeBlock, globalObject, iteratorReturn, vm.propertyNames->done, metadata.m_doneModeMetadata);
     LLINT_CHECK_EXCEPTION();
@@ -1063,7 +1063,7 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     JSValue constructor = getOperand(callFrame, bytecode.m_constructor);
 
     if (!constructor.isObject())
-        LLINT_THROW(createTypeError(globalObject, "Right hand side of instanceof is not an object"_s));
+        LLINT_THROW(createTypeError(globalObject, "Right hand side of instanceof is not an object"_si));
 
     bool result = false;
     JSValue hasInstance = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpInstanceof::getHasInstance), codeBlock, globalObject, constructor, vm.propertyNames->hasInstanceSymbol, metadata.m_hasInstanceModeMetadata);
@@ -1185,7 +1185,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     bool couldDelete = JSCell::deleteProperty(baseObject, globalObject, codeBlock->identifier(bytecode.m_property));
     LLINT_CHECK_EXCEPTION();
     if (!couldDelete && bytecode.m_ecmaMode.isStrict())
-        LLINT_THROW(createTypeError(globalObject, UnableToDeletePropertyError));
+        LLINT_THROW(createTypeError(globalObject, StringImpl::create(UnableToDeletePropertyError).ptr()));
     LLINT_RETURN(jsBoolean(couldDelete));
 }
 
@@ -1578,7 +1578,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
     LLINT_CHECK_EXCEPTION();
 
     if (!couldDelete && bytecode.m_ecmaMode.isStrict())
-        LLINT_THROW(createTypeError(globalObject, UnableToDeletePropertyError));
+        LLINT_THROW(createTypeError(globalObject, StringImpl::create(UnableToDeletePropertyError).ptr()));
     
     LLINT_RETURN(jsBoolean(couldDelete));
 }
@@ -1893,7 +1893,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     ASSERT(string->length() == 1);
     auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
     auto str = string->value(globalObject);
-    int32_t intValue = str.data[0];
+    int32_t intValue = codeUnitAt(str.data, 0);
     if (!unlinkedTable.isList()) {
         JUMP_TO(unlinkedTable.offsetForValue(intValue));
         LLINT_END();
@@ -1928,7 +1928,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
             auto scrutineeString = string->value(globalObject);
             LLINT_CHECK_EXCEPTION();
 
-            JUMP_TO(unlinkedTable.offsetForValue(scrutineeString.data.impl()));
+            JUMP_TO(unlinkedTable.offsetForValue(scrutineeString.data.get()));
         }
     }
     LLINT_END();
@@ -2033,7 +2033,7 @@ LLINT_SLOW_PATH_DECL(slow_path_async_iterator_open_get_next)
     Register& nextRegister = callFrame->uncheckedR(bytecode.m_next);
 
     if (!iterator.isObject())
-        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
+        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_si));
 
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpAsyncIteratorOpen::getNext), codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
     LLINT_CHECK_EXCEPTION();

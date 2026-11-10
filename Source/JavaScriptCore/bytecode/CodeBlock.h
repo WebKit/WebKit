@@ -182,7 +182,7 @@ public:
     UnlinkedCodeBlock* unlinkedCodeBlock() const LIFETIME_BOUND { return m_unlinkedCode.get(); }
 
     UTF8CString inferredName() const;
-    String inferredNameWithHash() const;
+    RefPtr<StringImpl> inferredNameWithHash() const;
     CodeBlockHash hash() const;
     NODELETE bool hasHash() const;
     UTF8CString sourceCodeForTools() const;
@@ -411,7 +411,7 @@ public:
     const SourceCode& source() const LIFETIME_BOUND { return m_ownerExecutable->source(); }
     unsigned sourceOffset() const { return m_ownerExecutable->source().startOffset(); }
 
-    String nameForRegister(VirtualRegister);
+    RefPtr<StringImpl> nameForRegister(VirtualRegister);
 
     static constexpr ptrdiff_t offsetOfArgumentValueProfiles() { return OBJECT_OFFSETOF(CodeBlock, m_argumentValueProfiles); }
     unsigned numberOfArgumentValueProfiles()

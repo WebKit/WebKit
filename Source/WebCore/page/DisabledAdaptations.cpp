@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-String watchAdaptationName()
+RefPtr<StringImpl> watchAdaptationName()
 {
-    return "watch"_s;
+    return "watch"_si;
 }
 
 } // namespace WebCore

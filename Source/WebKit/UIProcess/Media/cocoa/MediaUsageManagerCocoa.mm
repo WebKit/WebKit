@@ -110,7 +110,7 @@ void MediaUsageManagerCocoa::reset()
     m_mediaSessions.clear();
 }
 
-void MediaUsageManagerCocoa::addMediaSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void MediaUsageManagerCocoa::addMediaSession(WebCore::MediaSessionIdentifier identifier, StringImpl* bundleIdentifier, const URL& pageURL)
 {
     auto addResult = m_mediaSessions.ensure(identifier, [&] {
         return makeUnique<MediaUsageManagerCocoa::SessionMediaUsage>(identifier, bundleIdentifier, pageURL);
@@ -185,7 +185,7 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
             if (!mediaUsageInfo.isPlaying)
                 return;
 
-            session->usageTracker = adoptNS([PAL::allocUSVideoUsageInstance() initWithBundleIdentifier:session->bundleIdentifier.createNSString().get() URL:session->pageURL.createNSURL().get()
+            session->usageTracker = adoptNS([PAL::allocUSVideoUsageInstance() initWithBundleIdentifier:createNSString(session->bundleIdentifier).get() URL:session->pageURL.createNSURL().get()
                 mediaURL:mediaUsageInfo.mediaURL.createNSURL().get() videoMetadata:metadata]);
             ASSERT(session->usageTracker);
             if (!session->usageTracker)

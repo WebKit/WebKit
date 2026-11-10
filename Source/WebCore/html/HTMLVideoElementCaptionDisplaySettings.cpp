@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-static void parsePositionAreaString(const String& positionArea, ResolvedCaptionDisplaySettingsOptions& options)
+static void parsePositionAreaString(StringImpl* positionArea, ResolvedCaptionDisplaySettingsOptions& options)
 {
     CSSParserContext context { HTMLStandardMode };
     CSS::PropertyParserState state { context };
@@ -149,7 +149,7 @@ void HTMLVideoElementCaptionDisplaySettings::showCaptionDisplaySettings(HTMLVide
     if (options) {
         if (RefPtr anchorElement = dynamicDowncast<Element>(options->anchorNode.get()))
             resolvedOptions.anchorBounds = anchorElement->boundingBoxInMainFrameViewCoordinates();
-        if (!options->positionArea.isEmpty())
+        if (!isEmpty(options->positionArea))
             parsePositionAreaString(options->positionArea, resolvedOptions);
     }
 

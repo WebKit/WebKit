@@ -124,7 +124,7 @@ void JSWebAssemblyTable::set(JSGlobalObject* globalObject, uint32_t index, JSVal
     if (index < length())
         return m_table->set(index, JSValue::decode(wasmValue));
 
-    throwRangeError(globalObject, scope, "Table.set expects an index less than the length of the table"_s);
+    throwRangeError(globalObject, scope, "Table.set expects an index less than the length of the table"_si);
 }
 
 void JSWebAssemblyTable::set(uint32_t index, JSValue value)
@@ -148,13 +148,13 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     switch (element) {
     case Wasm::TableElementType::Funcref:
         if (m_table->wasmType().isNullable())
-            elementString = jsNontrivialString(vm, "funcref"_s);
+            elementString = jsNontrivialString(vm, "funcref"_si);
         else
             return nullptr;
         break;
     case Wasm::TableElementType::Externref:
         if (isExternref(m_table->wasmType()) && m_table->wasmType().isNullable())
-            elementString = jsNontrivialString(vm, "externref"_s);
+            elementString = jsNontrivialString(vm, "externref"_si);
         else
             return nullptr;
         break;

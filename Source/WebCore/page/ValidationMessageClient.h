@@ -42,7 +42,7 @@ public:
     // Show validation message for the specified anchor element. An
     // implementation of this function may hide the message automatically after
     // some period.
-    virtual void showValidationMessage(const Element& anchor, String&& message) = 0;
+    virtual void showValidationMessage(const Element& anchor, RefPtr<StringImpl>&& message) = 0;
 
     // Hide validation message for the specified anchor if the message for the
     // anchor is already visible.

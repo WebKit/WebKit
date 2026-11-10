@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct MultiCacheQueryOptions : CacheQueryOptions {
-    String cacheName;
+    RefPtr<StringImpl> cacheName;
 };
 
 } // namespace WebCore

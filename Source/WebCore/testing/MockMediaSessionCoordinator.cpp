@@ -97,7 +97,7 @@ void MockMediaSessionCoordinator::pause(CompletionHandler<void(std::optional<Exc
     });
 }
 
-void MockMediaSessionCoordinator::setTrack(const String&, CompletionHandler<void(std::optional<Exception>&&)>&& callback)
+void MockMediaSessionCoordinator::setTrack(StringImpl*, CompletionHandler<void(std::optional<Exception>&&)>&& callback)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_context->postTask([this, protectedThis = Ref { *this }, callback = WTF::move(callback)] (ScriptExecutionContext&) mutable {
@@ -108,25 +108,25 @@ void MockMediaSessionCoordinator::setTrack(const String&, CompletionHandler<void
 void MockMediaSessionCoordinator::positionStateChanged(const std::optional<MediaPositionState>&)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "positionStateChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "positionStateChanged"_si);
 }
 
 void MockMediaSessionCoordinator::readyStateChanged(MediaSessionReadyState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "readyStateChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "readyStateChanged"_si);
 }
 
 void MockMediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "playbackStateChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "playbackStateChanged"_si);
 }
 
-void MockMediaSessionCoordinator::trackIdentifierChanged(const String& identifier)
+void MockMediaSessionCoordinator::trackIdentifierChanged(StringImpl* identifier)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, identifier);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "trackIdentifierChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "trackIdentifierChanged"_si);
 }
 
 WTFLogChannel& MockMediaSessionCoordinator::logChannel() const

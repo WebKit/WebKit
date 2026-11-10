@@ -73,11 +73,11 @@ private:
     GUniquePtr<char> m_path;
 };
 
-String writeAndReturnPath(const char* dir, const char* name, std::span<const uint8_t> contents)
+RefPtr<StringImpl> writeAndReturnPath(const char* dir, const char* name, std::span<const uint8_t> contents)
 {
     GUniquePtr<char> joined(g_build_filename(dir, name, nullptr));
-    String path = String::fromUTF8(joined.get());
-    FileSystem::overwriteEntireFile(path, contents);
+    RefPtr<StringImpl> path = StringImpl::fromUTF8(joined.get());
+    FileSystem::overwriteEntireFile(path.get(), contents);
     return path;
 }
 
@@ -91,16 +91,16 @@ TEST(WTF_FilePathWatcher, FiresOnWrite)
     // Seed the file before watching: the watcher suppresses bare DELETED
     // events that fire mid-rewrite (see FilePathWatcher.cpp), so we want a
     // CHANGES_DONE_HINT terminator on the next write.
-    String watched = writeAndReturnPath(dir.path(), "watched", std::span<const uint8_t> { });
+    RefPtr<StringImpl> watched = writeAndReturnPath(dir.path(), "watched", std::span<const uint8_t> { });
 
     bool fired = false;
-    FilePathWatcher watcher(watched, [&] {
+    FilePathWatcher watcher(watched.get(), [&] {
         fired = true;
     });
     EXPECT_TRUE(watcher.isActive());
 
-    auto contents = String::fromLatin1("changed").utf8();
-    FileSystem::overwriteEntireFile(watched, byteCast<uint8_t>(contents.span()));
+    auto contents = utf8(StringImpl::fromLatin1("changed"));
+    FileSystem::overwriteEntireFile(watched.get(), byteCast<uint8_t>(contents.span()));
 
     EXPECT_TRUE(runMainLoopUntil([&] {
         return fired;
@@ -115,21 +115,21 @@ TEST(WTF_FilePathWatcher, FiresOnSymlinkSwap)
     TempDir dir;
     ASSERT_TRUE(dir.isValid());
 
-    String targetA = writeAndReturnPath(dir.path(), "tz-a", std::span<const uint8_t> { });
-    String targetB = writeAndReturnPath(dir.path(), "tz-b", std::span<const uint8_t> { });
+    RefPtr<StringImpl> targetA = writeAndReturnPath(dir.path(), "tz-a", std::span<const uint8_t> { });
+    RefPtr<StringImpl> targetB = writeAndReturnPath(dir.path(), "tz-b", std::span<const uint8_t> { });
     auto linkPath = gBuildFilename(dir.path(), "localtime"_s);
 
-    if (posixSymlink(targetA.utf8(), linkPath) < 0)
+    if (posixSymlink(utf8(targetA), linkPath) < 0)
         GTEST_SKIP() << "symlink() unavailable on this filesystem";
 
     bool fired = false;
-    FilePathWatcher watcher(String::fromUTF8(linkPath.span()), [&] {
+    FilePathWatcher watcher(StringImpl::fromUTF8(linkPath.span()).get(), [&] {
         fired = true;
     });
     EXPECT_TRUE(watcher.isActive());
 
     g_unlink(linkPath.utf8());
-    ASSERT_EQ(posixSymlink(targetB.utf8(), linkPath), 0);
+    ASSERT_EQ(posixSymlink(utf8(targetB), linkPath), 0);
 
     EXPECT_TRUE(runMainLoopUntil([&] {
         return fired;
@@ -141,17 +141,17 @@ TEST(WTF_FilePathWatcher, IgnoresUnrelatedSiblings)
     TempDir dir;
     ASSERT_TRUE(dir.isValid());
 
-    String watched = writeAndReturnPath(dir.path(), "watched", std::span<const uint8_t> { });
-    String sibling = writeAndReturnPath(dir.path(), "sibling", std::span<const uint8_t> { });
+    RefPtr<StringImpl> watched = writeAndReturnPath(dir.path(), "watched", std::span<const uint8_t> { });
+    RefPtr<StringImpl> sibling = writeAndReturnPath(dir.path(), "sibling", std::span<const uint8_t> { });
 
     bool fired = false;
-    FilePathWatcher watcher(watched, [&] {
+    FilePathWatcher watcher(watched.get(), [&] {
         fired = true;
     });
     EXPECT_TRUE(watcher.isActive());
 
-    auto contents = String::fromLatin1("noise").utf8();
-    FileSystem::overwriteEntireFile(sibling, byteCast<uint8_t>(contents.span()));
+    auto contents = utf8(StringImpl::fromLatin1("noise"));
+    FileSystem::overwriteEntireFile(sibling.get(), byteCast<uint8_t>(contents.span()));
 
     // 1s of pumping is more than enough for any real notification to land;
     // we expect timeout (predicate stays false) which is what we want.

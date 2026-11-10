@@ -102,7 +102,7 @@ private:
     static StyleAttributeMutationScope* s_currentScope;
 
     const std::unique_ptr<MutationObserverInterestGroup> m_mutationRecipients;
-    AtomString m_oldValue;
+    RefPtr<AtomStringImpl> m_oldValue;
     const RefPtr<Element> m_element;
     bool m_isCustomElement { false };
     bool m_shouldDeliver { false };

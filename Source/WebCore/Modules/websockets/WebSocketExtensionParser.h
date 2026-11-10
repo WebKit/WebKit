@@ -47,10 +47,10 @@ public:
     NODELETE bool parsedSuccessfully();
 
     // FIXME: What character encoding are we parsing? Specify Latin1Character, char8_t, char16_t, or something else here.
-    bool parseExtension(String& extensionToken, HashMap<String, String>& parameters);
+    bool parseExtension(RefPtr<StringImpl>& extensionToken, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& parameters);
 
 private:
-    const String& currentToken() LIFETIME_BOUND { return m_currentToken; }
+    const RefPtr<StringImpl>& currentToken() LIFETIME_BOUND { return m_currentToken; }
 
     // The following member functions basically follow the grammar defined
     // in Section 2.2 of RFC 2616.
@@ -62,7 +62,7 @@ private:
     NODELETE void skipSpaces();
 
     std::span<const uint8_t> m_data;
-    String m_currentToken;
+    RefPtr<StringImpl> m_currentToken;
     bool m_didFailParsing { false };
 };
 

@@ -37,13 +37,13 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySystem)
+ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(StringImpl* keySystem)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-media-keys-constructor>:
     // The MediaKeys(keySystem) constructor must run the following steps:
 
     // 1. If keySystem is null or an empty string, throw an InvalidAccessError exception and abort these steps.
-    if (keySystem.isEmpty())
+    if (isEmpty(keySystem))
         return Exception { ExceptionCode::InvalidAccessError };
 
     // 2. If keySystem is not one of the user agent's supported Key Systems, throw a NotSupportedError and abort these steps.
@@ -60,7 +60,7 @@ ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySyste
     return adoptRef(*new WebKitMediaKeys(keySystem, WTF::move(cdm)));
 }
 
-WebKitMediaKeys::WebKitMediaKeys(const String& keySystem, Ref<LegacyCDM>&& cdm)
+WebKitMediaKeys::WebKitMediaKeys(StringImpl* keySystem, Ref<LegacyCDM>&& cdm)
     : m_keySystem(keySystem)
     , m_cdm(WTF::move(cdm))
 {
@@ -79,14 +79,14 @@ WebKitMediaKeys::~WebKitMediaKeys()
     m_cdm->setClient(nullptr);
 }
 
-ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document& document, const String& type, Ref<Uint8Array>&& initData)
+ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document& document, StringImpl* type, Ref<Uint8Array>&& initData)
 {
     // From <http://www.w3.org/TR/2014/WD-encrypted-media-20140218/#dom-createsession>:
     // The createSession(type, initData) method must run the following steps:
     // Note: The contents of initData are container-specific Initialization Data.
 
     // 1. If contentType is null or an empty string, throw an InvalidAccessError exception and abort these steps.
-    if (type.isEmpty())
+    if (isEmpty(type))
         return Exception { ExceptionCode::InvalidAccessError };
 
     // 2. If initData is an empty array, throw an InvalidAccessError exception and abort these steps.
@@ -107,7 +107,7 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document&
 
     // 5. Schedule a task to initialize the session, providing contentType, initData, and the new object.
     auto request = MediaKeySystemRequest::create(document, m_keySystem, { });
-    request->setAllowCallback([session = session.copyRef(), type = type, initData = WTF::move(initData)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&) mutable {
+    request->setAllowCallback([session = session.copyRef(), type = RefPtr { type }, initData = WTF::move(initData)](RefPtr<StringImpl>&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&) mutable {
         session->generateKeyRequest(type, WTF::move(initData), mediaKeysHashSalt);
     });
     request->start();
@@ -116,24 +116,24 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document&
     return session;
 }
 
-bool WebKitMediaKeys::isTypeSupported(const Document& document, const String& keySystem, const String& mimeType)
+bool WebKitMediaKeys::isTypeSupported(const Document& document, StringImpl* keySystem, StringImpl* mimeType)
 {
     // 1. If keySystem contains an unrecognized or unsupported Key System, return false and abort these steps.
     // Key system string comparison is case-sensitive.
-    if (keySystem.isEmpty() || !LegacyCDM::supportsKeySystem(keySystem))
+    if (isEmpty(keySystem) || !LegacyCDM::supportsKeySystem(keySystem))
         return false;
 
 #if PLATFORM(COCOA)
     if (document.quirks().needsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk()
-        && keySystem == "com.apple.fps.1_0"_s
-        && mimeType.startsWithIgnoringASCIICase("video/mp2t"_s))
+        && equal(keySystem, "com.apple.fps.1_0"_s)
+        && startsWithIgnoringASCIICase(mimeType, "video/mp2t"_s))
         return true;
 #else
     UNUSED_PARAM(document);
 #endif
 
     // 2. If type is null or an empty string, return true and abort these steps.
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return true;
 
     // 3. If the Key System specified by keySystem does not support decrypting the container and/or codec
@@ -174,7 +174,7 @@ void WebKitMediaKeys::keyAdded()
         mediaElement->keyAdded();
 }
 
-RefPtr<ArrayBuffer> WebKitMediaKeys::cachedKeyForKeyId(const String& keyId) const
+RefPtr<ArrayBuffer> WebKitMediaKeys::cachedKeyForKeyId(StringImpl* keyId) const
 {
     for (auto& session : m_sessions) {
         if (auto key = session->cachedKeyForKeyId(keyId))

@@ -175,8 +175,8 @@ public:
     virtual void applyScrollUpdate(ScrollUpdate&&, ScrollType = ScrollType::User, ViewportRectStability = ViewportRectStability::Stable) { }
 
     virtual void reconcileViewportConstrainedLayerPositions(std::optional<ScrollingNodeID>, const LayoutRect&, ScrollingLayerPositionAction) { }
-    virtual String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
-    virtual String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
+    virtual RefPtr<StringImpl> scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
+    virtual RefPtr<StringImpl> scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
     virtual bool haveScrollingTree() const { return false; }
     virtual bool isRubberBandInProgress(std::optional<ScrollingNodeID>) const { return false; }
     virtual bool isUserScrollInProgress(std::optional<ScrollingNodeID>) const { return false; }
@@ -195,8 +195,8 @@ public:
 
     virtual void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> /* nominalFramesPerSecond */) { }
 
-    static String synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason>);
-    String synchronousScrollingReasonsAsText() const;
+    static RefPtr<StringImpl> synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason>);
+    RefPtr<StringImpl> synchronousScrollingReasonsAsText() const;
 
     EventTrackingRegions absoluteEventTrackingRegions() const;
     virtual void updateIsMonitoringWheelEventsForFrameView(const LocalFrameView&) { }

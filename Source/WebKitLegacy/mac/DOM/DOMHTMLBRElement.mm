@@ -42,13 +42,13 @@
 - (NSString *)clear
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::clearAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::clearAttr)).autorelease();
 }
 
 - (void)setClear:(NSString *)newClear
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::clearAttr, newClear);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::clearAttr, AtomStringImpl::add((__bridge CFStringRef)newClear).get());
 }
 
 @end

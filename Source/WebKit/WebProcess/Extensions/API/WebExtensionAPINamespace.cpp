@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-static bool doesDictionaryExist(RefPtr<JSON::Object> value, const String& name, bool returningFalseIfEmpty = false)
+static bool doesDictionaryExist(RefPtr<JSON::Object> value, StringImpl* name, bool returningFalseIfEmpty = false)
 {
     RefPtr object = value ? value->getObject(name) : nullptr;
     if (!object)
@@ -49,9 +49,9 @@ static bool doesDictionaryExist(RefPtr<JSON::Object> value, const String& name, 
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-static bool doesKeyExist(RefPtr<JSON::Object> value, const String& key)
+static bool doesKeyExist(RefPtr<JSON::Object> value, StringImpl* key)
 {
-    return value && !value->getString(key).isEmpty();
+    return value && !isEmpty(value->getString(key));
 }
 #endif
 
@@ -70,29 +70,29 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return name == "runtime"_s;
 
     if (name == "offscreen"_s)
-        return page && page->corePage() && page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_s);
+        return page && page->corePage() && page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_si);
 #endif
 
     if (name == "action"_s)
-        return extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "action"_s);
+        return extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "action"_si);
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     if (name == "bookmarks"_s)
-        return page->corePage()->settings().webExtensionBookmarksEnabled() && extensionContext->hasPermission("bookmarks"_s);
+        return page->corePage()->settings().webExtensionBookmarksEnabled() && extensionContext->hasPermission("bookmarks"_si);
 #endif
 
     if (name == "commands"_s)
-        return doesDictionaryExist(extensionContext->manifest(), "commands"_s);
+        return doesDictionaryExist(extensionContext->manifest(), "commands"_si);
 
     if (name == "declarativeNetRequest"_s)
-        return extensionContext->hasPermission(name) || extensionContext->hasPermission("declarativeNetRequestWithHostAccess"_s);
+        return extensionContext->hasPermission(StringImpl::create(name).ptr()) || extensionContext->hasPermission("declarativeNetRequestWithHostAccess"_si);
 
     if (name == "browserAction"_s)
-        return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "browser_action"_s);
+        return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "browser_action"_si);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (name == "devtools"_s)
-        return doesKeyExist(extensionContext->manifest(), "devtools_page"_s) && page && (page->isInspectorPage() || extensionContext->isInspectorBackgroundPage(*page));
+        return doesKeyExist(extensionContext->manifest(), "devtools_page"_si) && page && (page->isInspectorPage() || extensionContext->isInspectorBackgroundPage(*page));
 #else
     if (name == "devtools"_s)
         return false;
@@ -100,31 +100,31 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
 
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
     if (name == "notifications"_s)
-        return (extensionContext->inTestingMode() || (page && page->corePage() && page->corePage()->settings().webExtensionNotificationsEnabled())) && extensionContext->hasPermission("notifications"_s);
+        return (extensionContext->inTestingMode() || (page && page->corePage() && page->corePage()->settings().webExtensionNotificationsEnabled())) && extensionContext->hasPermission("notifications"_si);
 #endif
 
     if (name == "pageAction"_s)
-        return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "page_action"_s);
+        return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "page_action"_si);
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     // If the extension requests both sidePanel and sidebarAction, we will give them sidebarAction --
     // we check in sidePanel that there is no sidebar_action key, but we do not check in sidebarAction
     // that there is no sidePanel permission
     if (name == "sidePanel"_s)
-        return page && page->corePage() && page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext->hasPermission("sidePanel"_s) && !doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
+        return page && page->corePage() && page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext->hasPermission("sidePanel"_si) && !doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_si, true);
     if (name == "sidebarAction"_s)
-        return page && page->corePage() && page->corePage()->settings().webExtensionSidebarEnabled() && doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
+        return page && page->corePage() && page->corePage()->settings().webExtensionSidebarEnabled() && doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_si, true);
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     if (name == "storage"_s)
-        return extensionContext->hasPermission(name) || extensionContext->hasPermission("unlimitedStorage"_s);
+        return extensionContext->hasPermission(StringImpl::create(name).ptr()) || extensionContext->hasPermission("unlimitedStorage"_si);
 
     if (name == "dom"_s || name == "extension"_s || name == "extensionTypes"_s || name == "i18n"_s || name == "permissions"_s || name == "runtime"_s || name == "tabs"_s || name == "windows"_s)
         return true;
 
     // The rest of the property names marked dynamic in WebExtensionAPINamespace.idl match permission names.
     // Check for the permission to determine if the property is allowed to be accessed.
-    return extensionContext->hasPermission(name);
+    return extensionContext->hasPermission(StringImpl::create(name).ptr());
 }
 
 #if PLATFORM(COCOA)
@@ -282,7 +282,7 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
 
     if (!m_runtime) {
         m_runtime = WebExtensionAPIRuntime::create(contentWorldType(), protect(extensionContext()));
-        m_runtime->setPropertyPath("runtime"_s, this);
+        m_runtime->setPropertyPath("runtime"_si, this);
     }
 
     return *m_runtime;

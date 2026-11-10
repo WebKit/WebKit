@@ -46,8 +46,6 @@ import WebGPU_Internal.XRSubImage
 import WebGPU_Internal.XRView
 import WebGPU_Private.WebGPU
 
-typealias String = Swift.String
-
 @_expose(Cxx)
 func commandEncoderClearBuffer(
     _ commandEncoder: WebGPU.Metal.CommandEncoder,
@@ -230,7 +228,7 @@ extension WebGPU.Metal.CommandEncoder {
         m_commandBuffer = nil
         m_existingCommandEncoder = nil
 
-        commandBuffer?.label = CxxBridging.convertWTFStringToNSString(descriptor.label)
+        commandBuffer?.label = CxxBridging.convertStringImplToNSString(descriptor.label)
 
         #if arch(x86_64) && (WTF_PLATFORM_MAC || WTF_PLATFORM_MACCATALYST)
         if (m_managedBuffers?.count ?? 0) != 0 || (m_managedTextures?.count ?? 0) != 0 {
@@ -2652,9 +2650,7 @@ extension WebGPU.Metal.CommandEncoder {
         }
 
         self.setExistingEncoder(computeCommandEncoder)
-        // FIXME: Figure out a way so that WTFString does not override String in the global
-        //        namespace. At the moment it is and that's why we need this.
-        computeCommandEncoder.label = CxxBridging.convertWTFStringToNSString(descriptor.label)
+        computeCommandEncoder.label = CxxBridging.convertStringImplToNSString(descriptor.label)
 
         return WebGPU.Metal.ComputePassEncoder.create(computeCommandEncoder, descriptor, self, m_device.ptr())
     }

@@ -54,7 +54,7 @@ WEBCORE_EXPORT bool shouldBlockRequest(Frame&, const URL&, IsUpgradable = IsUpgr
 
 WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
-WEBCORE_EXPORT String mixedContentViolationMessage(bool shouldUpgradeLocalhostAndIPAddressInMixedContent, bool blocked, const URL& current, const URL& target);
+WEBCORE_EXPORT RefPtr<StringImpl> mixedContentViolationMessage(bool shouldUpgradeLocalhostAndIPAddressInMixedContent, bool blocked, const URL& current, const URL& target);
 
 } // namespace MixedContentChecker
 } // namespace WebCore

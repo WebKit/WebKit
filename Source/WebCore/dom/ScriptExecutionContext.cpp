@@ -123,7 +123,7 @@ NODELETE static HashMap<ScriptExecutionContextIdentifier, WeakRef<ScriptExecutio
 struct ScriptExecutionContext::PendingException {
     WTF_MAKE_TZONE_ALLOCATED(PendingException);
 public:
-    PendingException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, RefPtr<ScriptCallStack>&& callStack)
+    PendingException(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, RefPtr<ScriptCallStack>&& callStack)
         : m_errorMessage(errorMessage)
         , m_lineNumber(lineNumber)
         , m_columnNumber(columnNumber)
@@ -131,10 +131,10 @@ public:
         , m_callStack(WTF::move(callStack))
     {
     }
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
     int m_lineNumber;
     int m_columnNumber;
-    String m_sourceURL;
+    RefPtr<StringImpl> m_sourceURL;
     RefPtr<ScriptCallStack> m_callStack;
 };
 
@@ -324,7 +324,7 @@ CSSValuePool& ScriptExecutionContext::cssValuePool()
     return CSSValuePool::singleton();
 }
 
-RefPtr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource)
+RefPtr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(StringImpl*, bool, bool, LoadedFromOpaqueSource)
 {
     return nullptr;
 }
@@ -356,7 +356,7 @@ JSC::ScriptExecutionStatus ScriptExecutionContext::jscScriptExecutionStatus() co
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#encoding-parsing-a-url
-URL ScriptExecutionContext::encodingParseURL(const String& url) const
+URL ScriptExecutionContext::encodingParseURL(StringImpl* url) const
 {
     return parseURL(url);
 }
@@ -378,7 +378,7 @@ URL ScriptExecutionContext::currentSourceURL(CallStackPosition position) const
             return IterationStatus::Continue;
 
         auto urlString = visitor->sourceURL();
-        if (urlString.isEmpty())
+        if (isEmpty(urlString))
             return IterationStatus::Continue;
 
         auto newSourceURL = URL { WTF::move(urlString) };
@@ -529,7 +529,7 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> ScriptExecutionContext::createRTCD
 }
 
 // FIXME: Should this function be in SecurityContext or SecurityOrigin instead?
-bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const String& sourceURL, bool fromModule)
+bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, StringImpl* sourceURL, bool fromModule)
 {
     ASSERT(securityOrigin());
     // Errors from module scripts are never muted.
@@ -540,13 +540,13 @@ bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const 
         return true;
     if (script) {
         ASSERT(script->origin());
-        ASSERT(securityOrigin()->toString() == script->origin()->toString());
+        ASSERT(equal(securityOrigin()->toString(), script->origin()->toString()));
         return script->isCORSSameOrigin();
     }
     return protect(securityOrigin())->canRequest(completeSourceURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
-void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript, bool fromModule)
+void ScriptExecutionContext::reportException(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript, bool fromModule)
 {
     if (m_inDispatchErrorEvent) {
         if (!m_pendingExceptions)
@@ -567,7 +567,7 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
         logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTF::move(exception->m_callStack));
 }
 
-void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack, const String& unmaskedSourceURL)
+void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack, StringImpl* unmaskedSourceURL)
 {
     Page* page = nullptr;
     if (auto* document = dynamicDowncast<Document>(*this))
@@ -580,35 +580,35 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
     Ref vm = state.vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSValue result = promise.result();
-    String resultMessage = retrieveErrorMessage(state, vm, result, scope);
-    String errorMessage;
+    RefPtr<StringImpl> resultMessage = retrieveErrorMessage(state, vm, result, scope);
+    RefPtr<StringImpl> errorMessage;
 
-    auto tryMakeErrorString = [&] (unsigned length) -> String {
-        bool addEllipsis = length != resultMessage.length();
+    auto tryMakeErrorString = [&] (unsigned length) -> RefPtr<StringImpl> {
+        bool addEllipsis = length != WTF::length(resultMessage);
         return tryMakeString("Unhandled Promise Rejection: "_s, StringView(resultMessage).left(length), addEllipsis ? "..."_s : ""_s);
     };
 
     if (!!resultMessage && !scope.exception()) {
         constexpr unsigned maxLength = 200;
         constexpr unsigned shortLength = 10;
-        errorMessage = tryMakeErrorString(std::min(resultMessage.length(), maxLength));
-        if (!errorMessage && resultMessage.length() > shortLength)
+        errorMessage = tryMakeErrorString(std::min(WTF::length(resultMessage), maxLength));
+        if (!errorMessage && WTF::length(resultMessage) > shortLength)
             errorMessage = tryMakeErrorString(shortLength);
     }
 
     if (!errorMessage)
-        errorMessage = "Unhandled Promise Rejection"_s;
+        errorMessage = "Unhandled Promise Rejection"_si;
 
     if (auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(&state); domGlobalObject && domGlobalObject->hasScriptErrorCallbacks()) {
         // Use the unmasked source URL captured at rejection time when available; fall back
         // to the call stack URL which may be masked for extension content scripts.
-        String rejectionSourceURL = unmaskedSourceURL;
+        RefPtr<StringImpl> rejectionSourceURL = unmaskedSourceURL;
         unsigned rejectionLine = 0;
         unsigned rejectionColumn = 0;
 
         if (callStack) {
             if (auto* frame = callStack->firstNonNativeCallFrame()) {
-                if (rejectionSourceURL.isEmpty())
+                if (isEmpty(rejectionSourceURL))
                     rejectionSourceURL = frame->sourceURL();
                 rejectionLine = frame->lineNumber();
                 rejectionColumn = frame->columnNumber();
@@ -626,12 +626,12 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
     addConsoleMessage(WTF::move(message));
 }
 
-void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
 {
     addMessage(source, level, message, sourceURL, lineNumber, columnNumber, nullptr, state, requestIdentifier);
 }
 
-bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule)
+bool ScriptExecutionContext::dispatchErrorEvent(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule)
 {
     RefPtr target = errorEventTarget();
     if (!target)
@@ -645,7 +645,7 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     if (canIncludeErrorDetails(cachedScript, sourceURL, fromModule))
         errorEvent = ErrorEvent::create(*jsGlobalObject, errorMessage, sourceURL, lineNumber, columnNumber, { vm(), exception ? exception->value() : JSC::jsNull() });
     else
-        errorEvent = ErrorEvent::create(*jsGlobalObject, "Script error."_s, { }, 0, 0, { });
+        errorEvent = ErrorEvent::create(*jsGlobalObject, "Script error."_si, nullptr, 0, 0, { });
 
     ASSERT(!m_inDispatchErrorEvent);
     m_inDispatchErrorEvent = true;
@@ -753,7 +753,7 @@ JSC::JSGlobalObject* ScriptExecutionContext::globalObject() const
     return nullptr;
 }
 
-String ScriptExecutionContext::domainForCachePartition() const
+RefPtr<StringImpl> ScriptExecutionContext::domainForCachePartition() const
 {
     if (m_storageBlockingPolicy != StorageBlockingPolicy::BlockThirdParty)
         return emptyString();
@@ -852,7 +852,7 @@ bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identif
     return true;
 }
 
-bool ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier identifier, Task&& task, const String& mode)
+bool ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier identifier, Task&& task, StringImpl* mode)
 {
     Locker locker { allScriptExecutionContextsMapLock };
     // Called from non-main thread.

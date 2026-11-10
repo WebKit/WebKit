@@ -137,38 +137,38 @@ static inline void invalidateElement(const std::optional<const Styleable>& style
         element->invalidateStyleForAnimation();
 }
 
-String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID property)
+RefPtr<StringImpl> KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID property)
 {
     // https://drafts.csswg.org/web-animations-1/#animation-property-name-to-idl-attribute-name
     // 1. If property follows the <custom-property-name> production, return property.
 
     // 2. If property refers to the CSS float property, return the string "cssFloat".
     if (property == CSSPropertyID::Float)
-        return "cssFloat"_s;
+        return "cssFloat"_si;
 
     // 3. If property refers to the CSS offset property, return the string "cssOffset".
     if (property == CSSPropertyID::Offset)
-        return "cssOffset"_s;
+        return "cssOffset"_si;
 
     // 4. Otherwise, return the result of applying the CSS property to IDL attribute algorithm [CSSOM] to property.
     return nameForIDL(property);
 }
 
-static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomString& idlAttributeName)
+static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(AtomStringImpl* idlAttributeName)
 {
     // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
     // 1. If attribute conforms to the <custom-property-name> production, return attribute.
 
     // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
-    if (idlAttributeName == "cssFloat"_s)
+    if (equal(idlAttributeName, "cssFloat"_s))
         return CSSPropertyID::Float;
 
     // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
-    if (idlAttributeName == "cssOffset"_s)
+    if (equal(idlAttributeName, "cssOffset"_s))
         return CSSPropertyID::Offset;
 
     // If the attribute is the string "fontStretch" return the CSS font-width property that it aliases.
-    if (idlAttributeName == "fontStretch"_s)
+    if (equal(idlAttributeName, "fontStretch"_s))
         return CSSPropertyID::FontWidth;
 
     // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
@@ -179,7 +179,7 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomSt
 
     // We need to check that converting the property back to IDL form yields the same result such that a property passed
     // in non-IDL form is rejected, for instance "font-size".
-    if (idlAttributeName != KeyframeEffect::CSSPropertyIDToIDLAttributeName(cssPropertyId))
+    if (!equal(idlAttributeName, KeyframeEffect::CSSPropertyIDToIDLAttributeName(cssPropertyId)))
         return CSSPropertyID::Invalid;
 
     return cssPropertyId;
@@ -193,10 +193,10 @@ static bool isTimelineRangeOffsetValid(const TimelineRangeOffset& timelineRangeO
     return offsetUnitValue && offsetUnitValue->unitEnum() == CSSUnitType::Percentage;
 }
 
-static std::optional<Variant<double, TimelineRangeOffset>> doubleOrTimelineRangeOffsetFromString(const String& offsetString, const Document& document)
+static std::optional<Variant<double, TimelineRangeOffset>> doubleOrTimelineRangeOffsetFromString(StringImpl* offsetString, const Document& document)
 {
     bool doubleParsingSuccess = true;
-    auto doubleValue = offsetString.toDouble(&doubleParsingSuccess);
+    auto doubleValue = toDouble(offsetString, &doubleParsingSuccess);
     if (doubleParsingSuccess)
         return { doubleValue };
 
@@ -227,7 +227,7 @@ static std::optional<KeyframeEffect::KeyframeOffset> validateKeyframeOffset(cons
         return *timelineRangeOffset;
     }
 
-    if (auto* stringOffset = std::get_if<String>(&offset)) {
+    if (auto* stringOffset = std::get_if<RefPtr<StringImpl>>(&offset)) {
         auto parsedValue = doubleOrTimelineRangeOffsetFromString(*stringOffset, document);
         if (!parsedValue)
             return { };
@@ -379,7 +379,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         // Convert string offsets to TimelineRangeOffset in case we were provided with a list of offsets.
         if (auto* offsets = std::get_if<Vector<KeyframeEffect::KeyframeOffset>>(&baseProperties.offset)) {
             for (auto& offset : *offsets) {
-                auto* stringOffset = std::get_if<String>(&offset);
+                auto* stringOffset = std::get_if<RefPtr<StringImpl>>(&offset);
                 if (!stringOffset)
                     continue;
                 if (auto parsedValue = doubleOrTimelineRangeOffsetFromString(*stringOffset, document)) {
@@ -406,7 +406,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
                 return Exception { ExceptionCode::TypeError };
             }
             baseProperties.offset = *timelineRangeOffsetValue;
-        } else if (auto* stringOffset = std::get_if<String>(baseKeyframeOffset)) {
+        } else if (auto* stringOffset = std::get_if<RefPtr<StringImpl>>(baseKeyframeOffset)) {
             if (auto parsedValue = doubleOrTimelineRangeOffsetFromString(*stringOffset, document)) {
                 if (auto doubleOffset = std::get_if<double>(&*parsedValue))
                     baseProperties.offset = *doubleOffset;
@@ -451,7 +451,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     Vector<JSC::Identifier> logicalLonghands;
     Vector<JSC::Identifier> physicalLonghands;
     for (auto& inputProperty : inputProperties) {
-        auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
+        auto cssProperty = IDLAttributeNameToAnimationPropertyName(protect(JSC::PropertyName(inputProperty).publicName()));
         if (!isExposed(cssProperty, &document.settings()))
             cssProperty = CSSPropertyID::Invalid;
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, WritingMode());
@@ -493,7 +493,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
         // 3. Convert raw value to a DOMString or sequence of DOMStrings property values as follows:
-        Vector<String> propertyValues;
+        Vector<RefPtr<StringImpl>> propertyValues;
         if (allowLists) {
             // If allow lists is true,
             // Let property values be the result of converting raw value to IDL type (DOMString or sequence<DOMString>)
@@ -505,10 +505,10 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
                 return Exception { ExceptionCode::TypeError };
 
             propertyValues = WTF::switchOn(propertyValuesConversionResult.releaseReturnValue(),
-                [](String&& value) -> Vector<String> {
+                [](RefPtr<StringImpl>&& value) -> Vector<RefPtr<StringImpl>> {
                     return { WTF::move(value) };
                 },
-                [](Vector<String>&& values) -> Vector<String> {
+                [](Vector<RefPtr<StringImpl>>&& values) -> Vector<RefPtr<StringImpl>> {
                     return values;
                 }
             );
@@ -523,7 +523,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         }
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
-        auto propertyName = animationProperties[i].string();
+        RefPtr<AtomStringImpl> propertyName = JSC::PropertyName(animationProperties[i]).publicName();
         auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(propertyName);
         ASSERT(isExposed(cssPropertyID, &document.settings()));
 
@@ -581,8 +581,8 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
 
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only easing
         // alternative we should expect is String.
-        ASSERT(std::holds_alternative<String>(keyframeLikeObject.baseProperties.easing));
-        keyframeOutput.easing = std::get<String>(keyframeLikeObject.baseProperties.easing);
+        ASSERT(std::holds_alternative<RefPtr<StringImpl>>(keyframeLikeObject.baseProperties.easing));
+        keyframeOutput.easing = std::get<RefPtr<StringImpl>>(keyframeLikeObject.baseProperties.easing);
 
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only composite
         // alternatives we should expect is CompositeOperationAuto.
@@ -611,7 +611,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
     return { };
 }
 
-static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes, Vector<String>& unusedEasings)
+static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes, Vector<RefPtr<StringImpl>>& unusedEasings)
 {
     // 1. Let property-indexed keyframe be the result of running the procedure to process a keyframe-like object passing object as the keyframe input.
     auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, document, WTF::move(keyframesInput), true);
@@ -711,7 +711,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         if (!isTimelineRangeOffsetValid(*timelineRangeOffset))
             return Exception { ExceptionCode::TypeError };
         offsets.append(*timelineRangeOffset);
-    } else if (auto* stringOffset = std::get_if<String>(sourceOffsets)) {
+    } else if (auto* stringOffset = std::get_if<RefPtr<StringImpl>>(sourceOffsets)) {
         if (auto parsedValue = doubleOrTimelineRangeOffsetFromString(*stringOffset, document)) {
             if (auto doubleOffset = std::get_if<double>(&*parsedValue))
                 offsets.append(*doubleOffset);
@@ -729,11 +729,11 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     // 7. Let easings be a sequence of DOMString values assigned based on the type of the “easing” member of the property-indexed keyframe as follows:
     //    - sequence<DOMString>, the value of “easing” as-is.
     //    - DOMString, a sequence of length one with the value of “easing” as its single item, i.e. « easing »,
-    Vector<String> easings;
-    if (std::holds_alternative<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing))
-        easings = std::get<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing);
-    else if (std::holds_alternative<String>(propertyIndexedKeyframe.baseProperties.easing))
-        easings.append(std::get<String>(propertyIndexedKeyframe.baseProperties.easing));
+    Vector<RefPtr<StringImpl>> easings;
+    if (std::holds_alternative<Vector<RefPtr<StringImpl>>>(propertyIndexedKeyframe.baseProperties.easing))
+        easings = std::get<Vector<RefPtr<StringImpl>>>(propertyIndexedKeyframe.baseProperties.easing);
+    else if (std::holds_alternative<RefPtr<StringImpl>>(propertyIndexedKeyframe.baseProperties.easing))
+        easings.append(std::get<RefPtr<StringImpl>>(propertyIndexedKeyframe.baseProperties.easing));
 
     // 8. If easings is an empty sequence, let it be a sequence of length one containing the single value “linear”, i.e. « "linear" ».
     if (easings.isEmpty())
@@ -1028,45 +1028,45 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         }();
         computedKeyframe.computedOffset = keyframe.offset();
         // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
-        computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear"_s : protect(timingFunctionForBlendingKeyframe(keyframe))->cssText();
+        computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear"_si : protect(timingFunctionForBlendingKeyframe(keyframe))->cssText();
 
         if (auto compositeOperation = keyframe.compositeOperation())
             computedKeyframe.composite = toCompositeOperationOrAuto(*compositeOperation);
 
         auto addPropertyToKeyframe = [&](CSSPropertyID cssPropertyId) {
-            String styleString = emptyString();
+            RefPtr<StringImpl> styleString = emptyString();
             if (keyframeRule) {
                 if (auto cssValue = protect(keyframeRule->properties())->getPropertyCSSValue(cssPropertyId)) {
                     if (!cssValue->hasSubstitutionFunctions())
                         styleString = protect(keyframeRule->properties())->getPropertyValue(cssPropertyId);
                 }
             }
-            if (styleString.isEmpty()) {
+            if (isEmpty(styleString)) {
                 if (auto cssValue = styleProperties->getPropertyCSSValue(cssPropertyId)) {
                     if (!cssValue->hasSubstitutionFunctions())
                         styleString = styleProperties->getPropertyValue(cssPropertyId);
                 }
             }
-            if (styleString.isEmpty())
+            if (isEmpty(styleString))
                 styleString = computedStyleExtractor.propertyValueSerializationInStyle(style, cssPropertyId, CSS::defaultSerializationContext(), CSSValuePool::singleton(), nullptr, Style::ExtractorState::PropertyValueType::Computed);
             computedKeyframe.styleStrings.set(cssPropertyId, styleString);
         };
 
-        auto addCustomPropertyToKeyframe = [&](const AtomString& customProperty) {
-            String styleString = emptyString();
+        auto addCustomPropertyToKeyframe = [&](AtomStringImpl* customProperty) {
+            RefPtr<StringImpl> styleString = emptyString();
             if (keyframeRule) {
                 if (auto cssValue = protect(keyframeRule->properties())->getCustomPropertyCSSValue(customProperty)) {
                     if (!cssValue->hasSubstitutionFunctions())
                         styleString = protect(keyframeRule->properties())->getCustomPropertyValue(customProperty);
                 }
             }
-            if (styleString.isEmpty()) {
+            if (isEmpty(styleString)) {
                 if (auto cssValue = styleProperties->getCustomPropertyCSSValue(customProperty)) {
                     if (!cssValue->hasSubstitutionFunctions())
                         styleString = styleProperties->getCustomPropertyValue(customProperty);
                 }
             }
-            if (styleString.isEmpty()) {
+            if (isEmpty(styleString)) {
                 if (RefPtr cssValue = style->customPropertyValue(customProperty))
                     styleString = cssValue->propertyValueSerialization(CSS::defaultSerializationContext(), style);
             }
@@ -1078,7 +1078,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
                 [&] (CSSPropertyID cssProperty) {
                     addPropertyToKeyframe(cssProperty);
                 },
-                [&] (const AtomString& customProperty) {
+                [&] (AtomStringImpl* customProperty) {
                     if (m_animationType != WebAnimationType::CSSAnimation)
                         addCustomPropertyToKeyframe(customProperty);
                 }
@@ -1131,7 +1131,7 @@ void KeyframeEffect::recomputeKeyframesAtNextOpportunity()
     invalidate();
 }
 
-void KeyframeEffect::customPropertyRegistrationDidChange(const AtomString& customProperty)
+void KeyframeEffect::customPropertyRegistrationDidChange(AtomStringImpl* customProperty)
 {
     // If the registration of a custom property is changed, we should recompute keyframes
     // at the next opportunity as the initial value, inherited value, etc. could have changed.
@@ -1163,7 +1163,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
     RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
     // 5. Perform the steps corresponding to the first matching condition from below,
-    Vector<String> unusedEasings;
+    Vector<RefPtr<StringImpl>> unusedEasings;
     if (!method.isUndefined()) {
         auto retVal = processIterableKeyframes(lexicalGlobalObject, document, WTF::move(keyframesInput), WTF::move(method), parsedKeyframes);
         if (retVal.hasException())
@@ -1304,7 +1304,7 @@ bool KeyframeEffect::animatesProperty(const AnimatableCSSProperty& property) con
                 return keyframe.styleStrings.contains(cssProperty);
             });
         },
-        [&](const AtomString& customProperty) {
+        [&](AtomStringImpl* customProperty) {
             return m_parsedKeyframes.findIf([&](auto& keyframe) {
                 return keyframe.customStyleStrings.contains(customProperty);
             });
@@ -1433,7 +1433,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const Style::ComputedS
     // NOTE: A CSSAnimation is always constructed with a backing Style::Animation that has a valid, non-none, name.
     auto backingStyleAnimationName = backingStyleAnimation.name().tryKeyframesName();
 
-    BlendingKeyframes blendingKeyframes(AtomString { backingStyleAnimationName->name });
+    BlendingKeyframes blendingKeyframes(RefPtr<AtomStringImpl> { backingStyleAnimationName->name });
     if (m_target) {
         Style::resolveTreeScopedReference(protect(*m_target), *backingStyleAnimationName, [&](const Style::Scope& scope, const Style::ScopedName&) {
             ASSERT(scope.resolverIfExists());
@@ -1586,7 +1586,7 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     didChangeTargetStyleable(previousTargetStyleable);
 }
 
-const String KeyframeEffect::pseudoElement() const
+const RefPtr<StringImpl> KeyframeEffect::pseudoElement() const
 {
     // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
 
@@ -1597,12 +1597,12 @@ const String KeyframeEffect::pseudoElement() const
     return { };
 }
 
-ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
+ExceptionOr<void> KeyframeEffect::setPseudoElement(StringImpl* pseudoElement)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
     auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(pseudoElement, protect(document()));
     if (!parsed)
-        return Exception { ExceptionCode::SyntaxError, "Parsing pseudo-element selector failed"_s };
+        return Exception { ExceptionCode::SyntaxError, "Parsing pseudo-element selector failed"_si };
 
     if (m_pseudoElementIdentifier == pseudoElementIdentifier)
         return { };

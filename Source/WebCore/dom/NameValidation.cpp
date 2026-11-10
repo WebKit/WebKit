@@ -160,19 +160,19 @@ bool isValidXMLName(StringView name)
 
 enum class QualifiedNameType : bool { Element, Attribute };
 
-static ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedNameToPair(const AtomString& qualifiedName, QualifiedNameType type)
+static ExceptionOr<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> parseQualifiedNameToPair(AtomStringImpl* qualifiedName, QualifiedNameType type)
 {
-    if (qualifiedName.isEmpty())
+    if (isEmpty(qualifiedName))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    auto firstColonPosition = qualifiedName.find(':');
+    auto firstColonPosition = find(qualifiedName, ':');
     if (firstColonPosition == notFound) {
         bool isValidLocal = type == QualifiedNameType::Element
             ? isValidElementName(qualifiedName)
             : isValidAttributeName(qualifiedName);
         if (!isValidLocal)
             return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid name: '"_s, qualifiedName, '\'') };
-        return std::pair<AtomString, AtomString> { nullAtom(), qualifiedName };
+        return std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>> { nullAtom(), qualifiedName };
     }
 
     auto prefix = StringView { qualifiedName }.left(firstColonPosition);
@@ -190,10 +190,10 @@ static ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedNameToPair(c
     if (!isValidLocal)
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid local name in '"_s, qualifiedName, '\'') };
 
-    return std::pair<AtomString, AtomString> { prefix.toAtomString(), localName.toAtomString() };
+    return std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>> { prefix.toAtomString(), localName.toAtomString() };
 }
 
-ExceptionOr<QualifiedName> parseQualifiedElementName(const AtomString& namespaceURI, const AtomString& qualifiedName)
+ExceptionOr<QualifiedName> parseQualifiedElementName(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName)
 {
     auto parseResult = parseQualifiedNameToPair(qualifiedName, QualifiedNameType::Element);
     if (parseResult.hasException())
@@ -202,7 +202,7 @@ ExceptionOr<QualifiedName> parseQualifiedElementName(const AtomString& namespace
     return QualifiedName { prefix, localName, namespaceURI };
 }
 
-ExceptionOr<QualifiedName> parseQualifiedAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName)
+ExceptionOr<QualifiedName> parseQualifiedAttributeName(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName)
 {
     auto parseResult = parseQualifiedNameToPair(qualifiedName, QualifiedNameType::Attribute);
     if (parseResult.hasException())
@@ -211,7 +211,7 @@ ExceptionOr<QualifiedName> parseQualifiedAttributeName(const AtomString& namespa
     return QualifiedName { prefix, localName, namespaceURI };
 }
 
-ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedAttributeName(const AtomString& qualifiedName)
+ExceptionOr<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> parseQualifiedAttributeName(AtomStringImpl* qualifiedName)
 {
     return parseQualifiedNameToPair(qualifiedName, QualifiedNameType::Attribute);
 }
@@ -220,7 +220,7 @@ ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedAttributeName(const
 // http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS
 bool hasValidNamespaceForElements(const QualifiedName& qName)
 {
-    if (!qName.prefix().isEmpty() && qName.namespaceURI().isNull()) // createElementNS(null, "html:div")
+    if (!isEmpty(qName.prefix()) && !qName.namespaceURI()) // createElementNS(null, "html:div")
         return false;
     if (qName.prefix() == xmlAtom() && qName.namespaceURI() != XMLNames::xmlNamespaceURI) // createElementNS("http://www.example.com", "xml:lang")
         return false;
@@ -228,7 +228,7 @@ bool hasValidNamespaceForElements(const QualifiedName& qName)
     // Required by DOM Level 3 Core and unspecified by DOM Level 2 Core:
     // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-DocCrElNS
     // createElementNS("http://www.w3.org/2000/xmlns/", "foo:bar"), createElementNS(null, "xmlns:bar"), createElementNS(null, "xmlns")
-    if (qName.prefix() == xmlnsAtom() || (qName.prefix().isEmpty() && qName.localName() == xmlnsAtom()))
+    if (qName.prefix() == xmlnsAtom() || (isEmpty(qName.prefix()) && qName.localName() == xmlnsAtom()))
         return qName.namespaceURI() == XMLNSNames::xmlnsNamespaceURI;
     return qName.namespaceURI() != XMLNSNames::xmlnsNamespaceURI;
 }

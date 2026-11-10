@@ -37,7 +37,7 @@ const ClassInfo WeakObjectRefConstructor::s_info = { "Function"_s, &Base::s_info
 
 void WeakObjectRefConstructor::finishCreation(VM& vm, WeakObjectRefPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "WeakRef"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "WeakRef"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

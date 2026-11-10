@@ -38,8 +38,8 @@ class TemplateObjectDescriptorTable;
 
 class TemplateObjectDescriptor : public RefCounted<TemplateObjectDescriptor> {
 public:
-    typedef Vector<String, 4> StringVector;
-    typedef Vector<std::optional<String>, 4> OptionalStringVector;
+    typedef Vector<RefPtr<StringImpl>, 4> StringVector;
+    typedef Vector<std::optional<RefPtr<StringImpl>>, 4> OptionalStringVector;
 
     enum DeletedValueTag { DeletedValue };
     TemplateObjectDescriptor(DeletedValueTag);
@@ -55,7 +55,7 @@ public:
     const StringVector& rawStrings() const LIFETIME_BOUND { return m_rawStrings; }
     const OptionalStringVector& cookedStrings() const LIFETIME_BOUND { return m_cookedStrings; }
 
-    bool operator==(const TemplateObjectDescriptor& other) const { return m_hash == other.m_hash && m_rawStrings == other.m_rawStrings; }
+    bool operator==(const TemplateObjectDescriptor& other) const { return m_hash == other.m_hash && contentEquals(m_rawStrings, other.m_rawStrings); }
 
     static unsigned calculateHash(const StringVector& rawStrings);
     ~TemplateObjectDescriptor();
@@ -93,8 +93,8 @@ inline TemplateObjectDescriptor::TemplateObjectDescriptor(EmptyValueTag)
 inline unsigned TemplateObjectDescriptor::calculateHash(const StringVector& rawStrings)
 {
     unsigned hash = WTF::stringHashingStartValue;
-    for (const String& string : rawStrings)
-        hash = pairIntHash(hash, string.hash());
+    for (const RefPtr<StringImpl>& string : rawStrings)
+        hash = pairIntHash(hash, WTF::hash(string));
     return hash;
 }
 

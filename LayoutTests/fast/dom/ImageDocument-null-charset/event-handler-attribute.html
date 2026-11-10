@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/image-document-frame.js"></script>
+</head>
+<body>
+<script>
+description("Tests that an event handler content attribute set on an element of an ImageDocument (a document without a text decoder, so with a null charset) runs. "
+    + "JSLazyEventListener compiles the handler with a CachedScriptFetcher created from the document charset.");
+
+window.jsTestIsAsync = true;
+var frameDocument;
+var clickHandlerRan = false;
+
+loadImageDocumentFrame().then((iframe) => {
+    frameDocument = iframe.contentDocument;
+    shouldBeEqualToString("frameDocument.body.firstChild.tagName", "IMG");
+
+    const image = frameDocument.body.firstChild;
+    image.setAttribute("onclick", "parent.clickHandlerRan = true;");
+    image.dispatchEvent(new MouseEvent("click"));
+    shouldBeTrue("clickHandlerRan");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

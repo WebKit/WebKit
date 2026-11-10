@@ -108,7 +108,7 @@ void ImageBufferCairoSurfaceBackend::putPixelBuffer(const PixelBufferSourceView&
     cairo_surface_mark_dirty_rectangle(m_surface.get(), destPoint.x(), destPoint.y(), srcRect.width(), srcRect.height());
 }
 
-String ImageBufferCairoSurfaceBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferCairoSurfaceBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferCairoSurfaceBackend " << this << " " << m_surface.get();

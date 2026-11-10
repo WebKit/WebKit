@@ -3079,7 +3079,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromWebPage)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(webpageScript) } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -3142,7 +3142,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromWebPageWithImmediateMessage)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(webpageScript) } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -3199,7 +3199,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromWebPageWithWrongIdentifier)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(webpageScript) } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -3230,7 +3230,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPage)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(webpageScript) } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -3339,7 +3339,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithTabFrameAndAsyncReply)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(webpageScript) } },
         { "/second-tab.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -3394,7 +3394,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithWrongIdentifier)
     ]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(webpageScript) } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();

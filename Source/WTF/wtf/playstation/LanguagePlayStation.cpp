@@ -30,13 +30,13 @@
 
 namespace WTF {
 
-Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
+Vector<RefPtr<StringImpl>> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
-    Vector<String> languages;
+    Vector<RefPtr<StringImpl>> languages;
 
     char buffer[16];
     if (!getenv_np("SYSTEM_LANGUAGE", buffer, sizeof(buffer)))
-        languages.append(String::fromLatin1(buffer));
+        languages.append(StringImpl::fromLatin1(buffer));
 
     return languages;
 }

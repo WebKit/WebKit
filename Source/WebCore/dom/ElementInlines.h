@@ -47,7 +47,7 @@ inline unsigned Element::findAttributeIndexByName(const QualifiedName& name) con
     return elementData()->findAttributeIndexByName(name);
 }
 
-inline unsigned Element::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+inline unsigned Element::findAttributeIndexByName(AtomStringImpl* name, bool shouldIgnoreAttributeCase) const
 {
     return elementData()->findAttributeIndexByName(name, shouldIgnoreAttributeCase);
 }
@@ -69,7 +69,7 @@ inline bool Element::hasAttributeWithoutSynchronization(const QualifiedName& nam
     return elementData() && findAttributeByName(name);
 }
 
-inline const AtomString& Element::attributeWithoutSynchronization(const QualifiedName& name) const
+inline const RefPtr<AtomStringImpl>& Element::attributeWithoutSynchronization(const QualifiedName& name) const
 {
     if (elementData()) {
         if (const Attribute* attribute = findAttributeByName(name))
@@ -78,10 +78,10 @@ inline const AtomString& Element::attributeWithoutSynchronization(const Qualifie
     return nullAtom();
 }
 
-inline const AtomString& Element::attributeWithDefaultARIA(const QualifiedName& name) const
+inline const RefPtr<AtomStringImpl>& Element::attributeWithDefaultARIA(const QualifiedName& name) const
 {
     auto& value = attributeWithoutSynchronization(name);
-    if (!value.isNull())
+    if (value)
         return value;
 
     CheckedPtr defaultARIA = customElementDefaultARIAIfExists();
@@ -93,14 +93,14 @@ inline bool Element::isDrawable() const
     return hasAttributeWithoutSynchronization(HTMLNames::drawableAttr);
 }
 
-inline String Element::attributeTrimmedWithDefaultARIA(const QualifiedName& name) const
+inline RefPtr<StringImpl> Element::attributeTrimmedWithDefaultARIA(const QualifiedName& name) const
 {
     const auto& originalValue = attributeWithDefaultARIA(name);
-    if (originalValue.isEmpty())
+    if (isEmpty(originalValue))
         return { };
 
-    auto value = originalValue.string();
-    return value.trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+    auto value = originalValue;
+    return simplifyWhiteSpace(trim(value, isASCIIWhitespace), isASCIIWhitespace);
 }
 
 inline bool Document::shouldMaskURLForBindings(const URL& urlToMask) const
@@ -127,26 +127,26 @@ inline bool Element::hasAttributesWithoutUpdate() const
     return elementData() && !elementData()->isEmpty();
 }
 
-inline const AtomString& Element::idForStyleResolution() const
+inline const RefPtr<AtomStringImpl>& Element::idForStyleResolution() const
 {
     return hasID() ? elementData()->idForStyleResolution() : nullAtom();
 }
 
-inline const AtomString& Element::getIdAttribute() const
+inline const RefPtr<AtomStringImpl>& Element::getIdAttribute() const
 {
     if (hasID())
         return elementData()->findAttributeByName(HTMLNames::idAttr)->value();
     return nullAtom();
 }
 
-inline const AtomString& Element::getNameAttribute() const
+inline const RefPtr<AtomStringImpl>& Element::getNameAttribute() const
 {
     if (hasName())
         return elementData()->findAttributeByName(HTMLNames::nameAttr)->value();
     return nullAtom();
 }
 
-inline void Element::setIdAttribute(const AtomString& value)
+inline void Element::setIdAttribute(AtomStringImpl* value)
 {
     setAttributeWithoutSynchronization(HTMLNames::idAttr, value);
 }
@@ -158,7 +158,7 @@ inline const SpaceSplitString& Element::classNames() const
     return elementData()->classNames();
 }
 
-inline bool Element::hasClassName(const AtomString& className) const
+inline bool Element::hasClassName(AtomStringImpl* className) const
 {
     if (!elementData())
         return false;
@@ -242,24 +242,24 @@ inline const Attribute* Element::getAttributeInternal(const QualifiedName& name)
     return findAttributeByName(name);
 }
 
-inline const Attribute* Element::getAttributeInternal(const AtomString& qualifiedName) const
+inline const Attribute* Element::getAttributeInternal(AtomStringImpl* qualifiedName) const
 {
-    if (!elementData() || qualifiedName.isEmpty())
+    if (!elementData() || isEmpty(qualifiedName))
         return nullptr;
     synchronizeAttribute(qualifiedName);
     return elementData()->findAttributeByName(qualifiedName, shouldIgnoreAttributeCase(*this));
 }
 
-inline AtomString Element::getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs resolveURLs) const
+inline RefPtr<AtomStringImpl> Element::getAttributeNSForBindings(AtomStringImpl* namespaceURI, AtomStringImpl* localName, ResolveURLs resolveURLs) const
 {
     return getAttributeForBindings(QualifiedName(nullAtom(), localName, namespaceURI), resolveURLs);
 }
 
 template<typename... QualifiedNames>
-inline const AtomString& Element::getAttribute(const QualifiedName& name, const QualifiedNames&... names) const
+inline const RefPtr<AtomStringImpl>& Element::getAttribute(const QualifiedName& name, const QualifiedNames&... names) const
 {
-    const AtomString& value = getAttribute(name);
-    if (!value.isNull())
+    const RefPtr<AtomStringImpl>& value = getAttribute(name);
+    if (value)
         return value;
     return getAttribute(names...);
 }

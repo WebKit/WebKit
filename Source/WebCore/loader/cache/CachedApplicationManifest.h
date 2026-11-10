@@ -47,7 +47,7 @@ private:
     ASCIILiteral encoding() const final;
 
     const Ref<TextResourceDecoder> m_decoder;
-    std::optional<String> m_text;
+    std::optional<RefPtr<StringImpl>> m_text;
 };
 
 } // namespace WebCore

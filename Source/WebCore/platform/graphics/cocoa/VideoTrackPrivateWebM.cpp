@@ -75,17 +75,17 @@ std::optional<bool> VideoTrackPrivateWebM::defaultEnabled() const
     return std::nullopt;
 }
 
-String VideoTrackPrivateWebM::label() const
+RefPtr<StringImpl> VideoTrackPrivateWebM::label() const
 {
-    if (m_label.isNull())
-        m_label = m_track.name.is_present() ? String::fromUTF8(m_track.name.value()) : emptyString();
+    if (!m_label)
+        m_label = m_track.name.is_present() ? StringImpl::fromUTF8(m_track.name.value()) : emptyString();
     return m_label;
 }
 
-String VideoTrackPrivateWebM::language() const
+RefPtr<StringImpl> VideoTrackPrivateWebM::language() const
 {
-    if (m_language.isNull())
-        m_language = m_track.language.is_present() ? String::fromUTF8(m_track.language.value()) : emptyString();
+    if (!m_language)
+        m_language = m_track.language.is_present() ? StringImpl::fromUTF8(m_track.language.value()) : emptyString();
     return m_language;
 }
 
@@ -96,12 +96,12 @@ int VideoTrackPrivateWebM::trackIndex() const
     return 0;
 }
 
-String VideoTrackPrivateWebM::codec() const
+RefPtr<StringImpl> VideoTrackPrivateWebM::codec() const
 {
     if (m_formatDescription) {
-        if (!m_formatDescription->codecString().isEmpty())
+        if (!isEmpty(m_formatDescription->codecString()))
             return m_formatDescription->codecString();
-        return String::fromLatin1(m_formatDescription->codecName().string().data());
+        return StringImpl::fromLatin1(m_formatDescription->codecName().string().data());
     }
 
     if (!m_track.codec_id.is_present())
@@ -110,13 +110,13 @@ String VideoTrackPrivateWebM::codec() const
     StringView codecID { std::span { m_track.codec_id.value() } };
 
     if (codecID == "V_VP9"_s)
-        return "vp09"_s;
+        return "vp09"_si;
 
     if (codecID == "V_VP8"_s)
-        return "vp08"_s;
+        return "vp08"_si;
 
     if (codecID == "V_MPEG4/ISO/AVC"_s)
-        return "h264"_s;
+        return "h264"_si;
 
     return emptyString();
 }

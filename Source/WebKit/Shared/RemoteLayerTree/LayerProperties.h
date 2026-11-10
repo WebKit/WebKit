@@ -161,7 +161,7 @@ struct LayerProperties {
     OptionSet<LayerChange> changedProperties;
     OptionSet<LayerChange> everChangedProperties;
 
-    String name;
+    RefPtr<StringImpl> name;
     std::unique_ptr<WebCore::TransformationMatrix> transform;
     std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
     std::unique_ptr<WebCore::FloatRoundedRect> shapeRoundedRect;
@@ -169,8 +169,8 @@ struct LayerProperties {
     Vector<WebCore::PlatformLayerIdentifier> children;
 
     struct AnimationChanges {
-        Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
-        HashSet<String> keysOfAnimationsToRemove;
+        Vector<std::pair<RefPtr<StringImpl>, PlatformCAAnimationRemote::Properties>> addedAnimations;
+        HashSet<RefPtr<StringImpl>> keysOfAnimationsToRemove;
 #if ENABLE(THREADED_ANIMATIONS)
         Vector<Ref<WebCore::AcceleratedEffect>> effects;
         WebCore::AcceleratedEffectValues baseValues;

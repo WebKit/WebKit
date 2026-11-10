@@ -62,7 +62,7 @@ namespace WebCore::CQ {
 using namespace MQ;
 
 struct SizeFeatureSchema : public FeatureSchema {
-    SizeFeatureSchema(const AtomString& name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
+    SizeFeatureSchema(AtomStringImpl* name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
         : FeatureSchema(name, type, valueType, dependencies, WTF::move(valueIdentifiers))
     {
     }
@@ -96,7 +96,7 @@ namespace Features {
 
 struct WidthFeatureSchema : public SizeFeatureSchema {
     WidthFeatureSchema()
-        : SizeFeatureSchema("width"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
+        : SizeFeatureSchema("width"_atom, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
     }
 
@@ -111,7 +111,7 @@ struct WidthFeatureSchema : public SizeFeatureSchema {
 
 struct HeightFeatureSchema : public SizeFeatureSchema {
     HeightFeatureSchema()
-        : SizeFeatureSchema("height"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
+        : SizeFeatureSchema("height"_atom, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
     }
 
@@ -126,7 +126,7 @@ struct HeightFeatureSchema : public SizeFeatureSchema {
 
 struct InlineSizeFeatureSchema : public SizeFeatureSchema {
     InlineSizeFeatureSchema()
-        : SizeFeatureSchema("inline-size"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
+        : SizeFeatureSchema("inline-size"_atom, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
     }
 
@@ -141,7 +141,7 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema {
 
 struct BlockSizeFeatureSchema : public SizeFeatureSchema {
     BlockSizeFeatureSchema()
-        : SizeFeatureSchema("block-size"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
+        : SizeFeatureSchema("block-size"_atom, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
     }
 
@@ -156,7 +156,7 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema {
 
 struct AspectRatioFeatureSchema : public SizeFeatureSchema {
     AspectRatioFeatureSchema()
-        : SizeFeatureSchema("aspect-ratio"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio, MediaQueryDynamicDependency::Viewport)
+        : SizeFeatureSchema("aspect-ratio"_atom, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio, MediaQueryDynamicDependency::Viewport)
     {
     }
 
@@ -170,7 +170,7 @@ struct AspectRatioFeatureSchema : public SizeFeatureSchema {
 
 struct OrientationFeatureSchema : public SizeFeatureSchema {
     OrientationFeatureSchema()
-        : SizeFeatureSchema("orientation"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, MediaQueryDynamicDependency::Viewport, { CSSValueID::Portrait, CSSValueID::Landscape })
+        : SizeFeatureSchema("orientation"_atom, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, MediaQueryDynamicDependency::Viewport, { CSSValueID::Portrait, CSSValueID::Landscape })
     {
     }
 
@@ -280,7 +280,7 @@ NODELETE static bool styleRangeValuesShareCategory(std::initializer_list<const s
 
 struct StyleFeatureSchema : public FeatureSchema {
     StyleFeatureSchema()
-        : FeatureSchema("style"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::CustomProperty, { })
+        : FeatureSchema("style"_atom, FeatureSchema::Type::Range, FeatureSchema::ValueType::CustomProperty, { })
     {
     }
 
@@ -366,7 +366,7 @@ struct StyleFeatureSchema : public FeatureSchema {
 
         auto resolveValue = [&](const CSSCustomPropertyValue& value) -> RefPtr<const Style::CustomProperty> {
             // A bare <custom-property-name> is substituted as if wrapped in var(): read it from the container.
-            if (auto name = MQ::bareCustomPropertyName(value.tokens().span()); !name.isNull())
+            if (auto name = MQ::bareCustomPropertyName(value.tokens().span()); name)
                 return style.customPropertyValue(name);
             // Plain values (literals, calc()) are already final; only var()/attr()/css-wide keywords need resolution.
             if (auto* data = std::get_if<Ref<CSSVariableData>>(&value.value()))
@@ -374,9 +374,9 @@ struct StyleFeatureSchema : public FeatureSchema {
             return ensureBuilder().resolveCustomPropertyForContainerQueries(value);
         };
 
-        auto resolveOperand = [&](const Value* operandValue, const AtomString& centerName) -> std::optional<StyleRangeValue> {
+        auto resolveOperand = [&](const Value* operandValue, AtomStringImpl* centerName) -> std::optional<StyleRangeValue> {
             RefPtr<const Style::CustomProperty> customProperty;
-            if (!centerName.isNull())
+            if (centerName)
                 customProperty = style.customPropertyValue(centerName);
             else {
                 if (!operandValue)
@@ -424,7 +424,7 @@ struct StyleFeatureSchema : public FeatureSchema {
 // Scroll-state query features: scroll-state(scrollable | scrolled | stuck | snapped [: <keyword>]).
 // https://drafts.csswg.org/css-conditional-5/#scroll-state-container
 struct ScrollStateFeatureSchema : public FeatureSchema {
-    ScrollStateFeatureSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers)
+    ScrollStateFeatureSchema(AtomStringImpl* name, FixedVector<CSSValueID>&& valueIdentifiers)
         : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, { }, WTF::move(valueIdentifiers))
     {
     }
@@ -550,25 +550,25 @@ static const StyleFeatureSchema& styleFeatureSchema()
 
 static const ScrollStateFeatureSchema& scrollableFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollableFeatureSchema> schema { "scrollable"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd, CSSValueID::Block, CSSValueID::Inline, CSSValueID::X, CSSValueID::Y } };
+    static MainThreadNeverDestroyed<ScrollableFeatureSchema> schema { "scrollable"_atom, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd, CSSValueID::Block, CSSValueID::Inline, CSSValueID::X, CSSValueID::Y } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& scrolledFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd, CSSValueID::Block, CSSValueID::Inline, CSSValueID::X, CSSValueID::Y } };
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_atom, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd, CSSValueID::Block, CSSValueID::Inline, CSSValueID::X, CSSValueID::Y } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& stuckFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "stuck"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd } };
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "stuck"_atom, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& snappedFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "snapped"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::X, CSSValueID::Y, CSSValueID::Block, CSSValueID::Inline, CSSValueID::Both } };
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "snapped"_atom, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::X, CSSValueID::Y, CSSValueID::Block, CSSValueID::Inline, CSSValueID::Both } };
     return schema;
 }
 
@@ -609,15 +609,15 @@ const MQ::FeatureSchema& style()
     return styleFeatureSchema();
 }
 
-const MQ::FeatureSchema* scrollState(const AtomString& name)
+const MQ::FeatureSchema* scrollState(AtomStringImpl* name)
 {
-    if (name == "scrollable"_s)
+    if (equal(name, "scrollable"_s))
         return &scrollableFeatureSchema();
-    if (name == "scrolled"_s)
+    if (equal(name, "scrolled"_s))
         return &scrolledFeatureSchema();
-    if (name == "stuck"_s)
+    if (equal(name, "stuck"_s))
         return &stuckFeatureSchema();
-    if (name == "snapped"_s)
+    if (equal(name, "snapped"_s))
         return &snappedFeatureSchema();
     return nullptr;
 }

@@ -46,21 +46,21 @@ const StyleRuleScope& CSSScopeRule::styleRuleScope() const
     return downcast<StyleRuleScope>(groupRule());
 }
 
-String CSSScopeRule::cssText() const
+RefPtr<StringImpl> CSSScopeRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@scope"_s);
     auto start = this->start();
-    if (!start.isEmpty())
+    if (!isEmpty(start))
         builder.append(" ("_s, start, ')');
     auto end = this->end();
-    if (!end.isEmpty())
+    if (!isEmpty(end))
         builder.append(" to "_s, '(', end, ')');
     appendCSSTextForItems(builder);
     return builder.toString();
 }
 
-String CSSScopeRule::start() const
+RefPtr<StringImpl> CSSScopeRule::start() const
 {
     auto& scope = styleRuleScope().originalScopeStart();
     if (scope.isEmpty())
@@ -69,7 +69,7 @@ String CSSScopeRule::start() const
     return scope.selectorsText();
 }
 
-String CSSScopeRule::end() const
+RefPtr<StringImpl> CSSScopeRule::end() const
 {
     auto& scope = styleRuleScope().originalScopeEnd();
     if (scope.isEmpty())

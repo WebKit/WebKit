@@ -48,7 +48,7 @@ public:
         WordBoundary,
     };
 
-    TextBreakIteratorCFStringTokenizer(StringView string, StringView priorContext, Mode mode, const AtomString& locale)
+    TextBreakIteratorCFStringTokenizer(StringView string, StringView priorContext, Mode mode, AtomStringImpl* locale)
     {
         auto options = [mode] {
             switch (mode) {
@@ -68,7 +68,7 @@ public:
         auto stringObject = createString(string, priorContext);
         m_stringLength = string.length();
         m_priorContextLength = priorContext.length();
-        auto localeObject = adoptCF(CFLocaleCreate(kCFAllocatorDefault, locale.string().createCFString().get()));
+        auto localeObject = adoptCF(CFLocaleCreate(kCFAllocatorDefault, createCFString(locale).get()));
         m_stringTokenizer = adoptCF(CFStringTokenizerCreate(kCFAllocatorDefault, stringObject.get(), CFRangeMake(0, m_stringLength + m_priorContextLength), options, localeObject.get()));
         if (!m_stringTokenizer)
             m_stringTokenizer = adoptCF(CFStringTokenizerCreate(kCFAllocatorDefault, stringObject.get(), CFRangeMake(0, m_stringLength + m_priorContextLength), options, nullptr));

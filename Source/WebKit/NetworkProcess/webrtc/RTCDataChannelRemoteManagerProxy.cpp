@@ -83,7 +83,7 @@ void RTCDataChannelRemoteManagerProxy::receiveData(WebCore::RTCDataChannelIdenti
         IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::ReceiveData { identifier, isRaw, data }, 0);
 }
 
-void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType detail, const String& message)
+void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType detail, StringImpl* message)
 {
     if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
         IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier, detail, message }, 0);

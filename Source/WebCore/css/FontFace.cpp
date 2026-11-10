@@ -56,7 +56,7 @@ void FontFace::setErrorState()
     protect(m_backing)->setErrorState();
 }
 
-Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const AtomString& family, Source&& source, const Descriptors& descriptors)
+Ref<FontFace> FontFace::create(ScriptExecutionContext& context, AtomStringImpl* family, Source&& source, const Descriptors& descriptors)
 {
     ASSERT(context.cssFontSelector());
     Ref result = adoptRef(*new FontFace(*protect(context.cssFontSelector())));
@@ -77,7 +77,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const AtomString
 
     auto fontTrustedTypes = context.settingsValues().downloadableBinaryFontTrustedTypes;
     auto sourceConversionResult = WTF::switchOn(source,
-        [&](String& string) -> ExceptionOr<void> {
+        [&](RefPtr<StringImpl>& string) -> ExceptionOr<void> {
             auto value = CSSPropertyParserHelpers::parseFontFaceSrc(string, context);
             if (!value)
                 return Exception { ExceptionCode::SyntaxError };
@@ -109,54 +109,54 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const AtomString
     }
 
     // These ternaries match the default strings inside the FontFaceDescriptors dictionary inside FontFace.idl.
-    auto setStyleResult = result->setStyle(context, descriptors.style.isEmpty() ? "normal"_s : descriptors.style);
+    auto setStyleResult = result->setStyle(context, isEmpty(descriptors.style) ? "normal"_si : descriptors.style);
     if (setStyleResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setWeightResult = result->setWeight(context, descriptors.weight.isEmpty() ? "normal"_s : descriptors.weight);
+    auto setWeightResult = result->setWeight(context, isEmpty(descriptors.weight) ? "normal"_si : descriptors.weight);
     if (setWeightResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setWidthResult = result->setWidth(context, descriptors.width.isEmpty() ? "normal"_s : descriptors.width);
+    auto setWidthResult = result->setWidth(context, isEmpty(descriptors.width) ? "normal"_si : descriptors.width);
     if (setWidthResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setUnicodeRangeResult = result->setUnicodeRange(context, descriptors.unicodeRange.isEmpty() ? "U+0-10FFFF"_s : descriptors.unicodeRange);
+    auto setUnicodeRangeResult = result->setUnicodeRange(context, isEmpty(descriptors.unicodeRange) ? "U+0-10FFFF"_si : descriptors.unicodeRange);
     if (setUnicodeRangeResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setFeatureSettingsResult = result->setFeatureSettings(context, descriptors.featureSettings.isEmpty() ? "normal"_s : descriptors.featureSettings);
+    auto setFeatureSettingsResult = result->setFeatureSettings(context, isEmpty(descriptors.featureSettings) ? "normal"_si : descriptors.featureSettings);
     if (setFeatureSettingsResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setDisplayResult = result->setDisplay(context, descriptors.display.isEmpty() ? "auto"_s : descriptors.display);
+    auto setDisplayResult = result->setDisplay(context, isEmpty(descriptors.display) ? "auto"_si : descriptors.display);
     if (setDisplayResult.hasException()) {
         result->setErrorState();
         return result;
     }
     if (context.settingsValues().cssFontFaceMetricOverrideDescriptorsEnabled) {
-        auto setAscentOverrideResult = result->setAscentOverride(context, descriptors.ascentOverride.isEmpty() ? "normal"_s : descriptors.ascentOverride);
+        auto setAscentOverrideResult = result->setAscentOverride(context, isEmpty(descriptors.ascentOverride) ? "normal"_si : descriptors.ascentOverride);
         if (setAscentOverrideResult.hasException()) {
             result->setErrorState();
             return result;
         }
-        auto setDescentOverrideResult = result->setDescentOverride(context, descriptors.descentOverride.isEmpty() ? "normal"_s : descriptors.descentOverride);
+        auto setDescentOverrideResult = result->setDescentOverride(context, isEmpty(descriptors.descentOverride) ? "normal"_si : descriptors.descentOverride);
         if (setDescentOverrideResult.hasException()) {
             result->setErrorState();
             return result;
         }
-        auto setLineGapOverrideResult = result->setLineGapOverride(context, descriptors.lineGapOverride.isEmpty() ? "normal"_s : descriptors.lineGapOverride);
+        auto setLineGapOverrideResult = result->setLineGapOverride(context, isEmpty(descriptors.lineGapOverride) ? "normal"_si : descriptors.lineGapOverride);
         if (setLineGapOverrideResult.hasException()) {
             result->setErrorState();
             return result;
         }
     }
-    auto setSizeAdjustResult = result->setSizeAdjust(context, descriptors.sizeAdjust.isEmpty() ? "100%"_s : descriptors.sizeAdjust);
+    auto setSizeAdjustResult = result->setSizeAdjust(context, isEmpty(descriptors.sizeAdjust) ? "100%"_si : descriptors.sizeAdjust);
     if (setSizeAdjustResult.hasException()) {
         result->setErrorState();
         return result;
@@ -199,13 +199,13 @@ FontFace::~FontFace()
     protect(m_backing)->removeClient(*this);
 }
 
-ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const AtomString& family)
+ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, AtomStringImpl* family)
 {
     protect(m_backing)->setFamily(context.cssValuePool().createFontFamilyNameValue(family));
     return { };
 }
 
-ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const String& style)
+ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, StringImpl* style)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceFontStyle(style, context)) {
         protect(m_backing)->setStyle(*value);
@@ -214,7 +214,7 @@ ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const Stri
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const String& weight)
+ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, StringImpl* weight)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceFontWeight(weight, context)) {
         protect(m_backing)->setWeight(*value);
@@ -223,7 +223,7 @@ ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const Str
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setWidth(ScriptExecutionContext& context, const String& width)
+ExceptionOr<void> FontFace::setWidth(ScriptExecutionContext& context, StringImpl* width)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceFontWidth(width, context)) {
         protect(m_backing)->setWidth(*value);
@@ -232,7 +232,7 @@ ExceptionOr<void> FontFace::setWidth(ScriptExecutionContext& context, const Stri
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, const String& unicodeRange)
+ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, StringImpl* unicodeRange)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceUnicodeRange(unicodeRange, context)) {
         protect(m_backing)->setUnicodeRange(*value);
@@ -241,7 +241,7 @@ ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, con
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, const String& featureSettings)
+ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, StringImpl* featureSettings)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceFeatureSettings(featureSettings, context)) {
         protect(m_backing)->setFeatureSettings(*value);
@@ -250,7 +250,7 @@ ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, 
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const String& display)
+ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, StringImpl* display)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceDisplay(display, context)) {
         protect(m_backing)->setDisplay(*value);
@@ -259,7 +259,7 @@ ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const St
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const String& sizeAdjust)
+ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, StringImpl* sizeAdjust)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceSizeAdjust(sizeAdjust, context)) {
         protect(m_backing)->setSizeAdjust(*value);
@@ -268,7 +268,7 @@ ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setAscentOverride(ScriptExecutionContext& context, const String& ascentOverride)
+ExceptionOr<void> FontFace::setAscentOverride(ScriptExecutionContext& context, StringImpl* ascentOverride)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceAscentOverride(ascentOverride, context)) {
         protect(m_backing)->setAscentOverride(*value);
@@ -277,7 +277,7 @@ ExceptionOr<void> FontFace::setAscentOverride(ScriptExecutionContext& context, c
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setDescentOverride(ScriptExecutionContext& context, const String& descentOverride)
+ExceptionOr<void> FontFace::setDescentOverride(ScriptExecutionContext& context, StringImpl* descentOverride)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceDescentOverride(descentOverride, context)) {
         protect(m_backing)->setDescentOverride(*value);
@@ -286,7 +286,7 @@ ExceptionOr<void> FontFace::setDescentOverride(ScriptExecutionContext& context, 
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setLineGapOverride(ScriptExecutionContext& context, const String& lineGapOverride)
+ExceptionOr<void> FontFace::setLineGapOverride(ScriptExecutionContext& context, StringImpl* lineGapOverride)
 {
     if (auto value = CSSPropertyParserHelpers::parseFontFaceLineGapOverride(lineGapOverride, context)) {
         protect(m_backing)->setLineGapOverride(*value);
@@ -295,79 +295,79 @@ ExceptionOr<void> FontFace::setLineGapOverride(ScriptExecutionContext& context, 
     return Exception { ExceptionCode::SyntaxError };
 }
 
-AtomString FontFace::family() const
+RefPtr<AtomStringImpl> FontFace::family() const
 {
-    if (auto value = protect(m_backing)->family(); !value.isNull())
+    if (auto value = protect(m_backing)->family(); value)
         return value;
-    return "normal"_s;
+    return "normal"_atom;
 }
 
-String FontFace::style() const
+RefPtr<StringImpl> FontFace::style() const
 {
-    if (auto value = protect(m_backing)->style(); !value.isNull())
+    if (auto value = protect(m_backing)->style(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::weight() const
+RefPtr<StringImpl> FontFace::weight() const
 {
-    if (auto value = protect(m_backing)->weight(); !value.isNull())
+    if (auto value = protect(m_backing)->weight(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::width() const
+RefPtr<StringImpl> FontFace::width() const
 {
-    if (auto value = protect(m_backing)->width(); !value.isNull())
+    if (auto value = protect(m_backing)->width(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::unicodeRange() const
+RefPtr<StringImpl> FontFace::unicodeRange() const
 {
-    if (auto value = protect(m_backing)->unicodeRange(); !value.isNull())
+    if (auto value = protect(m_backing)->unicodeRange(); value)
         return value;
-    return "U+0-10FFFF"_s;
+    return "U+0-10FFFF"_si;
 }
 
-String FontFace::featureSettings() const
+RefPtr<StringImpl> FontFace::featureSettings() const
 {
-    if (auto value = protect(m_backing)->featureSettings(); !value.isNull())
+    if (auto value = protect(m_backing)->featureSettings(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::sizeAdjust() const
+RefPtr<StringImpl> FontFace::sizeAdjust() const
 {
-    if (auto value = protect(m_backing)->sizeAdjust(); !value.isNull())
+    if (auto value = protect(m_backing)->sizeAdjust(); value)
         return value;
-    return "100%"_s;
+    return "100%"_si;
 }
 
-String FontFace::ascentOverride() const
+RefPtr<StringImpl> FontFace::ascentOverride() const
 {
-    if (auto value = protect(m_backing)->ascentOverride(); !value.isNull())
+    if (auto value = protect(m_backing)->ascentOverride(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::descentOverride() const
+RefPtr<StringImpl> FontFace::descentOverride() const
 {
-    if (auto value = protect(m_backing)->descentOverride(); !value.isNull())
+    if (auto value = protect(m_backing)->descentOverride(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::lineGapOverride() const
+RefPtr<StringImpl> FontFace::lineGapOverride() const
 {
-    if (auto value = protect(m_backing)->lineGapOverride(); !value.isNull())
+    if (auto value = protect(m_backing)->lineGapOverride(); value)
         return value;
-    return "normal"_s;
+    return "normal"_si;
 }
 
-String FontFace::display() const
+RefPtr<StringImpl> FontFace::display() const
 {
-    if (auto value = protect(m_backing)->display(); !value.isNull())
+    if (auto value = protect(m_backing)->display(); value)
         return value;
     return autoAtom();
 }

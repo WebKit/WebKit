@@ -62,7 +62,7 @@ public:
     virtual ~Image();
 
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
-    WEBCORE_EXPORT static bool supportsType(const String&);
+    WEBCORE_EXPORT static bool supportsType(StringImpl*);
 
     WEBCORE_EXPORT static void decodeToShareableBitmaps(std::span<const uint8_t>, std::span<const unsigned> lengths, CompletionHandler<void(Vector<Ref<ShareableBitmap>>&&)>&&);
     WEBCORE_EXPORT static void decodeToShareableBitmap(std::span<const uint8_t>, std::optional<FloatSize> preferredSize, CompletionHandler<void(RefPtr<ShareableBitmap>&&)>&&);
@@ -113,9 +113,9 @@ public:
     // data (e.g. to replace a dirty copy of the data with a clean copy of the data).
     bool tryReplaceData(Ref<FragmentedSharedBuffer>&& data);
 
-    virtual String uti() const { return String(); } // null string if unknown
-    virtual String filenameExtension() const { return String(); } // null string if unknown
-    virtual String accessibilityDescription() const { return String(); } // null string if unknown
+    virtual RefPtr<StringImpl> uti() const { return nullptr; } // null string if unknown
+    virtual RefPtr<StringImpl> filenameExtension() const { return nullptr; } // null string if unknown
+    virtual RefPtr<StringImpl> accessibilityDescription() const { return nullptr; } // null string if unknown
 
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
 
@@ -148,7 +148,7 @@ public:
     void invalidateAdapter();
 
     URL sourceURL() const;
-    WEBCORE_EXPORT String mimeType() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> mimeType() const;
     long long expectedContentLength() const;
 
     WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const ImageDrawDescriptor&, FloatPoint destination = { });

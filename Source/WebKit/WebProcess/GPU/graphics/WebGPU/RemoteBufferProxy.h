@@ -59,7 +59,7 @@ public:
     void destroy() final;
     void generateAValidationError() final;
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

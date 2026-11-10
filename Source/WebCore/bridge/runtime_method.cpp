@@ -53,7 +53,7 @@ RuntimeMethod::RuntimeMethod(VM& vm, Structure* structure, Method* method)
 {
 }
 
-void RuntimeMethod::finishCreation(VM& vm, const String& ident)
+void RuntimeMethod::finishCreation(VM& vm, StringImpl* ident)
 {
     Base::finishCreation(vm, 0, ident);
     ASSERT(inherits(info()));

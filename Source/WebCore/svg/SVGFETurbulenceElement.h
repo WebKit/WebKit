@@ -37,26 +37,26 @@ template<>
 struct SVGPropertyTraits<SVGStitchOptions> {
     static unsigned highestEnumValue() { return SVG_STITCHTYPE_NOSTITCH; }
 
-    static String toString(SVGStitchOptions type)
+    static RefPtr<StringImpl> toString(SVGStitchOptions type)
     {
         switch (type) {
         case SVG_STITCHTYPE_UNKNOWN:
             return emptyString();
         case SVG_STITCHTYPE_STITCH:
-            return "stitch"_s;
+            return "stitch"_si;
         case SVG_STITCHTYPE_NOSTITCH:
-            return "noStitch"_s;
+            return "noStitch"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGStitchOptions fromString(SVGElement&, const String& value)
+    static SVGStitchOptions fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "stitch"_s)
+        if (equal(value, "stitch"_s))
             return SVG_STITCHTYPE_STITCH;
-        if (value == "noStitch"_s)
+        if (equal(value, "noStitch"_s))
             return SVG_STITCHTYPE_NOSTITCH;
         return SVG_STITCHTYPE_UNKNOWN;
     }
@@ -66,26 +66,26 @@ template<>
 struct SVGPropertyTraits<TurbulenceType> {
     static unsigned highestEnumValue() { return static_cast<unsigned>(TurbulenceType::Turbulence); }
 
-    static String toString(TurbulenceType type)
+    static RefPtr<StringImpl> toString(TurbulenceType type)
     {
         switch (type) {
         case TurbulenceType::Unknown:
             return emptyString();
         case TurbulenceType::FractalNoise:
-            return "fractalNoise"_s;
+            return "fractalNoise"_si;
         case TurbulenceType::Turbulence:
-            return "turbulence"_s;
+            return "turbulence"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static TurbulenceType fromString(SVGElement&, const String& value)
+    static TurbulenceType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "fractalNoise"_s)
+        if (equal(value, "fractalNoise"_s))
             return TurbulenceType::FractalNoise;
-        if (value == "turbulence"_s)
+        if (equal(value, "turbulence"_s))
             return TurbulenceType::Turbulence;
         return TurbulenceType::Unknown;
     }
@@ -118,7 +118,7 @@ private:
 
     static constexpr int initialOctavesValue = 1;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;

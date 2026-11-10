@@ -57,15 +57,15 @@ BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
 {
     using namespace WebCore;
     class EmptyBlobRegistry : public WebCore::BlobRegistry {
-        void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
+        void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, StringImpl* path, StringImpl* contentType) final { ASSERT_NOT_REACHED(); }
+        void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, StringImpl* contentType) final { ASSERT_NOT_REACHED(); }
         void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&, const std::optional<SecurityOriginData>&) final { ASSERT_NOT_REACHED(); }
-        void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final { ASSERT_NOT_REACHED(); }
+        void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, StringImpl* contentType) final { ASSERT_NOT_REACHED(); }
+        void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, StringImpl* contentType) final { ASSERT_NOT_REACHED(); }
         void unregisterBlobURL(const URL&, const std::optional<WebCore::SecurityOriginData>&) final { ASSERT_NOT_REACHED(); }
-        String blobType(const URL&) final { ASSERT_NOT_REACHED(); return emptyString(); }
+        RefPtr<StringImpl> blobType(const URL&) final { ASSERT_NOT_REACHED(); return emptyString(); }
         unsigned long long blobSize(const URL&) final { ASSERT_NOT_REACHED(); return 0; }
-        void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final { ASSERT_NOT_REACHED(); }
+        void writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&&) final { ASSERT_NOT_REACHED(); }
         void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>&) final { ASSERT_NOT_REACHED(); }
         void unregisterBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>&) final { ASSERT_NOT_REACHED(); }
     };

@@ -83,7 +83,7 @@ public:
 
     void didSetSearchingForNode(bool) override;
 
-    void sendMessageToFrontend(const String&) override;
+    void sendMessageToFrontend(StringImpl*) override;
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     bool inspectorStartsAttached();
@@ -121,11 +121,11 @@ public:
 
     void startWindowDrag() override;
 
-    String localizedStringsURL() const override;
+    RefPtr<StringImpl> localizedStringsURL() const override;
     Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::WebPage; };
-    String targetPlatformName() const final { return "macOS"_s; };
-    String targetBuildVersion() const final { return "Unknown"_s; };
-    String targetProductVersion() const final { return "Unknown"_s; };
+    RefPtr<StringImpl> targetPlatformName() const final { return "macOS"_si; };
+    RefPtr<StringImpl> targetBuildVersion() const final { return "Unknown"_si; };
+    RefPtr<StringImpl> targetProductVersion() const final { return "Unknown"_si; };
     bool targetIsSimulator() const final { return false; }
 
     void bringToFront() override;
@@ -147,15 +147,15 @@ public:
 #endif
     void setSheetRect(const WebCore::FloatRect&) override;
 
-    void inspectedURLChanged(const String& newURL) override;
+    void inspectedURLChanged(StringImpl* newURL) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
-    void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingDictionary&) override;
+    void logDiagnosticEvent(StringImpl* eventName, const WebCore::DiagnosticLoggingDictionary&) override;
 #endif
 
-    void sendMessageToBackend(const String& message) final;
+    void sendMessageToBackend(StringImpl* message) final;
 
 private:
     void updateWindowTitle() const;
@@ -167,8 +167,8 @@ private:
     WeakObjCPtr<WebView> m_inspectedWebView;
     WeakPtr<LegacyWebPageInspectorController> m_webPageInspectorController;
     const RetainPtr<WebInspectorWindowController> m_frontendWindowController;
-    String m_inspectedURL;
-    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    RefPtr<StringImpl> m_inspectedURL;
+    HashMap<RefPtr<StringImpl>, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     WebCore::FloatRect m_sheetRect;
 #endif
 };

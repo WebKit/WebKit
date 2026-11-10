@@ -67,10 +67,10 @@ private:
     void doSetRemoteDescription(const RTCSessionDescription&) final;
     void doAddIceCandidate(RTCIceCandidate&, AddIceCandidateCallback&&) final;
     void doStop() final;
-    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
+    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(StringImpl*, const RTCDataChannelInit&) final;
     void restartIce() final;
     bool setConfiguration(MediaEndpointConfiguration&&) final;
-    void gatherDecoderImplementationName(Function<void(String&&)>&&) final;
+    void gatherDecoderImplementationName(Function<void(RefPtr<StringImpl>&&)>&&) final;
     void getStats(Ref<DeferredPromise>&&) final;
     void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) final;
     void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) final;
@@ -85,10 +85,10 @@ private:
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 
-    ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<String>&&) final;
+    ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<RefPtr<StringImpl>>&&) final;
     void removeTrack(RTCRtpSender&) final;
 
-    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag) final;
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(StringImpl*, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag) final;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
     void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
 
@@ -97,16 +97,16 @@ private:
 
     void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&) final;
 
-    const HashMap<String, String>& trackIds() const { return m_trackIds; }
+    const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& trackIds() const { return m_trackIds; }
 
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
 
     bool shouldEnableServiceClass() const final;
 
-    void startGatheringStatLogs(Function<void(String&&)>&&) final;
+    void startGatheringStatLogs(Function<void(RefPtr<StringImpl>&&)>&&) final;
     void stopGatheringStatLogs() final;
-    void provideStatLogs(String&&);
+    void provideStatLogs(RefPtr<StringImpl>&&);
     friend class RtcEventLogOutput;
 
     template<typename T>
@@ -125,8 +125,8 @@ private:
 
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 
-    HashMap<String, String> m_trackIds;
-    Function<void(String&&)> m_rtcStatsLogCallback;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_trackIds;
+    Function<void(RefPtr<StringImpl>&&)> m_rtcStatsLogCallback;
 };
 
 } // namespace WebCore

@@ -490,8 +490,8 @@ public:
 private:
     struct AllocationDebugInfo {
         size_t size;
-        String stackTrace;
-        String proximateFrame;
+        RefPtr<StringImpl> stackTrace;
+        RefPtr<StringImpl> proximateFrame;
         bool live;
     };
 

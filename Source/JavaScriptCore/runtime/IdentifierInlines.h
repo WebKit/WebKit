@@ -35,19 +35,19 @@ namespace JSC  {
 inline Identifier::Identifier(VM& vm, std::span<const Latin1Character> string)
     : m_string(add(vm, string))
 {
-    ASSERT(m_string.impl()->isAtom());
+    ASSERT(m_string->isAtom());
 }
 
 inline Identifier::Identifier(VM& vm, std::span<const char16_t> string)
     : m_string(add(vm, string))
 {
-    ASSERT(m_string.impl()->isAtom());
+    ASSERT(m_string->isAtom());
 }
 
 ALWAYS_INLINE Identifier::Identifier(VM& vm, ASCIILiteral literal)
     : m_string(add(vm, literal))
 {
-    ASSERT(m_string.impl()->isAtom());
+    ASSERT(m_string->isAtom());
 }
 
 inline Identifier::Identifier(VM& vm, AtomStringImpl* string)
@@ -62,28 +62,10 @@ inline Identifier::Identifier(VM& vm, AtomStringImpl* string)
 #endif
 }
 
-inline Identifier::Identifier(VM& vm, const AtomString& string)
-    : m_string(string)
+inline Identifier::Identifier(VM& vm, StringImpl* string)
+    : m_string(add(vm, string))
 {
-#ifndef NDEBUG
-    checkCurrentAtomStringTable(vm);
-    if (!string.isNull())
-        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomStringImpl::isInAtomStringTable(string.impl()), "The atomic string comes from an other thread!");
-#else
-    UNUSED_PARAM(vm);
-#endif
-}
-
-inline Identifier::Identifier(VM& vm, const String& string)
-    : m_string(add(vm, string.impl()))
-{
-    ASSERT(m_string.impl()->isAtom());
-}
-
-inline Identifier::Identifier(VM& vm, StringImpl* rep)
-    : m_string(add(vm, rep))
-{
-    ASSERT(m_string.impl()->isAtom());
+    ASSERT(m_string->isAtom());
 }
 
 inline Ref<AtomStringImpl> Identifier::add(VM& vm, ASCIILiteral literal)
@@ -124,7 +106,7 @@ inline Identifier Identifier::createLatin1(VM& vm, std::span<const char16_t> str
 SUPPRESS_NODELETE inline Identifier Identifier::fromUid(VM& vm, UniquedStringImpl* uid)
 {
     if (!uid || !uid->isSymbol())
-        return Identifier(vm, uid);
+        return Identifier(vm, static_cast<AtomStringImpl*>(uid)); // A UniquedStringImpl that is not a symbol is an atom.
     return static_cast<SymbolImpl&>(*uid);
 }
 
@@ -153,9 +135,9 @@ inline Identifier Identifier::fromString(VM& vm, std::span<const char16_t> s)
     return Identifier(vm, s);
 }
 
-inline Identifier Identifier::fromString(VM& vm, const String& string)
+inline Identifier Identifier::fromString(VM& vm, StringImpl* string)
 {
-    return Identifier(vm, string.impl());
+    return Identifier(vm, string);
 }
 
 inline Identifier Identifier::fromString(VM& vm, AtomStringImpl* atomStringImpl)
@@ -168,14 +150,10 @@ inline Identifier Identifier::fromString(VM& vm, Ref<AtomStringImpl>&& atomStrin
     return Identifier(vm, WTF::move(atomStringImpl));
 }
 
-inline Identifier Identifier::fromString(VM& vm, const AtomString& atomString)
-{
-    return Identifier(vm, atomString);
-}
-
 inline Identifier Identifier::fromString(VM& vm, SymbolImpl* symbolImpl)
 {
-    return Identifier(vm, symbolImpl);
+    // fromString() discards symbol-ness: this atomizes the symbol's description.
+    return Identifier(vm, static_cast<StringImpl*>(symbolImpl));
 }
 
 inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)

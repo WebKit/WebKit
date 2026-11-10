@@ -181,7 +181,7 @@ void ResourceRequest::doUpdateResourceRequest()
     m_requestData.m_isTopSite = static_cast<NSNumber*>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
 
     if (RetainPtr method = [m_nsRequest HTTPMethod])
-        m_requestData.m_httpMethod = method.get();
+        m_requestData.m_httpMethod = StringImpl::create(method.get());
     m_requestData.m_allowCookies = [m_nsRequest HTTPShouldHandleCookies];
 
     if (resourcePrioritiesEnabled())
@@ -189,7 +189,7 @@ void ResourceRequest::doUpdateResourceRequest()
 
     m_requestData.m_httpHeaderFields.clear();
     [retainPtr([m_nsRequest allHTTPHeaderFields]) enumerateKeysAndObjectsUsingBlock: ^(NSString *name, NSString *value, BOOL *) {
-        m_requestData.m_httpHeaderFields.set(name, value);
+        m_requestData.m_httpHeaderFields.set(name, StringImpl::create(value).get());
     }];
 
     m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
@@ -199,7 +199,7 @@ void ResourceRequest::doUpdateResourceRequest()
     for (SUPPRESS_UNRETAINED_LOCAL NSNumber *encodingFallback in encodingFallbacks.get()) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
         if (encoding != kCFStringEncodingInvalidId)
-            m_requestData.m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
+            m_requestData.m_responseContentDispositionEncodingFallbackArray.append(StringImpl::create(protect(CFStringConvertEncodingToIANACharSetName(encoding)).get()));
     }
 
     if (m_nsRequest) {
@@ -294,8 +294,8 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setTimeoutInterval:defaultTimeoutInterval()];
 
     [nsRequest setMainDocumentURL:firstPartyForCookies().createNSURL().get()];
-    if (!httpMethod().isEmpty())
-        [nsRequest setHTTPMethod:httpMethod().createNSString().get()];
+    if (!WTF::isEmpty(httpMethod()))
+        [nsRequest setHTTPMethod:createNSString(httpMethod()).get()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
 
     [nsRequest _setProperty:RetainPtr { siteForCookies(m_requestData.m_sameSiteDisposition, retainPtr([nsRequest URL]).get()) }.get() forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
@@ -306,23 +306,23 @@ void ResourceRequest::doUpdatePlatformRequest()
     for (SUPPRESS_UNRETAINED_LOCAL NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
         [nsRequest setValue:nil forHTTPHeaderField:oldHeaderName];
     for (const auto& header : httpHeaderFields())
-        [nsRequest setValue:header.value.createNSString().get() forHTTPHeaderField:header.key.createNSString().get()];
+        [nsRequest setValue:createNSString(header.value).get() forHTTPHeaderField:createNSString(header.key).get()];
 
     [nsRequest setContentDispositionEncodingFallbackArray:createNSArray(m_requestData.m_responseContentDispositionEncodingFallbackArray, [] (auto& name) -> NSNumber * {
-        auto encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(name.createCFString().get()));
+        auto encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(createCFString(name).get()));
         if (encoding == kCFStringEncodingInvalidId)
             return nil;
         return @(encoding);
     }).get()];
 
-    String partition = cachePartition();
-    if (!partition.isEmpty())
-        [NSURLProtocol setProperty:partition.createNSString() forKey:bridge_cast(_kCFURLCachePartitionKey) inRequest:nsRequest.get()];
+    RefPtr<StringImpl> partition = cachePartition();
+    if (!WTF::isEmpty(partition))
+        [NSURLProtocol setProperty:createNSString(partition) forKey:bridge_cast(_kCFURLCachePartitionKey) inRequest:nsRequest.get()];
 
 #if PLATFORM(MAC)
     if (m_requestData.m_url.protocolIsFile()) {
         auto filePath = m_requestData.m_url.fileSystemPath();
-        if (!filePath.isNull()) {
+        if (filePath) {
             auto fileDevice = FileSystem::getFileDeviceId(filePath);
             if (fileDevice && fileDevice.value())
                 [nsRequest _setProperty:[NSNumber numberWithInteger:fileDevice.value()] forKey:@"NSURLRequestFileProtocolExpectedDevice"];
@@ -360,7 +360,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
             [nsRequest setValue:lengthString.get() forHTTPHeaderField:@"Content-Length"];
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
-            m_requestData.m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString.get());
+            m_requestData.m_httpHeaderFields.set(HTTPHeaderName::ContentLength, StringImpl::create(lengthString.get()).get());
         }
     }
 

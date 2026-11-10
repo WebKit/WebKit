@@ -66,7 +66,7 @@ private:
 
     void clearCodecsConnectionForTesting() final;
 
-    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, WebCore::ScriptExecutionContextIdentifier, bool /* isFirstParty */, WebCore::RegistrableDomain&&, bool /* enableServiceClass */) final;
+    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(RefPtr<StringImpl>&& /* userAgent */, WebCore::ScriptExecutionContextIdentifier, bool /* isFirstParty */, WebCore::RegistrableDomain&&, bool /* enableServiceClass */) final;
 
     webrtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(WebCore::ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver&, webrtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 

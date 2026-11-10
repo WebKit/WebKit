@@ -35,10 +35,10 @@ namespace TestWebKitAPI {
 static size_t totalDestructorCalls;
 static size_t totalIsolatedCopyCalls;
 
-static HashCountedSet<String> defaultConstructorSet;
-static HashCountedSet<String> nameConstructorSet;
-static HashCountedSet<String> copyConstructorSet;
-static HashCountedSet<String> moveConstructorSet;
+static HashCountedSet<RefPtr<StringImpl>> defaultConstructorSet;
+static HashCountedSet<RefPtr<StringImpl>> nameConstructorSet;
+static HashCountedSet<RefPtr<StringImpl>> copyConstructorSet;
+static HashCountedSet<RefPtr<StringImpl>> moveConstructorSet;
 
 struct LifetimeLogger {
     LifetimeLogger()
@@ -79,14 +79,14 @@ struct LifetimeLogger {
         return LifetimeLogger(*this);
     }
 
-    String fullName()
+    RefPtr<StringImpl> fullName()
     {
         StringBuilder builder;
         builder.append(name);
         builder.append('-');
-        builder.append(String::number(copyGeneration));
+        builder.append(makeString(copyGeneration));
         builder.append('-');
-        builder.append(String::number(moveGeneration));
+        builder.append(makeString(moveGeneration));
 
         return builder.toString();
     }
@@ -113,15 +113,15 @@ TEST(WTF_CrossThreadTask, Basic)
     }
 
     ASSERT_EQ(1u, defaultConstructorSet.size());
-    ASSERT_EQ(1u, defaultConstructorSet.count("<default>-0-0"_s));
+    ASSERT_EQ(1u, defaultConstructorSet.count("<default>-0-0"_si));
 
     ASSERT_EQ(1u, nameConstructorSet.size());
-    ASSERT_EQ(1u, nameConstructorSet.count("logger-0-0"_s));
+    ASSERT_EQ(1u, nameConstructorSet.count("logger-0-0"_si));
 
     ASSERT_EQ(3u, copyConstructorSet.size());
-    ASSERT_EQ(1u, copyConstructorSet.count("logger-1-0"_s));
-    ASSERT_EQ(2u, copyConstructorSet.count("<default>-1-0"_s));
-    ASSERT_EQ(1u, copyConstructorSet.count("<default>-2-0"_s));
+    ASSERT_EQ(1u, copyConstructorSet.count("logger-1-0"_si));
+    ASSERT_EQ(2u, copyConstructorSet.count("<default>-1-0"_si));
+    ASSERT_EQ(1u, copyConstructorSet.count("<default>-2-0"_si));
 
 #if !COMPILER(MSVC) || COMPILER(CLANG)
     ASSERT_EQ(6u, moveConstructorSet.size());
@@ -130,12 +130,12 @@ TEST(WTF_CrossThreadTask, Basic)
     // This seems to be caused by differences in MSVC's implementation of lambdas.
     ASSERT_EQ(9u, moveConstructorSet.size());
 #endif
-    ASSERT_EQ(1u, moveConstructorSet.count("logger-1-1"_s));
-    ASSERT_EQ(1u, moveConstructorSet.count("logger-1-2"_s));
-    ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-1"_s));
-    ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-2"_s));
-    ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-1"_s));
-    ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-2"_s));
+    ASSERT_EQ(1u, moveConstructorSet.count("logger-1-1"_si));
+    ASSERT_EQ(1u, moveConstructorSet.count("logger-1-2"_si));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-1"_si));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-2"_si));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-1"_si));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-2"_si));
 
 #if !COMPILER(MSVC) || COMPILER(CLANG)
     ASSERT_EQ(12u, totalDestructorCalls);

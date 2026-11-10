@@ -47,7 +47,7 @@ CSSStyleProperties& CSSNestedDeclarations::style()
     return *m_propertiesCSSOMWrapper;
 }
 
-String CSSNestedDeclarations::cssText() const
+RefPtr<StringImpl> CSSNestedDeclarations::cssText() const
 {
     return protect(protect(m_styleRule)->properties())->asText(CSS::defaultSerializationContext());
 }

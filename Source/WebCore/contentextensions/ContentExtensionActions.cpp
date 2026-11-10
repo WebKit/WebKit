@@ -58,10 +58,10 @@ NODELETE static size_t deserializeLength(std::span<const uint8_t> span, size_t o
     return reinterpretCastSpanStartTo<const uint32_t>(span.subspan(offset));
 }
 
-static String deserializeUTF8String(std::span<const uint8_t> span, size_t offset, size_t length)
+static RefPtr<StringImpl> deserializeUTF8String(std::span<const uint8_t> span, size_t offset, size_t length)
 {
     RELEASE_ASSERT(span.size() >= offset + length);
-    return String::fromUTF8(span.subspan(offset, length));
+    return StringImpl::fromUTF8(span.subspan(offset, length));
 }
 
 NODELETE static void writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t offset)
@@ -76,7 +76,7 @@ NODELETE static void writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t
 std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const JSON::Object& modifyHeaders)
 {
     auto parseHeaders = [] (const JSON::Object& modifyHeaders, ASCIILiteral arrayName) -> std::expected<Vector<ModifyHeaderInfo>, std::error_code> {
-        auto value = modifyHeaders.getValue(arrayName);
+        auto value = modifyHeaders.getValue(StringImpl::create(arrayName).ptr());
         if (!value)
             return { };
         auto array = value->asArray();
@@ -100,7 +100,7 @@ std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(c
     if (!responseHeaders)
         return makeUnexpected(responseHeaders.error());
 
-    auto priority = modifyHeaders.getInteger("priority"_s);
+    auto priority = modifyHeaders.getInteger("priority"_si);
     if (!priority || priority.value() < 0)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidPriority);
 
@@ -159,13 +159,13 @@ size_t ModifyHeadersAction::serializedLength(std::span<const uint8_t> span)
     return deserializeLength(span, 0);
 }
 
-void ModifyHeadersAction::applyToRequest(ResourceRequest& request, HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
+void ModifyHeadersAction::applyToRequest(ResourceRequest& request, HashMap<RefPtr<StringImpl>, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
 {
     for (auto& info : requestHeaders)
         info.applyToRequest(request, headerNameToFirstOperationApplied);
 }
 
-void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request, HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
+void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request, HashMap<RefPtr<StringImpl>, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
 {
     WTF::visit(WTF::makeVisitor([&] (const AppendOperation& operation) {
         ModifyHeadersOperationType previouslyAppliedHeaderOperation = headerNameToFirstOperationApplied.get(operation.header);
@@ -173,7 +173,7 @@ void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& requ
             return;
 
         auto existingValue = request.httpHeaderField(operation.header);
-        if (existingValue.isEmpty())
+        if (isEmpty(existingValue))
             request.setHTTPHeaderField(operation.header, operation.value);
         else
             request.setHTTPHeaderField(operation.header, makeString(existingValue, "; "_s, operation.value));
@@ -201,27 +201,27 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
     if (!object)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
 
-    String operation = object->getString("operation"_s);
+    RefPtr<StringImpl> operation = object->getString("operation"_si);
     if (!operation)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingOperation);
 
-    String header = object->getString("header"_s);
+    RefPtr<StringImpl> header = object->getString("header"_si);
     if (!header)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingHeader);
 
-    String value = object->getString("value"_s);
+    RefPtr<StringImpl> value = object->getString("value"_si);
 
-    if (operation == "set"_s) {
+    if (equal(operation, "set"_s)) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
         return ModifyHeaderInfo { SetOperation { WTF::move(header), WTF::move(value) } };
     }
-    if (operation == "append"_s) {
+    if (equal(operation, "append"_s)) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
         return ModifyHeaderInfo { AppendOperation { WTF::move(header), WTF::move(value) } };
     }
-    if (operation == "remove"_s)
+    if (equal(operation, "remove"_s))
         return ModifyHeaderInfo { RemoveOperation { WTF::move(header) } };
     return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidOperation);
 }
@@ -242,11 +242,11 @@ void ModifyHeadersAction::ModifyHeaderInfo::serialize(Vector<uint8_t>& vector) c
     append(vector, 0);
     vector.append(operation.index());
     WTF::visit(WTF::makeVisitor([&] (const RemoveOperation& operation) {
-        append(vector, operation.header.utf8());
+        append(vector, utf8(operation.header));
     }, [&] (const auto& operation) {
-        auto valueUTF8 = operation.value.utf8();
+        auto valueUTF8 = utf8(operation.value);
         append(vector, valueUTF8.length());
-        append(vector, operation.header.utf8());
+        append(vector, utf8(operation.header));
         append(vector, valueUTF8);
     }), operation);
     writeLengthToVectorAtOffset(vector, beginIndex);
@@ -295,41 +295,41 @@ bool RedirectAction::onlyRemovesQueryParameters() const
     if (!transform)
         return false;
 
-    if (!transform->fragment.isNull() || !transform->host.isNull() || !transform->password.isNull() || !transform->path.isNull())
+    if (!!transform->fragment || !!transform->host || !!transform->password || !!transform->path)
         return false;
 
-    if (transform->port || !transform->scheme.isNull() || !transform->username.isNull())
+    if (transform->port || !!transform->scheme || !!transform->username)
         return false;
 
     auto* queryTransform = std::get_if<URLTransformAction::QueryTransform>(&transform->queryTransform);
     return queryTransform && queryTransform->addOrReplaceParams.isEmpty() && !queryTransform->removeParams.isEmpty();
 }
 
-std::expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
+std::expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, StringImpl* urlFilter)
 {
-    auto redirect = redirectObject.getObject("redirect"_s);
+    auto redirect = redirectObject.getObject("redirect"_si);
     if (!redirect)
         return makeUnexpected(ContentExtensionError::JSONRedirectMissing);
 
-    auto priority = static_cast<uint32_t>(std::max(redirectObject.getInteger("priority"_s).value_or(0), 0));
+    auto priority = static_cast<uint32_t>(std::max(redirectObject.getInteger("priority"_si).value_or(0), 0));
 
-    if (auto extensionPath = redirect->getString("extension-path"_s); !!extensionPath) {
-        if (!extensionPath.startsWith('/'))
+    if (auto extensionPath = redirect->getString("extension-path"_si); !!extensionPath) {
+        if (!startsWith(extensionPath, '/'))
             return makeUnexpected(ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash);
         return RedirectAction { ExtensionPathAction { WTF::move(extensionPath) }, priority };
     }
 
-    if (auto regexSubstitution = redirect->getString("regex-substitution"_s); !!regexSubstitution)
+    if (auto regexSubstitution = redirect->getString("regex-substitution"_si); !!regexSubstitution)
         return RedirectAction { RegexSubstitutionAction { WTF::move(regexSubstitution), urlFilter }, priority };
 
-    if (auto transform = redirect->getObject("transform"_s)) {
+    if (auto transform = redirect->getObject("transform"_si)) {
         auto parsedTransform = URLTransformAction::parse(*transform);
         if (!parsedTransform)
             return makeUnexpected(parsedTransform.error());
         return RedirectAction { WTF::move(*parsedTransform), priority };
     }
 
-    if (auto urlString = redirect->getString("url"_s); !!urlString) {
+    if (auto urlString = redirect->getString("url"_si); !!urlString) {
         URL url { urlString };
         if (!url.isValid())
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
@@ -358,13 +358,13 @@ void RedirectAction::serialize(Vector<uint8_t>& vector) const
     append(vector, priority);
     vector.append(action.index());
     WTF::visit(WTF::makeVisitor([&](const ExtensionPathAction& action) {
-        append(vector, action.extensionPath.utf8());
+        append(vector, utf8(action.extensionPath));
     }, [&](const RegexSubstitutionAction& action) {
         action.serialize(vector);
     }, [&](const URLTransformAction& action) {
         action.serialize(vector);
     }, [&](const URLAction& action) {
-        append(vector, action.url.utf8());
+        append(vector, utf8(action.url));
     }), action);
     writeLengthToVectorAtOffset(vector, beginIndex);
 }
@@ -419,8 +419,8 @@ void RedirectAction::modifyURL(URL& originalURL, const URL& extensionBaseURL)
 
 void RedirectAction::RegexSubstitutionAction::serialize(Vector<uint8_t>& vector) const
 {
-    auto regexSubstitutionUTF8 = regexSubstitution.utf8();
-    auto regexFilterUTF8 = regexFilter.utf8();
+    auto regexSubstitutionUTF8 = utf8(regexSubstitution);
+    auto regexFilterUTF8 = utf8(regexFilter);
     vector.reserveCapacity(vector.size()
         + sizeof(uint32_t)
         + sizeof(uint32_t)
@@ -462,7 +462,7 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
     };
     auto valueToWTFString = [&] (JSValueRef value) {
         RefPtr string = adoptRef(JSValueToStringCopy(context, value, nullptr));
-        return String { utf8CString(string.get()) };
+        return StringImpl::create((utf8CString(string.get())).span());
     };
 
     // Effectively execute this JavaScript:
@@ -476,7 +476,7 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
     if (!JSValueIsArray(context, result))
         return;
 
-    String substitution = regexSubstitution;
+    RefPtr<StringImpl> substitution = regexSubstitution;
     size_t resultLength = JSValueToNumber(context, getProperty(result, "length"_s), nullptr);
     for (size_t i = 0; i < std::min<size_t>(10, resultLength); i++)
         substitution = makeStringByReplacingAll(substitution, makeString('\\', i), valueToWTFString(getArrayValue(result, i)));
@@ -489,17 +489,17 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
 auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> std::expected<URLTransformAction, std::error_code>
 {
     URLTransformAction action;
-    if (auto fragment = transform.getString("fragment"_s); !!fragment) {
-        if (!fragment.isEmpty() && !fragment.startsWith('#'))
+    if (auto fragment = transform.getString("fragment"_si); !!fragment) {
+        if (!isEmpty(fragment) && !startsWith(fragment, '#'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidFragment);
         action.fragment = WTF::move(fragment);
     }
-    action.host = transform.getString("host"_s);
-    action.password = transform.getString("password"_s);
-    action.path = transform.getString("path"_s);
-    auto port = transform.getString("port"_s);
+    action.host = transform.getString("host"_si);
+    action.password = transform.getString("password"_si);
+    action.path = transform.getString("path"_si);
+    auto port = transform.getString("port"_si);
     if (!!port) {
-        if (port.isEmpty())
+        if (isEmpty(port))
             action.port = { std::optional<uint16_t> { } };
         else {
             auto parsedPort = parseInteger<uint16_t>(StringView(port));
@@ -509,7 +509,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
         }
     }
 
-    if (auto uncanonicalizedScheme = transform.getString("scheme"_s); !!uncanonicalizedScheme) {
+    if (auto uncanonicalizedScheme = transform.getString("scheme"_si); !!uncanonicalizedScheme) {
         auto scheme = WTF::URLParser::maybeCanonicalizeScheme(uncanonicalizedScheme);
         if (!scheme)
             return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeInvalid);
@@ -517,15 +517,15 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
         action.scheme = WTF::move(*scheme);
     }
-    action.username = transform.getString("username"_s);
-    if (auto queryTransform = transform.getObject("query-transform"_s)) {
+    action.username = transform.getString("username"_si);
+    if (auto queryTransform = transform.getObject("query-transform"_si)) {
         auto parsedQueryTransform = QueryTransform::parse(*queryTransform);
         if (!parsedQueryTransform)
             return makeUnexpected(parsedQueryTransform.error());
         action.queryTransform = *parsedQueryTransform;
     } else {
-        auto query = transform.getString("query"_s);
-        if (!query.isEmpty() && !query.startsWith('?'))
+        auto query = transform.getString("query"_si);
+        if (!isEmpty(query) && !startsWith(query, '?'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidQuery);
         action.queryTransform = WTF::move(query);
     }
@@ -553,16 +553,16 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
     uint8_t hasPort = !!port;
     uint8_t hasScheme = !!scheme;
     uint8_t hasUsername = !!username;
-    auto* queryString = std::get_if<String>(&queryTransform);
-    auto queryStringUTF8 = queryString ? queryString->utf8() : UTF8CString();
+    auto* queryString = std::get_if<RefPtr<StringImpl>>(&queryTransform);
+    auto queryStringUTF8 = queryString ? utf8(*queryString) : UTF8CString();
     uint8_t hasQuery = !queryString || !!*queryString;
 
-    auto fragmentUTF8 = fragment.utf8();
-    auto hostUTF8 = host.utf8();
-    auto passwordUTF8 = password.utf8();
-    auto pathUTF8 = path.utf8();
-    auto schemeUTF8 = scheme.utf8();
-    auto usernameUTF8 = username.utf8();
+    auto fragmentUTF8 = utf8(fragment);
+    auto hostUTF8 = utf8(host);
+    auto passwordUTF8 = utf8(password);
+    auto pathUTF8 = utf8(path);
+    auto schemeUTF8 = utf8(scheme);
+    auto usernameUTF8 = utf8(username);
 
     vector.reserveCapacity(vector.size() + sizeof(uint32_t) + sizeof(uint8_t)
         + (hasFragment ? sizeof(uint32_t) + fragmentUTF8.length() : 0)
@@ -609,7 +609,7 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
     }
     if (hasQuery) {
         vector.append(queryTransform.index());
-        WTF::visit(WTF::makeVisitor([&](const String&) {
+        WTF::visit(WTF::makeVisitor([&](StringImpl*) {
             append(vector, queryStringUTF8.length());
             append(vector, queryStringUTF8);
         }, [&](const QueryTransform& transform) {
@@ -641,12 +641,12 @@ auto RedirectAction::URLTransformAction::deserialize(std::span<const uint8_t> sp
         progress += sizeof(uint32_t) + stringLength;
         return string;
     };
-    auto fragment = hasFragment ? deserializeString() : String();
-    auto host = hasHost ? deserializeString() : String();
-    auto password = hasPassword ? deserializeString() : String();
-    auto path = hasPath ? deserializeString() : String();
-    auto scheme = hasScheme ? deserializeString() : String();
-    auto username = hasUsername ? deserializeString() : String();
+    auto fragment = hasFragment ? deserializeString() : nullptr;
+    auto host = hasHost ? deserializeString() : nullptr;
+    auto password = hasPassword ? deserializeString() : nullptr;
+    auto path = hasPath ? deserializeString() : nullptr;
+    auto scheme = hasScheme ? deserializeString() : nullptr;
+    auto username = hasUsername ? deserializeString() : nullptr;
     std::optional<std::optional<uint16_t>> port;
     if (hasPort) {
         if (span[progress++]) {
@@ -661,7 +661,7 @@ auto RedirectAction::URLTransformAction::deserialize(std::span<const uint8_t> sp
     if (hasQuery) {
         RELEASE_ASSERT(span.size() > progress);
         uint8_t variantIndex = span[progress++];
-        if (variantIndex == WTF::alternativeIndexV<String, QueryTransformVariant>) {
+        if (variantIndex == WTF::alternativeIndexV<RefPtr<StringImpl>, QueryTransformVariant>) {
             auto queryStringLength = deserializeLength(span, progress);
             queryTransform = deserializeUTF8String(span, progress + sizeof(uint32_t), queryStringLength);
         } else if (variantIndex == WTF::alternativeIndexV<QueryTransform, QueryTransformVariant>)
@@ -691,11 +691,11 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
 {
     QueryTransform parsedQueryTransform;
 
-    if (auto removeParametersValue = queryTransform.getValue("remove-parameters"_s)) {
+    if (auto removeParametersValue = queryTransform.getValue("remove-parameters"_si)) {
         auto removeParametersArray = removeParametersValue->asArray();
         if (!removeParametersArray)
             return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
-        Vector<String> removeParametersVector(ReserveCapacityTag { }, removeParametersArray->length());
+        Vector<RefPtr<StringImpl>> removeParametersVector(ReserveCapacityTag { }, removeParametersArray->length());
         for (auto& parameter : *removeParametersArray) {
             if (parameter.get().type() != JSON::Value::Type::String)
                 return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
@@ -704,7 +704,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         parsedQueryTransform.removeParams = WTF::move(removeParametersVector);
     }
 
-    if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters"_s)) {
+    if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters"_si)) {
         auto addOrReplaceParametersArray = addOrReplaceParametersValue->asArray();
         if (!addOrReplaceParametersArray)
             return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersNotArray);
@@ -724,7 +724,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
 void RedirectAction::URLTransformAction::applyToURL(URL& url) const
 {
     if (!!fragment) {
-        if (fragment.isEmpty())
+        if (isEmpty(fragment))
             url.removeFragmentIdentifier();
         else
             url.setFragmentIdentifier(StringView(fragment).substring(1));
@@ -737,9 +737,9 @@ void RedirectAction::URLTransformAction::applyToURL(URL& url) const
         url.setPath(path);
     if (!!port)
         url.setPort(*port);
-    WTF::visit(WTF::makeVisitor([&] (const String& query) {
-        if (!query.isNull())
-            url.setQuery(query.isEmpty() ? StringView() : StringView(query));
+    WTF::visit(WTF::makeVisitor([&] (StringImpl* query) {
+        if (query)
+            url.setQuery(isEmpty(query) ? StringView() : StringView(query));
     }, [&] (const URLTransformAction::QueryTransform& transform) {
         transform.applyToURL(url);
     }), queryTransform);
@@ -754,12 +754,12 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
     if (!url.hasQuery())
         return;
 
-    HashSet<String> keysToRemove;
+    HashSet<RefPtr<StringImpl>> keysToRemove;
     for (auto& key : removeParams)
         keysToRemove.add(key);
 
-    Vector<KeyValuePair<String, String>> keysToAdd;
-    HashMap<String, String> keysToReplace;
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> keysToAdd;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> keysToReplace;
     for (auto& [key, replaceOnly, value] : addOrReplaceParams) {
         if (replaceOnly)
             keysToReplace.add(key, value);
@@ -777,7 +777,7 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
         }
 
         auto& key = nameAndValue->key;
-        if (key.isEmpty()) {
+        if (isEmpty(key)) {
             ASSERT_NOT_REACHED();
             continue;
         }
@@ -832,7 +832,7 @@ void RedirectAction::URLTransformAction::QueryTransform::serialize(Vector<uint8_
         queryKeyValue.serialize(vector);
     writeLengthToVectorAtOffset(vector, keyValueBeginIndex);
     for (auto& string : removeParams) {
-        auto utf8 = string.utf8();
+        auto utf8 = WTF::utf8(string);
         append(vector, utf8.length());
         append(vector, utf8);
     }
@@ -852,7 +852,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::deserialize(std::span<c
     }
     RELEASE_ASSERT(queryKeyValuesProgress == keyValuesSerializedLength);
     
-    Vector<String> strings;
+    Vector<RefPtr<StringImpl>> strings;
     auto stringsProgress = sizeof(uint32_t) + queryKeyValuesProgress;
     while (stringsProgress < serializedLength) {
         auto stringLength = deserializeLength(span, stringsProgress);
@@ -873,16 +873,16 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(co
     if (!keyValue)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary);
 
-    String key = keyValue->getString("key"_s);
+    RefPtr<StringImpl> key = keyValue->getString("key"_si);
     if (!key)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
 
-    String value = keyValue->getString("value"_s);
+    RefPtr<StringImpl> value = keyValue->getString("value"_si);
     if (!value)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
 
     bool replaceOnly { false };
-    if (auto boolean = keyValue->getBoolean("replace-only"_s))
+    if (auto boolean = keyValue->getBoolean("replace-only"_si))
         replaceOnly = *boolean;
 
     return { { WTF::move(key), replaceOnly, WTF::move(value) } };
@@ -893,8 +893,8 @@ void RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serializ
     constexpr auto headerLength = sizeof(uint32_t) + sizeof(uint32_t) + sizeof(bool);
     // FIXME: All these allocations and copies aren't strictly necessary.
     // We would need a way to query exactly what the UTF-8 encoded length would be to remove them, though.
-    auto keyUTF8 = key.utf8();
-    auto valueUTF8 = value.utf8();
+    auto keyUTF8 = utf8(key);
+    auto valueUTF8 = utf8(value);
     auto serializedLength = headerLength + keyUTF8.length() + valueUTF8.length();
     vector.reserveCapacity(vector.size() + serializedLength);
     append(vector, serializedLength);

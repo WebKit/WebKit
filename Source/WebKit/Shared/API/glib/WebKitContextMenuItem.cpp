@@ -126,10 +126,10 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
         bool checked = false;
         unsigned indentationLevel = 0;
-        return WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTF::move(subMenuItems));
+        return WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, item->priv->menuItem->action(), RefPtr<StringImpl> { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTF::move(subMenuItems));
     }
 
-    return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), item->priv->menuItem->checked());
+    return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), RefPtr<StringImpl> { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), item->priv->menuItem->checked());
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -181,7 +181,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_gaction(GAction* action
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(action, String::fromUTF8(label), target);
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(action, StringImpl::fromUTF8(label), target);
 #endif // ENABLE(CONTEXT_MENUS)
 
     return item;
@@ -236,7 +236,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action_with_label
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(type, webkitContextMenuActionGetActionTag(action), String::fromUTF8(label));
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(type, webkitContextMenuActionGetActionTag(action), StringImpl::fromUTF8(label));
 #endif // ENABLE(CONTEXT_MENUS)
 
     return item;
@@ -263,7 +263,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, StringImpl::fromUTF8(label));
     item->priv->subMenu = submenu;
     webkitContextMenuSetParentItem(submenu, item);
 #endif // ENABLE(CONTEXT_MENUS)
@@ -282,7 +282,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Separator, ContextMenuItemTagNoAction, String());
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Separator, ContextMenuItemTagNoAction, nullptr);
 #endif // ENABLE(CONTEXT_MENUS)
 
     return item;
@@ -399,7 +399,7 @@ const gchar* webkit_context_menu_item_get_title(WebKitContextMenuItem* item)
     if (item->priv->menuItem->type() == WebCore::ContextMenuItemType::Separator)
         return nullptr;
     if (item->priv->titleUTF8.isNull())
-        item->priv->titleUTF8 = item->priv->menuItem->title().utf8();
+        item->priv->titleUTF8 = utf8(item->priv->menuItem->title());
     return item->priv->titleUTF8.legacyCStringPointer();
 #else
     g_assert_not_reached();

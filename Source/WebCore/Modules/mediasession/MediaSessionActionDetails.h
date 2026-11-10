@@ -38,7 +38,7 @@ struct MediaSessionActionDetails {
     std::optional<bool> fastSeek { };
     std::optional<bool> isActivating { };
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-    String trackIdentifier { };
+    RefPtr<StringImpl> trackIdentifier { };
 #endif
     std::optional<unsigned long> trackIndex { };
 };

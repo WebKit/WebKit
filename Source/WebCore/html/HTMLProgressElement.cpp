@@ -80,7 +80,7 @@ bool HTMLProgressElement::childShouldCreateRenderer(const Node& child) const
     return !is<RenderProgress>(renderer()) && HTMLElement::childShouldCreateRenderer(child);
 }
 
-void HTMLProgressElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLProgressElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::valueAttr:
@@ -118,7 +118,7 @@ double HTMLProgressElement::max() const
 void HTMLProgressElement::setMax(double max)
 {
     if (max > 0)
-        setAttributeWithoutSynchronization(maxAttr, AtomString::number(max));
+        setAttributeWithoutSynchronization(maxAttr, AtomStringImpl::number(max));
 }
 
 double HTMLProgressElement::position() const
@@ -165,8 +165,8 @@ void HTMLProgressElement::appendShadowTreeForAutoAppearance(ShadowRoot& root)
     Ref innerElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope innerScope { innerElement };
     innerElement->setUserAgentPart(UserAgentParts::webkitProgressInnerElement());
-    innerElement->setInlineStyleProperty(CSSPropertyID::Appearance, "inherit"_s);
-    innerElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(inline-block, none)"_s, IsImportant::Yes);
+    innerElement->setInlineStyleProperty(CSSPropertyID::Appearance, "inherit"_si);
+    innerElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(inline-block, none)"_si, IsImportant::Yes);
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(innerElement);
 
@@ -191,8 +191,8 @@ void HTMLProgressElement::appendShadowTreeForBaseAppearance(ShadowRoot& root)
     Ref trackElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope trackScope { trackElement };
     trackElement->setUserAgentPart(UserAgentParts::sliderTrack());
-    trackElement->setInlineStyleProperty(CSSPropertyID::Appearance, "inherit"_s);
-    trackElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(none, inline-block)"_s, IsImportant::Yes);
+    trackElement->setInlineStyleProperty(CSSPropertyID::Appearance, "inherit"_si);
+    trackElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(none, inline-block)"_si, IsImportant::Yes);
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(trackElement);
 

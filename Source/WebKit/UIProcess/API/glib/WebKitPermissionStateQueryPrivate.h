@@ -25,4 +25,4 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
-WebKitPermissionStateQuery* webkitPermissionStateQueryCreate(const WTF::String& permissionName, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
+WebKitPermissionStateQuery* webkitPermissionStateQueryCreate(StringImpl* permissionName, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);

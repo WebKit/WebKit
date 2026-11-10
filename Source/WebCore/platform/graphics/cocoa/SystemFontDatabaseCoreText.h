@@ -69,8 +69,8 @@ public:
             static const bool safeToCompareToEmptyOrDeleted = true;
         };
 
-        AtomString fontName;
-        AtomString locale;
+        RefPtr<AtomStringImpl> fontName;
+        RefPtr<AtomStringImpl> locale;
         CGFloat weight { 0 };
         CGFloat width { 0 };
         float size { 0 };
@@ -81,16 +81,16 @@ public:
     SystemFontDatabaseCoreText();
     static SystemFontDatabaseCoreText& forCurrentThread();
 
-    std::optional<SystemFontKind> matchSystemFontUse(const AtomString& family);
-    Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const FontDescription&, const AtomString& cssFamily, SystemFontKind, AllowUserInstalledFonts);
+    std::optional<SystemFontKind> matchSystemFontUse(AtomStringImpl* family);
+    Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const FontDescription&, AtomStringImpl* cssFamily, SystemFontKind, AllowUserInstalledFonts);
 
-    String serifFamily(const String& locale);
-    String sansSerifFamily(const String& locale);
-    String cursiveFamily(const String& locale);
-    String fantasyFamily(const String& locale);
-    String monospaceFamily(const String& locale);
+    RefPtr<StringImpl> serifFamily(StringImpl* locale);
+    RefPtr<StringImpl> sansSerifFamily(StringImpl* locale);
+    RefPtr<StringImpl> cursiveFamily(StringImpl* locale);
+    RefPtr<StringImpl> fantasyFamily(StringImpl* locale);
+    RefPtr<StringImpl> monospaceFamily(StringImpl* locale);
 
-    const AtomString& systemFontShorthandFamily(FontShorthand);
+    const RefPtr<AtomStringImpl>& systemFontShorthandFamily(FontShorthand);
     float systemFontShorthandSize(FontShorthand);
     FontSelectionValue systemFontShorthandWeight(FontShorthand);
 
@@ -115,17 +115,17 @@ private:
     static RetainPtr<CTFontRef> createFontByApplyingWeightWidthItalicsAndFallbackBehavior(CTFontRef, CGFloat weight, CGFloat width, bool italic, float size, AllowUserInstalledFonts, CFStringRef design = nullptr);
     static RetainPtr<CTFontDescriptorRef> removeCascadeList(CTFontDescriptorRef);
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef, CFStringRef locale);
-    static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, SystemFontKind, AllowUserInstalledFonts);
+    static CascadeListParameters systemFontParameters(const FontDescription&, AtomStringImpl* familyName, SystemFontKind, AllowUserInstalledFonts);
 
     HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
 
-    MemoryCompactRobinHoodHashMap<String, String> m_serifFamilies;
-    MemoryCompactRobinHoodHashMap<String, String> m_sansSeriferifFamilies;
-    MemoryCompactRobinHoodHashMap<String, String> m_cursiveFamilies;
-    MemoryCompactRobinHoodHashMap<String, String> m_fantasyFamilies;
-    MemoryCompactRobinHoodHashMap<String, String> m_monospaceFamilies;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_serifFamilies;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_sansSeriferifFamilies;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_cursiveFamilies;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_fantasyFamilies;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_monospaceFamilies;
 
-    Vector<AtomString> m_textStyles;
+    Vector<RefPtr<AtomStringImpl>> m_textStyles;
 };
 
 inline void add(Hasher& hasher, const SystemFontDatabaseCoreText::CascadeListParameters& parameters)

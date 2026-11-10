@@ -71,7 +71,7 @@ public:
     {
         return adoptRef(*new XMLDocumentParser(document, isInFrameView, policy));
     }
-    static Ref<XMLDocumentParser> create(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
+    static Ref<XMLDocumentParser> create(DocumentFragment& fragment, HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>&& prefixToNamespaceMap, AtomStringImpl* defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     {
         return adoptRef(*new XMLDocumentParser(fragment, WTF::move(prefixToNamespaceMap), defaultNamespaceURI, parserContentPolicy));
     }
@@ -85,16 +85,16 @@ public:
     void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
     bool isXHTMLDocument() const { return m_isXHTMLDocument; }
 
-    static bool parseDocumentFragment(const String&, DocumentFragment&, Element* parent = nullptr, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
+    static bool parseDocumentFragment(StringImpl*, DocumentFragment&, Element* parent = nullptr, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     // Used by XMLHttpRequest to check if the responseXML was well formed.
     bool wellFormed() const final { return !m_sawError; }
 
-    static bool supportsXMLVersion(const String&);
+    static bool supportsXMLVersion(StringImpl*);
 
 private:
     explicit XMLDocumentParser(Document&, IsInFrameView, OptionSet<ParserContentPolicy>);
-    XMLDocumentParser(DocumentFragment&, HashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
+    XMLDocumentParser(DocumentFragment&, HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>&&, AtomStringImpl*, OptionSet<ParserContentPolicy>);
 
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
@@ -122,7 +122,7 @@ private:
     NODELETE void pauseParsing();
     void resumeParsing();
 
-    bool appendFragmentSource(const String&);
+    bool appendFragmentSource(StringImpl*);
 
 public:
     // Callbacks from parser SAX, and other functions needed inside
@@ -146,7 +146,7 @@ public:
 private:
     void initializeParserContext(const UTF8CString& chunk = UTF8CString());
     void flushDeferredEntityDeclarations();
-    uint64_t computeTransitiveEntityReferenceCount(const AtomString& name, const HashMap<AtomString, String>& entityContents, HashSet<AtomString>& visiting);
+    uint64_t computeTransitiveEntityReferenceCount(AtomStringImpl* name, const HashMap<RefPtr<AtomStringImpl>, RefPtr<StringImpl>>& entityContents, HashSet<RefPtr<AtomStringImpl>>& visiting);
 
     void pushCurrentNode(ContainerNode*);
     void popCurrentNode();
@@ -157,7 +157,7 @@ private:
     void createLeafTextNode();
     bool updateLeafTextNode();
 
-    void doWrite(String&&);
+    void doWrite(RefPtr<StringImpl>&&);
     void doEnd();
 
     xmlParserCtxtPtr context() const { return m_context ? m_context->context() : nullptr; };
@@ -187,15 +187,15 @@ private:
     const uint64_t m_maxEntityExpansionCount;
 
     struct DeferredEntityDeclaration {
-        String name;
+        RefPtr<StringImpl> name;
         int type;
-        String publicId;
-        String systemId;
-        String content;
+        RefPtr<StringImpl> publicId;
+        RefPtr<StringImpl> systemId;
+        RefPtr<StringImpl> content;
     };
     Vector<DeferredEntityDeclaration> m_deferredEntityDeclarations;
     bool m_deferredEntityDeclarationsFlushed { false };
-    HashMap<AtomString, uint64_t> m_entityTransitiveReferenceCounts;
+    HashMap<RefPtr<AtomStringImpl>, uint64_t> m_entityTransitiveReferenceCounts;
 
     const std::unique_ptr<XMLErrors> m_xmlErrors;
 
@@ -205,19 +205,19 @@ private:
 
     bool m_parsingFragment { false };
 
-    HashMap<AtomString, AtomString> m_prefixToNamespaceMap;
-    AtomString m_defaultNamespaceURI;
+    HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>> m_prefixToNamespaceMap;
+    RefPtr<AtomStringImpl> m_defaultNamespaceURI;
 
     SegmentedString m_pendingSrc;
 };
 
 #if ENABLE(XSLT)
-xmlDocPtr xmlDocPtrForString(CachedResourceLoader&, const String& source, const String& url);
+xmlDocPtr xmlDocPtrForString(CachedResourceLoader&, StringImpl* source, StringImpl* url);
 #endif
 
 xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr);
 void initializeXMLParser();
 
-std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader&, const String&);
+std::optional<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>> parseAttributes(CachedResourceLoader&, StringImpl*);
 
 } // namespace WebCore

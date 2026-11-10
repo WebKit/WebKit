@@ -44,8 +44,8 @@ namespace WebKit::NetworkCache {
 class Entry {
     WTF_MAKE_TZONE_ALLOCATED(Entry);
 public:
-    Entry(const Key&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
-    Entry(const Key&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<String, String>>& varyingRequestHeaders);
+    Entry(const Key&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders);
+    Entry(const Key&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders);
     explicit Entry(const Storage::Record&);
     Entry(const Entry&);
 
@@ -57,7 +57,7 @@ public:
     const Key& key() const LIFETIME_BOUND { return m_key; }
     WallTime timeStamp() const { return m_timeStamp; }
     const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
-    const Vector<std::pair<String, String>>& varyingRequestHeaders() const LIFETIME_BOUND { return m_varyingRequestHeaders; }
+    const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders() const LIFETIME_BOUND { return m_varyingRequestHeaders; }
 
     WebCore::FragmentedSharedBuffer* buffer() const;
     const std::optional<WebCore::ResourceRequest>& redirectRequest() const LIFETIME_BOUND { return m_redirectRequest; }
@@ -80,7 +80,7 @@ private:
     Key m_key;
     WallTime m_timeStamp;
     WebCore::ResourceResponse m_response;
-    Vector<std::pair<String, String>> m_varyingRequestHeaders;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> m_varyingRequestHeaders;
 
     std::optional<WebCore::ResourceRequest> m_redirectRequest;
     mutable RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;

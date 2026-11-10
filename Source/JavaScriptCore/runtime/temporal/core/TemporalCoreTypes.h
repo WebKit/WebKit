@@ -42,7 +42,7 @@ enum class TemporalErrorKind : uint8_t {
 // TemporalError — temporal_rs: TemporalError (src/error.rs)
 struct TemporalError {
     TemporalErrorKind kind;
-    String message;
+    RefPtr<StringImpl> message;
 };
 
 // TemporalResult<T> — temporal_rs: TemporalResult<T> = Result<T, TemporalError>
@@ -51,10 +51,10 @@ using TemporalResult = std::expected<T, TemporalError>;
 
 // Convenience constructors — temporal_rs: TemporalError::range() / TemporalError::type_()
 namespace TemporalCore {
-inline TemporalError rangeError(ASCIILiteral msg) { return { TemporalErrorKind::RangeError, String(msg) }; }
-inline TemporalError rangeError(String msg) { return { TemporalErrorKind::RangeError, WTF::move(msg) }; }
-inline TemporalError typeError(ASCIILiteral msg) { return { TemporalErrorKind::TypeError, String(msg) }; }
-inline TemporalError typeError(String msg) { return { TemporalErrorKind::TypeError, WTF::move(msg) }; }
+inline TemporalError rangeError(ASCIILiteral msg) { return { TemporalErrorKind::RangeError, StringImpl::create(msg) }; }
+inline TemporalError rangeError(RefPtr<StringImpl> msg) { return { TemporalErrorKind::RangeError, WTF::move(msg) }; }
+inline TemporalError typeError(ASCIILiteral msg) { return { TemporalErrorKind::TypeError, StringImpl::create(msg) }; }
+inline TemporalError typeError(RefPtr<StringImpl> msg) { return { TemporalErrorKind::TypeError, WTF::move(msg) }; }
 
 // Shared error messages for ICU failure paths in the calendar/time-zone bridges.
 inline constexpr ASCIILiteral icuOpenCalendarFailed = "Failed to open ICU calendar"_s;

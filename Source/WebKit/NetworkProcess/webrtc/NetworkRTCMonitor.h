@@ -69,7 +69,7 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
     static std::optional<RTCNetwork::IPAddress> getDefaultIPAddress(bool useIPv4);
-    static HashMap<String, RTCNetwork> gatherNetworkMap();
+    static HashMap<RefPtr<StringImpl>, RTCNetwork> gatherNetworkMap();
     static bool hasNetworkChanged(const RTCNetwork&, const RTCNetwork&);
     static bool sortNetworks(const RTCNetwork &, const RTCNetwork &);
     static bool isEqual(const RTCNetwork::InterfaceAddress&, const RTCNetwork::InterfaceAddress&);
@@ -87,7 +87,7 @@ private:
 
 class IPAddressCallbackAggregator final : public ThreadSafeRefCounted<IPAddressCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
 public:
-    using Callback = CompletionHandler<void(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<String, RTCNetwork>&&)>;
+    using Callback = CompletionHandler<void(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<RefPtr<StringImpl>, RTCNetwork>&&)>;
     static Ref<IPAddressCallbackAggregator> create(Callback&& callback) { return adoptRef(*new IPAddressCallbackAggregator(WTF::move(callback))); }
 
     ~IPAddressCallbackAggregator()
@@ -97,7 +97,7 @@ public:
 
     void setIPv4(RTCNetwork::IPAddress&& ipv4) { m_ipv4 = WTF::move(ipv4); }
     void setIPv6(RTCNetwork::IPAddress&& ipv6) { m_ipv6 = WTF::move(ipv6); }
-    void setNetworkMap(HashMap<String, RTCNetwork>&& networkMap) { m_networkMap = crossThreadCopy(WTF::move(networkMap)); }
+    void setNetworkMap(HashMap<RefPtr<StringImpl>, RTCNetwork>&& networkMap) { m_networkMap = crossThreadCopy(WTF::move(networkMap)); }
 
 private:
     explicit IPAddressCallbackAggregator(Callback&& callback)
@@ -107,7 +107,7 @@ private:
 
     Callback m_callback;
 
-    HashMap<String, RTCNetwork> m_networkMap;
+    HashMap<RefPtr<StringImpl>, RTCNetwork> m_networkMap;
     RTCNetwork::IPAddress m_ipv4;
     RTCNetwork::IPAddress m_ipv6;
 };

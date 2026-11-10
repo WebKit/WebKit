@@ -43,7 +43,7 @@ public:
     }
 };
 
-static Ref<UserAgentStringData> parse(const String& userAgent)
+static Ref<UserAgentStringData> parse(StringImpl* userAgent)
 {
     auto data = UserAgentStringParser::create(userAgent)->parse();
     RELEASE_ASSERT(data);
@@ -52,21 +52,21 @@ static Ref<UserAgentStringData> parse(const String& userAgent)
 
 TEST_F(UserAgentStringParserTest, SafariBrowserVersionIsReported)
 {
-    auto data = parse("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"_s);
+    auto data = parse("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"_si);
     EXPECT_WK_STREQ("Safari", data->browserName);
     EXPECT_WK_STREQ("605.1.15", data->browserVersion);
 }
 
 TEST_F(UserAgentStringParserTest, FirefoxVersionNotClobberedByTrailingSafariToken)
 {
-    auto data = parse("Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0 Safari/605.1.15"_s);
+    auto data = parse("Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0 Safari/605.1.15"_si);
     EXPECT_WK_STREQ("Firefox", data->browserName);
     EXPECT_WK_STREQ("120.0", data->browserVersion);
 }
 
 TEST_F(UserAgentStringParserTest, ChromeBrowserVersionIsReported)
 {
-    auto data = parse("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"_s);
+    auto data = parse("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"_si);
     EXPECT_WK_STREQ("Google Chrome", data->browserName);
     EXPECT_WK_STREQ("120.0.0.0", data->browserVersion);
 }

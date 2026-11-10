@@ -769,7 +769,7 @@ static constexpr bool unreachableForValue = false;
         if (LOG_CHANNEL(channel).state != logChannelStateOff) { \
             WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
             commands; \
-            LOG(channel, "%s", stream.release().utf8()); \
+            LOG(channel, "%s", WTF::utf8(stream.release())); \
         } \
     } while (0)
 #endif
@@ -967,13 +967,13 @@ inline const char* wtfLogPriorityName(int priority)
 #define ALWAYS_LOG_WITH_STREAM(commands) do { \
         WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
         commands; \
-        SAFE_WTFLOGALWAYS("%s", stream.release().utf8()); \
+        SAFE_WTFLOGALWAYS("%s", WTF::utf8(stream.release())); \
     } while (0)
 
 #define WTF_ALWAYS_LOG(commands) do { \
         WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
         stream << commands; \
-        SAFE_WTFLOGALWAYS("%s", stream.release().utf8()); \
+        SAFE_WTFLOGALWAYS("%s", WTF::utf8(stream.release())); \
     } while (0)
 
 /* RELEASE_ASSERT */

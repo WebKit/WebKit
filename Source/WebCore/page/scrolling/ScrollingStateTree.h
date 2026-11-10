@@ -95,7 +95,7 @@ public:
         --m_scrollingNodeCount;
     }
 
-    WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
     FrameIdentifier rootFrameIdentifier() const { return *m_rootFrameIdentifier; }
     void setRootFrameIdentifier(std::optional<FrameIdentifier> frameID) { m_rootFrameIdentifier = frameID; }
 

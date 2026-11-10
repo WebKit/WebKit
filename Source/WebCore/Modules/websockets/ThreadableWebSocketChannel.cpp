@@ -136,15 +136,15 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     httpURL.setProtocol(url.protocolIs("ws"_s) ? "http"_s : "https"_s);
     auto requestOrigin = SecurityOrigin::create(httpURL);
     if (requestOrigin->isPotentiallyTrustworthy() && !document.quirks().shouldDisableFetchMetadata()) {
-        request.addHTTPHeaderField(HTTPHeaderName::SecFetchDest, "websocket"_s);
-        request.addHTTPHeaderField(HTTPHeaderName::SecFetchMode, "websocket"_s);
+        request.addHTTPHeaderField(HTTPHeaderName::SecFetchDest, "websocket"_si);
+        request.addHTTPHeaderField(HTTPHeaderName::SecFetchMode, "websocket"_si);
 
         if (protect(document.securityOrigin())->isSameOriginAs(requestOrigin.get()))
-            request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-origin"_s);
+            request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-origin"_si);
         else if (protect(document.securityOrigin())->isSameSiteAs(requestOrigin))
-            request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-site"_s);
+            request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-site"_si);
         else
-            request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "cross-site"_s);
+            request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "cross-site"_si);
     }
 
     return request;

@@ -34,7 +34,7 @@
 
 namespace WebCore::Style {
 
-NODELETE static RefPtr<Element> findElementForUserAgentPart(Element& host, const AtomString& userAgentPartName)
+NODELETE static RefPtr<Element> findElementForUserAgentPart(Element& host, AtomStringImpl* userAgentPartName)
 {
     auto* shadowRoot = host.userAgentShadowRoot();
     if (!shadowRoot)
@@ -46,7 +46,7 @@ NODELETE static RefPtr<Element> findElementForUserAgentPart(Element& host, const
     return nullptr;
 }
 
-ResolvedComputedPseudoElement resolveComputedPseudoElement(Element& element, const WTF::String& pseudoElement)
+ResolvedComputedPseudoElement resolveComputedPseudoElement(Element& element, StringImpl* pseudoElement)
 {
     auto identifier = CSSSelectorParser::parsePseudoElement(pseudoElement, CSSSelectorParserContext { protect(element.document()) });
     if (!identifier)

@@ -128,7 +128,7 @@ void JSCallbackObject<Parent>::init(JSGlobalObject* globalObject)
 
     if (hasConvertToType) {
         this->putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
-            JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, customToPrimitive, ImplementationVisibility::Public),
+            JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_si, customToPrimitive, ImplementationVisibility::Public),
             static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
     
@@ -211,8 +211,8 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
         return true;
 
     if (propertyName.uid() == vm.propertyNames->toStringTagSymbol.impl()) {
-        String className = thisObject->classRef()->className();
-        if (className.isEmpty())
+        RefPtr<StringImpl> className = thisObject->classRef()->className();
+        if (isEmpty(className))
             className = thisObject->className();
         slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), jsString(vm, WTF::move(className)));
         return true;
@@ -620,7 +620,7 @@ void JSCallbackObject<Parent>::getOwnSpecialPropertyNames(JSObject* object, JSGl
                 StaticValueEntry* entry = it->value.get();
                 if (entry->getProperty && (mode == DontEnumPropertiesMode::Include || !(entry->attributes & kJSPropertyAttributeDontEnum))) {
                     ASSERT(!name->isSymbol());
-                    propertyNames.add(Identifier::fromString(vm, String(name)));
+                    propertyNames.add(Identifier::fromString(vm, RefPtr<StringImpl>(name)));
                 }
             }
         }
@@ -633,7 +633,7 @@ void JSCallbackObject<Parent>::getOwnSpecialPropertyNames(JSObject* object, JSGl
                 StaticFunctionEntry* entry = it->value.get();
                 if (mode == DontEnumPropertiesMode::Include || !(entry->attributes & kJSPropertyAttributeDontEnum)) {
                     ASSERT(!name->isSymbol());
-                    propertyNames.add(Identifier::fromString(vm, String(name)));
+                    propertyNames.add(Identifier::fromString(vm, RefPtr<StringImpl>(name)));
                 }
             }
         }
@@ -726,7 +726,7 @@ EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetterImpl(JSGlobalObject
         }
     }
 
-    return JSValue::encode(throwException(globalObject, scope, createReferenceError(globalObject, "Static function property defined with NULL callAsFunction callback."_s)));
+    return JSValue::encode(throwException(globalObject, scope, createReferenceError(globalObject, "Static function property defined with NULL callAsFunction callback."_si)));
 }
 
 template <class Parent>
@@ -761,7 +761,7 @@ EncodedJSValue JSCallbackObject<Parent>::callbackGetterImpl(JSGlobalObject* glob
         }
     }
 
-    return JSValue::encode(throwException(globalObject, scope, createReferenceError(globalObject, "hasProperty callback returned true for a property that doesn't exist."_s)));
+    return JSValue::encode(throwException(globalObject, scope, createReferenceError(globalObject, "hasProperty callback returned true for a property that doesn't exist."_si)));
 }
 
 } // namespace JSC

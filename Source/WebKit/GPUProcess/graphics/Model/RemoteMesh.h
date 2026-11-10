@@ -93,7 +93,7 @@ private:
 
     void destruct();
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&);
     void removeModel(WebCore::NodeIdentifier);
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&, CompletionHandler<void(bool)>&&);

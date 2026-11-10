@@ -579,5 +579,40 @@ TEST(AsyncFunction, TransientActivationConsumedDuringForcedUserGestureIsNotResto
 
 #endif // PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION) || PLATFORM(MAC)
 
+// An image document has no text decoder, so its charset is null. evaluateJavaScript and
+// callAsyncJavaScript create the script fetcher from the document charset.
+static RetainPtr<TestWKWebView> webViewWithImageDocument()
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]];
+    return webView;
+}
+
+TEST(AsyncFunction, ImageDocument)
+{
+    // callAsyncJavaScript first, in its own web view, so that it is the first script run in the image document.
+    {
+        RetainPtr webView = webViewWithImageDocument();
+        NSError *error = nil;
+        id result = [webView objectByCallingAsyncFunction:@"return document.body.firstChild.tagName + ':' + value" withArguments:@{ @"value" : @42 } error:&error];
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ("IMG:42", result);
+
+        error = nil;
+        result = [webView objectByCallingAsyncFunction:@"return await new Promise((resolve) => setTimeout(() => resolve(document.images.length), 0))" withArguments:nil error:&error];
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@1]);
+    }
+
+    // evaluateJavaScript, in a separate web view.
+    {
+        RetainPtr webView = webViewWithImageDocument();
+        EXPECT_WK_STREQ("IMG", [webView stringByEvaluatingJavaScript:@"document.body.firstChild.tagName"]);
+        EXPECT_WK_STREQ("UTF-8", [webView stringByEvaluatingJavaScript:@"document.characterSet"]);
+    }
+}
+
 } // namespace TestWebKitAPI
 

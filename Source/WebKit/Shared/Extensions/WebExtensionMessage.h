@@ -38,7 +38,7 @@ namespace WebKit {
 // A message is either a JSON string or a structured clone.
 struct WebExtensionMessage {
     WebExtensionMessage() = default;
-    WebExtensionMessage(String json)
+    WebExtensionMessage(RefPtr<StringImpl> json)
         : value(WTF::move(json))
     {
     }
@@ -48,14 +48,14 @@ struct WebExtensionMessage {
     {
     }
 
-    WebExtensionMessage(Variant<String, Ref<WebCore::SerializedScriptValue>>&& value)
+    WebExtensionMessage(Variant<RefPtr<StringImpl>, Ref<WebCore::SerializedScriptValue>>&& value)
         : value(WTF::move(value))
     {
     }
 
-    std::optional<String> json() const
+    std::optional<RefPtr<StringImpl>> json() const
     {
-        if (auto* string = std::get_if<String>(&value))
+        if (auto* string = std::get_if<RefPtr<StringImpl>>(&value))
             return *string;
         return std::nullopt;
     }
@@ -74,13 +74,13 @@ struct WebExtensionMessage {
     size_t length() const
     {
         if (auto json = this->json())
-            return json->length();
+            return WTF::length(*json);
         if (RefPtr structuredClone = this->structuredClone())
             return structuredClone->wireBytes().size();
         return 0;
     }
 
-    Variant<String, Ref<WebCore::SerializedScriptValue>> value;
+    Variant<RefPtr<StringImpl>, Ref<WebCore::SerializedScriptValue>> value;
 };
 
 } // namespace WebKit

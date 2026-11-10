@@ -65,7 +65,7 @@ public:
     NODELETE WritableStream& writable();
     JSC::JSValue options(JSC::JSGlobalObject&);
 
-    void generateKeyFrame(const String&, Ref<DeferredPromise>&&);
+    void generateKeyFrame(StringImpl*, Ref<DeferredPromise>&&);
     void sendKeyFrameRequest(Ref<DeferredPromise>&&);
 
     void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }

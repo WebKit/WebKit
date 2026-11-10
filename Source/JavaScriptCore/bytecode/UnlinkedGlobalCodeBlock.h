@@ -45,8 +45,8 @@ public:
 
     StringImpl* sourceURLDirective() const { return m_sourceURLDirective.get(); }
     StringImpl* sourceMappingURLDirective() const { return m_sourceMappingURLDirective.get(); }
-    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL.impl(); }
-    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL.impl(); }
+    void setSourceURLDirective(StringImpl* sourceURL) { m_sourceURLDirective = sourceURL; }
+    void setSourceMappingURLDirective(StringImpl* sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
 
     CodeFeatures codeFeatures() const { return m_features; }
     bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }

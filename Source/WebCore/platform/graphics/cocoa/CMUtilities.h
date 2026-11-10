@@ -95,7 +95,7 @@ WEBCORE_EXPORT AudioChannelLayoutWithSize channelLayoutFromMediaChannelLayout(co
 // Converts back a layout created by channelLayoutFromMediaChannelLayout().
 WEBCORE_EXPORT std::optional<MediaChannelLayout> mediaChannelLayoutFromChannelLayout(const AudioChannelLayout&);
 // Retrieve channel layout name string for debugging.
-WEBCORE_EXPORT String channelLayoutDescription(UInt32);
+WEBCORE_EXPORT RefPtr<StringImpl> channelLayoutDescription(UInt32);
 
 class PacketDurationParser final {
     WTF_MAKE_TZONE_ALLOCATED(PacketDurationParser);

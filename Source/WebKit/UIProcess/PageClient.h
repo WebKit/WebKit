@@ -322,7 +322,7 @@ public:
 
     virtual void preferencesDidChange() = 0;
 
-    virtual void toolTipChanged(const String&, const String&) = 0;
+    virtual void toolTipChanged(StringImpl*, StringImpl*) = 0;
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Adopt the WKUIDelegatePrivate callback on iOS and remove this.
@@ -331,7 +331,7 @@ public:
 
     virtual void didStartProvisionalLoadForMainFrame() { };
     virtual void didFailProvisionalLoadForMainFrame() { };
-    virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
+    virtual void didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider) = 0;
 
 #if ENABLE(PDF_HUD)
     virtual void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&) = 0;
@@ -394,7 +394,7 @@ public:
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
 #if PLATFORM(COCOA)
     virtual void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, pid_t) = 0;
-    virtual bool executeSavedCommandBySelector(const String& selector) = 0;
+    virtual bool executeSavedCommandBySelector(StringImpl* selector) = 0;
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
@@ -425,7 +425,7 @@ public:
 #endif
 
 #if USE(APPKIT)
-    virtual void setPromisedDataForImage(const String& pasteboardName, Ref<WebCore::FragmentedSharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& originIdentifier) = 0;
+    virtual void setPromisedDataForImage(StringImpl* pasteboardName, Ref<WebCore::FragmentedSharedBuffer>&& imageBuffer, StringImpl* filename, StringImpl* extension, StringImpl* title, StringImpl* url, StringImpl* visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, StringImpl* originIdentifier) = 0;
 #endif
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
@@ -438,7 +438,7 @@ public:
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
 #if PLATFORM(IOS_FAMILY)
-    virtual void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) = 0;
+    virtual void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) = 0;
     virtual void relayAriaNotifyNotification(const WebCore::AriaNotifyData&) = 0;
     virtual void relayLiveRegionNotification(const WebCore::LiveRegionAnnouncementData&) = 0;
 #endif
@@ -508,7 +508,7 @@ public:
     virtual RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) = 0;
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    virtual Ref<WebCore::ValidationBubble> createValidationBubble(String&& message, const WebCore::ValidationBubble::Settings&) = 0;
+    virtual Ref<WebCore::ValidationBubble> createValidationBubble(RefPtr<StringImpl>&& message, const WebCore::ValidationBubble::Settings&) = 0;
 #endif
 
     virtual bool shouldSuppressFormValidationBubble() const { return false; }
@@ -544,17 +544,17 @@ public:
     virtual void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) = 0;
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
-    virtual Vector<String> dictationAlternatives(WebCore::DictationContext) = 0;
+    virtual Vector<RefPtr<StringImpl>> dictationAlternatives(WebCore::DictationContext) = 0;
     virtual PlatformTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) = 0;
 #endif
 
 #if PLATFORM(MAC)
-    virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) = 0;
+    virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacementString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings) = 0;
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) = 0;
-    virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) = 0;
-    virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString) = 0;
+    virtual RefPtr<StringImpl> dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) = 0;
+    virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, StringImpl* replacedString, StringImpl* replacementString) = 0;
     virtual void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle) = 0;
-    virtual void handleControlledElementIDResponse(const String&) = 0;
+    virtual void handleControlledElementIDResponse(StringImpl*) = 0;
 
     virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
 
@@ -629,13 +629,13 @@ public:
     virtual bool isFocusingElement() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, KeyEventInterpretationContext&&) = 0;
     virtual void saveImageToLibrary(const Ref<WebCore::SharedBuffer>&) = 0;
-    virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) = 0;
+    virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, StringImpl*) = 0;
     virtual void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&) = 0;
     virtual WebCore::InteractiveWidgetValue viewportMetaTagInteractiveWidget() const = 0;
     virtual void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) = 0;
     virtual void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>) = 0;
     virtual void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>) = 0;
-    virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
+    virtual Vector<RefPtr<StringImpl>> mimeTypesWithCustomContentProviders() = 0;
 
     virtual void hardwareKeyboardAvailabilityChanged() = 0;
 
@@ -661,7 +661,7 @@ public:
     virtual WebCore::Color insertionPointColor() = 0;
     virtual bool isScreenBeingCaptured() = 0;
 
-    virtual String sceneID() = 0;
+    virtual RefPtr<StringImpl> sceneID() = 0;
 
     virtual UIScreen *screen() = 0;
 
@@ -686,7 +686,7 @@ public:
 #endif
 
     // Custom representations.
-    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) = 0;
+    virtual void didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t>) = 0;
 
     virtual void navigationGestureDidBegin() = 0;
     virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) = 0;
@@ -735,11 +735,11 @@ public:
     virtual bool hasResizableWindows() const { return false; }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
     virtual void computeHasVisualSearchResults(const URL&, WebCore::ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
-    virtual void translateAccessibilityAnnouncementStrings(Vector<String>&&, String&&, CompletionHandler<void(Vector<String>&&)>&& completion) { completion({ }); }
+    virtual void translateAccessibilityAnnouncementStrings(Vector<RefPtr<StringImpl>>&&, RefPtr<StringImpl>&&, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion) { completion({ }); }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     virtual void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, const FrameInfoData&, WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&& completionHandler) { completionHandler(WebCore::MediaControlsContextMenuItem::invalidID); }
@@ -784,7 +784,7 @@ public:
     virtual void didChangeLocalInspectorAttachment() { }
 
 #if USE(QUICK_LOOK)
-    virtual void requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&&) = 0;
+    virtual void requestPasswordForQuickLookDocument(StringImpl* fileName, WTF::Function<void(StringImpl*)>&&) = 0;
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
@@ -796,10 +796,10 @@ public:
     virtual void didReceiveInteractiveModelElement(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>) = 0;
 #endif
 
-    virtual void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) = 0;
+    virtual void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect& elementRect, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void didInsertAttachment(API::Attachment&, const String& source) { }
+    virtual void didInsertAttachment(API::Attachment&, StringImpl* source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }
     virtual void didInvalidateDataForAttachment(API::Attachment&) { }
 #if PLATFORM(IOS_FAMILY)
@@ -883,7 +883,7 @@ public:
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    virtual String spatialTrackingLabel() const = 0;
+    virtual RefPtr<StringImpl> spatialTrackingLabel() const = 0;
 #endif
 
 #if ENABLE(GAMEPAD)

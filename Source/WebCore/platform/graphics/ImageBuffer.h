@@ -228,7 +228,7 @@ public:
     WEBCORE_EXPORT void setVolatileAndPurgeForTesting();
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
-    WEBCORE_EXPORT virtual String debugDescription() const;
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> debugDescription() const;
 
     WEBCORE_EXPORT virtual ImageBufferBackendSharing* toBackendSharing();
 

@@ -48,7 +48,7 @@ void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecUserDefined::decode(std::span<const uint8_t> bytes, bool, bool, bool&)
+RefPtr<StringImpl> TextCodecUserDefined::decode(std::span<const uint8_t> bytes, bool, bool, bool&)
 {
     StringBuilder result;
     result.reserveCapacity(bytes.size());

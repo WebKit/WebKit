@@ -48,11 +48,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpScriptTransform);
 ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlobalObject& state, Worker& worker, JSC::JSValue options, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     if (!worker.scriptExecutionContext())
-        return Exception { ExceptionCode::InvalidStateError, "Worker frame is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Worker frame is detached"_si };
 
     RefPtr context = downcast<JSDOMGlobalObject>(&state)->scriptExecutionContext();
     if (!context)
-        return Exception { ExceptionCode::InvalidStateError, "Invalid context"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Invalid context"_si };
 
     Vector<Ref<MessagePort>> transferredPorts;
     auto serializedOptions = SerializedScriptValue::create(state, options, WTF::move(transfer), transferredPorts, SerializationForStorage::No);

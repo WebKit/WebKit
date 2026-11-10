@@ -466,7 +466,7 @@ IntDegrees LocalFrame::orientation() const
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
 
-static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& labels)
+static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<RefPtr<StringImpl>>& labels)
 {
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
@@ -479,7 +479,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
 
         bool startsWithWordCharacter = false;
         bool endsWithWordCharacter = false;
-        if (label.length()) {
+        if (length(label)) {
             StringView labelView { label };
             startsWithWordCharacter = wordRegExp.get().match(labelView.left(1)) >= 0;
             endsWithWordCharacter = wordRegExp.get().match(labelView.right(1)) >= 0;
@@ -493,7 +493,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     return JSC::Yarr::RegularExpression(pattern.toString(), { JSC::Yarr::Flags::IgnoreCase });
 }
 
-String LocalFrame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
+RefPtr<StringImpl> LocalFrame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
 {
     if (RefPtr aboveCell = cell->cellAbove()) {
         // search within the above cell we found for a match
@@ -502,25 +502,25 @@ String LocalFrame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& 
             if (!textNode->renderer() || textNode->renderer()->usedStyle().visibility() != UsedVisibility::Visible)
                 continue;
             // For each text chunk, run the regexp
-            String nodeString = textNode->data();
+            RefPtr<StringImpl> nodeString = textNode->data();
             int pos = regExp.searchRev(nodeString);
             if (pos >= 0) {
                 if (resultDistanceFromStartOfCell)
                     *resultDistanceFromStartOfCell = lengthSearched;
-                return nodeString.substring(pos, regExp.matchedLength());
+                return substring(nodeString, pos, regExp.matchedLength());
             }
-            lengthSearched += nodeString.length();
+            lengthSearched += length(nodeString);
         }
     }
 
     // Any reason in practice to search all cells in that are above cell?
     if (resultDistanceFromStartOfCell)
         *resultDistanceFromStartOfCell = notFound;
-    return String();
+    return nullptr;
 }
 
 // FIXME: This should take an Element&.
-String LocalFrame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
+RefPtr<StringImpl> LocalFrame::searchForLabelsBeforeElement(const Vector<RefPtr<StringImpl>>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
     ASSERT(element);
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
@@ -552,8 +552,8 @@ String LocalFrame::searchForLabelsBeforeElement(const Vector<String>& labels, El
         if (n->hasTagName(tdTag) && !startingTableCell)
             startingTableCell = downcast<HTMLTableCellElement>(n);
         else if (is<HTMLTableRowElement>(*n) && startingTableCell) {
-            String result = searchForLabelsAboveCell(regExp, startingTableCell.get(), resultDistance);
-            if (!result.isEmpty()) {
+            RefPtr<StringImpl> result = searchForLabelsAboveCell(regExp, startingTableCell.get(), resultDistance);
+            if (!isEmpty(result)) {
                 if (resultIsInCellAbove)
                     *resultIsInCellAbove = true;
                 return result;
@@ -561,39 +561,39 @@ String LocalFrame::searchForLabelsBeforeElement(const Vector<String>& labels, El
             searchedCellAbove = true;
         } else if (CheckedPtr renderText = dynamicDowncast<RenderText>(n->renderer()); renderText && renderText->usedStyle().visibility() == UsedVisibility::Visible) {
             // For each text chunk, run the regexp
-            String nodeString = n->nodeValue();
+            RefPtr<StringImpl> nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes
-            if (lengthSearched + nodeString.length() > maxCharsSearched)
-                nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
+            if (lengthSearched + length(nodeString) > maxCharsSearched)
+                nodeString = right(nodeString, charsSearchedThreshold - lengthSearched);
             int pos = regExp.searchRev(nodeString);
             if (pos >= 0) {
                 if (resultDistance)
                     *resultDistance = lengthSearched;
-                return nodeString.substring(pos, regExp.matchedLength());
+                return substring(nodeString, pos, regExp.matchedLength());
             }
-            lengthSearched += nodeString.length();
+            lengthSearched += length(nodeString);
         }
     }
 
     // If we started in a cell, but bailed because we found the start of the form or the
     // previous element, we still might need to search the row above us for a label.
     if (startingTableCell && !searchedCellAbove) {
-        String result = searchForLabelsAboveCell(regExp, startingTableCell.get(), resultDistance);
-        if (!result.isEmpty()) {
+        RefPtr<StringImpl> result = searchForLabelsAboveCell(regExp, startingTableCell.get(), resultDistance);
+        if (!isEmpty(result)) {
             if (resultIsInCellAbove)
                 *resultIsInCellAbove = true;
             return result;
         }
     }
-    return String();
+    return nullptr;
 }
 
-static String matchLabelsAgainstString(const Vector<String>& labels, const String& stringToMatch)
+static RefPtr<StringImpl> matchLabelsAgainstString(const Vector<RefPtr<StringImpl>>& labels, StringImpl* stringToMatch)
 {
-    if (stringToMatch.isEmpty())
-        return String();
+    if (isEmpty(stringToMatch))
+        return nullptr;
 
-    String mutableStringToMatch = stringToMatch;
+    RefPtr<StringImpl> mutableStringToMatch = stringToMatch;
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"_s), " "_s);
@@ -619,18 +619,18 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     } while (pos != -1);
     
     if (bestPos != -1)
-        return mutableStringToMatch.substring(bestPos, bestLength);
-    return String();
+        return substring(mutableStringToMatch, bestPos, bestLength);
+    return nullptr;
 }
     
-String LocalFrame::matchLabelsAgainstElement(const Vector<String>& labels, Element* element)
+RefPtr<StringImpl> LocalFrame::matchLabelsAgainstElement(const Vector<RefPtr<StringImpl>>& labels, Element* element)
 {
     // Match against the name element, then against the id element if no match is found for the name element.
     // See 7538330 for one popular site that benefits from the id element check.
     // FIXME: This code is mirrored in FrameMac.mm. It would be nice to make the Mac code call the platform-agnostic
     // code, which would require converting the NSArray of NSStrings to a Vector of Strings somewhere along the way.
-    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->getNameAttribute());
-    if (!resultFromNameAttribute.isEmpty())
+    RefPtr<StringImpl> resultFromNameAttribute = matchLabelsAgainstString(labels, element->getNameAttribute());
+    if (!isEmpty(resultFromNameAttribute))
         return resultFromNameAttribute;
     
     return matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(idAttr));
@@ -812,7 +812,7 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
 #if ENABLE(APP_BOUND_DOMAINS)
     if (loader->client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (RefPtr document = this->document())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_si);
         FRAME_RELEASE_LOG_ERROR(Loading, "injectUserScriptImmediately: Ignoring user script injection for non app-bound domain");
         return;
     }
@@ -856,7 +856,7 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     page->setHasInjectedUserScript();
     loader->client().willInjectUserScript(world);
 
-    WTFBeginSignpost(this, UserScript, "injectUserScript: %" PRIVATE_LOG_STRING " (%u bytes, top frame only %d, doc start %d)", script.debugDescription().utf8(), script.source().length(), script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly, script.injectionTime() == UserScriptInjectionTime::DocumentStart);
+    WTFBeginSignpost(this, UserScript, "injectUserScript: %" PRIVATE_LOG_STRING " (%u bytes, top frame only %d, doc start %d)", utf8(script.debugDescription()), length(script.source()), script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly, script.injectionTime() == UserScriptInjectionTime::DocumentStart);
     protect(this->script())->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), JSC::SourceTaintedOrigin::Untainted, URL(script.url())), world);
     WTFEndSignpost(this, UserScript);
 }
@@ -947,9 +947,9 @@ void LocalFrame::willBeReplacedByRemoteFrame()
 #endif
 }
 
-String LocalFrame::displayStringModifiedByEncoding(const String& str) const
+RefPtr<StringImpl> LocalFrame::displayStringModifiedByEncoding(StringImpl* str) const
 {
-    return document() ? protect(document())->displayStringModifiedByEncoding(str) : str;
+    return document() ? protect(document())->displayStringModifiedByEncoding(str) : RefPtr { str };
 }
 
 VisiblePosition LocalFrame::visiblePositionForPoint(const IntPoint& framePoint) const
@@ -1087,10 +1087,10 @@ URL LocalFrame::urlForConsoleLog() const
     return document->url();
 }
 
-String LocalFrame::trackedRepaintRectsAsText() const
+RefPtr<StringImpl> LocalFrame::trackedRepaintRectsAsText() const
 {
     if (!m_view)
-        return String();
+        return nullptr;
     return protect(view())->trackedRepaintRectsAsText();
 }
 
@@ -1290,7 +1290,7 @@ void LocalFrame::selfOnlyDeref()
     deref();
 }
 
-String LocalFrame::debugDescription() const
+RefPtr<StringImpl> LocalFrame::debugDescription() const
 {
     StringBuilder builder;
 
@@ -1423,21 +1423,21 @@ bool LocalFrame::requestSkipUserActivationCheckForStorageAccess(const Registrabl
     return true;
 }
 
-String LocalFrame::customUserAgent() const
+RefPtr<StringImpl> LocalFrame::customUserAgent() const
 {
     if (auto* documentLoader = loader().activeDocumentLoader())
         return documentLoader->customUserAgent();
     return { };
 }
 
-String LocalFrame::customUserAgentAsSiteSpecificQuirks() const
+RefPtr<StringImpl> LocalFrame::customUserAgentAsSiteSpecificQuirks() const
 {
     if (auto* documentLoader = loader().activeDocumentLoader())
         return documentLoader->customUserAgentAsSiteSpecificQuirks();
     return { };
 }
 
-String LocalFrame::customNavigatorPlatform() const
+RefPtr<StringImpl> LocalFrame::customNavigatorPlatform() const
 {
     if (auto* documentLoader = loader().activeDocumentLoader())
         return documentLoader->customNavigatorPlatform();
@@ -1530,7 +1530,7 @@ void LocalFrame::reportMixedContentViolation(bool blocked, const URL& target) co
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-static String generateResourceMonitorErrorHTML(OptionSet<ColorScheme> colorScheme)
+static RefPtr<StringImpl> generateResourceMonitorErrorHTML(OptionSet<ColorScheme> colorScheme)
 {
 #if ENABLE(HEAVY_AD_UNLOADING)
     constexpr auto shieldIconSvg = R"(
@@ -1689,10 +1689,10 @@ void LocalFrame::showResourceMonitoringError()
     URL mainFrameURL;
     if (RefPtr page = this->page()) {
         mainFrameURL = page->mainFrameURL();
-        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Unloaded"_s, valueDictionaryForResult(true), ShouldSample::No);
+        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Unloaded"_si, valueDictionaryForResult(true), ShouldSample::No);
     }
 
-    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": unloading", url.isValid() ? url.string().utf8() : "invalid"_s, mainFrameURL.isValid() ? mainFrameURL.string().utf8() : "invalid"_s);
+    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": unloading", url.isValid() ? utf8(url.string()) : "invalid"_s, mainFrameURL.isValid() ? utf8(mainFrameURL.string()) : "invalid"_s);
 
     document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Error, makeString("Frame was unloaded because its network usage exceeded the limit: "_s, ResourceMonitorChecker::singleton().networkUsageThreshold(), " bytes, url="_s, url.string()));
 
@@ -1720,18 +1720,18 @@ void LocalFrame::reportResourceMonitoringWarning()
         url = document->url();
     if (RefPtr page = this->page()) {
         mainFrameURL = page->mainFrameURL();
-        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, valueDictionaryForResult(false), ShouldSample::No);
+        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_si, valueDictionaryForResult(false), ShouldSample::No);
     }
 
-    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": not unloading due to global limits", url.isValid() ? url.string().utf8() : "invalid"_s, mainFrameURL.isValid() ? mainFrameURL.string().utf8() : "invalid"_s);
+    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": not unloading due to global limits", url.isValid() ? utf8(url.string()) : "invalid"_s, mainFrameURL.isValid() ? utf8(mainFrameURL.string()) : "invalid"_s);
 
     if (RefPtr document = this->document())
-        document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Warning, "Frame's network usage exceeded the limit."_s);
+        document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Warning, "Frame's network usage exceeded the limit."_si);
 }
 
 #endif
 
-static String generateFrameMemoryMonitorErrorHTML(OptionSet<ColorScheme> colorScheme)
+static RefPtr<StringImpl> generateFrameMemoryMonitorErrorHTML(OptionSet<ColorScheme> colorScheme)
 {
     constexpr auto lightAndDarkColorScheme = ":root { color-scheme: light dark } "_s;
     constexpr auto darkOnlyColorScheme = ":root { color-scheme: only dark } "_s;
@@ -1827,12 +1827,12 @@ std::optional<AgentClusterIdentifier> LocalFrame::frameAgentClusterIdentifier() 
     return document ? document->agentClusterIdentifier() : std::nullopt;
 }
 
-String LocalFrame::frameURLProtocol() const
+RefPtr<StringImpl> LocalFrame::frameURLProtocol() const
 {
     if (RefPtr document = this->document())
         return document->url().protocol().toString();
 
-    return ""_s;
+    return ""_si;
 }
 
 #if PLATFORM(COCOA)

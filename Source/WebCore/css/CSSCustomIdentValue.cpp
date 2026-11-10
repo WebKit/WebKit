@@ -42,7 +42,7 @@ CSSCustomIdentValue::CSSCustomIdentValue(CSS::CustomIdent&& customIdent)
 {
 }
 
-String CSSCustomIdentValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSCustomIdentValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_customIdent);
 }

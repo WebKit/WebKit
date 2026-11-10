@@ -46,7 +46,7 @@ public:
 
     TextBreakingPositionCache();
 
-    using Key = std::tuple<String, TextBreakingPositionContext, SecurityOriginData>;
+    using Key = std::tuple<RefPtr<StringImpl>, TextBreakingPositionContext, SecurityOriginData>;
     using List = Vector<unsigned, 8>;
     using WidthList = Vector<float>;
 
@@ -76,7 +76,7 @@ public:
 private:
     void evict();
     bool clearWidthsIfGenerationChanged();
-    NODELETE static size_t approximateEntrySizeBytes(const String& text, const Entry&);
+    NODELETE static size_t approximateEntrySizeBytes(StringImpl* text, const Entry&);
 
 private:
     using TextBreakingPositionMap = HashMap<Key, std::unique_ptr<Entry>>;

@@ -41,7 +41,7 @@ public:
     explicit DocumentScope(Document&);
     ~DocumentScope();
 
-    void setPreferredStylesheetSetName(const WTF::String&);
+    void setPreferredStylesheetSetName(StringImpl*);
 
     void releaseMemory();
 
@@ -115,7 +115,7 @@ private:
     bool invalidateForContainerDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext&);
 
-    WTF::String m_preferredStylesheetSetName;
+    RefPtr<StringImpl> m_preferredStylesheetSetName;
 
     RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     Vector<Ref<StyleRuleKeyframes>> m_viewTransitionKeyframes;

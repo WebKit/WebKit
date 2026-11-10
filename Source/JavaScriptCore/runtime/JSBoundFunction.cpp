@@ -313,12 +313,12 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
     return terminal;
 }
 
-String JSBoundFunction::nameStringWithoutGCSlow(VM& vm)
+RefPtr<StringImpl> JSBoundFunction::nameStringWithoutGCSlow(VM& vm)
 {
     AssertNoGC assertNoGC;
     unsigned nestingCount = 0;
     JSObject* cursor = m_targetFunction.get();
-    String terminal;
+    RefPtr<StringImpl> terminal;
     while (true) {
         ASSERT(cursor->inherits<JSFunction>()); // If this is not JSFunction, we eagerly materialized the name.
         if (!cursor->inherits<JSBoundFunction>()) {

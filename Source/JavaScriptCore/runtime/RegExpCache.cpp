@@ -38,14 +38,14 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RegExpCache);
 
-RegExp* RegExpCache::lookup(VM&, const WTF::String& patternString, OptionSet<Yarr::Flags> flags)
+RegExp* RegExpCache::lookup(VM&, StringImpl* patternString, OptionSet<Yarr::Flags> flags)
 {
     Locker locker { m_lock };
     RegExpKey key(flags, patternString);
     return m_weakCache.get(key);
 }
 
-RegExp* RegExpCache::lookupOrCreate(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
+RegExp* RegExpCache::lookupOrCreate(VM& vm, StringImpl* patternString, OptionSet<Yarr::Flags> flags)
 {
     RegExpKey key(flags, patternString);
     {
@@ -86,8 +86,8 @@ WeakHandleOwner::FinalizeResult RegExpCache::finalize(Handle<Unknown> handle, vo
 
 void RegExpCache::addToStrongCache(RegExp* regExp)
 {
-    String pattern = regExp->pattern();
-    if (pattern.length() > maxStrongCacheablePatternLength)
+    RefPtr<StringImpl> pattern = regExp->pattern();
+    if (length(pattern) > maxStrongCacheablePatternLength)
         return;
 
     m_strongCache[m_nextEntryInStrongCache] = regExp;

@@ -47,11 +47,11 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     CGFloat adjustedSize = initialFontSize;
     for (size_t i = 0; i < items.size(); ++i) {
         const OptionItem& item = items[i];
-        if (item.text.isEmpty())
+        if (isEmpty(item.text))
             continue;
 
         CGFloat actualFontSize = initialFontSize;
-        [item.text.createNSString() _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
+        [createNSString(item.text) _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
 
         if (actualFontSize > 0 && actualFontSize < adjustedSize)
             adjustedSize = actualFontSize;

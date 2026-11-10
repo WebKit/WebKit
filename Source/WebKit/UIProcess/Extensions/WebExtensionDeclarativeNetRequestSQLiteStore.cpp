@@ -42,42 +42,42 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionDeclarativeNetRequestSQLiteStore);
 
 static const SchemaVersion currentDeclarativeNetRequestSchemaVersion = 2;
 
-WebExtensionDeclarativeNetRequestSQLiteStore::WebExtensionDeclarativeNetRequestSQLiteStore(const String& uniqueIdentifier, WebExtensionDeclarativeNetRequestStorageType storageType, const String& directory, UsesInMemoryDatabase useInMemoryDatabase)
+WebExtensionDeclarativeNetRequestSQLiteStore::WebExtensionDeclarativeNetRequestSQLiteStore(StringImpl* uniqueIdentifier, WebExtensionDeclarativeNetRequestStorageType storageType, StringImpl* directory, UsesInMemoryDatabase useInMemoryDatabase)
     : WebExtensionSQLiteStore(uniqueIdentifier, directory, static_cast<bool>(useInMemoryDatabase))
     , m_storageType(storageType)
 {
     m_tableName = makeString(toString(m_storageType), "_rules"_s);
 }
 
-static Vector<String> ruleIdMapToString(Vector<double> ruleIDs)
+static Vector<RefPtr<StringImpl>> ruleIdMapToString(Vector<double> ruleIDs)
 {
     return ruleIDs.map([](auto& id) {
-        return String::number(id);
+        return makeString(id);
     });
 }
 
-void WebExtensionDeclarativeNetRequestSQLiteStore::updateRulesByRemovingIDs(Vector<double> ruleIDs, Ref<JSON::Array> rules, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
+void WebExtensionDeclarativeNetRequestSQLiteStore::updateRulesByRemovingIDs(Vector<double> ruleIDs, Ref<JSON::Array> rules, CompletionHandler<void(StringImpl* errorMessage)>&& completionHandler)
 {
-    deleteRules(ruleIDs, [protectedThis = Ref { *this }, ruleIDs = WTF::move(ruleIDs), rules = WTF::move(rules), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
+    deleteRules(ruleIDs, [protectedThis = Ref { *this }, ruleIDs = WTF::move(ruleIDs), rules = WTF::move(rules), completionHandler = WTF::move(completionHandler)](StringImpl* errorMessage) mutable {
+        if (!isEmpty(errorMessage)) {
             completionHandler(errorMessage);
             return;
         }
 
-        protectedThis->addRules(rules, [completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
+        protectedThis->addRules(rules, [completionHandler = WTF::move(completionHandler)](StringImpl* errorMessage) mutable {
             completionHandler(errorMessage);
         });
     });
 }
 
-void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rules, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
+void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rules, CompletionHandler<void(StringImpl* errorMessage)>&& completionHandler)
 {
     if (!rules->length()) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 
-    Vector<std::pair<double, String>> serializedRules;
+    Vector<std::pair<double, RefPtr<StringImpl>>> serializedRules;
     for (Ref ruleValue : rules.get()) {
         RefPtr rule = ruleValue->asObject();
         if (!rule || !rule->size()) {
@@ -85,7 +85,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
             continue;
         }
 
-        auto ruleID = rule->getInteger("id"_s);
+        auto ruleID = rule->getInteger("id"_si);
         ASSERT(ruleID);
         serializedRules.append({ *ruleID, rule->toJSONString() });
     }
@@ -94,12 +94,12 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ });
+                completionHandler(nullptr);
             });
             return;
         }
 
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, true)) {
             WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
@@ -107,7 +107,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
             return;
         }
 
-        ASSERT(errorMessage.isEmpty());
+        ASSERT(isEmpty(errorMessage));
 
         Borrow borrowedSerializedRules = serializedRules;
 
@@ -117,7 +117,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
 
         ASSERT(rulesIDs.size());
 
-        if (RefPtr rows = SQLiteDatabaseFetch(*(protectedThis->database()), makeString("SELECT id FROM "_s, protectedThis->m_tableName, " WHERE id in ("_s, makeStringByJoining(ruleIdMapToString(rulesIDs).span(), ", "_s), ")"_s))) {
+        if (RefPtr rows = SQLiteDatabaseFetch(*(protectedThis->database()), makeString("SELECT id FROM "_s, protectedThis->m_tableName, " WHERE id in ("_s, makeStringByJoining(ruleIdMapToString(rulesIDs).span(), ", "_si), ")"_s))) {
             Vector<double> existingRuleIDs;
             RefPtr row = rows->next();
 
@@ -129,9 +129,9 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
             if (existingRuleIDs.size() == 1)
                 errorMessage = makeString("Failed to add "_s, toString(protectedThis->m_storageType), " rules. Rule "_s, existingRuleIDs.first(), " does not have a unique ID."_s);
             else if (existingRuleIDs.size() >= 2)
-                errorMessage = makeString("Failed to add "_s, toString(protectedThis->m_storageType), " rules. Some rules do not have unique IDs ("_s, makeStringByJoining(ruleIdMapToString(rulesIDs).span(), ", "_s), ")"_s);
+                errorMessage = makeString("Failed to add "_s, toString(protectedThis->m_storageType), " rules. Some rules do not have unique IDs ("_s, makeStringByJoining(ruleIdMapToString(rulesIDs).span(), ", "_si), ")"_s);
 
-            if (!errorMessage.isEmpty()) {
+            if (!isEmpty(errorMessage)) {
                 WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                     completionHandler(errorMessage);
                 });
@@ -141,7 +141,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
 
         for (auto& [ruleID, ruleData] : borrowedSerializedRules) {
             errorMessage = protectedThis->insertRule(ruleID, ruleData, *(protectedThis->database()));
-            if (!errorMessage.isEmpty())
+            if (!isEmpty(errorMessage))
                 break;
         }
 
@@ -151,10 +151,10 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
     });
 }
 
-void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ruleIDs, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
+void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ruleIDs, CompletionHandler<void(StringImpl* errorMessage)>&& completionHandler)
 {
     if (!ruleIDs.size()) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 
@@ -162,12 +162,12 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ru
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ });
+                completionHandler(nullptr);
             });
             return;
         }
 
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, true)) {
             WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
@@ -175,24 +175,24 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ru
             return;
         }
 
-        ASSERT(errorMessage.isEmpty());
+        ASSERT(isEmpty(errorMessage));
         ASSERT(protectedThis->database());
 
-        DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->database()), makeString("DELETE FROM "_s, protectedThis->m_tableName, " WHERE id IN ("_s, makeStringByJoining(ruleIdMapToString(ruleIDs).span(), ", "_s), ")"_s));
+        DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->database()), makeString("DELETE FROM "_s, protectedThis->m_tableName, " WHERE id IN ("_s, makeStringByJoining(ruleIdMapToString(ruleIDs).span(), ", "_si), ")"_s));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to delete rules for extension %s.", protectedThis->uniqueIdentifier().utf8());
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete rules for extension %s.", utf8(protectedThis->uniqueIdentifier()));
             errorMessage = makeString("Failed to delete rules from "_s, toString(protectedThis->m_storageType), " rules storage."_s);
         }
 
-        String deleteDatabaseErrorMessage = protectedThis->deleteDatabaseIfEmpty();
+        RefPtr<StringImpl> deleteDatabaseErrorMessage = protectedThis->deleteDatabaseIfEmpty();
 
         WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(errorMessage.isEmpty() ? deleteDatabaseErrorMessage : errorMessage);
+            completionHandler(isEmpty(errorMessage) ? deleteDatabaseErrorMessage : errorMessage);
         });
     });
 }
 
-void WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, const String& errorMessage)>&& completionHandler)
+void WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, StringImpl* errorMessage)>&& completionHandler)
 {
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, ruleIDs = crossThreadCopy(ruleIDs), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
@@ -203,7 +203,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<do
             return;
         }
 
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         RefPtr rules = protectedThis->getRulesWithRuleIDsInternal(ruleIDs, errorMessage);
         WorkQueue::mainSingleton().dispatch([rules = WTF::move(rules), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(rules, errorMessage);
@@ -211,27 +211,27 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<do
     });
 }
 
-RefPtr<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDsInternal(Vector<double> ruleIDs, String& errorMessage)
+RefPtr<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDsInternal(Vector<double> ruleIDs, RefPtr<StringImpl>& errorMessage)
 {
     assertIsCurrent(queue());
 
     if (!openDatabaseIfNecessary(errorMessage, true))
         return { };
 
-    ASSERT(errorMessage.isEmpty());
+    ASSERT(isEmpty(errorMessage));
     ASSERT(database());
 
     RefPtr<WebExtensionSQLiteRowEnumerator> rows;
 
     if (ruleIDs.size()) {
         const Vector bindings = [&] {
-            Vector<String> bindings;
+            Vector<RefPtr<StringImpl>> bindings;
             for (size_t i = 0; i < ruleIDs.size(); i++)
                 bindings.append("?"_s);
             return bindings;
         }();
 
-        auto joinedBindings = makeStringByJoining(bindings.span(), ", "_s);
+        auto joinedBindings = makeStringByJoining(bindings.span(), ", "_si);
         auto query = makeString("SELECT * FROM "_s, m_tableName, " WHERE id IN ("_s, joinedBindings, ")"_s);
         RefPtr<API::Error> statementError;
         RefPtr statement = WebExtensionSQLiteStatement::create(*(database()), query, statementError);
@@ -270,13 +270,13 @@ Ref<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getKeysAndValuesF
     return results;
 }
 
-String WebExtensionDeclarativeNetRequestSQLiteStore::insertRule(double ruleID, const String& ruleData, Ref<WebExtensionSQLiteDatabase> database)
+RefPtr<StringImpl> WebExtensionDeclarativeNetRequestSQLiteStore::insertRule(double ruleID, StringImpl* ruleData, Ref<WebExtensionSQLiteDatabase> database)
 {
     assertIsCurrent(queue());
 
     DatabaseResult result = SQLiteDatabaseExecute(database, makeString("INSERT INTO "_s, m_tableName, " (id, rule) VALUES (?, ?)"_s), ruleID, ruleData);
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to insert %s rule for extension %s", toString(m_storageType).utf8(), uniqueIdentifier().utf8());
+        RELEASE_LOG_ERROR(Extensions, "Failed to insert %s rule for extension %s", utf8(toString(m_storageType)), utf8(uniqueIdentifier()));
         return makeString("Failed to add "_s, toString(m_storageType), " rule."_s);
     }
 
@@ -297,7 +297,7 @@ URL WebExtensionDeclarativeNetRequestSQLiteStore::databaseURL()
 
     ASSERT(m_storageType == WebExtensionDeclarativeNetRequestStorageType::Dynamic);
 
-    String databaseName = "DeclarativeNetRequestRules.db"_s;
+    RefPtr<StringImpl> databaseName = "DeclarativeNetRequestRules.db"_si;
 
     ASSERT(!directory().isEmpty());
 
@@ -311,7 +311,7 @@ DatabaseResult WebExtensionDeclarativeNetRequestSQLiteStore::createFreshDatabase
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("CREATE TABLE "_s, m_tableName, " (id INTEGER PRIMARY KEY NOT NULL, rule BLOB NOT NULL)"_s));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create %s database for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create %s database for extension %s: %s (%d)", utf8(m_tableName), utf8(uniqueIdentifier()), lastErrorMessage(), result);
     return result;
 }
 
@@ -341,7 +341,7 @@ DatabaseResult WebExtensionDeclarativeNetRequestSQLiteStore::resetDatabaseSchema
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("DROP TABLE IF EXISTS "_s, m_tableName));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset %s database schema for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset %s database schema for extension %s: %s (%d)", utf8(m_tableName), utf8(uniqueIdentifier()), lastErrorMessage(), result);
 
     return result;
 }

@@ -105,18 +105,18 @@ inline void SegmentedString::appendSubstring(Substring&& substring)
     }
 }
 
-void SegmentedString::pushBack(String&& string)
+void SegmentedString::pushBack(RefPtr<StringImpl>&& string)
 {
     // We never create a substring for an empty string.
-    ASSERT(string.length());
+    ASSERT(WTF::length(string));
 
     // The new substring we will create won't have the doNotExcludeLineNumbers set appropriately.
     // That was lost when the characters were consumed before pushing them back. But this does
     // not matter, because clients never use this for newlines. Catch that with this assertion.
-    ASSERT(!string.contains('\n'));
+    ASSERT(!contains(string, '\n'));
 
     // The characters in the string must be previously consumed characters from this segmented string.
-    ASSERT(string.length() <= numberOfCharactersConsumed());
+    ASSERT(WTF::length(string) <= numberOfCharactersConsumed());
 
     m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
     if (m_currentSubstring.length())
@@ -147,17 +147,17 @@ void SegmentedString::append(SegmentedString&& string)
         m_otherSubstrings.append(WTF::move(substring));
 }
 
-void SegmentedString::append(String&& string)
+void SegmentedString::append(RefPtr<StringImpl>&& string)
 {
     appendSubstring(WTF::move(string));
 }
 
-void SegmentedString::append(const String& string)
+void SegmentedString::append(StringImpl* string)
 {
-    appendSubstring(String { string });
+    appendSubstring(RefPtr<StringImpl> { string });
 }
 
-String SegmentedString::toString() const
+RefPtr<StringImpl> SegmentedString::toString() const
 {
     StringBuilder result;
     m_currentSubstring.appendTo(result);
@@ -256,7 +256,7 @@ SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(ASCIILit
         auto character = m_currentCharacter;
         if (characterMismatch(character, literal[i], lettersIgnoringASCIICase)) {
             if (i)
-                pushBack(String(std::span { consumedCharacters }.first(i)));
+                pushBack(StringImpl::create(std::span { consumedCharacters }.first(i)));
             return DidNotMatch;
         }
         advancePastNonNewline();

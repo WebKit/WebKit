@@ -51,7 +51,7 @@ class Storage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Storage, 
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Storage);
 public:
     enum class Mode { Normal, AvoidRandomness };
-    static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit);
+    static RefPtr<Storage> open(StringImpl* cachePath, Mode, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit);
 
     enum class ReadOperationIdentifierType { };
     using ReadOperationIdentifier = ObjectIdentifier<ReadOperationIdentifierType>;
@@ -108,14 +108,14 @@ public:
 
     void remove(const Key&);
     void remove(const Vector<Key>&, CompletionHandler<void()>&&);
-    void clear(String&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&&);
-    Vector<Key> pendingWriteKeys(const String& type, const std::optional<String>& partition) const;
+    void clear(RefPtr<StringImpl>&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&&);
+    Vector<Key> pendingWriteKeys(StringImpl* type, const std::optional<RefPtr<StringImpl>>& partition) const;
 
     struct RecordInfo {
         size_t bodySize;
         double worth; // 0-1 where 1 is the most valuable.
         unsigned bodyShareCount;
-        String bodyHash;
+        RefPtr<StringImpl> bodyHash;
         WallTime lastAccessTime;
     };
     enum class TraverseFlag : uint8_t {
@@ -125,8 +125,8 @@ public:
     };
     using TraverseHandler = Function<void (const Record*, const RecordInfo&)>;
     // Null record signals end.
-    void traverse(const String& type, OptionSet<TraverseFlag>, TraverseHandler&&);
-    void traverse(const String& type, const String& partition, OptionSet<TraverseFlag>, TraverseHandler&&);
+    void traverse(StringImpl* type, OptionSet<TraverseFlag>, TraverseHandler&&);
+    void traverse(StringImpl* type, StringImpl* partition, OptionSet<TraverseFlag>, TraverseHandler&&);
 
     void setCapacity(size_t);
     size_t capacity() const { return m_capacity; }
@@ -135,9 +135,9 @@ public:
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
     static const unsigned version = 18;
 
-    String basePathIsolatedCopy() const;
-    String versionPath() const;
-    String recordsPathIsolatedCopy() const;
+    RefPtr<StringImpl> basePathIsolatedCopy() const;
+    RefPtr<StringImpl> versionPath() const;
+    RefPtr<StringImpl> recordsPathIsolatedCopy() const;
 
     const Salt& salt() const LIFETIME_BOUND { return m_salt; }
 
@@ -146,13 +146,13 @@ public:
     void writeWithoutWaiting() { m_initialWriteDelay = 0_s; };
 
 private:
-    Storage(const String& directoryPath, Mode, Salt, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit);
+    Storage(StringImpl* directoryPath, Mode, Salt, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit);
 
-    String recordDirectoryPathForKey(const Key&) const;
-    String recordPathForKey(const Key&) const;
-    String blobPathForKey(const Key&) const;
+    RefPtr<StringImpl> recordDirectoryPathForKey(const Key&) const;
+    RefPtr<StringImpl> recordPathForKey(const Key&) const;
+    RefPtr<StringImpl> blobPathForKey(const Key&) const;
 
-    void traverseInternal(const String& partitionName, const String& type, OptionSet<TraverseFlag>, TraverseHandler&&);
+    void traverseInternal(StringImpl* partitionName, StringImpl* type, OptionSet<TraverseFlag>, TraverseHandler&&);
 
     void synchronize();
     void deleteOldVersions();
@@ -177,9 +177,9 @@ private:
     Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     Record readRecord(const Data&);
     void readRecordFromData(Storage::ReadOperationIdentifier, MonotonicTime, std::optional<Vector<uint8_t>>&&);
-    void readBlobIfNecessary(Storage::ReadOperationIdentifier, const String& blobPath);
+    void readBlobIfNecessary(Storage::ReadOperationIdentifier, StringImpl* blobPath);
 
-    void updateFileModificationTime(String&& path);
+    void updateFileModificationTime(RefPtr<StringImpl>&& path);
     void removeFromPendingWriteOperations(const Key&);
 
     ConcurrentWorkQueue& ioQueue() { return m_ioQueue.get(); }
@@ -198,8 +198,8 @@ private:
     size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount) const;
     uint32_t volumeBlockSize() const;
 
-    const String m_basePath;
-    const String m_recordsPath;
+    const RefPtr<StringImpl> m_basePath;
+    const RefPtr<StringImpl> m_recordsPath;
     
     const Mode m_mode;
     const Salt m_salt;

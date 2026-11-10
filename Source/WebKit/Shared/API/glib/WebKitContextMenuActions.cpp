@@ -241,10 +241,10 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
     case ContextMenuItemTagInspectElement:
         return WEBKIT_CONTEXT_MENU_ACTION_INSPECT_ELEMENT;
     case ContextMenuItemTagOpenMediaInNewWindow:
-        return menuItem.title() == contextMenuItemTagOpenVideoInNewWindow() ?
+        return equal(menuItem.title(), contextMenuItemTagOpenVideoInNewWindow()) ?
             WEBKIT_CONTEXT_MENU_ACTION_OPEN_VIDEO_IN_NEW_WINDOW : WEBKIT_CONTEXT_MENU_ACTION_OPEN_AUDIO_IN_NEW_WINDOW;
     case ContextMenuItemTagCopyMediaLinkToClipboard:
-        return menuItem.title() == contextMenuItemTagCopyVideoLinkToClipboard() ?
+        return equal(menuItem.title(), contextMenuItemTagCopyVideoLinkToClipboard()) ?
             WEBKIT_CONTEXT_MENU_ACTION_COPY_VIDEO_LINK_TO_CLIPBOARD : WEBKIT_CONTEXT_MENU_ACTION_COPY_AUDIO_LINK_TO_CLIPBOARD;
     case ContextMenuItemTagToggleMediaControls:
         return WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS;
@@ -253,12 +253,12 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
     case ContextMenuItemTagEnterVideoFullscreen:
         return WEBKIT_CONTEXT_MENU_ACTION_ENTER_VIDEO_FULLSCREEN;
     case ContextMenuItemTagMediaPlayPause:
-        return menuItem.title() == contextMenuItemTagMediaPlay() ?
+        return equal(menuItem.title(), contextMenuItemTagMediaPlay()) ?
             WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY : WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PAUSE;
     case ContextMenuItemTagMediaMute:
         return WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE;
     case ContextMenuItemTagDownloadMediaToDisk:
-        return menuItem.title() == contextMenuItemTagDownloadVideoToDisk() ?
+        return equal(menuItem.title(), contextMenuItemTagDownloadVideoToDisk()) ?
             WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK : WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK;
     case ContextMenuItemPDFAutoSize:
         return WEBKIT_CONTEXT_MENU_ACTION_PDF_AUTO_SIZE;
@@ -291,7 +291,7 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
 
 // The labels are only compiled in when PDF.js is, but the actions are always part of the API,
 // so an application may still ask for one of them.
-static String pdfContextMenuActionLabel(WebKitContextMenuAction action)
+static RefPtr<StringImpl> pdfContextMenuActionLabel(WebKitContextMenuAction action)
 {
 #if ENABLE(PDFJS)
     switch (action) {
@@ -321,10 +321,10 @@ static String pdfContextMenuActionLabel(WebKitContextMenuAction action)
 #else
     UNUSED_PARAM(action);
 #endif
-    return String();
+    return nullptr;
 }
 
-String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
+RefPtr<StringImpl> webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
 {
     switch (action) {
     case WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK:
@@ -433,12 +433,12 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
     case WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION:
     case WEBKIT_CONTEXT_MENU_ACTION_CUSTOM:
     case WEBKIT_CONTEXT_MENU_ACTION_SPELLING_GUESS:
-        return String();
+        return nullptr;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    return String();
+    return nullptr;
 }
 
 #endif // ENABLE(CONTEXT_MENUS)

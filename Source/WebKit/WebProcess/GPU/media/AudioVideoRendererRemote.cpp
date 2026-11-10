@@ -202,9 +202,9 @@ void AudioVideoRendererRemote::setPreservesPitchAndCorrectionAlgorithm(bool pres
 }
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-void AudioVideoRendererRemote::setOutputDeviceId(const String& deviceId)
+void AudioVideoRendererRemote::setOutputDeviceId(StringImpl* deviceId)
 {
-    ensureOnDispatcherWithConnection([deviceId = deviceId.isolatedCopy()](auto& renderer, auto& connection) {
+    ensureOnDispatcherWithConnection([deviceId = isolatedCopy(deviceId)](auto& renderer, auto& connection) {
         connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetOutputDeviceId(renderer.m_identifier, deviceId), 0);
     });
 }
@@ -903,9 +903,9 @@ void AudioVideoRendererRemote::notifyWhenErrorOccurs(Function<void(PlatformMedia
     });
 }
 
-void AudioVideoRendererRemote::setSpatialTrackingInfo(bool prefersSpatialAudioExperience , SoundStageSize stage, const String& sceneIdentifier, const String& defaultLabel, const String& label)
+void AudioVideoRendererRemote::setSpatialTrackingInfo(bool prefersSpatialAudioExperience , SoundStageSize stage, StringImpl* sceneIdentifier, StringImpl* defaultLabel, StringImpl* label)
 {
-    ensureOnDispatcherWithConnection([prefersSpatialAudioExperience, stage, sceneIdentifier = sceneIdentifier.isolatedCopy(), defaultLabel = defaultLabel.isolatedCopy(), label = label.isolatedCopy()](auto& renderer, auto& connection) {
+    ensureOnDispatcherWithConnection([prefersSpatialAudioExperience, stage, sceneIdentifier = isolatedCopy(sceneIdentifier), defaultLabel = isolatedCopy(defaultLabel), label = isolatedCopy(label)](auto& renderer, auto& connection) {
         connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetSpatialTrackingInfo(renderer.m_identifier, prefersSpatialAudioExperience, stage, sceneIdentifier, defaultLabel, label), 0);
     });
 }

@@ -50,17 +50,17 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     DateComponentsType dateType() const final;
     WallTime valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(WallTime) const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
-    String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
+    RefPtr<StringImpl> formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
     void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const final;
 };
 

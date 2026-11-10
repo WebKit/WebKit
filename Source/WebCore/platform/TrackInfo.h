@@ -56,7 +56,7 @@ enum class TrackInfoTrackType : uint8_t {
     Text
 };
 
-String convertEnumerationToString(TrackInfoTrackType);
+RefPtr<StringImpl> convertEnumerationToString(TrackInfoTrackType);
 
 enum class EncryptionBoxType : uint8_t {
     CommonEncryptionTrackEncryptionBox,
@@ -94,14 +94,22 @@ struct EncryptionDataCollection {
 
 struct TrackInfoData {
     const FourCC codecName { };
-    const String codecString { };
+    const RefPtr<StringImpl> codecString { };
     TrackID trackID { 0 };
 
 #if ENABLE(ENCRYPTED_MEDIA)
     std::optional<EncryptionDataCollection> encryptionData { };
 #endif
 
-    bool operator==(const TrackInfoData&) const = default;
+    bool operator==(const TrackInfoData& other) const
+    {
+        return codecName == other.codecName
+            && contentEquals(codecString, other.codecString)
+#if ENABLE(ENCRYPTED_MEDIA)
+            && encryptionData == other.encryptionData
+#endif
+            && trackID == other.trackID;
+    }
 };
 
 class TrackInfo : public ThreadSafeRefCounted<TrackInfo> {
@@ -122,7 +130,7 @@ public:
     }
 
     FourCC codecName() const { return m_data.codecName; }
-    const String& codecString() const LIFETIME_BOUND { return m_data.codecString; }
+    const RefPtr<StringImpl>& codecString() const LIFETIME_BOUND { return m_data.codecString; }
 
     TrackID trackID() const { return m_data.trackID; };
     void setTrackID(TrackID trackID) { m_data.trackID = trackID; }
@@ -288,7 +296,7 @@ namespace WTF {
 
 template <>
 struct LogArgument<WebCore::TrackInfoTrackType> {
-    static String toString(const WebCore::TrackInfoTrackType type)
+    static RefPtr<StringImpl> toString(const WebCore::TrackInfoTrackType type)
     {
         return convertEnumerationToString(type);
     }

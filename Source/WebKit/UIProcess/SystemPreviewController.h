@@ -60,7 +60,7 @@ class SystemPreviewController : public RefCountedAndCanMakeWeakPtr<SystemPreview
 public:
     static Ref<SystemPreviewController> create(WebPageProxy&);
 
-    bool canPreview(const String& mimeType) const;
+    bool canPreview(StringImpl* mimeType) const;
 
     void begin(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void updateProgress(float);
@@ -98,7 +98,7 @@ private:
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
     URL m_downloadURL;
     URL m_localFileURL;
-    String m_fragmentIdentifier;
+    RefPtr<StringImpl> m_fragmentIdentifier;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> m_qlPreviewController;
     RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;

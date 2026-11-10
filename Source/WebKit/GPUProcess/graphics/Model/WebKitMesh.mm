@@ -49,7 +49,7 @@ namespace WebModel {
 
 static WKBridgeTypedResourceId *convert(const TypedResourceId& update)
 {
-    return [WebKit::allocWKBridgeTypedResourceIdInstance() initWithValue:[[NSUUID alloc] initWithUUIDString:update.value.createNSString().get()] path:update.path.createNSString().get() hashValue:update.hashValue];
+    return [WebKit::allocWKBridgeTypedResourceIdInstance() initWithValue:[[NSUUID alloc] initWithUUIDString:createNSString(update.value).get()] path:createNSString(update.path).get() hashValue:update.hashValue];
 }
 
 // Helper conversion functions from WebGPU types to Metal types
@@ -779,12 +779,12 @@ static WKBridgeDataType convert(DataType type)
     }
 }
 
-static NSArray<WKBridgeValueString *> *convert(const Vector<Variant<String, double>>& constantValues)
+static NSArray<WKBridgeValueString *> *convert(const Vector<Variant<RefPtr<StringImpl>, double>>& constantValues)
 {
     NSMutableArray<WKBridgeValueString *> *result = [NSMutableArray array];
     for (const auto& c : constantValues) {
-        [result addObject:WTF::switchOn(c, [&](const String& s) -> WKBridgeValueString * {
-            return [WebKit::allocWKBridgeValueStringInstance() initWithString:s.createNSString().get()];
+        [result addObject:WTF::switchOn(c, [&](StringImpl* s) -> WKBridgeValueString * {
+            return [WebKit::allocWKBridgeValueStringInstance() initWithString:createNSString(s).get()];
         }, [&] (double d) -> WKBridgeValueString * {
             return [WebKit::allocWKBridgeValueStringInstance() initWithNumber:[[NSNumber alloc] initWithDouble:d]];
         })];
@@ -795,22 +795,22 @@ static NSArray<WKBridgeValueString *> *convert(const Vector<Variant<String, doub
 
 static WKBridgeConstantContainer *convert(const ConstantContainer& constant)
 {
-    NSString *colorSpaceName = constant.colorSpaceName ? constant.colorSpaceName->createNSString().get() : nil;
-    return [WebKit::allocWKBridgeConstantContainerInstance() initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:constant.name.createNSString().get() colorSpaceName:colorSpaceName];
+    NSString *colorSpaceName = constant.colorSpaceName ? createNSString(*constant.colorSpaceName).get() : nil;
+    return [WebKit::allocWKBridgeConstantContainerInstance() initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:createNSString(constant.name).get() colorSpaceName:colorSpaceName];
 }
 
 static NSArray<WKBridgeInputOutput *> *convert(const Vector<InputOutput>& inputOutputs)
 {
     NSMutableArray<WKBridgeInputOutput *> *result = [NSMutableArray array];
     for (const auto& io : inputOutputs) {
-        NSString *semanticTypeName = io.semanticTypeName ? io.semanticTypeName->createNSString().get() : nil;
+        NSString *semanticTypeName = io.semanticTypeName ? createNSString(*io.semanticTypeName).get() : nil;
 
         WKBridgeConstantContainer *defaultValue = nil;
         if (io.defaultValue)
             defaultValue = convert(*io.defaultValue);
 
         [result addObject:[WebKit::allocWKBridgeInputOutputInstance() initWithType:convert(io.type)
-            name:io.name.createNSString().get()
+            name:createNSString(io.name).get()
             semanticTypeName:semanticTypeName
             defaultValue:defaultValue]];
     }
@@ -822,10 +822,10 @@ static NSArray<WKBridgeEdge *> *convert(const Vector<Edge>& edges)
 {
     NSMutableArray<WKBridgeEdge *> *result = [NSMutableArray array];
     for (const auto& e : edges) {
-        [result addObject:[WebKit::allocWKBridgeEdgeInstance() initWithOutputNode:e.outputNode.createNSString().get()
-            outputPort:e.outputPort.createNSString().get()
-            inputNode:e.inputNode.createNSString().get()
-            inputPort:e.inputPort.createNSString().get()]];
+        [result addObject:[WebKit::allocWKBridgeEdgeInstance() initWithOutputNode:createNSString(e.outputNode).get()
+            outputPort:createNSString(e.outputPort).get()
+            inputNode:createNSString(e.inputNode).get()
+            inputPort:createNSString(e.inputPort).get()]];
     }
 
     return result;
@@ -847,7 +847,7 @@ static WKBridgeNodeType convert(NodeType bridgeNodeType)
 
 static WKBridgeBuiltin *convert(const Builtin& builtin)
 {
-    return [WebKit::allocWKBridgeBuiltinInstance() initWithDefinition:builtin.definition.createNSString().get() name:builtin.name.createNSString().get()];
+    return [WebKit::allocWKBridgeBuiltinInstance() initWithDefinition:createNSString(builtin.definition).get() name:createNSString(builtin.name).get()];
 }
 
 static WKBridgeNode *convert(const Node& node)
@@ -863,18 +863,18 @@ static NSArray<WKBridgeNode *> *convert(const Vector<Node>& nodes)
     return result;
 }
 
-static NSArray<NSString *> *convertStrings(const Vector<String>& strings)
+static NSArray<NSString *> *convertStrings(const Vector<RefPtr<StringImpl>>& strings)
 {
     NSMutableArray<NSString *> *result = [NSMutableArray arrayWithCapacity:strings.size()];
     for (const auto& s : strings)
-        [result addObject:s.createNSString().get()];
+        [result addObject:createNSString(s).get()];
     return result;
 }
 
 static WKBridgeMaterialGraph *convert(const MaterialGraph& material)
 {
     return [WebKit::allocWKBridgeMaterialGraphInstance()
-        initWithGraphName:material.graphName.createNSString().get()
+        initWithGraphName:createNSString(material.graphName).get()
         nodes:convert(material.nodes)
         edges:convert(material.edges)
         arguments:convert(material.arguments)
@@ -1018,7 +1018,7 @@ void WebMesh::removeNode(WebCore::NodeIdentifier nodeIdentifier)
 #if ENABLE(GPU_PROCESS_MODEL)
 static WKBridgeUpdateTexture *convert(const WebModel::UpdateTextureDescriptor& input)
 {
-    return [WebKit::allocWKBridgeUpdateTextureInstance() initWithImageAsset:WebModel::convert(input.imageAsset) identifier:convert(input.identifier) hashString:input.hashString.createNSString().get() layout:createNSArray(input.layout, [](const WebModel::TextureLevelInfo& desc) {
+    return [WebKit::allocWKBridgeUpdateTextureInstance() initWithImageAsset:WebModel::convert(input.imageAsset) identifier:convert(input.identifier) hashString:createNSString(input.hashString).get() layout:createNSArray(input.layout, [](const WebModel::TextureLevelInfo& desc) {
         return WebModel::convert(desc);
     })];
 }

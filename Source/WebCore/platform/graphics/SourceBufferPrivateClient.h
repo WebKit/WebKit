@@ -106,7 +106,7 @@ public:
 namespace WTF {
 template<>
 struct LogArgument<WebCore::SourceBufferEvictionData> {
-    static String toString(const WebCore::SourceBufferEvictionData& evictionData)
+    static RefPtr<StringImpl> toString(const WebCore::SourceBufferEvictionData& evictionData)
     {
         return makeString("{ contentSize:"_s, evictionData.contentSize, " evictableData:"_s, evictionData.evictableSize, " maximumBufferSize:"_s, evictionData.maximumBufferSize, " numSamples:"_s, evictionData.numMediaSamples, " }"_s);
     }

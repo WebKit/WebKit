@@ -62,9 +62,9 @@ static constexpr size_t maximumBodySize = 64 * MB;
 // A connection that doesn't send a whole request in this time is dropped, including an idle one.
 static constexpr Seconds requestTimeout = 30_s;
 
-static String headerValue(CFHTTPMessageRef message, CFStringRef name)
+static RefPtr<StringImpl> headerValue(CFHTTPMessageRef message, CFStringRef name)
 {
-    return adoptCF(CFHTTPMessageCopyHeaderFieldValue(message, name)).get();
+    return StringImpl::create(adoptCF(CFHTTPMessageCopyHeaderFieldValue(message, name)).get());
 }
 
 static bool hasVersion(CFHTTPMessageRef message, CFStringRef version)
@@ -218,12 +218,12 @@ bool HTTPConnection::didReceiveHeader()
     // before the body is read, so that a page can't make this side buffer one.
     if (!isFromThisMachine()) {
         auto error = JSON::Object::create();
-        error->setString("error"_s, "invalid argument"_s);
-        error->setString("message"_s, "'Host' header or 'Origin' header is specified and is not localhost."_s);
-        error->setString("stacktrace"_s, emptyString());
+        error->setString("error"_si, "invalid argument"_si);
+        error->setString("message"_si, "'Host' header or 'Origin' header is specified and is not localhost."_si);
+        error->setString("stacktrace"_si, emptyString());
         auto responseBody = JSON::Object::create();
-        responseBody->setObject("value"_s, WTF::move(error));
-        respond({ 400, responseBody->toJSONString().utf8(), "application/json; charset=utf-8"_s }, true);
+        responseBody->setObject("value"_si, WTF::move(error));
+        respond({ 400, utf8(responseBody->toJSONString()), "application/json; charset=utf-8"_s }, true);
         return false;
     }
 
@@ -234,13 +234,13 @@ bool HTTPConnection::didReceiveHeader()
     }
 
     // WebDriver clients send bodies with a Content-Length, so chunked bodies aren't supported.
-    if (!headerValue(m_request.get(), CFSTR("Transfer-Encoding")).isNull()) {
+    if (!!headerValue(m_request.get(), CFSTR("Transfer-Encoding"))) {
         respondWithStatus(501, true);
         return false;
     }
 
     auto contentLength = headerValue(m_request.get(), CFSTR("Content-Length"));
-    if (contentLength.isNull())
+    if (!contentLength)
         m_contentLength = 0;
     else {
         m_contentLength = parseInteger<size_t>(contentLength);
@@ -254,7 +254,7 @@ bool HTTPConnection::didReceiveHeader()
         }
     }
 
-    if (!contentLength.isNull() && hasVersion(m_request.get(), kCFHTTPVersion1_1)) {
+    if (!!contentLength && hasVersion(m_request.get(), kCFHTTPVersion1_1)) {
         auto expect = headerValue(m_request.get(), CFSTR("Expect"));
         for (auto token : StringView { expect }.split(',')) {
             if (equalLettersIgnoringASCIICase(token.trim(isASCIIWhitespace<char16_t>), "100-continue"_s)) {
@@ -270,10 +270,10 @@ bool HTTPConnection::didReceiveHeader()
 bool HTTPConnection::isFromThisMachine() const
 {
     auto host = headerValue(m_request.get(), CFSTR("Host"));
-    if (!host.isNull() && !isLoopbackURL(makeString("http://"_s, host)))
+    if (!!host && !isLoopbackURL(makeString("http://"_s, host)))
         return false;
     auto origin = headerValue(m_request.get(), CFSTR("Origin"));
-    return origin.isNull() || isLoopbackURL(origin);
+    return !origin || isLoopbackURL(origin);
 }
 
 void HTTPConnection::didReceiveRequest(std::span<const uint8_t> body)
@@ -300,8 +300,8 @@ void HTTPConnection::didReceiveRequest(std::span<const uint8_t> body)
     RetainPtr decodedPath = adoptCF(CFURLCreateStringByReplacingPercentEscapes(kCFAllocatorDefault, path.get(), CFSTR("")));
 
     HTTPRequestHandler::Request request;
-    request.method = method.get();
-    request.path = decodedPath ? decodedPath.get() : path.get();
+    request.method = StringImpl::create(method.get());
+    request.path = StringImpl::create(decodedPath ? decodedPath.get() : path.get());
     if (!body.empty()) {
         request.data = byteCast<char>(body.data());
         request.dataLength = body.size();
@@ -331,9 +331,9 @@ void HTTPConnection::respond(HTTPRequestHandler::Response&& response, bool close
     m_isHandlingRequest = true;
 
     RetainPtr message = adoptCF(CFHTTPMessageCreateResponse(kCFAllocatorDefault, response.statusCode, nullptr, kCFHTTPVersion1_1));
-    if (!response.contentType.isEmpty())
-        CFHTTPMessageSetHeaderFieldValue(message.get(), CFSTR("Content-Type"), response.contentType.createCFString().get());
-    CFHTTPMessageSetHeaderFieldValue(message.get(), CFSTR("Content-Length"), String::number(response.data.length()).createCFString().get());
+    if (!isEmpty(response.contentType))
+        CFHTTPMessageSetHeaderFieldValue(message.get(), CFSTR("Content-Type"), createCFString(response.contentType).get());
+    CFHTTPMessageSetHeaderFieldValue(message.get(), CFSTR("Content-Length"), createCFString(makeString(response.data.length())).get());
     CFHTTPMessageSetHeaderFieldValue(message.get(), CFSTR("Cache-Control"), CFSTR("no-cache"));
     CFHTTPMessageSetHeaderFieldValue(message.get(), CFSTR("Connection"), closeAfterSending ? CFSTR("close") : CFSTR("keep-alive"));
     send(message.get(), WTF::move(response.data), closeAfterSending ? AfterSending::Close : AfterSending::StartNextRequest);
@@ -389,9 +389,9 @@ void HTTPConnection::close()
     nw_connection_cancel(m_connection.get());
 }
 
-bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
+bool HTTPServer::listen(const std::optional<RefPtr<StringImpl>>& host, unsigned port)
 {
-    if (!validateListeningHost(host.value_or(String())))
+    if (!validateListeningHost(host.value_or(nullString())))
         return false;
 
     auto boundPort = startListener("127.0.0.1"_s, port);
@@ -401,7 +401,7 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
     }
 
     // The WebSocket server only listens on 127.0.0.1, so that's the host in webSocketUrl.
-    m_visibleHost = "127.0.0.1"_s;
+    m_visibleHost = "127.0.0.1"_si;
     return true;
 }
 
@@ -409,7 +409,7 @@ std::optional<uint16_t> HTTPServer::startListener(ASCIILiteral address, uint16_t
 {
     OSObjectPtr parameters = adoptOSObject(nw_parameters_create_secure_tcp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     nw_parameters_set_reuse_local_address(parameters.get(), true);
-    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host(address.characters(), String::number(port).utf8().legacyCStringPointer())).get());
+    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host(address.characters(), utf8(makeString(port)).legacyCStringPointer())).get());
 
     OSObjectPtr listener = adoptOSObject(nw_listener_create(parameters.get()));
     if (!listener)

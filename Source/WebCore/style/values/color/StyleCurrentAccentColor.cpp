@@ -38,9 +38,9 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     builder.append("AccentColor"_s);
 }
 
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentAccentColor&)
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentAccentColor&)
 {
-    return "AccentColor"_s;
+    return "AccentColor"_si;
 }
 
 // MARK: - TextStream

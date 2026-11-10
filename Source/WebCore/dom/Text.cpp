@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Text);
 
-Ref<Text> Text::createEditingText(Document& document, String&& data)
+Ref<Text> Text::createEditingText(Document& document, RefPtr<StringImpl>&& data)
 {
     auto node = adoptRef(*new Text(document, WTF::move(data), NodeType::Text, { TypeFlag::IsPseudoElementOrSpecialInternalNode }));
     ASSERT(node->isEditingText());
@@ -65,8 +65,8 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 
     EventQueueScope scope;
     auto oldData = data();
-    Ref newText = virtualCreate(oldData.substring(offset));
-    setDataWithoutUpdate(oldData.left(offset));
+    Ref newText = virtualCreate(substring(oldData, offset));
+    setDataWithoutUpdate(left(oldData, offset));
 
     dispatchModifiedEvent(oldData);
 
@@ -78,7 +78,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 
     protect(document())->textNodeSplit(*this);
 
-    updateRendererAfterContentChange(0, oldData.length());
+    updateRendererAfterContentChange(0, WTF::length(oldData));
 
     return newText;
 }
@@ -107,7 +107,7 @@ NODELETE static const Text* latestLogicallyAdjacentTextNode(const Text* text)
     return text;
 }
 
-String Text::wholeText() const
+RefPtr<StringImpl> Text::wholeText() const
 {
     RefPtr startText = earliestLogicallyAdjacentTextNode(this);
     RefPtr endText = latestLogicallyAdjacentTextNode(this);
@@ -120,7 +120,7 @@ String Text::wholeText() const
     return result.toString();
 }
 
-void Text::replaceWholeText(const String& newText)
+void Text::replaceWholeText(StringImpl* newText)
 {
     // Protect startText and endText against mutation event handlers removing the last ref
     RefPtr startText = const_cast<Text*>(earliestLogicallyAdjacentTextNode(this));
@@ -142,7 +142,7 @@ void Text::replaceWholeText(const String& newText)
         }
     }
 
-    if (newText.isEmpty()) {
+    if (isEmpty(newText)) {
         if (parent && parentNode() == parent)
             parent->removeChild(*this);
         return;
@@ -151,14 +151,14 @@ void Text::replaceWholeText(const String& newText)
     setData(newText);
 }
 
-String Text::nodeName() const
+RefPtr<StringImpl> Text::nodeName() const
 {
-    return "#text"_s;
+    return "#text"_si;
 }
 
 Ref<Node> Text::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
-    return create(document, String { data() });
+    return create(document, RefPtr<StringImpl> { data() });
 }
 
 SerializedNode Text::serializeNode(CloningOperation) const
@@ -188,7 +188,7 @@ RenderPtr<RenderText> Text::createTextRenderer()
     return createRenderer<RenderText>(RenderObject::Type::Text, *this, data());
 }
 
-Ref<Text> Text::virtualCreate(String&& data)
+Ref<Text> Text::virtualCreate(RefPtr<StringImpl>&& data)
 {
     return create(protect(document()), WTF::move(data));
 }
@@ -206,20 +206,20 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
 
 static void appendTextRepresentation(StringBuilder& builder, const Text& text)
 {
-    String value = text.data();
-    builder.append(" length="_s, value.length());
+    RefPtr<StringImpl> value = text.data();
+    builder.append(" length="_s, length(value));
 
     value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
     value = makeStringByReplacingAll(value, '\n', "\\n"_s);
     
     constexpr size_t maxDumpLength = 30;
-    if (value.length() > maxDumpLength)
+    if (length(value) > maxDumpLength)
         builder.append(" \""_s, StringView(value).left(maxDumpLength - 10), "...\""_s);
     else
         builder.append(" \""_s, value, '\"');
 }
 
-String Text::description() const
+RefPtr<StringImpl> Text::description() const
 {
     StringBuilder builder;
 
@@ -229,7 +229,7 @@ String Text::description() const
     return builder.toString();
 }
 
-String Text::debugDescription() const
+RefPtr<StringImpl> Text::debugDescription() const
 {
     StringBuilder builder;
 
@@ -239,7 +239,7 @@ String Text::debugDescription() const
     return builder.toString();
 }
 
-void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges updateLiveRanges)
+void Text::setDataAndUpdate(StringImpl* newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges updateLiveRanges)
 {
     auto oldData = data();
     CharacterData::setDataAndUpdate(newData, offsetOfReplacedData, oldLength, newLength, updateLiveRanges);
@@ -248,7 +248,7 @@ void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData
     if (!offsetOfReplacedData) {
         Ref document = this->document();
         CheckedPtr textManipulationController = document->textManipulationControllerIfExists();
-        if (textManipulationController && oldData != newData) [[unlikely]]
+        if (textManipulationController && !equal(oldData, newData)) [[unlikely]]
             textManipulationController->didUpdateContentForNode(*this);
     }
 }

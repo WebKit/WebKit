@@ -96,11 +96,11 @@ public:
     const WebCore::PlatformCALayerList* customSublayers() const override { return nullptr; }
     void adoptSublayers(WebCore::PlatformCALayer& source) override;
 
-    void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation&) override;
-    void removeAnimationForKey(const String& key) override;
-    RefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
-    void animationStarted(const String& key, MonotonicTime beginTime) override;
-    void animationEnded(const String& key) override;
+    void addAnimationForKey(StringImpl* key, WebCore::PlatformCAAnimation&) override;
+    void removeAnimationForKey(StringImpl* key) override;
+    RefPtr<WebCore::PlatformCAAnimation> animationForKey(StringImpl* key) override;
+    void animationStarted(StringImpl* key, MonotonicTime beginTime) override;
+    void animationEnded(StringImpl* key) override;
 
 #if ENABLE(THREADED_ANIMATIONS)
     void clearAcceleratedEffectsAndBaseValues() override;
@@ -188,7 +188,7 @@ public:
 
     void setBlendMode(WebCore::BlendMode) override;
 
-    void setName(const String&) override;
+    void setName(StringImpl*) override;
 
     void setSpeed(float) override;
 
@@ -314,7 +314,7 @@ private:
     LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     WeakPtr<PlatformCALayerRemote> m_superlayer;
-    HashMap<String, Ref<WebCore::PlatformCAAnimation>> m_animations;
+    HashMap<RefPtr<StringImpl>, Ref<WebCore::PlatformCAAnimation>> m_animations;
 
     bool m_acceleratesDrawing { false };
     WeakPtr<RemoteLayerTreeContext> m_context;

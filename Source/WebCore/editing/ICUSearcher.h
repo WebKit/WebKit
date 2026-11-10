@@ -32,7 +32,7 @@ namespace WebCore {
 
 class ICUSearcher {
 public:
-    explicit ICUSearcher(const String& foldedTarget, FindOptions&);
+    explicit ICUSearcher(StringImpl* foldedTarget, FindOptions&);
     ~ICUSearcher();
     void setCollationStrength(UCollationStrength);
     void setAttribute(USearchAttribute, USearchAttributeValue);
@@ -56,8 +56,8 @@ bool isWordStartMatch(std::span<const char16_t> buffer, size_t matchStart, size_
 bool isWordEndMatch(std::span<const char16_t> buffer, size_t matchStart, size_t matchLength, FindOptions);
 void normalizeCharacters(const char16_t* characters, unsigned length, Vector<char16_t>& buffer);
 char16_t foldQuoteMarkAndReplaceNoBreakSpace(char16_t);
-bool containsKanaLetters(const String& pattern);
+bool containsKanaLetters(StringImpl* pattern);
 bool isSeparator(char32_t character);
-WEBCORE_EXPORT String foldQuoteMarks(const String&);
+WEBCORE_EXPORT RefPtr<StringImpl> foldQuoteMarks(StringImpl*);
 
 } // namespace WebCore

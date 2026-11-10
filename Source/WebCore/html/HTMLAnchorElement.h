@@ -49,14 +49,14 @@ public:
 
     WEBCORE_EXPORT URL href() const;
 
-    NODELETE const AtomString& name() const;
+    NODELETE const RefPtr<AtomStringImpl>& name() const;
 
-    WEBCORE_EXPORT String origin() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> origin() const;
 
     WEBCORE_EXPORT void setProtocol(StringView value);
 
-    WEBCORE_EXPORT String text();
-    void setText(String&&);
+    WEBCORE_EXPORT RefPtr<StringImpl> text();
+    void setText(RefPtr<StringImpl>&&);
 
     bool isLiveLink() const;
 
@@ -73,22 +73,22 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewLink();
 #endif
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) override;
     void postConnectionSteps() override;
 
-    AtomString target() const override;
+    RefPtr<AtomStringImpl> target() const override;
 
-    void setShouldBePrefetched(SpeculationRules::Eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&&);
+    void setShouldBePrefetched(SpeculationRules::Eagerness, Vector<RefPtr<StringImpl>>&& tags, std::optional<ReferrerPolicy>&&);
 
-    WEBCORE_EXPORT String prefetchEagernessForTesting() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> prefetchEagernessForTesting() const;
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
 
 private:
     bool supportsFocus() const override;
@@ -102,7 +102,7 @@ private:
     bool draggable() const final;
     bool isInteractiveContent() const final;
 
-    AtomString effectiveTarget() const;
+    RefPtr<AtomStringImpl> effectiveTarget() const;
 
     std::optional<URL> attributionDestinationURLForPCM() const;
     std::optional<RegistrableDomain> mainDocumentRegistrableDomainForPCM() const;
@@ -136,7 +136,7 @@ private:
     };
 
     PrefetchEagerness m_prefetchEagerness { PrefetchEagerness::None };
-    Vector<String> m_speculationRulesTags;
+    Vector<RefPtr<StringImpl>> m_speculationRulesTags;
     std::optional<ReferrerPolicy> m_prefetchReferrerPolicy;
 
     bool m_hasRootEditableElementForSelectionOnMouseDown { false };

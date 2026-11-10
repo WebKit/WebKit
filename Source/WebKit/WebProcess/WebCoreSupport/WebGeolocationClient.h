@@ -48,9 +48,9 @@ private:
 
     void geolocationDestroyed() final;
 
-    void startUpdating(const String& authorizationToken, bool needsHighAccuracy) final;
+    void startUpdating(StringImpl* authorizationToken, bool needsHighAccuracy) final;
     void stopUpdating() final;
-    void revokeAuthorizationToken(const String&) final;
+    void revokeAuthorizationToken(StringImpl*) final;
     void setEnableHighAccuracy(bool) final;
 
     std::optional<WebCore::GeolocationPositionData> lastPosition() final;

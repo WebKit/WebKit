@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct MediaRecorderPrivateOptions {
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
     std::optional<unsigned> audioBitsPerSecond;
     std::optional<unsigned> videoBitsPerSecond;
     std::optional<unsigned> bitsPerSecond;

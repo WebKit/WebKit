@@ -88,8 +88,8 @@ private:
         bool firstTokenContainsDelimiter { false };
         bool lastTokenContainsDelimiter { false };
     };
-    ManipulationUnit createUnit(const Vector<String>&, Node&);
-    void parse(ManipulationUnit&, const String&, Node&);
+    ManipulationUnit createUnit(const Vector<RefPtr<StringImpl>>&, Node&);
+    void parse(ManipulationUnit&, StringImpl*, Node&);
 
     bool shouldExcludeNodeBasedOnStyle(const Node&);
 
@@ -113,7 +113,7 @@ private:
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodesWithNewContent;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_addedOrNewlyRenderedNodes;
 
-    HashMap<String, bool> m_cachedFontFamilyExclusionResults;
+    HashMap<RefPtr<StringImpl>, bool> m_cachedFontFamilyExclusionResults;
 
     bool m_didScheduleObservationUpdate { false };
 

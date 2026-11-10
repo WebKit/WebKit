@@ -222,7 +222,7 @@ void WKWebsiteDataStoreSetStatisticsVeryPrevalentResource(WKWebsiteDataStoreRef 
 
 void WKWebsiteDataStoreDumpResourceLoadStatistics(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreDumpResourceLoadStatisticsFunction callback)
 {
-    protect(WebKit::toImpl(dataStoreRef))->dumpResourceLoadStatistics([context, callback] (const String& resourceLoadStatistics) {
+    protect(WebKit::toImpl(dataStoreRef))->dumpResourceLoadStatistics([context, callback] (StringImpl* resourceLoadStatistics) {
         callback(WebKit::toAPI(resourceLoadStatistics), context);
     });
 }
@@ -782,7 +782,7 @@ void WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(WKWebsiteDataStoreR
 
 void WKWebsiteDataStoreGetAllStorageAccessEntries(WKWebsiteDataStoreRef dataStoreRef, WKPageRef pageRef, void* context, WKWebsiteDataStoreGetAllStorageAccessEntriesFunction callback)
 {
-    protect(WebKit::toImpl(dataStoreRef))->getAllStorageAccessEntries(WebKit::toImpl(pageRef)->identifier(), [context, callback] (Vector<String>&& domains) {
+    protect(WebKit::toImpl(dataStoreRef))->getAllStorageAccessEntries(WebKit::toImpl(pageRef)->identifier(), [context, callback] (Vector<RefPtr<StringImpl>>&& domains) {
         auto domainArrayRef = WKMutableArrayCreate();
         for (auto domain : domains)
             WKArrayAppendItem(domainArrayRef, adoptWK(WebKit::toCopiedAPI(domain)).get());

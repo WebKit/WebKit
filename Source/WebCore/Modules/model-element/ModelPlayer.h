@@ -166,7 +166,7 @@ public:
     virtual void setEnvironmentMap(Ref<SharedBuffer>&& data, const URL& sourceURL);
     virtual void disableEnvironmentMap();
     virtual void enableSystemEnvironmentMap();
-    virtual String environmentMapForTesting() const;
+    virtual RefPtr<StringImpl> environmentMapForTesting() const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_PORTAL)
@@ -176,7 +176,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     virtual void setPortalTransform(const UsedPortalTransform&);
     virtual void setPortalAction(PortalActionKind);
-    virtual void setAnchor(NodeIdentifier, std::optional<NodeIdentifier> anchorNode, const String& placement);
+    virtual void setAnchor(NodeIdentifier, std::optional<NodeIdentifier> anchorNode, StringImpl* placement);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
@@ -200,7 +200,7 @@ public:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    virtual void sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, Vector<std::pair<NodeIdentifier, String>>&& modelLabels, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&);
+    virtual void sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, Vector<std::pair<NodeIdentifier, RefPtr<StringImpl>>>&& modelLabels, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 #endif
 };
 

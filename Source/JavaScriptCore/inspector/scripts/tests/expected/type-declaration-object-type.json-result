@@ -387,9 +387,9 @@ using ErrorList = JSON::ArrayOf<Protocol::Database::Error>;
 
 namespace TestHelpers {
 
-String getEnumConstantValue(int code);
+RefPtr<StringImpl> getEnumConstantValue(int code);
 
-template<typename T> String getEnumConstantValue(T enumValue)
+template<typename T> RefPtr<StringImpl> getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
@@ -434,17 +434,17 @@ public:
         friend class Error;
     public:
 
-        Builder<STATE | MessageSet>& setMessage(const String& in_message)
+        Builder<STATE | MessageSet>& setMessage(StringImpl* in_message)
         {
             static_assert(!(STATE & MessageSet), "property message already set");
-            Ref { *m_result }->setString("message"_s, in_message);
+            Ref { *m_result }->setString("message"_si, in_message);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int in_code)
         {
             static_assert(!(STATE & CodeSet), "property code already set");
-            Ref { *m_result }->setInteger("code"_s, in_code);
+            Ref { *m_result }->setInteger("code"_si, in_code);
             return castState<CodeSet>();
         }
 
@@ -544,49 +544,49 @@ public:
         return Builder<NoFieldsSet>(adoptRef(*new OptionalParameterBundle));
     }
 
-    void setColumnNames(Ref<JSON::ArrayOf<String>>&& in_opt_columnNames)
+    void setColumnNames(Ref<JSON::ArrayOf<RefPtr<StringImpl>>>&& in_opt_columnNames)
     {
-        JSON::ObjectBase::setArray("columnNames"_s, WTF::move(in_opt_columnNames));
+        JSON::ObjectBase::setArray("columnNames"_si, WTF::move(in_opt_columnNames));
     }
 
     void setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_opt_buttons)
     {
-        JSON::ObjectBase::setArray("buttons"_s, WTF::move(in_opt_buttons));
+        JSON::ObjectBase::setArray("buttons"_si, WTF::move(in_opt_buttons));
     }
 
     void setDirectionality(Directionality in_opt_directionality)
     {
-        JSON::ObjectBase::setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_opt_directionality));
+        JSON::ObjectBase::setString("directionality"_si, Protocol::TestHelpers::getEnumConstantValue(in_opt_directionality));
     }
 
-    void setNotes(const String& in_opt_notes)
+    void setNotes(StringImpl* in_opt_notes)
     {
-        JSON::ObjectBase::setString("notes"_s, in_opt_notes);
+        JSON::ObjectBase::setString("notes"_si, in_opt_notes);
     }
 
     void setTimestamp(double in_opt_timestamp)
     {
-        JSON::ObjectBase::setDouble("timestamp"_s, in_opt_timestamp);
+        JSON::ObjectBase::setDouble("timestamp"_si, in_opt_timestamp);
     }
 
     void setValues(Ref<JSON::Object>&& in_opt_values)
     {
-        JSON::ObjectBase::setObject("values"_s, WTF::move(in_opt_values));
+        JSON::ObjectBase::setObject("values"_si, WTF::move(in_opt_values));
     }
 
     void setPayload(Ref<JSON::Value>&& in_opt_payload)
     {
-        JSON::ObjectBase::setValue("payload"_s, WTF::move(in_opt_payload));
+        JSON::ObjectBase::setValue("payload"_si, WTF::move(in_opt_payload));
     }
 
     void setError(Ref<Protocol::Database::Error>&& in_opt_error)
     {
-        JSON::ObjectBase::setObject("error"_s, WTF::move(in_opt_error));
+        JSON::ObjectBase::setObject("error"_si, WTF::move(in_opt_error));
     }
 
     void setErrorList(Ref<Protocol::Database::ErrorList>&& in_opt_errorList)
     {
-        JSON::ObjectBase::setArray("errorList"_s, WTF::move(in_opt_errorList));
+        JSON::ObjectBase::setArray("errorList"_si, WTF::move(in_opt_errorList));
     }
 };
 
@@ -638,66 +638,66 @@ public:
         friend class ParameterBundle;
     public:
 
-        Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
+        Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<RefPtr<StringImpl>>>&& in_columnNames)
         {
             static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
-            Ref { *m_result }->setArray("columnNames"_s, WTF::move(in_columnNames));
+            Ref { *m_result }->setArray("columnNames"_si, WTF::move(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
             static_assert(!(STATE & ButtonsSet), "property buttons already set");
-            Ref { *m_result }->setArray("buttons"_s, WTF::move(in_buttons));
+            Ref { *m_result }->setArray("buttons"_si, WTF::move(in_buttons));
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality in_directionality)
         {
             static_assert(!(STATE & DirectionalitySet), "property directionality already set");
-            Ref { *m_result }->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
+            Ref { *m_result }->setString("directionality"_si, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
             return castState<DirectionalitySet>();
         }
 
-        Builder<STATE | NotesSet>& setNotes(const String& in_notes)
+        Builder<STATE | NotesSet>& setNotes(StringImpl* in_notes)
         {
             static_assert(!(STATE & NotesSet), "property notes already set");
-            Ref { *m_result }->setString("notes"_s, in_notes);
+            Ref { *m_result }->setString("notes"_si, in_notes);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double in_timestamp)
         {
             static_assert(!(STATE & TimestampSet), "property timestamp already set");
-            Ref { *m_result }->setDouble("timestamp"_s, in_timestamp);
+            Ref { *m_result }->setDouble("timestamp"_si, in_timestamp);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
             static_assert(!(STATE & ValuesSet), "property values already set");
-            Ref { *m_result }->setObject("values"_s, WTF::move(in_values));
+            Ref { *m_result }->setObject("values"_si, WTF::move(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
             static_assert(!(STATE & PayloadSet), "property payload already set");
-            Ref { *m_result }->setValue("payload"_s, WTF::move(in_payload));
+            Ref { *m_result }->setValue("payload"_si, WTF::move(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
             static_assert(!(STATE & ErrorSet), "property error already set");
-            Ref { *m_result }->setObject("error"_s, WTF::move(in_error));
+            Ref { *m_result }->setObject("error"_si, WTF::move(in_error));
             return castState<ErrorSet>();
         }
 
         Builder<STATE | ErrorListSet>& setErrorList(Ref<Protocol::Database::ErrorList>&& in_errorList)
         {
             static_assert(!(STATE & ErrorListSet), "property errorList already set");
-            Ref { *m_result }->setArray("errorList"_s, WTF::move(in_errorList));
+            Ref { *m_result }->setArray("errorList"_si, WTF::move(in_errorList));
             return castState<ErrorListSet>();
         }
 
@@ -773,38 +773,38 @@ public:
         friend class ObjectWithPropertyNameConflicts;
     public:
 
-        Builder<STATE | IntegerSet>& setInteger(const String& in_integer)
+        Builder<STATE | IntegerSet>& setInteger(StringImpl* in_integer)
         {
             static_assert(!(STATE & IntegerSet), "property integer already set");
-            Ref { *m_result }->setString("integer"_s, in_integer);
+            Ref { *m_result }->setString("integer"_si, in_integer);
             return castState<IntegerSet>();
         }
 
-        Builder<STATE | ArraySet>& setArray(const String& in_array)
+        Builder<STATE | ArraySet>& setArray(StringImpl* in_array)
         {
             static_assert(!(STATE & ArraySet), "property array already set");
-            Ref { *m_result }->setString("array"_s, in_array);
+            Ref { *m_result }->setString("array"_si, in_array);
             return castState<ArraySet>();
         }
 
-        Builder<STATE | StringSet>& setString(const String& in_string)
+        Builder<STATE | StringSet>& setString(StringImpl* in_string)
         {
             static_assert(!(STATE & StringSet), "property string already set");
-            Ref { *m_result }->setString("string"_s, in_string);
+            Ref { *m_result }->setString("string"_si, in_string);
             return castState<StringSet>();
         }
 
-        Builder<STATE | ValueSet>& setValue(const String& in_value)
+        Builder<STATE | ValueSet>& setValue(StringImpl* in_value)
         {
             static_assert(!(STATE & ValueSet), "property value already set");
-            Ref { *m_result }->setString("value"_s, in_value);
+            Ref { *m_result }->setString("value"_si, in_value);
             return castState<ValueSet>();
         }
 
-        Builder<STATE | ObjectSet>& setObject(const String& in_object)
+        Builder<STATE | ObjectSet>& setObject(StringImpl* in_object)
         {
             static_assert(!(STATE & ObjectSet), "property object already set");
-            Ref { *m_result }->setString("object"_s, in_object);
+            Ref { *m_result }->setString("object"_si, in_object);
             return castState<ObjectSet>();
         }
 
@@ -933,14 +933,14 @@ public:
         Builder<STATE | NullableObjectSet>& setNullableObject(Ref<Protocol::Database::DummyObject>&& in_nullableObject)
         {
             static_assert(!(STATE & NullableObjectSet), "property nullableObject already set");
-            Ref { *m_result }->setObject("nullableObject"_s, WTF::move(in_nullableObject));
+            Ref { *m_result }->setObject("nullableObject"_si, WTF::move(in_nullableObject));
             return castState<NullableObjectSet>();
         }
 
         Builder<STATE | NullableObjectSet>& setNullableObjectIsNull()
         {
             static_assert(!(STATE & NullableObjectSet), "property nullableObject already set");
-            Ref { *m_result }->setValue("nullableObject"_s, JSON::Value::null());
+            Ref { *m_result }->setValue("nullableObject"_si, JSON::Value::null());
             return castState<NullableObjectSet>();
         }
 
@@ -970,22 +970,22 @@ public:
 
     void setNullableObject(Ref<Protocol::Database::DummyObject>&& in_opt_nullableObject)
     {
-        JSON::ObjectBase::setObject("nullableObject"_s, WTF::move(in_opt_nullableObject));
+        JSON::ObjectBase::setObject("nullableObject"_si, WTF::move(in_opt_nullableObject));
     }
 
     void setNullableObjectIsNull()
     {
-        JSON::ObjectBase::setValue("nullableObject"_s, JSON::Value::null());
+        JSON::ObjectBase::setValue("nullableObject"_si, JSON::Value::null());
     }
 
     void setNullableOptionalObject(Ref<Protocol::Database::DummyObject>&& in_opt_nullableOptionalObject)
     {
-        JSON::ObjectBase::setObject("nullableOptionalObject"_s, WTF::move(in_opt_nullableOptionalObject));
+        JSON::ObjectBase::setObject("nullableOptionalObject"_si, WTF::move(in_opt_nullableOptionalObject));
     }
 
     void setNullableOptionalObjectIsNull()
     {
-        JSON::ObjectBase::setValue("nullableOptionalObject"_s, JSON::Value::null());
+        JSON::ObjectBase::setValue("nullableOptionalObject"_si, JSON::Value::null());
     }
 };
 
@@ -1043,56 +1043,56 @@ public:
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality in_directionality)
         {
             static_assert(!(STATE & DirectionalitySet), "property directionality already set");
-            Ref { *m_result }->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
+            Ref { *m_result }->setString("directionality"_si, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
             static_assert(!(STATE & ButtonsSet), "property buttons already set");
-            Ref { *m_result }->setArray("buttons"_s, WTF::move(in_buttons));
+            Ref { *m_result }->setArray("buttons"_si, WTF::move(in_buttons));
             return castState<ButtonsSet>();
         }
 
-        Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
+        Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<RefPtr<StringImpl>>>&& in_columnNames)
         {
             static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
-            Ref { *m_result }->setArray("columnNames"_s, WTF::move(in_columnNames));
+            Ref { *m_result }->setArray("columnNames"_si, WTF::move(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
-        Builder<STATE | NotesSet>& setNotes(const String& in_notes)
+        Builder<STATE | NotesSet>& setNotes(StringImpl* in_notes)
         {
             static_assert(!(STATE & NotesSet), "property notes already set");
-            Ref { *m_result }->setString("notes"_s, in_notes);
+            Ref { *m_result }->setString("notes"_si, in_notes);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double in_timestamp)
         {
             static_assert(!(STATE & TimestampSet), "property timestamp already set");
-            Ref { *m_result }->setDouble("timestamp"_s, in_timestamp);
+            Ref { *m_result }->setDouble("timestamp"_si, in_timestamp);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
             static_assert(!(STATE & ValuesSet), "property values already set");
-            Ref { *m_result }->setObject("values"_s, WTF::move(in_values));
+            Ref { *m_result }->setObject("values"_si, WTF::move(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
             static_assert(!(STATE & PayloadSet), "property payload already set");
-            Ref { *m_result }->setValue("payload"_s, WTF::move(in_payload));
+            Ref { *m_result }->setValue("payload"_si, WTF::move(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
             static_assert(!(STATE & ErrorSet), "property error already set");
-            Ref { *m_result }->setObject("error"_s, WTF::move(in_error));
+            Ref { *m_result }->setObject("error"_si, WTF::move(in_error));
             return castState<ErrorSet>();
         }
 
@@ -1135,19 +1135,19 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(StringImpl*);
 
 // Enums in the 'Database' Domain
 template<>
-std::optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(const String&);
+std::optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(StringImpl*);
 template<>
-std::optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(const String&);
+std::optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(StringImpl*);
 template<>
-std::optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(const String&);
+std::optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(StringImpl*);
 
 // Enums in the 'Test' Domain
 template<>
-std::optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(const String&);
+std::optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(StringImpl*);
 
 } // namespace TestHelpers
 
@@ -1216,13 +1216,13 @@ static const auto enum_constant_values = WTF::toArray<ASCIILiteral>({
     "RTL"_s,
 });
 
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
+RefPtr<StringImpl> getEnumConstantValue(int code) {
+    return StringImpl::create(enum_constant_values[code]);
 }
 
 // Enums in the 'Database' Domain
 
-template<> std::optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(const String& protocolString)
+template<> std::optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Database::MouseButton::None,
@@ -1231,33 +1231,33 @@ template<> std::optional<Protocol::Database::MouseButton> parseEnumValueFromStri
         (size_t)Protocol::Database::MouseButton::Right,
     });
     for (size_t i = 0; i < 4; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Database::MouseButton)constantValues[i];
 
     return std::nullopt;
 }
 
-template<> std::optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(const String& protocolString)
+template<> std::optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Database::OptionalParameterBundle::Directionality::LTR,
         (size_t)Protocol::Database::OptionalParameterBundle::Directionality::RTL,
     });
     for (size_t i = 0; i < 2; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Database::OptionalParameterBundle::Directionality)constantValues[i];
 
     return std::nullopt;
 }
 
-template<> std::optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(const String& protocolString)
+template<> std::optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Database::ParameterBundle::Directionality::LTR,
         (size_t)Protocol::Database::ParameterBundle::Directionality::RTL,
     });
     for (size_t i = 0; i < 2; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Database::ParameterBundle::Directionality)constantValues[i];
 
     return std::nullopt;
@@ -1265,14 +1265,14 @@ template<> std::optional<Protocol::Database::ParameterBundle::Directionality> pa
 
 // Enums in the 'Test' Domain
 
-template<> std::optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(const String& protocolString)
+template<> std::optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Test::ParameterBundle::Directionality::LTR,
         (size_t)Protocol::Test::ParameterBundle::Directionality::RTL,
     });
     for (size_t i = 0; i < 2; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Test::ParameterBundle::Directionality)constantValues[i];
 
     return std::nullopt;
@@ -1742,24 +1742,24 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
-inline String toProtocolString(TestProtocolDatabaseMouseButton value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolDatabaseMouseButton value)
 {
     switch(value) {
     case TestProtocolDatabaseMouseButtonNone:
-        return "None"_s;
+        return "None"_si;
     case TestProtocolDatabaseMouseButtonLeft:
-        return "Left"_s;
+        return "Left"_si;
     case TestProtocolDatabaseMouseButtonMiddle:
-        return "Middle"_s;
+        return "Middle"_si;
     case TestProtocolDatabaseMouseButtonRight:
-        return "Right"_s;
+        return "Right"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolDatabaseMouseButton> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseMouseButton> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolDatabaseMouseButton>>({
         { "Left"_s, TestProtocolDatabaseMouseButtonLeft },
@@ -1772,18 +1772,18 @@ inline std::optional<TestProtocolDatabaseMouseButton> fromProtocolString(const S
     return std::nullopt;
 }
 
-inline String toProtocolString(TestProtocolDatabaseOptionalParameterBundleDirectionality value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolDatabaseOptionalParameterBundleDirectionality value)
 {
     switch(value) {
     case TestProtocolDatabaseOptionalParameterBundleDirectionalityLTR:
-        return "LTR"_s;
+        return "LTR"_si;
     case TestProtocolDatabaseOptionalParameterBundleDirectionalityRTL:
-        return "RTL"_s;
+        return "RTL"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolDatabaseOptionalParameterBundleDirectionality>>({
         { "LTR"_s, TestProtocolDatabaseOptionalParameterBundleDirectionalityLTR },
@@ -1794,18 +1794,18 @@ inline std::optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> 
     return std::nullopt;
 }
 
-inline String toProtocolString(TestProtocolDatabaseParameterBundleDirectionality value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolDatabaseParameterBundleDirectionality value)
 {
     switch(value) {
     case TestProtocolDatabaseParameterBundleDirectionalityLTR:
-        return "LTR"_s;
+        return "LTR"_si;
     case TestProtocolDatabaseParameterBundleDirectionalityRTL:
-        return "RTL"_s;
+        return "RTL"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolDatabaseParameterBundleDirectionality> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseParameterBundleDirectionality> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolDatabaseParameterBundleDirectionality>>({
         { "LTR"_s, TestProtocolDatabaseParameterBundleDirectionalityLTR },
@@ -1816,18 +1816,18 @@ inline std::optional<TestProtocolDatabaseParameterBundleDirectionality> fromProt
     return std::nullopt;
 }
 
-inline String toProtocolString(TestProtocolTestParameterBundleDirectionality value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolTestParameterBundleDirectionality value)
 {
     switch(value) {
     case TestProtocolTestParameterBundleDirectionalityLTR:
-        return "LTR"_s;
+        return "LTR"_si;
     case TestProtocolTestParameterBundleDirectionalityRTL:
-        return "RTL"_s;
+        return "RTL"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolTestParameterBundleDirectionality> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestParameterBundleDirectionality> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolTestParameterBundleDirectionality>>({
         { "LTR"_s, TestProtocolTestParameterBundleDirectionalityLTR },
@@ -1915,7 +1915,7 @@ using namespace Inspector;
 + (void)_parseMouseButton:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    auto result = Inspector::fromProtocolString<TestProtocolDatabaseMouseButton>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolDatabaseMouseButton>(StringImpl::create((__bridge CFStringRef)payload).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"MouseButton");
     *outValue = @(result.value());
 }
@@ -2072,7 +2072,7 @@ using namespace Inspector;
 
     self.buttons = payload[@"buttons"];
 
-    if (auto directionality = fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]))
+    if (auto directionality = fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>(StringImpl::create((__bridge CFStringRef)payload[@"directionality"]).get()))
         self.directionality = *directionality;
 
     self.notes = payload[@"notes"];
@@ -2119,12 +2119,12 @@ using namespace Inspector;
 
 - (void)setDirectionality:(TestProtocolDatabaseOptionalParameterBundleDirectionality)directionality
 {
-    [super setString:toProtocolString(directionality).createNSString().get() forKey:@"directionality"];
+    [super setString:createNSString(toProtocolString(directionality)).get() forKey:@"directionality"];
 }
 
 - (TestProtocolDatabaseOptionalParameterBundleDirectionality)directionality
 {
-    return fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>((__bridge CFStringRef)[super stringForKey:@"directionality"]).value();
+    return fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>(StringImpl::create((__bridge CFStringRef)[super stringForKey:@"directionality"]).get()).value();
 }
 
 - (void)setNotes:(NSString *)notes
@@ -2213,7 +2213,7 @@ using namespace Inspector;
     self.buttons = payload[@"buttons"];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"directionality"], @"directionality");
-    auto directionality = fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
+    auto directionality = fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>(StringImpl::create((__bridge CFStringRef)payload[@"directionality"]).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(directionality, @"directionality");
     self.directionality = *directionality;
 
@@ -2294,12 +2294,12 @@ using namespace Inspector;
 
 - (void)setDirectionality:(TestProtocolDatabaseParameterBundleDirectionality)directionality
 {
-    [super setString:toProtocolString(directionality).createNSString().get() forKey:@"directionality"];
+    [super setString:createNSString(toProtocolString(directionality)).get() forKey:@"directionality"];
 }
 
 - (TestProtocolDatabaseParameterBundleDirectionality)directionality
 {
-    return fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>((__bridge CFStringRef)[super stringForKey:@"directionality"]).value();
+    return fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>(StringImpl::create((__bridge CFStringRef)[super stringForKey:@"directionality"]).get()).value();
 }
 
 - (void)setNotes:(NSString *)notes
@@ -2567,7 +2567,7 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"directionality"], @"directionality");
-    auto directionality = fromProtocolString<TestProtocolTestParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
+    auto directionality = fromProtocolString<TestProtocolTestParameterBundleDirectionality>(StringImpl::create((__bridge CFStringRef)payload[@"directionality"]).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(directionality, @"directionality");
     self.directionality = *directionality;
 
@@ -2628,12 +2628,12 @@ using namespace Inspector;
 
 - (void)setDirectionality:(TestProtocolTestParameterBundleDirectionality)directionality
 {
-    [super setString:toProtocolString(directionality).createNSString().get() forKey:@"directionality"];
+    [super setString:createNSString(toProtocolString(directionality)).get() forKey:@"directionality"];
 }
 
 - (TestProtocolTestParameterBundleDirectionality)directionality
 {
-    return fromProtocolString<TestProtocolTestParameterBundleDirectionality>((__bridge CFStringRef)[super stringForKey:@"directionality"]).value();
+    return fromProtocolString<TestProtocolTestParameterBundleDirectionality>(StringImpl::create((__bridge CFStringRef)[super stringForKey:@"directionality"]).get()).value();
 }
 
 - (void)setButtons:(NSArray/*<NSString>*/ *)buttons

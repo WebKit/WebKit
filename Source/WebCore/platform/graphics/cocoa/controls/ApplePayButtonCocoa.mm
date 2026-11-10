@@ -121,7 +121,7 @@ void ApplePayButtonCocoa::draw(GraphicsContext& context, const FloatRoundedRect&
         largestCornerRadius,
         toPKPaymentButtonType(applePayButtonPart->buttonType()),
         toPKPaymentButtonStyle(applePayButtonPart->buttonStyle()),
-        applePayButtonPart->locale().createNSString().get()
+        createNSString(applePayButtonPart->locale()).get()
     );
 }
 

@@ -44,6 +44,6 @@ struct TestPageOptions {
 
 // Tests should use TestPageHarness rather than calling these directly.
 WEBCORE_TESTSUPPORT_EXPORT Ref<Page> createTestPage(const TestPageOptions& = { });
-WEBCORE_TESTSUPPORT_EXPORT void loadHTMLIntoTestPage(LocalFrame&, const String& html);
+WEBCORE_TESTSUPPORT_EXPORT void loadHTMLIntoTestPage(LocalFrame&, StringImpl* html);
 
 } // namespace WebCore

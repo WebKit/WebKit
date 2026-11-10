@@ -649,7 +649,8 @@ char32_t VisiblePosition::characterAfter() const
         return 0;
 
     char32_t ch;
-    U16_NEXT(textNode->data(), offset, length, ch);
+    StringView data { textNode->data() };
+    U16_NEXT(data, offset, length, ch);
     return ch;
 }
 
@@ -718,12 +719,12 @@ void VisiblePosition::debugPosition(ASCIILiteral msg) const
     if (isNull())
         SAFE_FPRINTF(stderr, "Position [%s]: null\n", msg);
     else {
-        SAFE_FPRINTF(stderr, "Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8());
+        SAFE_FPRINTF(stderr, "Position [%s]: %s, ", msg, utf8(m_deepPosition.deprecatedNode()->nodeName()));
         m_deepPosition.showAnchorTypeAndOffset();
     }
 }
 
-String VisiblePosition::debugDescription() const
+RefPtr<StringImpl> VisiblePosition::debugDescription() const
 {
     // Only log affinity when it's the non-default value of upstream.
     return makeString(m_deepPosition.debugDescription(), ", affinity: "_s, m_affinity == Affinity::Upstream ? "upstream"_s : ""_s);
@@ -734,7 +735,7 @@ void VisiblePosition::showTreeForThis() const
     m_deepPosition.showTreeForThis();
 }
 
-String VisiblePositionRange::debugDescription() const
+RefPtr<StringImpl> VisiblePositionRange::debugDescription() const
 {
     return makeString("start: "_s, start.debugDescription(), ", end: "_s, end.debugDescription());
 }

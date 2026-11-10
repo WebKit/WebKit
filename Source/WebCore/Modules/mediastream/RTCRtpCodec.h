@@ -32,10 +32,10 @@
 namespace WebCore {
 
 struct RTCRtpCodec {
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
     unsigned long clockRate { 0 };
     std::optional<unsigned short> channels;
-    String sdpFmtpLine;
+    RefPtr<StringImpl> sdpFmtpLine;
 };
 
 } // namespace WebCore

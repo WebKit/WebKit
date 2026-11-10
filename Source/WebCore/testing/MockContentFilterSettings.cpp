@@ -56,7 +56,7 @@ void MockContentFilterSettings::setEnabled(bool enabled)
     MockContentFilterManager::singleton().notifySettingsChanged(singleton());
 }
 
-void MockContentFilterSettings::setBlockedString(const String& blockedString)
+void MockContentFilterSettings::setBlockedString(StringImpl* blockedString)
 {
     m_blockedString = blockedString;
     MockContentFilterManager::singleton().notifySettingsChanged(singleton());
@@ -80,15 +80,15 @@ void MockContentFilterSettings::setUnblockRequestDecision(Decision unblockReques
     MockContentFilterManager::singleton().notifySettingsChanged(singleton());
 }
 
-void MockContentFilterSettings::setModifiedRequestURL(const String& modifiedRequestURL)
+void MockContentFilterSettings::setModifiedRequestURL(StringImpl* modifiedRequestURL)
 {
     m_modifiedRequestURL = modifiedRequestURL;
     MockContentFilterManager::singleton().notifySettingsChanged(singleton());
 }
 
-const String& MockContentFilterSettings::unblockRequestURL() const
+const RefPtr<StringImpl>& MockContentFilterSettings::unblockRequestURL() const
 {
-    static NeverDestroyed<String> unblockRequestURL = makeString(ContentFilter::urlScheme(), "://"_s, unblockURLHost());
+    static NeverDestroyed<RefPtr<StringImpl>> unblockRequestURL = makeString(ContentFilter::urlScheme(), "://"_s, unblockURLHost());
     return unblockRequestURL;
 }
 

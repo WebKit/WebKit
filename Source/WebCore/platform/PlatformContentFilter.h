@@ -64,7 +64,7 @@ public:
     virtual ~PlatformContentFilter() = default;
     virtual bool isEnabled() const { return true; }
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) = 0;
-    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(String&&)>&&) = 0;
+    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&) = 0;
     virtual void responseReceived(const ResourceResponse&) = 0;
     virtual void addData(const SharedBuffer&) = 0;
     virtual void finishedAddingData() = 0;
@@ -72,7 +72,7 @@ public:
 #if ENABLE(CONTENT_FILTERING)
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
 #endif
-    virtual String unblockRequestDeniedScript() const { return emptyString(); }
+    virtual RefPtr<StringImpl> unblockRequestDeniedScript() const { return emptyString(); }
 
 #if HAVE(AUDIT_TOKEN)
     const std::optional<audit_token_t> hostProcessAuditToken() const { return m_hostProcessAuditToken; }
@@ -82,7 +82,7 @@ public:
     struct FilterParameters {
 #if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-        String webContentRestrictionsConfigurationPath { };
+        RefPtr<StringImpl> webContentRestrictionsConfigurationPath { };
 #endif
         IsMainFrameLoad isMainFrameLoad;
         URL mainDocumentURL;

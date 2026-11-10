@@ -43,7 +43,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 struct OpaqueJSScript final : public SourceProvider {
 public:
-    static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, String filename, int startingLineNumber, const String& source)
+    static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, RefPtr<StringImpl> filename, int startingLineNumber, StringImpl* source)
     {
         return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, WTF::move(filename), startingLineNumber, source));
     }
@@ -58,10 +58,10 @@ public:
         return m_source.get();
     }
 
-    [[maybe_unused]] String debugDescription() const
+    [[maybe_unused]] RefPtr<StringImpl> debugDescription() const
     {
         auto url = sourceURL();
-        if (!url.isEmpty())
+        if (!isEmpty(url))
             return url;
 
         auto truncated = source().left(64);
@@ -77,10 +77,10 @@ public:
     VM& vm() const { return m_vm; }
 
 private:
-    OpaqueJSScript(VM& vm, const SourceOrigin& sourceOrigin, String&& filename, int startingLineNumber, const String& source)
-        : SourceProvider(sourceOrigin, WTF::move(filename), String(), SourceTaintedOrigin::Untainted, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
+    OpaqueJSScript(VM& vm, const SourceOrigin& sourceOrigin, RefPtr<StringImpl>&& filename, int startingLineNumber, StringImpl* source)
+        : SourceProvider(sourceOrigin, WTF::move(filename), nullptr, SourceTaintedOrigin::Untainted, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
         , m_vm(vm)
-        , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
+        , m_source(!source ? *StringImpl::empty() : *source)
     {
     }
 
@@ -111,9 +111,9 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = urlString ? URL({ }, urlString->string()) : URL();
-    auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURL }, sourceURL.string(), startingLineNumber, String(StringImpl::createWithoutCopying({ source, length })));
+    auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURL }, sourceURL.string(), startingLineNumber, RefPtr<StringImpl>(StringImpl::createWithoutCopying({ source, length })));
 
-    WTFBeginSignpost(source, JSScriptRef, "createImmortal: %" PRIVATE_LOG_STRING " (%u bytes)", result->debugDescription().utf8(), result->source().length());
+    WTFBeginSignpost(source, JSScriptRef, "createImmortal: %" PRIVATE_LOG_STRING " (%u bytes)", utf8(result->debugDescription()), result->source().length());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(source, JSScriptRef);
     });
@@ -140,7 +140,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
     auto sourceURL = urlString ? URL({ }, urlString->string()) : URL();
     auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURL }, sourceURL.string(), startingLineNumber, source->string());
 
-    WTFBeginSignpost(source, JSScriptRef, "createFromString: %" PRIVATE_LOG_STRING " (%u bytes)", result->debugDescription().utf8(), result->source().length());
+    WTFBeginSignpost(source, JSScriptRef, "createFromString: %" PRIVATE_LOG_STRING " (%u bytes)", utf8(result->debugDescription()), result->source().length());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(source, JSScriptRef);
     });
@@ -179,7 +179,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
         return nullptr;
     }
 
-    WTFBeginSignpost(script, JSScriptRef, "evaluate: %" PRIVATE_LOG_STRING " (%u bytes)", script->debugDescription().utf8(), script->source().length());
+    WTFBeginSignpost(script, JSScriptRef, "evaluate: %" PRIVATE_LOG_STRING " (%u bytes)", utf8(script->debugDescription()), script->source().length());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(script, JSScriptRef);
     });

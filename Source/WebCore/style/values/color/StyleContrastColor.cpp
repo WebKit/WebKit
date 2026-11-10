@@ -85,7 +85,7 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     builder.append(')');
 }
 
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext& context, const ContrastColor& contrastColor)
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext& context, const ContrastColor& contrastColor)
 {
     StringBuilder builder;
     serializationForCSSTokenization(builder, context, contrastColor);

@@ -287,7 +287,7 @@ void SourceBufferPrivateAVFObjC::processInitializationSegment(std::optional<Init
     ALWAYS_LOG(LOGIDENTIFIER, "initialization segment was processed");
 }
 
-void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, TrackID, const String&)
+void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, TrackID, StringImpl*)
 {
     didReceiveSample(WTF::move(mediaSample));
 }
@@ -385,7 +385,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
         switch (result.error()) {
         case PlatformMediaError::CDMInstanceKeyNeeded: {
             auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(initData);
-            String initDataType = CDMPrivateFairPlayStreaming::sinfName();
+            RefPtr<StringImpl> initDataType = CDMPrivateFairPlayStreaming::sinfName();
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
             if (!keyIDs) {
                 keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsMpts(initData);
@@ -394,7 +394,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 #endif
             if (!keyIDs)
                 return;
-            protectedThis->callOnMainThreadWithPlayer([initDataType = initDataType.isolatedCopy(), initData](auto& player) {
+            protectedThis->callOnMainThreadWithPlayer([initDataType = isolatedCopy(initDataType), initData](auto& player) {
                 player.initializationDataEncountered(initDataType, initData->tryCreateArrayBuffer());
             });
             protectedThis->setWaitingForKey(true);
@@ -772,7 +772,7 @@ void SourceBufferPrivateAVFObjC::configureParser(SourceBufferParser& parser)
             protectedThis->didReceiveInitializationSegment(WTF::move(segment));
     });
 
-    parser.setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
+    parser.setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, StringImpl* mediaType) {
         assertIsCurrent(dispatcher);
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->didProvideMediaDataForTrackId(WTF::move(sample), trackId, mediaType);

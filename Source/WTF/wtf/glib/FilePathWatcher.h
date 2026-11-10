@@ -42,7 +42,7 @@ class FilePathWatcher {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilePathWatcher, WTF_EXPORT_PRIVATE);
     WTF_MAKE_NONCOPYABLE(FilePathWatcher);
 public:
-    WTF_EXPORT_PRIVATE FilePathWatcher(const String& path, Function<void()>&& handler);
+    WTF_EXPORT_PRIVATE FilePathWatcher(StringImpl* path, Function<void()>&& handler);
     WTF_EXPORT_PRIVATE ~FilePathWatcher();
 
     bool isActive() const { return !!m_monitor; }

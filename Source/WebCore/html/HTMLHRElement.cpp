@@ -121,7 +121,7 @@ bool HTMLHRElement::hasPresentationalHintsForAttribute(const QualifiedName& name
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::alignAttr:

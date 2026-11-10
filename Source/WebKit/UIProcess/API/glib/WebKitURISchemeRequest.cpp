@@ -127,7 +127,7 @@ const char* webkit_uri_scheme_request_get_uri(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uri.isNull())
-        request->priv->uri = request->priv->task->request().url().string().utf8();
+        request->priv->uri = utf8(request->priv->task->request().url().string());
 
     return request->priv->uri.legacyCStringPointer();
 }
@@ -180,7 +180,7 @@ const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* r
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (!request->priv->httpMethod)
-        request->priv->httpMethod = g_intern_string(request->priv->task->request().httpMethod().utf8().legacyCStringPointer());
+        request->priv->httpMethod = g_intern_string(utf8(request->priv->task->request().httpMethod()).legacyCStringPointer());
 
     return request->priv->httpMethod;
 }
@@ -242,8 +242,8 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
 
     WebKitURISchemeResponse* resp = priv->response.get();
     if (!priv->bytesRead) {
-        String contentType { webKitURISchemeResponseGetContentType(resp) };
-        ResourceResponse response(URL { priv->task->request().url() }, extractMIMETypeFromMediaType(contentType), webKitURISchemeResponseGetStreamLength(resp), String { emptyString() });
+        RefPtr<StringImpl> contentType = StringImpl::create(webKitURISchemeResponseGetContentType(resp).span());
+        ResourceResponse response(URL { priv->task->request().url() }, extractMIMETypeFromMediaType(contentType.get()), webKitURISchemeResponseGetStreamLength(resp), RefPtr { emptyString() });
         response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
         const auto& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
         if (statusMessage.isNull()) {
@@ -251,9 +251,9 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
             response.setHTTPStatusText("OK"_s);
         } else {
             response.setHTTPStatusCode(webKitURISchemeResponseGetStatusCode(resp));
-            response.setHTTPStatusText(String { statusMessage });
+            response.setHTTPStatusText(StringImpl::fromUTF8(statusMessage.span()));
         }
-        if (response.mimeType().isEmpty())
+        if (isEmpty(response.mimeType()))
             response.setMimeType(MIMETypeRegistry::mimeTypeForPath(response.url().path()));
         if (auto* headers = webKitURISchemeResponseGetHeaders(resp))
             response.updateFromSoupMessageHeaders(headers);
@@ -332,6 +332,6 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
 
     WebKitURISchemeRequestPrivate* priv = request->priv;
     priv->response = nullptr;
-    ResourceError resourceError(String::fromLatin1(g_quark_to_string(error->domain)), toWebCoreError(error->code), priv->task->request().url(), String::fromUTF8(error->message));
+    ResourceError resourceError(StringImpl::fromLatin1(g_quark_to_string(error->domain)), toWebCoreError(error->code), priv->task->request().url(), StringImpl::fromUTF8(error->message));
     priv->task->didComplete(resourceError);
 }

@@ -58,7 +58,7 @@ DateInputType::DateInputType(HTMLInputElement& element)
 {
 }
 
-const AtomString& DateInputType::formControlType() const
+const RefPtr<AtomStringImpl>& DateInputType::formControlType() const
 {
     return InputTypeNames::date();
 }
@@ -97,7 +97,7 @@ bool DateInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> res
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay });
 }
 
-String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
+RefPtr<StringImpl> DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
     if (!state.dayOfMonth || !state.month || !state.year)
         return emptyString();
@@ -108,7 +108,7 @@ String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state
 void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents&) const
 {
     layoutParameters.dateTimeFormat = layoutParameters.locale->dateFormat();
-    layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd"_s;
+    layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd"_si;
 }
 
 } // namespace WebCore

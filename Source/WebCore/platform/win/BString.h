@@ -41,8 +41,8 @@ namespace WebCore {
         WEBCORE_EXPORT BString();
         WEBCORE_EXPORT BString(const wchar_t*);
         WEBCORE_EXPORT BString(const wchar_t*, size_t length);
-        WEBCORE_EXPORT BString(const String&);
-        WEBCORE_EXPORT BString(const AtomString&);
+        WEBCORE_EXPORT BString(StringImpl*);
+        WEBCORE_EXPORT BString(AtomStringImpl*);
         WEBCORE_EXPORT BString(const URL&);
         WEBCORE_EXPORT ~BString();
 

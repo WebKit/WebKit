@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-LONG adjustedGDIFontWeight(LONG, const String&);
-GDIObject<HFONT> createGDIFont(const AtomString&, LONG, bool, int);
+LONG adjustedGDIFontWeight(LONG, StringImpl*);
+GDIObject<HFONT> createGDIFont(AtomStringImpl*, LONG, bool, int);
 LONG toGDIFontWeight(FontSelectionValue);
 bool isGDIFontWeightBold(LONG);
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, AtomStringImpl* family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.fontStyleSlope()),

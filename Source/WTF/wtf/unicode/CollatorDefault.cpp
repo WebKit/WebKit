@@ -53,7 +53,7 @@ int Collator::collate(StringView a, StringView b) const
 
 int Collator::collate(const char8_t* a, const char8_t* b) const
 {
-    return collate(String::fromUTF8(byteCast<char>(a)), String::fromUTF8(byteCast<char>(b)));
+    return collate(StringImpl::fromUTF8(byteCast<char>(a)), StringImpl::fromUTF8(byteCast<char>(b)));
 }
 
 }

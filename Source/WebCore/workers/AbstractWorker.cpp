@@ -58,7 +58,7 @@ FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options, Fe
     return fetchOptions;
 }
 
-ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
+ExceptionOr<URL> AbstractWorker::resolveURL(StringImpl* url)
 {
     Ref context = *scriptExecutionContext();
 

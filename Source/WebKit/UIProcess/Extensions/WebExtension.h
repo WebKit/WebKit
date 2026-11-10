@@ -61,10 +61,10 @@ class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension>, pu
 
 public:
     using IconCacheEntry = Variant<RefPtr<WebCore::Icon>, Vector<double>>;
-    using IconsCache = HashMap<String, IconCacheEntry>;
-    using Resources = HashMap<String, Variant<String, Ref<API::Data>>>;
-    using DataResources = HashMap<String, Ref<API::Data>>;
-    using StringResources = HashMap<String, String>;
+    using IconsCache = HashMap<RefPtr<StringImpl>, IconCacheEntry>;
+    using Resources = HashMap<RefPtr<StringImpl>, Variant<RefPtr<StringImpl>, Ref<API::Data>>>;
+    using DataResources = HashMap<RefPtr<StringImpl>, Ref<API::Data>>;
+    using StringResources = HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>;
 
     template<typename... Args>
     static Ref<WebExtension> create(Args&&... args)
@@ -143,7 +143,7 @@ public:
         Dark  = 1 << 1
     };
 
-    using PermissionsSet = HashSet<String>;
+    using PermissionsSet = HashSet<RefPtr<StringImpl>>;
     using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
 
     // Needs to match UIKeyModifierFlags and NSEventModifierFlags.
@@ -165,9 +165,9 @@ public:
     }
 
     struct CommandData {
-        String identifier;
-        String description;
-        String activationKey;
+        RefPtr<StringImpl> identifier;
+        RefPtr<StringImpl> description;
+        RefPtr<StringImpl> activationKey;
         OptionSet<ModifierFlags> modifierFlags;
     };
 
@@ -178,37 +178,37 @@ public:
         InjectionTime injectionTime { InjectionTime::DocumentIdle };
         WebCore::UserContentMatchParentFrame matchParentFrame { WebCore::UserContentMatchParentFrame::Never };
 
-        String identifier { ""_s };
+        RefPtr<StringImpl> identifier { ""_si };
 
         bool injectsIntoAllFrames { false };
         WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
         WebCore::UserStyleLevel styleLevel { WebCore::UserStyleLevel::Author };
 
-        Vector<String> scriptPaths;
-        Vector<String> styleSheetPaths;
+        Vector<RefPtr<StringImpl>> scriptPaths;
+        Vector<RefPtr<StringImpl>> styleSheetPaths;
 
-        Vector<String> includeGlobPatternStrings;
-        Vector<String> excludeGlobPatternStrings;
+        Vector<RefPtr<StringImpl>> includeGlobPatternStrings;
+        Vector<RefPtr<StringImpl>> excludeGlobPatternStrings;
 
-        Vector<String> expandedIncludeMatchPatternStrings() const;
-        Vector<String> expandedExcludeMatchPatternStrings() const;
+        Vector<RefPtr<StringImpl>> expandedIncludeMatchPatternStrings() const;
+        Vector<RefPtr<StringImpl>> expandedExcludeMatchPatternStrings() const;
     };
 
     struct WebAccessibleResourceData {
         MatchPatternSet matchPatterns;
-        Vector<String> resourcePathPatterns;
+        Vector<RefPtr<StringImpl>> resourcePathPatterns;
     };
 
     struct DeclarativeNetRequestRulesetData {
-        String rulesetID;
+        RefPtr<StringImpl> rulesetID;
         bool enabled { false };
-        String jsonPath;
+        RefPtr<StringImpl> jsonPath;
     };
 
     struct LocaleComponents {
-        String languageCode;
-        String scriptCode;
-        String countryCode;
+        RefPtr<StringImpl> languageCode;
+        RefPtr<StringImpl> scriptCode;
+        RefPtr<StringImpl> countryCode;
     };
 
     using CommandsVector = Vector<CommandData>;
@@ -245,32 +245,32 @@ public:
 
     bool isWebAccessibleResource(const URL& resourceURL, const URL& pageURL);
 
-    bool hasResourceForPath(const String&);
-    String resourceMIMETypeForPath(const String&);
+    bool hasResourceForPath(StringImpl*);
+    RefPtr<StringImpl> resourceMIMETypeForPath(StringImpl*);
 
-    std::expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
-    std::expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    std::expected<RefPtr<StringImpl>, RefPtr<API::Error>> resourceStringForPath(StringImpl*, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    std::expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(StringImpl*, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 
     RefPtr<WebExtensionLocalization> localization();
 
-    const Vector<String>& supportedLocales();
-    const String& defaultLocale();
-    String bestMatchLocale();
+    const Vector<RefPtr<StringImpl>>& supportedLocales();
+    const RefPtr<StringImpl>& defaultLocale();
+    RefPtr<StringImpl> bestMatchLocale();
 
-    const String& displayName();
-    const String& displayShortName();
-    const String& displayVersion();
-    const String& displayDescription();
-    const String& version();
+    const RefPtr<StringImpl>& displayName();
+    const RefPtr<StringImpl>& displayShortName();
+    const RefPtr<StringImpl>& displayVersion();
+    const RefPtr<StringImpl>& displayDescription();
+    const RefPtr<StringImpl>& version();
 
-    const String& contentSecurityPolicy();
+    const RefPtr<StringImpl>& contentSecurityPolicy();
     bool usesStructuredCloneMessageSerialization();
 
     RefPtr<WebCore::Icon> icon(WebCore::FloatSize idealSize);
 
     RefPtr<WebCore::Icon> actionIcon(WebCore::FloatSize idealSize);
-    const String& displayActionLabel();
-    const String& actionPopupPath();
+    const RefPtr<StringImpl>& displayActionLabel();
+    const RefPtr<StringImpl>& actionPopupPath();
 
     bool hasAction();
     bool hasBrowserAction();
@@ -281,22 +281,22 @@ public:
     bool hasSidePanel();
     bool hasAnySidebar();
     RefPtr<WebCore::Icon> sidebarIcon(WebCore::FloatSize idealSize);
-    const std::optional<String>& sidebarDocumentPath();
-    const std::optional<String>& sidebarTitle();
+    const std::optional<RefPtr<StringImpl>>& sidebarDocumentPath();
+    const std::optional<RefPtr<StringImpl>>& sidebarTitle();
 #endif
 
-    std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(const String&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
+    std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(StringImpl*, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
 
     size_t bestIconSize(const JSON::Object&, size_t idealPixelSize);
-    String pathForBestImage(const JSON::Object&, size_t idealPixelSize);
+    RefPtr<StringImpl> pathForBestImage(const JSON::Object&, size_t idealPixelSize);
 
     RefPtr<WebCore::Icon> bestIcon(RefPtr<JSON::Object>, WebCore::FloatSize idealSize, NOESCAPE const Function<void(Ref<API::Error>)>&);
-    RefPtr<WebCore::Icon> bestIconForManifestKey(const JSON::Object&, const String& manifestKey, WebCore::FloatSize idealSize, IconsCache& cacheLocation, Error, const String& customLocalizedDescription);
+    RefPtr<WebCore::Icon> bestIconForManifestKey(const JSON::Object&, StringImpl* manifestKey, WebCore::FloatSize idealSize, IconsCache& cacheLocation, Error, StringImpl* customLocalizedDescription);
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     RefPtr<JSON::Object> bestIconVariantJSONObject(RefPtr<JSON::Array>, size_t idealPixelSize, ColorScheme);
     RefPtr<WebCore::Icon> bestIconVariant(RefPtr<JSON::Array>, WebCore::FloatSize idealSize, NOESCAPE const Function<void(Ref<API::Error>)>&);
-    RefPtr<WebCore::Icon> bestIconVariantForManifestKey(const JSON::Object&, const String& manifestKey, WebCore::FloatSize idealSize, IconsCache& cacheLocation, Error, const String& customLocalizedDescription);
+    RefPtr<WebCore::Icon> bestIconVariantForManifestKey(const JSON::Object&, StringImpl* manifestKey, WebCore::FloatSize idealSize, IconsCache& cacheLocation, Error, StringImpl* customLocalizedDescription);
 #endif
 
     bool hasBackgroundContent();
@@ -304,23 +304,23 @@ public:
     bool backgroundContentUsesModules();
     bool backgroundContentIsServiceWorker();
 
-    const String& backgroundContentPath();
-    const String& generatedBackgroundContent();
+    const RefPtr<StringImpl>& backgroundContentPath();
+    const RefPtr<StringImpl>& generatedBackgroundContent();
 
     bool hasInspectorBackgroundPage();
-    const String& inspectorBackgroundPagePath();
+    const RefPtr<StringImpl>& inspectorBackgroundPagePath();
 
     bool hasOptionsPage();
     bool hasOverrideNewTabPage();
 
-    const String& optionsPagePath();
-    const String& overrideNewTabPagePath();
+    const RefPtr<StringImpl>& optionsPagePath();
+    const RefPtr<StringImpl>& overrideNewTabPagePath();
 
     const CommandsVector& commands();
     bool hasCommands();
 
     const DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets();
-    std::optional<DeclarativeNetRequestRulesetData> declarativeNetRequestRuleset(const String&);
+    std::optional<DeclarativeNetRequestRulesetData> declarativeNetRequestRuleset(StringImpl*);
     bool hasContentModificationRules() { return !declarativeNetRequestRulesets().isEmpty(); }
 
     const InjectedContentVector& staticInjectedContents();
@@ -332,7 +332,7 @@ public:
     const PermissionsSet& requestedPermissions();
     const PermissionsSet& optionalPermissions();
 
-    bool hasRequestedPermission(String);
+    bool hasRequestedPermission(RefPtr<StringImpl>);
 
     // Match patterns requested by the extension in their manifest.
     // These are not the currently allowed permission patterns.
@@ -347,7 +347,7 @@ public:
     // Combined pattern set that includes permission patterns and injected content patterns from the manifest.
     MatchPatternSet allRequestedMatchPatterns();
 
-    Ref<API::Error> createError(Error error, const String& customLocalizedDescription = { }, RefPtr<API::Error> underlyingError = nullptr);
+    Ref<API::Error> createError(Error, StringImpl* customLocalizedDescription = nullptr, RefPtr<API::Error> underlyingError = nullptr);
     void recordError(Ref<API::Error>);
     void recordErrorIfNeeded(RefPtr<API::Error> error)
     {
@@ -364,9 +364,9 @@ public:
 private:
     static DataResources toDataResources(const Resources&);
     static StringResources toStringResources(const Resources&);
-    static String resourceKeyForPath(const String&);
+    static RefPtr<StringImpl> resourceKeyForPath(StringImpl*);
 
-    static String processFileAndExtractZipArchive(const String&);
+    static RefPtr<StringImpl> processFileAndExtractZipArchive(StringImpl*);
 
     bool parseManifest(StringView);
 
@@ -392,7 +392,7 @@ private:
     void populateSidePanelProperties(const JSON::Object&);
 #endif
 
-    URL resourceFileURLForPath(const String&);
+    URL resourceFileURLForPath(StringImpl*);
 
     std::expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> parseDeclarativeNetRequestRulesetObject(const JSON::Object&);
 
@@ -420,44 +420,44 @@ private:
     DataResources m_dataResources;
     StringResources m_stringResources;
 
-    String m_defaultLocale;
-    Vector<String> m_supportedLocales;
+    RefPtr<StringImpl> m_defaultLocale;
+    Vector<RefPtr<StringImpl>> m_supportedLocales;
     RefPtr<WebExtensionLocalization> m_localization;
 
     Vector<Ref<API::Error>> m_errors;
 
-    String m_displayName;
-    String m_displayShortName;
-    String m_displayVersion;
-    String m_displayDescription;
-    String m_version;
+    RefPtr<StringImpl> m_displayName;
+    RefPtr<StringImpl> m_displayShortName;
+    RefPtr<StringImpl> m_displayVersion;
+    RefPtr<StringImpl> m_displayDescription;
+    RefPtr<StringImpl> m_version;
 
     IconsCache m_iconsCache;
 
     RefPtr<JSON::Object> m_actionObject;
     IconsCache m_actionIconsCache;
     RefPtr<WebCore::Icon> m_defaultActionIcon;
-    String m_displayActionLabel;
-    String m_actionPopupPath;
+    RefPtr<StringImpl> m_displayActionLabel;
+    RefPtr<StringImpl> m_actionPopupPath;
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     std::optional<IconsCache> m_sidebarIconsCache;
-    std::optional<String> m_sidebarDocumentPath;
-    std::optional<String> m_sidebarTitle;
+    std::optional<RefPtr<StringImpl>> m_sidebarDocumentPath;
+    std::optional<RefPtr<StringImpl>> m_sidebarTitle;
 #endif
 
-    String m_contentSecurityPolicy;
+    RefPtr<StringImpl> m_contentSecurityPolicy;
 
-    Vector<String> m_backgroundScriptPaths;
-    String m_backgroundPagePath;
-    String m_backgroundServiceWorkerPath;
-    String m_generatedBackgroundContent;
+    Vector<RefPtr<StringImpl>> m_backgroundScriptPaths;
+    RefPtr<StringImpl> m_backgroundPagePath;
+    RefPtr<StringImpl> m_backgroundServiceWorkerPath;
+    RefPtr<StringImpl> m_generatedBackgroundContent;
     Environment m_backgroundContentEnvironment { Environment::Document };
 
-    String m_inspectorBackgroundPagePath;
+    RefPtr<StringImpl> m_inspectorBackgroundPagePath;
 
-    String m_optionsPagePath;
-    String m_overrideNewTabPagePath;
+    RefPtr<StringImpl> m_optionsPagePath;
+    RefPtr<StringImpl> m_overrideNewTabPagePath;
 
 #if PLATFORM(MAC)
     bool m_shouldValidateResourceData : 1 { true };

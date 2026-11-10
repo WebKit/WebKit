@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HiddenInputType);
 
 using namespace HTMLNames;
 
-const AtomString& HiddenInputType::formControlType() const
+const RefPtr<AtomStringImpl>& HiddenInputType::formControlType() const
 {
     return InputTypeNames::hidden();
 }
@@ -58,13 +58,13 @@ FormControlState HiddenInputType::saveFormControlState() const
     // It's OK for now because we restore values only to form controls created by parsing.
     ASSERT(element());
     Ref element = *this->element();
-    return element->valueAttributeWasUpdatedAfterParsing() ? FormControlState { { AtomString { element->value() } } } : FormControlState { };
+    return element->valueAttributeWasUpdatedAfterParsing() ? FormControlState { { AtomStringImpl::add(protect(element->value().get())) } } : FormControlState { };
 }
 
 void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
     ASSERT(element());
-    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { state[0] });
+    protect(element())->setAttributeWithoutSynchronization(valueAttr, RefPtr<AtomStringImpl> { state[0] });
 }
 
 RenderPtr<RenderElement> HiddenInputType::createInputRenderer(Style::ComputedStyle&&)
@@ -88,10 +88,10 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
+void HiddenInputType::setValue(StringImpl* sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
-    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
+    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomStringImpl::add(sanitizedValue).get());
 }
 
 bool HiddenInputType::appendFormData(DOMFormData& formData) const
@@ -101,11 +101,11 @@ bool HiddenInputType::appendFormData(DOMFormData& formData) const
     auto name = element->name();
 
     if (equalIgnoringASCIICase(name, "_charset_"_s)) {
-        formData.append(name, String::fromLatin1(formData.encoding().name()));
+        formData.append(name, StringImpl::fromLatin1(formData.encoding().name()));
         return true;
     }
     InputType::appendFormData(formData);
-    if (auto& dirname = element->attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+    if (auto& dirname = element->attributeWithoutSynchronization(dirnameAttr); dirname)
         formData.append(dirname, element->directionForFormData());
     return true;
 }

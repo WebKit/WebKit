@@ -69,34 +69,34 @@ public:
 
     StringView host() const LIFETIME_BOUND { return m_url.host(); }
 
-    WEBCORE_EXPORT const String& domainWithoutPublicSuffix() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const RefPtr<StringImpl>& domainWithoutPublicSuffix() const LIFETIME_BOUND;
 
-    WEBCORE_EXPORT const String& registrableDomain() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const RefPtr<StringImpl>& registrableDomain() const LIFETIME_BOUND;
 
 private:
     const URL m_url;
-    mutable std::optional<String> m_registrableDomain;
-    mutable std::optional<String> m_domainWithoutPublicSuffix;
+    mutable std::optional<RefPtr<StringImpl>> m_registrableDomain;
+    mutable std::optional<RefPtr<StringImpl>> m_domainWithoutPublicSuffix;
 };
 
 class QuirkMatchPattern {
 public:
     WEBCORE_EXPORT static std::optional<QuirkMatchPattern> parse(StringView);
 
-    WEBCORE_EXPORT explicit QuirkMatchPattern(String&&);
+    WEBCORE_EXPORT explicit QuirkMatchPattern(RefPtr<StringImpl>&&);
 
     bool isValid() const { return m_pattern.isValid(); }
 
     WEBCORE_EXPORT bool matches(const URLMatchContext&) const;
 
-    const String& string() const LIFETIME_BOUND { return m_string; }
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND { return m_string; }
 
-    friend bool operator==(const QuirkMatchPattern& a, const QuirkMatchPattern& b) { return a.m_string == b.m_string; }
+    friend bool operator==(const QuirkMatchPattern& a, const QuirkMatchPattern& b) { return equal(a.m_string, b.m_string); }
 
 private:
-    NODELETE QuirkMatchPattern(String&&, UserContentURLPattern&&, bool matchesAnyPublicSuffix);
+    NODELETE QuirkMatchPattern(RefPtr<StringImpl>&&, UserContentURLPattern&&, bool matchesAnyPublicSuffix);
 
-    String m_string;
+    RefPtr<StringImpl> m_string;
 
     UserContentURLPattern m_pattern;
     bool m_matchesAnyPublicSuffix { false };

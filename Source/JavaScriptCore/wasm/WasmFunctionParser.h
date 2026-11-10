@@ -370,7 +370,7 @@ private:
     }
 
     template <typename Arg>
-    [[nodiscard]] String validationFailHelper(const Arg& arg) const
+    [[nodiscard]] RefPtr<StringImpl> validationFailHelper(const Arg& arg) const
     {
         if constexpr (std::is_same<Arg, Type>())
             return typeToStringModuleRelative(arg);
@@ -378,7 +378,7 @@ private:
             return FailureHelper::makeString(arg);
     }
 
-    String typeToStringModuleRelative(const Type& type) const
+    RefPtr<StringImpl> typeToStringModuleRelative(const Type& type) const
     {
         if (isRefType(type)) {
             StringPrintStream out;
@@ -562,7 +562,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
 #endif
 
         if constexpr (verbose) {
-            String extOpString;
+            RefPtr<StringImpl> extOpString;
             auto computeExtOpString = [&]<typename ExtOpEnum>() {
                 uint32_t extOpBits;
                 if (peekVarUInt32(extOpBits))
@@ -3803,22 +3803,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big "_s, numberOfTargets);
 
         WASM_ALLOCATOR_FAIL_IF(!targets.tryReserveCapacity(numberOfTargets), "can't allocate memory for "_s, numberOfTargets, " br_table targets"_s);
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         targets.appendUsingFunctor(numberOfTargets, [&](size_t i) -> ControlType* {
             uint32_t target;
             if (!parseVarUInt32(target)) [[unlikely]] {
-                if (errorMessage.isNull())
+                if (!errorMessage)
                     errorMessage = WTF::makeString("can't get "_s, i, "th target for br_table"_s);
                 return nullptr;
             }
             if (target >= m_controlStack.size()) [[unlikely]] {
-                if (errorMessage.isNull())
+                if (!errorMessage)
                     errorMessage = WTF::makeString("br_table's "_s, i, "th target "_s, target, " exceeds control stack size "_s, m_controlStack.size());
                 return nullptr;
             }
             return &m_controlStack[m_controlStack.size() - 1 - target].controlData;
         });
-        WASM_PARSER_FAIL_IF(!errorMessage.isNull(), errorMessage);
+        WASM_PARSER_FAIL_IF(!!errorMessage, errorMessage);
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTargetIndex), "can't get default target for br_table"_s);
         WASM_PARSER_FAIL_IF(defaultTargetIndex >= m_controlStack.size(), "br_table's default target "_s, defaultTargetIndex, " exceeds control stack size "_s, m_controlStack.size());

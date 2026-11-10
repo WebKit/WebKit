@@ -48,7 +48,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetch::Record);
 
 static const unsigned backgroundFetchCurrentVersion = 1;
 
-BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
+BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, StringImpl* identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
     : m_identifier(identifier)
     , m_options(WTF::move(options))
     , m_registrationKey(registration.key())
@@ -63,7 +63,7 @@ BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const Strin
     });
 }
 
-BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
+BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, RefPtr<StringImpl>&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
     : m_identifier(WTF::move(identifier))
     , m_options(WTF::move(options))
     , m_registrationKey(registration.key())
@@ -264,7 +264,7 @@ BackgroundFetch::Record::~Record()
 
     auto bodyCallbacks = std::exchange(m_responseBodyCallbacks, { });
     for (auto& callback : bodyCallbacks)
-        callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Record is gone"_s }));
+        callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Record is gone"_si }));
 }
 
 bool BackgroundFetch::Record::isMatching(const ResourceRequest& request, const CacheQueryOptions& options) const
@@ -307,7 +307,7 @@ void BackgroundFetch::Record::abort()
 
     auto bodyCallbacks = std::exchange(m_responseBodyCallbacks, { });
     for (auto& callback : bodyCallbacks)
-        callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Background fetch was aborted"_s, ResourceError::Type::Cancellation }));
+        callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Background fetch was aborted"_si, ResourceError::Type::Cancellation }));
 
     if (RefPtr loader = m_loader) {
         loader->abort();
@@ -338,11 +338,11 @@ static bool validatePartialResponse(size_t rangeStart, const ResourceResponse& p
         return false;
 
     auto previousETag = previousResponse.httpHeaderField(HTTPHeaderName::ETag);
-    if (!previousETag.isEmpty() && previousETag != partialResponse.httpHeaderField(HTTPHeaderName::ETag))
+    if (!isEmpty(previousETag) && !equal(previousETag, partialResponse.httpHeaderField(HTTPHeaderName::ETag)))
         return false;
 
     auto previousLastMotified = previousResponse.httpHeaderField(HTTPHeaderName::LastModified);
-    if (!previousLastMotified.isEmpty() && previousLastMotified != partialResponse.httpHeaderField(HTTPHeaderName::LastModified))
+    if (!isEmpty(previousLastMotified) && !equal(previousLastMotified, partialResponse.httpHeaderField(HTTPHeaderName::LastModified)))
         return false;
 
     if (previousResponse.httpStatusCode() == httpStatus206PartialContent) {
@@ -360,7 +360,7 @@ void BackgroundFetch::Record::didReceiveResponse(ResourceResponse&& response)
     bool shouldClearResponseBody = false;
     if (response.httpStatusCode() == httpStatus206PartialContent) {
         if (!validatePartialResponse(m_responseDataSize, response, m_response)) {
-            didFinish(ResourceError { String { }, 0, response.url(), "Validation of partial response failed"_s, ResourceError::Type::AccessControl });
+            didFinish(ResourceError { nullString(), 0, response.url(), "Validation of partial response failed"_si, ResourceError::Type::AccessControl });
             return;
         }
     } else if (m_responseDataSize)
@@ -432,7 +432,7 @@ void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRe
 void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& store, RetrieveRecordResponseBodyCallback&& callback)
 {
     if (m_isAborted) {
-        callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Background fetch was aborted"_s, ResourceError::Type::Cancellation }));
+        callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Background fetch was aborted"_si, ResourceError::Type::Cancellation }));
         return;
     }
 
@@ -447,12 +447,12 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
         callback(WTF::move(result.value()));
 
         if (!weakThis) {
-            callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Record is gone"_s }));
+            callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Record is gone"_si }));
             return;
         }
 
         if (weakThis->m_isAborted) {
-            callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Background fetch was aborted"_s, ResourceError::Type::Cancellation }));
+            callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Background fetch was aborted"_si, ResourceError::Type::Cancellation }));
             return;
         }
 
@@ -520,7 +520,7 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
         return nullptr;
     }
 
-    std::optional<String> identifier;
+    std::optional<RefPtr<StringImpl>> identifier;
     decoder >> identifier;
     if (!identifier)
         return nullptr;
@@ -530,7 +530,7 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
     if (!downloadTotal)
         return nullptr;
 
-    std::optional<String> title;
+    std::optional<RefPtr<StringImpl>> title;
     decoder >> title;
     if (!title)
         return nullptr;
@@ -575,7 +575,7 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
         if (!httpHeaders)
             return nullptr;
 
-        std::optional<String> referrer;
+        std::optional<RefPtr<StringImpl>> referrer;
         decoder >> referrer;
         if (!referrer)
             return nullptr;

@@ -96,7 +96,7 @@ public:
     void enumerateDevices(EnumerateDevicesPromise&&);
     NODELETE MediaTrackSupportedConstraints getSupportedConstraints();
 
-    String deviceIdToPersistentId(const String&) const;
+    RefPtr<StringImpl> deviceIdToPersistentId(StringImpl*) const;
 
     static bool isFeaturePolicyAllowingSpeakerSelection(const Document&);
 
@@ -106,7 +106,7 @@ private:
     explicit MediaDevices(Document&);
 
     void scheduledEventTimerFired();
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     using EventTarget::addEventListener;
 
     void exposeDevices(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&, EnumerateDevicesPromise&&);
@@ -142,8 +142,8 @@ private:
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;
 
-    MemoryCompactRobinHoodHashMap<String, String> m_audioOutputDeviceIdToPersistentId;
-    String m_audioOutputDeviceId;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_audioOutputDeviceIdToPersistentId;
+    RefPtr<StringImpl> m_audioOutputDeviceId;
 
     bool m_hasRestrictedCameraDevices { true };
     bool m_hasRestrictedMicrophoneDevices { true };

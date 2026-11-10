@@ -126,7 +126,7 @@ void ImageBufferRemoteIOSurfaceBackend::putPixelBuffer(const PixelBufferSourceVi
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String ImageBufferRemoteIOSurfaceBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferRemoteIOSurfaceBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferRemoteIOSurfaceBackend " << this << " handle " << m_handle.sendRight() << " " << m_volatilityState;

@@ -58,7 +58,7 @@ struct ResourceLoadInfo {
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     Markable<WTF::UUID> documentID;
     URL originalURL;
-    String originalHTTPMethod;
+    RefPtr<StringImpl> originalHTTPMethod;
     WallTime eventTimestamp;
     bool loadedFromCache { false };
     Type type { Type::Other };

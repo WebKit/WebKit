@@ -43,10 +43,10 @@
 
 namespace TestWebKitAPI {
 
-static String parseUserAgent(const Vector<char>& request)
+static RefPtr<StringImpl> parseUserAgent(const Vector<char>& request)
 {
-    auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
-    auto index = headers.findIf([] (auto& header) { return header.startsWith("User-Agent:"_s); });
+    auto headers = split(StringImpl::fromUTF8(request.span()), "\r\n"_s);
+    auto index = headers.findIf([] (auto& header) { return startsWith(header, "User-Agent:"_s); });
     if (index != notFound)
         return headers[index];
     return emptyString();
@@ -111,7 +111,7 @@ TEST(MediaLoading, UserAgentStringHLS)
             );
 
             connection.send(makeString("HTTP/1.1 200 OK\r\n"_s,
-                "Content-Length: "_s, payload.length(), "\r\n"_s,
+                "Content-Length: "_s, length(payload), "\r\n"_s,
                 "\r\n"_s,
                 payload
             ));
@@ -174,12 +174,12 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
             };
             totalRequests++;
             auto path = HTTPServer::parsePath(request);
-            if (path == "/"_s)
-                sendResponse({ videoPlayTestHTML }, HTTPResponse::IncludeContentLength::Yes);
-            else if (path == "/video.mp4"_s)
+            if (equal(path, "/"_s))
+                sendResponse({ StringImpl::create(videoPlayTestHTML).ptr() }, HTTPResponse::IncludeContentLength::Yes);
+            else if (equal(path, "/video.mp4"_s))
                 sendResponse(testVideoBytes(), HTTPResponse::IncludeContentLength::No);
             else
-                ASSERT(path.isNull());
+                ASSERT(!path);
         });
     };
 
@@ -234,7 +234,7 @@ TEST(MediaLoading, LockdownModeHLS)
         "#EXTINF:6.0272,\n"_s,
         "http://127.0.0.1:"_s, serverPort, "/start-offset.ts\n"_s
     );
-    server.addResponse("/video.m3u8"_s, { m3u8Source });
+    server.addResponse("/video.m3u8"_si, { m3u8Source });
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];

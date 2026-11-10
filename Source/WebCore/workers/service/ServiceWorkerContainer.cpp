@@ -164,9 +164,9 @@ ServiceWorker* ServiceWorkerContainer::controller() const
     return context ? context->activeServiceWorker() : nullptr;
 }
 
-void ServiceWorkerContainer::addRegistration(Variant<Ref<TrustedScriptURL>, String>&& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
+void ServiceWorkerContainer::addRegistration(Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
 {
-    auto stringValueHolder = trustedTypeCompliantString(*protect(scriptExecutionContext()), WTF::move(relativeScriptURL), "ServiceWorkerContainer register"_s);
+    auto stringValueHolder = trustedTypeCompliantString(*protect(scriptExecutionContext()), WTF::move(relativeScriptURL), "ServiceWorkerContainer register"_si);
 
     if (stringValueHolder.hasException()) {
         promise->reject(stringValueHolder.releaseException());
@@ -180,8 +180,8 @@ void ServiceWorkerContainer::addRegistration(Variant<Ref<TrustedScriptURL>, Stri
         return;
     }
 
-    if (trustedRelativeScriptURL.isEmpty()) {
-        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() cannot be called with an empty script URL"_s });
+    if (isEmpty(trustedRelativeScriptURL)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() cannot be called with an empty script URL"_si });
         return;
     }
 
@@ -204,7 +204,7 @@ void ServiceWorkerContainer::addRegistration(Variant<Ref<TrustedScriptURL>, Stri
 
     if (!jobData.scriptURL.isValid()) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL");
-        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a valid relative script URL"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a valid relative script URL"_si });
         return;
     }
 
@@ -212,32 +212,32 @@ void ServiceWorkerContainer::addRegistration(Variant<Ref<TrustedScriptURL>, Stri
     jobData.isFromServiceWorkerPage = page && page->isServiceWorkerPage();
     if (!jobData.scriptURL.protocolIsInHTTPFamily() && !jobData.isFromServiceWorkerPage) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
-        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_si });
         return;
     }
 
     auto path = jobData.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f"_s) || path.containsIgnoringASCIICase("%5c"_s)) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scriptURL contains invalid character");
-        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_si });
         return;
     }
 
-    if (!options.scope.isEmpty())
+    if (!isEmpty(options.scope))
         jobData.scopeURL = context->encodingParseURL(options.scope);
     else
-        jobData.scopeURL = URL(jobData.scriptURL, "./"_s);
+        jobData.scopeURL = URL(jobData.scriptURL, "./"_si);
 
     if (!jobData.scopeURL.isNull() && !jobData.scopeURL.protocolIsInHTTPFamily() && !jobData.isFromServiceWorkerPage) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL scheme is not HTTP or HTTPS");
-        promise->reject(Exception { ExceptionCode::TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_si });
         return;
     }
 
     path = jobData.scopeURL.path();
     if (path.containsIgnoringASCIICase("%2f"_s) || path.containsIgnoringASCIICase("%5c"_s)) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL contains invalid character");
-        promise->reject(Exception { ExceptionCode::TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_si });
         return;
     }
 
@@ -325,7 +325,7 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
     swConnection->scheduleJob(contextIdentifier(), jobData);
 }
 
-void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<DeferredPromise>&& promise)
+void ServiceWorkerContainer::getRegistration(StringImpl* clientURL, Ref<DeferredPromise>&& promise)
 {
     if (m_isStopped) {
         promise->reject(Exception { ExceptionCode::InvalidStateError });
@@ -335,7 +335,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     Ref context = *scriptExecutionContext();
     URL parsedURL = context->encodingParseURL(clientURL);
     if (!protocolHostAndPortAreEqual(parsedURL, context->url())) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "Origin of clientURL is not client's origin"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "Origin of clientURL is not client's origin"_si });
         return;
     }
 
@@ -418,7 +418,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
         destroyJob(job);
     });
 
-    CONTAINER_RELEASE_LOG_ERROR("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), exception.message().utf8());
+    CONTAINER_RELEASE_LOG_ERROR("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), utf8(exception.message()));
 
     if (job.data().type == ServiceWorkerJobType::Register)
         willSettleRegistrationPromise(false);
@@ -499,7 +499,7 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
 
     MessageEventSource source = ServiceWorker::getOrCreate(context.get(), WTF::move(sourceData));
 
-    auto messageEvent = MessageEvent::create(*globalObject, message.message.releaseNonNull(), WTF::move(sourceOrigin), { }, WTF::move(source), MessagePort::entanglePorts(context.get(), WTF::move(message.transferredPorts)));
+    auto messageEvent = MessageEvent::create(*globalObject, message.message.releaseNonNull(), WTF::move(sourceOrigin), nullptr, WTF::move(source), MessagePort::entanglePorts(context.get(), WTF::move(message.transferredPorts)));
     if (scope.exception()) [[unlikely]] {
         // Currently, we assume that the only way we can get here is if we have a termination.
         RELEASE_ASSERT(vm.hasPendingTerminationException());
@@ -550,7 +550,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     RefPtr context = scriptExecutionContext();
     if (!context) {
         LOG_ERROR("ServiceWorkerContainer::jobResolvedWithRegistration called but the container's ScriptExecutionContext is gone");
-        notifyFailedFetchingScript(job, { errorDomainWebKitInternal, 0, job.data().scriptURL, "Attempt to fetch service worker script with no ScriptExecutionContext"_s });
+        notifyFailedFetchingScript(job, { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, job.data().scriptURL, "Attempt to fetch service worker script with no ScriptExecutionContext"_si });
         destroyJob(job);
         return;
     }
@@ -571,7 +571,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 {
     ASSERT(m_creationThreadID == currentThreadID());
 
-    CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8());
+    CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), utf8(error.localizedDescription()));
 
     if (job.data().type == ServiceWorkerJobType::Register)
         willSettleRegistrationPromise(false);
@@ -678,7 +678,7 @@ void ServiceWorkerContainer::getPushPermissionState(ServiceWorkerRegistrationIde
 }
 
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerContainer::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&& promise)
+void ServiceWorkerContainer::getNotifications(const URL& serviceWorkerRegistrationURL, StringImpl* tag, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&& promise)
 {
     protect(ensureSWClientConnection())->getNotifications(serviceWorkerRegistrationURL, tag, [promise = WTF::move(promise), protectedThis = Ref { *this }](auto&& result) mutable {
         RefPtr context = protectedThis->scriptExecutionContext();
@@ -715,7 +715,7 @@ void ServiceWorkerContainer::stop()
     auto jobMap = WTF::move(m_jobMap);
     for (auto& ongoingJob : jobMap.values()) {
         if (Ref { *ongoingJob.job }->cancelPendingLoad())
-            notifyFailedFetchingScript(*ongoingJob.job.get(), ResourceError { errorDomainWebKitInternal, 0, ongoingJob.job->data().scriptURL, "Job cancelled"_s, ResourceError::Type::Cancellation });
+            notifyFailedFetchingScript(*ongoingJob.job.get(), ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, ongoingJob.job->data().scriptURL, "Job cancelled"_si, ResourceError::Type::Cancellation });
     }
 
     auto registrationMap = WTF::move(m_ongoingSettledRegistrations);
@@ -740,7 +740,7 @@ ServiceWorkerJob* ServiceWorkerContainer::job(ServiceWorkerJobIdentifier identif
     return iterator->value.job.get();
 }
 
-bool ServiceWorkerContainer::addEventListener(const AtomString& eventType, Ref<EventListener>&& eventListener, const AddEventListenerOptions& options)
+bool ServiceWorkerContainer::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& eventListener, const AddEventListenerOptions& options)
 {
     // Setting the onmessage EventHandler attribute on the ServiceWorkerContainer should start the messages
     // automatically.
@@ -764,7 +764,7 @@ void ServiceWorkerContainer::disableNavigationPreload(ServiceWorkerRegistrationI
     });
 }
 
-void ServiceWorkerContainer::setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier identifier, String&& headerValue, VoidPromise&& promise)
+void ServiceWorkerContainer::setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier identifier, RefPtr<StringImpl>&& headerValue, VoidPromise&& promise)
 {
     protect(ensureSWClientConnection())->setNavigationPreloadHeaderValue(identifier, WTF::move(headerValue), [promise = WTF::move(promise)](auto&& result) mutable {
         promise.settle(WTF::move(result));

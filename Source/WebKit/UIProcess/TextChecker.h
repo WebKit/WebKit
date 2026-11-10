@@ -69,8 +69,8 @@ public:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    static void setSpellCheckingLanguages(const Vector<String>&);
-    static Vector<String> loadedSpellCheckingLanguages();
+    static void setSpellCheckingLanguages(const Vector<RefPtr<StringImpl>>&);
+    static Vector<RefPtr<StringImpl>> loadedSpellCheckingLanguages();
 #endif
 
     static void continuousSpellCheckingEnabledStateChanged(bool);
@@ -85,11 +85,11 @@ public:
     NODELETE static void checkGrammarOfString(SpellDocumentTag, StringView text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
     static bool spellingUIIsShowing();
     static void toggleSpellingUIIsShowing();
-    static void updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String& misspelledWord);
-    static void updateSpellingUIWithGrammarString(SpellDocumentTag, const String& badGrammarPhrase, const WebCore::GrammarDetail&);
-    static void getGuessesForWord(SpellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses, bool initialCapitalizationEnabled);
-    static void learnWord(SpellDocumentTag, const String& word);
-    static void ignoreWord(SpellDocumentTag, const String& word);
+    static void updateSpellingUIWithMisspelledWord(SpellDocumentTag, StringImpl* misspelledWord);
+    static void updateSpellingUIWithGrammarString(SpellDocumentTag, StringImpl* badGrammarPhrase, const WebCore::GrammarDetail&);
+    static void getGuessesForWord(SpellDocumentTag, StringImpl* word, StringImpl* context, int32_t insertionPoint, Vector<RefPtr<StringImpl>>& guesses, bool initialCapitalizationEnabled);
+    static void learnWord(SpellDocumentTag, StringImpl* word);
+    static void ignoreWord(SpellDocumentTag, StringImpl* word);
     NODELETE static void requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
     static void requestExtendedCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
 };

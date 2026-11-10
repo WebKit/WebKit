@@ -94,7 +94,7 @@ public:
 
 #if ENABLE(TREE_DEBUGGING)
     void debugPosition(ASCIILiteral msg = ""_s) const;
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
     void showTreeForThis() const;
 #endif
 
@@ -133,7 +133,7 @@ struct VisiblePositionRange {
 
     bool isNull() const { return start.isNull() || end.isNull(); }
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 #endif
 };
 

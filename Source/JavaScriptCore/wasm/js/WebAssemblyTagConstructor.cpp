@@ -61,21 +61,21 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTag, (JSGlobalObject* globalObjec
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         Wasm::Type type;
-        String valueString = nextType.toWTFString(globalObject);
+        RefPtr<StringImpl> valueString = nextType.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
-        if (valueString == "i32"_s)
+        if (equal(valueString, "i32"_s))
             type = Wasm::Types::I32;
-        else if (valueString == "i64"_s)
+        else if (equal(valueString, "i64"_s))
             type = Wasm::Types::I64;
-        else if (valueString == "f32"_s)
+        else if (equal(valueString, "f32"_s))
             type = Wasm::Types::F32;
-        else if (valueString == "f64"_s)
+        else if (equal(valueString, "f64"_s))
             type = Wasm::Types::F64;
-        else if (valueString == "v128"_s)
+        else if (equal(valueString, "v128"_s))
             type = Wasm::Types::V128;
-        else if (valueString == "funcref"_s || valueString == "anyfunc"_s)
+        else if (equal(valueString, "funcref"_s) || equal(valueString, "anyfunc"_s))
             type = Wasm::funcrefType();
-        else if (valueString == "externref"_s)
+        else if (equal(valueString, "externref"_s))
             type = Wasm::externrefType();
         else {
             throwTypeError(globalObject, scope, "WebAssembly.Tag constructor expects the 'parameters' field of the first argument to be a sequence of WebAssembly value types."_s);
@@ -113,7 +113,7 @@ Structure* WebAssemblyTagConstructor::createStructure(VM& vm, JSGlobalObject* gl
 
 void WebAssemblyTagConstructor::finishCreation(VM& vm, WebAssemblyTagPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Tag"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Tag"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

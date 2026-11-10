@@ -39,9 +39,9 @@ struct WebExtensionCookieParameters {
 };
 
 struct WebExtensionCookieFilterParameters {
-    std::optional<String> name;
-    std::optional<String> domain;
-    std::optional<String> path;
+    std::optional<RefPtr<StringImpl>> name;
+    std::optional<RefPtr<StringImpl>> domain;
+    std::optional<RefPtr<StringImpl>> path;
     std::optional<bool> secure;
     std::optional<bool> session;
 };

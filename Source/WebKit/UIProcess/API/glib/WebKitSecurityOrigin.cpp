@@ -92,7 +92,7 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
     if (port && !WTF::isDefaultPortForProtocol(port, StringView::fromLatin1(protocol)))
         optionalPort = port;
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOriginData(String::fromUTF8(protocol), String::fromUTF8(host), optionalPort));
+    return webkitSecurityOriginCreate(WebCore::SecurityOriginData(StringImpl::fromUTF8(protocol), StringImpl::fromUTF8(host), optionalPort));
 }
 
 /**
@@ -113,7 +113,7 @@ WebKitSecurityOrigin* webkit_security_origin_new_for_uri(const gchar* uri)
 {
     g_return_val_if_fail(uri, nullptr);
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { String::fromUTF8(uri) }));
+    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { StringImpl::fromUTF8(uri) }));
 }
 
 /**
@@ -172,11 +172,11 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    if (origin->securityOriginData.protocol().isEmpty())
+    if (isEmpty(origin->securityOriginData.protocol()))
         return nullptr;
 
     if (origin->protocol.isNull())
-        origin->protocol = origin->securityOriginData.protocol().utf8();
+        origin->protocol = utf8(origin->securityOriginData.protocol());
     return origin->protocol.legacyCStringPointer();
 }
 
@@ -197,11 +197,11 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    if (origin->securityOriginData.host().isEmpty())
+    if (isEmpty(origin->securityOriginData.host()))
         return nullptr;
 
     if (origin->host.isNull())
-        origin->host = origin->securityOriginData.host().utf8();
+        origin->host = utf8(origin->securityOriginData.host());
     return origin->host.legacyCStringPointer();
 }
 
@@ -271,6 +271,6 @@ gchar* webkit_security_origin_to_string(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    auto cstring = origin->securityOriginData.toString().utf8();
+    auto cstring = utf8(origin->securityOriginData.toString());
     return cstring == "null"_s || cstring == ""_s ? nullptr : gStrdup(cstring);
 }

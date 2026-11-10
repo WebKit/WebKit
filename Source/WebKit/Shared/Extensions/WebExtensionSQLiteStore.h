@@ -47,21 +47,21 @@ class WebExtensionSQLiteStore : public ThreadSafeRefCountedAndCanMakeThreadSafeW
     WTF_MAKE_NONCOPYABLE(WebExtensionSQLiteStore)
 
 public:
-    WebExtensionSQLiteStore(const String& uniqueIdentifier, const String& directory, bool useInMemoryDatabase);
+    WebExtensionSQLiteStore(StringImpl* uniqueIdentifier, StringImpl* directory, bool useInMemoryDatabase);
     virtual ~WebExtensionSQLiteStore() { close(); };
 
     SchemaVersion databaseSchemaVersion();
     bool useInMemoryDatabase() { return m_useInMemoryDatabase; };
 
-    bool openDatabaseIfNecessary(String& outErrorMessage, bool createIfNecessary);
+    bool openDatabaseIfNecessary(RefPtr<StringImpl>& outErrorMessage, bool createIfNecessary);
 
     void close();
-    void deleteDatabase(CompletionHandler<void(const String& errorMessage)>&&);
-    String deleteDatabaseIfEmpty();
+    void deleteDatabase(CompletionHandler<void(StringImpl* errorMessage)>&&);
+    RefPtr<StringImpl> deleteDatabaseIfEmpty();
 
-    void createSavepoint(CompletionHandler<void(Markable<WTF::UUID> savepointIdentifier, const String& errorMessage)>&&);
-    void commitSavepoint(WTF::UUID& savepointIdentifier, CompletionHandler<void(const String& errorMessage)>&&);
-    void rollbackToSavepoint(WTF::UUID& savepointIdentifier, CompletionHandler<void(const String& errorMessage)>&&);
+    void createSavepoint(CompletionHandler<void(Markable<WTF::UUID> savepointIdentifier, StringImpl* errorMessage)>&&);
+    void commitSavepoint(WTF::UUID& savepointIdentifier, CompletionHandler<void(StringImpl* errorMessage)>&&);
+    void rollbackToSavepoint(WTF::UUID& savepointIdentifier, CompletionHandler<void(StringImpl* errorMessage)>&&);
 
 protected:
     virtual DatabaseResult createFreshDatabaseSchema() = 0;
@@ -75,22 +75,22 @@ protected:
 
     WorkQueue& queue() { return m_queue; };
     RefPtr<WebExtensionSQLiteDatabase> database() { return m_database; };
-    String uniqueIdentifier() { return m_uniqueIdentifier; };
+    RefPtr<StringImpl> uniqueIdentifier() { return m_uniqueIdentifier; };
     const UTF8CString& lastErrorMessage() LIFETIME_BOUND { return m_database->m_lastErrorMessage; };
     URL directory() { return m_directory; };
 
 private:
     void vacuum();
     NODELETE bool isDatabaseOpen();
-    String openDatabase(const URL& databaseURL, WebExtensionSQLiteDatabase::AccessType, bool deleteDatabaseFileOnError);
-    String deleteDatabaseFileAtURL(const URL& databaseURL, bool reopenDatabase);
-    String deleteDatabase();
+    RefPtr<StringImpl> openDatabase(const URL& databaseURL, WebExtensionSQLiteDatabase::AccessType, bool deleteDatabaseFileOnError);
+    RefPtr<StringImpl> deleteDatabaseFileAtURL(const URL& databaseURL, bool reopenDatabase);
+    RefPtr<StringImpl> deleteDatabase();
 
-    String savepointNameFromUUID(const WTF::UUID& savepointIdentifier);
+    RefPtr<StringImpl> savepointNameFromUUID(const WTF::UUID& savepointIdentifier);
 
-    String handleSchemaVersioning(bool deleteDatabaseFileOnError);
+    RefPtr<StringImpl> handleSchemaVersioning(bool deleteDatabaseFileOnError);
 
-    String m_uniqueIdentifier;
+    RefPtr<StringImpl> m_uniqueIdentifier;
     URL m_directory;
     RefPtr<WebExtensionSQLiteDatabase> m_database;
     const Ref<WorkQueue> m_queue;

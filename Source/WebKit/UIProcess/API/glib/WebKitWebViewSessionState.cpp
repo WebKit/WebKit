@@ -120,7 +120,7 @@ static inline unsigned toHTMLBodyElementType(size_t index)
         return HTMLBodyElementType::Data;
     case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>:
         return HTMLBodyElementType::File;
-    case WTF::alternativeIndexV<String, HTTPBody::Element::Data>:
+    case WTF::alternativeIndexV<RefPtr<StringImpl>, HTTPBody::Element::Data>:
         return HTMLBodyElementType::Blob;
     }
 
@@ -130,7 +130,7 @@ static inline unsigned toHTMLBodyElementType(size_t index)
 static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBody& httpBody)
 {
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("(sa" HTTP_BODY_ELEMENT_TYPE_STRING_V1 ")"));
-    gVariantBuilderAdd(sessionBuilder, "s", httpBody.contentType.utf8());
+    gVariantBuilderAdd(sessionBuilder, "s", utf8(httpBody.contentType));
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("a" HTTP_BODY_ELEMENT_TYPE_STRING_V1));
     for (const auto& element : httpBody.elements) {
         g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(HTTP_BODY_ELEMENT_TYPE_STRING_V1));
@@ -144,7 +144,7 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
         g_variant_builder_close(sessionBuilder);
 
         if (auto* fileData = std::get_if<HTTPBody::Element::FileData>(&element.data)) {
-            gVariantBuilderAdd(sessionBuilder, "s", fileData->filePath.utf8());
+            gVariantBuilderAdd(sessionBuilder, "s", utf8(fileData->filePath));
             g_variant_builder_add(sessionBuilder, "x", fileData->fileStart);
             if (fileData->fileLength)
                 g_variant_builder_add(sessionBuilder, "mx", TRUE, fileData->fileLength.value());
@@ -162,8 +162,8 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
             g_variant_builder_add(sessionBuilder, "md", FALSE);
         }
 
-        if (auto* blobURLString = std::get_if<String>(&element.data))
-            gVariantBuilderAdd(sessionBuilder, "s", blobURLString->utf8());
+        if (auto* blobURLString = std::get_if<RefPtr<StringImpl>>(&element.data))
+            gVariantBuilderAdd(sessionBuilder, "s", utf8(*blobURLString));
         else
             g_variant_builder_add(sessionBuilder, "s", "");
 
@@ -175,14 +175,14 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
 
 static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const FrameState& frameState)
 {
-    gVariantBuilderAdd(sessionBuilder, "s", frameState.urlString.utf8());
-    gVariantBuilderAdd(sessionBuilder, "s", frameState.originalURLString.utf8());
-    gVariantBuilderAdd(sessionBuilder, "s", frameState.referrer.utf8());
-    const auto frameStateTarget = frameState.target.string();
-    gVariantBuilderAdd(sessionBuilder, "s", (frameStateTarget.length() < maximumFrameStateTargetLength) ? UTF8CStringView { frameStateTarget.utf8() } : ""_s);
+    gVariantBuilderAdd(sessionBuilder, "s", utf8(frameState.urlString));
+    gVariantBuilderAdd(sessionBuilder, "s", utf8(frameState.originalURLString));
+    gVariantBuilderAdd(sessionBuilder, "s", utf8(frameState.referrer));
+    const auto& frameStateTarget = frameState.target;
+    gVariantBuilderAdd(sessionBuilder, "s", (length(frameStateTarget) < maximumFrameStateTargetLength) ? UTF8CStringView { utf8(frameStateTarget) } : ""_s);
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("as"));
     for (const auto& state : frameState.documentState())
-        gVariantBuilderAdd(sessionBuilder, "s", state.string().utf8());
+        gVariantBuilderAdd(sessionBuilder, "s", utf8(state));
     g_variant_builder_close(sessionBuilder);
     if (!frameState.stateObjectData)
         g_variant_builder_add(sessionBuilder, "may", FALSE);
@@ -217,7 +217,7 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
 
 static inline void encodeMainFrameState(GVariantBuilder* sessionBuilder, const BackForwardListItemState& state)
 {
-    gVariantBuilderAdd(sessionBuilder, "s", state.frameState->title.utf8());
+    gVariantBuilderAdd(sessionBuilder, "s", utf8(state.frameState->title));
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(FRAME_STATE_TYPE_STRING_V1));
     encodeFrameState(sessionBuilder, state.frameState);
     g_variant_builder_close(sessionBuilder);
@@ -266,7 +266,7 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
     g_variant_get(httpBodyVariant, HTTP_BODY_FORMAT_STRING_V1, &hasHTTPBody, &contentType, &elementsIter.outPtr());
     if (!hasHTTPBody)
         return false;
-    httpBody.contentType = String::fromUTF8(contentType);
+    httpBody.contentType = StringImpl::fromUTF8(contentType);
     gsize elementsLength = g_variant_iter_n_children(elementsIter.get());
     if (!elementsLength)
         return true;
@@ -294,7 +294,7 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
             break;
         case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>: {
             HTTPBody::Element::FileData fileData;
-            fileData.filePath = String::fromUTF8(filePath);
+            fileData.filePath = StringImpl::fromUTF8(filePath);
             fileData.fileStart = fileStart;
             if (hasFileLength)
                 fileData.fileLength = fileLength;
@@ -303,8 +303,8 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
             httpBody.elements.append({ WTF::move(fileData) });
             break;
         }
-        case WTF::alternativeIndexV<String, HTTPBody::Element::Data>:
-            httpBody.elements.append({ String::fromUTF8(blobURLString) });
+        case WTF::alternativeIndexV<RefPtr<StringImpl>, HTTPBody::Element::Data>:
+            httpBody.elements.append({ StringImpl::fromUTF8(blobURLString) });
             break;
         }
     }
@@ -329,19 +329,19 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     g_variant_get(frameStateVariant, FRAME_STATE_FORMAT_STRING_V1, &urlString, &originalURLString, &referrer, &target,
         &documentStateIter.outPtr(), &stateObjectDataIter.outPtr(), &documentSequenceNumber, &itemSequenceNumber,
         &scrollPositionX, &scrollPositionY, &pageScaleFactor, &httpBodyVariant, &childrenIter.outPtr());
-    frameState.urlString = String::fromUTF8(urlString);
-    frameState.originalURLString = String::fromUTF8(originalURLString);
+    frameState.urlString = StringImpl::fromUTF8(urlString);
+    frameState.originalURLString = StringImpl::fromUTF8(originalURLString);
     // frameState.referrer must not be an empty string since we never want to
     // send an empty Referer header. Bug #159606.
-    if (auto referrerString = String::fromUTF8(referrer); !referrerString.isEmpty())
+    if (auto referrerString = StringImpl::fromUTF8(referrer); !isEmpty(referrerString))
         frameState.referrer = WTF::move(referrerString);
-    if (auto targetString = AtomString::fromUTF8(target); !targetString.isEmpty())
+    if (auto targetString = AtomStringImpl::fromUTF8(target); !isEmpty(targetString))
         frameState.target = WTF::move(targetString);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
-        Vector<AtomString> documentState(ReserveCapacityTag { }, documentStateLength);
+        Vector<RefPtr<AtomStringImpl>> documentState(ReserveCapacityTag { }, documentStateLength);
         const char* documentStateString;
         while (g_variant_iter_next(documentStateIter.get(), "&s", &documentStateString))
-            documentState.append(AtomString::fromUTF8(documentStateString));
+            documentState.append(AtomStringImpl::fromUTF8(documentStateString));
         frameState.setDocumentState(documentState);
     }
     if (stateObjectDataIter) {
@@ -379,7 +379,7 @@ static inline void decodeBackForwardListItemStateV1(GVariantIter* backForwardLis
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V1, &identifier, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
         Ref mainFrameState = FrameState::create();
-        mainFrameState->title = String::fromUTF8(title);
+        mainFrameState->title = StringImpl::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
         mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
         backForwardListState.items.append({ WTF::move(mainFrameState), std::nullopt });
@@ -393,7 +393,7 @@ static inline void decodeBackForwardListItemStateV2(GVariantIter* backForwardLis
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V2, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
         Ref mainFrameState = FrameState::create();
-        mainFrameState->title = String::fromUTF8(title);
+        mainFrameState->title = StringImpl::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
         mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
         backForwardListState.items.append({ WTF::move(mainFrameState), std::nullopt });
@@ -423,7 +423,7 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
 
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V3, &title, &frameStateVariant, &hasNavigatedFrameID, &navigatedFrameID, &shouldOpenExternalURLsPolicy)) {
         Ref mainFrameState = FrameState::create();
-        mainFrameState->title = String::fromUTF8(title);
+        mainFrameState->title = StringImpl::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
         mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
         backForwardListState.items.append({ WTF::move(mainFrameState), hasNavigatedFrameID ? std::optional<WebCore::FrameIdentifier>(navigatedFrameID) : std::nullopt });

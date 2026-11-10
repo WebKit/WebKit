@@ -31,17 +31,17 @@ namespace WebCore {
 
 struct LinkDecorationFilteringData {
     RegistrableDomain domain;
-    String path;
-    String linkDecoration;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> linkDecoration;
 
-    LinkDecorationFilteringData(RegistrableDomain&& domain, String&& path, String&& linkDecoration)
+    LinkDecorationFilteringData(RegistrableDomain&& domain, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& linkDecoration)
         : domain(WTF::move(domain))
         , path(WTF::move(path))
         , linkDecoration(WTF::move(linkDecoration))
     {
     }
 
-    LinkDecorationFilteringData(String&& domain, String&& path, String&& linkDecoration)
+    LinkDecorationFilteringData(RefPtr<StringImpl>&& domain, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& linkDecoration)
         : LinkDecorationFilteringData(RegistrableDomain { URL { WTF::move(domain) } }, WTF::move(path), WTF::move(linkDecoration))
     {
     }

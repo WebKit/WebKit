@@ -122,7 +122,7 @@ static Ref<SuspendableWorkQueue> sharedStatisticsQueue()
     return queue.get().copyRef();
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral isEphemeral)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, StringImpl* resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral isEphemeral)
     : m_networkSession(networkSession)
     , m_statisticsQueue(sharedStatisticsQueue())
     , m_dailyTasksTimer(RunLoop::mainSingleton(), "WebResourceLoadStatisticsStore::DailyTasksTimer"_s, this, &WebResourceLoadStatisticsStore::performDailyTasks)
@@ -134,8 +134,8 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
     if (isEphemeral == ResourceLoadStatistics::IsEphemeral::Yes)
         return;
 
-    if (!resourceLoadStatisticsDirectory.isEmpty()) {
-        postTask([resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()](auto& store) {
+    if (!isEmpty(resourceLoadStatisticsDirectory)) {
+        postTask([resourceLoadStatisticsDirectory = isolatedCopy(resourceLoadStatisticsDirectory), shouldIncludeLocalhost, sessionID = networkSession.sessionID()](auto& store) {
             Ref statisticsStore = ResourceLoadStatisticsStore::create(store, Ref { store.m_statisticsQueue }, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
             store.m_statisticsStore = statisticsStore.copyRef();
 
@@ -156,7 +156,7 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
     RELEASE_ASSERT(!m_statisticsStore);
 }
 
-Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
+Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(NetworkSession& networkSession, StringImpl* resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
 {
     return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
 }
@@ -218,7 +218,7 @@ void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandl
                 statisticsStore->setIsNewResourceLoadStatisticsDatabaseFile(false);
             } else
                 postTaskReply([protectedThis = Ref { store }, completionHandler = WTF::move(completionHandler)]() mutable {
-                    protectedThis->logTestingEvent("PopulatedWithoutGrandfathering"_s);
+                    protectedThis->logTestingEvent("PopulatedWithoutGrandfathering"_si);
                     completionHandler();
                 });
         } else
@@ -351,7 +351,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
         // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
         statisticsStore->updateCookieBlocking([protectedThis = Ref { store }]() {
             postTaskReply([protectedThis] {
-                protectedThis->logTestingEvent("Statistics Updated"_s);
+                protectedThis->logTestingEvent("Statistics Updated"_si);
             });
         });
         statisticsStore->processStatisticsAndDataRecords([] { });
@@ -1089,20 +1089,20 @@ void WebResourceLoadStatisticsStore::setMostRecentWebPushInteractionTime(Registr
     });
 }
 
-void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(String&&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     postTask([completionHandler = WTF::move(completionHandler)](auto& store) mutable {
-        auto innerCompletionHandler = [completionHandler = WTF::move(completionHandler)](const String& result) mutable {
-            postTaskReply([result = result.isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+        auto innerCompletionHandler = [completionHandler = WTF::move(completionHandler)](StringImpl* result) mutable {
+            postTaskReply([result = isolatedCopy(result), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(WTF::move(result));
             });
         };
         if (RefPtr statisticsStore = store.m_statisticsStore)
             statisticsStore->dumpResourceLoadStatistics(WTF::move(innerCompletionHandler));
         else
-            innerCompletionHandler(String { emptyString() });
+            innerCompletionHandler(RefPtr<StringImpl> { emptyString() });
     });
 }
 
@@ -1410,8 +1410,8 @@ bool WebResourceLoadStatisticsStore::needsUserInteractionQuirk(const Registrable
 {
     static NeverDestroyed<HashSet<RegistrableDomain>> quirks = [] {
         HashSet<RegistrableDomain> set;
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kinja.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kinja.com"_si));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_si));
         return set;
     }();
 
@@ -1514,7 +1514,7 @@ void WebResourceLoadStatisticsStore::resetParametersToDefaultValues(CompletionHa
     });
 }
 
-void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
+void WebResourceLoadStatisticsStore::logTestingEvent(StringImpl* event)
 {
     ASSERT(RunLoop::isMain());
 

@@ -151,17 +151,17 @@ public:
         out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
     }
 
-    String toJSONString() const
+    RefPtr<StringImpl> toJSONString() const
     {
         auto object = JSON::Object::create();
 
-        object->setObject("pts"_s, presentationTime().toJSONObject());
-        object->setObject("dts"_s, decodeTime().toJSONObject());
-        object->setObject("duration"_s, duration().toJSONObject());
-        object->setBoolean("isSync"_s, isSync());
-        object->setBoolean("isNonDisplaying"_s, isNonDisplaying());
-        object->setInteger("flags"_s, static_cast<unsigned>(flags()));
-        object->setObject("presentationSize"_s, presentationSize().toJSONObject());
+        object->setObject("pts"_si, presentationTime().toJSONObject());
+        object->setObject("dts"_si, decodeTime().toJSONObject());
+        object->setObject("duration"_si, duration().toJSONObject());
+        object->setBoolean("isSync"_si, isSync());
+        object->setBoolean("isNonDisplaying"_si, isNonDisplaying());
+        object->setInteger("flags"_si, static_cast<unsigned>(flags()));
+        object->setObject("presentationSize"_si, presentationSize().toJSONObject());
 
         return object->toJSONString();
     }
@@ -174,7 +174,7 @@ namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::MediaSample> {
-    static String toString(const WebCore::MediaSample& sample)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSample& sample)
     {
         return sample.toJSONString();
     }

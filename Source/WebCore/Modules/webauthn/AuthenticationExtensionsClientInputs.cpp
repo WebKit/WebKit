@@ -77,15 +77,15 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
 Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
 {
     cbor::CBORValue::MapValue clientInputsMap;
-    if (!appid.isEmpty())
+    if (!isEmpty(appid))
         clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(appid);
     if (credProps)
         clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(*credProps);
-    if (!crossDeviceFallbackURL.isEmpty())
+    if (!isEmpty(crossDeviceFallbackURL))
         clientInputsMap[cbor::CBORValue("crossDeviceFallbackUrl")] = cbor::CBORValue(crossDeviceFallbackURL);
     if (largeBlob) {
         cbor::CBORValue::MapValue largeBlobMap;
-        if (!largeBlob->support.isNull())
+        if (largeBlob->support)
             largeBlobMap[cbor::CBORValue("support")] = cbor::CBORValue(largeBlob->support);
 
         if (largeBlob->read)

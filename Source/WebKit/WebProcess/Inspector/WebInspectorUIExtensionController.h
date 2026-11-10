@@ -74,16 +74,16 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // WebInspectorUIExtensionController IPC messages.
-    void registerExtension(const Inspector::ExtensionID&, const String& extensionBundleIdentifier, const String& displayName, CompletionHandler<void(std::expected<void, Inspector::ExtensionError>)>&&);
+    void registerExtension(const Inspector::ExtensionID&, StringImpl* extensionBundleIdentifier, StringImpl* displayName, CompletionHandler<void(std::expected<void, Inspector::ExtensionError>)>&&);
     void unregisterExtension(const Inspector::ExtensionID&, CompletionHandler<void(std::expected<void, Inspector::ExtensionError>)>&&);
-    void createTabForExtension(const Inspector::ExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
-    void evaluateScriptForExtension(const Inspector::ExtensionID&, const String& scriptSource, const std::optional<URL>& frameURL, const std::optional<URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, CompletionHandler<void(WebKit::RunJavaScriptResult&&, const std::optional<Inspector::ExtensionError>&)>&&);
-    void reloadForExtension(const Inspector::ExtensionID&, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, CompletionHandler<void(const std::optional<Inspector::ExtensionError>&)>&&);
+    void createTabForExtension(const Inspector::ExtensionID&, StringImpl* tabName, const URL& tabIconURL, const URL& sourceURL, CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
+    void evaluateScriptForExtension(const Inspector::ExtensionID&, StringImpl* scriptSource, const std::optional<URL>& frameURL, const std::optional<URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, CompletionHandler<void(WebKit::RunJavaScriptResult&&, const std::optional<Inspector::ExtensionError>&)>&&);
+    void reloadForExtension(const Inspector::ExtensionID&, const std::optional<bool>& ignoreCache, const std::optional<RefPtr<StringImpl>>& userAgent, const std::optional<RefPtr<StringImpl>>& injectedScript, CompletionHandler<void(const std::optional<Inspector::ExtensionError>&)>&&);
     void showExtensionTab(const Inspector::ExtensionTabID&, CompletionHandler<void(std::expected<void, Inspector::ExtensionError>)>&&);
     void navigateTabForExtension(const Inspector::ExtensionTabID&, const URL& sourceURL, CompletionHandler<void(const std::optional<Inspector::ExtensionError>&)>&&);
 
     // WebInspectorUIExtensionController IPC messages for testing.
-    void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, const String& scriptSource, CompletionHandler<void(WebKit::RunJavaScriptResult&&, const std::optional<Inspector::ExtensionError>&)>&&);
+    void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, StringImpl* scriptSource, CompletionHandler<void(WebKit::RunJavaScriptResult&&, const std::optional<Inspector::ExtensionError>&)>&&);
 
     // Callbacks from the frontend.
     void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier);

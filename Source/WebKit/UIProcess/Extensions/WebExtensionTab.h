@@ -145,7 +145,7 @@ public:
 
     WKWebView *webView() const;
 
-    String title() const;
+    RefPtr<StringImpl> title() const;
 
     bool isOpen() const;
     void didOpen();

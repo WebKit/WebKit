@@ -64,9 +64,9 @@ Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::disable()
     return WebHeapAgent::disable();
 }
 
-String PageHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder& builder, JSC::JSCell* cell, const String& currentClassName)
+RefPtr<StringImpl> PageHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder& builder, JSC::JSCell* cell, StringImpl* currentClassName)
 {
-    if (currentClassName == "HTMLElement"_s) {
+    if (equal(currentClassName, "HTMLElement"_s)) {
         if (auto* jsElement = dynamicDowncast<JSElement>(cell)) {
             Ref element = jsElement->wrapped();
             if (element->isDefinedCustomElement()) {
@@ -74,8 +74,8 @@ String PageHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapsh
                     if (RefPtr customElementInterface = customElementRegistry->findInterface(element)) {
                         if (JSC::JSObject* customElementConstructorObject = customElementInterface->constructor()) {
                             if (JSC::JSFunction* customElementConstructorFunction = dynamicDowncast<JSC::JSFunction>(customElementConstructorObject)) {
-                                String customElementClassName = customElementConstructorFunction->calculatedDisplayName(customElementConstructorFunction->vm());
-                                if (!customElementClassName.isNull())
+                                RefPtr<StringImpl> customElementClassName = customElementConstructorFunction->calculatedDisplayName(customElementConstructorFunction->vm());
+                                if (customElementClassName)
                                     return customElementClassName;
                             }
                         }

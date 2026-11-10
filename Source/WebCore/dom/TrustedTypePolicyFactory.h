@@ -50,15 +50,15 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions&);
+    ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, StringImpl* policyName, const TrustedTypePolicyOptions&);
     NODELETE bool isHTML(JSC::JSValue) const;
     NODELETE bool isScript(JSC::JSValue) const;
     NODELETE bool isScriptURL(JSC::JSValue) const;
     Ref<TrustedHTML> emptyHTML() const;
     Ref<TrustedScript> emptyScript() const;
 
-    String getAttributeType(const String& tagName, const String& attribute, const String& elementNamespace, const String& attributeNamespace) const;
-    String getPropertyType(const String& tagName, const String& property, const String& elementNamespace) const;
+    RefPtr<StringImpl> getAttributeType(StringImpl* tagName, StringImpl* attribute, StringImpl* elementNamespace, StringImpl* attributeNamespace) const;
+    RefPtr<StringImpl> getPropertyType(StringImpl* tagName, StringImpl* property, StringImpl* elementNamespace) const;
 
     RefPtr<TrustedTypePolicy> defaultPolicy() const { return m_defaultPolicy; }
     TrustedTypePolicy* defaultPolicyConcurrently() const { return m_defaultPolicy.get(); }
@@ -67,7 +67,7 @@ private:
     TrustedTypePolicyFactory(ScriptExecutionContext&);
 
     RefPtr<TrustedTypePolicy> m_defaultPolicy;
-    ListHashSet<String> m_createdPolicyNames;
+    ListHashSet<RefPtr<StringImpl>> m_createdPolicyNames;
 };
 
 } // namespace WebCore

@@ -128,17 +128,17 @@ namespace TextExtraction {
 
 using namespace JSC;
 
-static String normalizeText(const String& string, unsigned maxDescriptionLength = 512)
+static RefPtr<StringImpl> normalizeText(StringImpl* string, unsigned maxDescriptionLength = 512)
 {
     auto result = foldQuoteMarks(string);
     result = makeStringByReplacingAll(result, '"', "'"_s);
     result = makeStringByReplacingAll(result, '\r', ""_s);
     result = makeStringByReplacingAll(result, '\n', " "_s);
-    result = result.simplifyWhiteSpace(isASCIIWhitespace);
-    if (result.length() <= maxDescriptionLength)
+    result = simplifyWhiteSpace(result, isASCIIWhitespace);
+    if (length(result) <= maxDescriptionLength)
         return result;
 
-    return makeString(result.left(maxDescriptionLength / 2 - 2), "..."_s, result.right(maxDescriptionLength / 2 - 1));
+    return makeString(left(result, maxDescriptionLength / 2 - 2), "..."_s, right(result, maxDescriptionLength / 2 - 1));
 }
 
 static constexpr auto minimumClassOrIdLength = 6;
@@ -159,8 +159,8 @@ static constexpr auto minOpacityToConsiderVisible = 0.05;
 
 enum class IncludeTextInAutoFilledControls : bool { No, Yes };
 
-using TextNodesAndText = Vector<std::pair<Ref<Text>, String>>;
-using TextAndSelectedRange = std::pair<String, std::optional<CharacterRange>>;
+using TextNodesAndText = Vector<std::pair<Ref<Text>, RefPtr<StringImpl>>>;
+using TextAndSelectedRange = std::pair<RefPtr<StringImpl>, std::optional<CharacterRange>>;
 using TextAndSelectedRangeMap = HashMap<Ref<Text>, TextAndSelectedRange>;
 
 static constexpr OptionSet behaviorsForTextExtraction {
@@ -185,7 +185,7 @@ static inline TextNodesAndText collectText(const SimpleRange& range, IncludeText
 
     auto emitTextForLastNode = [&] {
         auto text = makeStringByReplacingAll(textForLastTextNode.toString(), noBreakSpace, ' ');
-        if (text.isEmpty())
+        if (isEmpty(text))
             return;
         nodesAndText.append({ lastTextNode.releaseNonNull(), WTF::move(text) });
     };
@@ -229,25 +229,25 @@ static inline TextNodesAndText collectText(const SimpleRange& range, IncludeText
     return nodesAndText;
 }
 
-NODELETE static String stringOnlyIfHumanReadable(const String& string)
+NODELETE static RefPtr<StringImpl> stringOnlyIfHumanReadable(StringImpl* string)
 {
     if (StringEntropyHelpers::isProbablyHumanReadable(string))
         return string;
     return { };
 }
 
-String shortenedURLString(const URL& url)
+RefPtr<StringImpl> shortenedURLString(const URL& url)
 {
     auto shortenedURL = StringEntropyHelpers::removeHighEntropyComponents(url);
     if (shortenedURL.protocolIsFile()) {
-        String lastComponent;
-        String secondToLastComponent;
+        RefPtr<StringImpl> lastComponent;
+        RefPtr<StringImpl> secondToLastComponent;
         for (auto component : shortenedURL.path().split('/')) {
             std::swap(secondToLastComponent, lastComponent);
             lastComponent = component.toString();
         }
 
-        if (!secondToLastComponent.isEmpty())
+        if (!isEmpty(secondToLastComponent))
             shortenedURL.setPath(makeString(WTF::move(secondToLastComponent), '/', WTF::move(lastComponent)));
 
         return shortenedURL.path().toString();
@@ -257,16 +257,16 @@ String shortenedURLString(const URL& url)
     if (!shortenedURL.protocolIsInHTTPFamily())
         return shortenedString;
 
-    if (auto endOfProtocol = shortenedString.find("://"_s); endOfProtocol != notFound)
-        shortenedString = shortenedString.substring(endOfProtocol + 3);
+    if (auto endOfProtocol = find(shortenedString, "://"_s); endOfProtocol != notFound)
+        shortenedString = substring(shortenedString, endOfProtocol + 3);
 
-    if (shortenedString.endsWith('/'))
-        shortenedString = shortenedString.left(shortenedString.length() - 1);
+    if (endsWith(shortenedString, '/'))
+        shortenedString = left(shortenedString, length(shortenedString) - 1);
 
     return shortenedString;
 }
 
-static void addBoxShadowIfNeeded(Node& node, const String& colorAsString)
+static void addBoxShadowIfNeeded(Node& node, StringImpl* colorAsString)
 {
     Ref document = node.document();
     if (!document->settings().textExtractionDebugUIEnabled())
@@ -294,7 +294,7 @@ static void addBoxShadowIfNeeded(Node& node, const String& colorAsString)
     }
 }
 
-using ClientNodeAttributesMap = WeakHashMap<Node, HashMap<String, String>, WeakPtrImplWithEventTargetData>;
+using ClientNodeAttributesMap = WeakHashMap<Node, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>, WeakPtrImplWithEventTargetData>;
 
 static constexpr unsigned maxExtractionRecursionDepth = 255;
 
@@ -431,12 +431,12 @@ static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoF
             if (auto entry = result.find(node.ptr()); entry != result.end() && entry->key.ptr() == node.ptr()) {
                 entry->value = std::make_pair(
                     makeString(entry->value.first, text),
-                    CharacterRange { entry->value.first.length(), text.length() }
+                    CharacterRange { length(entry->value.first), length(text) }
                 );
                 continue;
             }
         }
-        result.add(node, TextAndSelectedRange { text, CharacterRange { 0, text.length() } });
+        result.add(node, TextAndSelectedRange { text, CharacterRange { 0, length(text) } });
     }
 
     bool isFirstNodeAfterSelection = true;
@@ -480,7 +480,7 @@ static inline void merge(Item& destinationItem, Item&& sourceItem)
 
     destinationItem.rectInRootView.unite(sourceItem.rectInRootView);
 
-    auto originalContentLength = destination.content.length();
+    auto originalContentLength = length(destination.content);
     destination.content = makeString(destination.content, WTF::move(source.content));
 
     if (source.selectedRange) {
@@ -554,15 +554,15 @@ static Vector<Ref<HTMLLabelElement>> associatedLabels(HTMLElement& element)
     return result;
 }
 
-static inline String labelText(std::span<const Ref<HTMLLabelElement>> labels)
+static inline RefPtr<StringImpl> labelText(std::span<const Ref<HTMLLabelElement>> labels)
 {
     StringBuilder builder;
     for (auto& label : labels) {
         if (!label->renderer())
             continue;
 
-        auto text = label->textContent().simplifyWhiteSpace(isASCIIWhitespace);
-        if (text.isEmpty())
+        auto text = simplifyWhiteSpace(label->textContent(), isASCIIWhitespace);
+        if (isEmpty(text))
             continue;
 
         if (!builder.isEmpty())
@@ -746,11 +746,11 @@ static bool isDisabledControlItem(Node& node, const ItemData& data)
 
 enum class IncludeAssociatedLabels : bool { No, Yes };
 
-static String normalizedLabelText(Element& element, IncludeAssociatedLabels includeAssociatedLabels = IncludeAssociatedLabels::No)
+static RefPtr<StringImpl> normalizedLabelText(Element& element, IncludeAssociatedLabels includeAssociatedLabels = IncludeAssociatedLabels::No)
 {
     for (auto attribute : { HTMLNames::aria_labelAttr.get(), HTMLNames::labelAttr.get() }) {
         auto text = normalizeText(element.attributeWithoutSynchronization(attribute));
-        if (!text.isEmpty())
+        if (!isEmpty(text))
             return text;
     }
 
@@ -762,9 +762,9 @@ static String normalizedLabelText(Element& element, IncludeAssociatedLabels incl
     return { };
 }
 
-static String svgAltText(SVGSVGElement& svg)
+static RefPtr<StringImpl> svgAltText(SVGSVGElement& svg)
 {
-    if (auto altText = normalizeText(svg.attributeWithoutSynchronization(HTMLNames::aria_labelAttr)); !altText.isEmpty())
+    if (auto altText = normalizeText(svg.attributeWithoutSynchronization(HTMLNames::aria_labelAttr)); !isEmpty(altText))
         return altText;
 
     if (RefPtr title = childrenOfType<SVGTitleElement>(svg).first())
@@ -777,19 +777,19 @@ static constexpr auto minimumDataAttributeHintLength = 6;
 static constexpr auto maximumDataAttributeHintLength = 39;
 static constexpr auto maximumDataAttributeHintCandidates = 5;
 
-static Vector<std::pair<String, String>> dataAttributeHintCandidates(const Element& element)
+static Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> dataAttributeHintCandidates(const Element& element)
 {
-    Vector<std::pair<String, String>> candidates;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> candidates;
     if (!element.hasAttributes())
         return candidates;
 
     for (auto& attribute : element.attributes()) {
         auto& name = attribute.localName();
-        if (!name.startsWith("data-"_s))
+        if (!startsWith(name, "data-"_s))
             continue;
 
         auto value = normalizeText(attribute.value());
-        if (value.length() < minimumDataAttributeHintLength || value.length() > maximumDataAttributeHintLength)
+        if (length(value) < minimumDataAttributeHintLength || length(value) > maximumDataAttributeHintLength)
             continue;
 
         if (!StringEntropyHelpers::isProbablyHumanReadable(value))
@@ -856,7 +856,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
         if (auto iterator = context.visibleText.find(*textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
-            context.visibleTextLength += textContent.length();
+            context.visibleTextLength += length(textContent);
             return { TextItemData { { }, selectedRange, textContent, { } } };
         }
         return { SkipExtraction::Self };
@@ -873,7 +873,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     }
 
     if (element->isLink()) {
-        if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !href.isEmpty()) {
+        if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !isEmpty(href)) {
             if (auto url = protect(element->document())->encodingParseURL(href); !url.isEmpty()) {
                 if (context.mergeParagraphs)
                     return { WTF::move(url) };
@@ -881,17 +881,17 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                 auto shortenedString = shortenedURLString(url);
                 bool linksToCurrentURL = url.viewWithoutQueryOrFragmentIdentifier() == element->document().url().viewWithoutQueryOrFragmentIdentifier();
 
-                String shortenedSelfLinkURLString;
+                RefPtr<StringImpl> shortenedSelfLinkURLString;
                 if (linksToCurrentURL) {
                     using namespace StringEntropyHelpers;
-                    String tail;
+                    RefPtr<StringImpl> tail;
                     auto params = queryParameters(url);
                     if (params.size() == 1 && isProbablyHumanReadable(params[0].key) && isProbablyHumanReadable(params[0].value))
                         tail = url.queryWithLeadingQuestionMark().toString();
                     else if (url.hasFragmentIdentifier() && !url.fragmentIdentifier().isEmpty() && isProbablyHumanReadable(url.fragmentIdentifier()))
                         tail = url.fragmentIdentifierWithLeadingNumberSign().toString();
 
-                    if (!tail.isEmpty()) {
+                    if (!isEmpty(tail)) {
                         auto lastPathComponent = url.lastPathComponent();
                         if (isProbablyHumanReadable(lastPathComponent))
                             shortenedSelfLinkURLString = makeString(lastPathComponent, WTF::move(tail));
@@ -900,7 +900,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                     }
                 }
 
-                String target;
+                RefPtr<StringImpl> target;
                 if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*element))
                     target = anchor->target();
 
@@ -942,16 +942,16 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element)) {
         auto completedSourceURL = image->getURLAttribute(HTMLNames::srcAttr);
-        String mimeType;
+        RefPtr<StringImpl> mimeType;
         if (RefPtr underlyingImage = image->image())
             mimeType = underlyingImage->mimeType();
 
-        if (mimeType.isEmpty())
-            mimeType = "image/png"_s;
+        if (isEmpty(mimeType))
+            mimeType = "image/png"_si;
 
         return { ImageItemData {
             .completedSource = completedSourceURL,
-            .shortenedName = StringEntropyHelpers::lowEntropyLastPathComponent(completedSourceURL, "image"_s, mimeType),
+            .shortenedName = StringEntropyHelpers::lowEntropyLastPathComponent(completedSourceURL, "image"_si, mimeType),
             .altText = image->altText(),
         } };
     }
@@ -969,8 +969,8 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
             if (RefPtr frameOrigin = contentFrame->frameDocumentSecurityOrigin()) {
                 bool isSameOriginAsParent = frameOrigin->isSameOriginAs(protect(protect(element->document())->securityOrigin()));
                 auto originString = frameOrigin->toString();
-                String shortenedOrigin;
-                if (!isSameOriginAsParent && !originString.isEmpty())
+                RefPtr<StringImpl> shortenedOrigin;
+                if (!isSameOriginAsParent && !isEmpty(originString))
                     shortenedOrigin = shortenedURLString(URL { originString });
                 return { IFrameData {
                     .origin = WTF::move(originString),
@@ -1013,8 +1013,8 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                 .controlType = control->type(),
                 .autocomplete = control->autocomplete(),
                 .pattern = control->attributeWithoutSynchronization(HTMLNames::patternAttr),
-                .name = input ? stringOnlyIfHumanReadable(input->name()) : String { },
-                .value = input ? String { input->value() } : String { },
+                .name = input ? stringOnlyIfHumanReadable(input->name()) : nullptr,
+                .value = input ? input->value().get() : nullptr,
                 .minLength = input ? wholeNumberOrNull(input->minLength()) : std::optional<int> { },
                 .maxLength = input ? wholeNumberOrNull(input->maxLength()) : std::optional<int> { },
                 .isRequired = control->isRequired(),
@@ -1232,7 +1232,7 @@ NODELETE static bool isProbablyNotInteractiveBasedOnTagName(const Element& eleme
 static bool isProbablyNotInteractiveBasedOnRole(const Element& element)
 {
     auto role = element.attributeWithoutSynchronization(HTMLNames::roleAttr);
-    if (role.isEmpty())
+    if (isEmpty(role))
         return false;
 
     switch (AccessibilityObject::ariaRoleToWebCoreRole(role)) {
@@ -1284,7 +1284,7 @@ static bool looksLikeButton(const RenderObject& renderer)
 
     static constexpr auto maxButtonLabelLength = 64;
     auto text = protectedElement->textContent();
-    if (text.isEmpty() || text.length() > maxButtonLabelLength || text.containsOnly<isASCIIWhitespace>())
+    if (isEmpty(text) || length(text) > maxButtonLabelLength || containsOnly<isASCIIWhitespace>(text))
         return false;
 
     return !containsInteractiveDescendant(protectedElement);
@@ -1386,13 +1386,13 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     auto clientAttributes = context.clientNodeAttributes.get(node);
 
     static constexpr auto maximumClassNamesPerItem = 5;
-    Vector<String> classNames;
-    String idAttribute;
+    Vector<RefPtr<StringImpl>> classNames;
+    RefPtr<StringImpl> idAttribute;
     if (RefPtr element = dynamicDowncast<Element>(node)) {
         if (auto idValue = element->attributeWithoutSynchronization(HTMLNames::idAttr); isCandidateClassOrId(idValue))
             idAttribute = WTF::move(idValue);
 
-        if (auto classValue = element->attributeWithoutSynchronization(HTMLNames::classAttr); !classValue.isEmpty()) {
+        if (auto classValue = element->attributeWithoutSynchronization(HTMLNames::classAttr); !isEmpty(classValue)) {
             for (auto className : StringView { classValue }.split(' ')) {
                 if (!isCandidateClassOrId(className))
                     continue;
@@ -1403,9 +1403,9 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         }
     }
 
-    HashMap<String, String> ariaAttributes;
-    String role;
-    String title;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> ariaAttributes;
+    RefPtr<StringImpl> role;
+    RefPtr<StringImpl> title;
     if (RefPtr element = dynamicDowncast<Element>(node); element && context.includeAccessibilityAttributes) {
         auto attributesToExtract = std::array {
             HTMLNames::aria_labelAttr.get(),
@@ -1424,12 +1424,12 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             HTMLNames::aria_valuetextAttr.get(),
         };
         for (auto& attributeName : attributesToExtract) {
-            if (auto value = element->attributeWithoutSynchronization(attributeName); !value.isEmpty())
+            if (auto value = element->attributeWithoutSynchronization(attributeName); !isEmpty(value))
                 ariaAttributes.set(attributeName.toString(), WTF::move(value));
         }
         role = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
 
-        if (!role.isEmpty()) {
+        if (!isEmpty(role)) {
             auto shouldSuppressRole = [&] {
                 static constexpr auto ignoredRoles = WTF::toArray({
                     "presentation"_s,
@@ -1462,7 +1462,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             }();
 
             if (shouldSuppressRole)
-                role = { };
+                role = nullptr;
         }
 
         title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
@@ -1474,9 +1474,9 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 continue;
 
             static constexpr auto maximumLengthForAttributeText = 32;
-            auto rawText = plainText(makeRangeSelectingNodeContents(*elementForAttribute)).simplifyWhiteSpace(isASCIIWhitespace);
+            auto rawText = simplifyWhiteSpace(plainText(makeRangeSelectingNodeContents(*elementForAttribute)), isASCIIWhitespace);
             auto elementText = normalizeText(WTF::move(rawText), maximumLengthForAttributeText);
-            if (elementText.isEmpty())
+            if (isEmpty(elementText))
                 continue;
 
             ariaAttributes.set(attributeName.toString(), WTF::move(elementText));
@@ -1500,10 +1500,10 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         if (!ariaAttributes.isEmpty())
             return FallbackPolicy::Extract;
 
-        if (!title.isEmpty())
+        if (!isEmpty(title))
             return FallbackPolicy::Extract;
 
-        if (!role.isEmpty())
+        if (!isEmpty(role))
             return FallbackPolicy::Extract;
 
         if (!clientAttributes.isEmpty())
@@ -1659,7 +1659,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         if (item) {
             if (linkURL) {
                 auto& text = std::get<TextItemData>(item->data);
-                text.links.append({ WTF::move(*linkURL), CharacterRange { 0, text.content.length() } });
+                text.links.append({ WTF::move(*linkURL), CharacterRange { 0, length(text.content) } });
             }
             if (editable) {
                 auto& text = std::get<TextItemData>(item->data);
@@ -1692,7 +1692,7 @@ static void pruneWhitespaceRecursive(Item& item)
             return false;
 
         auto& text = std::get<TextItemData>(child.data);
-        return !text.editable && text.content.template containsOnly<isASCIIWhitespace>();
+        return !text.editable && containsOnly<isASCIIWhitespace>(text.content);
     });
 
     for (auto& child : item.children)
@@ -1714,10 +1714,10 @@ static void pruneEmptyContainersRecursive(Item& item)
         if (!child.ariaAttributes.isEmpty())
             return false;
 
-        if (!child.accessibilityRole.isEmpty())
+        if (!isEmpty(child.accessibilityRole))
             return false;
 
-        if (!child.title.isEmpty())
+        if (!isEmpty(child.title))
             return false;
 
         if (!std::holds_alternative<ContainerType>(child.data))
@@ -1739,13 +1739,13 @@ static bool isRedundantFormWrapper(const Item& item)
     if (!std::holds_alternative<FormData>(item.data))
         return false;
 
-    if (!std::get<FormData>(item.data).name.isEmpty())
+    if (!isEmpty(std::get<FormData>(item.data).name))
         return false;
 
     if (!item.eventListeners.isEmpty() || !item.ariaAttributes.isEmpty() || !item.clientAttributes.isEmpty())
         return false;
 
-    if (!item.accessibilityRole.isEmpty() || !item.title.isEmpty())
+    if (!isEmpty(item.accessibilityRole) || !isEmpty(item.title))
         return false;
 
     if (item.children.size() != 1)
@@ -1894,7 +1894,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
 #endif
 
     if (extractionRootNode)
-        addBoxShadowIfNeeded(*extractionRootNode, extractingWithDataDetectors ? "#0088FF"_s : "#ff8d28"_s);
+        addBoxShadowIfNeeded(*extractionRootNode, StringImpl::create(extractingWithDataDetectors ? "#0088FF"_s : "#ff8d28"_s).ptr());
 
     if (!extractionRootNode)
         return { root, 0 };
@@ -1924,7 +1924,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
                     continue;
 
                 clientNodeAttributes.ensure(*node, [] {
-                    return HashMap<String, String> { };
+                    return HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> { };
                 }).iterator->value.set(attribute, value);
             }
         }
@@ -1960,7 +1960,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
             for (Ref element : targetedElements) {
                 static constexpr FloatSize minimumSize { 280, 200 };
                 if (RefPtr container = findLargeContainerAboveNode(element, minimumSize)) {
-                    addBoxShadowIfNeeded(*container, "#cb30e0"_s);
+                    addBoxShadowIfNeeded(*container, "#cb30e0"_si);
                     additionalContainersToCollect.add(container.releaseNonNull());
                 }
             }
@@ -2003,7 +2003,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
     return { WTF::move(root), visibleTextLength };
 }
 
-using Token = Variant<String, IntSize>;
+using Token = Variant<RefPtr<StringImpl>, IntSize>;
 struct TokenAndBlockOffset {
     Vector<Token> tokens;
     int offset { 0 };
@@ -2089,11 +2089,11 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
         if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(descendant)) {
             if (textRenderer->hasRenderedText()) {
                 Vector<Token> tokens;
-                for (auto token : textRenderer->text().simplifyWhiteSpace(isASCIIWhitespace).split(' ')) {
-                    auto candidate = token.removeCharacters([](char16_t character) {
+                for (auto token : split(simplifyWhiteSpace(textRenderer->text(), isASCIIWhitespace), ' ')) {
+                    auto candidate = removeCharacters(token, [](char16_t character) {
                         return !u_isalpha(character) && !u_isdigit(character);
                     });
-                    if (!candidate.isEmpty())
+                    if (!isEmpty(candidate))
                         tokens.append({ WTF::move(candidate) });
                 }
                 appendTokens(WTF::move(tokens), frameView->contentsToRootView(descendant->absoluteBoundingBoxRect()));
@@ -2145,7 +2145,7 @@ RenderedText extractRenderedText(Element& element)
     bool hasLargeReplacedDescendant = false;
     StringBuilder textWithReplacedContent;
     StringBuilder textWithoutReplacedContent;
-    auto appendText = [](StringBuilder& builder, const String& string) {
+    auto appendText = [](StringBuilder& builder, StringImpl* string) {
         if (!builder.isEmpty())
             builder.append(' ');
         builder.append(string);
@@ -2153,7 +2153,7 @@ RenderedText extractRenderedText(Element& element)
 
     for (auto& [tokens, offset] : allTokensAndOffsets) {
         for (auto& token : tokens) {
-            switchOn(token, [&](const String& text) {
+            switchOn(token, [&](StringImpl* text) {
                 appendText(textWithReplacedContent, text);
                 appendText(textWithoutReplacedContent, text);
             }, [&](const IntSize& size) {
@@ -2199,7 +2199,7 @@ bool isLargeReplacedContent(IntSize size, FloatSize elementSizeInDocument)
     return size.width() > ratioToConsiderLengthAsLarge * elementSizeInDocument.width() && size.height() > ratioToConsiderLengthAsLarge * elementSizeInDocument.height();
 }
 
-static Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRectsRecursive(Document& document)
+static Vector<std::pair<RefPtr<StringImpl>, MainFrameViewFloatRect>> extractAllTextAndRectsRecursive(Document& document)
 {
     RefPtr bodyElement = document.body();
     if (!bodyElement)
@@ -2210,7 +2210,7 @@ static Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRectsR
         return { };
 
     OrderedHashSet<Ref<HTMLFrameOwnerElement>> frameOwners;
-    Vector<std::pair<String, MainFrameViewFloatRect>> result;
+    Vector<std::pair<RefPtr<StringImpl>, MainFrameViewFloatRect>> result;
     auto fullRange = makeRangeSelectingNodeContents(*bodyElement);
     for (TextIterator iterator { fullRange, behaviorsForTextExtraction }; !iterator.atEnd(); iterator.advance()) {
         RefPtr node = iterator.node();
@@ -2255,9 +2255,9 @@ static Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRectsR
     return result;
 }
 
-Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRects(Page& page)
+Vector<std::pair<RefPtr<StringImpl>, MainFrameViewFloatRect>> extractAllTextAndRects(Page& page)
 {
-    Vector<std::pair<String, MainFrameViewFloatRect>> result;
+    Vector<std::pair<RefPtr<StringImpl>, MainFrameViewFloatRect>> result;
     for (RefPtr frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
         if (!localFrame || !localFrame->isRootFrame())
@@ -2269,9 +2269,9 @@ Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRects(Page& p
     return result;
 }
 
-static std::optional<SimpleRange> searchForClickTarget(Node& container, const String& searchText)
+static std::optional<SimpleRange> searchForClickTarget(Node& container, StringImpl* searchText)
 {
-    if (searchText.isEmpty())
+    if (isEmpty(searchText))
         return std::nullopt;
 
     Vector<SimpleRange> candidateRanges;
@@ -2313,7 +2313,7 @@ static std::optional<SimpleRange> searchForClickTarget(Node& container, const St
             continue;
 
         bool isClickable = target->willRespondToMouseClickEvents() || target->isLink() || target->isFormListedElement();
-        bool isExactMatch = normalizeText(plainText(makeRangeSelectingNodeContents(*ancestor))) == searchText;
+        bool isExactMatch = equal(normalizeText(plainText(makeRangeSelectingNodeContents(*ancestor))), searchText);
 
         if (!bestRangeIsClickable && isClickable) {
             bestRangeIsClickable = true;
@@ -2332,9 +2332,9 @@ static std::optional<SimpleRange> searchForClickTarget(Node& container, const St
     return bestRange;
 }
 
-static std::optional<SimpleRange> searchForText(const SimpleRange& searchRange, const String& searchText)
+static std::optional<SimpleRange> searchForText(const SimpleRange& searchRange, StringImpl* searchText)
 {
-    if (searchText.isEmpty())
+    if (isEmpty(searchText))
         return std::nullopt;
 
     auto caseSensitiveRange = findPlainText(searchRange, searchText, {
@@ -2357,7 +2357,7 @@ static std::optional<SimpleRange> searchForText(const SimpleRange& searchRange, 
     return { };
 }
 
-static std::optional<SimpleRange> searchForText(Node& node, const String& searchText)
+static std::optional<SimpleRange> searchForText(Node& node, StringImpl* searchText)
 {
     return searchForText(makeRangeSelectingNodeContents(node), searchText);
 }
@@ -2381,9 +2381,9 @@ static RefPtr<Element> nearestNonInlineAncestor(const Element& element)
 
 enum class InteractionTextSearchKind : bool { ClickTarget, Text };
 
-static std::optional<SimpleRange> searchForInteractionTargetText(Node& target, const String& searchText, InteractionTextSearchKind kind)
+static std::optional<SimpleRange> searchForInteractionTargetText(Node& target, StringImpl* searchText, InteractionTextSearchKind kind)
 {
-    auto search = [kind, searchText](Node& container) {
+    auto search = [kind, searchText = RefPtr { searchText }](Node& container) {
         if (kind == InteractionTextSearchKind::ClickTarget)
             return searchForClickTarget(container, searchText);
         return searchForText(container, searchText);
@@ -2403,20 +2403,20 @@ static std::optional<SimpleRange> searchForInteractionTargetText(Node& target, c
     return search(*ancestor);
 }
 
-static String invalidNodeIdentifierDescription(std::optional<NodeIdentifier>&& identifier)
+static RefPtr<StringImpl> invalidNodeIdentifierDescription(std::optional<NodeIdentifier>&& identifier)
 {
     if (!identifier)
-        return "Missing nodeIdentifier"_s;
+        return "Missing nodeIdentifier"_si;
 
     return makeString("Failed to resolve stale uid="_s, identifier->loggingString());
 }
 
-static String searchTextNotFoundDescription(const String& searchText)
+static RefPtr<StringImpl> searchTextNotFoundDescription(StringImpl* searchText)
 {
     return makeString('\'', searchText, "' not found inside the target node"_s);
 }
 
-static String alternativeTextForFallbackTextSearch(const Element& element)
+static RefPtr<StringImpl> alternativeTextForFallbackTextSearch(const Element& element)
 {
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
         return image->altText();
@@ -2434,38 +2434,38 @@ static String alternativeTextForFallbackTextSearch(const Element& element)
     return { };
 }
 
-static bool searchTextMatchesElementLabelOrRenderedText(Element& element, const String& searchText)
+static bool searchTextMatchesElementLabelOrRenderedText(Element& element, StringImpl* searchText)
 {
-    auto withoutWhitespace = [](const String& string) {
-        return normalizeText(string).removeCharacters([](char16_t character) {
+    auto withoutWhitespace = [](StringImpl* string) {
+        return removeCharacters(normalizeText(string), [](char16_t character) {
             return isUnicodeWhitespace(character);
         });
     };
 
     auto strippedSearchText = withoutWhitespace(searchText);
-    if (strippedSearchText.isEmpty()) {
+    if (isEmpty(strippedSearchText)) {
         // Err on the side of allowing the interaction.
         return true;
     }
 
-    if (withoutWhitespace(normalizedLabelText(element)).containsIgnoringASCIICase(strippedSearchText))
+    if (containsIgnoringASCIICase(withoutWhitespace(normalizedLabelText(element)), strippedSearchText))
         return true;
 
-    if (withoutWhitespace(alternativeTextForFallbackTextSearch(element)).containsIgnoringASCIICase(strippedSearchText))
+    if (containsIgnoringASCIICase(withoutWhitespace(alternativeTextForFallbackTextSearch(element)), strippedSearchText))
         return true;
 
     auto range = makeRangeSelectingNodeContents(element);
-    if (withoutWhitespace(plainText(range, behaviorsForTextExtraction)).containsIgnoringASCIICase(strippedSearchText))
+    if (containsIgnoringASCIICase(withoutWhitespace(plainText(range, behaviorsForTextExtraction)), strippedSearchText))
         return true;
 
     RefPtr input = dynamicDowncast<HTMLInputElement>(element);
-    return input && withoutWhitespace(input->placeholder()).containsIgnoringASCIICase(strippedSearchText);
+    return input && containsIgnoringASCIICase(withoutWhitespace(input->placeholder()), strippedSearchText);
 }
 
 static constexpr auto nullFrameDescription = "Browsing context has been detached"_s;
 static constexpr auto interactedWithSelectElementDescription = "Successfully updated option in select element"_s;
 
-static void dispatchSimulatedClick(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchSimulatedClick(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     frame.eventHandler().handleMouseMoveEvent({
         location, location, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
@@ -2482,7 +2482,7 @@ static void dispatchSimulatedClick(LocalFrame& frame, IntPoint location, Complet
     completion(true, { });
 }
 
-static void dispatchSimulatedHover(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchSimulatedHover(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     frame.eventHandler().handleMouseMoveEvent({
         location, location, std::unexpected { MouseButtonState::None }, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
@@ -2553,7 +2553,7 @@ struct ResolvedMouseTarget {
 
 enum class ScrollTargetIntoView : bool { No, Yes };
 
-static std::expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode, const String& searchText, ASCIILiteral boxShadowColor, ScrollTargetIntoView scrollTargetIntoView = ScrollTargetIntoView::No)
+static std::expected<ResolvedMouseTarget, RefPtr<StringImpl>> resolveMouseTarget(Node& targetNode, StringImpl* searchText, ASCIILiteral boxShadowColor, ScrollTargetIntoView scrollTargetIntoView = ScrollTargetIntoView::No)
 {
     RefPtr element = dynamicDowncast<Element>(targetNode);
     if (!element)
@@ -2581,16 +2581,16 @@ static std::expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targe
 
     RefPtr frame = document->frame();
     if (!frame)
-        return makeUnexpected(String { nullFrameDescription });
+        return makeUnexpected(StringImpl::create(nullFrameDescription));
 
-    addBoxShadowIfNeeded(targetNode, boxShadowColor);
+    addBoxShadowIfNeeded(targetNode, StringImpl::create(boxShadowColor).ptr());
 
     std::optional<SimpleRange> foundRange;
-    if (!searchText.isEmpty()) {
+    if (!isEmpty(searchText)) {
         foundRange = searchForInteractionTargetText(*element, searchText, InteractionTextSearchKind::ClickTarget);
         if (!foundRange) {
             bool targetIsWholePage = element == document->body() || element.get() == document->documentElement();
-            bool matched = targetIsWholePage ? normalizedLabelText(*element).containsIgnoringASCIICase(normalizeText(searchText)) : searchTextMatchesElementLabelOrRenderedText(*element, searchText);
+            bool matched = targetIsWholePage ? containsIgnoringASCIICase(normalizedLabelText(*element), normalizeText(searchText)) : searchTextMatchesElementLabelOrRenderedText(*element, searchText);
             if (!matched && !element->isLink())
                 return makeUnexpected(searchTextNotFoundDescription(searchText));
         }
@@ -2620,7 +2620,7 @@ static std::expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targe
     return ResolvedMouseTarget { element.releaseNonNull(), frame.releaseNonNull(), view.releaseNonNull(), roundedIntPoint(targetRectInRootView->center()) };
 }
 
-static void dispatchSimulatedClick(Node& targetNode, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchSimulatedClick(Node& targetNode, StringImpl* searchText, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     auto resolved = resolveMouseTarget(targetNode, searchText, "#34c759"_s, ScrollTargetIntoView::Yes);
     if (!resolved)
@@ -2629,7 +2629,7 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
     auto [element, frame, view, centerInRootView] = WTF::move(*resolved);
 
     if (isInDisabledFormControl(element))
-        return completion(false, "Click target is disabled"_s);
+        return completion(false, "Click target is disabled"_si);
 
     Ref document = element->document();
     if (RefPtr target = findNodeAtRootViewLocation(view, document, centerInRootView); target && (target == element.ptr() || target->isShadowIncludingDescendantOf(element) || isImageCoveredByButtonOrLinkInSameListItem(*target, element))) {
@@ -2646,10 +2646,10 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
     if (protect(clickTarget)->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents))
         completion(true, { });
     else
-        completion(false, "Failed to click (tried falling back to dispatching programmatic click since target could not be hit-tested)"_s);
+        completion(false, "Failed to click (tried falling back to dispatching programmatic click since target could not be hit-tested)"_si);
 }
 
-static void dispatchSimulatedClick(NodeIdentifier identifier, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchSimulatedClick(NodeIdentifier identifier, StringImpl* searchText, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
@@ -2658,7 +2658,7 @@ static void dispatchSimulatedClick(NodeIdentifier identifier, const String& sear
     dispatchSimulatedClick(*foundNode, searchText, WTF::move(completion));
 }
 
-static void dispatchSimulatedHover(Node& targetNode, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchSimulatedHover(Node& targetNode, StringImpl* searchText, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     auto resolved = resolveMouseTarget(targetNode, searchText, "#ff9500"_s);
     if (!resolved)
@@ -2667,7 +2667,7 @@ static void dispatchSimulatedHover(Node& targetNode, const String& searchText, C
     return dispatchSimulatedHover(resolved->frame, resolved->centerInRootView, WTF::move(completion));
 }
 
-static void dispatchSimulatedHover(NodeIdentifier identifier, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchSimulatedHover(NodeIdentifier identifier, StringImpl* searchText, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
@@ -2678,10 +2678,10 @@ static void dispatchSimulatedHover(NodeIdentifier identifier, const String& sear
 
 struct SelectOptionResult {
     bool handled { false };
-    String failureReason;
+    RefPtr<StringImpl> failureReason;
 };
 
-static SelectOptionResult selectOptionByValue(NodeIdentifier identifier, const String& optionText)
+static SelectOptionResult selectOptionByValue(NodeIdentifier identifier, StringImpl* optionText)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
@@ -2691,10 +2691,10 @@ static SelectOptionResult selectOptionByValue(NodeIdentifier identifier, const S
         if (select->isDisabledFormControl())
             return { true, "Select is disabled"_s };
 
-        if (optionText.isEmpty())
+        if (isEmpty(optionText))
             return { };
 
-        addBoxShadowIfNeeded(*select, "#34c759"_s);
+        addBoxShadowIfNeeded(*select, "#34c759"_si);
         select->setValue(optionText);
         return { select->selectedIndex() != -1, { } };
     }
@@ -2722,15 +2722,15 @@ NODELETE static RefPtr<Node> resolveNodeWithBodyOrDocumentElementAsFallback(cons
     return bodyOrDocumentElement(frame);
 }
 
-static std::optional<SimpleRange> rangeForTextInContainer(const String& searchText, Ref<Node>&& node)
+static std::optional<SimpleRange> rangeForTextInContainer(StringImpl* searchText, Ref<Node>&& node)
 {
-    if (searchText.isEmpty() && !is<HTMLBodyElement>(node))
+    if (isEmpty(searchText) && !is<HTMLBodyElement>(node))
         return makeRangeSelectingNodeContents(node);
 
     return searchForText(node, searchText);
 }
 
-static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, const String& searchText, bool revealText, CompletionHandler<void(bool, String&&)>&& completion)
+static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, StringImpl* searchText, bool revealText, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
     if (!foundNode)
@@ -2739,7 +2739,7 @@ static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identi
     if (RefPtr control = dynamicDowncast<HTMLTextFormControlElement>(*foundNode)) {
         // FIXME: This should probably honor `searchText`.
         control->select();
-        addBoxShadowIfNeeded(*control, "#34c759"_s);
+        addBoxShadowIfNeeded(*control, "#34c759"_si);
         return completion(true, { });
     }
 
@@ -2749,7 +2749,7 @@ static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identi
 
     Ref document = foundNode->document();
     if (!document->selection().setSelectedRange(*targetRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes))
-        return completion(false, "Failed to set selected range"_s);
+        return completion(false, "Failed to set selected range"_si);
 
     if (revealText)
         document->selection().revealSelection();
@@ -2757,7 +2757,7 @@ static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identi
     return completion(true, { });
 }
 
-static void highlightText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, const String& searchText, bool scrollToVisible, CompletionHandler<void(bool, String&&)>&& completion)
+static void highlightText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, StringImpl* searchText, bool scrollToVisible, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
     if (!foundNode)
@@ -2780,20 +2780,20 @@ static void highlightText(LocalFrame& frame, std::optional<NodeIdentifier>&& ide
     return completion(true, { });
 }
 
-static String wrapWithDoubleQuotes(StringView text)
+static RefPtr<StringImpl> wrapWithDoubleQuotes(StringView text)
 {
     return makeString(u"“", text, u"”");
 }
 
-static String shortenedHREFAttributeForDescription(const String& hrefAttribute)
+static RefPtr<StringImpl> shortenedHREFAttributeForDescription(StringImpl* hrefAttribute)
 {
     static constexpr unsigned maximumLength = 80;
 
-    auto result = hrefAttribute;
-    if (auto queryIndex = result.find('?'); queryIndex != notFound)
+    auto result = RefPtr { hrefAttribute };
+    if (auto queryIndex = find(result, '?'); queryIndex != notFound)
         result = makeString(StringView(result).left(queryIndex + 1), horizontalEllipsis);
 
-    if (result.length() > maximumLength)
+    if (length(result) > maximumLength)
         result = makeString(StringView(result).left(maximumLength - 1), horizontalEllipsis);
 
     return result;
@@ -2828,7 +2828,7 @@ static bool containsLetterOrDigit(StringView text)
 
 enum class AdjacentTextSearchDirection : bool { Backward, Forward };
 
-static String adjacentRenderedTextLabel(const Element& element, AdjacentTextSearchDirection direction, const Node* stayWithin)
+static RefPtr<StringImpl> adjacentRenderedTextLabel(const Element& element, AdjacentTextSearchDirection direction, const Node* stayWithin)
 {
     static constexpr unsigned maximumAdjacentTextNodesToSearch = 16;
     static constexpr unsigned maximumAdjacentTextLength = 40;
@@ -2846,7 +2846,7 @@ static String adjacentRenderedTextLabel(const Element& element, AdjacentTextSear
     };
 
     unsigned examinedTextNodes = 0;
-    Vector<String> collected;
+    Vector<RefPtr<StringImpl>> collected;
     for (RefPtr node = firstNodeToExamine(); node; node = advance(*node)) {
         RefPtr text = dynamicDowncast<Text>(*node);
         if (!text || !text->renderer())
@@ -2859,7 +2859,7 @@ static String adjacentRenderedTextLabel(const Element& element, AdjacentTextSear
             break;
 
         auto normalized = normalizeText(text->data());
-        if (normalized.isEmpty())
+        if (isEmpty(normalized))
             continue;
 
         collected.append(normalized);
@@ -2873,19 +2873,19 @@ static String adjacentRenderedTextLabel(const Element& element, AdjacentTextSear
     if (collected.isEmpty())
         return { };
 
-    auto joined = makeStringByJoining(collected, " "_s);
+    auto joined = makeStringByJoining(collected, " "_si);
     if (!containsLetterOrDigit(joined))
         return { };
 
-    if (joined.length() > maximumAdjacentTextLength)
+    if (length(joined) > maximumAdjacentTextLength)
         joined = makeString(StringView { joined }.left(maximumAdjacentTextLength - 3), "..."_s);
 
     return joined;
 }
 
-static String adjacentRenderedTextLabelDescription(const Element& element, Vector<String>& stringsToValidate)
+static RefPtr<StringImpl> adjacentRenderedTextLabelDescription(const Element& element, Vector<RefPtr<StringImpl>>& stringsToValidate)
 {
-    auto describe = [&](ASCIILiteral prefix, String&& text) {
+    auto describe = [&](ASCIILiteral prefix, RefPtr<StringImpl>&& text) {
         stringsToValidate.append(text);
         return makeString(prefix, wrapWithDoubleQuotes(WTF::move(text)));
     };
@@ -2894,20 +2894,20 @@ static String adjacentRenderedTextLabelDescription(const Element& element, Vecto
         auto textBefore = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Backward, bound.get());
         auto textAfter = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Forward, bound.get());
 
-        if (!textBefore.isEmpty() && !textAfter.isEmpty()) {
+        if (!isEmpty(textBefore) && !isEmpty(textAfter)) {
             stringsToValidate.append(textBefore);
             stringsToValidate.append(textAfter);
             return makeString(" between rendered text "_s, wrapWithDoubleQuotes(WTF::move(textBefore)), " and "_s, wrapWithDoubleQuotes(WTF::move(textAfter)));
         }
 
-        if (!textBefore.isEmpty())
+        if (!isEmpty(textBefore))
             return describe(" after rendered text "_s, WTF::move(textBefore));
 
-        if (!textAfter.isEmpty())
+        if (!isEmpty(textAfter))
             return describe(" before rendered text "_s, WTF::move(textAfter));
     }
 
-    if (auto textBefore = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Backward, protect(element.document().documentElement()).get()); !textBefore.isEmpty())
+    if (auto textBefore = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Backward, protect(element.document().documentElement()).get()); !isEmpty(textBefore))
         return describe(" after rendered text "_s, WTF::move(textBefore));
 
     return { };
@@ -2943,7 +2943,7 @@ static bool hasNoRenderedTextOrLabeledChild(Element& element)
         return false;
 
     for (Ref child : descendantsOfType<Element>(element)) {
-        if (!normalizedLabelText(child).isEmpty())
+        if (!isEmpty(normalizedLabelText(child)))
             return false;
     }
 
@@ -2959,26 +2959,26 @@ static bool hasSingleUnlabeledIconChild(Element& element)
         icon = child.ptr();
     }
 
-    if (!icon || !icon->attributeWithoutSynchronization(HTMLNames::titleAttr).isEmpty())
+    if (!icon || !isEmpty(icon->attributeWithoutSynchronization(HTMLNames::titleAttr)))
         return false;
 
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(icon))
-        return normalizeText(image->altText()).isEmpty();
+        return isEmpty(normalizeText(image->altText()));
 
     if (RefPtr svg = dynamicDowncast<SVGSVGElement>(icon))
-        return svgAltText(*svg).isEmpty();
+        return isEmpty(svgAltText(*svg));
 
     return false;
 }
 
-static String textDescription(Element& element, Vector<String>& stringsToValidate, bool isTargetElement = true)
+static RefPtr<StringImpl> textDescription(Element& element, Vector<RefPtr<StringImpl>>& stringsToValidate, bool isTargetElement = true)
 {
     StringBuilder description;
 
     if (element.hasEditableStyle())
         description.append("editable "_s);
 
-    auto tagName = element.tagName().convertToASCIILowercase();
+    auto tagName = convertToASCIILowercase(element.tagName());
     if (element.isLink())
         description.append("link"_s);
     else
@@ -2989,7 +2989,7 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
     auto hrefLacksEnoughContext = false;
 
     if (element.isLink()) {
-        if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)); !text.isEmpty()) {
+        if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)); !isEmpty(text)) {
             auto shortenedHREF = shortenedHREFAttributeForDescription(text);
             hrefLacksEnoughContext = TextExtraction::hrefLacksEnoughContext(shortenedHREF);
             description.append(makeString(" with href "_s, wrapWithDoubleQuotes(shortenedHREF)));
@@ -2999,30 +2999,30 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         }
     }
 
-    if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::roleAttr)); !text.isEmpty() && text != tagName) {
+    if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::roleAttr)); !isEmpty(text) && !equal(text, tagName)) {
         description.append(makeString(" with role "_s, wrapWithDoubleQuotes(WTF::move(text))));
         needsParentContext = false;
         hasAccessibleName = true;
     }
 
-    if (auto text = normalizedLabelText(element, IncludeAssociatedLabels::Yes); !text.isEmpty()) {
+    if (auto text = normalizedLabelText(element, IncludeAssociatedLabels::Yes); !isEmpty(text)) {
         description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
         hasAccessibleName = true;
     }
 
-    if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::titleAttr)); !text.isEmpty()) {
+    if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::titleAttr)); !isEmpty(text)) {
         description.append(makeString(" titled "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
         hasAccessibleName = true;
     }
 
-    if (auto text = element.attributeWithoutSynchronization(HTMLNames::typeAttr); !text.isEmpty() && text != tagName)
+    if (auto text = element.attributeWithoutSynchronization(HTMLNames::typeAttr); !isEmpty(text) && !equal(text, tagName))
         description.append(makeString(" of type "_s, text));
 
-    if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::placeholderAttr)); !text.isEmpty()) {
+    if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::placeholderAttr)); !isEmpty(text)) {
         description.append(makeString(" with placeholder "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
@@ -3035,7 +3035,7 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         });
 
         if (includeValue) {
-            if (auto text = normalizeText(input->value()); !text.isEmpty()) {
+            if (auto text = normalizeText(protect(input->value().get())); !isEmpty(text)) {
                 description.append(makeString(" with value "_s, wrapWithDoubleQuotes(WTF::move(text))));
                 stringsToValidate.append(WTF::move(text));
                 needsParentContext = false;
@@ -3051,8 +3051,8 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         needsParentContext = false;
     }
 
-    if (auto classValue = element.attributeWithoutSynchronization(HTMLNames::classAttr); !classValue.isEmpty()) {
-        Vector<String, maximumNumberOfClasses> humanReadableClassNames;
+    if (auto classValue = element.attributeWithoutSynchronization(HTMLNames::classAttr); !isEmpty(classValue)) {
+        Vector<RefPtr<StringImpl>, maximumNumberOfClasses> humanReadableClassNames;
         for (auto className : StringView { classValue }.split(' ')) {
             if (!isCandidateClassOrId(className))
                 continue;
@@ -3064,7 +3064,7 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
 
         if (!humanReadableClassNames.isEmpty()) {
             auto classOrClasses = humanReadableClassNames.size() > 1 ? " with classes "_s : " with class "_s;
-            description.append(makeString(classOrClasses, wrapWithDoubleQuotes(makeStringByJoining(humanReadableClassNames, " "_s))));
+            description.append(makeString(classOrClasses, wrapWithDoubleQuotes(makeStringByJoining(humanReadableClassNames, " "_si))));
             needsParentContext = false;
         }
     }
@@ -3082,12 +3082,12 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
     if (isTargetElement && is<HTMLImageElement>(element)) {
         if (RefPtr ancestor = closestLinkOrButtonAncestor(element)) {
             auto ancestorDescription = textDescription(*ancestor, stringsToValidate, false);
-            if (!ancestorDescription.isEmpty())
+            if (!isEmpty(ancestorDescription))
                 return makeString(WTF::move(elementDescription), " under "_s, WTF::move(ancestorDescription));
         }
     }
 
-    String neighborTextDescription;
+    RefPtr<StringImpl> neighborTextDescription;
     if (isTargetElement && !hasAccessibleName) {
         bool isSingleWordLinkWithoutDestination = hrefLacksEnoughContext
             && !containsMultipleWords(normalizeText(plainText(makeRangeSelectingNodeContents(element), behaviorsForTextExtraction)));
@@ -3095,7 +3095,7 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         if (is<HTMLImageElement>(element) || element.isSVGElement() || hasNoRenderedTextOrLabeledChild(element) || isSingleWordLinkWithoutDestination) {
             bool hasImageAltText = false;
             if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
-                hasImageAltText = !normalizeText(image->altText()).isEmpty();
+                hasImageAltText = !isEmpty(normalizeText(image->altText()));
 
             if (!hasImageAltText)
                 neighborTextDescription = adjacentRenderedTextLabelDescription(element, stringsToValidate);
@@ -3114,7 +3114,7 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         return describedElement();
 
     auto parentDescription = textDescription(*parent, stringsToValidate, false);
-    if (parentDescription.isEmpty())
+    if (isEmpty(parentDescription))
         return describedElement();
 
     if (isTargetElement)
@@ -3123,35 +3123,35 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
     return parentDescription;
 }
 
-static String textDescription(Element& element)
+static RefPtr<StringImpl> textDescription(Element& element)
 {
-    Vector<String> ignoredStringsToValidate;
+    Vector<RefPtr<StringImpl>> ignoredStringsToValidate;
     return textDescription(element, ignoredStringsToValidate);
 }
 
-static String textDescription(Node* node, Vector<String>& stringsToValidate)
+static RefPtr<StringImpl> textDescription(Node* node, Vector<RefPtr<StringImpl>>& stringsToValidate)
 {
     if (!node)
         return { };
 
-    addBoxShadowIfNeeded(*node, "#ff383c"_s);
+    addBoxShadowIfNeeded(*node, "#ff383c"_si);
 
-    auto addRenderedTextOrLabeledChild = [&](const String& description) {
+    auto addRenderedTextOrLabeledChild = [&](StringImpl* description) {
         StringBuilder extendedDescription;
         extendedDescription.append(description);
 
-        String renderedTextSuffix;
+        RefPtr<StringImpl> renderedTextSuffix;
         auto range = makeRangeSelectingNodeContents(*node);
-        if (auto text = normalizeText(plainText(range, behaviorsForTextExtraction)); !text.isEmpty()) {
+        if (auto text = normalizeText(plainText(range, behaviorsForTextExtraction)); !isEmpty(text)) {
             stringsToValidate.append(text);
             extendedDescription.append(makeString(", with rendered text "_s, wrapWithDoubleQuotes(WTF::move(text))));
         }
 
-        String labeledChildSuffix;
+        RefPtr<StringImpl> labeledChildSuffix;
         if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
             for (Ref child : descendantsOfType<Element>(*container)) {
                 auto label = normalizedLabelText(child);
-                if (label.isEmpty())
+                if (isEmpty(label))
                     continue;
 
                 stringsToValidate.append(label);
@@ -3172,7 +3172,7 @@ static String textDescription(Node* node, Vector<String>& stringsToValidate)
     return { };
 }
 
-static String textDescription(std::optional<NodeIdentifier> identifier, Vector<String>& stringsToValidate)
+static RefPtr<StringImpl> textDescription(std::optional<NodeIdentifier> identifier, Vector<RefPtr<StringImpl>>& stringsToValidate)
 {
     if (!identifier)
         return { };
@@ -3180,7 +3180,7 @@ static String textDescription(std::optional<NodeIdentifier> identifier, Vector<S
     return textDescription(RefPtr { Node::fromIdentifier(*identifier) }.get(), stringsToValidate);
 }
 
-static bool searchTextMatchesUnrenderedElementText(const Element& element, const String& searchText)
+static bool searchTextMatchesUnrenderedElementText(const Element& element, StringImpl* searchText)
 {
     if (containsInteractiveDescendant(element))
         return false;
@@ -3194,19 +3194,19 @@ static bool searchTextMatchesUnrenderedElementText(const Element& element, const
     if (box->borderBoxHeight().toFloat() > maximumTargetHeight || box->borderBoxWidth().toFloat() > maximumTargetWidth)
         return false;
 
-    auto withoutWhitespace = [](const String& string) {
-        return normalizeText(string).removeCharacters([](char16_t character) {
+    auto withoutWhitespace = [](StringImpl* string) {
+        return removeCharacters(normalizeText(string), [](char16_t character) {
             return isUnicodeWhitespace(character);
         });
     };
 
     auto strippedSearchText = withoutWhitespace(searchText);
-    return !strippedSearchText.isEmpty() && withoutWhitespace(element.textContent()).containsIgnoringASCIICase(strippedSearchText);
+    return !isEmpty(strippedSearchText) && containsIgnoringASCIICase(withoutWhitespace(element.textContent()), strippedSearchText);
 }
 
-static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> identifier, const String& searchText, Action action, Vector<String>& stringsToValidate)
+static RefPtr<StringImpl> textDescription(LocalFrame& frame, std::optional<NodeIdentifier> identifier, StringImpl* searchText, Action action, Vector<RefPtr<StringImpl>>& stringsToValidate)
 {
-    if (!identifier && searchText.isEmpty())
+    if (!identifier && isEmpty(searchText))
         return { };
 
     RefPtr target = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -3214,7 +3214,7 @@ static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> i
         return { };
 
     auto searchTextPrefix = emptyString();
-    if (!searchText.isEmpty()) {
+    if (!isEmpty(searchText)) {
         auto range = searchForInteractionTargetText(*target, searchText, action == Action::Click ? InteractionTextSearchKind::ClickTarget : InteractionTextSearchKind::Text);
         if (range) {
             target = commonInclusiveAncestor<ComposedTree>(*range);
@@ -3239,7 +3239,7 @@ static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> i
     return makeString(WTF::move(searchTextPrefix), textDescription(target.get(), stringsToValidate));
 }
 
-static String textDescription(LocalFrame& frame, FloatPoint locationInRootView, Vector<String>& stringsToValidate)
+static RefPtr<StringImpl> textDescription(LocalFrame& frame, FloatPoint locationInRootView, Vector<RefPtr<StringImpl>>& stringsToValidate)
 {
     RefPtr document = frame.document();
     if (!document)
@@ -3312,7 +3312,7 @@ static ScrollableContainer findLargeScrollableContainer(LocalFrame& frame)
     return best;
 }
 
-static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScrollableContainerIfNeeded(LocalFrame& frame, bool identifierProvided, ScrollableArea* scroller, Vector<String>& stringsToValidate)
+static std::optional<std::pair<RefPtr<StringImpl>, ScrollableContainer>> redirectToLargeScrollableContainerIfNeeded(LocalFrame& frame, bool identifierProvided, ScrollableArea* scroller, Vector<RefPtr<StringImpl>>& stringsToValidate)
 {
     if (identifierProvided)
         return { };
@@ -3329,13 +3329,13 @@ static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScro
         return { };
 
     StringBuilder description;
-    auto tagName = protect(element)->tagName().convertToASCIILowercase();
+    auto tagName = convertToASCIILowercase(protect(element)->tagName());
     description.append(tagName);
 
-    if (auto label = normalizedLabelText(*protect(element)); !label.isEmpty()) {
+    if (auto label = normalizedLabelText(*protect(element)); !isEmpty(label)) {
         description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(label)));
         stringsToValidate.append(WTF::move(label));
-    } else if (auto role = normalizeText(element->attributeWithoutSynchronization(HTMLNames::roleAttr)); !role.isEmpty() && role != tagName) {
+    } else if (auto role = normalizeText(element->attributeWithoutSynchronization(HTMLNames::roleAttr)); !isEmpty(role) && !equal(role, tagName)) {
         description.append(makeString(" with role "_s, wrapWithDoubleQuotes(role)));
         stringsToValidate.append(WTF::move(role));
     }
@@ -3343,7 +3343,7 @@ static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScro
     return { { description.toString(), { WTF::move(element), WTF::move(scrollableArea) } } };
 }
 
-static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, FloatSize scrollDelta, Vector<String>& stringsToValidate, CompletionHandler<void(bool, String&&)>&& completion)
+static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, FloatSize scrollDelta, Vector<RefPtr<StringImpl>>& stringsToValidate, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     bool identifierProvided = identifier.has_value();
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -3352,27 +3352,27 @@ static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifi
 
     WeakPtr weakScroller = CheckedRef { frame.eventHandler() }->enclosingScrollableArea(foundNode.get());
     if (!weakScroller)
-        return completion(false, "No scrollable area found"_s);
+        return completion(false, "No scrollable area found"_si);
 
-    String fallbackDescription;
+    RefPtr<StringImpl> fallbackDescription;
     if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(protect(frame), identifierProvided, protect(weakScroller), stringsToValidate)) {
         fallbackDescription = WTF::move(fallbackResult->first);
         foundNode = WTF::move(fallbackResult->second.element);
         weakScroller = WTF::move(fallbackResult->second.scrollableArea);
     }
 
-    addBoxShadowIfNeeded(*foundNode, "#34c759"_s);
+    addBoxShadowIfNeeded(*foundNode, "#34c759"_si);
     CheckedPtr scroller = weakScroller;
     scroller->scrollToOffsetWithoutAnimation(FloatPoint { scroller->scrollOffset() } + scrollDelta);
 
-    String summary;
-    if (!fallbackDescription.isEmpty())
+    RefPtr<StringImpl> summary;
+    if (!isEmpty(fallbackDescription))
         summary = makeString("Scrolled within "_s, WTF::move(fallbackDescription), " (root frame is unscrollable)"_s);
 
     completion(true, WTF::move(summary));
 }
 
-static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, Vector<String>& stringsToValidate, CompletionHandler<void(bool, String&&)>&& completion)
+static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, Vector<RefPtr<StringImpl>>& stringsToValidate, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     bool identifierProvided = identifier.has_value();
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -3381,16 +3381,16 @@ static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& 
 
     WeakPtr weakScroller = CheckedRef { frame.eventHandler() }->enclosingScrollableArea(foundNode.get());
     if (!weakScroller)
-        return completion(false, "No scrollable area found"_s);
+        return completion(false, "No scrollable area found"_si);
 
-    String fallbackDescription;
+    RefPtr<StringImpl> fallbackDescription;
     if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(frame, identifierProvided, protect(weakScroller), stringsToValidate)) {
         fallbackDescription = WTF::move(fallbackResult->first);
         foundNode = WTF::move(fallbackResult->second.element);
         weakScroller = WTF::move(fallbackResult->second.scrollableArea);
     }
 
-    addBoxShadowIfNeeded(*foundNode, "#34c759"_s);
+    addBoxShadowIfNeeded(*foundNode, "#34c759"_si);
 
     CheckedPtr scroller = weakScroller;
     auto currentOffset = scroller->scrollOffset();
@@ -3400,10 +3400,10 @@ static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& 
     bool isAtEnd = scrollsHorizontally ? currentOffset.x() >= maxOffset.x() : currentOffset.y() >= maxOffset.y();
     bool isRTL = scroller->shouldPlaceVerticalScrollbarOnLeft();
 
-    auto buildSummary = [&](int distance, ASCIILiteral direction, ASCIILiteral wrapNote) -> String {
+    auto buildSummary = [&](int distance, ASCIILiteral direction, ASCIILiteral wrapNote) -> RefPtr<StringImpl> {
         StringBuilder builder;
         builder.append(makeString("Scrolled "_s, distance, "px "_s, direction));
-        if (!fallbackDescription.isEmpty()) {
+        if (!isEmpty(fallbackDescription)) {
             builder.append(makeString(" within "_s, fallbackDescription));
             if (wrapNote.isNull())
                 builder.append(" (root frame is unscrollable)"_s);
@@ -3431,7 +3431,7 @@ static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& 
     }
 }
 
-static void scrollToReveal(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, String&& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static void scrollToReveal(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, RefPtr<StringImpl>&& searchText, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     RefPtr searchScope = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
     if (!searchScope)
@@ -3456,7 +3456,7 @@ static void scrollToReveal(LocalFrame& frame, std::optional<NodeIdentifier>&& id
     completion(true, { });
 }
 
-static bool simulateKeyPress(LocalFrame& frame, const String& key)
+static bool simulateKeyPress(LocalFrame& frame, StringImpl* key)
 {
     auto keyDown = PlatformKeyboardEvent::syntheticEventFromText(PlatformEvent::Type::KeyDown, key);
     if (!keyDown)
@@ -3471,7 +3471,7 @@ static bool simulateKeyPress(LocalFrame& frame, const String& key)
     return true;
 }
 
-static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifier>&& identifier, const String& text, CompletionHandler<void(bool, String&&)>&& completion)
+static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifier>&& identifier, StringImpl* text, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     if (identifier) {
         RefPtr focusTarget = dynamicDowncast<Element>(Node::fromIdentifier(*identifier));
@@ -3482,23 +3482,23 @@ static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifi
             focusTarget->focus();
     }
 
-    String canonicalKey = text;
-    if (text == "\n"_s || text == "Return"_s)
-        canonicalKey = "Enter"_s;
-    else if (text == "Left"_s || text == "Right"_s || text == "Up"_s || text == "Down"_s)
+    RefPtr<StringImpl> canonicalKey = text;
+    if (equal(text, "\n"_s) || equal(text, "Return"_s))
+        canonicalKey = "Enter"_si;
+    else if (equal(text, "Left"_s) || equal(text, "Right"_s) || equal(text, "Up"_s) || equal(text, "Down"_s))
         canonicalKey = makeString("Arrow"_s, text);
 
     if (simulateKeyPress(targetFrame, canonicalKey))
         return completion(true, { });
 
-    if (!text.is8Bit()) {
+    if (!is8Bit(text)) {
         // FIXME: Consider falling back to simulating text insertion.
-        return completion(false, "Only 8-bit strings are supported"_s);
+        return completion(false, "Only 8-bit strings are supported"_si);
     }
 
     bool succeeded = true;
-    for (auto character : text.span8()) {
-        if (!simulateKeyPress(targetFrame, { std::span { &character, 1 } }))
+    for (auto character : span8(text)) {
+        if (!simulateKeyPress(targetFrame, StringImpl::create(std::span { &character, 1 }).ptr()))
             succeeded = false;
     }
 
@@ -3507,14 +3507,14 @@ static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifi
         : makeString("One or more key events failed (tried to input '"_s, text, "' character by character"_s));
 }
 
-static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool replaceAll, CompletionHandler<void(bool, String&&)>&& completion)
+static void focusAndInsertText(NodeIdentifier identifier, RefPtr<StringImpl>&& text, bool replaceAll, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
         return completion(false, invalidNodeIdentifierDescription(identifier));
 
     if (!canBeEdited(*foundNode))
-        return completion(false, "Target is readonly"_s);
+        return completion(false, "Target is readonly"_si);
 
     RefPtr<Element> elementToFocus;
     if (RefPtr element = dynamicDowncast<Element>(*foundNode); element && element->isTextField())
@@ -3536,7 +3536,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
         return completion(false, nullFrameDescription);
 
     // First, attempt to dispatch a click over the editable area (and fall back to programmatically setting focus).
-    dispatchSimulatedClick(*elementToFocus, { }, [document = document.copyRef(), elementToFocus, frame, replaceAll, text = WTF::move(text), completion = WTF::move(completion)](bool clicked, String&&) mutable {
+    dispatchSimulatedClick(*elementToFocus, nullptr, [document = document.copyRef(), elementToFocus, frame, replaceAll, text = WTF::move(text), completion = WTF::move(completion)](bool clicked, RefPtr<StringImpl>&&) mutable {
         if (!clicked || elementToFocus != document->activeElement())
             elementToFocus->focus();
 
@@ -3554,7 +3554,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
     });
 }
 
-static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Vector<String>& stringsToValidate, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Vector<RefPtr<StringImpl>>& stringsToValidate, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& completion)
 {
     switch (interaction.action) {
     case Action::Click: {
@@ -3564,15 +3564,15 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Ve
         if (auto identifier = interaction.nodeIdentifier)
             return dispatchSimulatedClick(*identifier, WTF::move(interaction.text), WTF::move(completion));
 
-        if (RefPtr body = bodyOrDocumentElement(frame); body && !interaction.text.isEmpty())
+        if (RefPtr body = bodyOrDocumentElement(frame); body && !isEmpty(interaction.text))
             return dispatchSimulatedClick(*body, WTF::move(interaction.text), WTF::move(completion));
 
-        return completion(false, "Missing nodeIdentifier and/or text"_s);
+        return completion(false, "Missing nodeIdentifier and/or text"_si);
     }
     case Action::SelectMenuItem: {
         if (auto identifier = interaction.nodeIdentifier) {
             if (auto [handled, failureReason] = selectOptionByValue(*identifier, interaction.text); handled) {
-                if (failureReason.isEmpty())
+                if (isEmpty(failureReason))
                     return completion(true, interactedWithSelectElementDescription);
 
                 return completion(false, WTF::move(failureReason));
@@ -3581,20 +3581,20 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Ve
             return dispatchSimulatedClick(*identifier, interaction.text, WTF::move(completion));
         }
 
-        return completion(false, "Missing nodeIdentifier"_s);
+        return completion(false, "Missing nodeIdentifier"_si);
     }
     case Action::SelectText: {
         if (auto identifier = interaction.nodeIdentifier) {
             if (auto [handled, failureReason] = selectOptionByValue(WTF::move(*identifier), interaction.text); handled) {
-                if (failureReason.isEmpty())
+                if (isEmpty(failureReason))
                     return completion(true, interactedWithSelectElementDescription);
 
                 return completion(false, WTF::move(failureReason));
             }
         }
 
-        if (interaction.text.isEmpty() && !interaction.nodeIdentifier)
-            return completion(false, "Missing nodeIdentifier and/or text"_s);
+        if (isEmpty(interaction.text) && !interaction.nodeIdentifier)
+            return completion(false, "Missing nodeIdentifier and/or text"_si);
 
         return selectText(frame, WTF::move(interaction.nodeIdentifier), WTF::move(interaction.text), interaction.scrollToVisible, WTF::move(completion));
     }
@@ -3602,18 +3602,18 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Ve
         if (auto identifier = interaction.nodeIdentifier)
             return focusAndInsertText(*identifier, WTF::move(interaction.text), interaction.replaceAll, WTF::move(completion));
 
-        return completion(false, "Missing nodeIdentifier"_s);
+        return completion(false, "Missing nodeIdentifier"_si);
     }
     case Action::KeyPress:
         return simulateKeyPress(frame, WTF::move(interaction.nodeIdentifier), interaction.text, WTF::move(completion));
     case Action::HighlightText: {
-        if (interaction.text.isEmpty() && !interaction.nodeIdentifier)
-            return completion(false, "Missing nodeIdentifier and/or text"_s);
+        if (isEmpty(interaction.text) && !interaction.nodeIdentifier)
+            return completion(false, "Missing nodeIdentifier and/or text"_si);
 
         return highlightText(frame, WTF::move(interaction.nodeIdentifier), WTF::move(interaction.text), interaction.scrollToVisible, WTF::move(completion));
     }
     case Action::Scroll:
-        if (!interaction.text.isEmpty())
+        if (!isEmpty(interaction.text))
             return scrollToReveal(frame, WTF::move(interaction.nodeIdentifier), WTF::move(interaction.text), WTF::move(completion));
 
         if (interaction.scrollDelta.isZero())
@@ -3627,19 +3627,19 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Ve
         if (auto identifier = interaction.nodeIdentifier)
             return dispatchSimulatedHover(*identifier, WTF::move(interaction.text), WTF::move(completion));
 
-        if (RefPtr body = bodyOrDocumentElement(frame); body && !interaction.text.isEmpty())
+        if (RefPtr body = bodyOrDocumentElement(frame); body && !isEmpty(interaction.text))
             return dispatchSimulatedHover(*body, WTF::move(interaction.text), WTF::move(completion));
 
-        return completion(false, "Missing nodeIdentifier and/or text"_s);
+        return completion(false, "Missing nodeIdentifier and/or text"_si);
     }
     default:
         ASSERT_NOT_REACHED();
         break;
     }
-    completion(false, "Invalid action"_s);
+    completion(false, "Invalid action"_si);
 }
 
-void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&& completion)
+void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, RefPtr<StringImpl>&&, Vector<RefPtr<StringImpl>>&&, FloatRect)>&& completion)
 {
     RefPtr<Node> targetNode;
     if (auto location = interaction.locationInRootView) {
@@ -3650,8 +3650,8 @@ void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionH
     } else if (auto identifier = interaction.nodeIdentifier)
         targetNode = Node::fromIdentifier(*identifier);
 
-    auto stringsToValidate = Box<Vector<String>>::create();
-    dispatchInteraction(WTF::move(interaction), frame, *stringsToValidate, [completion = WTF::move(completion), targetNode = WTF::move(targetNode), stringsToValidate](bool success, String&& message) mutable {
+    auto stringsToValidate = Box<Vector<RefPtr<StringImpl>>>::create();
+    dispatchInteraction(WTF::move(interaction), frame, *stringsToValidate, [completion = WTF::move(completion), targetNode = WTF::move(targetNode), stringsToValidate](bool success, RefPtr<StringImpl>&& message) mutable {
         FloatRect bounds;
         if (targetNode)
             bounds = mainFrameViewBounds(*targetNode);
@@ -3666,7 +3666,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
     bool isSingleKeyPress = action == Action::KeyPress && PlatformKeyboardEvent::syntheticEventFromText(PlatformEvent::Type::KeyUp, interaction.text);
 
     StringBuilder description;
-    description.append([&] -> String {
+    description.append([&] -> RefPtr<StringImpl> {
         if (isSingleKeyPress)
             return makeString(pastTense ? "Pressed"_s : "Press"_s, " the "_s, interaction.text, " key"_s);
 
@@ -3708,15 +3708,15 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
         return false;
     }();
 
-    Vector<String> stringsToValidate;
+    Vector<RefPtr<StringImpl>> stringsToValidate;
     if (!usesSearchText) {
-        if (auto escapedString = normalizeText(interaction.text); !escapedString.isEmpty()) {
-            description.append(makeString(" "_s, wrapWithDoubleQuotes(String { escapedString })));
+        if (auto escapedString = normalizeText(interaction.text); !isEmpty(escapedString)) {
+            description.append(makeString(" "_s, wrapWithDoubleQuotes(RefPtr<StringImpl> { escapedString })));
             stringsToValidate.append(WTF::move(escapedString));
         }
     }
 
-    if (action == Action::Scroll && interaction.text.isEmpty()) {
+    if (action == Action::Scroll && isEmpty(interaction.text)) {
         if (interaction.scrollDelta.isZero())
             description.append(" to next page"_s);
         else {
@@ -3728,25 +3728,25 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
     bool didAppendElementString = false;
     auto appendElementString = [&]<typename... T>(T&&... args) {
         auto elementString = textDescription(std::forward<T>(args)...);
-        if (elementString.isEmpty())
+        if (isEmpty(elementString))
             return;
 
-        auto elementPrefix = [&interaction] -> String {
+        auto elementPrefix = [&interaction] -> RefPtr<StringImpl> {
             switch (interaction.action) {
             case Action::Click:
-                return " on "_s;
+                return " on "_si;
             case Action::SelectText:
-                return " inside "_s;
+                return " inside "_si;
             case Action::SelectMenuItem:
             case Action::KeyPress:
             case Action::HighlightText:
-                return " in "_s;
+                return " in "_si;
             case Action::Scroll:
-                return interaction.text.isEmpty() ? " in "_s : " to reveal "_s;
+                return isEmpty(interaction.text) ? " in "_s : " to reveal "_s;
             case Action::TextInput:
-                return " into "_s;
+                return " into "_si;
             case Action::Hover:
-                return " over "_s;
+                return " over "_si;
             }
             ASSERT_NOT_REACHED();
             return { };
@@ -3780,7 +3780,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
         didFindTargetNode = node && node->isConnected();
     }
 
-    bool targetsSpecificElement = interaction.locationInRootView || interaction.nodeIdentifier || interaction.targetNodeHandleIdentifier || (usesSearchText && !interaction.text.isEmpty());
+    bool targetsSpecificElement = interaction.locationInRootView || interaction.nodeIdentifier || interaction.targetNodeHandleIdentifier || (usesSearchText && !isEmpty(interaction.text));
 
     return { description.toString(), WTF::move(stringsToValidate), didFindTargetNode, didAppendElementString || !targetsSpecificElement };
 }
@@ -3839,7 +3839,7 @@ RefPtr<Element> containerElementForExtractedText(const LocalFrame& frame, Extrac
     return element;
 }
 
-RefPtr<Element> containerElementForSearchTexts(const LocalFrame& frame, Vector<String>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier)
+RefPtr<Element> containerElementForSearchTexts(const LocalFrame& frame, Vector<RefPtr<StringImpl>>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier)
 {
     RefPtr body = bodyOrDocumentElement(frame);
     if (!body)
@@ -3896,7 +3896,7 @@ std::optional<SimpleRange> rangeForExtractedText(const LocalFrame& frame, Extrac
     if (!node)
         return { };
 
-    if (text.isEmpty())
+    if (isEmpty(text))
         return { makeRangeSelectingNodeContents(*node) };
 
     return searchForText(*node, text);
@@ -3906,7 +3906,7 @@ Vector<FilterRule> extractRules(Vector<FilterRuleData>&& data)
 {
     return WTF::map(WTF::move(data), [](auto&& data) -> FilterRule {
         auto&& [name, urlPattern, scriptSource] = WTF::move(data);
-        if (urlPattern.isEmpty())
+        if (isEmpty(urlPattern))
             return { WTF::move(name), { FilterRulePattern::Global }, WTF::move(scriptSource) };
 
         auto regex = Yarr::RegularExpression { urlPattern, { Yarr::Flags::IgnoreCase } };

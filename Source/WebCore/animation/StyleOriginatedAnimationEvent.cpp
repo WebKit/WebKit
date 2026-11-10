@@ -36,14 +36,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleOriginatedAnimationEvent);
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : AnimationEventBase(eventInterface, type, animation, scheduledTime)
     , m_elapsedTime(elapsedTime)
     , m_pseudoElementIdentifier(pseudoElementIdentifier)
 {
 }
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, EventInit&& init, IsTrusted isTrusted, double elapsedTime, String&& pseudoElement, RefPtr<WebAnimation>&& animation)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, EventInit&& init, IsTrusted isTrusted, double elapsedTime, RefPtr<StringImpl>&& pseudoElement, RefPtr<WebAnimation>&& animation)
     : AnimationEventBase(eventInterface, type, WTF::move(init), isTrusted, WTF::move(animation))
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(WTF::move(pseudoElement))
@@ -55,9 +55,9 @@ StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterface
 
 StyleOriginatedAnimationEvent::~StyleOriginatedAnimationEvent() = default;
 
-const String& StyleOriginatedAnimationEvent::pseudoElement()
+const RefPtr<StringImpl>& StyleOriginatedAnimationEvent::pseudoElement()
 {
-    if (m_pseudoElementIdentifier && m_pseudoElement.isNull())
+    if (m_pseudoElementIdentifier && !m_pseudoElement)
         m_pseudoElement = pseudoElementIdentifierAsString(m_pseudoElementIdentifier);
     return m_pseudoElement;
 }

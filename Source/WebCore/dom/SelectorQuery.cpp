@@ -239,7 +239,7 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
     ASSERT(m_selectors.size() == 1);
     ASSERT(idSelector);
 
-    const AtomString& idToMatch = idSelector->value();
+    const RefPtr<AtomStringImpl>& idToMatch = idSelector->value();
     if (rootNode.treeScope().containsMultipleElementsWithId(idToMatch)) [[unlikely]] {
         auto* elements = protect(rootNode.treeScope())->getAllElementsById(idToMatch);
         ASSERT(elements);
@@ -281,7 +281,7 @@ static Ref<ContainerNode> filterRootById(ContainerNode& rootNode, const CSSSelec
     bool inAdjacentChain = false;
     for (; selector; selector = selector->precedingInComplexSelector()) {
         if (canBeUsedForIdFastPath(*selector)) {
-            const AtomString& idToMatch = selector->value();
+            const RefPtr<AtomStringImpl>& idToMatch = selector->value();
             if (RefPtr<ContainerNode> searchRoot = protect(rootNode.treeScope())->getElementById(idToMatch)) {
                 if (!rootNode.treeScope().containsMultipleElementsWithId(idToMatch)) [[likely]] {
                     if (inAdjacentChain)
@@ -298,7 +298,7 @@ static Ref<ContainerNode> filterRootById(ContainerNode& rootNode, const CSSSelec
     return rootNode;
 }
 
-NODELETE static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomString& localName, const AtomString& lowercaseLocalName)
+NODELETE static ALWAYS_INLINE bool localNameMatches(const Element& element, AtomStringImpl* localName, AtomStringImpl* lowercaseLocalName)
 {
     if (element.isHTMLElement() && element.document().isHTMLDocument())
         return element.localName() == lowercaseLocalName;
@@ -307,7 +307,7 @@ NODELETE static ALWAYS_INLINE bool localNameMatches(const Element& element, cons
 }
 
 template<typename OutputType>
-static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomString& localName, const AtomString& lowercaseLocalName, OutputType& output)
+static inline void elementsForLocalName(const ContainerNode& rootNode, AtomStringImpl* localName, AtomStringImpl* lowercaseLocalName, OutputType& output)
 {
     if (auto* rootDocument = dynamicDowncast<Document>(rootNode); rootDocument && lowercaseLocalName == HTMLNames::baseTag->localName()) {
         auto* firstBaseElement = rootDocument->firstBaseElement();
@@ -356,9 +356,9 @@ ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Cont
     ASSERT(isSingleTagNameSelector(selectorData.selector));
 
     const QualifiedName& tagQualifiedName = selectorData.selector.tagQName();
-    const AtomString& selectorLocalName = tagQualifiedName.localName();
-    const AtomString& selectorLowercaseLocalName = selectorData.selector.tagLowercaseLocalName();
-    const AtomString& selectorNamespaceURI = tagQualifiedName.namespaceURI();
+    const RefPtr<AtomStringImpl>& selectorLocalName = tagQualifiedName.localName();
+    const RefPtr<AtomStringImpl>& selectorLowercaseLocalName = selectorData.selector.tagLowercaseLocalName();
+    const RefPtr<AtomStringImpl>& selectorNamespaceURI = tagQualifiedName.namespaceURI();
 
     if (selectorNamespaceURI == starAtom()) {
         if (selectorLocalName != starAtom()) {
@@ -386,7 +386,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Co
     ASSERT(m_selectors.size() == 1);
     ASSERT(isSingleClassNameSelector(selectorData.selector));
 
-    const AtomString& className = selectorData.selector.value();
+    const RefPtr<AtomStringImpl>& className = selectorData.selector.value();
     for (Ref element : descendantsOfType<Element>(const_cast<ContainerNode&>(rootNode))) {
         if (element->hasClassName(className)) {
             appendOutputForElement(output, element);
@@ -396,7 +396,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Co
     }
 }
 
-AtomString SelectorDataList::classNameToMatch() const
+RefPtr<AtomStringImpl> SelectorDataList::classNameToMatch() const
 {
     if (m_matchType != MatchType::ClassNameMatch)
         return nullAtom();
@@ -695,9 +695,9 @@ SelectorQueryCache& SelectorQueryCache::singleton()
     return cache.get();
 }
 
-SelectorQuery* SelectorQueryCache::add(const String& selectors, const Document& document)
+SelectorQuery* SelectorQueryCache::add(StringImpl* selectors, const Document& document)
 {
-    ASSERT(!selectors.isEmpty());
+    ASSERT(!isEmpty(selectors));
 
     auto context = CSSSelectorParserContext { document };
     auto key = Key { selectors, context, document.securityOrigin().data() };
@@ -719,7 +719,7 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, const Document& 
     constexpr auto maximumSelectorQueryCacheSize = 512;
     while (m_entries.size() > maximumSelectorQueryCacheSize) {
         auto it = m_entries.random();
-        if (it->key != result.iterator->key)
+        if (!contentEquals(it->key, result.iterator->key))
             m_entries.remove(it);
     }
 

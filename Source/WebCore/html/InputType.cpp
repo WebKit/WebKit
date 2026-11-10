@@ -96,7 +96,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InputType);
 using namespace HTMLNames;
 
 typedef bool (Settings::*InputTypeConditionalFunction)() const;
-typedef const AtomString& (*InputTypeNameFunction)();
+typedef const RefPtr<AtomStringImpl>& (*InputTypeNameFunction)();
 typedef Ref<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
 
 struct InputTypeFactory {
@@ -104,7 +104,7 @@ struct InputTypeFactory {
     InputTypeFactoryFunction factoryFunction;
 };
 
-typedef MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, InputTypeFactory> InputTypeFactoryMap;
+typedef MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, InputTypeFactory> InputTypeFactoryMap;
 
 template<typename T> static Ref<InputType> createInputType(HTMLInputElement& element)
 {
@@ -159,22 +159,22 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
     return map;
 }
 
-static inline std::pair<const AtomString&, InputTypeFactory*> findFactory(const AtomString& typeName)
+static inline std::pair<const RefPtr<AtomStringImpl>&, InputTypeFactory*> findFactory(AtomStringImpl* typeName)
 {
     static NeverDestroyed factoryMap = createInputTypeFactoryMap();
     auto& map = factoryMap.get();
     auto it = map.find(typeName);
     if (it == map.end()) [[unlikely]] {
-        it = map.find(typeName.convertToASCIILowercase());
+        it = map.find(convertToASCIILowercase(typeName));
         if (it == map.end())
             return { nullAtom(), nullptr };
     }
     return { it->key, &it->value };
 }
 
-RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, const AtomString& typeName, InputType* currentInputType)
+RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, AtomStringImpl* typeName, InputType* currentInputType)
 {
-    if (!typeName.isEmpty()) {
+    if (!isEmpty(typeName)) {
         auto& currentTypeName = currentInputType ? currentInputType->formControlType() : nullAtom();
         if (typeName == currentTypeName)
             return nullptr;
@@ -264,7 +264,7 @@ FormControlState InputType::saveFormControlState() const
 {
     ASSERT(element());
     Ref input = *element();
-    AtomString currentValue { input->value().get() };
+    RefPtr<AtomStringImpl> currentValue { AtomStringImpl::add(input->value().get()) };
     if (currentValue == input->attributeWithoutSynchronization(valueAttr))
         return { };
     return { { currentValue } };
@@ -280,7 +280,7 @@ bool InputType::isFormDataAppendable() const
 {
     ASSERT(element());
     // There is no form data unless there's a name for non-image types.
-    return !protect(element())->name().isEmpty();
+    return !isEmpty(protect(element())->name());
 }
 
 bool InputType::appendFormData(DOMFormData& formData) const
@@ -288,7 +288,7 @@ bool InputType::appendFormData(DOMFormData& formData) const
     ASSERT(element());
     // Always successful.
     Ref input = *element();
-    formData.append(input->name(), input->value());
+    formData.append(input->name(), protect(input->value().get()));
     return true;
 }
 
@@ -516,27 +516,27 @@ bool InputType::hasStepRangeViolation(StringView value) const
     return range.stepMismatch(numericValue);
 }
 
-String InputType::badInputText() const
+RefPtr<StringImpl> InputType::badInputText() const
 {
     ASSERT_NOT_REACHED();
     return validationMessageTypeMismatchText();
 }
 
-String InputType::typeMismatchText() const
+RefPtr<StringImpl> InputType::typeMismatchText() const
 {
     return validationMessageTypeMismatchText();
 }
 
-String InputType::valueMissingText() const
+RefPtr<StringImpl> InputType::valueMissingText() const
 {
     return validationMessageValueMissingText();
 }
 
-String InputType::validationMessage() const
+RefPtr<StringImpl> InputType::validationMessage() const
 {
     ASSERT(element());
     Ref element = *this->element();
-    String value = element->value();
+    RefPtr<StringImpl> value = element->value();
 
     // The order of the following checks is meaningful. e.g. We'd like to show the
     // badInput message even if the control has other validation errors.
@@ -550,17 +550,17 @@ String InputType::validationMessage() const
         return typeMismatchText();
 
     if (patternMismatch(value)) {
-        auto title = element->attributeWithoutSynchronization(HTMLNames::titleAttr).string().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
-        if (title.isEmpty())
+        auto title = simplifyWhiteSpace(trim(element->attributeWithoutSynchronization(HTMLNames::titleAttr), isASCIIWhitespace), isASCIIWhitespace);
+        if (isEmpty(title))
             return validationMessagePatternMismatchText();
         return validationMessagePatternMismatchText(title);
     }
 
     if (element->tooShort())
-        return validationMessageTooShortText(value.length(), element->minLength());
+        return validationMessageTooShortText(length(value), element->minLength());
 
     if (element->tooLong())
-        return validationMessageTooLongText(value.length(), element->effectiveMaxLength());
+        return validationMessageTooLongText(length(value), element->effectiveMaxLength());
 
     if (!isSteppable())
         return emptyString();
@@ -578,7 +578,7 @@ String InputType::validationMessage() const
         return validationMessageRangeOverflowText(serialize(stepRange.maximum()));
 
     if (stepRange.stepMismatch(numericValue)) {
-        const String stepString = stepRange.hasStep() ? serializeForNumberType(stepRange.step() / stepRange.stepScaleFactor()) : emptyString();
+        const RefPtr<StringImpl> stepString = stepRange.hasStep() ? serializeForNumberType(stepRange.step() / stepRange.stepScaleFactor()) : emptyString();
         return validationMessageStepMismatchText(serialize(stepRange.stepBase()), stepString);
     }
 
@@ -670,10 +670,10 @@ Decimal InputType::extractStepRangeBound(const QualifiedName& attributeName, con
     return defaultValue;
 }
 
-String InputType::serialize(const Decimal&) const
+RefPtr<StringImpl> InputType::serialize(const Decimal&) const
 {
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 DateComponentsType InputType::dateType() const
@@ -773,14 +773,14 @@ bool InputType::rendererIsNeeded()
     return true;
 }
 
-NODELETE ValueOrReference<String> InputType::fallbackValue() const
+NODELETE ValueOrReference<RefPtr<StringImpl>> InputType::fallbackValue() const
 {
-    return String();
+    return nullString();
 }
 
-NODELETE String InputType::defaultValue() const
+NODELETE RefPtr<StringImpl> InputType::defaultValue() const
 {
-    return String();
+    return nullptr;
 }
 
 bool InputType::shouldSendChangeEventAfterCheckedChanged()
@@ -793,7 +793,7 @@ bool InputType::storesValueSeparateFromAttribute()
     return true;
 }
 
-void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection)
+void InputType::setValue(StringImpl* sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection)
 {
     RefPtr element = this->element();
     ASSERT(element);
@@ -832,12 +832,12 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
         cache->valueChanged(*element);
 }
 
-String InputType::localizeValue(const String& proposedValue) const
+RefPtr<StringImpl> InputType::localizeValue(StringImpl* proposedValue) const
 {
     return proposedValue;
 }
 
-String InputType::visibleValue() const
+RefPtr<StringImpl> InputType::visibleValue() const
 {
     ASSERT(element());
     return protect(element())->value();
@@ -848,9 +848,9 @@ bool InputType::isEmptyValue() const
     return true;
 }
 
-ValueOrReference<String> InputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> InputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
-    return proposedValue;
+    return RefPtr { proposedValue };
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -869,10 +869,10 @@ Icon* InputType::icon() const
     return nullptr;
 }
 
-String InputType::displayString() const
+RefPtr<StringImpl> InputType::displayString() const
 {
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 bool InputType::shouldResetOnDocumentActivation()
@@ -931,9 +931,9 @@ void InputType::subtreeHasChanged()
     ASSERT_NOT_REACHED();
 }
 
-String InputType::defaultToolTip() const
+RefPtr<StringImpl> InputType::defaultToolTip() const
 {
-    return String();
+    return nullptr;
 }
 
 std::optional<Decimal> InputType::findClosestTickMarkValue(const Decimal&)
@@ -998,7 +998,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     Decimal step = stepRange.step();
     Decimal newValue = current;
 
-    const AtomString& stepString = element->getAttribute(HTMLNames::stepAttr);
+    const RefPtr<AtomStringImpl>& stepString = element->getAttribute(HTMLNames::stepAttr);
 
     if (!equalLettersIgnoringASCIICase(stepString, "any"_s) && stepRange.stepMismatch(current)) {
         // Snap-to-step / clamping steps
@@ -1140,12 +1140,12 @@ void InputType::stepUpOrDown(StepDirection direction)
     Ref element = *this->element();
 
     Ref beforeInputEvent = InputEvent::create(eventNames().beforeinputEvent, emptyString(), Event::IsCancelable::Yes,
-        element->document().windowProxy(), { }, nullptr, { }, 0, IsInputMethodComposing::No);
+        element->document().windowProxy(), nullptr, nullptr, { }, 0, IsInputMethodComposing::No);
     element->dispatchEvent(beforeInputEvent);
     if (beforeInputEvent->defaultPrevented() || !element->document().frame())
         return;
 
-    String currentStringValue = element->value();
+    RefPtr<StringImpl> currentStringValue = element->value();
     Decimal current = parseToNumberOrNaN(currentStringValue);
     if (!current.isFinite()) {
         current = defaultValueForStepUp();
@@ -1192,7 +1192,7 @@ RefPtr<TextControlInnerTextElement> InputType::innerTextElementCreatingShadowSub
     return innerTextElement();
 }
 
-String InputType::resultForDialogSubmit() const
+RefPtr<StringImpl> InputType::resultForDialogSubmit() const
 {
     ASSERT(element());
     return protect(element())->value();

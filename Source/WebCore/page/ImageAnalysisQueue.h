@@ -49,8 +49,8 @@ class Timer;
 class WeakPtrImplWithEventTargetData;
 
 struct ImageTranslationLanguageIdentifiers {
-    String source;
-    String target;
+    RefPtr<StringImpl> source;
+    RefPtr<StringImpl> target;
 };
 
 class ImageAnalysisQueue final : public RefCountedAndCanMakeWeakPtr<ImageAnalysisQueue> {
@@ -59,7 +59,7 @@ public:
     NODELETE static Ref<ImageAnalysisQueue> create(Page&);
     WEBCORE_EXPORT ~ImageAnalysisQueue();
 
-    WEBCORE_EXPORT void enqueueAllImagesIfNeeded(Frame&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
+    WEBCORE_EXPORT void enqueueAllImagesIfNeeded(Frame&, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier);
     void clear();
 
     void enqueueIfNeeded(HTMLImageElement&);

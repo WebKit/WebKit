@@ -45,7 +45,7 @@
 {
     WTF::initializeMainThread();
 
-    auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(String { databaseIdentifier });
+    auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(StringImpl::create(databaseIdentifier).get());
     if (!origin)
         return nil;
 
@@ -66,29 +66,29 @@
 
 - (NSString *)protocol
 {
-    return protect(_origin)->protocol().createNSString().autorelease();
+    return createNSString(protect(_origin)->protocol()).autorelease();
 }
 
 - (NSString *)host
 {
-    return protect(_origin)->host().createNSString().autorelease();
+    return createNSString(protect(_origin)->host()).autorelease();
 }
 
 - (NSString *)databaseIdentifier
 {
-    return _origin->data().databaseIdentifier().createNSString().autorelease();
+    return createNSString(_origin->data().databaseIdentifier()).autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (NSString *)toString
 {
-    return protect(_origin)->toString().createNSString().autorelease();
+    return createNSString(protect(_origin)->toString()).autorelease();
 }
 #endif
 
 - (NSString *)stringValue
 {
-    return protect(_origin)->toString().createNSString().autorelease();
+    return createNSString(protect(_origin)->toString()).autorelease();
 }
 
 - (unsigned short)port
@@ -124,7 +124,7 @@
 
 - (id)_initWithString:(NSString *)originString
 {
-    auto origin = WebCore::SecurityOrigin::createFromString(originString);
+    auto origin = WebCore::SecurityOrigin::createFromString(StringImpl::create(originString).get());
     return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.ptr()]).autorelease();
 }
 

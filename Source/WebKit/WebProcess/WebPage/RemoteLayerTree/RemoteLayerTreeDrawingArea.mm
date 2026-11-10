@@ -265,12 +265,12 @@ void RemoteLayerTreeDrawingArea::updateRenderingWithForcedRepaintAsync(WebPage& 
     completionHandler();
 }
 
-void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
+void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, StringImpl* key, MonotonicTime startTime)
 {
     m_remoteLayerTreeContext->animationDidStart(layerID, key, startTime);
 }
 
-void RemoteLayerTreeDrawingArea::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
+void RemoteLayerTreeDrawingArea::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, StringImpl* key)
 {
     m_remoteLayerTreeContext->animationDidEnd(layerID, key);
 }

@@ -54,7 +54,7 @@ bool SpatialAudioPlaybackHelper::supportsSpatialAudioPlaybackForConfiguration(co
     if (!spatialAudioPreferences.spatialAudioSourceCount)
         return false;
 
-    auto channelCount = configuration.audio->channels.toDouble();
+    auto channelCount = toDouble(configuration.audio->channels);
 
     for (auto& source : std::span { spatialAudioPreferences.spatialAudioSources }.first(spatialAudioPreferences.spatialAudioSourceCount)) {
         if (source == kSpatialAudioSource_Multichannel && channelCount > 2)

@@ -77,9 +77,9 @@ public:
         return (m_pathByteStream.size() / 10) * sizeof(FloatPoint);
     }
 
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
-        String value;
+        RefPtr<StringImpl> value;
         buildStringFromByteStream(pathByteStream(), value, UnalteredParsing);
         return value;
     }

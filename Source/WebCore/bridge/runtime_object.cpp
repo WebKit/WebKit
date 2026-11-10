@@ -59,7 +59,7 @@ void RuntimeObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
-        JSFunction::create(vm, realm(), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive, ImplementationVisibility::Public),
+        JSFunction::create(vm, realm(), 1, "[Symbol.toPrimitive]"_si, convertRuntimeObjectToPrimitive, ImplementationVisibility::Public),
         std::to_underlying(PropertyAttribute::DontEnum));
 }
 
@@ -311,7 +311,7 @@ void RuntimeObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexica
 
 Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
 {
-    return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."_s));
+    return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."_si));
 }
 
 JSC::GCClient::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)

@@ -46,9 +46,9 @@ public:
     void logSubresourceLoading(const WebCore::LocalFrame*, const WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse, FetchDestinationIsScriptLike) final;
     void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL) final;
     void logUserInteractionWithReducedTimeResolution(const WebCore::Document&) final;
-    void logFontLoad(const WebCore::Document&, const String& familyName, bool loadStatus) final;
+    void logFontLoad(const WebCore::Document&, StringImpl* familyName, bool loadStatus) final;
     void logCanvasRead(const WebCore::Document&) final;
-    void logCanvasWriteOrMeasure(const WebCore::Document&, const String& textWritten) final;
+    void logCanvasWriteOrMeasure(const WebCore::Document&, StringImpl* textWritten) final;
     void logNavigatorAPIAccessed(const WebCore::Document&, const WebCore::NavigatorAPIsAccessed) final;
     void logScreenAPIAccessed(const WebCore::Document&, const WebCore::ScreenAPIsAccessed) final;
     void logSubresourceLoadingForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification);
@@ -57,7 +57,7 @@ public:
     NODELETE static void setShouldLogUserInteraction(bool);
 #endif
 
-    String statisticsForURL(const URL&) final;
+    RefPtr<StringImpl> statisticsForURL(const URL&) final;
     void updateCentralStatisticsStore(CompletionHandler<void()>&&) final;
     void clearState() final;
     

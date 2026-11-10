@@ -52,8 +52,8 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
     if (isPlatformBinary)
         return false;
 
-    const String& path = m_processPool->configuration().injectedBundlePath();
-    return !path.isEmpty() && !path.startsWith("/System/"_s);
+    const RefPtr<StringImpl>& path = m_processPool->configuration().injectedBundlePath();
+    return !isEmpty(path) && !startsWith(path, "/System/"_s);
 }
 
 } // namespace WebKit

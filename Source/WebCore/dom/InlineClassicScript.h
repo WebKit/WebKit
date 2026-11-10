@@ -38,7 +38,7 @@ public:
     ScriptType scriptType() const final { return ScriptType::Classic; }
 
 private:
-    InlineClassicScript(const AtomString& nonce, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    InlineClassicScript(AtomStringImpl* nonce, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree);
 };
 
 }

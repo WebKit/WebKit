@@ -79,10 +79,10 @@ public:
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     WEBCORE_EXPORT void didCreateObjectStore(const IDBResultData&);
 
-    void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
+    void deleteObjectStore(const IDBRequestData&, StringImpl* objectStoreName);
     WEBCORE_EXPORT void didDeleteObjectStore(const IDBResultData&);
 
-    void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, const String& newName);
+    void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl* newName);
     WEBCORE_EXPORT void didRenameObjectStore(const IDBResultData&);
 
     void clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier);
@@ -91,10 +91,10 @@ public:
     void createIndex(const IDBRequestData&, const IDBIndexInfo&);
     WEBCORE_EXPORT void didCreateIndex(const IDBResultData&);
 
-    void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String& indexName);
+    void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl* indexName);
     WEBCORE_EXPORT void didDeleteIndex(const IDBResultData&);
 
-    void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName);
+    void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName);
     WEBCORE_EXPORT void didRenameIndex(const IDBResultData&);
 
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode);

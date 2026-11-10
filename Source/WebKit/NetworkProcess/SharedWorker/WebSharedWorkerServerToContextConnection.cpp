@@ -104,7 +104,7 @@ void WebSharedWorkerServerToContextConnection::connectionIsNoLongerNeeded()
         connection->sharedWorkerServerToContextConnectionIsNoLongerNeeded();
 }
 
-void WebSharedWorkerServerToContextConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
+void WebSharedWorkerServerToContextConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("postErrorToWorkerObject: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
     if (CheckedPtr server = m_server.get())
@@ -181,7 +181,7 @@ void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSh
 
 void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     auto& sharedWorkerObjects = m_sharedWorkerObjects.ensure(sharedWorkerObjectIdentifier.processIdentifier(), [] { return HashSet<WebCore::SharedWorkerObjectIdentifier> { }; }).iterator->value;
     ASSERT(!sharedWorkerObjects.contains(sharedWorkerObjectIdentifier));
     sharedWorkerObjects.add(sharedWorkerObjectIdentifier);
@@ -198,7 +198,7 @@ void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::Sh
 
 void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, utf8(sharedWorkerObjectIdentifier.toString()));
     auto it = m_sharedWorkerObjects.find(sharedWorkerObjectIdentifier.processIdentifier());
     ASSERT(it != m_sharedWorkerObjects.end());
     if (it == m_sharedWorkerObjects.end())

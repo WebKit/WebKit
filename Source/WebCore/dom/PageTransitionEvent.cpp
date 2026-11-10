@@ -32,13 +32,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageTransitionEvent);
 
-PageTransitionEvent::PageTransitionEvent(const AtomString& type, bool persisted)
+PageTransitionEvent::PageTransitionEvent(AtomStringImpl* type, bool persisted)
     : Event(EventInterfaceType::PageTransitionEvent, type, CanBubble::Yes, IsCancelable::Yes)
     , m_persisted(persisted)
 {
 }
 
-PageTransitionEvent::PageTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+PageTransitionEvent::PageTransitionEvent(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::PageTransitionEvent, type, initializer, isTrusted)
     , m_persisted(initializer.persisted)
 {

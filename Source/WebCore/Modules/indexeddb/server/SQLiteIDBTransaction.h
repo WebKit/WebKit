@@ -78,8 +78,8 @@ public:
     SQLiteTransaction* sqliteTransaction() const LIFETIME_BOUND { return m_sqliteTransaction.get(); }
     SQLiteIDBBackingStore& backingStore() { return m_backingStore.get(); }
 
-    void addBlobFile(const String& temporaryPath, const String& storedFilename);
-    void addRemovedBlobFile(const String& removedFilename);
+    void addBlobFile(StringImpl* temporaryPath, StringImpl* storedFilename);
+    void addRemovedBlobFile(StringImpl* removedFilename);
 
 private:
     void clearCursors();
@@ -96,8 +96,8 @@ private:
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBCursor>> m_cursors;
     HashSet<CheckedPtr<SQLiteIDBCursor>> m_backingStoreCursors;
-    Vector<std::pair<String, String>> m_blobTemporaryAndStoredFilenames;
-    MemoryCompactRobinHoodHashSet<String> m_blobRemovedFilenames;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> m_blobTemporaryAndStoredFilenames;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_blobRemovedFilenames;
 };
 
 } // namespace IDBServer

@@ -44,7 +44,7 @@ CSSAppleColorFilterValue::CSSAppleColorFilterValue(CSS::AppleColorFilter filter)
 {
 }
 
-String CSSAppleColorFilterValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSAppleColorFilterValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_filter);
 }

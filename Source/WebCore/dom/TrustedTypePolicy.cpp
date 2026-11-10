@@ -42,17 +42,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TrustedTypePolicy);
 
-Ref<TrustedTypePolicy> TrustedTypePolicy::create(const String& name, const TrustedTypePolicyOptions& options)
+Ref<TrustedTypePolicy> TrustedTypePolicy::create(StringImpl* name, const TrustedTypePolicyOptions& options)
 {
     return adoptRef(*new TrustedTypePolicy(name, options));
 }
 
-TrustedTypePolicy::TrustedTypePolicy(const String& name, const TrustedTypePolicyOptions& options)
+TrustedTypePolicy::TrustedTypePolicy(StringImpl* name, const TrustedTypePolicyOptions& options)
     : m_name(name)
     , m_options(options)
 { }
 
-ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     auto policyValue = getPolicyValue(TrustedType::TrustedHTML, input, WTF::move(arguments));
 
@@ -60,13 +60,13 @@ ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input,
         return policyValue.releaseException();
 
     auto dataString = policyValue.releaseReturnValue();
-    if (dataString.isNull())
+    if (!dataString)
         dataString = emptyString();
 
     return TrustedHTML::create(dataString);
 }
 
-ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     auto policyValue = getPolicyValue(TrustedType::TrustedScript, input, WTF::move(arguments));
 
@@ -74,13 +74,13 @@ ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& in
         return policyValue.releaseException();
 
     auto dataString = policyValue.releaseReturnValue();
-    if (dataString.isNull())
+    if (!dataString)
         dataString = emptyString();
 
     return TrustedScript::create(dataString);
 }
 
-ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     auto policyValue = getPolicyValue(TrustedType::TrustedScriptURL, input, WTF::move(arguments));
 
@@ -88,16 +88,16 @@ ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const Stri
         return policyValue.releaseException();
 
     auto dataString = policyValue.releaseReturnValue();
-    if (dataString.isNull())
+    if (!dataString)
         dataString = emptyString();
 
     return TrustedScriptURL::create(dataString);
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-policy-value-algorithm
-ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments, IfMissing ifMissing)
+ExceptionOr<RefPtr<StringImpl>> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeName, StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments, IfMissing ifMissing)
 {
-    CallbackResult<String> policyValue(CallbackResultType::UnableToExecute);
+    CallbackResult<RefPtr<StringImpl>> policyValue(CallbackResultType::UnableToExecute);
     if (trustedTypeName == TrustedType::TrustedHTML) {
         if (m_options.createHTML && m_options.createHTML->hasCallback())
             policyValue = m_options.createHTML->invokeRethrowingException(input, WTF::move(arguments));
@@ -125,7 +125,7 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
         };
     }
 
-    return String(nullString());
+    return RefPtr<StringImpl>(nullString());
 }
 
 WebCoreOpaqueRoot root(TrustedTypePolicy* policy)

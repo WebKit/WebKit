@@ -69,14 +69,14 @@ private:
     MediaSessionManagerGLib& m_manager;
     GRefPtr<GDBusConnection> m_connection;
     MprisRegistrationEligiblilty m_registrationEligibility { MprisRegistrationEligiblilty::NotEligible };
-    String m_instanceId;
+    RefPtr<StringImpl> m_instanceId;
     unsigned m_ownerId { 0 };
     unsigned m_rootRegistrationId { 0 };
     unsigned m_playerRegistrationId { 0 };
     static bool m_dBusAddressFailed;
 };
 
-String convertEnumerationToString(MediaSessionGLib::MprisRegistrationEligiblilty);
+RefPtr<StringImpl> convertEnumerationToString(MediaSessionGLib::MprisRegistrationEligiblilty);
 
 } // namespace WebCore
 
@@ -87,7 +87,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::MediaSessionGLib::MprisRegistrationEligiblilty> {
-    static String toString(const WebCore::MediaSessionGLib::MprisRegistrationEligiblilty state)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSessionGLib::MprisRegistrationEligiblilty state)
     {
         return convertEnumerationToString(state);
     }

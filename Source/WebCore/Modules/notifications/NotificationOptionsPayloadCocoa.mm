@@ -76,7 +76,7 @@ std::optional<NotificationOptionsPayload> NotificationOptionsPayload::fromDictio
         rawSilent = [silent boolValue];
     }
 
-    return NotificationOptionsPayload { rawDir, lang.get(), body.get(), tag.get(), icon.get(), dataJSON.get(), rawSilent };
+    return NotificationOptionsPayload { rawDir, StringImpl::create(lang.get()), StringImpl::create(body.get()), StringImpl::create(tag.get()), StringImpl::create(icon.get()), StringImpl::create(dataJSON.get()), rawSilent };
 }
 
 NSDictionary *NotificationOptionsPayload::dictionaryRepresentation() const
@@ -85,11 +85,11 @@ NSDictionary *NotificationOptionsPayload::dictionaryRepresentation() const
 
     return @{
         WebDirKey : @((uint8_t)dir),
-        WebLangKey : lang.createNSString().get(),
-        WebBodyKey : body.createNSString().get(),
-        WebTagKey : tag.createNSString().get(),
-        WebIconKey : icon.createNSString().get(),
-        WebDataJSONKey : dataJSONString.createNSString().get(),
+        WebLangKey : createNSString(lang).get(),
+        WebBodyKey : createNSString(body).get(),
+        WebTagKey : createNSString(tag).get(),
+        WebIconKey : createNSString(icon).get(),
+        WebDataJSONKey : createNSString(dataJSONString).get(),
         WebSilentKey : silent.has_value() ? @(*silent) : [NSNull null],
     };
 }

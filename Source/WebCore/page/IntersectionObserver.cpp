@@ -70,7 +70,7 @@
 
 namespace WebCore {
 
-static ExceptionOr<IntersectionObserverMarginBox> parseMargin(String& margin, const String& marginName)
+static ExceptionOr<IntersectionObserverMarginBox> parseMargin(RefPtr<StringImpl>& margin, StringImpl* marginName)
 {
     using namespace CSSPropertyParserHelpers;
 
@@ -141,11 +141,11 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
         );
     }
 
-    auto rootMarginOrException = parseMargin(init.rootMargin, "rootMargin"_s);
+    auto rootMarginOrException = parseMargin(init.rootMargin, "rootMargin"_si);
     if (rootMarginOrException.hasException())
         return rootMarginOrException.releaseException();
 
-    auto scrollMarginOrException = parseMargin(init.scrollMargin, "scrollMargin"_s);
+    auto scrollMarginOrException = parseMargin(init.scrollMargin, "scrollMargin"_si);
     if (scrollMarginOrException.hasException())
         return scrollMarginOrException.releaseException();
 
@@ -164,7 +164,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 
     for (auto threshold : thresholds) {
         if (!(threshold >= 0 && threshold <= 1))
-            return Exception { ExceptionCode::RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
+            return Exception { ExceptionCode::RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_si };
     }
 
     return adoptRef(*new IntersectionObserver(document, WTF::move(callback), root.get(), rootMarginOrException.releaseReturnValue(), scrollMarginOrException.releaseReturnValue(), WTF::move(thresholds), includeObscuredInsets));
@@ -217,7 +217,7 @@ Document* IntersectionObserver::trackingDocument() const
     return m_root ? &m_root->document() : m_implicitRootDocument.get();
 }
 
-static String marginBoxToString(const IntersectionObserverMarginBox& marginBox)
+static RefPtr<StringImpl> marginBoxToString(const IntersectionObserverMarginBox& marginBox)
 {
     StringBuilder stringBuilder;
     for (auto side : allBoxSides) {
@@ -230,12 +230,12 @@ static String marginBoxToString(const IntersectionObserverMarginBox& marginBox)
     return stringBuilder.toString();
 }
 
-String IntersectionObserver::rootMargin() const
+RefPtr<StringImpl> IntersectionObserver::rootMargin() const
 {
     return marginBoxToString(m_rootMargin);
 }
 
-String IntersectionObserver::scrollMargin() const
+RefPtr<StringImpl> IntersectionObserver::scrollMargin() const
 {
     return marginBoxToString(m_scrollMargin);
 }
@@ -761,7 +761,7 @@ void IntersectionObserver::notify()
     }
 #endif
 
-    InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_s);
+    InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_si);
     m_callback->invoke(*this, WTF::move(takenRecords.records), *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }

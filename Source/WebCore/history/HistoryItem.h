@@ -82,7 +82,7 @@ protected:
 class HistoryItem : public RefCountedAndCanMakeWeakPtr<HistoryItem> {
 public:
     using Client = HistoryItemClient;
-    static Ref<HistoryItem> create(Client& client, const String& urlString = { }, const String& title = { }, const String& alternateTitle = { }, std::optional<BackForwardItemIdentifier> itemID = { }, std::optional<BackForwardFrameItemIdentifier> frameItemID = { })
+    static Ref<HistoryItem> create(Client& client, StringImpl* urlString = nullptr, StringImpl* title = nullptr, StringImpl* alternateTitle = nullptr, std::optional<BackForwardItemIdentifier> itemID = { }, std::optional<BackForwardFrameItemIdentifier> frameItemID = { })
     {
         return adoptRef(*new HistoryItem(client, urlString, title, alternateTitle, itemID, frameItemID));
     }
@@ -99,25 +99,25 @@ public:
 
     bool operator==(const HistoryItem& other) const { return itemID() == other.itemID(); }
 
-    NODELETE WEBCORE_EXPORT const String& originalURLString() const LIFETIME_BOUND;
-    NODELETE WEBCORE_EXPORT const String& urlString() const LIFETIME_BOUND;
-    NODELETE WEBCORE_EXPORT const String& title() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& originalURLString() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& urlString() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& title() const LIFETIME_BOUND;
     
     WEBCORE_EXPORT bool isInBackForwardCache() const;
     WEBCORE_EXPORT bool hasCachedPageExpired() const;
 
-    WEBCORE_EXPORT void setAlternateTitle(const String&);
-    NODELETE WEBCORE_EXPORT const String& alternateTitle() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setAlternateTitle(StringImpl*);
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& alternateTitle() const LIFETIME_BOUND;
     
     WEBCORE_EXPORT URL url() const;
     WEBCORE_EXPORT URL originalURL() const;
-    NODELETE WEBCORE_EXPORT const String& referrer() const LIFETIME_BOUND;
-    NODELETE WEBCORE_EXPORT const AtomString& target() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& referrer() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const RefPtr<AtomStringImpl>& target() const LIFETIME_BOUND;
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }
     bool isTargetItem() const { return m_isTargetItem; }
     
     NODELETE WEBCORE_EXPORT FormData* formData();
-    NODELETE WEBCORE_EXPORT String formContentType() const;
+    NODELETE WEBCORE_EXPORT RefPtr<StringImpl> formContentType() const;
     
     bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
 
@@ -131,21 +131,21 @@ public:
     NODELETE WEBCORE_EXPORT float pageScaleFactor() const;
     NODELETE WEBCORE_EXPORT void setPageScaleFactor(float);
     
-    NODELETE WEBCORE_EXPORT const Vector<AtomString>& documentState() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void setDocumentState(const Vector<AtomString>&);
+    NODELETE WEBCORE_EXPORT const Vector<RefPtr<AtomStringImpl>>& documentState() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setDocumentState(const Vector<RefPtr<AtomStringImpl>>&);
     void clearDocumentState();
 
     NODELETE WEBCORE_EXPORT void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy);
     NODELETE WEBCORE_EXPORT ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const;
 
     void setURL(const URL&);
-    WEBCORE_EXPORT void setURLString(const String&);
-    WEBCORE_EXPORT void setOriginalURLString(const String&);
-    WEBCORE_EXPORT void setReferrer(String&&);
-    WEBCORE_EXPORT void setTarget(const AtomString&);
+    WEBCORE_EXPORT void setURLString(StringImpl*);
+    WEBCORE_EXPORT void setOriginalURLString(StringImpl*);
+    WEBCORE_EXPORT void setReferrer(RefPtr<StringImpl>&&);
+    WEBCORE_EXPORT void setTarget(AtomStringImpl*);
     WEBCORE_EXPORT void setFrameID(std::optional<FrameIdentifier>);
-    WEBCORE_EXPORT void setTitle(String&&);
-    WEBCORE_EXPORT void setTitle(const String&);
+    WEBCORE_EXPORT void setTitle(RefPtr<StringImpl>&&);
+    WEBCORE_EXPORT void setTitle(StringImpl*);
     void setIsTargetItem(bool isTargetItem) { m_isTargetItem = isTargetItem; }
     
     WEBCORE_EXPORT void setStateObject(RefPtr<SerializedScriptValue>&&);
@@ -165,13 +165,13 @@ public:
 
     void setFormInfoFromRequest(const ResourceRequest&);
     WEBCORE_EXPORT void setFormData(RefPtr<FormData>&&);
-    WEBCORE_EXPORT void setFormContentType(const String&);
+    WEBCORE_EXPORT void setFormContentType(StringImpl*);
 
     void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }
 
     WEBCORE_EXPORT void addChildItem(Ref<HistoryItem>&&);
     void setChildItem(Ref<HistoryItem>&&);
-    NODELETE WEBCORE_EXPORT HistoryItem* childItemWithTarget(const AtomString&);
+    NODELETE WEBCORE_EXPORT HistoryItem* childItemWithTarget(AtomStringImpl*);
     NODELETE WEBCORE_EXPORT HistoryItem* childItemWithFrameID(FrameIdentifier);
     NODELETE WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const LIFETIME_BOUND;
     void clearChildren();
@@ -231,30 +231,30 @@ public:
     IsInitialAboutBlank isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
 #if !LOG_DISABLED
-    String logString() const;
+    RefPtr<StringImpl> logString() const;
 #endif
 
     const std::optional<PolicyContainer>& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
 private:
-    WEBCORE_EXPORT HistoryItem(Client&, const String& urlString, const String& title, const String& alternateTitle, std::optional<BackForwardItemIdentifier>, std::optional<BackForwardFrameItemIdentifier>);
+    WEBCORE_EXPORT HistoryItem(Client&, StringImpl* urlString, StringImpl* title, StringImpl* alternateTitle, std::optional<BackForwardItemIdentifier>, std::optional<BackForwardFrameItemIdentifier>);
 
     HistoryItem(const HistoryItem&);
 
     static int64_t generateSequenceNumber();
 
-    String m_urlString;
-    String m_originalURLString;
-    String m_referrer;
-    AtomString m_target;
+    RefPtr<StringImpl> m_urlString;
+    RefPtr<StringImpl> m_originalURLString;
+    RefPtr<StringImpl> m_referrer;
+    RefPtr<AtomStringImpl> m_target;
     std::optional<FrameIdentifier> m_frameID;
-    String m_title;
-    String m_displayTitle;
+    RefPtr<StringImpl> m_title;
+    RefPtr<StringImpl> m_displayTitle;
 
     IntPoint m_scrollPosition;
     float m_pageScaleFactor { 0 }; // 0 indicates "unset".
-    Vector<AtomString> m_documentState;
+    Vector<RefPtr<AtomStringImpl>> m_documentState;
 
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     
@@ -287,7 +287,7 @@ private:
 
     // info used to repost form data
     RefPtr<FormData> m_formData;
-    String m_formContentType;
+    RefPtr<StringImpl> m_formContentType;
 
 #if PLATFORM(IOS_FAMILY)
     FloatRect m_exposedContentRect;

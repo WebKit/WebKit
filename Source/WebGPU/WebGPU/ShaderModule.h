@@ -61,7 +61,7 @@ class ShaderModule final : public WebGPU::ShaderModule {
     };
     using CheckResult = Variant<ValidCheck, WGSL::FailedCheck, std::monostate>;
 public:
-    static Ref<ShaderModule> create(WGSL::SuccessfulCheck&& successfulCheck, String&& source, WGSL::Configuration&& configuration, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+    static Ref<ShaderModule> create(WGSL::SuccessfulCheck&& successfulCheck, RefPtr<StringImpl>&& source, WGSL::Configuration&& configuration, HashMap<RefPtr<StringImpl>, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<RefPtr<StringImpl>, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     {
         Ref shaderModule = adoptRef(*new ShaderModule(WTF::move(successfulCheck), WTF::move(source), WTF::move(configuration), WTF::move(pipelineLayoutHints), WTF::move(entryPointInformation), library, device));
         shaderModule->releaseASTIfUnused();
@@ -75,12 +75,12 @@ public:
     ~ShaderModule();
 
     void compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&&) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     bool isValid() const final { return std::holds_alternative<ValidCheck>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
-    static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label, NSError **, WGSL::DeviceState&&);
+    static id<MTLLibrary> createLibrary(id<MTLDevice>, StringImpl* msl, RefPtr<StringImpl>&& label, NSError **, WGSL::DeviceState&&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, NSString *msl, NSString *label, NSError **, const WGSL::DeviceState&);
     static void createLibraryAsync(id<MTLDevice>, NSString *msl, NSString *label, const WGSL::DeviceState&, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
 
@@ -107,14 +107,14 @@ public:
 
     ASTHandle ast() const;
 
-    const PipelineLayout* pipelineLayoutHint(const String&) const;
-    const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
+    const PipelineLayout* pipelineLayoutHint(StringImpl*) const;
+    const WGSL::Reflection::EntryPointInformation* entryPointInformation(StringImpl*) const;
     id<MTLLibrary> library() const { return m_library; }
 
     Device& device() const { return m_device; }
-    NODELETE const String& defaultVertexEntryPoint() const;
-    NODELETE const String& defaultFragmentEntryPoint() const;
-    NODELETE const String& defaultComputeEntryPoint() const;
+    NODELETE const RefPtr<StringImpl>& defaultVertexEntryPoint() const;
+    NODELETE const RefPtr<StringImpl>& defaultFragmentEntryPoint() const;
+    NODELETE const RefPtr<StringImpl>& defaultComputeEntryPoint() const;
 
     using VertexStageIn = HashMap<uint32_t, WebGPU::VertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
@@ -124,23 +124,23 @@ public:
     };
     using VertexOutputs = HashMap<uint32_t, VertexOutputFragmentInput, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentInputs = VertexOutputs;
-    const FragmentOutputs* fragmentReturnTypeForEntryPoint(const String&) const;
-    const FragmentInputs* fragmentInputsForEntryPoint(const String&) const;
-    const VertexStageIn* stageInTypesForEntryPoint(const String&) const;
-    const VertexOutputs* vertexReturnTypeForEntryPoint(const String&) const;
-    bool usesFrontFacingInInput(const String&) const;
-    bool usesSampleIndexInInput(const String&) const;
-    bool usesSampleMaskInInput(const String&) const;
-    bool usesSampleMaskInOutput(const String&) const;
-    bool usesFragDepth(const String&) const;
-    bool usesDualSourceBlending(const String&) const;
-    bool usesPrimitiveIndexInInput(const String&) const;
-    bool usesSubgroupInvocationIdInInput(const String&) const;
-    bool usesSubgroupSizeInInput(const String&) const;
-    uint32_t clipDistancesCount(const String&) const;
+    const FragmentOutputs* fragmentReturnTypeForEntryPoint(StringImpl*) const;
+    const FragmentInputs* fragmentInputsForEntryPoint(StringImpl*) const;
+    const VertexStageIn* stageInTypesForEntryPoint(StringImpl*) const;
+    const VertexOutputs* vertexReturnTypeForEntryPoint(StringImpl*) const;
+    bool usesFrontFacingInInput(StringImpl*) const;
+    bool usesSampleIndexInInput(StringImpl*) const;
+    bool usesSampleMaskInInput(StringImpl*) const;
+    bool usesSampleMaskInOutput(StringImpl*) const;
+    bool usesFragDepth(StringImpl*) const;
+    bool usesDualSourceBlending(StringImpl*) const;
+    bool usesPrimitiveIndexInInput(StringImpl*) const;
+    bool usesSubgroupInvocationIdInInput(StringImpl*) const;
+    bool usesSubgroupSizeInInput(StringImpl*) const;
+    uint32_t clipDistancesCount(StringImpl*) const;
 
 private:
-    ShaderModule(WGSL::SuccessfulCheck&&, String&& source, WGSL::Configuration&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
+    ShaderModule(WGSL::SuccessfulCheck&&, RefPtr<StringImpl>&& source, WGSL::Configuration&&, HashMap<RefPtr<StringImpl>, Ref<PipelineLayout>>&&, HashMap<RefPtr<StringImpl>, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
     ShaderModule(Device&, CheckResult&&);
 
     void releaseASTIfUnused() const;
@@ -149,28 +149,28 @@ private:
     // A module can be kept alive for a long time before it is used to create a pipeline, and its
     // AST is many times the size of its source, so the AST only exists while the module is being
     // created or a pipeline is being created from it.
-    const String m_source;
+    const RefPtr<StringImpl> m_source;
     const std::optional<WGSL::Configuration> m_configuration;
     mutable std::unique_ptr<WGSL::ShaderModule> m_ast;
     mutable unsigned m_astHandleCount { 0 };
-    const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
-    const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
+    const HashMap<RefPtr<StringImpl>, Ref<PipelineLayout>> m_pipelineLayoutHints;
+    const HashMap<RefPtr<StringImpl>, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
     const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
-    void populateFragmentInputs(const WGSL::Type&, ShaderModule::FragmentInputs&, const String&);
-    FragmentInputs parseFragmentInputs(const WGSL::AST::Function&, const String& entryPointName);
-    void populateOutputState(const String&, WGSL::Builtin);
+    void populateFragmentInputs(const WGSL::Type&, ShaderModule::FragmentInputs&, StringImpl*);
+    FragmentInputs parseFragmentInputs(const WGSL::AST::Function&, StringImpl* entryPointName);
+    void populateOutputState(StringImpl*, WGSL::Builtin);
 
     ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type&, const WGSL::CallGraph::EntryPoint&);
 
     const Ref<Device> m_device;
-    HashMap<String, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;
-    HashMap<String, FragmentInputs> m_fragmentInputsForEntryPoint;
-    HashMap<String, VertexOutputs> m_vertexReturnTypeForEntryPoint;
-    HashMap<String, VertexStageIn> m_stageInTypesForEntryPoint;
+    HashMap<RefPtr<StringImpl>, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;
+    HashMap<RefPtr<StringImpl>, FragmentInputs> m_fragmentInputsForEntryPoint;
+    HashMap<RefPtr<StringImpl>, VertexOutputs> m_vertexReturnTypeForEntryPoint;
+    HashMap<RefPtr<StringImpl>, VertexStageIn> m_stageInTypesForEntryPoint;
 
-    String m_defaultVertexEntryPoint;
-    String m_defaultFragmentEntryPoint;
-    String m_defaultComputeEntryPoint;
+    RefPtr<StringImpl> m_defaultVertexEntryPoint;
+    RefPtr<StringImpl> m_defaultFragmentEntryPoint;
+    RefPtr<StringImpl> m_defaultComputeEntryPoint;
 
     struct ShaderModuleState {
         bool usesFrontFacingInInput { false };
@@ -184,9 +184,9 @@ private:
         bool usesSubgroupSizeInInput { false };
         uint32_t clipDistancesCount { 0 }; // Number of clip distances (0 if not used)
     };
-    const ShaderModuleState* shaderModuleState(const String&) const;
-    ShaderModuleState& populateShaderModuleState(const String&);
-    HashMap<String, ShaderModuleState> m_usageInformationPerEntryPoint;
+    const ShaderModuleState* shaderModuleState(StringImpl*) const;
+    ShaderModuleState& populateShaderModuleState(StringImpl*);
+    HashMap<RefPtr<StringImpl>, ShaderModuleState> m_usageInformationPerEntryPoint;
 };
 
 } // namespace WebGPU::Metal

@@ -132,7 +132,7 @@ static const WebAssemblyBuiltinSet* findEnabledBuiltinSet(const Wasm::Import& im
 
 static void defineImportedStringConstant(VM& vm, WriteBarrier<JSWebAssemblyInstance>& instance, const Wasm::Import& import)
 {
-    String text = makeString(import.field);
+    RefPtr<StringImpl> text = makeString(import.field);
     JSValue string = jsString(vm, WTF::move(text));
     instance->setGlobal(import.kindIndex, string);
 }
@@ -184,7 +184,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         }
         const WebAssemblyBuiltinSet* builtinSet = findEnabledBuiltinSet(import, moduleInformation);
         if (builtinSet) {
-            String fieldName = makeString(import.field);
+            RefPtr<StringImpl> fieldName = makeString(import.field);
             auto* builtin = builtinSet->findBuiltin(fieldName);
             if (!builtin)
                 return exception(createTypeError(globalObject, importFailMessage(import, "import"_s, "is not a valid builtin reference"_s)));
@@ -221,7 +221,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(globalObject, scope, "Importing binding name 'default' cannot be resolved by star export entries."_s);
+                throwSyntaxError(globalObject, scope, "Importing binding name 'default' cannot be resolved by star export entries."_si);
                 return;
 
             case Resolution::Type::Resolved:
@@ -591,7 +591,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             // We create a Table when it's a Table definition.
             RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(vm, moduleInformation.tables[i].initial(), moduleInformation.tables[i].maximum(), moduleInformation.tables[i].type(), moduleInformation.tables[i].wasmType(), moduleInformation.tables[i].addressType() );
             if (!wasmTable)
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, "couldn't create Table"_s));
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, "couldn't create Table"_si));
 
             Wasm::TableInformation::InitializationType initType = moduleInformation.tables[i].initType();
             uint64_t initialBitsOrImportNumber = moduleInformation.tables[i].initialBitsOrImportNumber();
@@ -626,7 +626,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
             if (initType != Wasm::TableInformation::Default) {
                 if (!Wasm::tableFill(m_instance.get(), i, 0, initialBitsOrImportNumber, m_instance->table(i)->length()))
-                    return exception(createJSWebAssemblyLinkError(globalObject, vm, "failed to initialize Table"_s));
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, "failed to initialize Table"_si));
             }
         }
     }
@@ -834,7 +834,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             auto wasmCallee = calleeGroup->wasmCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             ASSERT(wasmCallee);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), rtt->argumentCount(), "start"_s, m_instance.get(), *wasmCallee, entrypointLoadLocation, WTF::move(rtt));
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), rtt->argumentCount(), "start"_si, m_instance.get(), *wasmCallee, entrypointLoadLocation, WTF::move(rtt));
             m_startFunction.set(vm, this, function);
         }
     }
@@ -856,7 +856,7 @@ JSValue WebAssemblyModuleRecord::evaluateConstantExpression(JSGlobalObject* glob
 template <typename Scope, typename M, typename N, typename ...Args>
 NEVER_INLINE static JSValue dataSegmentFail(JSGlobalObject* globalObject, VM& vm, Scope& scope, M memorySize, N segmentSize, N offset, Args... args)
 {
-    return throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, makeString("Invalid data segment initialization: segment of "_s, String::number(segmentSize), " bytes memory of "_s, String::number(memorySize), " bytes, at offset "_s, String::number(offset), args...)));
+    return throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, makeString("Invalid data segment initialization: segment of "_s, segmentSize, " bytes memory of "_s, memorySize, " bytes, at offset "_s, offset, args...)));
 }
 
 JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
@@ -953,7 +953,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
         uint64_t tableLength = m_instance->table(tableIndex)->length();
         uint64_t segmentLength = element.initTypes.size();
         if (elementIndex > tableLength || segmentLength > tableLength - elementIndex) [[unlikely]] {
-            exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
+            exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Element is trying to set an out of bounds table index"_si)));
             return IterationStatus::Done;
         }
 

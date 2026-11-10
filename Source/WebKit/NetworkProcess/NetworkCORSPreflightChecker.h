@@ -57,8 +57,8 @@ public:
         WebCore::ResourceRequest originalRequest;
         Ref<WebCore::SecurityOrigin> sourceOrigin;
         Ref<WebCore::SecurityOrigin> topOrigin;
-        String referrer;
-        String userAgent;
+        RefPtr<StringImpl> referrer;
+        RefPtr<StringImpl> userAgent;
         PAL::SessionID sessionID;
         Markable<WebPageProxyIdentifier> webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;

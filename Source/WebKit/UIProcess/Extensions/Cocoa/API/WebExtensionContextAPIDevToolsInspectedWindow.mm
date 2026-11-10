@@ -41,14 +41,14 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, StringImpl* scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"Web Inspector not found").get()));
         return;
     }
 
@@ -56,20 +56,20 @@ void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier web
 
     RefPtr tab = getTab(webPageProxyIdentifier, std::nullopt, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [extension, tab, scriptSource, frameURL, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [extension, tab, scriptSource = RefPtr { scriptSource }, frameURL, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"this extension does not have access to this tab").get()));
             return;
         }
 
         extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTF::move(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
             if (!result) {
-                RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
-                completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not evaluate script"));
+                RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", createNSString(extensionErrorToString(result.error())).get());
+                completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"Web Inspector could not evaluate script").get()));
                 return;
             }
 
@@ -90,7 +90,7 @@ void WebExtensionContext::devToolsInspectedWindowReload(WebPageProxyIdentifier w
 
     extension->reloadIgnoringCache(ignoreCache, std::nullopt, std::nullopt, [](Inspector::ExtensionVoidResult&& result) {
         if (!result)
-            RELEASE_LOG_ERROR(Extensions, "Inspector could not reload page (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
+            RELEASE_LOG_ERROR(Extensions, "Inspector could not reload page (%{public}@)", createNSString(extensionErrorToString(result.error())).get());
     });
 }
 

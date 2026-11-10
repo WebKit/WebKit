@@ -43,25 +43,25 @@ namespace API {
 
 class InspectorExtension final : public API::ObjectImpl<Object::Type::InspectorExtension> {
 public:
-    static Ref<InspectorExtension> create(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy&);
+    static Ref<InspectorExtension> create(StringImpl* identifier, WebKit::WebInspectorUIExtensionControllerProxy&);
 
-    const WTF::String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
 
-    void createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
-    void evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
+    void createTab(StringImpl* tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
+    void evaluateScript(StringImpl* scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
     void navigateTab(const Inspector::ExtensionTabID&, const WTF::URL& sourceURL, WTF::CompletionHandler<void(const std::optional<Inspector::ExtensionError>)>&&);
-    void reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&&);
+    void reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<RefPtr<StringImpl>>& userAgent, const std::optional<RefPtr<StringImpl>>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&&);
 
     // For testing.
-    void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, const WTF::String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
+    void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, StringImpl* scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
 
     InspectorExtensionClient* client() const LIFETIME_BOUND { return m_client.get(); }
     void setClient(UniqueRef<InspectorExtensionClient>&&);
 
 private:
-    InspectorExtension(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy&);
+    InspectorExtension(StringImpl* identifier, WebKit::WebInspectorUIExtensionControllerProxy&);
 
-    WTF::String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     WeakPtr<WebKit::WebInspectorUIExtensionControllerProxy> m_extensionControllerProxy;
     std::unique_ptr<API::InspectorExtensionClient> m_client;
 };

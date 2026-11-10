@@ -57,7 +57,7 @@ static const std::initializer_list<TypeExtensionPair>& platformMediaTypes()
     return platformMediaTypes;
 }
 
-String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
+RefPtr<StringImpl> MIMETypeRegistry::mimeTypeForExtension(StringView extension)
 {
     for (auto& entry : platformMediaTypes()) {
         if (equalIgnoringASCIICase(extension, entry.extension))
@@ -66,12 +66,12 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
     return emptyString();
 }
 
-bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
+bool MIMETypeRegistry::isApplicationPluginMIMEType(StringImpl*)
 {
     return false;
 }
 
-String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
+RefPtr<StringImpl> MIMETypeRegistry::preferredExtensionForMIMEType(StringImpl* mimeType)
 {
     for (auto& entry : platformMediaTypes()) {
         if (equalIgnoringASCIICase(mimeType, entry.type))
@@ -80,7 +80,7 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
     return emptyString();
 }
 
-Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String&)
+Vector<RefPtr<StringImpl>> MIMETypeRegistry::extensionsForMIMEType(StringImpl*)
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };

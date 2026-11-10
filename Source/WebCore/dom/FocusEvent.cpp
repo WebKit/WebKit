@@ -41,13 +41,13 @@ FocusEvent::FocusEvent()
 {
 }
 
-FocusEvent::FocusEvent(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
+FocusEvent::FocusEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable isCancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
     : UIEvent(EventInterfaceType::FocusEvent, type, canBubble, isCancelable, IsComposed::Yes, WTF::move(view), detail)
     , m_relatedTarget(WTF::move(relatedTarget))
 {
 }
 
-FocusEvent::FocusEvent(const AtomString& type, Init&& initializer)
+FocusEvent::FocusEvent(AtomStringImpl* type, Init&& initializer)
     : UIEvent(EventInterfaceType::FocusEvent, type, WTF::move(initializer))
     , m_relatedTarget(WTF::move(initializer.relatedTarget))
 {
@@ -55,9 +55,9 @@ FocusEvent::FocusEvent(const AtomString& type, Init&& initializer)
 
 FocusEvent::~FocusEvent() = default;
 
-String FocusEvent::debugDescription() const
+RefPtr<StringImpl> FocusEvent::debugDescription() const
 {
-    String focusTargetDescription = "null"_s;
+    RefPtr<StringImpl> focusTargetDescription = "null"_si;
     if (RefPtr node = dynamicDowncast<Node>(m_relatedTarget))
         focusTargetDescription = node->debugDescription();
     else if (m_relatedTarget) {

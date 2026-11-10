@@ -186,7 +186,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, PAL::SessionID);
-    static void logCookieInformation(NetworkConnectionToWebProcess&, ASCIILiteral label, const void* loggedObject, const NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
+    static void logCookieInformation(NetworkConnectionToWebProcess&, ASCIILiteral label, const void* loggedObject, const NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, StringImpl* referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
 #endif
 
     void disableExtraNetworkLoadMetricsCapture() { m_shouldCaptureExtraNetworkLoadMetrics = false; }
@@ -238,12 +238,12 @@ private:
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
     void dataReceivedThroughContentFilter(const WebCore::SharedBuffer&) final;
-    WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
+    WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler&&, RefPtr<StringImpl>&& unblockRequestDeniedScript) final;
     void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
     void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&&) final;
 #if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String webContentRestrictionsConfigurationPath() const final;
+    RefPtr<StringImpl> webContentRestrictionsConfigurationPath() const final;
 #endif
     URL mainDocumentURL() const final { return m_parameters.mainDocumentURL; }
 #endif
@@ -264,7 +264,7 @@ private:
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void dispatchWillSendRequestForCacheEntry(WebCore::ResourceRequest&&, std::unique_ptr<NetworkCache::Entry>&&);
 
-    bool shouldInterruptLoadForXFrameOptions(const String&, const URL&);
+    bool shouldInterruptLoadForXFrameOptions(StringImpl*, const URL&);
     bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&);
     bool shouldInterruptNavigationForCrossOriginEmbedderPolicy(const WebCore::ResourceResponse&);
     bool shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy(const WebCore::ResourceResponse&);
@@ -305,7 +305,7 @@ private:
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
     // ContentSecurityPolicyClient
-    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) final;
+    void addConsoleMessage(MessageSource, MessageLevel, StringImpl*, unsigned long requestIdentifier = 0) final;
     void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEventInit&&) final;
 
     // HTTP 103 Early Hints.
@@ -327,9 +327,9 @@ private:
 
     // ReportingClient
     void notifyReportObservers(Ref<WebCore::Report>&&) final;
-    String endpointURIForToken(const String&) const final;
-    void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<WebCore::FormData>&& report, WebCore::ViolationReportType) final;
-    String httpUserAgent() const final { return originalRequest().httpUserAgent(); }
+    RefPtr<StringImpl> endpointURIForToken(StringImpl*) const final;
+    void sendReportToEndpoints(const URL& baseURL, std::span<const RefPtr<StringImpl>> endpointURIs, std::span<const RefPtr<StringImpl>> endpointTokens, Ref<WebCore::FormData>&& report, WebCore::ViolationReportType) final;
+    RefPtr<StringImpl> httpUserAgent() const final { return originalRequest().httpUserAgent(); }
     void initializeReportingEndpoints(const WebCore::ResourceResponse&);
     NODELETE WebCore::FrameIdentifier frameIdentifierForReport() const;
 
@@ -440,11 +440,11 @@ private:
 #if ENABLE(CONTENT_FILTERING)
     RefPtr<WebCore::ContentFilter> m_contentFilter;
     WebCore::ContentFilterUnblockHandler m_unblockHandler;
-    String m_unblockRequestDeniedScript;
+    RefPtr<StringImpl> m_unblockRequestDeniedScript;
 #endif
 
     PrivateRelayed m_privateRelayed { PrivateRelayed::No };
-    MemoryCompactRobinHoodHashMap<String, String> m_reportingEndpoints;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_reportingEndpoints;
 
     std::unique_ptr<WebCore::ResourceResponse> m_redirectionForCurrentNavigation;
 };

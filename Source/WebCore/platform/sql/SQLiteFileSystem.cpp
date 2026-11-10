@@ -54,37 +54,37 @@ static constexpr std::array<ASCIILiteral, 3> databaseFileSuffixes { ""_s, "-shm"
 
 SQLiteFileSystem::SQLiteFileSystem() = default;
 
-String SQLiteFileSystem::appendDatabaseFileNameToPath(StringView path, StringView fileName)
+RefPtr<StringImpl> SQLiteFileSystem::appendDatabaseFileNameToPath(StringView path, StringView fileName)
 {
     return FileSystem::pathByAppendingComponent(path, fileName);
 }
 
-bool SQLiteFileSystem::ensureDatabaseDirectoryExists(const String& path)
+bool SQLiteFileSystem::ensureDatabaseDirectoryExists(StringImpl* path)
 {
-    if (path.isEmpty())
+    if (isEmpty(path))
         return false;
     return FileSystem::makeAllDirectories(path);
 }
 
-bool SQLiteFileSystem::ensureDatabaseFileExists(const String& fileName, bool checkPathOnly)
+bool SQLiteFileSystem::ensureDatabaseFileExists(StringImpl* fileName, bool checkPathOnly)
 {
-    if (fileName.isEmpty())
+    if (isEmpty(fileName))
         return false;
 
     if (checkPathOnly) {
-        String dir = FileSystem::parentPath(fileName);
+        RefPtr<StringImpl> dir = FileSystem::parentPath(fileName);
         return ensureDatabaseDirectoryExists(dir);
     }
 
     return FileSystem::fileExists(fileName);
 }
 
-bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
+bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(StringImpl* path)
 {
     return FileSystem::deleteEmptyDirectory(path);
 }
 
-bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
+bool SQLiteFileSystem::deleteDatabaseFile(StringImpl* filePath)
 {
     bool fileExists = false;
     for (auto suffix : databaseFileSuffixes) {
@@ -97,7 +97,7 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
 }
 
 #if PLATFORM(COCOA)
-void SQLiteFileSystem::setCanSuspendLockedFileAttribute(const String& filePath)
+void SQLiteFileSystem::setCanSuspendLockedFileAttribute(StringImpl* filePath)
 {
     for (auto suffix : databaseFileSuffixes) {
         auto path = makeString(filePath, suffix);
@@ -109,7 +109,7 @@ void SQLiteFileSystem::setCanSuspendLockedFileAttribute(const String& filePath)
 }
 #endif
 
-bool SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
+bool SQLiteFileSystem::moveDatabaseFile(StringImpl* oldFilePath, StringImpl* newFilePath)
 {
     bool allMoved = true;
     for (auto suffix : databaseFileSuffixes)
@@ -125,7 +125,7 @@ bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
 }
 #endif
     
-uint64_t SQLiteFileSystem::databaseFileSize(const String& filePath)
+uint64_t SQLiteFileSystem::databaseFileSize(StringImpl* filePath)
 {
     uint64_t totalSize = 0;
     for (auto suffix : databaseFileSuffixes) {
@@ -136,17 +136,17 @@ uint64_t SQLiteFileSystem::databaseFileSize(const String& filePath)
     return totalSize;
 }
 
-std::optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseCreationTime(StringImpl* fileName)
 {
     return FileSystem::fileCreationTime(fileName);
 }
 
-std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(StringImpl* fileName)
 {
     return FileSystem::fileModificationTime(fileName);
 }
     
-String SQLiteFileSystem::computeHashForFileName(StringView fileName)
+RefPtr<StringImpl> SQLiteFileSystem::computeHashForFileName(StringView fileName)
 {
     auto cryptoDigest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
     auto utf8FileName = fileName.utf8();

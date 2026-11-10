@@ -47,8 +47,8 @@ public:
     <%= behavior.declaration %>
 <%- end -%>
 
-    WEBCORE_EXPORT static bool elementMatchesSelectorCondition(const String& selector, const Node*);
-    WEBCORE_EXPORT static RefPtr<Element> firstElementMatchingSelectorCondition(const String& selector, Document&);
+    WEBCORE_EXPORT static bool elementMatchesSelectorCondition(StringImpl* selector, const Node*);
+    WEBCORE_EXPORT static RefPtr<Element> firstElementMatchingSelectorCondition(StringImpl* selector, Document&);
 
 protected:
     explicit QuirksAccessors(Document&);

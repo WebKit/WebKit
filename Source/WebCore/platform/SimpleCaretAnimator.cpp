@@ -69,7 +69,7 @@ void SimpleCaretAnimator::start()
     didStart(m_lastTimeCaretPaintWasToggled, RenderTheme::singleton().caretBlinkInterval());
 }
 
-String SimpleCaretAnimator::debugDescription() const
+RefPtr<StringImpl> SimpleCaretAnimator::debugDescription() const
 {
     TextStream textStream;
     textStream << "SimpleCaretAnimator " << this << " active " << isActive() << " blink state = " << (m_presentationProperties.blinkState == PresentationProperties::BlinkState::On ? "On" : "Off");

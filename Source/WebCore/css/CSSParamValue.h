@@ -45,7 +45,7 @@ public:
     const CSS::ParamFunction& parameter() const LIFETIME_BOUND { return m_parameter; }
 
     bool equals(const CSSParamValue&) const;
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
 private:
     explicit CSSParamValue(CSS::ParamFunction&&);

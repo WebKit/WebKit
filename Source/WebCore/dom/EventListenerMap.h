@@ -63,19 +63,19 @@ public:
     NODELETE WEBCORE_EXPORT EventListenerMap();
 
     bool isEmpty() const { return m_entries.isEmpty(); }
-    bool contains(const AtomString& eventType) const { return find(eventType); }
-    NODELETE bool containsCapturing(const AtomString& eventType) const;
-    NODELETE bool containsActive(const AtomString& eventType) const;
+    bool contains(AtomStringImpl* eventType) const { return find(eventType); }
+    NODELETE bool containsCapturing(AtomStringImpl* eventType) const;
+    NODELETE bool containsActive(AtomStringImpl* eventType) const;
 
     void clear();
     void clearEntriesForTearDown(const EventTarget& owner);
 
-    void replacePreservingOptions(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture = false);
-    RefPtr<RegisteredEventListener> add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
-    bool remove(const AtomString& eventType, EventListener&, bool useCapture);
-    NODELETE WEBCORE_EXPORT EventListenerVector* find(const AtomString& eventType);
-    const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
-    Vector<AtomString> eventTypes() const;
+    void replacePreservingOptions(AtomStringImpl* eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture = false);
+    RefPtr<RegisteredEventListener> add(AtomStringImpl* eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
+    bool remove(AtomStringImpl* eventType, EventListener&, bool useCapture);
+    NODELETE WEBCORE_EXPORT EventListenerVector* find(AtomStringImpl* eventType);
+    const EventListenerVector* find(AtomStringImpl* eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
+    Vector<RefPtr<AtomStringImpl>> eventTypes() const;
 
     template<typename CallbackType>
     void enumerateEventListenerTypes(NOESCAPE const CallbackType& callback) const
@@ -103,7 +103,7 @@ public:
         return false;
     }
 
-    void removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType);
+    void removeFirstEventListenerCreatedFromMarkup(AtomStringImpl* eventType);
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
     
     template<typename Visitor> void visitJSEventListenersInGCThread(Visitor&);
@@ -126,7 +126,7 @@ private:
         RELEASE_ASSERT(currentThreadMayBeGCThread());
     }
 
-    Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries;
+    Vector<std::pair<RefPtr<AtomStringImpl>, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries;
     Lock m_lock;
     uint32_t m_threadUID { 0 };
 };

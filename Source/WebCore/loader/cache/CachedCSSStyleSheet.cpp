@@ -45,7 +45,7 @@ namespace WebCore {
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTF::move(request), Type::CSSStyleSheet, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::CSS, request.charset()))
+    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::CSS, request.charset().get()))
 {
 }
 
@@ -67,7 +67,7 @@ void CachedCSSStyleSheet::didAddClient(CachedResourceClient& client)
         downcast<CachedStyleSheetClient>(client).setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), m_decoder->encoding().name(), *this);
 }
 
-void CachedCSSStyleSheet::setEncoding(const String& chs)
+void CachedCSSStyleSheet::setEncoding(StringImpl* chs)
 {
     protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
 }
@@ -77,7 +77,7 @@ ASCIILiteral CachedCSSStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-std::expected<String, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, ForceUTF8Encoding forceUTF8Encoding) const
+std::expected<RefPtr<StringImpl>, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, ForceUTF8Encoding forceUTF8Encoding) const
 {
     // Ensure hasValidMIMEType and hasHTTPStatusOK always get set (even if m_data is null or empty) — which in turn
     // ensures that if the MIME type isn't text/css or the HTTP status isn't an OK status, we never load the resource.
@@ -87,11 +87,11 @@ std::expected<String, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText
 
     RefPtr data = m_data;
     if (!data || data->isEmpty())
-        return String();
+        return nullString();
 
     switch (forceUTF8Encoding) {
     case ForceUTF8Encoding::No:
-        if (!m_decodedSheetText.isNull())
+        if (m_decodedSheetText)
             return m_decodedSheetText;
 
         // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
@@ -130,7 +130,7 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     setLoading(false);
     checkNotify(metrics);
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.
-    m_decodedSheetText = String();
+    m_decodedSheetText = nullptr;
 }
 
 void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
@@ -143,7 +143,7 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
         client->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), m_decoder->encoding().name(), *this);
 }
 
-String CachedCSSStyleSheet::responseMIMEType() const
+RefPtr<StringImpl> CachedCSSStyleSheet::responseMIMEType() const
 {
     return extractMIMETypeFromMediaType(response().httpHeaderField(HTTPHeaderName::ContentType));
 }
@@ -183,8 +183,8 @@ std::optional<CachedCSSStyleSheet::Error> CachedCSSStyleSheet::canUseSheet(MIMET
     //
     // This code defaults to allowing the stylesheet for non-HTTP protocols so
     // folks can use standards mode for local HTML documents.
-    String mimeType = responseMIMEType();
-    bool typeOK = mimeType.isEmpty() || equalLettersIgnoringASCIICase(mimeType, "text/css"_s) || equalLettersIgnoringASCIICase(mimeType, "application/x-unknown-content-type"_s) || !isValidContentType(mimeType);
+    RefPtr<StringImpl> mimeType = responseMIMEType();
+    bool typeOK = isEmpty(mimeType) || equalLettersIgnoringASCIICase(mimeType, "text/css"_s) || equalLettersIgnoringASCIICase(mimeType, "application/x-unknown-content-type"_s) || !isValidContentType(mimeType);
     if (!typeOK)
         return Error::InvalidMIMEType;
 

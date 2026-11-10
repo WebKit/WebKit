@@ -46,7 +46,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> disable() override;
 
     // JSC::HeapSnapshotBuilder::Client
-    String heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder&, JSC::JSCell*, const String& currentClassName) override;
+    RefPtr<StringImpl> heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder&, JSC::JSCell*, StringImpl* currentClassName) override;
     bool heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell*) override;
 
     // InspectorInstrumentation

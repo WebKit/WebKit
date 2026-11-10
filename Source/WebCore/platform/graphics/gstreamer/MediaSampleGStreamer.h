@@ -63,7 +63,7 @@ protected:
 private:
     MediaSampleGStreamer(const FloatSize& presentationSize, TrackID);
 
-    void updateSampleTimestamps(const String&);
+    void updateSampleTimestamps(StringImpl*);
 
     MediaTime m_pts;
     MediaTime m_dts;

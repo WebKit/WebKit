@@ -72,12 +72,12 @@ CacheStorageDiskStore::SafeFileData::operator bool() const
     return !std::holds_alternative<std::monostate>(data);
 }
 
-CacheStorageDiskStore::SafeFileData CacheStorageDiskStore::SafeFileData::read(const String& filePath)
+CacheStorageDiskStore::SafeFileData CacheStorageDiskStore::SafeFileData::read(StringImpl* filePath)
 {
     bool canMapFile = true;
     if (!FileSystem::isSafeToUseMemoryMapForPath(filePath)) {
         canMapFile = FileSystem::makeSafeToUseMemoryMapForPath(filePath);
-        RELEASE_LOG_ERROR_IF(!canMapFile, CacheStorage, "CacheStorageDiskStore::SafeFileData::read fails to mark file %" SENSITIVE_LOG_STRING " as safe to use for mmap", filePath.utf8());
+        RELEASE_LOG_ERROR_IF(!canMapFile, CacheStorage, "CacheStorageDiskStore::SafeFileData::read fails to mark file %" SENSITIVE_LOG_STRING " as safe to use for mmap", utf8(filePath));
     }
 
     // Try memory mapping first if it's safe to do so.
@@ -108,7 +108,7 @@ static SHA1::Digest computeSHA1(std::span<const uint8_t> span, FileSystem::Salt 
     return digest;
 }
 
-static String recordFilePathWithDirectory(const String& directory, const NetworkCache::Key& key)
+static RefPtr<StringImpl> recordFilePathWithDirectory(StringImpl* directory, const NetworkCache::Key& key)
 {
     return FileSystem::pathByAppendingComponents(directory, std::initializer_list<StringView>({ key.partitionHashAsString(), key.type(), key.hashAsString() }));
 }
@@ -137,7 +137,7 @@ struct RecordHeader {
     WebCore::FetchHeaders::Guard requestHeadersGuard { WebCore::FetchHeaders::Guard::None };
     WebCore::ResourceRequest request;
     WebCore::FetchOptions options;
-    String referrer;
+    RefPtr<StringImpl> referrer;
     WebCore::FetchHeaders::Guard responseHeadersGuard { WebCore::FetchHeaders::Guard::None };
     WebCore::ResourceResponse::CrossThreadData responseData;
     uint64_t responseBodySize { 0 };
@@ -149,53 +149,53 @@ struct StoredRecordInformation {
     RecordHeader header;
 };
 
-Ref<CacheStorageDiskStore> CacheStorageDiskStore::create(const String& cacheName, const String& path, Ref<WorkQueue>&& queue)
+Ref<CacheStorageDiskStore> CacheStorageDiskStore::create(StringImpl* cacheName, StringImpl* path, Ref<WorkQueue>&& queue)
 {
     return adoptRef(*new CacheStorageDiskStore(cacheName, path, WTF::move(queue)));
 }
 
-CacheStorageDiskStore::CacheStorageDiskStore(const String& cacheName, const String& path, Ref<WorkQueue>&& queue)
+CacheStorageDiskStore::CacheStorageDiskStore(StringImpl* cacheName, StringImpl* path, Ref<WorkQueue>&& queue)
     : m_cacheName(cacheName)
     , m_path(path)
     , m_salt(valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath())))
     , m_callbackQueue(WTF::move(queue))
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.CacheStorageCache"_s))
 {
-    ASSERT(!m_cacheName.isEmpty());
-    ASSERT(!m_path.isEmpty());
+    ASSERT(!isEmpty(m_cacheName));
+    ASSERT(!isEmpty(m_path));
 }
 
-String CacheStorageDiskStore::versionDirectoryPath() const
+RefPtr<StringImpl> CacheStorageDiskStore::versionDirectoryPath() const
 {
     return FileSystem::pathByAppendingComponent(m_path, makeString(versionDirectoryPrefix, currentVersion));
 }
 
-String CacheStorageDiskStore::saltFilePath() const
+RefPtr<StringImpl> CacheStorageDiskStore::saltFilePath() const
 {
     return FileSystem::pathByAppendingComponent(versionDirectoryPath(), saltFileName);
 }
 
-String CacheStorageDiskStore::recordsDirectoryPath() const
+RefPtr<StringImpl> CacheStorageDiskStore::recordsDirectoryPath() const
 {
     return FileSystem::pathByAppendingComponent(versionDirectoryPath(), recordsDirectoryName);
 }
 
-String CacheStorageDiskStore::recordFilePath(const NetworkCache::Key& key) const
+RefPtr<StringImpl> CacheStorageDiskStore::recordFilePath(const NetworkCache::Key& key) const
 {
     return recordFilePathWithDirectory(recordsDirectoryPath(), key);
 }
 
-String CacheStorageDiskStore::recordBlobFilePath(const String& recordPath) const
+RefPtr<StringImpl> CacheStorageDiskStore::recordBlobFilePath(StringImpl* recordPath) const
 {
     return makeString(recordPath, blobSuffix);
 }
 
-String CacheStorageDiskStore::blobsDirectoryPath() const
+RefPtr<StringImpl> CacheStorageDiskStore::blobsDirectoryPath() const
 {
     return FileSystem::pathByAppendingComponent(versionDirectoryPath(), blobsDirectoryName);
 }
 
-String CacheStorageDiskStore::blobFilePath(const String& blobFileName) const
+RefPtr<StringImpl> CacheStorageDiskStore::blobFilePath(StringImpl* blobFileName) const
 {
     return FileSystem::pathByAppendingComponent(blobsDirectoryPath(), blobFileName);
 }
@@ -286,7 +286,7 @@ static std::optional<RecordHeader> decodeRecordHeader(std::span<const uint8_t> h
     if (!WebCore::FetchOptions::decodePersistent(decoder, options))
         return std::nullopt;
 
-    std::optional<String> referrer;
+    std::optional<RefPtr<StringImpl>> referrer;
     decoder >> referrer;
     if (!referrer)
         return std::nullopt;
@@ -393,14 +393,14 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
 
 void CacheStorageDiskStore::readAllRecordInfosInternal(ReadAllRecordInfosCallback&& callback)
 {
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordsDirectory = recordsDirectoryPath().isolatedCopy(), cacheName = m_cacheName.isolatedCopy(), salt = m_salt, callback = WTF::move(callback)]() mutable {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordsDirectory = isolatedCopy(recordsDirectoryPath()), cacheName = isolatedCopy(m_cacheName), salt = m_salt, callback = WTF::move(callback)]() mutable {
         Vector<CacheStorageRecordInformation> recordInfos;
         const auto partitionNames = FileSystem::listDirectory(recordsDirectory);
         for (auto& partitionName : partitionNames) {
             auto partitionDirectoryPath = FileSystem::pathByAppendingComponent(recordsDirectory, partitionName);
             auto cacheDirectory = FileSystem::pathByAppendingComponent(partitionDirectoryPath, cacheName);
             for (auto& recordName : FileSystem::listDirectory(cacheDirectory)) {
-                if (recordName.endsWith(blobSuffix))
+                if (endsWith(recordName, blobSuffix))
                     continue;
 
                 auto recordFile = FileSystem::pathByAppendingComponent(cacheDirectory, recordName);
@@ -444,7 +444,7 @@ void CacheStorageDiskStore::readRecordsInternal(const Vector<CacheStorageRecordI
                 continue;
             }
 
-            if (recordFilePath(recordInfo.key()) != recordFilePath(record->info.key())) {
+            if (!equal(recordFilePath(recordInfo.key()), recordFilePath(record->info.key()))) {
                 records.append(std::nullopt);
                 continue;
             }
@@ -551,7 +551,7 @@ static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<u
 
 void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, WriteRecordsCallback&& callback)
 {
-    Vector<String> recordFiles;
+    Vector<RefPtr<StringImpl>> recordFiles;
     Vector<Vector<uint8_t>> recordDatas;
     Vector<Vector<uint8_t>> recordBlobDatas;
     for (auto&& record : borrow(records)) {

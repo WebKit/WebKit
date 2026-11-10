@@ -398,10 +398,10 @@ TEST(ScriptTrackingPrivacyTests, ConsistentQueryParameters)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    auto simpleConsistentIndexHTML = makeStringByReplacingAll(simpleIndexHTML, "tainted.example"_s, "consistentQueryParameterFiltering.internal"_s);
+    auto simpleConsistentIndexHTML = makeStringByReplacingAll(StringImpl::create(simpleIndexHTML).ptr(), "tainted.example"_s, "consistentQueryParameterFiltering.internal"_s);
 
     RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html?uid=Hv9U23Hfco08", @{
-        @"test://top-domain.org/index.html?uid=Hv9U23Hfco08" : simpleConsistentIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/index.html?uid=Hv9U23Hfco08" : createNSString(simpleConsistentIndexHTML).autorelease(),
         @"test://pure.com/script.js" : @"window.urlForPureScript = document.URL;",
         @"test://consistentQueryParameterFiltering.internal/script.js" : @"window.urlFor3PScript = document.URL;"
     });
@@ -723,7 +723,7 @@ TEST(ScriptTrackingPrivacyTests, DirectFormFieldAccess)
             "var %@TextAreaInputValue = %@TextAreaInput.value;"
             "function %@GetElementValueById(id) { return document.getElementById(id)?.value; }"
             , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted
-            , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, expectedPureValue("textAreaInput"_s).utf8().legacyCStringPointer()
+            , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, utf8(expectedPureValue("textAreaInput"_s)).legacyCStringPointer()
             , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted];
     };
 
@@ -948,9 +948,9 @@ TEST(ScriptTrackingPrivacyTests, SameSiteFetchNotBlocked)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
 
-            if (path.endsWith("/script.js"_s)) {
+            if (endsWith(path, "/script.js"_s)) {
                 co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } },
-                    "async function doFetch() {"
+                    StringImpl::create("async function doFetch() {"
                     "  try {"
                     "    const response = await fetch('http://tainted.example/data.json');"
                     "    const data = await response.text();"
@@ -959,15 +959,15 @@ TEST(ScriptTrackingPrivacyTests, SameSiteFetchNotBlocked)
                     "    window.fetchResult = 'error: ' + e.message;"
                     "  }"
                     "}"
-                    "doFetch();"_s).serialize());
+                    "doFetch();"_s).ptr()).serialize());
                 continue;
             }
-            if (path.endsWith("/index.html"_s)) {
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, String { taintedSiteIndexHTML }).serialize());
+            if (endsWith(path, "/index.html"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, taintedSiteIndexHTML).serialize());
                 continue;
             }
-            if (path.endsWith("/data.json"_s)) {
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, "{\"value\": 42}"_s).serialize());
+            if (endsWith(path, "/data.json"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, "{\"value\": 42}"_si).serialize());
                 continue;
             }
 
@@ -1008,23 +1008,23 @@ TEST(ScriptTrackingPrivacyTests, MainFrameNavigationNotBlocked)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
 
-            if (path.endsWith("/script.js"_s)) {
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, ""_s).serialize());
+            if (endsWith(path, "/script.js"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, ""_si).serialize());
                 continue;
             }
-            if (path.contains("top-domain.org"_s) && path.endsWith("/index.html"_s)) {
-                String document = makeStringByReplacingAll(String { simpleIndexHTML }, "test://"_s, "http://"_s);
+            if (contains(path, "top-domain.org"_s) && endsWith(path, "/index.html"_s)) {
+                RefPtr<StringImpl> document = makeStringByReplacingAll(StringImpl::create(simpleIndexHTML).ptr(), "test://"_s, "http://"_s);
                 co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, document).serialize());
                 continue;
             }
-            if (path.contains("tainted.example"_s) && path.endsWith("/page.html"_s)) {
+            if (contains(path, "tainted.example"_s) && endsWith(path, "/page.html"_s)) {
                 receivedNavigationRequest = true;
                 co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } },
-                    "<html><body><script>window.navigationResult = 'loaded';</script></body></html>"_s).serialize());
+                    "<html><body><script>window.navigationResult = 'loaded';</script></body></html>"_si).serialize());
                 continue;
             }
 
-            co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, ""_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, ""_si).serialize());
         }
     }, HTTPServer::Protocol::Http);
 
@@ -1057,9 +1057,9 @@ static RetainPtr<NSString> crossSiteFetchResultToTrackerDomain(BOOL enableResour
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
 
-            if (path.endsWith("/index.html"_s)) {
+            if (endsWith(path, "/index.html"_s)) {
                 co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } },
-                    "<!DOCTYPE html>"
+                    StringImpl::create("<!DOCTYPE html>"
                     "<html><body><script>"
                     "async function doFetch() {"
                     "  try {"
@@ -1070,11 +1070,11 @@ static RetainPtr<NSString> crossSiteFetchResultToTrackerDomain(BOOL enableResour
                     "  }"
                     "}"
                     "doFetch();"
-                    "</script></body></html>"_s).serialize());
+                    "</script></body></html>"_s).ptr()).serialize());
                 continue;
             }
-            if (path.endsWith("/data.json"_s)) {
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, "{\"value\": 42}"_s).serialize());
+            if (endsWith(path, "/data.json"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, "{\"value\": 42}"_si).serialize());
                 continue;
             }
 

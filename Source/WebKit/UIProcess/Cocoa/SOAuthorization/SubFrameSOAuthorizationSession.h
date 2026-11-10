@@ -47,7 +47,7 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
 private:
-    using Supplement = Variant<Vector<uint8_t>, String>;
+    using Supplement = Variant<Vector<uint8_t>, RefPtr<StringImpl>>;
 
     SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, std::optional<WebCore::FrameIdentifier>);
 
@@ -66,7 +66,7 @@ private:
     void appendRequestToLoad(URL&&, Supplement&&);
     void loadRequestToFrame();
 
-    bool shouldInterruptLoadForXFrameOptions(Vector<Ref<WebCore::SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL&);
+    bool shouldInterruptLoadForXFrameOptions(Vector<Ref<WebCore::SecurityOrigin>>&& frameAncestorOrigins, StringImpl* xFrameOptions, const URL&);
     bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) final;
 
     Markable<WebCore::FrameIdentifier> m_frameID;

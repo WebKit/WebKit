@@ -93,12 +93,12 @@ protected:
 
     static bool isSupportedAttribute(const QualifiedName&);
     bool attributeContainsJavaScriptURL(const Attribute&) const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    NODELETE String toValue() const;
-    NODELETE String byValue() const;
-    NODELETE String fromValue() const;
+    NODELETE RefPtr<StringImpl> toValue() const;
+    NODELETE RefPtr<StringImpl> byValue() const;
+    NODELETE RefPtr<StringImpl> fromValue() const;
 
     // from SVGSMILElement
     void startedActiveInterval() override;
@@ -115,37 +115,37 @@ protected:
 
 private:
     void animationAttributeChanged() override;
-    void setAttributeType(const AtomString&);
+    void setAttributeType(AtomStringImpl*);
 
     bool isSVGAnimationElement() const final { return true; }
 
-    virtual bool setFromAndToValues(const String& fromString, const String& toString) = 0;
-    virtual bool setFromAndByValues(const String& fromString, const String& byString) = 0;
-    virtual bool setToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
+    virtual bool setFromAndToValues(StringImpl* fromString, StringImpl* toString) = 0;
+    virtual bool setFromAndByValues(StringImpl* fromString, StringImpl* byString) = 0;
+    virtual bool setToAtEndOfDurationValue(StringImpl* toAtEndOfDurationString) = 0;
     virtual void calculateAnimatedValue(float percent, unsigned repeatCount) = 0;
-    virtual std::optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
+    virtual std::optional<float> calculateDistance(StringImpl* /*fromString*/, StringImpl* /*toString*/) = 0;
 
     NODELETE const Vector<float>& keyTimes() const;
-    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
+    void currentValuesForValuesAnimation(float percent, float& effectivePercent, RefPtr<StringImpl>& from, RefPtr<StringImpl>& to);
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;
-    void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
+    void currentValuesFromKeyPoints(float percent, float& effectivePercent, RefPtr<StringImpl>& from, RefPtr<StringImpl>& to) const;
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
     NODELETE float calculatePercentForFromTo(float percent) const;
     NODELETE unsigned calculateKeyTimesIndex(float percent) const;
 
-    void setCalcMode(const AtomString&);
+    void setCalcMode(AtomStringImpl*);
 
     bool m_animationValid { false };
 
     AttributeType m_attributeType { AttributeType::Auto };
-    Vector<String> m_values;
+    Vector<RefPtr<StringImpl>> m_values;
     Vector<float> m_keyTimesFromAttribute;
     Vector<float> m_keyTimesForPaced;
     Vector<float> m_keyPoints;
     Vector<UnitBezier> m_keySplines;
-    String m_lastValuesAnimationFrom;
-    String m_lastValuesAnimationTo;
+    RefPtr<StringImpl> m_lastValuesAnimationFrom;
+    RefPtr<StringImpl> m_lastValuesAnimationTo;
     CalcMode m_calcMode { CalcMode::Linear };
     AnimationMode m_animationMode { AnimationMode::None };
 };

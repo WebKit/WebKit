@@ -50,10 +50,10 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderCounter);
 
-using CounterMap = HashMap<AtomString, Ref<CounterNode>>;
+using CounterMap = HashMap<RefPtr<AtomStringImpl>, Ref<CounterNode>>;
 using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<CounterMap>>;
 
-static CounterNode* makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
+static CounterNode* makeCounterNode(RenderElement&, AtomStringImpl* identifier, bool alwaysCreateCounter);
 
 NODELETE static CounterMaps& counterMaps()
 {
@@ -182,7 +182,7 @@ struct CounterPlan {
     int value;
 };
 
-static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
+static std::optional<CounterPlan> planCounter(RenderElement& renderer, AtomStringImpl* identifier)
 {
     // We must have a generating node or else we cannot have a counter.
     RefPtr generatingElement = renderer.generatingElement();
@@ -199,7 +199,7 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
 
     auto directives = style.usedCounterDirectives().map.get(identifier);
 
-    if (identifier == "list-item"_s) {
+    if (equal(identifier, "list-item"_s)) {
         auto itemDirectives = listItemCounterDirectives(renderer);
         if (!directives.resetValue)
             directives.resetValue = itemDirectives.resetValue;
@@ -248,7 +248,7 @@ struct CounterInsertionPoint {
     RefPtr<CounterNode> previousSibling;
 };
 
-static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, const AtomString& identifier, OptionSet<CounterNode::Type> type)
+static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, AtomStringImpl* identifier, OptionSet<CounterNode::Type> type)
 {
     // We cannot stop searching for counters with the same identifier before we also
     // check this renderer, because it may affect the positioning in the tree of our counter.
@@ -361,7 +361,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
     return { };
 }
 
-static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& identifier, bool alwaysCreateCounter)
+static CounterNode* makeCounterNode(RenderElement& renderer, AtomStringImpl* identifier, bool alwaysCreateCounter)
 {
     if (renderer.hasCounterNodeMap()) {
         ASSERT(counterMaps().contains(renderer));
@@ -436,7 +436,7 @@ ASCIILiteral RenderCounter::renderName() const
     return "RenderCounter"_s;
 }
 
-String RenderCounter::originalText() const
+RefPtr<StringImpl> RenderCounter::originalText() const
 {
     if (!m_counterNode)
         return emptyString();
@@ -448,7 +448,7 @@ String RenderCounter::originalText() const
         return counterStyle()->text(value, writingMode());
     };
     auto text = counterText(value);
-    if (!m_counter.separator.value.isNull()) {
+    if (m_counter.separator.value) {
         if (!counterNode->actsAsReset())
             counterNode = counterNode->parent();
         while (RefPtr parent = counterNode->parent()) {
@@ -480,7 +480,7 @@ void RenderCounter::updateCounter()
     setText(originalText(), true);
 }
 
-static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, CounterNode& node)
+static void destroyCounterNodeWithoutMapRemoval(AtomStringImpl* identifier, CounterNode& node)
 {
     RefPtr<CounterNode> previous;
     for (RefPtr<CounterNode> child = node.lastDescendant(); child && child != &node; child = WTF::move(previous)) {
@@ -505,7 +505,7 @@ void RenderCounter::destroyCounterNodes(RenderElement& owner)
     owner.setHasCounterNodeMap(false);
 }
 
-void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomString& identifier)
+void RenderCounter::destroyCounterNode(RenderElement& owner, AtomStringImpl* identifier)
 {
     auto map = counterMaps().find(owner);
     if (map == counterMaps().end())
@@ -581,7 +581,7 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, ASCIILiteral
     while (root->parent())
         root = root->parent();
 
-    AtomString identifier { counterName };
+    RefPtr<AtomStringImpl> identifier { AtomStringImpl::add(counterName) };
     for (auto* current = root; current; current = current->nextInPreOrder()) {
         auto* element = dynamicDowncast<WebCore::RenderElement>(*current);
         if (!element)

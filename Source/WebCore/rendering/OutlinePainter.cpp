@@ -742,11 +742,11 @@ void OutlinePainter::addPDFURLAnnotationForLink(const RenderElement& renderer, c
         return;
 
     auto href = element->getAttribute(HTMLNames::hrefAttr);
-    if (href.isNull())
+    if (!href)
         return;
 
     if (m_paintInfo.context().supportsInternalLinks()) {
-        String outAnchorName;
+        RefPtr<StringImpl> outAnchorName;
         RefPtr linkTarget = element->findAnchorElementForLink(outAnchorName);
         if (linkTarget) {
             m_paintInfo.context().setDestinationForRect(outAnchorName, urlRect);

@@ -46,10 +46,10 @@ TEST(KeyedCoding, SetAndGetBytes)
     constexpr std::array<uint8_t, 8> inputData = { 0x00, 0x01, 0x02, 0x03, 0xde, 0xad, 0xbe, 0xef };
 
     auto encoder = WebCore::KeyedEncoder::encoder();
-    encoder->encodeBytes("data"_s, inputData);
+    encoder->encodeBytes("data"_si, inputData);
     constexpr size_t zeroLength = 0; // Workaround for llvm bug (https://bugs.llvm.org/show_bug.cgi?id=49295).
-    encoder->encodeBytes("data-size0"_s, std::span { inputData.data(), zeroLength });
-    encoder->encodeBytes("data-size1"_s, std::span { inputData.data(), 1 });
+    encoder->encodeBytes("data-size0"_si, std::span { inputData.data(), zeroLength });
+    encoder->encodeBytes("data-size1"_si, std::span { inputData.data(), 1 });
     auto encodedBuffer = encoder->finishEncoding();
 
     auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
@@ -57,34 +57,37 @@ TEST(KeyedCoding, SetAndGetBytes)
     bool success;
     std::span<const uint8_t> decodedData;
 
-    success = decoder->decodeBytes("data"_s, decodedData);
+    success = decoder->decodeBytes("data"_si, decodedData);
     EXPECT_TRUE(success);
     EXPECT_EQ(inputData.size(), decodedData.size());
     EXPECT_TRUE(checkDecodedBytes(inputData, decodedData));
 
-    success = decoder->decodeBytes("data-size0"_s, decodedData);
+    success = decoder->decodeBytes("data-size0"_si, decodedData);
     EXPECT_TRUE(success);
     EXPECT_EQ(0U, decodedData.size());
 
-    success = decoder->decodeBytes("data-size1"_s, decodedData);
+    success = decoder->decodeBytes("data-size1"_si, decodedData);
     EXPECT_TRUE(success);
     EXPECT_EQ(1U, decodedData.size());
     EXPECT_TRUE(checkDecodedBytes({ inputData.data(), 1 }, decodedData));
 }
 
 template <typename EncodeFunctionType, typename DecodeValueType, typename EncodeValueType>
-bool testSimpleValue(EncodeFunctionType encode, bool (WebCore::KeyedDecoder::* decode)(const String&, DecodeValueType&), EncodeValueType value)
+bool testSimpleValue(EncodeFunctionType encode, bool (WebCore::KeyedDecoder::* decode)(StringImpl*, DecodeValueType&), EncodeValueType value)
 {
     auto encoder = WebCore::KeyedEncoder::encoder();
-    (encoder.get()->*encode)("key"_s, value);
+    (encoder.get()->*encode)("key"_si, value);
 
     auto encodedBuffer = encoder->finishEncoding();
     auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     DecodeValueType decodedValue;
-    bool success = (decoder.get()->*decode)("key"_s, decodedValue);
+    bool success = (decoder.get()->*decode)("key"_si, decodedValue);
 
-    return success && decodedValue == value;
+    if constexpr (std::is_same_v<DecodeValueType, RefPtr<StringImpl>>)
+        return success && equal(decodedValue, value);
+    else
+        return success && decodedValue == value;
 }
 
 TEST(KeyedCoding, SetAndGetBool)
@@ -147,72 +150,72 @@ TEST(KeyedCoding, SetAndGetDouble)
 
 TEST(KeyedCoding, SetAndGetString)
 {
-    EXPECT_TRUE(testSimpleValue(&WebCore::KeyedEncoder::encodeString, &WebCore::KeyedDecoder::decodeString, String("WebKit"_s)));
+    EXPECT_TRUE(testSimpleValue(&WebCore::KeyedEncoder::encodeString, &WebCore::KeyedDecoder::decodeString, "WebKit"_si));
 }
 
 TEST(KeyedCoding, GetNonExistingRecord)
 {
     auto encoder = WebCore::KeyedEncoder::encoder();
-    encoder->encodeBool("bool-true"_s, true);
+    encoder->encodeBool("bool-true"_si, true);
 
     auto encodedBuffer = encoder->finishEncoding();
     auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     bool success, boolValue;
-    success = decoder->decodeBool("bool-true"_s, boolValue);
+    success = decoder->decodeBool("bool-true"_si, boolValue);
     EXPECT_TRUE(success);
     EXPECT_EQ(true, boolValue);
 
-    success = decoder->decodeBool("no-exist-key"_s, boolValue);
+    success = decoder->decodeBool("no-exist-key"_si, boolValue);
     EXPECT_FALSE(success);
 
     int32_t int32Value;
-    success = decoder->decodeInt32("no-exist-key"_s, int32Value);
+    success = decoder->decodeInt32("no-exist-key"_si, int32Value);
     EXPECT_FALSE(success);
 
     uint32_t uint32Value;
-    success = decoder->decodeUInt32("no-exist-key"_s, uint32Value);
+    success = decoder->decodeUInt32("no-exist-key"_si, uint32Value);
     EXPECT_FALSE(success);
 
     int64_t int64Value;
-    success = decoder->decodeInt64("no-exist-key"_s, int64Value);
+    success = decoder->decodeInt64("no-exist-key"_si, int64Value);
     EXPECT_FALSE(success);
 
     uint64_t uint64Value;
-    success = decoder->decodeUInt64("no-exist-key"_s, uint64Value);
+    success = decoder->decodeUInt64("no-exist-key"_si, uint64Value);
     EXPECT_FALSE(success);
 
     float floatValue;
-    success = decoder->decodeFloat("no-exist-key"_s, floatValue);
+    success = decoder->decodeFloat("no-exist-key"_si, floatValue);
     EXPECT_FALSE(success);
 
     double doubleValue;
-    success = decoder->decodeDouble("no-exist-key"_s, doubleValue);
+    success = decoder->decodeDouble("no-exist-key"_si, doubleValue);
     EXPECT_FALSE(success);
 
     std::span<const uint8_t> buffer;
-    success = decoder->decodeBytes("no-exist-key"_s, buffer);
+    success = decoder->decodeBytes("no-exist-key"_si, buffer);
     EXPECT_FALSE(success);
 }
 
 struct KeyedCodingTestObject {
     static void encode(WebCore::KeyedEncoder& encoder, const KeyedCodingTestObject& object)
     {
-        encoder.encodeString("name"_s, object.m_name);
-        encoder.encodeInt32("age"_s, object.m_age);
+        encoder.encodeString("name"_si, object.m_name);
+        encoder.encodeInt32("age"_si, object.m_age);
     }
 
     static bool decode(WebCore::KeyedDecoder& decoder, KeyedCodingTestObject& object)
     {
-        if (!decoder.decodeString("name"_s, object.m_name))
+        if (!decoder.decodeString("name"_si, object.m_name))
             return false;
-        if (!decoder.decodeInt32("age"_s, object.m_age))
+        if (!decoder.decodeInt32("age"_si, object.m_age))
             return false;
         return true;
     }
 
     KeyedCodingTestObject() = default;
-    KeyedCodingTestObject(String name, int age)
+    KeyedCodingTestObject(RefPtr<StringImpl> name, int age)
         : m_name(name)
         , m_age(age)
     {
@@ -220,10 +223,10 @@ struct KeyedCodingTestObject {
 
     bool equals(const KeyedCodingTestObject& other) const
     {
-        return (m_name == other.m_name) && (m_age == other.m_age);
+        return (equal(m_name, other.m_name)) && (m_age == other.m_age);
     }
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     int32_t m_age;
 };
 
@@ -234,23 +237,23 @@ static bool operator==(const KeyedCodingTestObject& lObject, const KeyedCodingTe
 
 TEST(KeyedCoding, SetAndGetObject)
 {
-    const KeyedCodingTestObject user0("Noah"_s, 28);
-    const KeyedCodingTestObject user1("Emma"_s, 31);
+    const KeyedCodingTestObject user0("Noah"_si, 28);
+    const KeyedCodingTestObject user1("Emma"_si, 31);
 
     auto encoder = WebCore::KeyedEncoder::encoder();
-    encoder->encodeObject("user0"_s, user0, KeyedCodingTestObject::encode);
-    encoder->encodeObject("user1"_s, user1, KeyedCodingTestObject::encode);
+    encoder->encodeObject("user0"_si, user0, KeyedCodingTestObject::encode);
+    encoder->encodeObject("user1"_si, user1, KeyedCodingTestObject::encode);
     auto encodedBuffer = encoder->finishEncoding();
 
     auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
     bool success;
     KeyedCodingTestObject decodedUser0, decodedUser1;
 
-    success = decoder->decodeObject("user0"_s, decodedUser0, KeyedCodingTestObject::decode);
+    success = decoder->decodeObject("user0"_si, decodedUser0, KeyedCodingTestObject::decode);
     EXPECT_TRUE(success);
     EXPECT_EQ(decodedUser0, user0);
 
-    success = decoder->decodeObject("user1"_s, decodedUser1, KeyedCodingTestObject::decode);
+    success = decoder->decodeObject("user1"_si, decodedUser1, KeyedCodingTestObject::decode);
     EXPECT_TRUE(success);
     EXPECT_EQ(decodedUser1, user1);
 }
@@ -259,16 +262,16 @@ TEST(KeyedCoding, SetAndGetObjects)
 {
     Vector<KeyedCodingTestObject> users;
     for (int i = 0; i < 10; i++)
-        users.append(KeyedCodingTestObject("username"_s, i));
+        users.append(KeyedCodingTestObject("username"_si, i));
 
     auto encoder = WebCore::KeyedEncoder::encoder();
-    encoder->encodeObjects("users"_s, users, KeyedCodingTestObject::encode);
+    encoder->encodeObjects("users"_si, users, KeyedCodingTestObject::encode);
     auto encodedBuffer = encoder->finishEncoding();
 
     auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
     Vector<KeyedCodingTestObject> decodedUsers;
 
-    bool success = decoder->decodeObjects("users"_s, decodedUsers, KeyedCodingTestObject::decode);
+    bool success = decoder->decodeObjects("users"_si, decodedUsers, KeyedCodingTestObject::decode);
     EXPECT_TRUE(success);
     EXPECT_EQ(users, decodedUsers);
 }

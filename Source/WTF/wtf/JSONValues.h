@@ -66,8 +66,9 @@ public:
     NODELETE static Ref<Value> create(bool);
     NODELETE static Ref<Value> create(int);
     NODELETE static Ref<Value> create(double);
-    NODELETE static Ref<Value> create(const String&);
-    template<class T>
+    NODELETE static Ref<Value> create(StringImpl*);
+    template<StringImplPointerLike T> static Ref<Value> create(const T&);
+    template<class T> requires (!StringImplPointerLike<T>)
     static Ref<Value> create(T) = delete;
 
     enum class Type : uint8_t {
@@ -89,7 +90,7 @@ public:
         static_assert(std::is_same_v<bool, WTF::variant_alternative_t<static_cast<uint8_t>(Type::Boolean), decltype(m_value)>>);
         static_assert(std::is_same_v<double, WTF::variant_alternative_t<static_cast<uint8_t>(Type::Double), decltype(m_value)>>);
         static_assert(std::is_same_v<int, WTF::variant_alternative_t<static_cast<uint8_t>(Type::Integer), decltype(m_value)>>);
-        static_assert(std::is_same_v<String, WTF::variant_alternative_t<static_cast<uint8_t>(Type::String), decltype(m_value)>>);
+        static_assert(std::is_same_v<RefPtr<StringImpl>, WTF::variant_alternative_t<static_cast<uint8_t>(Type::String), decltype(m_value)>>);
         static_assert(std::is_same_v<ObjectTypeTag, WTF::variant_alternative_t<static_cast<uint8_t>(Type::Object), decltype(m_value)>>);
         static_assert(std::is_same_v<ArrayTypeTag, WTF::variant_alternative_t<static_cast<uint8_t>(Type::Array), decltype(m_value)>>);
         return static_cast<Type>(m_value.index());
@@ -99,7 +100,7 @@ public:
     NODELETE std::optional<bool> asBoolean() const;
     NODELETE std::optional<int> asInteger() const;
     NODELETE std::optional<double> asDouble() const;
-    NODELETE const String& asString() const;
+    NODELETE const RefPtr<StringImpl>& asString() const;
     RefPtr<Value> asValue();
     RefPtr<Object> asObject();
     RefPtr<const Object> asObject() const;
@@ -111,14 +112,14 @@ public:
     static RefPtr<Value> parseJSON(StringView, ParsingMode);
     static std::optional<Ref<Value>> optionalParseJSON(StringView);
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
 
     void dump(PrintStream&) const;
 
     // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
     NODELETE bool asDouble(double&) const;
     NODELETE bool asInteger(int&) const;
-    bool asString(String&) const;
+    bool asString(RefPtr<StringImpl>&) const;
 
     size_t memoryCost() const;
     void writeJSON(StringBuilder& output) const;
@@ -151,7 +152,7 @@ protected:
     {
     }
 
-    explicit Value(const String& value)
+    explicit Value(StringImpl* value)
         : m_value(value)
     {
     }
@@ -162,14 +163,19 @@ protected:
     void writeJSONImpl(StringBuilder& output) const;
 
 private:
-    WTF::Variant<std::monostate, bool, double, int, String, ObjectTypeTag, ArrayTypeTag> m_value;
+    WTF::Variant<std::monostate, bool, double, int, RefPtr<StringImpl>, ObjectTypeTag, ArrayTypeTag> m_value;
 };
+
+template<StringImplPointerLike T> inline Ref<Value> Value::create(const T& value)
+{
+    return create(toStringImplPointer(value));
+}
 
 class ObjectBase : public Value {
 private:
     friend class Value;
-    using DataStorage = HashMap<String, Ref<Value>>;
-    using OrderStorage = Vector<String>;
+    using DataStorage = HashMap<RefPtr<StringImpl>, Ref<Value>>;
+    using OrderStorage = Vector<RefPtr<StringImpl>>;
 
 public:
     using iterator = DataStorage::iterator;
@@ -179,26 +185,26 @@ protected:
     ~ObjectBase();
 
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
-    void setBoolean(const String& name, bool);
-    void setInteger(const String& name, int);
-    void setDouble(const String& name, double);
-    void setString(const String& name, const String&);
-    void setValue(const String& name, Ref<Value>&&);
-    void setObject(const String& name, Ref<ObjectBase>&&);
-    void setArray(const String& name, Ref<ArrayBase>&&);
+    void setBoolean(StringImpl* name, bool);
+    void setInteger(StringImpl* name, int);
+    void setDouble(StringImpl* name, double);
+    void setString(StringImpl* name, StringImpl*);
+    void setValue(StringImpl* name, Ref<Value>&&);
+    void setObject(StringImpl* name, Ref<ObjectBase>&&);
+    void setArray(StringImpl* name, Ref<ArrayBase>&&);
 
-    iterator find(const String& name) LIFETIME_BOUND;
-    const_iterator find(const String& name) const LIFETIME_BOUND;
+    iterator find(StringImpl* name) LIFETIME_BOUND;
+    const_iterator find(StringImpl* name) const LIFETIME_BOUND;
 
-    WTF_EXPORT_PRIVATE std::optional<bool> getBoolean(const String& name) const;
-    WTF_EXPORT_PRIVATE std::optional<double> getDouble(const String& name) const;
-    WTF_EXPORT_PRIVATE std::optional<int> getInteger(const String& name) const;
-    WTF_EXPORT_PRIVATE String getString(const String& name) const;
-    WTF_EXPORT_PRIVATE RefPtr<Object> getObject(const String& name) const;
-    WTF_EXPORT_PRIVATE RefPtr<Array> getArray(const String& name) const;
-    WTF_EXPORT_PRIVATE RefPtr<Value> getValue(const String& name) const;
+    WTF_EXPORT_PRIVATE std::optional<bool> getBoolean(StringImpl* name) const;
+    WTF_EXPORT_PRIVATE std::optional<double> getDouble(StringImpl* name) const;
+    WTF_EXPORT_PRIVATE std::optional<int> getInteger(StringImpl* name) const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> getString(StringImpl* name) const;
+    WTF_EXPORT_PRIVATE RefPtr<Object> getObject(StringImpl* name) const;
+    WTF_EXPORT_PRIVATE RefPtr<Array> getArray(StringImpl* name) const;
+    WTF_EXPORT_PRIVATE RefPtr<Value> getValue(StringImpl* name) const;
 
-    WTF_EXPORT_PRIVATE void remove(const String& name);
+    WTF_EXPORT_PRIVATE void remove(StringImpl* name);
 
     iterator begin() LIFETIME_BOUND { return m_map.begin(); }
     iterator end() LIFETIME_BOUND { return m_map.end(); }
@@ -210,11 +216,11 @@ protected:
     unsigned size() const { return m_map.size(); }
 
     // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
-    bool getBoolean(const String& name, bool& output) const;
-    WTF_EXPORT_PRIVATE bool getString(const String& name, String& output) const;
-    bool getObject(const String& name, RefPtr<Object>& output) const;
-    bool getArray(const String& name, RefPtr<Array>& output) const;
-    WTF_EXPORT_PRIVATE bool getValue(const String& name, RefPtr<Value>& output) const;
+    bool getBoolean(StringImpl* name, bool& output) const;
+    WTF_EXPORT_PRIVATE bool getString(StringImpl* name, RefPtr<StringImpl>& output) const;
+    bool getObject(StringImpl* name, RefPtr<Object>& output) const;
+    bool getArray(StringImpl* name, RefPtr<Array>& output) const;
+    WTF_EXPORT_PRIVATE bool getValue(StringImpl* name, RefPtr<Value>& output) const;
 
 protected:
     WTF_EXPORT_PRIVATE ObjectBase();
@@ -279,7 +285,7 @@ protected:
     void pushBoolean(bool);
     void pushInteger(int);
     void pushDouble(double);
-    void pushString(const String&);
+    void pushString(StringImpl*);
     void pushValue(Ref<Value>&&);
     void pushObject(Ref<ObjectBase>&&);
     void pushArray(Ref<ArrayBase>&&);
@@ -287,7 +293,7 @@ protected:
     void setBoolean(size_t, bool);
     void setInteger(size_t, int);
     void setDouble(size_t, double);
-    void setString(size_t, const String&);
+    void setString(size_t, StringImpl*);
     void setValue(size_t, Ref<Value>&&);
     void setObject(size_t, Ref<ObjectBase>&&);
     void setArray(size_t, Ref<ArrayBase>&&);
@@ -334,49 +340,49 @@ public:
     using ArrayBase::end;
 };
 
-inline ObjectBase::iterator ObjectBase::find(const String& name) LIFETIME_BOUND
+inline ObjectBase::iterator ObjectBase::find(StringImpl* name) LIFETIME_BOUND
 {
     return m_map.find(name);
 }
 
-inline ObjectBase::const_iterator ObjectBase::find(const String& name) const LIFETIME_BOUND
+inline ObjectBase::const_iterator ObjectBase::find(StringImpl* name) const LIFETIME_BOUND
 {
     return m_map.find(name);
 }
 
-inline void ObjectBase::setBoolean(const String& name, bool value)
+inline void ObjectBase::setBoolean(StringImpl* name, bool value)
 {
     setValue(name, Value::create(value));
 }
 
-inline void ObjectBase::setInteger(const String& name, int value)
+inline void ObjectBase::setInteger(StringImpl* name, int value)
 {
     setValue(name, Value::create(value));
 }
 
-inline void ObjectBase::setDouble(const String& name, double value)
+inline void ObjectBase::setDouble(StringImpl* name, double value)
 {
     setValue(name, Value::create(value));
 }
 
-inline void ObjectBase::setString(const String& name, const String& value)
+inline void ObjectBase::setString(StringImpl* name, StringImpl* value)
 {
     setValue(name, Value::create(value));
 }
 
-inline void ObjectBase::setValue(const String& name, Ref<Value>&& value)
+inline void ObjectBase::setValue(StringImpl* name, Ref<Value>&& value)
 {
     if (m_map.set(name, WTF::move(value)).isNewEntry)
         m_order.append(name);
 }
 
-inline void ObjectBase::setObject(const String& name, Ref<ObjectBase>&& value)
+inline void ObjectBase::setObject(StringImpl* name, Ref<ObjectBase>&& value)
 {
     if (m_map.set(name, WTF::move(value)).isNewEntry)
         m_order.append(name);
 }
 
-inline void ObjectBase::setArray(const String& name, Ref<ArrayBase>&& value)
+inline void ObjectBase::setArray(StringImpl* name, Ref<ArrayBase>&& value)
 {
     if (m_map.set(name, WTF::move(value)).isNewEntry)
         m_order.append(name);
@@ -397,7 +403,7 @@ inline void ArrayBase::pushDouble(double value)
     m_map.append(Value::create(value));
 }
 
-inline void ArrayBase::pushString(const String& value)
+inline void ArrayBase::pushString(StringImpl* value)
 {
     m_map.append(Value::create(value));
 }
@@ -445,8 +451,8 @@ public:
     }
 
     template<typename V = T>
-        requires (std::same_as<String, V> || std::same_as<Value, V>)
-    void addItem(const String& value)
+        requires (std::same_as<RefPtr<StringImpl>, V> || std::same_as<Value, V>)
+    void addItem(StringImpl* value)
     {
         pushString(value);
     }
@@ -494,8 +500,8 @@ public:
     }
 
     template<typename V = T>
-        requires (std::same_as<String, V> || std::same_as<Value, V>)
-    void setItem(size_t index, const String& value)
+        requires (std::same_as<RefPtr<StringImpl>, V> || std::same_as<Value, V>)
+    void setItem(size_t index, StringImpl* value)
     {
         setString(index, value);
     }

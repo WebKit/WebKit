@@ -85,8 +85,8 @@ public:
     virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) { }
     
     // Callback for when hardware-accelerated animation started.
-    virtual void notifyAnimationStarted(const GraphicsLayer*, const String& /*animationKey*/, MonotonicTime /*time*/) { }
-    virtual void notifyAnimationEnded(const GraphicsLayer*, const String& /*animationKey*/) { }
+    virtual void notifyAnimationStarted(const GraphicsLayer*, StringImpl* /*animationKey*/, MonotonicTime /*time*/) { }
+    virtual void notifyAnimationEnded(const GraphicsLayer*, StringImpl* /*animationKey*/) { }
 
     // Notification that a layer property changed that requires a subsequent call to flushCompositingState()
     // to appear on the screen.

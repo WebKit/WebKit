@@ -40,13 +40,13 @@ public:
         Ref<NavigationHistoryEntry> from;
     };
 
-    static Ref<NavigationCurrentEntryChangeEvent> create(const AtomString& type, Init&&);
+    static Ref<NavigationCurrentEntryChangeEvent> create(AtomStringImpl* type, Init&&);
 
     std::optional<NavigationNavigationType> navigationType() const { return m_navigationType; };
     NavigationHistoryEntry& from() const { return m_from; };
 
 private:
-    NavigationCurrentEntryChangeEvent(const AtomString& type, Init&&);
+    NavigationCurrentEntryChangeEvent(AtomStringImpl* type, Init&&);
 
     std::optional<NavigationNavigationType> m_navigationType;
     const Ref<NavigationHistoryEntry> m_from;

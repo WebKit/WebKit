@@ -42,8 +42,8 @@ private:
     friend struct IPC::ArgumentCoder<CoreIPCDateComponents>;
     CoreIPCDateComponents() = default;
 
-    String m_calendarIdentifier;
-    String m_timeZoneName;
+    RefPtr<StringImpl> m_calendarIdentifier;
+    RefPtr<StringImpl> m_timeZoneName;
     std::array<int64_t, numberOfComponentIndexes> m_componentValues;
 };
 

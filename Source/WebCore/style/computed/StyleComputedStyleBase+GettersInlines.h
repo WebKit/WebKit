@@ -312,7 +312,7 @@ inline std::optional<PseudoElementType> pseudoElementType(const ComputedStyleBas
     return style.pseudoElementType();
 }
 
-inline const AtomString& ComputedStyleBase::pseudoElementNameArgument() const
+inline const RefPtr<AtomStringImpl>& ComputedStyleBase::pseudoElementNameArgument() const
 {
     return m_nonInheritedData->rareData->pseudoElementNameArgument;
 }

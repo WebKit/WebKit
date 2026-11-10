@@ -31,15 +31,15 @@ namespace WebCore {
 
 class ChangeVersionData {
 public:
-    explicit ChangeVersionData(String oldVersion, String newVersion)
+    explicit ChangeVersionData(RefPtr<StringImpl> oldVersion, RefPtr<StringImpl> newVersion)
         : m_oldVersion(oldVersion), m_newVersion(newVersion) { }
 
-    String oldVersion() const { return m_oldVersion; }
-    String newVersion() const { return m_newVersion; }
+    RefPtr<StringImpl> oldVersion() const { return m_oldVersion; }
+    RefPtr<StringImpl> newVersion() const { return m_newVersion; }
 
 private:
-    String m_oldVersion;
-    String m_newVersion;
+    RefPtr<StringImpl> m_oldVersion;
+    RefPtr<StringImpl> m_newVersion;
 };
 
 } // namespace WebCore

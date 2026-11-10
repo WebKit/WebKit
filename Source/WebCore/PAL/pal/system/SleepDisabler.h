@@ -36,13 +36,13 @@ public:
         System,
         Display,
     };
-    static std::unique_ptr<SleepDisabler> create(const String&, Type);
+    static std::unique_ptr<SleepDisabler> create(StringImpl*, Type);
     PAL_EXPORT virtual ~SleepDisabler();
 
     Type type() const { return m_type; }
 
 protected:
-    NODELETE PAL_EXPORT SleepDisabler(const String&, Type);
+    NODELETE PAL_EXPORT SleepDisabler(StringImpl*, Type);
     Type m_type;
 };
 

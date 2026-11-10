@@ -31,23 +31,23 @@ namespace WebCore {
 
 class ModuleFetchParameters : public JSC::ScriptFetchParameters {
 public:
-    static Ref<ModuleFetchParameters> create(JSC::ScriptFetchParameters::Type type, const String& integrity, bool isTopLevelModule)
+    static Ref<ModuleFetchParameters> create(JSC::ScriptFetchParameters::Type type, StringImpl* integrity, bool isTopLevelModule)
     {
         return adoptRef(*new ModuleFetchParameters(type, integrity, isTopLevelModule));
     }
 
-    const String& integrity() const LIFETIME_BOUND override { return m_integrity; }
+    const RefPtr<StringImpl>& integrity() const LIFETIME_BOUND override { return m_integrity; }
     bool isTopLevelModule() const override { return m_isTopLevelModule; }
 
 private:
-    ModuleFetchParameters(JSC::ScriptFetchParameters::Type type, const String& integrity, bool isTopLevelModule)
+    ModuleFetchParameters(JSC::ScriptFetchParameters::Type type, StringImpl* integrity, bool isTopLevelModule)
         : JSC::ScriptFetchParameters(type)
         , m_integrity(integrity)
         , m_isTopLevelModule(isTopLevelModule)
     {
     }
 
-    String m_integrity;
+    RefPtr<StringImpl> m_integrity;
     bool m_isTopLevelModule;
 };
 

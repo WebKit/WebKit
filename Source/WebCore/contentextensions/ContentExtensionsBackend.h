@@ -59,31 +59,31 @@ public:
 
     // Set a list of rules for a given name. If there were existing rules for the name, they are overridden.
     // The identifier cannot be empty.
-    WEBCORE_EXPORT void addContentExtension(const String& identifier, Ref<CompiledContentExtension>, URL&& extensionBaseURL, ContentExtension::ShouldCompileCSS = ContentExtension::ShouldCompileCSS::Yes);
-    WEBCORE_EXPORT void removeContentExtension(const String& identifier);
+    WEBCORE_EXPORT void addContentExtension(StringImpl* identifier, Ref<CompiledContentExtension>, URL&& extensionBaseURL, ContentExtension::ShouldCompileCSS = ContentExtension::ShouldCompileCSS::Yes);
+    WEBCORE_EXPORT void removeContentExtension(StringImpl* identifier);
     WEBCORE_EXPORT void removeAllContentExtensions();
 
     // - Internal WebCore Interface.
     struct ActionsFromContentRuleList {
-        String contentRuleListIdentifier;
+        RefPtr<StringImpl> contentRuleListIdentifier;
         bool sawIgnorePreviousRules { false };
         Vector<DeserializedAction> actions;
     };
 
     enum class ShouldSkipRuleList : bool { No, Yes };
-    using RuleListFilter = Function<ShouldSkipRuleList(const String&)>;
-    WEBCORE_EXPORT Vector<ActionsFromContentRuleList> actionsForResourceLoad(const ResourceLoadInfo&, NOESCAPE const RuleListFilter& = { [](const String&) { return ShouldSkipRuleList::No; } }) const;
-    WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
+    using RuleListFilter = Function<ShouldSkipRuleList(StringImpl*)>;
+    WEBCORE_EXPORT Vector<ActionsFromContentRuleList> actionsForResourceLoad(const ResourceLoadInfo&, NOESCAPE const RuleListFilter& = { [](StringImpl*) { return ShouldSkipRuleList::No; } }) const;
+    WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(StringImpl* identifier) const;
 
     ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom, NOESCAPE const RuleListFilter&) const;
     enum class MainFrameContext : bool { No, Yes };
-    WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod, MainFrameContext = MainFrameContext::No);
+    WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL, StringImpl* httpMethod, MainFrameContext = MainFrameContext::No);
     WEBCORE_EXPORT bool shouldBlockLoad(const ResourceLoadInfo&) const;
     bool processContentRuleListsForResourceMonitoring(const URL&, const URL& mainDocumentURL, const URL& frameURL, OptionSet<ResourceType>);
 
-    static const String& displayNoneCSSRule();
+    static const RefPtr<StringImpl>& displayNoneCSSRule();
 
-    void forEach(NOESCAPE const Function<void(const String&, ContentExtension&)>&) const;
+    void forEach(NOESCAPE const Function<void(StringImpl*, ContentExtension&)>&) const;
 
     WEBCORE_EXPORT static bool shouldBeMadeSecure(const URL&);
 
@@ -91,19 +91,19 @@ public:
     ContentExtensionsBackend isolatedCopy() && { return ContentExtensionsBackend { crossThreadCopy(WTF::move(m_contentExtensions)) }; }
 
 private:
-    explicit ContentExtensionsBackend(HashMap<String, Ref<ContentExtension>>&& contentExtensions)
+    explicit ContentExtensionsBackend(HashMap<RefPtr<StringImpl>, Ref<ContentExtension>>&& contentExtensions)
         : m_contentExtensions(WTF::move(contentExtensions))
     {
     }
 
-    ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, const String& urlString, const ResourceLoadInfo&, ResourceFlags) const;
+    ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, StringImpl* urlString, const ResourceLoadInfo&, ResourceFlags) const;
 
-    HashMap<String, Ref<ContentExtension>> m_contentExtensions;
+    HashMap<RefPtr<StringImpl>, Ref<ContentExtension>> m_contentExtensions;
 };
 
 WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&, const URL& redirectURL = URL { });
 WEBCORE_EXPORT void applyResultsToRequestIfCrossOriginRedirect(ContentRuleListResults&&, Page*, ResourceRequest&);
-std::optional<String> customTrackerBlockingMessageForConsole(const ContentRuleListResults&, const URL& urlString = { }, const URL& mainDocumentURL = { });
+std::optional<RefPtr<StringImpl>> customTrackerBlockingMessageForConsole(const ContentRuleListResults&, const URL& urlString = { }, const URL& mainDocumentURL = { });
 
 } // namespace WebCore::ContentExtensions
 } // namespace WebCore

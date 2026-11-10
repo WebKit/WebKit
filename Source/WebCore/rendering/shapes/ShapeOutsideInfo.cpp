@@ -343,7 +343,7 @@ static inline bool checkShapeImageOrigin(Document& document, const Style::Image&
         return true;
 
     const URL& url = cachedImage->url();
-    String urlString = url.isNull() ? "''"_s : url.stringCenterEllipsizedToLength();
+    RefPtr<StringImpl> urlString = url.isNull() ? "''"_si : url.stringCenterEllipsizedToLength();
     document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Unsafe attempt to load URL "_s, urlString, '.'));
 
     return false;

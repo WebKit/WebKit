@@ -55,7 +55,7 @@ public:
     virtual ~IDBDatabase();
 
     // IDBDatabase IDL
-    NODELETE const String name() const;
+    NODELETE const RefPtr<StringImpl> name() const;
     NODELETE uint64_t version() const;
     Ref<DOMStringList> objectStoreNames() const;
 
@@ -64,18 +64,18 @@ public:
         bool autoIncrement;
     };
 
-    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, ObjectStoreParameters&&);
+    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(StringImpl* name, ObjectStoreParameters&&);
 
-    using StringOrVectorOfStrings = Variant<String, Vector<String>>;
+    using StringOrVectorOfStrings = Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>;
     struct TransactionOptions {
         std::optional<IDBTransactionDurability> durability;
     };
     ExceptionOr<Ref<IDBTransaction>> transaction(StringOrVectorOfStrings&& storeNames, IDBTransactionMode, TransactionOptions = { });
-    ExceptionOr<void> deleteObjectStore(const String& name);
+    ExceptionOr<void> deleteObjectStore(StringImpl* name);
     void close();
 
-    void renameObjectStore(IDBObjectStore&, const String& newName);
-    void renameIndex(IDBIndex&, const String& newName);
+    void renameObjectStore(IDBObjectStore&, StringImpl* newName);
+    void renameIndex(IDBIndex&, StringImpl* newName);
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBDatabase; }

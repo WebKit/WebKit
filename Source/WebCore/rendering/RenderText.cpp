@@ -86,16 +86,16 @@ using namespace WTF::Unicode;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderText);
 
-bool isDutchLocale(const AtomString& locale)
+bool isDutchLocale(AtomStringImpl* locale)
 {
-    return locale.length() >= 2
-        && isASCIIAlphaCaselessEqual(locale[0], 'n')
-        && isASCIIAlphaCaselessEqual(locale[1], 'l')
-        && (locale.length() == 2 || locale[2] == '-');
+    return length(locale) >= 2
+        && isASCIIAlphaCaselessEqual(codeUnitAt(locale, 0), 'n')
+        && isASCIIAlphaCaselessEqual(codeUnitAt(locale, 1), 'l')
+        && (length(locale) == 2 || codeUnitAt(locale, 2) == '-');
 }
 
 struct SameSizeAsRenderText : public RenderObject, private Layout::InlineTextBox {
-    String text;
+    RefPtr<StringImpl> text;
     uint32_t bitfields : 9;
     float candidateTextSize;
 };
@@ -149,15 +149,15 @@ void SecureTextTimer::fired()
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
 
-NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
+NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, RefPtr<StringImpl>>& originalTextMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
+    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, RefPtr<StringImpl>>> map;
     return map;
 }
 
-NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& altTextMap()
+NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, RefPtr<StringImpl>>& altTextMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
+    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, RefPtr<StringImpl>>> map;
     return map;
 }
 
@@ -194,7 +194,7 @@ static inline size_t capitalizeCharacter(StringView textContent, unsigned startC
 
         // Decomposed ligatures may need more space.
         std::span<char16_t> capitalizedStringData;
-        auto capitalizedString = String::createUninitialized(realLength, capitalizedStringData);
+        auto capitalizedString = StringImpl::createUninitialized(realLength, capitalizedStringData);
         status = U_ZERO_ERROR;
         u_strToTitle(capitalizedStringData.data(), capitalizedStringData.size(), contentToCapitalize, length, nullptr, "", &status);
         if (U_SUCCESS(status)) {
@@ -224,9 +224,9 @@ static inline size_t capitalizeCharacter(StringView textContent, unsigned startC
 // Titlecase the first letter of a word using ICU's locale-aware u_strToTitle.
 // CSS capitalize only uppercases the first letter; u_strToTitle also lowercases
 // the rest. We determine the titlecased prefix and return only that.
-static size_t capitalizeWordWithLocale(StringView textContent, unsigned startOffset, unsigned endOffset, const AtomString& locale, StringBuilder& output)
+static size_t capitalizeWordWithLocale(StringView textContent, unsigned startOffset, unsigned endOffset, AtomStringImpl* locale, StringBuilder& output)
 {
-    auto localeUTF8 = locale.string().utf8();
+    auto localeUTF8 = utf8(locale);
     unsigned wordLength = std::min(endOffset, textContent.length()) - startOffset;
     if (!wordLength)
         return 0;
@@ -279,17 +279,17 @@ static size_t capitalizeWordWithLocale(StringView textContent, unsigned startOff
     return prefixLength;
 }
 
-String capitalize(const String& string, const AtomString& locale)
+RefPtr<StringImpl> capitalize(StringImpl* string, AtomStringImpl* locale)
 {
     return capitalize(string, ' ', locale);
 }
 
-String capitalize(const String& string, char32_t previousCharacter, const AtomString& locale)
+RefPtr<StringImpl> capitalize(StringImpl* string, char32_t previousCharacter, AtomStringImpl* locale)
 {
-    int32_t length = string.length();
-    Ref stringImpl = *string.impl();
+    int32_t length = WTF::length(string);
+    Ref stringImpl = *string;
 
-    static_assert(String::MaxLength < std::numeric_limits<unsigned>::max(), "Must be able to add one without overflowing unsigned");
+    static_assert(StringImpl::MaxLength < std::numeric_limits<unsigned>::max(), "Must be able to add one without overflowing unsigned");
 
     // Replace NO BREAK SPACE with a normal spaces since ICU does not treat it as a word separator.
     std::array<char16_t, 2> previousCharacterUTF16;
@@ -336,7 +336,7 @@ String capitalize(const String& string, char32_t previousCharacter, const AtomSt
             }
         }
     }
-    return result == string ? string : result.toString();
+    return result == string ? RefPtr { string } : result.toString();
 }
 
 NODELETE static LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, WritingMode writingMode)
@@ -425,30 +425,30 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
     return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), runPosition, true);
 }
 
-static FontCascade::CodePath computeFontCodePath(const String& text, bool containsOnlyASCII)
+static FontCascade::CodePath computeFontCodePath(StringImpl* text, bool containsOnlyASCII)
 {
-    ASSERT(containsOnlyASCII == text.impl()->containsOnlyASCII());
-    return (containsOnlyASCII || text.is8Bit()) ? FontCascade::CodePath::Simple : FontCascade::characterRangeCodePath(text.span16());
+    ASSERT(containsOnlyASCII == text->containsOnlyASCII());
+    return (containsOnlyASCII || is8Bit(text)) ? FontCascade::CodePath::Simple : FontCascade::characterRangeCodePath(span16(text));
 }
 
-inline RenderText::RenderText(Type type, Node& node, const String& text, std::optional<SynthesizedGlyph> contentGlyph)
+inline RenderText::RenderText(Type type, Node& node, StringImpl* text, std::optional<SynthesizedGlyph> contentGlyph)
     : RenderObject(type, node, TypeFlag::IsText, { })
     // The initial values of an anonymous inline box. The inherited ones come on attach, see inheritStyleFromParent().
     , Layout::InlineTextBox(Style::ComputedStyle::create(), contentGlyph)
     , m_text(text)
-    , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
+    , m_containsOnlyASCII(text->containsOnlyASCII())
     , m_fontCodePath(std::to_underlying(computeFontCodePath(m_text, m_containsOnlyASCII)))
 {
-    ASSERT(!m_text.isNull());
+    ASSERT(m_text);
     ASSERT(isRenderText());
 }
 
-RenderText::RenderText(Type type, Text& textNode, const String& text)
+RenderText::RenderText(Type type, Text& textNode, StringImpl* text)
     : RenderText(type, static_cast<Node&>(textNode), text)
 {
 }
 
-RenderText::RenderText(Type type, Document& document, const String& text)
+RenderText::RenderText(Type type, Document& document, StringImpl* text)
     : RenderText(type, static_cast<Node&>(document), text)
 {
 }
@@ -636,21 +636,21 @@ void RenderText::willBeDestroyed()
     RenderObject::willBeDestroyed();
 }
 
-String RenderText::originalText() const
+RefPtr<StringImpl> RenderText::originalText() const
 {
     return m_originalTextDiffersFromRendered ? originalTextMap().get(this) : m_text;
 }
 
-const String& RenderText::altText() const
+const RefPtr<StringImpl>& RenderText::altText() const
 {
     if (!m_hasAltText)
         return nullString();
     return altTextMap().find(this)->value;
 }
 
-void RenderText::setAltText(const String& altText)
+void RenderText::setAltText(StringImpl* altText)
 {
-    if (altText.isNull()) {
+    if (!altText) {
         if (m_hasAltText)
             altTextMap().remove(this);
         m_hasAltText = false;
@@ -777,7 +777,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
-            if (auto ellipsisRect = ellipsisRectForTextBox(textBox, 0, textRenderer.text().length())) {
+            if (auto ellipsisRect = ellipsisRectForTextBox(textBox, 0, length(textRenderer.text()))) {
                 if (textRenderer.writingMode().isHorizontal())
                     boundaries.setWidth(ellipsisRect->maxX() - boundaries.x());
                 else
@@ -1057,7 +1057,7 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
 {
     auto firstRun = InlineIterator::lineLeftmostTextBoxFor(*this);
 
-    if (!firstRun || !text().length())
+    if (!firstRun || !WTF::length(text()))
         return createPositionWithAffinity(0, Affinity::Downstream);
 
     auto logicalPoint = firstRun->isHorizontal()
@@ -1113,9 +1113,9 @@ template<typename CharacterType> NODELETE static inline bool containsOnlyCollaps
 
 bool RenderText::containsOnlyCollapsibleWhitespace() const
 {
-    if (text().is8Bit())
-        return WebCore::containsOnlyCollapsibleWhitespace(text().span8(), style());
-    return WebCore::containsOnlyCollapsibleWhitespace(text().span16(), style());
+    if (is8Bit(text()))
+        return WebCore::containsOnlyCollapsibleWhitespace(span8(text()), style());
+    return WebCore::containsOnlyCollapsibleWhitespace(span16(text()), style());
 }
 
 // FIXME: merge this with isCSSSpace somehow
@@ -1130,12 +1130,12 @@ template<typename CharacterType> NODELETE static inline bool containsOnlyPossibl
 
 bool RenderText::containsOnlyCSSWhitespace(unsigned from, unsigned length) const
 {
-    ASSERT(from <= text().length());
-    ASSERT(length <= text().length());
-    ASSERT(from + length <= text().length());
-    if (text().is8Bit())
-        return containsOnlyPossiblyCollapsibleWhitespace(text().span8().subspan(from, length));
-    return containsOnlyPossiblyCollapsibleWhitespace(text().span16().subspan(from, length));
+    ASSERT(from <= WTF::length(text()));
+    ASSERT(length <= WTF::length(text()));
+    ASSERT(from + length <= WTF::length(text()));
+    if (is8Bit(text()))
+        return containsOnlyPossiblyCollapsibleWhitespace(span8(text()).subspan(from, length));
+    return containsOnlyPossiblyCollapsibleWhitespace(span16(text()).subspan(from, length));
 }
 
 Vector<std::pair<unsigned, unsigned>> RenderText::contentRangesBetweenOffsetsForType(DocumentMarkerType type, unsigned startOffset, unsigned endOffset) const
@@ -1186,7 +1186,7 @@ NODELETE static inline bool isInlineFlowOrEmptyText(const RenderObject& renderer
     if (renderer.isInlineBox())
         return true;
     auto* textRenderer = dynamicDowncast<RenderText>(renderer);
-    return textRenderer && textRenderer->text().isEmpty();
+    return textRenderer && isEmpty(textRenderer->text());
 }
 
 char32_t RenderText::previousCharacter() const
@@ -1202,13 +1202,13 @@ char32_t RenderText::previousCharacter() const
     if (!renderText)
         return ' ';
     auto& previousString = renderText->text();
-    unsigned length = previousString.length();
+    unsigned length = WTF::length(previousString);
     if (!length)
         return ' ';
     return StringView(previousString).codePointBefore(length);
 }
 
-static String convertToFullSizeKana(const String& string)
+static RefPtr<StringImpl> convertToFullSizeKana(StringImpl* string)
 {
     // https://www.w3.org/TR/css-text-3/#small-kana
     static constexpr SortedArrayMap sortedMap { WTF::toArray<std::pair<char32_t, char16_t>>({
@@ -1295,25 +1295,25 @@ static String convertToFullSizeKana(const String& string)
 }
 
 // https://w3c.github.io/mathml-core/#math-auto-transform
-static String convertToMathAuto(const String& string)
+static RefPtr<StringImpl> convertToMathAuto(StringImpl* string)
 {
 #if ENABLE(MATHML)
     StringView view = string;
     if (auto codePoint = view.convertToSingleCodePoint()) {
         char32_t transformedCodePoint = mathVariantMapCodePoint(codePoint.value(), MathVariant::Italic);
         if (transformedCodePoint != codePoint.value())
-            return String::fromCodePoint(transformedCodePoint);
+            return StringImpl::fromCodePoint(transformedCodePoint);
     }
 #endif
     return string;
 }
 
-String applyTextTransform(const Style::ComputedStyle& style, const String& text)
+RefPtr<StringImpl> applyTextTransform(const Style::ComputedStyle& style, StringImpl* text)
 {
     return applyTextTransform(style, text, ' ');
 }
 
-String applyTextTransform(const Style::ComputedStyle& style, const String& text, char32_t previousCharacter)
+RefPtr<StringImpl> applyTextTransform(const Style::ComputedStyle& style, StringImpl* text, char32_t previousCharacter)
 {
     auto transform = style.textTransform();
 
@@ -1321,13 +1321,13 @@ String applyTextTransform(const Style::ComputedStyle& style, const String& text,
         return text;
 
     // https://w3c.github.io/csswg-drafts/css-text/#text-transform-order
-    auto modified = text;
+    auto modified = RefPtr { text };
     if (transform.contains(Style::TextTransformValue::Capitalize))
         modified = capitalize(modified, previousCharacter, Style::toPlatform(style.usedLocale()));
     else if (transform.contains(Style::TextTransformValue::Uppercase))
-        modified = modified.convertToUppercaseWithLocale(Style::toPlatform(style.usedLocale()));
+        modified = convertToUppercaseWithLocale(modified, Style::toPlatform(style.usedLocale()));
     else if (transform.contains(Style::TextTransformValue::Lowercase))
-        modified = modified.convertToLowercaseWithLocale(Style::toPlatform(style.usedLocale()));
+        modified = convertToLowercaseWithLocale(modified, Style::toPlatform(style.usedLocale()));
 
     if (transform.contains(Style::TextTransformValue::FullWidth))
         modified = transformToFullWidth(modified);
@@ -1341,11 +1341,11 @@ String applyTextTransform(const Style::ComputedStyle& style, const String& text,
     return modified;
 }
 
-void RenderText::setRenderedText(const String& newText)
+void RenderText::setRenderedText(StringImpl* newText)
 {
-    ASSERT(!newText.isNull());
+    ASSERT(newText);
 
-    String originalText = this->originalText();
+    RefPtr<StringImpl> originalText = this->originalText();
 
     m_text = newText;
 
@@ -1383,10 +1383,10 @@ void RenderText::setRenderedText(const String& newText)
 #endif
     }
 
-    m_containsOnlyASCII = text().containsOnlyASCII();
+    m_containsOnlyASCII = containsOnlyASCII(text());
     m_fontCodePath = std::to_underlying(computeFontCodePath(text(), m_containsOnlyASCII));
 
-    if (m_text != originalText) {
+    if (!equal(m_text, originalText)) {
         originalTextMap().set(*this, originalText);
         m_originalTextDiffersFromRendered = true;
     } else if (m_originalTextDiffersFromRendered) {
@@ -1405,7 +1405,7 @@ void RenderText::secureText(char16_t maskingCharacter)
     // of the characters are surrogate pairs or combining marks. Thus, this function
     // does not attempt to handle either of those.
 
-    unsigned length = text().length();
+    unsigned length = WTF::length(text());
     if (!length)
         return;
 
@@ -1418,12 +1418,12 @@ void RenderText::secureText(char16_t maskingCharacter)
             // If it's called a second time we assume the text is different and a character should not be revealed.
             revealedCharactersOffset = timer->takeOffsetAfterLastTypedCharacter();
             if (revealedCharactersOffset && revealedCharactersOffset <= length)
-                characterToReveal = text()[--revealedCharactersOffset];
+                characterToReveal = codeUnitAt(text(), --revealedCharactersOffset);
         }
     }
 
     std::span<char16_t> characters;
-    m_text = String::createUninitialized(length, characters);
+    m_text = StringImpl::createUninitialized(length, characters);
 
     std::ranges::fill(characters, maskingCharacter);
     if (characterToReveal)
@@ -1449,11 +1449,11 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(RenderText& renderer
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
 }
 
-void RenderText::setTextInternal(const String& text, bool force)
+void RenderText::setTextInternal(StringImpl* text, bool force)
 {
-    ASSERT(!text.isNull());
+    ASSERT(text);
 
-    if (!force && text == originalText())
+    if (!force && equal(text, originalText()))
         return;
 
     m_text = text;
@@ -1468,7 +1468,7 @@ void RenderText::setTextInternal(const String& text, bool force)
         cache->deferTextChangedIfNeeded(protect(textNode()));
 }
 
-void RenderText::updateRenderedText(const String& text)
+void RenderText::updateRenderedText(StringImpl* text)
 {
     setRenderedText(text);
     setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -1490,25 +1490,25 @@ void RenderText::updateRenderedText()
         cache->deferTextChangedIfNeeded(protect(textNode()));
 }
 
-void RenderText::setText(const String& newContent, bool force)
+void RenderText::setText(StringImpl* newContent, bool force)
 {
-    auto isDifferent = newContent != text();
+    auto isDifferent = !equal(newContent, text());
     setTextInternal(newContent, force);
     if (isDifferent || force)
         invalidateLineLayoutPathOnContentChangeIfNeeded(*this, { }, { });
 }
 
-void RenderText::setTextWithOffset(const String& newText, unsigned offset)
+void RenderText::setTextWithOffset(StringImpl* newText, unsigned offset)
 {
-    if (text() == newText)
+    if (equal(text(), newText))
         return;
 
-    size_t oldLength = text().length();
+    size_t oldLength = WTF::length(text());
     setTextInternal(newText, false);
     invalidateLineLayoutPathOnContentChangeIfNeeded(*this, offset, oldLength);
 }
 
-String RenderText::textWithoutConvertingBackslashToYenSymbol() const
+RefPtr<StringImpl> RenderText::textWithoutConvertingBackslashToYenSymbol() const
 {
     if (!m_useBackslashAsYenSymbol || style().textSecurity() != TextSecurity::None)
         return text();
@@ -1558,12 +1558,12 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
     if (selectionState() == HighlightState::Inside) {
         // We are fully selected.
         startOffset = 0;
-        endOffset = text().length();
+        endOffset = WTF::length(text());
     } else {
         startOffset = view().selection().startOffset();
         endOffset = view().selection().endOffset();
         if (selectionState() == HighlightState::Start)
-            endOffset = text().length();
+            endOffset = WTF::length(text());
         else if (selectionState() == HighlightState::End)
             startOffset = 0;
     }
@@ -1618,7 +1618,7 @@ int RenderText::caretMaxOffset() const
 {
     auto first = InlineIterator::lineLeftmostTextBoxFor(*this);
     if (!first)
-        return text().length();
+        return WTF::length(text());
 
     int maxOffset = first->end();
     for (auto box = first; ++box;)
@@ -1685,7 +1685,7 @@ bool RenderText::hasRenderedText() const
 
 int RenderText::previousOffset(int current) const
 {
-    if (m_containsOnlyASCII || text().is8Bit())
+    if (m_containsOnlyASCII || is8Bit(text()))
         return current - 1;
 
     CachedTextBreakIterator iterator(text(), { }, TextBreakIterator::CaretMode { }, nullAtom());
@@ -1700,7 +1700,7 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
 
 int RenderText::nextOffset(int current) const
 {
-    if (m_containsOnlyASCII || text().is8Bit())
+    if (m_containsOnlyASCII || is8Bit(text()))
         return current + 1;
 
     CachedTextBreakIterator iterator(text(), { }, TextBreakIterator::CaretMode { }, nullAtom());
@@ -1720,7 +1720,7 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTyp
 
 StringView RenderText::stringView(unsigned start, std::optional<unsigned> stop) const
 {
-    unsigned destination = stop.value_or(text().length());
+    unsigned destination = stop.value_or(WTF::length(text()));
     ASSERT(start <= length());
     ASSERT(destination <= length());
     ASSERT(start <= destination);

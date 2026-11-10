@@ -186,7 +186,7 @@ void webkit_dom_html_mod_element_set_cite(WebKitDOMHTMLModElement* self, const g
     g_return_if_fail(WEBKIT_DOM_IS_HTML_MOD_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLModElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_mod_element_get_date_time(WebKitDOMHTMLModElement* self)
@@ -204,7 +204,7 @@ void webkit_dom_html_mod_element_set_date_time(WebKitDOMHTMLModElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_MOD_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLModElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::datetimeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::datetimeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -79,7 +79,7 @@ static TemporalDuration* createTemporalDurationImpl(JSGlobalObject* globalObject
 
     // Step 1: If IsValidDuration(...) is false, throw a RangeError exception.
     if (!ISO8601::isValidDuration(duration)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
+        throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_si);
         return { };
     }
 
@@ -136,7 +136,7 @@ toTemporalPartialDurationRecord(JSGlobalObject* globalObject, JSObject* duration
         double v = value.toNumber(globalObject) + 0.0;
         RETURN_IF_EXCEPTION(scope, std::nullopt);
         if (!isInteger(v)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_s);
+            throwRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_si);
             return std::nullopt;
         }
         result[static_cast<size_t>(unit)] = v;
@@ -181,7 +181,7 @@ ISO8601::Duration TemporalDuration::toTemporalDurationRecord(JSGlobalObject* glo
 
         // Step 15: Return ! CreateTemporalDuration(...). IsValidDuration check below.
         if (!ISO8601::isValidDuration(result)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
+            throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_si);
             return { };
         }
         return result;
@@ -194,7 +194,7 @@ ISO8601::Duration TemporalDuration::toTemporalDurationRecord(JSGlobalObject* glo
     }
 
     // Step 2.b: Return ? ParseTemporalDurationString(item).
-    String string = itemValue.toWTFString(globalObject);
+    RefPtr<StringImpl> string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto parsed = ISO8601::parseDuration(string);
@@ -205,7 +205,7 @@ ISO8601::Duration TemporalDuration::toTemporalDurationRecord(JSGlobalObject* glo
     }
 
     if (!ISO8601::isValidDuration(*parsed)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
+        throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_si);
         return { };
     }
     return *parsed;
@@ -282,7 +282,7 @@ static RelativeToRecord getTemporalRelativeToOption(JSGlobalObject* globalObject
 
     // Steps 3-4: offsetBehaviour = ~option~; matchBehaviour = ~match-exactly~.
     RelativeToParts parts;
-    String string; // Set by step 6 only; used for its error messages.
+    RefPtr<StringImpl> string; // Set by step 6 only; used for its error messages.
 
     // Step 5: If value is an Object, then
     if (relativeToValue.isObject()) {
@@ -385,7 +385,7 @@ static RelativeToRecord getTemporalRelativeToOption(JSGlobalObject* globalObject
     if (!parts.timeZone) {
         // CreateTemporalDate Step 1. Step 5.f already made the identical check via CalendarDateFromFields Step 3, so only a step 6 string can reach the throw.
         if (!ISO8601::isDateTimeWithinLimits(parts.isoDate.year(), parts.isoDate.month(), parts.isoDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-            ASSERT(!string.isNull());
+            ASSERT(string);
             throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(200, string), "' is outside the representable range for a relativeTo parameter"_s));
             return { };
         }
@@ -477,7 +477,7 @@ JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne
     }
 
     if (!relativeTo.plainRelativeTo) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Cannot compare a duration of years, months, or weeks without a relativeTo option"_s);
+        throwRangeError(globalObject, scope, "Cannot compare a duration of years, months, or weeks without a relativeTo option"_si);
         return { };
     }
 
@@ -572,7 +572,7 @@ ISO8601::Duration TemporalDuration::addDurations(JSGlobalObject* globalObject, J
 
     // Step 6: If IsCalendarUnit(largestUnit) is true, throw a RangeError exception.
     if (isCalendarUnit(largestUnit)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Cannot add or subtract durations with calendar units (years, months, or weeks)"_s);
+        throwRangeError(globalObject, scope, "Cannot add or subtract durations with calendar units (years, months, or weeks)"_si);
         return { };
     }
 
@@ -587,7 +587,7 @@ ISO8601::Duration TemporalDuration::addDurations(JSGlobalObject* globalObject, J
     //   AddTimeDuration is `a + b` followed by an overflow check against maxTimeDuration.
     auto timeResult = d1.time() + d2.time();
     if (absInt128(timeResult) > ISO8601::InternalDuration::maxTimeDuration) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Sum of durations exceeds maximum time duration"_s);
+        throwRangeError(globalObject, scope, "Sum of durations exceeds maximum time duration"_si);
         return { };
     }
 
@@ -633,7 +633,7 @@ ISO8601::InternalDuration TemporalDuration::round(JSGlobalObject* globalObject, 
     std::optional<Int128> timeDuration = ISO8601::roundTimeDuration(globalObject, internalDuration.time(), increment, unit, mode);
     RETURN_IF_EXCEPTION(scope, { });
     if (!timeDuration) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Rounded duration exceeds maximum time duration"_s);
+        throwRangeError(globalObject, scope, "Rounded duration exceeds maximum time duration"_si);
         return { };
     }
     return ISO8601::InternalDuration::combineDateAndTimeDuration(ISO8601::Duration(), timeDuration.value());
@@ -740,7 +740,7 @@ static std::optional<double> differencePlainDateTimeWithTotal(JSGlobalObject* gl
             target.targetTime.hour(), target.targetTime.minute(), target.targetTime.second(),
             target.targetTime.millisecond(), target.targetTime.microsecond(), target.targetTime.nanosecond());
     if (dtOutOfRange) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_si);
         return std::nullopt;
     }
 
@@ -783,7 +783,7 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
         RETURN_IF_EXCEPTION(scope, { });
         smallest = temporalUnitType(string);
         if (!smallest) [[unlikely]] {
-            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_si);
             return { };
         }
     } else {
@@ -852,13 +852,13 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
 
     // Step 22: If smallestUnitPresent is false and largestUnitPresent is false, throw a RangeError.
     if (!smallestUnitPresent && !largestUnitPresent) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Cannot round without a smallestUnit or largestUnit option"_s);
+        throwRangeError(globalObject, scope, "Cannot round without a smallestUnit or largestUnit option"_si);
         return { };
     }
 
     // Step 23: If LargerOfTwoTemporalUnits(largestUnit, smallestUnit) is not largestUnit, throw a RangeError.
     if (smallestUnit < largestUnit) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
+        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_si);
         return { };
     }
 
@@ -872,7 +872,7 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
 
     // Step 26: If roundingIncrement > 1, largestUnit ≠ smallestUnit, and smallestUnit is a date unit, throw a RangeError.
     if (roundingIncrement > 1 && largestUnit != smallestUnit && smallestUnit <= TemporalUnit::Day) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Incompatible rounding increment and largest/smallest units"_s);
+        throwRangeError(globalObject, scope, "Incompatible rounding increment and largest/smallest units"_si);
         return { };
     }
 
@@ -951,7 +951,7 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
 
     // Step 29: If IsCalendarUnit(existingLargestUnit) or IsCalendarUnit(largestUnit), throw RangeError.
     if (years() || months() || weeks() || isCalendarUnit(largestUnit)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Cannot round a duration of years, months, or weeks without a relativeTo option"_s);
+        throwRangeError(globalObject, scope, "Cannot round a duration of years, months, or weeks without a relativeTo option"_si);
         return { };
     }
 
@@ -982,7 +982,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     // Steps 1-2: branding done by caller.
     // Steps 3-7: totalOf may be a String (treated as { unit }) or an options object.
     JSObject* options = nullptr;
-    String unitString;
+    RefPtr<StringImpl> unitString;
     if (optionsValue.isString()) {
         unitString = optionsValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, 0);
@@ -1004,7 +1004,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     // Step 12: ValidateTemporalUnitValue(unit, ~datetime~).
     auto unitType = temporalUnitType(unitString);
     if (!unitType) [[unlikely]] {
-        throwRangeError(globalObject, scope, "unit is an invalid Temporal unit"_s);
+        throwRangeError(globalObject, scope, "unit is an invalid Temporal unit"_si);
         return 0;
     }
     TemporalUnit unit = unitType.value();
@@ -1015,7 +1015,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     if (!hasRelativeTo) {
         // Step 13.a: reject calendar units.
         if (isCalendarUnit(unit) || years() || months() || weeks()) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Cannot total a duration of years, months, or weeks without a relativeTo option"_s);
+            throwRangeError(globalObject, scope, "Cannot total a duration of years, months, or weeks without a relativeTo option"_si);
             return 0;
         }
         // Steps 13.b-c: ToInternalDurationRecordWith24HourDays + TotalTimeDuration.
@@ -1055,7 +1055,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.tostring
-String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
+RefPtr<StringImpl> TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1084,7 +1084,7 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
     std::optional<TemporalUnit> smallestUnit = std::get<std::optional<TemporalUnit>>(smallestUnitResult);
     // Step 9: If smallestUnit is ~hour~ or ~minute~, throw a RangeError exception.
     if (smallestUnit == TemporalUnit::Hour || smallestUnit == TemporalUnit::Minute) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit must not be \"minute\" or larger"_s);
+        throwRangeError(globalObject, scope, "smallestUnit must not be \"minute\" or larger"_si);
         return { };
     }
 
@@ -1142,7 +1142,7 @@ static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, 
     auto* bigint = JSBigInt::createFrom(globalObject, absValue);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String string = bigint->toString(globalObject, 10);
+    RefPtr<StringImpl> string = bigint->toString(globalObject, 10);
     RETURN_IF_EXCEPTION(scope, void());
 
     builder.append(string);
@@ -1150,7 +1150,7 @@ static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, 
 
 // TemporalDurationToString ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationtostring
-String TemporalDuration::toString(JSGlobalObject* globalObject, const ISO8601::Duration& duration, std::tuple<Precision, unsigned> precision)
+RefPtr<StringImpl> TemporalDuration::toString(JSGlobalObject* globalObject, const ISO8601::Duration& duration, std::tuple<Precision, unsigned> precision)
 {
     ASSERT(std::get<0>(precision) == Precision::Auto || std::get<1>(precision) < 10);
 

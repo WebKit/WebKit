@@ -46,7 +46,7 @@ private:
     {
         GRefPtr<GVariant> data = webkitWebContextInitializeWebProcessExtensions(m_webContext);
         GUniquePtr<gchar> dataString(g_variant_print(data.get(), TRUE));
-        return API::String::create(String::fromUTF8(dataString.get()));
+        return API::String::create(StringImpl::fromUTF8(dataString.get()));
     }
 
     WebKitWebContext* m_webContext;

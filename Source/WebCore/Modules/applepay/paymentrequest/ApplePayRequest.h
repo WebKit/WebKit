@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct ApplePayRequest : public ApplePayRequestBase {
     uint32_t version;
-    String merchantIdentifier;
+    RefPtr<StringImpl> merchantIdentifier;
 };
 
 } // namespace WebCore

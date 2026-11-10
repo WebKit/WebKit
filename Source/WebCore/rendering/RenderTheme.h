@@ -123,18 +123,18 @@ public:
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for macOS.
 
-    virtual String extraDefaultStyleSheet() { return String(); }
+    virtual RefPtr<StringImpl> extraDefaultStyleSheet() { return nullptr; }
 #if ENABLE(VIDEO)
-    virtual Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) { return { }; }
-    virtual Vector<String, 2> mediaControlsScripts() { return { }; }
-    virtual RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) { return nullptr; }
-    virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
-    virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
-    virtual String youTubeQuirkScript() { return { }; }
-    virtual String cnnQuirkScript() { return { }; }
+    virtual Vector<RefPtr<StringImpl>, 2> mediaControlsStyleSheets(const HTMLMediaElement&) { return { }; }
+    virtual Vector<RefPtr<StringImpl>, 2> mediaControlsScripts() { return { }; }
+    virtual RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(StringImpl*, StringImpl*) { return nullptr; }
+    virtual RefPtr<StringImpl> mediaControlsBase64StringForIconNameAndType(StringImpl*, StringImpl*) { return nullptr; }
+    virtual RefPtr<StringImpl> mediaControlsFormattedStringForDuration(double) { return nullptr; }
+    virtual RefPtr<StringImpl> youTubeQuirkScript() { return { }; }
+    virtual RefPtr<StringImpl> cnnQuirkScript() { return { }; }
 #endif // ENABLE(VIDEO)
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual String attachmentStyleSheet() const;
+    virtual RefPtr<StringImpl> attachmentStyleSheet() const;
 #endif
 
     virtual LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect& paintRect) const { return paintRect; }
@@ -254,8 +254,8 @@ public:
     virtual bool popsMenuByArrowKeys() const { return false; }
     virtual bool popsMenuBySpaceOrReturn() const { return false; }
 
-    virtual String fileListDefaultLabel(bool multipleFilesAllowed) const;
-    virtual String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const;
+    virtual RefPtr<StringImpl> fileListDefaultLabel(bool multipleFilesAllowed) const;
+    virtual RefPtr<StringImpl> fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const;
 
     enum class FileUploadDecorations : bool { SingleFile, MultipleFiles };
     virtual void paintFileUploadIconDecorations(const RenderElement& /*inputRenderer*/, const RenderElement& /*buttonRenderer*/, const PaintInfo&, const FloatRect&, Icon*, FileUploadDecorations) { }

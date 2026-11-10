@@ -113,7 +113,7 @@ void listenForTimeZoneChangeNotifications()
         // that is thread-default when this first runs (the first DateCache
         // construction drives it), so this must be reached on the main thread
         // for its run loop to dispatch the notifications.
-        localtimeWatcher() = makeUnique<FilePathWatcher>("/etc/localtime"_s, [] {
+        localtimeWatcher() = makeUnique<FilePathWatcher>("/etc/localtime"_si, [] {
             timeZoneDidChange();
         });
         // Async proxy construction so we don't block on timedated being

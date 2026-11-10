@@ -44,7 +44,7 @@ constexpr size_t maximumPromptAdditionalActions = 2;
 struct MediaPermissionPromptAdditionalAction {
     enum class Decision : bool { Deny, Allow };
 
-    String title;
+    RefPtr<StringImpl> title;
     Decision decision { Decision::Deny };
 #if PLATFORM(COCOA)
     RetainPtr<_WKMediaCapturePermissionAction> source;
@@ -54,10 +54,10 @@ struct MediaPermissionPromptAdditionalAction {
 // A null string means the prompt keeps the text WebKit would have used. Informative text has no WebKit
 // default, so a null one means none is shown.
 struct MediaPermissionPromptCustomization {
-    String messageText;
-    String informativeText;
-    String allowButtonTitle;
-    String denyButtonTitle;
+    RefPtr<StringImpl> messageText;
+    RefPtr<StringImpl> informativeText;
+    RefPtr<StringImpl> allowButtonTitle;
+    RefPtr<StringImpl> denyButtonTitle;
     Vector<MediaPermissionPromptAdditionalAction> additionalActions;
 };
 
@@ -68,36 +68,36 @@ struct MediaPermissionPromptResult {
 #if PLATFORM(COCOA)
     RetainPtr<_WKMediaCapturePermissionAction> chosenAction;
 #endif
-    String selectedAudioDeviceUID;
-    String selectedVideoDeviceUID;
+    RefPtr<StringImpl> selectedAudioDeviceUID;
+    RefPtr<StringImpl> selectedVideoDeviceUID;
 };
 
 // No button means the prompt closed without an answer. A null device ID doesn't change the prompt's selection.
 struct MediaPermissionPromptResponseForTesting {
     std::optional<size_t> buttonIndex;
-    String cameraPersistentID;
-    String microphonePersistentID;
+    RefPtr<StringImpl> cameraPersistentID;
+    RefPtr<StringImpl> microphonePersistentID;
 };
 
 // Lets an API test drive the capture permission prompt.
 class MediaPermissionPromptForTesting : public RefCounted<MediaPermissionPromptForTesting> {
 public:
     struct Device {
-        String persistentID;
-        String label;
+        RefPtr<StringImpl> persistentID;
+        RefPtr<StringImpl> label;
     };
 
     virtual ~MediaPermissionPromptForTesting() = default;
 
-    const String& title() const LIFETIME_BOUND { return m_title; }
-    const String& informativeText() const LIFETIME_BOUND { return m_informativeText; }
-    const Vector<String>& buttonTitles() const LIFETIME_BOUND { return m_buttonTitles; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
+    const RefPtr<StringImpl>& informativeText() const LIFETIME_BOUND { return m_informativeText; }
+    const Vector<RefPtr<StringImpl>>& buttonTitles() const LIFETIME_BOUND { return m_buttonTitles; }
     bool showsPreview() const { return m_showsPreview; }
 
     virtual Vector<Device> cameras() const = 0;
     virtual Vector<Device> microphones() const = 0;
-    virtual String selectedCameraID() const = 0;
-    virtual String selectedMicrophoneID() const = 0;
+    virtual RefPtr<StringImpl> selectedCameraID() const = 0;
+    virtual RefPtr<StringImpl> selectedMicrophoneID() const = 0;
     virtual unsigned audioLevelUpdateCount() const = 0;
     virtual unsigned previewLayerCount() const = 0;
     virtual bool hasPreviewLayer() const = 0;
@@ -107,7 +107,7 @@ public:
     virtual void respond(MediaPermissionPromptResponseForTesting&&) = 0;
 
 protected:
-    MediaPermissionPromptForTesting(String&& title, String&& informativeText, Vector<String>&& buttonTitles, bool showsPreview)
+    MediaPermissionPromptForTesting(RefPtr<StringImpl>&& title, RefPtr<StringImpl>&& informativeText, Vector<RefPtr<StringImpl>>&& buttonTitles, bool showsPreview)
         : m_title(WTF::move(title))
         , m_informativeText(WTF::move(informativeText))
         , m_buttonTitles(WTF::move(buttonTitles))
@@ -116,9 +116,9 @@ protected:
     }
 
 private:
-    const String m_title;
-    const String m_informativeText;
-    const Vector<String> m_buttonTitles;
+    const RefPtr<StringImpl> m_title;
+    const RefPtr<StringImpl> m_informativeText;
+    const Vector<RefPtr<StringImpl>> m_buttonTitles;
     const bool m_showsPreview { false };
 };
 

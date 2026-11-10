@@ -434,7 +434,7 @@ bool DocumentLoader::isLoading() const
 static void hideRedirectTimingForNoReferrerNavigation(const DocumentLoader& loader, NetworkLoadMetrics& metrics)
 {
     // https://html.spec.whatwg.org/C#initialise-the-document-object step 15.3 resets redirectCount in case of "no-referrer".
-    if (loader.triggeringAction().requester() && loader.request().httpReferrer().isEmpty())
+    if (loader.triggeringAction().requester() && isEmpty(loader.request().httpReferrer()))
         metrics.redirectCount = 0;
 }
 
@@ -497,7 +497,7 @@ void DocumentLoader::finishedLoading()
                 MemoryCache::singleton().remove(*resource);
         }
         Ref document = *frame->document();
-        FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), WTF::move(request), { }, InitiatedByMainFrame::Unknown };
+        FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), WTF::move(request), nullptr, InitiatedByMainFrame::Unknown };
         frameLoadRequest.setIsRequestFromClientOrUserInput();
         frameLoadRequest.setShouldTreatAsContinuingLoad(ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
         if (auto navigationID = takeNavigationID())
@@ -555,17 +555,17 @@ void DocumentLoader::finishedLoading()
 
 static bool isRedirectToGetAfterPost(const ResourceRequest& oldRequest, const ResourceRequest& newRequest)
 {
-    return oldRequest.httpMethod() == "POST"_s && newRequest.httpMethod() == "GET"_s;
+    return equal(oldRequest.httpMethod(), "POST"_s) && equal(newRequest.httpMethod(), "GET"_s);
 }
 
 bool DocumentLoader::isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
-    if (newRequest.httpMethod() == "POST"_s)
+    if (equal(newRequest.httpMethod(), "POST"_s))
         return true;
 
     int status = redirectResponse.httpStatusCode();
     if (((status >= 301 && status <= 303) || status == 307)
-        && m_originalRequest.httpMethod() == "POST"_s)
+        && equal(m_originalRequest.httpMethod(), "POST"_s))
         return true;
 
     return false;
@@ -589,7 +589,7 @@ void DocumentLoader::handleSubstituteDataLoadNow()
 
     ResourceResponse response = m_substituteData.response();
     if (response.url().isEmpty())
-        response = ResourceResponse(URL { m_request.url() }, String { m_substituteData.mimeType() }, m_substituteData.content()->size(), String { m_substituteData.textEncoding() });
+        response = ResourceResponse(URL { m_request.url() }, RefPtr<StringImpl> { m_substituteData.mimeType() }, m_substituteData.content()->size(), RefPtr<StringImpl> { m_substituteData.textEncoding() });
 
 #if ENABLE(CONTENT_EXTENSIONS)
     RefPtr frame = m_frame.get();
@@ -836,8 +836,8 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             // the authoritative UA here so all sources — including URL-dependent
             // quirks — take effect on the redirected request.
             if (RefPtr frameLoader = this->frameLoader()) {
-                String userAgent = frameLoader->userAgent(request.url());
-                if (!userAgent.isEmpty() && userAgent != request.httpUserAgent())
+                RefPtr<StringImpl> userAgent = frameLoader->userAgent(request.url());
+                if (!isEmpty(userAgent) && !equal(userAgent, request.httpUserAgent()))
                     request.setHTTPUserAgent(WTF::move(userAgent));
             }
             break;
@@ -935,7 +935,7 @@ static URL microsoftTeamsRedirectURL()
 
 bool DocumentLoader::shouldClearContentSecurityPolicyForResponse(const ResourceResponse& response) const
 {
-    return response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull() && !m_isLoadingMultipartContent;
+    return !response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy) && !m_isLoadingMultipartContent;
 }
 
 void DocumentLoader::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
@@ -1041,8 +1041,8 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
         }
 
         if (frame && !contentSecurityPolicy.overridesXFrameOptions()) {
-            String frameOptions = response.httpHeaderFields().get(HTTPHeaderName::XFrameOptions);
-            if (!frameOptions.isNull()) {
+            RefPtr<StringImpl> frameOptions = response.httpHeaderFields().get(HTTPHeaderName::XFrameOptions);
+            if (frameOptions) {
                 if (protect(frameLoader())->shouldInterruptLoadForXFrameOptions(frameOptions, url, identifier)) {
                     auto message = makeString("Refused to display '"_s, url.stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, frameOptions, "'."_s);
                     protect(frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier.toUInt64());
@@ -1124,8 +1124,8 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
 // because they can claim to be from any domain and thus avoid cross-domain security checks (4120255, 45524528, 47610130).
 bool DocumentLoader::disallowWebArchive() const
 {
-    String mimeType = m_response.mimeType();
-    if (mimeType.isNull() || !MIMETypeRegistry::isWebArchiveMIMEType(mimeType))
+    RefPtr<StringImpl> mimeType = m_response.mimeType();
+    if (!mimeType || !MIMETypeRegistry::isWebArchiveMIMEType(mimeType))
         return false;
 
 #if USE(QUICK_LOOK)
@@ -1216,7 +1216,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy, CompletionH
             } else
                 protect(frameLoader()->client())->convertMainResourceLoadToDownload(this, m_request, m_response);
         } else if (RefPtr document = frame->document())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_si);
 
         // The main resource might be loading from the memory cache, or its loader might have gone missing.
         if (RefPtr loader = mainResourceLoader()) {
@@ -1462,8 +1462,8 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         }
 
         DocumentWriter::IsEncodingUserChosen userChosen;
-        String encoding;
-        if (overrideEncoding().isNull()) {
+        RefPtr<StringImpl> encoding;
+        if (!overrideEncoding()) {
             userChosen = DocumentWriter::IsEncodingUserChosen::No;
             encoding = response().textEncodingName();
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -1818,7 +1818,7 @@ void DocumentLoader::addArchiveResource(Ref<ArchiveResource>&& resource)
     m_archiveResourceCollection->addResource(WTF::move(resource));
 }
 
-RefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName, const URL& url)
+RefPtr<Archive> DocumentLoader::popArchiveForSubframe(StringImpl* frameName, const URL& url)
 {
     return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName, url) : nullptr;
 }
@@ -1958,7 +1958,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
 #if ENABLE(WEB_ARCHIVE)
     // The idea of WebArchiveDebugMode is that we should fail instead of trying to fetch from the network.
     // Returning true ensures the caller will not try to fetch from the network.
-    if (m_frame->settings().webArchiveDebugModeEnabled() && responseMIMEType() == "application/x-webarchive"_s)
+    if (m_frame->settings().webArchiveDebugModeEnabled() && equal(responseMIMEType(), "application/x-webarchive"_s))
         return true;
 #endif
 
@@ -2037,7 +2037,7 @@ URL DocumentLoader::documentURL() const
 #if PLATFORM(IOS_FAMILY)
 
 // FIXME: This method seems to violate the encapsulation of this class.
-void DocumentLoader::setResponseMIMEType(const String& responseMIMEType)
+void DocumentLoader::setResponseMIMEType(StringImpl* responseMIMEType)
 {
     m_response.setMimeType(extractMIMETypeFromMediaType(responseMIMEType));
 }
@@ -2167,8 +2167,8 @@ bool DocumentLoader::maybeLoadEmpty()
             frameLoaderClient->dispatchDidChangeProvisionalURL();
     }
 
-    String mimeType = shouldLoadEmpty ? textHTMLContentTypeAtom() : frameLoaderClient->generatedMIMETypeForURLScheme(m_request.url().protocol());
-    m_response = ResourceResponse(URL { m_request.url() }, WTF::move(mimeType), 0, "UTF-8"_s);
+    RefPtr<StringImpl> mimeType = shouldLoadEmpty ? textHTMLContentTypeAtom() : frameLoaderClient->generatedMIMETypeForURLScheme(m_request.url().protocol());
+    m_response = ResourceResponse(URL { m_request.url() }, WTF::move(mimeType), 0, "UTF-8"_si);
 
     bool isDisplayingInitialEmptyDocument = frameLoader()->stateMachine().isDisplayingInitialEmptyDocument();
     if (!isDisplayingInitialEmptyDocument) {
@@ -2187,7 +2187,7 @@ bool DocumentLoader::maybeLoadEmpty()
 
 void DocumentLoader::loadErrorDocument()
 {
-    m_response = ResourceResponse(URL { m_request.url() }, String { textHTMLContentTypeAtom() }, 0, "UTF-8"_s);
+    m_response = ResourceResponse(URL { m_request.url() }, RefPtr<StringImpl> { textHTMLContentTypeAtom() }, 0, "UTF-8"_si);
     SetForScope isInFinishedLoadingOfEmptyDocument { m_isInFinishedLoadingOfEmptyDocument, true };
 
     commitIfReady();
@@ -2414,7 +2414,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
     ASSERT(frame);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (m_mainResource->errorOccurred() && frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
+    if (m_mainResource->errorOccurred() && frame->page() && equal(m_mainResource->resourceError().domain(), ContentExtensions::WebKitContentBlockerDomain)) {
         DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Blocked by content blocker error");
         cancelMainResourceLoad(protect(frameLoader())->blockedByContentBlockerError(m_request));
         return;
@@ -2543,7 +2543,7 @@ void DocumentLoader::startIconLoading()
 
     auto findResult = m_linkIcons.findIf([](auto& icon) { return icon.type == LinkIconType::Favicon; });
     if (findResult == notFound && document->url().protocolIsInHTTPFamily())
-        m_linkIcons.append({ document->encodingParseURL("/favicon.ico"_s), LinkIconType::Favicon, String(), std::nullopt, { } });
+        m_linkIcons.append({ document->encodingParseURL("/favicon.ico"_si), LinkIconType::Favicon, nullString(), std::nullopt, { } });
 
     if (!m_linkIcons.size())
         return;
@@ -2661,16 +2661,16 @@ void DocumentLoader::becomeMainResourceClient()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void DocumentLoader::addPendingContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
+void DocumentLoader::addPendingContentExtensionSheet(StringImpl* identifier, StyleSheetContents& sheet)
 {
     ASSERT(!m_gotFirstByte);
     m_pendingNamedContentExtensionStyleSheets.set(identifier, sheet);
 }
 
-void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID)
+void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(StringImpl* identifier, StringImpl* selector, uint32_t selectorID)
 {
     ASSERT(!m_gotFirstByte);
-    auto addResult = m_pendingContentExtensionDisplayNoneSelectors.add(identifier, Vector<std::pair<String, uint32_t>>());
+    auto addResult = m_pendingContentExtensionDisplayNoneSelectors.add(identifier, Vector<std::pair<RefPtr<StringImpl>, uint32_t>>());
     addResult.iterator->value.append(std::make_pair(selector, selectorID));
 }
 #endif
@@ -2695,7 +2695,7 @@ PreviewConverter* DocumentLoader::previewConverter() const
 
 #endif
 
-void DocumentLoader::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, unsigned long requestIdentifier)
+void DocumentLoader::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, StringImpl* message, unsigned long requestIdentifier)
 {
     protect(protect(frame())->document())->addConsoleMessage(messageSource, messageLevel, message, requestIdentifier);
 }
@@ -2716,7 +2716,7 @@ void DocumentLoader::cancelMainResourceLoadForContentFilter(const ResourceError&
     cancelMainResourceLoad(error);
 }
 
-ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler&& unblockHandler, String&& unblockRequestDeniedScript)
+ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler&& unblockHandler, RefPtr<StringImpl>&& unblockRequestDeniedScript)
 {
     return handleContentFilterDidBlock(WTF::move(unblockHandler), WTF::move(unblockRequestDeniedScript));
 }
@@ -2728,7 +2728,7 @@ void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& bl
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-String DocumentLoader::webContentRestrictionsConfigurationPath() const
+RefPtr<StringImpl> DocumentLoader::webContentRestrictionsConfigurationPath() const
 {
     return emptyString();
 }
@@ -2749,11 +2749,11 @@ URL DocumentLoader::mainDocumentURL() const
 #endif // ENABLE(CONTENT_FILTERING)
 
 #if ENABLE(CONTENT_FILTERING)
-ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHandler&& unblockHandler, String&& unblockRequestDeniedScript)
+ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHandler&& unblockHandler, RefPtr<StringImpl>&& unblockRequestDeniedScript)
 {
     unblockHandler.setUnreachableURL(documentURL());
-    if (!unblockRequestDeniedScript.isEmpty() && frame()) {
-        unblockHandler.wrapWithDecisionHandler([scriptController = WeakPtr { frame()->script() }, script = WTF::move(unblockRequestDeniedScript).isolatedCopy()](bool unblocked) {
+    if (!isEmpty(unblockRequestDeniedScript) && frame()) {
+        unblockHandler.wrapWithDecisionHandler([scriptController = WeakPtr { frame()->script() }, script = isolatedCopy(WTF::move(unblockRequestDeniedScript))](bool unblocked) {
             if (!unblocked && scriptController) {
                 // FIXME: This probably needs to figure out if the origin is considered tainted.
                 protect(scriptController)->executeScriptIgnoringException(script, JSC::SourceTaintedOrigin::Untainted);
@@ -2775,7 +2775,7 @@ bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const Resourc
         return true;
     if (contentFilterInDocumentLoader())
         return false;
-    return m_blockedByContentFilter && m_blockedError.errorCode() == error.errorCode() && m_blockedError.domain() == error.domain();
+    return m_blockedByContentFilter && m_blockedError.errorCode() == error.errorCode() && equal(m_blockedError.domain(), error.domain());
 }
 
 void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceError& error)
@@ -2789,9 +2789,9 @@ void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceErr
 
 #endif // ENABLE(CONTENT_FILTERING)
 
-void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>& patterns)
+void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>& patterns)
 {
-    MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> parsedPatternMap;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Vector<UserContentURLPattern>> parsedPatternMap;
 
     for (auto& pair : patterns) {
         auto patternVector = WTF::compactMap(pair.value, [](auto& patternString) -> std::optional<UserContentURLPattern> {
@@ -2806,7 +2806,7 @@ void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String
     m_activeContentRuleListActionPatterns = WTF::move(parsedPatternMap);
 }
 
-bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL& url) const
+bool DocumentLoader::allowsActiveContentRuleListActionsForURL(StringImpl* contentRuleListIdentifier, const URL& url) const
 {
     for (const auto& pattern : m_activeContentRuleListActionPatterns.get(contentRuleListIdentifier)) {
         if (pattern.matches(url))

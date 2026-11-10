@@ -40,7 +40,7 @@
 <%-   end -%>
 <%-   if @setting.defaultValues.size() == 1 -%>
 <%-     if @setting.type == "String" and @setting.defaultValues['default'][-1] == "\"" -%>
-#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>_s
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>_si
 <%-     else -%>
 #define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>
 <%-     end -%>
@@ -235,7 +235,7 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
         return;
     }
 <%- end -%>
-    if (m_values.<%= @setting.name %> == <%= @setting.name %>)
+    if (<%= @setting.equalityExpression("m_values.#{@setting.name}", @setting.name) %>)
         return;
     m_values.<%= @setting.name %> = <%= @setting.name %>;
 <%- if @setting.onChange -%>
@@ -266,7 +266,7 @@ void Settings::<%= @setting.setterFunctionName %>InspectorOverride(std::optional
         m_values.<%= @setting.name %>BeforeInspectorOverride = std::nullopt;
     }
 <%- if @setting.onChange -%>
-    if (m_values.<%= @setting.name %> != previousValue)
+    if (<%= @setting.inequalityExpression("m_values.#{@setting.name}", "previousValue") %>)
         <%= @setting.onChange %>();
 <%- end -%>
 <%- if @setting.condition -%>

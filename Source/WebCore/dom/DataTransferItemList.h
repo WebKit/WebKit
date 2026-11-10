@@ -63,13 +63,13 @@ public:
     unsigned length() const;
     RefPtr<DataTransferItem> item(unsigned index);
     bool isSupportedPropertyIndex(unsigned index);
-    ExceptionOr<RefPtr<DataTransferItem>> add(Document&, const String& data, const String& type);
+    ExceptionOr<RefPtr<DataTransferItem>> add(Document&, StringImpl* data, StringImpl* type);
     RefPtr<DataTransferItem> add(Ref<File>&&);
     ExceptionOr<void> remove(unsigned index);
     void clear();
 
-    void didClearStringData(const String& type);
-    void didSetStringData(const String& type);
+    void didClearStringData(StringImpl* type);
+    void didSetStringData(StringImpl* type);
     bool hasItems() const { return m_items.has_value(); }
     const Vector<Ref<DataTransferItem>>& items() const
     {

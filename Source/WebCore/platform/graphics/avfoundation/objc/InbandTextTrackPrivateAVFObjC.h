@@ -59,8 +59,8 @@ public:
     bool isMainProgramContent() const final;
     bool isEasyToRead() const final;
     bool isMachineGenerated() const final;
-    String label() const final;
-    String language() const final;
+    RefPtr<StringImpl> label() const final;
+    RefPtr<StringImpl> language() const final;
     bool isDefault() const final;
 
     void disconnect() final;
@@ -76,8 +76,8 @@ protected:
     bool isInbandTextTrackPrivateAVFObjC() const final { return true; }
 
 private:
-    String mediaType() const;
-    bool hasMediaCharacteristic(const String&) const;
+    RefPtr<StringImpl> mediaType() const;
+    bool hasMediaCharacteristic(StringImpl*) const;
 
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;
     RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;

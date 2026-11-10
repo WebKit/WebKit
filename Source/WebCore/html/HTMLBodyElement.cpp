@@ -81,12 +81,12 @@ bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& na
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::backgroundAttr: {
-        auto url = value.string().trim(isASCIIWhitespace);
-        if (!url.isEmpty())
+        auto url = trim(value, isASCIIWhitespace);
+        if (!isEmpty(url))
             style.setProperty(CSSProperty(CSSPropertyID::BackgroundImage, CSSImageValue::create(protect(document())->encodingParseURL(url), localName())));
         break;
     }
@@ -112,19 +112,19 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     }
 }
 
-const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
+const RefPtr<AtomStringImpl>& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
 {
     static NeverDestroyed map = [] {
         EventHandlerNameMap map;
-        JSHTMLBodyElement::forEachWindowEventHandlerContentAttribute([&] (const AtomString& attributeName, const AtomString& eventName) {
-            map.add(attributeName.impl(), eventName);
+        JSHTMLBodyElement::forEachWindowEventHandlerContentAttribute([&] (AtomStringImpl* attributeName, AtomStringImpl* eventName) {
+            map.add(attributeName, eventName);
         });
         return map;
     }();
     return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
-void HTMLBodyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLBodyElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     Ref document = this->document();
     switch (name.nodeName()) {
@@ -158,7 +158,7 @@ void HTMLBodyElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     }
 
-    if (auto& eventName = eventNameForWindowEventHandlerAttribute(name); !eventName.isNull()) {
+    if (auto& eventName = eventNameForWindowEventHandlerAttribute(name); eventName) {
         document->setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorldSingleton());
         return;
     }
@@ -192,10 +192,10 @@ void HTMLBodyElement::postConnectionSteps()
     // without modifying the body element's attributes. Could also add code so we can respond to updates
     // to the frame element attributes.
     auto marginWidth = ownerElement->attributeWithoutSynchronization(marginwidthAttr);
-    if (!marginWidth.isNull())
+    if (marginWidth)
         setAttributeWithoutSynchronization(marginwidthAttr, marginWidth);
     auto marginHeight = ownerElement->attributeWithoutSynchronization(marginheightAttr);
-    if (!marginHeight.isNull())
+    if (marginHeight)
         setAttributeWithoutSynchronization(marginheightAttr, marginHeight);
 }
 

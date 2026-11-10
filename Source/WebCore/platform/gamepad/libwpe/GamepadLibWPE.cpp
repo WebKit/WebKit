@@ -49,8 +49,8 @@ GamepadLibWPE::GamepadLibWPE(struct wpe_gamepad_provider* provider, uintptr_t ga
 
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
 
-    m_id = String::fromUTF8(wpe_gamepad_get_id(m_gamepad.get()));
-    m_mapping = String::fromUTF8("standard");
+    m_id = StringImpl::fromUTF8(wpe_gamepad_get_id(m_gamepad.get()));
+    m_mapping = StringImpl::fromUTF8("standard");
 
     static const struct wpe_gamepad_client_interface s_client = {
         // button_event

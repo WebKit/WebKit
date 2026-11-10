@@ -221,124 +221,124 @@ static bool isKeypadEvent(WPARAM wParam, LPARAM lParam, WebEventType type)
     }
 }
 
-static String textFromEvent(WPARAM wparam, WebEventType type)
+static RefPtr<StringImpl> textFromEvent(WPARAM wparam, WebEventType type)
 {
     if (type != WebEventType::Char)
-        return String();
+        return nullptr;
 
     char16_t c = static_cast<char16_t>(wparam);
-    return span(c);
+    return StringImpl::create(span(c));
 }
 
-static String unmodifiedTextFromEvent(WPARAM wparam, WebEventType type)
+static RefPtr<StringImpl> unmodifiedTextFromEvent(WPARAM wparam, WebEventType type)
 {
     if (type != WebEventType::Char)
-        return String();
+        return nullptr;
 
     char16_t c = static_cast<char16_t>(wparam);
-    return span(c);
+    return StringImpl::create(span(c));
 }
 
-static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
+static RefPtr<StringImpl> keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
 {
     if (type == WebEventType::Char)
-        return String();
+        return nullptr;
 
     unsigned short keyCode = static_cast<unsigned short>(wparam);
     switch (keyCode) {
     case VK_MENU:
-        return "Alt"_s;
+        return "Alt"_si;
     case VK_CONTROL:
-        return "Control"_s;
+        return "Control"_si;
     case VK_SHIFT:
-        return "Shift"_s;
+        return "Shift"_si;
     case VK_CAPITAL:
-        return "CapsLock"_s;
+        return "CapsLock"_si;
     case VK_LWIN:
     case VK_RWIN:
-        return "Win"_s;
+        return "Win"_si;
     case VK_CLEAR:
-        return "Clear"_s;
+        return "Clear"_si;
     case VK_DOWN:
-        return "Down"_s;
+        return "Down"_si;
     case VK_END:
-        return "End"_s;
+        return "End"_si;
     case VK_RETURN:
-        return "Enter"_s;
+        return "Enter"_si;
     case VK_EXECUTE:
-        return "Execute"_s;
+        return "Execute"_si;
     case VK_F1:
-        return "F1"_s;
+        return "F1"_si;
     case VK_F2:
-        return "F2"_s;
+        return "F2"_si;
     case VK_F3:
-        return "F3"_s;
+        return "F3"_si;
     case VK_F4:
-        return "F4"_s;
+        return "F4"_si;
     case VK_F5:
-        return "F5"_s;
+        return "F5"_si;
     case VK_F6:
-        return "F6"_s;
+        return "F6"_si;
     case VK_F7:
-        return "F7"_s;
+        return "F7"_si;
     case VK_F8:
-        return "F8"_s;
+        return "F8"_si;
     case VK_F9:
-        return "F9"_s;
+        return "F9"_si;
     case VK_F10:
-        return "F11"_s;
+        return "F11"_si;
     case VK_F12:
-        return "F12"_s;
+        return "F12"_si;
     case VK_F13:
-        return "F13"_s;
+        return "F13"_si;
     case VK_F14:
-        return "F14"_s;
+        return "F14"_si;
     case VK_F15:
-        return "F15"_s;
+        return "F15"_si;
     case VK_F16:
-        return "F16"_s;
+        return "F16"_si;
     case VK_F17:
-        return "F17"_s;
+        return "F17"_si;
     case VK_F18:
-        return "F18"_s;
+        return "F18"_si;
     case VK_F19:
-        return "F19"_s;
+        return "F19"_si;
     case VK_F20:
-        return "F20"_s;
+        return "F20"_si;
     case VK_F21:
-        return "F21"_s;
+        return "F21"_si;
     case VK_F22:
-        return "F22"_s;
+        return "F22"_si;
     case VK_F23:
-        return "F23"_s;
+        return "F23"_si;
     case VK_F24:
-        return "F24"_s;
+        return "F24"_si;
     case VK_HELP:
-        return "Help"_s;
+        return "Help"_si;
     case VK_HOME:
-        return "Home"_s;
+        return "Home"_si;
     case VK_INSERT:
-        return "Insert"_s;
+        return "Insert"_si;
     case VK_LEFT:
-        return "Left"_s;
+        return "Left"_si;
     case VK_NEXT:
-        return "PageDown"_s;
+        return "PageDown"_si;
     case VK_PRIOR:
-        return "PageUp"_s;
+        return "PageUp"_si;
     case VK_PAUSE:
-        return "Pause"_s;
+        return "Pause"_si;
     case VK_SNAPSHOT:
-        return "PrintScreen"_s;
+        return "PrintScreen"_si;
     case VK_RIGHT:
-        return "Right"_s;
+        return "Right"_si;
     case VK_SCROLL:
-        return "Scroll"_s;
+        return "Scroll"_si;
     case VK_SELECT:
-        return "Select"_s;
+        return "Select"_si;
     case VK_UP:
-        return "Up"_s;
+        return "Up"_si;
     case VK_DELETE:
-        return "U+007F"_s; // Standard says that DEL becomes U+007F.
+        return "U+007F"_si; // Standard says that DEL becomes U+007F.
     default:
         return makeString("U+"_s, hex(toASCIIUpper(keyCode), 4));
     }
@@ -501,11 +501,11 @@ WebWheelEventInit WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, 
 WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     auto type = keyboardEventTypeForEvent(message);
-    String text = textFromEvent(wparam, type);
-    String unmodifiedText = unmodifiedTextFromEvent(wparam, type);
-    String key = message == WM_CHAR ? windowsKeyNames().domKeyFromChar(wparam) : windowsKeyNames().domKeyFromParams(wparam, lparam);
-    String code = windowsKeyNames().domCodeFromLParam(lparam);
-    String keyIdentifier = keyIdentifierFromEvent(wparam, type);
+    RefPtr<StringImpl> text = textFromEvent(wparam, type);
+    RefPtr<StringImpl> unmodifiedText = unmodifiedTextFromEvent(wparam, type);
+    RefPtr<StringImpl> key = message == WM_CHAR ? windowsKeyNames().domKeyFromChar(wparam) : windowsKeyNames().domKeyFromParams(wparam, lparam);
+    RefPtr<StringImpl> code = windowsKeyNames().domCodeFromLParam(lparam);
+    RefPtr<StringImpl> keyIdentifier = keyIdentifierFromEvent(wparam, type);
     int windowsVirtualKeyCode = message == WM_CHAR ? 0 : static_cast<int>(wparam);
     int nativeVirtualKeyCode = static_cast<int>(wparam);
     int macCharCode = 0;

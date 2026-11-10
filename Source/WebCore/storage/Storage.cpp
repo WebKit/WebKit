@@ -70,7 +70,7 @@ unsigned Storage::length() const
     return m_storageArea->length();
 }
 
-String Storage::key(unsigned index) const
+RefPtr<StringImpl> Storage::key(unsigned index) const
 {
     if (requiresScriptTrackingPrivacyProtection())
         return { };
@@ -78,7 +78,7 @@ String Storage::key(unsigned index) const
     return m_storageArea->key(index);
 }
 
-String Storage::getItem(const String& key) const
+RefPtr<StringImpl> Storage::getItem(StringImpl* key) const
 {
     if (requiresScriptTrackingPrivacyProtection())
         return { };
@@ -86,7 +86,7 @@ String Storage::getItem(const String& key) const
     return m_storageArea->item(key);
 }
 
-ExceptionOr<void> Storage::setItem(const String& key, const String& value)
+ExceptionOr<void> Storage::setItem(StringImpl* key, StringImpl* value)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -102,7 +102,7 @@ ExceptionOr<void> Storage::setItem(const String& key, const String& value)
     return { };
 }
 
-ExceptionOr<void> Storage::removeItem(const String& key)
+ExceptionOr<void> Storage::removeItem(StringImpl* key)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -125,21 +125,21 @@ ExceptionOr<void> Storage::clear()
     return { };
 }
 
-bool Storage::contains(const String& key) const
+bool Storage::contains(StringImpl* key) const
 {
     return m_storageArea->contains(key);
 }
 
-bool Storage::isSupportedPropertyName(const String& propertyName) const
+bool Storage::isSupportedPropertyName(StringImpl* propertyName) const
 {
     return m_storageArea->contains(propertyName);
 }
 
-Vector<AtomString> Storage::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> Storage::supportedPropertyNames() const
 {
     unsigned length = m_storageArea->length();
-    return Vector<AtomString>(length, [this](size_t i) {
-        return m_storageArea->key(i);
+    return Vector<RefPtr<AtomStringImpl>>(length, [this](size_t i) {
+        return AtomStringImpl::add(m_storageArea->key(i));
     });
 }
 

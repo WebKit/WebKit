@@ -55,13 +55,13 @@ Ref<JSON::Object> IntSize::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("width"_s, m_width);
-    object->setDouble("height"_s, m_height);
+    object->setDouble("width"_si, m_width);
+    object->setDouble("height"_si, m_height);
 
     return object;
 }
 
-String IntSize::toJSONString() const
+RefPtr<StringImpl> IntSize::toJSONString() const
 {
     return toJSONObject()->toJSONString();
 }

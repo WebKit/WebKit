@@ -53,15 +53,15 @@ public:
     void preferredRenderingUpdateIntervalsInMilliseconds(CompletionHandler<void(Vector<double>&&)>&&);
     void dispatchActivityStateUpdate();
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
-    void setPermissionLevel(const String& origin, bool allowed);
-    bool isEditingCommandEnabled(const String& commandName);
+    void setPermissionLevel(StringImpl* origin, bool allowed);
+    bool isEditingCommandEnabled(StringImpl* commandName);
     void resetStateBetweenTests();
 
 #if PLATFORM(IOS_FAMILY)
     void screenIsBeingCaptured(WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
 #endif
 
-    void dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&&);
+    void dumpPrivateClickMeasurement(CompletionHandler<void(StringImpl*)>&&);
     void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
     void setPrivateClickMeasurementOverrideTimer(bool value, CompletionHandler<void()>&&);
     void markAttributedPrivateClickMeasurementsAsExpired(CompletionHandler<void()>&&);
@@ -71,8 +71,8 @@ public:
     void setPrivateClickMeasurementTokenSignatureURL(const URL&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementAttributionReportURLs(const URL& sourceURL, const URL& destinationURL, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpired(CompletionHandler<void()>&&);
-    void setPCMFraudPreventionValues(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAppBundleID(const String& appBundleIDForTesting, CompletionHandler<void()>&&);
+    void setPCMFraudPreventionValues(StringImpl* unlinkableToken, StringImpl* secretToken, StringImpl* signature, StringImpl* keyID, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAppBundleID(StringImpl* appBundleIDForTesting, CompletionHandler<void()>&&);
 
 #if ENABLE(NOTIFICATIONS)
     void clearNotificationPermissionState();

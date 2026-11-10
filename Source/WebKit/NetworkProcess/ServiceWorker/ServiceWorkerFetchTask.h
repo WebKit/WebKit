@@ -72,7 +72,7 @@ class ServiceWorkerFetchTask : public RefCountedAndCanMakeWeakPtr<ServiceWorkerF
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerFetchTask);
 public:
     static RefPtr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);
-    static Ref<ServiceWorkerFetchTask> fromCache(NetworkResourceLoader&, NetworkStorageManager&, WebCore::ResourceRequest&&, String&&);
+    static Ref<ServiceWorkerFetchTask> fromCache(NetworkResourceLoader&, NetworkStorageManager&, WebCore::ResourceRequest&&, RefPtr<StringImpl>&&);
     static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady, bool shouldRaceNetworkAndFetchHandler);
 
     ~ServiceWorkerFetchTask();
@@ -132,7 +132,7 @@ private:
 
     void workerClosed();
 
-    void loadFromCache(NetworkStorageManager&, WebCore::ClientOrigin&&, WebCore::RetrieveRecordsOptions&&, String&&);
+    void loadFromCache(NetworkStorageManager&, WebCore::ClientOrigin&&, WebCore::RetrieveRecordsOptions&&, RefPtr<StringImpl>&&);
     void respondWithCacheResponse(std::optional<WebCore::DOMCacheEngine::Record>&&);
     void finishLoadingWithCacheResponse(WebCore::DOMCacheEngine::Record&&);
     void sendData(Ref<WebCore::SharedBuffer>&&);

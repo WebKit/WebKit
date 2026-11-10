@@ -202,7 +202,7 @@ private:
     void waitForModalTransitionToFinish() const;
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;
-    void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&&);
+    void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<RefPtr<StringImpl>>&& modifierFlags, BlockPtr<void()>&&);
 
     JSObjectRef toObject(CGRect) const;
 

@@ -238,14 +238,14 @@ public:
     void pageEndUsingWebsiteDataStore(WebPageProxy&, WebsiteDataStore&);
     bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
-    const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
+    const RefPtr<StringImpl>& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
-    Ref<DownloadProxy> download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, const String& suggestedFilename = { });
-    Ref<DownloadProxy> resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart);
+    Ref<DownloadProxy> download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, StringImpl* suggestedFilename = nullptr);
+    Ref<DownloadProxy> resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, StringImpl* path, CallDownloadDidStart);
 
     void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTF::move(userData); }
 
-    void postMessageToInjectedBundle(const String&, API::Object*);
+    void postMessageToInjectedBundle(StringImpl*, API::Object*);
 
     void populateVisitedLinks();
 
@@ -271,12 +271,12 @@ public:
     DisplayLinkCollection& displayLinks() LIFETIME_BOUND { return m_displayLinks; }
 #endif
 
-    void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    void addSupportedPlugin(RefPtr<StringImpl>&& matchingDomain, RefPtr<StringImpl>&& name, HashSet<RefPtr<StringImpl>>&& mimeTypes, HashSet<RefPtr<StringImpl>> extensions);
     NODELETE void clearSupportedPlugins();
 
     HashSet<ProcessID> prewarmedProcessIdentifiers();
     HashSet<ProcessID> crossOriginIsolatedProcessIdentifiers();
-    void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
+    void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     void countWebPagesInAllProcessesForTesting(CompletionHandler<void(unsigned)>&&);
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
@@ -284,18 +284,18 @@ public:
     void setAlwaysUsesComplexTextCodePath(bool);
     void setDisableFontSubpixelAntialiasingForTesting(bool);
     
-    void registerURLSchemeAsEmptyDocument(const String&);
-    void registerURLSchemeAsSecure(const String&);
-    void registerURLSchemeAsBypassingContentSecurityPolicy(const String&);
-    void setDomainRelaxationForbiddenForURLScheme(const String&);
-    void registerURLSchemeAsLocal(const String&);
+    void registerURLSchemeAsEmptyDocument(StringImpl*);
+    void registerURLSchemeAsSecure(StringImpl*);
+    void registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl*);
+    void setDomainRelaxationForbiddenForURLScheme(StringImpl*);
+    void registerURLSchemeAsLocal(StringImpl*);
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-    void registerURLSchemeAsNoAccess(const String&);
+    void registerURLSchemeAsNoAccess(StringImpl*);
 #endif
-    void registerURLSchemeAsDisplayIsolated(const String&);
-    void registerURLSchemeAsCORSEnabled(const String&);
-    void registerURLSchemeAsCachePartitioned(const String&);
-    void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&);
+    void registerURLSchemeAsDisplayIsolated(StringImpl*);
+    void registerURLSchemeAsCORSEnabled(StringImpl*);
+    void registerURLSchemeAsCachePartitioned(StringImpl*);
+    void registerURLSchemeAsCanDisplayOnlyIfCanRequest(StringImpl*);
 
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
@@ -419,7 +419,7 @@ public:
     bool hasServiceWorkerBackgroundActivityForTesting() const;
     void serviceWorkerProcessCrashed(WebProcessProxy&, ProcessTerminationReason);
 
-    void updateRemoteWorkerUserAgent(const String& userAgent);
+    void updateRemoteWorkerUserAgent(StringImpl* userAgent);
     Ref<WebUserContentControllerProxy> userContentControllerForRemoteWorkers();
     static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
 
@@ -432,8 +432,8 @@ public:
     NODELETE static void setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(IPC::MessageName);
 
-    static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
-    static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
+    static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(StringImpl*);
+    static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(StringImpl*);
 
     void notifyMediaStreamingActivity(bool);
 
@@ -503,8 +503,8 @@ public:
 
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
-    void removeMockMediaDevice(const String&);
-    void setMockMediaDeviceIsEphemeral(const String&, bool);
+    void removeMockMediaDevice(StringImpl*);
+    void setMockMediaDeviceIsEphemeral(StringImpl*, bool);
     void resetMockMediaDevices();
 
     void clearCurrentModifierStateForTesting();
@@ -525,21 +525,21 @@ public:
     const Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>& userMessageHandler() const LIFETIME_BOUND { return m_userMessageHandler; }
 
 #if USE(ATSPI)
-    const String& accessibilityBusAddress() const;
-    const String& accessibilityBusName() const;
-    const String& sandboxedAccessibilityBusAddress() const;
+    const RefPtr<StringImpl>& accessibilityBusAddress() const;
+    const RefPtr<StringImpl>& accessibilityBusName() const;
+    const RefPtr<StringImpl>& sandboxedAccessibilityBusAddress() const;
 
-    const String& generateNextAccessibilityBusName();
+    const RefPtr<StringImpl>& generateNextAccessibilityBusName();
 #endif
 #endif
 
     WebProcessWithAudibleMediaToken webProcessWithAudibleMediaToken() const;
     WebProcessWithMediaStreamingToken webProcessWithMediaStreamingToken() const;
 
-    void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
-    const String& javaScriptConfigurationDirectory() const LIFETIME_BOUND { return m_javaScriptConfigurationDirectory; }
+    void setJavaScriptConfigurationDirectory(RefPtr<StringImpl>&& directory) { m_javaScriptConfigurationDirectory = directory; }
+    const RefPtr<StringImpl>& javaScriptConfigurationDirectory() const LIFETIME_BOUND { return m_javaScriptConfigurationDirectory; }
 
-    void setOverrideLanguages(Vector<String>&&);
+    void setOverrideLanguages(Vector<RefPtr<StringImpl>>&&);
 
     WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
     
@@ -553,12 +553,12 @@ public:
     void removeRemoteWorkerProcess(WebProcessProxy&);
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+    void notifyPreferencesChanged(StringImpl* domain, StringImpl* key, const std::optional<RefPtr<StringImpl>>& encodedValue);
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    const String& webProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.webProcessPath; }
-    const String& networkProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.networkProcessPath; }
+    const RefPtr<StringImpl>& webProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.webProcessPath; }
+    const RefPtr<StringImpl>& networkProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.networkProcessPath; }
     int32_t userId() const { return m_userId; }
 #endif
 
@@ -569,7 +569,7 @@ public:
 #endif
 
     static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
-    static Vector<String> urlSchemesWithCustomProtocolHandlers();
+    static Vector<RefPtr<StringImpl>> urlSchemesWithCustomProtocolHandlers();
 
     bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }
 #if PLATFORM(IOS_FAMILY)
@@ -612,13 +612,13 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCompiledContentRuleList* cachedResourceMonitorRuleList(bool forTesting);
-    void setResourceMonitorURLsForTesting(const String& rulesText, CompletionHandler<void()>&&);
+    void setResourceMonitorURLsForTesting(StringImpl* rulesText, CompletionHandler<void()>&&);
 #endif
 
 #if PLATFORM(COCOA)
     void registerAssetFonts(WebProcessProxy&);
-    const HashMap<String, bool>& mediaSourceTypesSupported() const { return m_mediaSourceTypesSupported; }
-    void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
+    const HashMap<RefPtr<StringImpl>, bool>& mediaSourceTypesSupported() const { return m_mediaSourceTypesSupported; }
+    void cacheMediaSourceTypeSupported(StringImpl* type, bool isSupported);
 #endif
 
 #if PLATFORM(MAC)
@@ -670,14 +670,14 @@ private:
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, JSCOptionsForWebProcess = { });
 
-    void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
-    void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&&);
+    void handleMessage(IPC::Connection&, StringImpl* messageName, const UserData& messageBody);
+    void handleSynchronousMessage(IPC::Connection&, StringImpl* messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&&);
 
 #if ENABLE(GAMEPAD)
     void startedUsingGamepads(IPC::Connection&);
     void stoppedUsingGamepads(IPC::Connection&, CompletionHandler<void()>&&);
-    void playGamepadEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&);
-    void stopGamepadEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&);
+    void playGamepadEffect(unsigned gamepadIndex, StringImpl* gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&);
+    void stopGamepadEffects(unsigned gamepadIndex, StringImpl* gamepadID, CompletionHandler<void()>&&);
 
     void processStoppedUsingGamepads(WebProcessProxy&);
 #endif
@@ -705,7 +705,7 @@ private:
     void unregisterNotificationObservers();
 
 #if ENABLE(NOTIFY_BLOCKING)
-    void setNotifyState(const String&, int, uint64_t);
+    void setNotifyState(StringImpl*, int, uint64_t);
 #endif
 #endif
 
@@ -797,8 +797,8 @@ private:
     void loadOrUpdateResourceMonitorRuleList();
 
     void platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
-    void platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
-    NODELETE String platformResourceMonitorRuleListSourceForTesting();
+    void platformCompileResourceMonitorRuleList(StringImpl* rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
+    NODELETE RefPtr<StringImpl> platformResourceMonitorRuleListSourceForTesting();
 #endif
 
     const Ref<API::ProcessPoolConfiguration> m_configuration;
@@ -816,7 +816,7 @@ private:
 
     std::optional<WebPreferencesStore> m_remoteWorkerPreferences;
     RefPtr<WebUserContentControllerProxy> m_userContentControllerForRemoteWorkers;
-    String m_remoteWorkerUserAgent;
+    RefPtr<StringImpl> m_remoteWorkerUserAgent;
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessProxy> m_gpuProcess;
@@ -860,22 +860,22 @@ private:
     const Ref<VisitedLinkStore> m_visitedLinkStore;
     bool m_visitedLinksPopulated { false };
 
-    HashSet<String> m_schemesToRegisterAsEmptyDocument;
-    HashSet<String> m_schemesToSetDomainRelaxationForbiddenFor;
-    HashSet<String> m_schemesToRegisterAsDisplayIsolated;
-    HashSet<String> m_schemesToRegisterAsCORSEnabled;
-    HashSet<String> m_schemesToRegisterAsAlwaysRevalidated;
-    HashSet<String> m_schemesToRegisterAsCachePartitioned;
-    HashSet<String> m_schemesToRegisterAsCanDisplayOnlyIfCanRequest;
+    HashSet<RefPtr<StringImpl>> m_schemesToRegisterAsEmptyDocument;
+    HashSet<RefPtr<StringImpl>> m_schemesToSetDomainRelaxationForbiddenFor;
+    HashSet<RefPtr<StringImpl>> m_schemesToRegisterAsDisplayIsolated;
+    HashSet<RefPtr<StringImpl>> m_schemesToRegisterAsCORSEnabled;
+    HashSet<RefPtr<StringImpl>> m_schemesToRegisterAsAlwaysRevalidated;
+    HashSet<RefPtr<StringImpl>> m_schemesToRegisterAsCachePartitioned;
+    HashSet<RefPtr<StringImpl>> m_schemesToRegisterAsCanDisplayOnlyIfCanRequest;
 
     bool m_alwaysUsesComplexTextCodePath { false };
     bool m_disableFontSubpixelAntialiasingForTesting { false };
 
-    Vector<String> m_fontAllowList;
+    Vector<RefPtr<StringImpl>> m_fontAllowList;
 
     // Messages that were posted before any pages were created.
     // The client should use initialization messages instead, so that a restarted process would get the same state.
-    Vector<std::pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
     bool m_memorySamplerEnabled { false };
     double m_memorySamplerInterval { 1400.0 };
@@ -928,7 +928,7 @@ private:
 
     bool m_memoryCacheDisabled { false };
     bool m_javaScriptConfigurationFileEnabled { false };
-    String m_javaScriptConfigurationDirectory;
+    RefPtr<StringImpl> m_javaScriptConfigurationDirectory;
     bool m_alwaysRunsAtBackgroundPriority;
     bool m_shouldTakeUIBackgroundAssertion;
     bool m_shouldMakeNextWebProcessLaunchFailForTesting { false };
@@ -968,15 +968,15 @@ private:
 #endif
 
     struct Paths {
-        String injectedBundlePath;
-        String uiProcessBundleResourcePath;
+        RefPtr<StringImpl> injectedBundlePath;
+        RefPtr<StringImpl> uiProcessBundleResourcePath;
 
 #if PLATFORM(PLAYSTATION)
-        String webProcessPath;
-        String networkProcessPath;
+        RefPtr<StringImpl> webProcessPath;
+        RefPtr<StringImpl> networkProcessPath;
 #endif
 
-        Vector<String> additionalWebProcessSandboxExtensionPaths;
+        Vector<RefPtr<StringImpl>> additionalWebProcessSandboxExtensionPaths;
     };
     Paths m_resolvedPaths;
 
@@ -1003,9 +1003,9 @@ private:
     Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)> m_userMessageHandler;
 
 #if USE(ATSPI)
-    mutable std::optional<String> m_accessibilityBusAddress;
-    mutable std::optional<String> m_accessibilityBusName;
-    String m_sandboxedAccessibilityBusAddress;
+    mutable std::optional<RefPtr<StringImpl>> m_accessibilityBusAddress;
+    mutable std::optional<RefPtr<StringImpl>> m_accessibilityBusName;
+    RefPtr<StringImpl> m_sandboxedAccessibilityBusAddress;
 #endif
 #endif
 
@@ -1043,7 +1043,7 @@ private:
     Vector<int> m_openDirectoryNotifyTokens;
 #endif
 #if ENABLE(NOTIFY_BLOCKING)
-    HashMap<String, uint64_t> m_notifyState;
+    HashMap<RefPtr<StringImpl>, uint64_t> m_notifyState;
     Vector<int> m_notifyTokens;
     Vector<RetainPtr<NSObject>> m_notificationObservers;
 #endif
@@ -1056,7 +1056,7 @@ private:
     bool m_processesShouldSuspend { false };
     HardwareKeyboardState m_hardwareKeyboardState;
 #if !USE(EXTENSIONKIT)
-    String m_cachedWebContentTempDirectory;
+    RefPtr<StringImpl> m_cachedWebContentTempDirectory;
 #endif
     const RetainPtr<NSObject> m_screenDidConnectObserver;
     const RetainPtr<NSObject> m_screenDidDisconnectObserver;
@@ -1085,10 +1085,10 @@ private:
 
 #if PLATFORM(COCOA)
     std::optional<Vector<URL>> m_assetFontURLs;
-    std::optional<HashMap<String, URL>> m_userInstalledFontURLs;
-    std::optional<HashMap<String, Vector<String>>> m_userInstalledFontFamilyMap;
+    std::optional<HashMap<RefPtr<StringImpl>, URL>> m_userInstalledFontURLs;
+    std::optional<HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>> m_userInstalledFontFamilyMap;
     std::optional<Vector<URL>> m_sandboxExtensionURLs;
-    HashMap<String, bool> m_mediaSourceTypesSupported;
+    HashMap<RefPtr<StringImpl>, bool> m_mediaSourceTypesSupported;
 
     ApproximateTime m_lastScreenPropertiesUpdateTime;
     RunLoop::Timer m_screenPropertiesUpdateTimer;
@@ -1111,7 +1111,7 @@ private:
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
     std::optional<WebCore::CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
-    std::optional<Vector<String>> m_preferredLanguages;
+    std::optional<Vector<RefPtr<StringImpl>>> m_preferredLanguages;
 #endif
 };
 

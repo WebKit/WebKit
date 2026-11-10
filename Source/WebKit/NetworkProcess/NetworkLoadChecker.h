@@ -68,7 +68,7 @@ public:
     static Ref<NetworkLoadChecker> create(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry,
         WebCore::FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, WebCore::HTTPHeaderMap&& originalRequestHeaders,
         URL&& url, DocumentURL&& documentURL, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, RefPtr<WebCore::SecurityOrigin>&& topOrigin,
-        RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy,
+        RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy preflightPolicy, RefPtr<StringImpl>&& referrer, bool allowPrivacyProxy,
         OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other)
     {
         return adoptRef(*new NetworkLoadChecker(networkProcess, networkResourceLoader, schemeRegistry,
@@ -129,7 +129,7 @@ public:
     bool isSameOriginRequest() const { return m_isSameOriginRequest; }
 
 private:
-    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
+    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, RefPtr<StringImpl>&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
 
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     NODELETE const WebCore::OriginAccessPatterns& originAccessPatterns() const;
@@ -149,7 +149,7 @@ private:
     void checkCORSRedirectedRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
     void checkCORSRequestWithPreflight(WebCore::ResourceRequest&&, ValidationHandler&&);
 
-    RequestOrRedirectionTripletOrError accessControlErrorForValidationHandler(String&&);
+    RequestOrRedirectionTripletOrError accessControlErrorForValidationHandler(RefPtr<StringImpl>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     struct ContentExtensionResult {
@@ -199,7 +199,7 @@ private:
     size_t m_redirectCount { 0 };
     URL m_previousURL;
     WebCore::PreflightPolicy m_preflightPolicy;
-    String m_referrer;
+    RefPtr<StringImpl> m_referrer;
     bool m_checkContentExtensions { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
 
@@ -212,7 +212,7 @@ private:
     bool m_timingAllowFailedFlag { false };
 
     // Remembers each redirect's opt-in so the whole chain can be judged once the destination is known.
-    Vector<Vector<String>> m_navigationTimingAllowValuesList;
+    Vector<Vector<RefPtr<StringImpl>>> m_navigationTimingAllowValuesList;
 
     // https://fetch.spec.whatwg.org/#navigation-tao-check
     bool m_navigationTAOCheckPassed { false };

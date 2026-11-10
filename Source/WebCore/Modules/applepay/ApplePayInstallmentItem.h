@@ -34,11 +34,11 @@ namespace WebCore {
 
 struct ApplePayInstallmentItem {
     ApplePayInstallmentItemType type { ApplePayInstallmentItemType::Generic };
-    String amount;
-    String currencyCode;
-    String programIdentifier;
-    String apr;
-    String programTerms;
+    RefPtr<StringImpl> amount;
+    RefPtr<StringImpl> currencyCode;
+    RefPtr<StringImpl> programIdentifier;
+    RefPtr<StringImpl> apr;
+    RefPtr<StringImpl> programTerms;
 };
 
 } // namespace WebCore

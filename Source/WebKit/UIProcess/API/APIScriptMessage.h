@@ -56,11 +56,11 @@ public:
     API::Object* apiBody() const { return m_apiBody.get(); }
     NODELETE WebKit::WebPageProxy* page() const;
     API::FrameInfo& frame() const { return m_frame.get(); }
-    const WTF::String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     API::ContentWorld& world() const { return m_world.get(); }
 
 private:
-    ScriptMessage(RefPtr<API::Object>&&, WebKit::WebPageProxy&, Ref<API::FrameInfo>&&, const WTF::String&, Ref<API::ContentWorld>&&);
+    ScriptMessage(RefPtr<API::Object>&&, WebKit::WebPageProxy&, Ref<API::FrameInfo>&&, StringImpl*, Ref<API::ContentWorld>&&);
 #if PLATFORM(COCOA)
     ScriptMessage(RetainPtr<id>&&, WebKit::WebPageProxy&, Ref<API::FrameInfo>&&, RetainPtr<NSString>&&, Ref<API::ContentWorld>&&);
 
@@ -70,7 +70,7 @@ private:
     const RefPtr<API::Object> m_apiBody;
     const WeakPtr<WebKit::WebPageProxy> m_page;
     const Ref<API::FrameInfo> m_frame;
-    const WTF::String m_name;
+    const RefPtr<StringImpl> m_name;
     const Ref<API::ContentWorld> m_world;
 };
 

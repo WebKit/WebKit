@@ -64,12 +64,12 @@ private:
     void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t handledRequestResultsCount) final;
     void didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) final;
-    void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) final;
-    void renameObjectStore(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, const String& newName) final;
+    void deleteObjectStore(const WebCore::IDBRequestData&, StringImpl* objectStoreName) final;
+    void renameObjectStore(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, StringImpl* newName) final;
     void clearObjectStore(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier) final;
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&) final;
-    void deleteIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, const String& indexName) final;
-    void renameIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, WebCore::IDBIndexIdentifier, const String& newName) final;
+    void deleteIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, StringImpl* indexName) final;
+    void renameIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, WebCore::IDBIndexIdentifier, StringImpl* newName) final;
     void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, const WebCore::IndexIDToIndexKeyMap&, const WebCore::IndexedDB::ObjectStoreOverwriteMode) final;
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&) final;
     void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&) final;

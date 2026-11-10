@@ -45,12 +45,12 @@ class AudioDecoderCocoa final : public AudioDecoder {
     WTF_MAKE_TZONE_ALLOCATED(AudioDecoderCocoa);
 
 public:
-    static Ref<CreatePromise> create(const String& codecName, const Config&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl* codecName, const Config&, OutputCallback&&);
     static Ref<CreatePromise> create(const AudioInfo&, OutputCallback&&);
 
     ~AudioDecoderCocoa();
 
-    static std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> isCodecSupported(const StringView&);
+    static std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, RefPtr<StringImpl>> isCodecSupported(const StringView&);
     static bool canDecode(const AudioInfo&);
 
     static WTF::WorkQueue& queueSingleton();

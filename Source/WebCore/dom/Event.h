@@ -64,18 +64,18 @@ public:
         BUBBLING_PHASE = 3
     };
 
-    WEBCORE_EXPORT static Ref<Event> create(const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
+    WEBCORE_EXPORT static Ref<Event> create(AtomStringImpl* type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
     static Ref<Event> createForBindings();
-    static Ref<Event> create(const AtomString& type, const EventInit&, IsTrusted = IsTrusted::No);
+    static Ref<Event> create(AtomStringImpl* type, const EventInit&, IsTrusted = IsTrusted::No);
 
     virtual ~Event();
 
-    WEBCORE_EXPORT void initEvent(const AtomString& type, bool canBubble, bool cancelable);
+    WEBCORE_EXPORT void initEvent(AtomStringImpl* type, bool canBubble, bool cancelable);
 
     bool isInitialized() const { return m_isInitialized; }
 
-    const AtomString& type() const LIFETIME_BOUND { return m_type; }
-    void setType(const AtomString& type) { m_type = type; }
+    const RefPtr<AtomStringImpl>& type() const LIFETIME_BOUND { return m_type; }
+    void setType(AtomStringImpl* type) { m_type = type; }
 
     enum EventInterfaceType interfaceType() const { return static_cast<enum EventInterfaceType>(m_eventInterface); }
 
@@ -144,7 +144,7 @@ public:
     virtual EventTarget* relatedTarget() const { return nullptr; }
     virtual void setRelatedTarget(RefPtr<EventTarget>&&) { }
 
-    virtual String debugDescription() const;
+    virtual RefPtr<StringImpl> debugDescription() const;
 
     bool isAutofillEvent() { return m_isAutofillEvent; }
     void setIsAutofillEvent() { m_isAutofillEvent = true; }
@@ -155,16 +155,16 @@ public:
 
 protected:
     explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);
-    Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
-    Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, IsTrusted isTrusted = IsTrusted::Yes);
-    Event(enum EventInterfaceType, const AtomString& type, const EventInit&, IsTrusted);
+    Event(enum EventInterfaceType, AtomStringImpl* type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
+    Event(enum EventInterfaceType, AtomStringImpl* type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, IsTrusted isTrusted = IsTrusted::Yes);
+    Event(enum EventInterfaceType, AtomStringImpl* type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget() { }
 
     bool isConstructedFromInitializer() const { return m_isConstructedFromInitializer; }
 
 private:
-    explicit Event(MonotonicTime createTime, enum EventInterfaceType, const AtomString& type, IsTrusted, CanBubble, IsCancelable, IsComposed);
+    explicit Event(MonotonicTime createTime, enum EventInterfaceType, AtomStringImpl* type, IsTrusted, CanBubble, IsCancelable, IsComposed);
 
     void setCanceledFlagIfPossible();
 
@@ -194,7 +194,7 @@ private:
 
     Lock m_targetLock;
 
-    AtomString m_type;
+    RefPtr<AtomStringImpl> m_type;
 
     RefPtr<EventTarget> m_currentTarget;
     SingleThreadWeakPtr<const EventPath> m_eventPath;

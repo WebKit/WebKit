@@ -359,9 +359,9 @@ class KeyPath;
 
 namespace TestHelpers {
 
-String getEnumConstantValue(int code);
+RefPtr<StringImpl> getEnumConstantValue(int code);
 
-template<typename T> String getEnumConstantValue(T enumValue)
+template<typename T> RefPtr<StringImpl> getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
@@ -415,7 +415,7 @@ public:
         Builder<STATE | TypeSet>& setType(Type in_type)
         {
             static_assert(!(STATE & TypeSet), "property type already set");
-            Ref { *m_result }->setString("type"_s, Protocol::TestHelpers::getEnumConstantValue(in_type));
+            Ref { *m_result }->setString("type"_si, Protocol::TestHelpers::getEnumConstantValue(in_type));
             return castState<TypeSet>();
         }
 
@@ -443,14 +443,14 @@ public:
         return Builder<NoFieldsSet>(adoptRef(*new KeyPath));
     }
 
-    void setString(const String& in_opt_string)
+    void setString(StringImpl* in_opt_string)
     {
-        JSON::ObjectBase::setString("string"_s, in_opt_string);
+        JSON::ObjectBase::setString("string"_si, in_opt_string);
     }
 
-    void setArray(Ref<JSON::ArrayOf<String>>&& in_opt_array)
+    void setArray(Ref<JSON::ArrayOf<RefPtr<StringImpl>>>&& in_opt_array)
     {
-        JSON::ObjectBase::setArray("array"_s, WTF::move(in_opt_array));
+        JSON::ObjectBase::setArray("array"_si, WTF::move(in_opt_array));
     }
 };
 
@@ -461,11 +461,11 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(StringImpl*);
 
 // Enums in the 'Runtime' Domain
 template<>
-std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String&);
+std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(StringImpl*);
 
 } // namespace TestHelpers
 
@@ -521,13 +521,13 @@ static const auto enum_constant_values = WTF::toArray<ASCIILiteral>({
     "array"_s,
 });
 
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
+RefPtr<StringImpl> getEnumConstantValue(int code) {
+    return StringImpl::create(enum_constant_values[code]);
 }
 
 // Enums in the 'Runtime' Domain
 
-template<> std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String& protocolString)
+template<> std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Runtime::KeyPath::Type::Null,
@@ -535,7 +535,7 @@ template<> std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromStr
         (size_t)Protocol::Runtime::KeyPath::Type::Array,
     });
     for (size_t i = 0; i < 3; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Runtime::KeyPath::Type)constantValues[i];
 
     return std::nullopt;
@@ -913,22 +913,22 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
-inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolRuntimeKeyPathType value)
 {
     switch(value) {
     case TestProtocolRuntimeKeyPathTypeNull:
-        return "null"_s;
+        return "null"_si;
     case TestProtocolRuntimeKeyPathTypeString:
-        return "string"_s;
+        return "string"_si;
     case TestProtocolRuntimeKeyPathTypeArray:
-        return "array"_s;
+        return "array"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
+inline std::optional<TestProtocolRuntimeKeyPathType> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolRuntimeKeyPathType>>({
         { "array"_s, TestProtocolRuntimeKeyPathTypeArray },
@@ -1048,7 +1048,7 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"type"], @"type");
-    auto type = fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)payload[@"type"]);
+    auto type = fromProtocolString<TestProtocolRuntimeKeyPathType>(StringImpl::create((__bridge CFStringRef)payload[@"type"]).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(type, @"type");
     self.type = *type;
 
@@ -1078,12 +1078,12 @@ using namespace Inspector;
 
 - (void)setType:(TestProtocolRuntimeKeyPathType)type
 {
-    [super setString:toProtocolString(type).createNSString().get() forKey:@"type"];
+    [super setString:createNSString(toProtocolString(type)).get() forKey:@"type"];
 }
 
 - (TestProtocolRuntimeKeyPathType)type
 {
-    return fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)[super stringForKey:@"type"]).value();
+    return fromProtocolString<TestProtocolRuntimeKeyPathType>(StringImpl::create((__bridge CFStringRef)[super stringForKey:@"type"]).get()).value();
 }
 
 - (void)setString:(NSString *)string

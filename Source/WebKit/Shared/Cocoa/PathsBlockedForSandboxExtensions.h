@@ -27,9 +27,9 @@
 
 namespace WebKit {
 
-void addPathsBlockedForSandboxExtension(Vector<String>&& paths);
-void addSubPathsBlockedForSandboxExtension(Vector<String>&& paths);
+void addPathsBlockedForSandboxExtension(Vector<RefPtr<StringImpl>>&& paths);
+void addSubPathsBlockedForSandboxExtension(Vector<RefPtr<StringImpl>>&& paths);
 
-bool pathIsBlockedForSandboxExtensions(const String& path);
+bool pathIsBlockedForSandboxExtensions(StringImpl* path);
 
 }

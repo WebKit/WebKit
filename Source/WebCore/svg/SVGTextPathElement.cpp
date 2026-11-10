@@ -71,7 +71,7 @@ void SVGTextPathElement::clearResourceReferences()
     removeElementReference();
 }
 
-void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGTextPathElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 
@@ -89,7 +89,7 @@ void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomS
         // Not an error when it fails to parse: SVG 2 keeps the valid portion, and parse()
         // leaves behind whatever it built before the first error.
         Ref pathAttribute = protect(m_pathAttribute)->baseVal();
-        if (newValue.isEmpty())
+        if (isEmpty(newValue))
             pathAttribute->clearByteStreamData();
         else
             pathAttribute->parse(newValue);
@@ -173,7 +173,7 @@ void SVGTextPathElement::buildPendingResource()
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
         Ref treeScope = treeScopeForSVGReferences();
-        if (!target.identifier.isEmpty() && !treeScope->isPendingSVGResource(*this, target.identifier)) {
+        if (!isEmpty(target.identifier) && !treeScope->isPendingSVGResource(*this, target.identifier)) {
             treeScope->addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }

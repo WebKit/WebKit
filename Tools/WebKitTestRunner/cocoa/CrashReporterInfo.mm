@@ -34,46 +34,46 @@
 
 namespace WTR {
 
-static String testPathFromURL(WKURLRef url)
+static RefPtr<StringImpl> testPathFromURL(WKURLRef url)
 {
     if (!url)
-        return "(null)"_s;
+        return "(null)"_si;
     auto cfURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
     if (!cfURL)
-        return String();
+        return nullptr;
 
     auto schemeCFString = adoptCF(CFURLCopyScheme(cfURL.get()));
     auto pathCFString = adoptCF(CFURLCopyPath(cfURL.get()));
 
-    String schemeString(schemeCFString.get());
-    String pathString(pathCFString.get());
+    RefPtr<StringImpl> schemeString(StringImpl::create(schemeCFString.get()));
+    RefPtr<StringImpl> pathString(StringImpl::create(pathCFString.get()));
     
     if (equalLettersIgnoringASCIICase(schemeString, "file"_s)) {
-        String layoutTests("/LayoutTests/"_s);
-        size_t layoutTestsOffset = pathString.find(layoutTests);
+        RefPtr<StringImpl> layoutTests("/LayoutTests/"_si);
+        size_t layoutTestsOffset = find(pathString, layoutTests);
         if (layoutTestsOffset == notFound)
-            return String();
+            return nullptr;
 
-        return pathString.substring(layoutTestsOffset + layoutTests.length());
+        return substring(pathString, layoutTestsOffset + length(layoutTests));
     }
 
     if (!equalLettersIgnoringASCIICase(schemeString, "http"_s) && !equalLettersIgnoringASCIICase(schemeString, "https"_s))
-        return String();
+        return nullptr;
 
     auto hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));
-    String hostString(hostCFString.get());
-    if (hostString == "127.0.0.1"_s)
+    RefPtr<StringImpl> hostString(StringImpl::create(hostCFString.get()));
+    if (equal(hostString, "127.0.0.1"_s))
         return pathString;
 
-    return String();
+    return nullptr;
 }
 
 void setCrashReportApplicationSpecificInformationToURL(WKURLRef url)
 {
-    String testPath = testPathFromURL(url);
-    if (!testPath.isNull()) {
+    RefPtr<StringImpl> testPath = testPathFromURL(url);
+    if (testPath) {
         auto message = makeString("CRASHING TEST: "_s, testPath);
-        WTF::setCrashLogMessage(message.utf8());
+        WTF::setCrashLogMessage(utf8(message));
     }
 }
 

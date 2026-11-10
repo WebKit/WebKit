@@ -87,15 +87,15 @@ class WebBlobRegistry final : public WebCore::BlobRegistry {
     WTF_MAKE_TZONE_ALLOCATED(WebBlobRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebBlobRegistry);
 private:
-    void registerInternalFileBlobURL(const URL& url, Ref<WebCore::BlobDataFileReference>&& reference, const String&, const String& contentType) final { m_blobRegistry.registerInternalFileBlobURL(url, WTF::move(reference), contentType); }
-    void registerInternalBlobURL(const URL& url, Vector<WebCore::BlobPart>&& parts, const String& contentType) final { m_blobRegistry.registerInternalBlobURL(url, WTF::move(parts), contentType); }
+    void registerInternalFileBlobURL(const URL& url, Ref<WebCore::BlobDataFileReference>&& reference, StringImpl*, StringImpl* contentType) final { m_blobRegistry.registerInternalFileBlobURL(url, WTF::move(reference), contentType); }
+    void registerInternalBlobURL(const URL& url, Vector<WebCore::BlobPart>&& parts, StringImpl* contentType) final { m_blobRegistry.registerInternalBlobURL(url, WTF::move(parts), contentType); }
     void registerBlobURL(const URL& url, const URL& srcURL, const WebCore::PolicyContainer& policyContainer, const std::optional<WebCore::SecurityOriginData>& topOrigin) final { m_blobRegistry.registerBlobURL(url, srcURL, policyContainer, topOrigin); }
-    void registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& reference, const String& contentType) final { m_blobRegistry.registerInternalBlobURLOptionallyFileBacked(url, srcURL, WTF::move(reference), contentType, { }); }
-    void registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType) final { m_blobRegistry.registerInternalBlobURLForSlice(url, srcURL, start, end, contentType); }
+    void registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& reference, StringImpl* contentType) final { m_blobRegistry.registerInternalBlobURLOptionallyFileBacked(url, srcURL, WTF::move(reference), contentType, { }); }
+    void registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, StringImpl* contentType) final { m_blobRegistry.registerInternalBlobURLForSlice(url, srcURL, start, end, contentType); }
     void unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin) final { m_blobRegistry.unregisterBlobURL(url, topOrigin); }
-    String blobType(const URL& url) final { return m_blobRegistry.blobType(url); }
+    RefPtr<StringImpl> blobType(const URL& url) final { return m_blobRegistry.blobType(url); }
     unsigned long long blobSize(const URL& url) final { return m_blobRegistry.blobSize(url); }
-    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler) final { m_blobRegistry.writeBlobsToTemporaryFilesForIndexedDB(blobURLs, WTF::move(completionHandler)); }
+    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&& completionHandler) final { m_blobRegistry.writeBlobsToTemporaryFilesForIndexedDB(blobURLs, WTF::move(completionHandler)); }
     void registerBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin) final { m_blobRegistry.registerBlobURLHandle(url, topOrigin); }
     void unregisterBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin) final { m_blobRegistry.unregisterBlobURLHandle(url, topOrigin); }
 
@@ -111,160 +111,160 @@ WebCore::BlobRegistry* WebPlatformStrategies::createBlobRegistry()
     return new WebBlobRegistry;
 }
 
-void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::getTypes(Vector<RefPtr<StringImpl>>& types, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).getTypes(types);
 }
 
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     auto pasteboardBuffer = WebCore::PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
     return WebCore::Pasteboard::bufferConvertedToPasteboardType(pasteboardBuffer, pasteboardType);
 }
 
-void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::getPathnamesForType(Vector<RefPtr<StringImpl>>& pathnames, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 }
 
-Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
+Vector<RefPtr<StringImpl>> WebPlatformStrategies::allStringsForType(StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType);
 }
 
-String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
+RefPtr<StringImpl> WebPlatformStrategies::stringForType(StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
-int64_t WebPlatformStrategies::changeCount(const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::changeCount(StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).changeCount();
 }
 
-WebCore::Color WebPlatformStrategies::color(const String& pasteboardName, const WebCore::PasteboardContext*)
+WebCore::Color WebPlatformStrategies::color(StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).color();    
 }
 
-URL WebPlatformStrategies::url(const String& pasteboardName, const WebCore::PasteboardContext*)
+URL WebPlatformStrategies::url(StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).url();
 }
 
-int64_t WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::addTypes(const Vector<RefPtr<StringImpl>>& pasteboardTypes, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
 }
 
-int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::setTypes(const Vector<RefPtr<StringImpl>>& pasteboardTypes, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-int64_t WebPlatformStrategies::setBufferForType(WebCore::SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::setBufferForType(WebCore::SharedBuffer* buffer, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
-int64_t WebPlatformStrategies::setURL(const WebCore::PasteboardURL& pasteboardURL, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::setURL(const WebCore::PasteboardURL& pasteboardURL, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).setURL(pasteboardURL);
 }
 
-int64_t WebPlatformStrategies::setColor(const WebCore::Color& color, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::setColor(const WebCore::Color& color, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).setColor(color);
 }
 
-int64_t WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::setStringForType(StringImpl* string, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
 
-int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName, const WebCore::PasteboardContext*)
+int WebPlatformStrategies::getNumberOfFiles(StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).numberOfFiles();
 }
 
-Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, const WebCore::PasteboardContext*)
+Vector<RefPtr<StringImpl>> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(StringImpl* pasteboardName, StringImpl* origin, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin);
 }
 
-int64_t WebPlatformStrategies::writeCustomData(const Vector<WebCore::PasteboardCustomData>& data, const String& pasteboardName, const WebCore::PasteboardContext*)
+int64_t WebPlatformStrategies::writeCustomData(const Vector<WebCore::PasteboardCustomData>& data, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).write(data);
 }
 
-bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(const String& pasteboardName, const String& type, const WebCore::PasteboardContext*)
+bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(StringImpl* pasteboardName, StringImpl* type, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).containsStringSafeForDOMToReadForType(type);
 }
 
-std::optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*)
+std::optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, StringImpl* pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).informationForItemAtIndex(index, changeCount);
 }
 
-std::optional<Vector<WebCore::PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*)
+std::optional<Vector<WebCore::PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(StringImpl* pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).allPasteboardItemInfo(changeCount);
 }
 
-int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName, const WebCore::PasteboardContext*)
+int WebPlatformStrategies::getPasteboardItemsCount(StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).count();
 }
 
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(std::optional<size_t> index, const String& type, const String& pasteboardName, const WebCore::PasteboardContext*)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(std::optional<size_t> index, StringImpl* type, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).readBuffer(index, type);
 }
 
-URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pasteboardName, String& title, const WebCore::PasteboardContext*)
+URL WebPlatformStrategies::readURLFromPasteboard(size_t index, StringImpl* pasteboardName, RefPtr<StringImpl>& title, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).readURL(index, title);
 }
 
-String WebPlatformStrategies::readStringFromPasteboard(size_t index, const String& type, const String& pasteboardName, const WebCore::PasteboardContext*)
+RefPtr<StringImpl> WebPlatformStrategies::readStringFromPasteboard(size_t index, StringImpl* type, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).readString(index, type);
 }
 
-bool WebPlatformStrategies::containsURLStringSuitableForLoading(const String& pasteboardName, const WebCore::PasteboardContext*)
+bool WebPlatformStrategies::containsURLStringSuitableForLoading(StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).containsURLStringSuitableForLoading();
 }
 
-String WebPlatformStrategies::urlStringSuitableForLoading(const String& pasteboardName, String& title, const WebCore::PasteboardContext*)
+RefPtr<StringImpl> WebPlatformStrategies::urlStringSuitableForLoading(StringImpl* pasteboardName, RefPtr<StringImpl>& title, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).urlStringSuitableForLoading(title);
 }
 
 #if PLATFORM(IOS_FAMILY)
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardURL& url, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardURL& url, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).write(url);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).write(content);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).write(image);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, const String& text, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::writeToPasteboard(StringImpl* pasteboardType, StringImpl* text, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).write(pasteboardType, text);
 }
 
-void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName, const WebCore::PasteboardContext*)
+void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<RefPtr<StringImpl>>& identifiers, StringImpl* pasteboardName, const WebCore::PasteboardContext*)
 {
     WebCore::PlatformPasteboard(pasteboardName).updateSupportedTypeIdentifiers(identifiers);
 }

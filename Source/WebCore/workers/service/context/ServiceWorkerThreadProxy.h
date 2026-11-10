@@ -79,7 +79,7 @@ public:
 
     WEBCORE_EXPORT void notifyNetworkStateChange(bool isOnline);
 
-    WEBCORE_EXPORT void startFetch(SWServerConnectionIdentifier, FetchIdentifier, Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+    WEBCORE_EXPORT void startFetch(SWServerConnectionIdentifier, FetchIdentifier, Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, RefPtr<StringImpl>&& referrer, FetchOptions&&, bool isServiceWorkerNavigationPreloadEnabled, RefPtr<StringImpl>&& clientIdentifier, RefPtr<StringImpl>&& resultingClientIdentifier);
     WEBCORE_EXPORT void cancelFetch(SWServerConnectionIdentifier, FetchIdentifier);
     WEBCORE_EXPORT void removeFetch(SWServerConnectionIdentifier, FetchIdentifier);
     WEBCORE_EXPORT void navigationPreloadIsReady(SWServerConnectionIdentifier, FetchIdentifier, ResourceResponse&&);
@@ -113,10 +113,10 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy>::setDidBeginCheckedPtrDeletion(); }
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(Ref<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(Ref<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, RefPtr<StringImpl>&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, StringImpl* mode);
 
     // WorkerLoaderProxy
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
@@ -127,7 +127,7 @@ private:
     RefPtr<IDBClient::IDBConnectionProxy> createIDBConnectionProxy() final;
 
     // WorkerDebuggerProxy
-    void postMessageToDebugger(const String&) final;
+    void postMessageToDebugger(StringImpl*) final;
     void setResourceCachingDisabledByWebInspector(bool) final;
 
     // WorkerBadgeProxy

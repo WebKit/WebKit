@@ -39,7 +39,7 @@ CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, CSS::Integer<CSS::Nonneg
 {
 }
 
-String CSSFontFeatureValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontFeatureValue::customCSSText(const CSS::SerializationContext& context) const
 {
     using namespace CSS::Literals;
 

@@ -56,8 +56,8 @@ public:
 
     void markAlreadyStarted() { m_alreadyStarted = true; }
 
-    const AtomString& scriptCharset() const LIFETIME_BOUND { return m_characterEncoding; }
-    WEBCORE_EXPORT String scriptContent() const;
+    const RefPtr<AtomStringImpl>& scriptCharset() const LIFETIME_BOUND { return m_characterEncoding; }
+    WEBCORE_EXPORT RefPtr<StringImpl> scriptContent() const;
     void executeClassicScript(const ScriptSourceCode&);
     void executeModuleScript(LoadableModuleScript&);
     void registerImportMap(const ScriptSourceCode&);
@@ -87,7 +87,7 @@ public:
 
     JSC::SourceTaintedness sourceTaintedOrigin() const { return m_taintedOrigin; }
 
-    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true, bool speculationRulesPrefetchEnabled = false);
+    static std::optional<ScriptType> determineScriptType(StringImpl* typeAttribute, StringImpl* languageAttribute, bool isHTMLDocument = true, bool speculationRulesPrefetchEnabled = false);
 
     // ActiveDOMObject
     bool virtualHasPendingActivity() const final;
@@ -114,10 +114,10 @@ protected:
     void postConnectionSteps();
     void childrenChanged(const ContainerNode::ChildChange&);
     void finishParsingChildren();
-    void handleSourceAttribute(const String& sourceURL);
+    void handleSourceAttribute(StringImpl* sourceURL);
     NODELETE void handleAsyncAttribute();
 
-    void setTrustedScriptText(const String&);
+    void setTrustedScriptText(StringImpl*);
 
     virtual void potentiallyBlockRendering() { }
     virtual void unblockRendering() { }
@@ -129,15 +129,15 @@ private:
     NODELETE bool ignoresLoadRequest() const;
     void dispatchLoadEventRespectingUserGestureIndicator();
 
-    bool requestClassicScript(const String& sourceURL);
-    bool requestModuleScript(const String& sourceText, const TextPosition& scriptStartPosition);
+    bool requestClassicScript(StringImpl* sourceURL);
+    bool requestModuleScript(StringImpl* sourceText, const TextPosition& scriptStartPosition);
 
     void updateTaintedOriginFromSourceURL();
 
-    virtual String sourceAttributeValue() const = 0;
-    virtual AtomString charsetAttributeValue() const = 0;
-    virtual String typeAttributeValue() const = 0;
-    virtual String languageAttributeValue() const = 0;
+    virtual RefPtr<StringImpl> sourceAttributeValue() const = 0;
+    virtual RefPtr<AtomStringImpl> charsetAttributeValue() const = 0;
+    virtual RefPtr<StringImpl> typeAttributeValue() const = 0;
+    virtual RefPtr<StringImpl> languageAttributeValue() const = 0;
     virtual ReferrerPolicy referrerPolicy() const = 0;
     virtual RequestPriority fetchPriority() const { return RequestPriority::Auto; }
 
@@ -159,7 +159,7 @@ private:
     bool m_childrenChangedByAPI : 1 { false };
     bool m_hasRelevantLoadEventsListener : 1 { false };
     ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
-    AtomString m_characterEncoding;
+    RefPtr<AtomStringImpl> m_characterEncoding;
     RefPtr<LoadableScript> m_loadableScript;
 
     // https://html.spec.whatwg.org/multipage/scripting.html#preparation-time-document
@@ -169,7 +169,7 @@ private:
     const RefPtr<UserGestureToken> m_userGestureToken;
 
     // https://w3c.github.io/trusted-types/dist/spec/#slots-with-trusted-values
-    String m_trustedScriptText { emptyString() };
+    RefPtr<StringImpl> m_trustedScriptText { emptyString() };
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.

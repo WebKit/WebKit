@@ -60,7 +60,7 @@ static constexpr auto deleteAllSitesSQL = "DELETE FROM sites"_s;
 static constexpr auto deleteSiteSQL = "DELETE FROM sites WHERE site = ?"_s;
 static constexpr auto insertSiteSQL = "INSERT OR REPLACE INTO sites (site, enhanced_security_state, last_modified) VALUES (?, ?, ?)"_s;
 
-EnhancedSecuritySitesPersistence::EnhancedSecuritySitesPersistence(const String& databaseDirectoryPath)
+EnhancedSecuritySitesPersistence::EnhancedSecuritySitesPersistence(StringImpl* databaseDirectoryPath)
 {
     ASSERT(!isMainRunLoop());
     openDatabase(databaseDirectoryPath);
@@ -79,9 +79,9 @@ void EnhancedSecuritySitesPersistence::reportSQLError(ASCIILiteral method, ASCII
     RELEASE_LOG_ERROR(EnhancedSecurity, "EnhancedSecuritySitesPersistence::%" PUBLIC_LOG_STRING ": Failed to %" PUBLIC_LOG_STRING " (%d) - %" PUBLIC_LOG_STRING, method.characters(), action.characters(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
 }
 
-static String databasePath(const String& directoryPath)
+static RefPtr<StringImpl> databasePath(StringImpl* directoryPath)
 {
-    ASSERT(!directoryPath.isEmpty());
+    ASSERT(!isEmpty(directoryPath));
     return FileSystem::pathByAppendingComponent(directoryPath, "EnhancedSecuritySites.db"_s);
 }
 
@@ -101,10 +101,10 @@ WebCore::SQLiteStatementAutoResetScope EnhancedSecuritySitesPersistence::cachedS
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool EnhancedSecuritySitesPersistence::openDatabase(const String& directoryPath)
+bool EnhancedSecuritySitesPersistence::openDatabase(StringImpl* directoryPath)
 {
     ASSERT(!isMainRunLoop());
-    ASSERT(!directoryPath.isEmpty());
+    ASSERT(!isEmpty(directoryPath));
 
     FileSystem::makeAllDirectories(directoryPath);
 
@@ -239,7 +239,7 @@ HashSet<WebCore::RegistrableDomain> EnhancedSecuritySitesPersistence::enhancedSe
     HashSet<WebCore::RegistrableDomain> sites;
     while (selectStatement->step() == SQLITE_ROW) {
         auto site = selectStatement->columnText(0);
-        sites.add(WebCore::RegistrableDomain::fromRawString(String { site }));
+        sites.add(WebCore::RegistrableDomain::fromRawString(RefPtr<StringImpl> { site }));
     }
 
     return sites;
@@ -263,7 +263,7 @@ HashSet<WebCore::RegistrableDomain> EnhancedSecuritySitesPersistence::allEnhance
     HashSet<WebCore::RegistrableDomain> sites;
     while (selectStatement->step() == SQLITE_ROW) {
         auto site = selectStatement->columnText(0);
-        sites.add(WebCore::RegistrableDomain::fromRawString(String { site }));
+        sites.add(WebCore::RegistrableDomain::fromRawString(RefPtr<StringImpl> { site }));
     }
 
     return sites;

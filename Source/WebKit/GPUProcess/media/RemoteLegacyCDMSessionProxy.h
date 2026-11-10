@@ -61,7 +61,7 @@ public:
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
     WebCore::LegacyCDMSession* session() const { return m_session.get(); }
 
-    RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
+    RefPtr<ArrayBuffer> getCachedKeyForKeyId(StringImpl*);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
@@ -73,10 +73,10 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // LegacyCDMSessionClient
-    void sendMessage(Uint8Array*, String destinationURL) final;
+    void sendMessage(Uint8Array*, RefPtr<StringImpl> destinationURL) final;
     void sendError(MediaKeyErrorCode, uint32_t systemCode) final;
-    String mediaKeysStorageDirectory() const final;
-    String mediaKeysHashSalt() const final { return m_mediaKeysHashSalt; }
+    RefPtr<StringImpl> mediaKeysStorageDirectory() const final;
+    RefPtr<StringImpl> mediaKeysHashSalt() const final { return m_mediaKeysHashSalt; }
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
@@ -85,13 +85,13 @@ private:
 #endif
 
     // Messages
-    using GenerateKeyCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String&, unsigned short, uint32_t)>;
-    void generateKeyRequest(const String& mimeType, RefPtr<WebCore::SharedBuffer>&& initData, const String& mediaKeysHashSalt, GenerateKeyCallback&&);
+    using GenerateKeyCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, StringImpl*, unsigned short, uint32_t)>;
+    void generateKeyRequest(StringImpl* mimeType, RefPtr<WebCore::SharedBuffer>&& initData, StringImpl* mediaKeysHashSalt, GenerateKeyCallback&&);
     void releaseKeys();
     using UpdateCallback = CompletionHandler<void(bool, RefPtr<WebCore::SharedBuffer>&&, unsigned short, uint32_t)>;
     void update(RefPtr<WebCore::SharedBuffer>&& update, UpdateCallback&&);
     using CachedKeyForKeyIDCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>;
-    void cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&&);
+    void cachedKeyForKeyID(RefPtr<StringImpl> keyId, CachedKeyForKeyIDCallback&&);
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;
 
@@ -102,7 +102,7 @@ private:
 
     RemoteLegacyCDMSessionIdentifier m_identifier;
     const RefPtr<WebCore::LegacyCDMSession> m_session;
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
 };
 
 }

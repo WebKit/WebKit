@@ -33,7 +33,7 @@ namespace WTF {
 class Indenter {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Indenter);
 public:
-    Indenter(unsigned count = 0, String string = "  "_s)
+    Indenter(unsigned count = 0, RefPtr<StringImpl> string = "  "_si)
         : m_count(count)
         , m_string(string)
     { }
@@ -57,7 +57,7 @@ public:
 
 private:
     unsigned m_count;
-    String m_string;
+    RefPtr<StringImpl> m_string;
 };
 
 } // namespace WTF

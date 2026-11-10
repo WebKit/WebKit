@@ -108,14 +108,14 @@ public:
     WEBCORE_EXPORT CurlStreamScheduler& streamScheduler();
 
     // Alt-Svc
-    const String& alternativeServicesStorageFile() const LIFETIME_BOUND { return m_alternativeServicesStorageFile; }
-    void setAlternativeServicesStorageFile(const String& cacheFile) { m_alternativeServicesStorageFile = cacheFile; }
+    const RefPtr<StringImpl>& alternativeServicesStorageFile() const LIFETIME_BOUND { return m_alternativeServicesStorageFile; }
+    void setAlternativeServicesStorageFile(StringImpl* cacheFile) { m_alternativeServicesStorageFile = cacheFile; }
     WEBCORE_EXPORT void clearAlternativeServicesStorageFile();
 
     // Proxy
     const CurlProxySettings& proxySettings() const LIFETIME_BOUND { return m_proxySettings; }
     void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
-    void setProxyUserPass(const String& user, const String& password) { m_proxySettings.setUserPass(user, password); }
+    void setProxyUserPass(StringImpl* user, StringImpl* password) { m_proxySettings.setUserPass(user, password); }
     void setDefaultProxyAuthMethod() { m_proxySettings.setDefaultAuthMethod(); }
     void setProxyAuthMethod(long authMethod) { m_proxySettings.setAuthMethod(authMethod); }
 
@@ -154,7 +154,7 @@ private:
     Seconds m_connectTimeout { 30.0 };
     Seconds m_defaultTimeoutInterval { 60.0 };
 
-    String m_alternativeServicesStorageFile;
+    RefPtr<StringImpl> m_alternativeServicesStorageFile;
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
@@ -249,7 +249,7 @@ public:
     CURLcode perform();
     CURLcode pause(int);
 
-    static const String errorDescription(CURLcode);
+    static const RefPtr<StringImpl> errorDescription(CURLcode);
 
     void enableShareHandle();
 
@@ -257,16 +257,16 @@ public:
     void enableSSL();
 
     void appendRequestHeaders(const HTTPHeaderMap&);
-    void appendRequestHeader(const String& name, const String& value);
-    void appendRequestHeader(const String& name);
-    void removeRequestHeader(const String& name);
+    void appendRequestHeader(StringImpl* name, StringImpl* value);
+    void appendRequestHeader(StringImpl* name);
+    void removeRequestHeader(StringImpl* name);
 
     void enableHttp();
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
     void enableHttpPostRequest(curl_off_t size);
     void enableHttpPutRequest(curl_off_t size);
-    void setHttpCustomRequest(const String&);
+    void setHttpCustomRequest(StringImpl*);
 
     void enableConnectionOnly();
 
@@ -274,7 +274,7 @@ public:
     void enableAllowedProtocols();
     void enableAltSvc();
 
-    void setHttpAuthUserPass(const String&, const String&, long authType = CURLAUTH_ANY);
+    void setHttpAuthUserPass(StringImpl*, StringImpl*, long authType = CURLAUTH_ANY);
 
     void disableServerTrustEvaluation();
     void setCACertPath(UTF8CStringView);
@@ -298,7 +298,7 @@ public:
     void setDebugCallbackFunction(curl_debug_callback, void*);
 
     // Status
-    std::optional<String> getProxyUrl();
+    std::optional<RefPtr<StringImpl>> getProxyUrl();
     std::optional<long> getResponseCode();
     std::optional<long> getHttpConnectCode();
     std::optional<long> getHttpAuthAvail();
@@ -323,8 +323,8 @@ public:
 private:
     struct TLSConnectionInfo {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TLSConnectionInfo);
-        String protocol;
-        String cipher;
+        RefPtr<StringImpl> protocol;
+        RefPtr<StringImpl> cipher;
     };
 
     void enableRequestHeaders();

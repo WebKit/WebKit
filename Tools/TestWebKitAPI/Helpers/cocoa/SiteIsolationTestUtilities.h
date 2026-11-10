@@ -66,7 +66,7 @@ std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsola
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect = CGRectZero);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer&, CGRect = CGRectZero);
 
-HTTPResponse documentIsolationPolicyResponse(const String& body);
+HTTPResponse documentIsolationPolicyResponse(StringImpl* body);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(const HTTPServer&);
 
 struct WebViewAndDelegates {
@@ -84,7 +84,7 @@ struct SiteIsolationParams {
 
     bool isCrossOriginWithSiteIsolation() const { return crossOrigin && siteIsolationEnabled; }
 
-    String subframeURL(ASCIILiteral path) const { return makeString(crossOrigin ? "https://webkit.org"_s : "https://example.com"_s, path); }
+    RefPtr<StringImpl> subframeURL(ASCIILiteral path) const { return makeString(crossOrigin ? "https://webkit.org"_s : "https://example.com"_s, path); }
 
     void applyTo(WKWebViewConfiguration *configuration) const
     {

@@ -30,10 +30,10 @@
 
 namespace WebCore {
 struct CanvasActivityRecord {
-    HashSet<String> textWritten;
+    HashSet<RefPtr<StringImpl>> textWritten;
     bool wasDataRead { false };
     
-    WEBCORE_EXPORT bool recordWrittenOrMeasuredText(const String&);
+    WEBCORE_EXPORT bool recordWrittenOrMeasuredText(StringImpl*);
     void mergeWith(const CanvasActivityRecord&);
 };
 } // namespace WebCore

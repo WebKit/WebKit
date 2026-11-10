@@ -124,12 +124,12 @@ private:
     void dispatchDidFinishLoad() final;
     void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) final;
 
-    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy, const String&) final;
+    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy, StringImpl*) final;
     void dispatchShow() final;
 
-    void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const WTF::String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, StringImpl*, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, StringImpl* frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, StringImpl*, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
     void updateSandboxFlags(WebCore::SandboxFlags) { }
     void updateOpener(std::optional<WebCore::FrameIdentifier>) { }
     void setPrinting(bool, WebCore::FloatSize, WebCore::FloatSize, float, WebCore::AdjustViewSize) { }
@@ -138,7 +138,7 @@ private:
     void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;
 
     void dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&) final;
-    void dispatchWillSubmitForm(WebCore::FormState&, URL&&, String&&, CompletionHandler<void()>&&) final;
+    void dispatchWillSubmitForm(WebCore::FormState&, URL&&, RefPtr<StringImpl>&&, CompletionHandler<void()>&&) final;
 
     void revertToProvisionalState(WebCore::DocumentLoader*) final;
     void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) final;
@@ -146,7 +146,7 @@ private:
 
     void setMainFrameDocumentReady(bool) final;
 
-    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String(), WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
+    void startDownload(const WebCore::ResourceRequest&, StringImpl* suggestedName = nullptr, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
 
     void willChangeTitle(WebCore::DocumentLoader*) final;
     void didChangeTitle(WebCore::DocumentLoader*) final;
@@ -171,7 +171,7 @@ private:
 
     bool shouldFallBack(const WebCore::ResourceError&) const final;
 
-    WTF::String userAgent(const URL&) const final;
+    RefPtr<StringImpl> userAgent(const URL&) const final;
     
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
@@ -183,10 +183,10 @@ private:
     void didRestoreFromBackForwardCache() final;
 
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
-    bool canShowMIMEType(const WTF::String& MIMEType) const final;
-    bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const final;
+    bool canShowMIMEType(StringImpl* MIMEType) const final;
+    bool canShowMIMETypeAsHTML(StringImpl* MIMEType) const final;
     bool representationExistsForURLScheme(WTF::StringView URLScheme) const final;
-    WTF::String generatedMIMETypeForURLScheme(WTF::StringView URLScheme) const final;
+    RefPtr<StringImpl> generatedMIMETypeForURLScheme(WTF::StringView URLScheme) const final;
 
     void frameLoadCompleted() final;
     void saveViewStateToItem(WebCore::HistoryItem&) final;
@@ -200,13 +200,13 @@ private:
 
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
 
-    RefPtr<WebCore::LocalFrame> createFrame(const WTF::AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::LocalFrame> createFrame(AtomStringImpl* name, WebCore::HTMLFrameOwnerElement&) final;
     RefPtr<WebCore::Widget> createPlugin(WebCore::HTMLPlugInElement&, const URL&,
-    const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool) final;
+    const Vector<RefPtr<AtomStringImpl>>&, const Vector<RefPtr<AtomStringImpl>>&, StringImpl*, bool) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
-    WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) final;
-    WTF::AtomString overrideMediaType() const final;
+    WebCore::ObjectContentType objectContentType(const URL&, StringImpl* mimeType) final;
+    RefPtr<AtomStringImpl> overrideMediaType() const final;
     
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
 
@@ -232,14 +232,14 @@ private:
     bool shouldPaintBrokenImage(const URL&) const final;
 
 #if USE(QUICK_LOOK)
-    RefPtr<WebCore::LegacyPreviewLoaderClient> createPreviewLoaderClient(const String& fileName, const String& uti) final;
+    RefPtr<WebCore::LegacyPreviewLoaderClient> createPreviewLoaderClient(StringImpl* fileName, StringImpl* uti) final;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&&) final;
 #endif
 
-    void prefetchDNS(const String&) final;
+    void prefetchDNS(StringImpl*) final;
     void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, WebCore::ResourceError>&&)>&&) final;
 
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;

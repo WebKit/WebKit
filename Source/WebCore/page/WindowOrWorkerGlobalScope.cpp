@@ -39,28 +39,28 @@
 
 namespace WebCore {
 
-ExceptionOr<String> WindowOrWorkerGlobalScope::btoa(const String& stringToEncode)
+ExceptionOr<RefPtr<StringImpl>> WindowOrWorkerGlobalScope::btoa(StringImpl* stringToEncode)
 {
-    if (stringToEncode.isNull())
-        return String();
+    if (!stringToEncode)
+        return RefPtr<StringImpl> { };
 
-    if (!stringToEncode.containsOnlyLatin1())
+    if (!containsOnlyLatin1(stringToEncode))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    String encodedString = base64EncodeToStringReturnNullIfOverflow(stringToEncode.latin1());
+    RefPtr<StringImpl> encodedString = base64EncodeToStringReturnNullIfOverflow(latin1(stringToEncode));
     if (!encodedString)
         return Exception { ExceptionCode::OutOfMemoryError };
 
     return encodedString;
 }
 
-ExceptionOr<String> WindowOrWorkerGlobalScope::atob(const String& encodedString)
+ExceptionOr<RefPtr<StringImpl>> WindowOrWorkerGlobalScope::atob(StringImpl* encodedString)
 {
-    if (encodedString.isNull())
-        return String();
+    if (!encodedString)
+        return RefPtr<StringImpl> { };
 
     auto decodedData = base64DecodeToString(encodedString, { Base64DecodeOption::ValidatePadding, Base64DecodeOption::IgnoreWhitespace });
-    if (decodedData.isNull())
+    if (!decodedData)
         return Exception { ExceptionCode::InvalidCharacterError };
 
     return decodedData;

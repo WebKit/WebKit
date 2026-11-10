@@ -32,6 +32,6 @@
 
 @interface WKReloadFrameErrorRecoveryAttempter : NSObject<_WKErrorRecoveryAttempting, NSSecureCoding>
 
-- (id)initWithWebView:(WKWebView *)webView frameHandle:(_WKFrameHandle *)frameHandle urlString:(const String&)urlString;
+- (id)initWithWebView:(WKWebView *)webView frameHandle:(_WKFrameHandle *)frameHandle urlString:(StringImpl*)urlString;
 
 @end

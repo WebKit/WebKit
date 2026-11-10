@@ -87,24 +87,24 @@
 #if PLATFORM(IOS)
 
 // FIXME: This is only here temporarily for staging purposes.
-static UNUSED_FUNCTION Vector<String> getAllowedBundleIdentifiers()
+static UNUSED_FUNCTION Vector<RefPtr<StringImpl>> getAllowedBundleIdentifiers()
 {
-    Vector<String> result = { "com.apple.SafariViewService"_s };
+    Vector<RefPtr<StringImpl>> result = { "com.apple.SafariViewService"_si };
     GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS;
     return result;
 }
 
-static String getAllowedBundleIdentifier()
+static RefPtr<StringImpl> getAllowedBundleIdentifier()
 {
-    String result = "com.apple.SafariViewService"_s;
+    RefPtr<StringImpl> result = "com.apple.SafariViewService"_si;
     GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS_1;
     return result;
 }
 
 #endif
 
-#define WEBPUSHDAEMON_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, connection.debugDescription().utf8(), ##__VA_ARGS__)
-#define WEBPUSHDAEMON_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, connection.debugDescription().utf8(), ##__VA_ARGS__)
+#define WEBPUSHDAEMON_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, utf8(connection.debugDescription()), ##__VA_ARGS__)
+#define WEBPUSHDAEMON_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, utf8(connection.debugDescription()), ##__VA_ARGS__)
 
 using namespace WebKit::WebPushD;
 using WebCore::PushSubscriptionSetIdentifier;
@@ -134,18 +134,18 @@ NODELETE static bool platformShouldPlaySound(const WebCore::NotificationData& da
 static RetainPtr<NSString> platformDefaultActionBundleIdentifier(const WebCore::PushSubscriptionSetIdentifier& identifier)
 {
 #if PLATFORM(IOS)
-    if (identifier.bundleIdentifier == "com.apple.SafariViewService"_s)
+    if (equal(identifier.bundleIdentifier, "com.apple.SafariViewService"_s))
         return @"com.apple.webapp";
-    return identifier.bundleIdentifier.createNSString();
+    return createNSString(identifier.bundleIdentifier);
 #else
     // FIXME: Calculate appropriate value on macOS
     return nil;
 #endif
 }
 
-static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(String pushPartition)
+static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(RefPtr<StringImpl> pushPartition)
 {
-    return adoptNS([[NSString alloc] initWithFormat:@"com.apple.WebKit.PushBundle.%@", pushPartition.createNSString().get()]);
+    return adoptNS([[NSString alloc] initWithFormat:@"com.apple.WebKit.PushBundle.%@", createNSString(pushPartition).get()]);
 }
 
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
@@ -191,7 +191,7 @@ void WebPushDaemon::startMockPushService()
     });
 }
 
-void WebPushDaemon::startPushService(const String& incomingPushServiceName, const String& databasePath, const String& webClipCachePath)
+void WebPushDaemon::startPushService(StringImpl* incomingPushServiceName, StringImpl* databasePath, StringImpl* webClipCachePath)
 {
 #if PLATFORM(IOS)
     m_webClipCachePath = webClipCachePath;
@@ -200,7 +200,7 @@ void WebPushDaemon::startPushService(const String& incomingPushServiceName, cons
     auto messageHandler = [](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
         WebPushDaemon::singleton().handleIncomingPush(identifier, WTF::move(message));
     };
-    PushService::create(incomingPushServiceName, databasePath, WTF::move(messageHandler), [webClipCachePath](auto&& pushService) mutable {
+    PushService::create(incomingPushServiceName, databasePath, WTF::move(messageHandler), [webClipCachePath = RefPtr { webClipCachePath }](auto&& pushService) mutable {
 #if PLATFORM(IOS)
         auto& daemon = WebPushDaemon::singleton();
         if (!pushService) {
@@ -354,8 +354,8 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 #if PLATFORM(IOS)
     auto bundleIdentifier = pushConnection->hostAppCodeSigningIdentifier();
     auto pushPartition = pushConnection->pushPartitionIfExists();
-    if (getAllowedBundleIdentifier() != bundleIdentifier || (!pushPartition.isEmpty() && !ensureWebClipCache().isWebClipVisible(bundleIdentifier, pushPartition))) {
-        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Got message from unexpected bundleIdentifier = %{public}s and pushPartition = %{public}s", bundleIdentifier.utf8(), pushPartition.utf8());
+    if (!equal(getAllowedBundleIdentifier(), bundleIdentifier) || (!isEmpty(pushPartition) && !ensureWebClipCache().isWebClipVisible(bundleIdentifier, pushPartition))) {
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Got message from unexpected bundleIdentifier = %{public}s and pushPartition = %{public}s", utf8(bundleIdentifier), utf8(pushPartition));
         updateSubscriptionSetState();
         tryCloseRequestConnection(request);
         return;
@@ -416,8 +416,8 @@ void WebPushDaemon::updateSubscriptionSetState()
         for (auto& [xpcConnection, pushClientConnection] : daemon.m_connectionMap) {
             auto bundleIdentifier = pushClientConnection->hostAppCodeSigningIdentifier();
             auto pushPartition = pushClientConnection->pushPartitionIfExists();
-            if (bundleIdentifier != allowedBundleIdentifier || (!pushPartition.isEmpty() && !visibleWebClipIdentifiers.contains(pushPartition))) {
-                RELEASE_LOG(Push, "WebPushDaemon::updateSubscriptionSetState: killing obsolete connection %p associated with bundleIdentifier = %{public}s and pushPartition = %{public}s", xpcConnection.get(), bundleIdentifier.utf8(), pushPartition.utf8());
+            if (!equal(bundleIdentifier, allowedBundleIdentifier) || (!isEmpty(pushPartition) && !visibleWebClipIdentifiers.contains(pushPartition))) {
+                RELEASE_LOG(Push, "WebPushDaemon::updateSubscriptionSetState: killing obsolete connection %p associated with bundleIdentifier = %{public}s and pushPartition = %{public}s", xpcConnection.get(), utf8(bundleIdentifier), utf8(pushPartition));
                 xpc_connection_cancel(xpcConnection.get());
             }
         }
@@ -426,15 +426,15 @@ void WebPushDaemon::updateSubscriptionSetState()
 
 #endif
 
-void WebPushDaemon::setPushAndNotificationsEnabledForOrigin(PushClientConnection& connection, const String& originString, bool enabled, CompletionHandler<void()>&& replySender)
+void WebPushDaemon::setPushAndNotificationsEnabledForOrigin(PushClientConnection& connection, StringImpl* originString, bool enabled, CompletionHandler<void()>&& replySender)
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(SecurityOriginData::fromURL(URL { originString }));
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", originString.utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(originString));
         return replySender();
     }
 
-    runAfterStartingPushService([identifier = WTF::move(*maybeIdentifier), originString, enabled, replySender = WTF::move(replySender)]() mutable {
+    runAfterStartingPushService([identifier = WTF::move(*maybeIdentifier), originString = RefPtr { originString }, enabled, replySender = WTF::move(replySender)]() mutable {
         auto& daemon = WebPushDaemon::singleton();
         if (!daemon.m_pushService)
             return replySender();
@@ -443,18 +443,18 @@ void WebPushDaemon::setPushAndNotificationsEnabledForOrigin(PushClientConnection
     });
 }
 
-void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, PushMessageForTesting&& message, CompletionHandler<void(const String&)>&& replySender)
+void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, PushMessageForTesting&& message, CompletionHandler<void(StringImpl*)>&& replySender)
 {
     auto checkConnectionAndInjectedMessage = [&]() -> ASCIILiteral {
         if (!connection.hostAppHasPushInjectEntitlement())
             return "Attempting to inject a push message from an unentitled process"_s;
-        if (message.targetAppCodeSigningIdentifier.isEmpty() || !message.registrationURL.isValid())
+        if (isEmpty(message.targetAppCodeSigningIdentifier) || !message.registrationURL.isValid())
             return "Attempting to inject an invalid push message"_s;
         return nullptr;
     };
     if (auto errorMessage = checkConnectionAndInjectedMessage()) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "%{public}s", errorMessage.characters());
-        return replySender(errorMessage);
+        return replySender(StringImpl::create(errorMessage).ptr());
     }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -476,33 +476,33 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
     PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString, .dataStoreIdentifier = connection.dataStoreIdentifier() };
-    auto data = message.payload.utf8();
+    auto data = utf8(message.payload);
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     WebKit::WebPushMessage pushMessage { Vector(byteCast<uint8_t>(data.span())), message.pushPartitionString, message.registrationURL, WTF::move(message.parsedPayload) };
 #else
     WebKit::WebPushMessage pushMessage { Vector(byteCast<uint8_t>(data.span())), message.pushPartitionString, message.registrationURL, { } };
 #endif
 
-    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8(), message.registrationURL.string().utf8(), m_pendingPushMessages.size(), message.payload.utf8());
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", utf8(message.targetAppCodeSigningIdentifier), utf8(message.registrationURL.string()), m_pendingPushMessages.size(), utf8(message.payload));
 
     handleIncomingPushImpl(identifier, WTF::move(pushMessage));
 
-    replySender({ });
+    replySender(nullptr);
 }
 
-void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& connection, const String& message, CompletionHandler<void(bool)>&& replySender)
+void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& connection, StringImpl* message, CompletionHandler<void(bool)>&& replySender)
 {
     if (!connection.hostAppHasPushInjectEntitlement()) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Attempting to inject a push message from an unentitled process");
         return replySender(false);
     }
 
-    runAfterStartingPushService([message = message, replySender = WTF::move(replySender)]() mutable {
+    runAfterStartingPushService([message = RefPtr { message }, replySender = WTF::move(replySender)]() mutable {
         auto& daemon = WebPushDaemon::singleton();
         if (!daemon.m_pushService)
             return replySender(false);
 
-        RetainPtr data = toNSData(byteCast<uint8_t>(message.utf8().span()));
+        RetainPtr data = toNSData(byteCast<uint8_t>(utf8(message).span()));
 
         id obj = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nullptr];
         if (!obj || ![obj isKindOfClass:[NSDictionary class]])
@@ -517,8 +517,8 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
 void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message)
 {
 #if PLATFORM(IOS)
-    if (getAllowedBundleIdentifier() != identifier.bundleIdentifier || !ensureWebClipCache().isWebClipVisible(identifier.bundleIdentifier, identifier.pushPartition)) {
-        RELEASE_LOG(Push, "Got incoming push from unexpected app: %{public}s", identifier.debugDescription().utf8());
+    if (!equal(getAllowedBundleIdentifier(), identifier.bundleIdentifier) || !ensureWebClipCache().isWebClipVisible(identifier.bundleIdentifier, identifier.pushPartition)) {
+        RELEASE_LOG(Push, "Got incoming push from unexpected app: %{public}s", utf8(identifier.debugDescription()));
         updateSubscriptionSetState();
         return;
     }
@@ -530,7 +530,7 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
     auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), message = WTF::move(message)](UNNotificationSettings *settings) mutable {
         auto status = settings.authorizationStatus;
         if (status != UNAuthorizationStatusAuthorized) {
-            RELEASE_LOG_ERROR(Push, "Ignoring incoming push from app with invalid notification permission state %d: %{public}s", static_cast<int>(status), identifier.debugDescription().utf8());
+            RELEASE_LOG_ERROR(Push, "Ignoring incoming push from app with invalid notification permission state %d: %{public}s", static_cast<int>(status), utf8(identifier.debugDescription()));
             return;
         }
 
@@ -547,13 +547,13 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 static bool supportsBuiltinNotifications(const PushSubscriptionSetIdentifier& identifier)
 {
-    bool hasPushPartition = !identifier.pushPartition.isEmpty();
+    bool hasPushPartition = !isEmpty(identifier.pushPartition);
 
 #if PLATFORM(IOS)
     return hasPushPartition;
 #endif
 #if PLATFORM(MAC)
-    return identifier.bundleIdentifier == "com.apple.WebKit.TestWebKitAPI"_s && hasPushPartition;
+    return equal(identifier.bundleIdentifier, "com.apple.WebKit.TestWebKitAPI"_s) && hasPushPartition;
 #endif // PLATFORM(MAC)
 }
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
@@ -563,11 +563,11 @@ void WebPushDaemon::handleIncomingPushImpl(const PushSubscriptionSetIdentifier& 
     ensureIncomingPushTransaction();
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    String payloadString;
+    RefPtr<StringImpl> payloadString;
     if (message.pushData)
-        payloadString = String::fromUTF8(borrow(*message.pushData)->span());
+        payloadString = StringImpl::fromUTF8(borrow(*message.pushData)->span());
 
-    if (!payloadString.isNull()) {
+    if (payloadString) {
         auto exceptionOrPayload = WebCore::NotificationPayload::parseJSON(payloadString);
         if (!exceptionOrPayload.hasException())
             message.notificationPayload = exceptionOrPayload.returnValue();
@@ -597,11 +597,11 @@ void WebPushDaemon::handleIncomingPushImpl(const PushSubscriptionSetIdentifier& 
 void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier& subscriptionSetIdentifier)
 {
     const auto& bundleIdentifier = subscriptionSetIdentifier.bundleIdentifier;
-    RELEASE_LOG(Push, "Launching %{public}s in response to push for %{public}s", bundleIdentifier.utf8(), subscriptionSetIdentifier.debugDescription().utf8());
+    RELEASE_LOG(Push, "Launching %{public}s in response to push for %{public}s", utf8(bundleIdentifier), utf8(subscriptionSetIdentifier.debugDescription()));
 
 #if PLATFORM(MAC)
     CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
-    RetainPtr identifier = bundleIdentifier.createCFString();
+    RetainPtr identifier = createCFString(bundleIdentifier);
 
     CFDictionaryRef options = (__bridge CFDictionaryRef)@{
         (id)_kLSOpenOptionPreferRunningInstanceKey: @(kLSOpenRunningInstanceBehaviorUseRunningProcess),
@@ -615,14 +615,14 @@ void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscr
         RELEASE_LOG_ERROR_IF(cfError, Push, "Failed to launch process in response to push: %{public}@", (__bridge NSError *)cfError);
     });
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    if (subscriptionSetIdentifier.pushPartition.isEmpty()) {
+    if (isEmpty(subscriptionSetIdentifier.pushPartition)) {
         RELEASE_LOG_ERROR(Push, "Cannot notify client app about web push action with empty pushPartition string");
         return;
     }
 
-    if (bundleIdentifier == "com.apple.SafariViewService"_s) {
+    if (equal(bundleIdentifier, "com.apple.SafariViewService"_s)) {
         const NSString *URLPrefix = @"webapp://web-push/";
-        RetainPtr launchURL = adoptNS([[NSURL alloc] initWithString:[URLPrefix stringByAppendingFormat:@"%@", subscriptionSetIdentifier.pushPartition.createNSString().get()]]);
+        RetainPtr launchURL = adoptNS([[NSURL alloc] initWithString:[URLPrefix stringByAppendingFormat:@"%@", createNSString(subscriptionSetIdentifier.pushPartition).get()]]);
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSDictionary *options = @{
@@ -647,7 +647,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr settingsInfo = @{
         pushActionVersionKeySingleton(): currentPushActionVersionSingleton(),
-        pushActionPartitionKeySingleton(): subscriptionSetIdentifier.pushPartition.createNSString().get(),
+        pushActionPartitionKeySingleton(): createNSString(subscriptionSetIdentifier.pushPartition).get(),
         pushActionTypeKeySingleton(): _WKWebPushActionTypePushEvent
     };
     RetainPtr<BSMutableSettings> bsSettings = adoptNS([[BSMutableSettings alloc] init]);
@@ -673,7 +673,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!m_openService)
         lazyInitialize(m_openService, retainPtr(SBSCreateOpenApplicationService()));
 
-    [m_openService openApplication:bundleIdentifier.createNSString().get() withOptions:options completion:^(BSProcessHandle *process, NSError *error) {
+    [m_openService openApplication:createNSString(bundleIdentifier).get() withOptions:options completion:^(BSProcessHandle *process, NSError *error) {
         if (error)
             RELEASE_LOG_ERROR(Push, "Failed to open app to handle push: %{public}@", error);
     }];
@@ -712,10 +712,10 @@ void WebPushDaemon::silentPushTimerFired()
         auto origin = WebCore::SecurityOriginData::fromURL(URL { it->scope });
         auto originString = origin.toString();
         if (m_inspectedServiceWorkerOrigins.contains(origin))
-            RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), but not incrementing silent push count since it is being inspected", it->identifier.debugDescription().utf8(), originString.utf8());
+            RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), but not incrementing silent push count since it is being inspected", utf8(it->identifier.debugDescription()), utf8(originString));
         else {
             m_pushService->incrementSilentPushCount(it->identifier, originString, [identifier = it->identifier, originString](unsigned newSilentPushCount) {
-                RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), silent push count is now %u", identifier.debugDescription().utf8(), originString.utf8(), newSilentPushCount);
+                RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), silent push count is now %u", utf8(identifier.debugDescription()), utf8(originString), newSilentPushCount);
             });
         }
 
@@ -725,14 +725,14 @@ void WebPushDaemon::silentPushTimerFired()
     rescheduleSilentPushTimer();
 }
 
-void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdentifier& identifier, const String& scope)
+void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdentifier& identifier, StringImpl* scope)
 {
     auto now = MonotonicTime::now();
     bool removedFirst = false;
 
     for (auto it = m_potentialSilentPushes.begin(); it != m_potentialSilentPushes.end();) {
-        if (it->identifier == identifier && it->scope == scope && it->expirationTime > now) {
-            RELEASE_LOG(Push, "showNotification called in time for %{public}s (origin = %{sensitive}s)", it->identifier.debugDescription().utf8(), it->scope.utf8());
+        if (it->identifier == identifier && equal(it->scope, scope) && it->expirationTime > now) {
+            RELEASE_LOG(Push, "showNotification called in time for %{public}s (origin = %{sensitive}s)", utf8(it->identifier.debugDescription()), utf8(it->scope));
             removedFirst = (it == m_potentialSilentPushes.begin());
             it = m_potentialSilentPushes.erase(it);
             break;
@@ -746,7 +746,7 @@ void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdenti
 
 static bool connectionMatchesPendingPushMessage(const PushClientConnection& connection, const PushSubscriptionSetIdentifier& identifierForPendingPushMessage)
 {
-    if (connection.hostAppCodeSigningIdentifier() != identifierForPendingPushMessage.bundleIdentifier)
+    if (!equal(connection.hostAppCodeSigningIdentifier(), identifierForPendingPushMessage.bundleIdentifier))
         return false;
 
     if (connection.dataStoreIdentifier() != identifierForPendingPushMessage.dataStoreIdentifier.asOptional())
@@ -757,7 +757,7 @@ static bool connectionMatchesPendingPushMessage(const PushClientConnection& conn
     // then we'll return any pending message for that app. Otherwise, it has to match the partition
     // specified in the message.
     auto pushPartition = connection.pushPartitionIfExists();
-    return pushPartition.isEmpty() || pushPartition == identifierForPendingPushMessage.pushPartition;
+    return isEmpty(pushPartition) || equal(pushPartition, identifierForPendingPushMessage.pushPartition);
 #else
     return equalIgnoringNullity(connection.pushPartitionIfExists(), identifierForPendingPushMessage.pushPartition);
 #endif
@@ -769,7 +769,7 @@ void WebPushDaemon::getPendingPushMessage(PushClientConnection& connection, Comp
         return connectionMatchesPendingPushMessage(connection, candidate.identifier);
     });
 
-    if (pendingPushMessage.identifier.bundleIdentifier.isEmpty()) {
+    if (isEmpty(pendingPushMessage.identifier.bundleIdentifier)) {
         WEBPUSHDAEMON_RELEASE_LOG(Push, "No pending push message");
         return replySender(std::nullopt);
     }
@@ -811,7 +811,7 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
         releaseIncomingPushTransaction();
 }
 
-void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
+void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, CompletionHandler<void(Vector<RefPtr<StringImpl>>, Vector<RefPtr<StringImpl>>)>&& completionHandler)
 {
     if (!connection.hostAppHasPushInjectEntitlement()) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Need entitlement to get push topics");
@@ -833,18 +833,18 @@ void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, con
     auto origin = SecurityOriginData::fromURL(scopeURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "User denied push permission"_s }));
     }
     auto identifier = WTF::move(*maybeIdentifier);
 
 #if PLATFORM(IOS)
     const auto& webClipIdentifier = identifier.pushPartition;
-    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:createNSString(webClipIdentifier).get()];
     auto webClipOrigin = SecurityOriginData::fromURL(URL { [webClip pageURL] });
 
     if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8(), origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", utf8(webClipOrigin.toString()), utf8(origin.toString()));
         return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "User denied push permission"_s }));
     }
 #endif
@@ -854,7 +854,7 @@ void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, con
     RetainPtr center = adoptNS([[m_userNotificationCenterClass.get() alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
     UNNotificationSettings *settings = [center notificationSettings];
     if (settings.authorizationStatus != UNAuthorizationStatusAuthorized) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not have correct permissions", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not have correct permissions", utf8(origin.toString()));
         return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "User denied push permission"_s }));
     }
 #endif
@@ -875,7 +875,7 @@ void WebPushDaemon::unsubscribeFromPushService(PushClientConnection& connection,
     auto origin = SecurityOriginData::fromURL(scopeURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return replySender(false);
     }
 
@@ -895,7 +895,7 @@ void WebPushDaemon::getPushSubscription(PushClientConnection& connection, const 
     auto origin = SecurityOriginData::fromURL(scopeURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return replySender(std::optional<WebCore::PushSubscriptionData> { });
     }
 
@@ -914,7 +914,7 @@ void WebPushDaemon::incrementSilentPushCount(PushClientConnection& connection, c
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(securityOrigin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", securityOrigin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(securityOrigin.toString()));
         return replySender(0);
     }
 
@@ -941,7 +941,7 @@ void WebPushDaemon::removeAllPushSubscriptions(PushClientConnection& connection,
 
 #if PLATFORM(IOS)
         // When implicit web clip mode is used, remove all push subscriptions irrespective of webClipIdentifier/pushPartition.
-        if (identifier.pushPartition.isEmpty()) {
+        if (isEmpty(identifier.pushPartition)) {
             daemon.m_pushService->removeRecordsForBundleIdentifierAndDataStore(identifier.bundleIdentifier, identifier.dataStoreIdentifier, WTF::move(replySender));
             return;
         }
@@ -954,7 +954,7 @@ void WebPushDaemon::removePushSubscriptionsForOrigin(PushClientConnection& conne
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(securityOrigin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", securityOrigin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(securityOrigin.toString()));
         return replySender(0);
     }
 
@@ -982,21 +982,21 @@ void WebPushDaemon::getAllPushSubscriptionOrigins(PushClientConnection&, Complet
     });
 }
 
-void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, const String& publicToken, CompletionHandler<void()>&& replySender)
+void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, StringImpl* publicToken, CompletionHandler<void()>&& replySender)
 {
     if (!connection.hostAppHasPushInjectEntitlement()) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Need entitlement to set public token");
         return replySender();
     }
 
-    runAfterStartingPushService([publicToken, replySender = WTF::move(replySender)]() mutable {
+    runAfterStartingPushService([publicToken = RefPtr { publicToken }, replySender = WTF::move(replySender)]() mutable {
         auto& daemon = WebPushDaemon::singleton();
         if (!daemon.m_pushService) {
             replySender();
             return;
         }
 
-        daemon.m_pushService->setPublicTokenForTesting(Vector<uint8_t> { publicToken.utf8().span() });
+        daemon.m_pushService->setPublicTokenForTesting(Vector<uint8_t> { utf8(publicToken).span() });
         replySender();
     });
 }
@@ -1008,7 +1008,7 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
     auto origin = SecurityOriginData::fromURL(URL { notificationData.originString });
     std::optional<WebCore::PushSubscriptionSetIdentifier> maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return completionHandler();
     }
 
@@ -1021,9 +1021,9 @@ void WebPushDaemon::showNotification(const WebCore::PushSubscriptionSetIdentifie
 
     [content setDefaultActionBundleIdentifier:platformDefaultActionBundleIdentifier(identifier).get()];
 
-    content.get().targetContentIdentifier = identifier.pushPartition.createNSString().get();
-    content.get().title = notificationData.title.createNSString().get();
-    content.get().body = notificationData.body.createNSString().get();
+    content.get().targetContentIdentifier = createNSString(identifier.pushPartition).get();
+    content.get().title = createNSString(notificationData.title).get();
+    content.get().body = createNSString(notificationData.body).get();
     content.get().categoryIdentifier = @"webpushdCategory";
     content.get().badge = appBadge ? [NSNumber numberWithLongLong:*appBadge] : nil;
 
@@ -1037,17 +1037,17 @@ void WebPushDaemon::showNotification(const WebCore::PushSubscriptionSetIdentifie
 
 #if PLATFORM(IOS)
     const auto& webClipIdentifier = identifier.pushPartition;
-    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:createNSString(webClipIdentifier).get()];
     notificationSourceForDisplay = [webClip title];
 #endif
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    content.get().subtitle = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("from %@", "Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia'").createNSString().get(), notificationSourceForDisplay]).get();
+    content.get().subtitle = adoptNS([[NSString alloc] initWithFormat:createNSString(WEB_UI_STRING("from %@", "Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia'")).get(), notificationSourceForDisplay]).get();
 ALLOW_NONLITERAL_FORMAT_END
 
     content.get().userInfo = retainPtr(notificationData.dictionaryRepresentation()).get();
 
-    RetainPtr request = [UNNotificationRequest requestWithIdentifier:notificationData.notificationID.toString().createNSString().get() content:content.get() trigger:nil];
+    RetainPtr request = [UNNotificationRequest requestWithIdentifier:createNSString(notificationData.notificationID.toString()).get() content:content.get() trigger:nil];
     RetainPtr<UNUserNotificationCenter> center = adoptNS([[m_userNotificationCenterClass.get() alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
     if (!center)
         RELEASE_LOG_ERROR(Push, "Failed to instantiate UNUserNotificationCenter center");
@@ -1068,12 +1068,12 @@ ALLOW_NONLITERAL_FORMAT_END
     [center addNotificationRequest:request.get() withCompletionHandler:blockPtr.get()];
 }
 
-void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, StringImpl* tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     auto origin = SecurityOriginData::fromURL(registrationURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return completionHandler(Vector<WebCore::NotificationData> { });
     }
     auto identifier = WTF::move(*maybeIdentifier);
@@ -1081,23 +1081,23 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
     auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
     RetainPtr center = adoptNS([[m_userNotificationCenterClass.get() alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
 
-    auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), registrationURL = crossThreadCopy(registrationURL), tag = crossThreadCopy(tag), completionHandler = WTF::move(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
+    auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), registrationURL = crossThreadCopy(registrationURL), tag = isolatedCopy(tag), completionHandler = WTF::move(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
         ensureOnMainRunLoop([identifier = crossThreadCopy(identifier), notifications = RetainPtr { notifications }, registrationURL = crossThreadCopy(WTF::move(registrationURL)), tag = crossThreadCopy(WTF::move(tag)), completionHandler = WTF::move(completionHandler)] mutable {
             Vector<WebCore::NotificationData> notificationDatas;
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL UNNotification *notification in notifications.get()) {
                 auto notificationData = WebCore::NotificationData::fromDictionary(retainPtr(notification.request.content.userInfo).get());
                 if (!notificationData) {
-                    RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", identifier.debugDescription().utf8());
+                    RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", utf8(identifier.debugDescription()));
                     continue;
                 }
 
-                if ((!tag.isEmpty() && notificationData->tag != tag) || notificationData->serviceWorkerRegistrationURL != registrationURL)
+                if ((!isEmpty(tag) && !equal(notificationData->tag, tag)) || notificationData->serviceWorkerRegistrationURL != registrationURL)
                     continue;
 
                 notificationDatas.append(*notificationData);
             }
-            RELEASE_LOG(Push, "WebPushDaemon::getNotifications: returned %zu notifications for subscription %{public}s", notificationDatas.size(), identifier.debugDescription().utf8());
+            RELEASE_LOG(Push, "WebPushDaemon::getNotifications: returned %zu notifications for subscription %{public}s", notificationDatas.size(), utf8(identifier.debugDescription()));
             completionHandler(notificationDatas);
         });
     });
@@ -1109,7 +1109,7 @@ void WebPushDaemon::cancelNotification(PushClientConnection& connection, WebCore
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return;
     }
     auto identifier = WTF::move(*maybeIdentifier);
@@ -1117,7 +1117,7 @@ void WebPushDaemon::cancelNotification(PushClientConnection& connection, WebCore
     auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
     RetainPtr center = adoptNS([[m_userNotificationCenterClass.get() alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
 
-    RetainPtr identifiers = @[ notificationID.toString().createNSString().get() ];
+    RetainPtr identifiers = @[ createNSString(notificationID.toString()).get() ];
     [center removePendingNotificationRequestsWithIdentifiers:identifiers.get()];
     [center removeDeliveredNotificationsWithIdentifiers:identifiers.get()];
 }
@@ -1126,23 +1126,23 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return replySender(WebCore::PushPermissionState::Denied);
     }
     auto identifier = WTF::move(*maybeIdentifier);
 
 #if PLATFORM(IOS)
-    if (identifier.pushPartition.isEmpty()) {
+    if (isEmpty(identifier.pushPartition)) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Denied push permission since no pushPartition specified");
         return replySender(WebCore::PushPermissionState::Denied);
     }
 
     const auto& webClipIdentifier = identifier.pushPartition;
-    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:createNSString(webClipIdentifier).get()];
     auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });
 
     if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8(), origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", utf8(webClipOrigin.toString()), utf8(origin.toString()));
         return replySender(WebCore::PushPermissionState::Denied);
     }
 #endif
@@ -1159,7 +1159,7 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
             default: return WebCore::PushPermissionState::Prompt;
             }
         }(settings.authorizationStatus);
-        RELEASE_LOG(Push, "getPushPermissionState for %{sensitive}s with result: %u", originString.utf8(), static_cast<unsigned>(permissionState));
+        RELEASE_LOG(Push, "getPushPermissionState for %{sensitive}s with result: %u", utf8(originString), static_cast<unsigned>(permissionState));
 
         WorkQueue::mainSingleton().dispatch([replySender = WTF::move(replySender), permissionState] mutable {
             replySender(permissionState);
@@ -1173,23 +1173,23 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(origin.toString()));
         return replySender(false);
     }
     auto identifier = WTF::move(*maybeIdentifier);
 
 #if PLATFORM(IOS)
-    if (identifier.pushPartition.isEmpty()) {
+    if (isEmpty(identifier.pushPartition)) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Denied push permission since no pushPartition specified");
         return replySender(false);
     }
 
     const auto& webClipIdentifier = identifier.pushPartition;
-    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:createNSString(webClipIdentifier).get()];
     auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });
 
     if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8(), origin.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", utf8(webClipOrigin.toString()), utf8(origin.toString()));
         return replySender(false);
     }
 #endif
@@ -1200,9 +1200,9 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
 
     auto blockPtr = makeBlockPtr([originString = crossThreadCopy(origin.toString()), replySender = WTF::move(replySender)](BOOL granted, NSError *error) mutable {
         if (error)
-            RELEASE_LOG_ERROR(Push, "Failed to request push permission for %{sensitive}s: %{public}@", originString.utf8(), error);
+            RELEASE_LOG_ERROR(Push, "Failed to request push permission for %{sensitive}s: %{public}@", utf8(originString), error);
         else
-            RELEASE_LOG(Push, "Requested push permission for %{sensitive}s with result: %d", originString.utf8(), granted);
+            RELEASE_LOG(Push, "Requested push permission for %{sensitive}s with result: %d", utf8(originString), granted);
 
         WorkQueue::mainSingleton().dispatch([replySender = WTF::move(replySender), granted] mutable {
             replySender(granted);
@@ -1216,7 +1216,7 @@ void WebPushDaemon::setAppBadge(PushClientConnection& connection, WebCore::Secur
 {
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(badgeOriginData);
     if (!maybeIdentifier) {
-        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", badgeOriginData.toString().utf8());
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "No web clip associated with origin %{sensitive}s", utf8(badgeOriginData.toString()));
         return;
     }
 
@@ -1225,7 +1225,7 @@ void WebPushDaemon::setAppBadge(PushClientConnection& connection, WebCore::Secur
 
 #if PLATFORM(IOS)
     auto webClipIdentifier = identifier.pushPartition;
-    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:createNSString(webClipIdentifier).get()];
     appPageURL = [webClip pageURL];
 #elif PLATFORM(MAC)
     // FIXME: Establish the app page URL for Mac apps here
@@ -1242,15 +1242,15 @@ void WebPushDaemon::setAppBadge(PushClientConnection& connection, WebCore::Secur
     RetainPtr state = adoptNS([[UISApplicationState alloc] initWithBundleIdentifier:platformNotificationCenterBundleIdentifier(identifier.pushPartition).get()]);
     state.get().badgeValue = appBadge ? [NSNumber numberWithUnsignedLongLong:*appBadge] : nil;
 #elif PLATFORM(MAC)
-    String bundleIdentifier = identifier.pushPartition.isEmpty() ? connection.hostAppCodeSigningIdentifier() : identifier.pushPartition;
-    RetainPtr center = adoptNS([[m_userNotificationCenterClass.get() alloc]  initWithBundleIdentifier:bundleIdentifier.createNSString().get()]);
+    RefPtr<StringImpl> bundleIdentifier = isEmpty(identifier.pushPartition) ? connection.hostAppCodeSigningIdentifier() : identifier.pushPartition;
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass.get() alloc]  initWithBundleIdentifier:createNSString(bundleIdentifier).get()]);
     if (!center)
         return;
 
     RetainPtr content = adoptNS([UNMutableNotificationContent new]);
     content.get().badge = appBadge ? [NSNumber numberWithLongLong:*appBadge] : nil;
     RetainPtr request = [UNNotificationRequest requestWithIdentifier:retainPtr(NSUUID.UUID.UUIDString).get() content:content.get() trigger:nil];
-    RetainPtr debugDescription = identifier.debugDescription().createNSString().get();
+    RetainPtr debugDescription = createNSString(identifier.debugDescription()).get();
     [center addNotificationRequest:request.get() withCompletionHandler:^(NSError *error) {
         if (error) {
             RELEASE_LOG_ERROR(Push, "Error attempting to set badge count for web app %{public}@", debugDescription.get());
@@ -1270,8 +1270,8 @@ void WebPushDaemon::getAppBadgeForTesting(PushClientConnection& connection, Comp
 #else
     RELEASE_ASSERT(m_userNotificationCenterClass.get() == _WKMockUserNotificationCenter.class);
 
-    String bundleIdentifier = connection.pushPartitionIfExists().isEmpty() ? connection.hostAppCodeSigningIdentifier() : connection.pushPartitionIfExists();
-    RetainPtr center = adoptNS([[_WKMockUserNotificationCenter alloc] initWithBundleIdentifier:bundleIdentifier.createNSString().get()]);
+    RefPtr<StringImpl> bundleIdentifier = isEmpty(connection.pushPartitionIfExists()) ? connection.hostAppCodeSigningIdentifier() : connection.pushPartitionIfExists();
+    RetainPtr center = adoptNS([[_WKMockUserNotificationCenter alloc] initWithBundleIdentifier:createNSString(bundleIdentifier).get()]);
     RetainPtr<NSNumber> centerBadge = [center getAppBadgeForTesting];
 
     if (centerBadge)
@@ -1297,10 +1297,10 @@ void WebPushDaemon::setServiceWorkerOriginIsBeingInspected(const WebCore::Securi
         auto count = --result.iterator->value;
         if (count <= 0)
             m_inspectedServiceWorkerOrigins.remove(result.iterator);
-        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s no longer being inspected (inspection count = %d)", origin.toString().utf8(), count);
+        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s no longer being inspected (inspection count = %d)", utf8(origin.toString()), count);
     } else {
         auto count = ++result.iterator->value;
-        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s is being inspected (inspection count = %d); suspending silent push enforcement", origin.toString().utf8(), count);
+        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s is being inspected (inspection count = %d); suspending silent push enforcement", utf8(origin.toString()), count);
     }
 }
 

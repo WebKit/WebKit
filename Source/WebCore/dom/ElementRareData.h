@@ -86,8 +86,8 @@ public:
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(const std::unique_ptr<NamedNodeMap>&& attributeMap) { lazyInitialize(m_attributeMap, std::move(attributeMap)); }
 
-    String userInfo() const { return m_userInfo; }
-    void setUserInfo(String&& userInfo) { m_userInfo = WTF::move(userInfo); }
+    const RefPtr<StringImpl>& userInfo() const LIFETIME_BOUND { return m_userInfo; }
+    void setUserInfo(RefPtr<StringImpl>&& userInfo) { m_userInfo = WTF::move(userInfo); }
 
     Style::ComputedStyle* computedStyle() const LIFETIME_BOUND { return m_computedStyle.get(); }
     void setComputedStyle(std::unique_ptr<Style::ComputedStyle>&& computedStyle) { m_computedStyle = WTF::move(computedStyle); }
@@ -95,8 +95,8 @@ public:
     Style::ComputedStyle* displayContentsOrNoneStyle() const LIFETIME_BOUND { return m_displayContentsOrNoneStyle.get(); }
     void setDisplayContentsOrNoneStyle(std::unique_ptr<Style::ComputedStyle> style) { m_displayContentsOrNoneStyle = WTF::move(style); }
 
-    const AtomString& effectiveLang() const LIFETIME_BOUND { return m_effectiveLang; }
-    void setEffectiveLang(const AtomString& lang) { m_effectiveLang = lang; }
+    const RefPtr<AtomStringImpl>& effectiveLang() const LIFETIME_BOUND { return m_effectiveLang; }
+    void setEffectiveLang(AtomStringImpl* lang) { m_effectiveLang = lang; }
 
     DOMTokenList* classList() const { return m_classList.get(); }
     void setClassList(const std::unique_ptr<DOMTokenList>&& classList) { lazyInitialize(m_classList, std::move(classList)); }
@@ -111,8 +111,8 @@ public:
     ElementAnimationRareData* animationRareData(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
     ElementAnimationRareData& ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
 
-    AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
-    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
+    NODELETE AtomStringImpl* viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
+    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, RefPtr<AtomStringImpl>);
 
     DOMTokenList* partList() const { return m_partList.get(); }
     void setPartList(const std::unique_ptr<DOMTokenList>&& partList) { lazyInitialize(m_partList, std::move(partList)); }
@@ -136,8 +136,8 @@ public:
     void clearLastRememberedLogicalWidth() { m_lastRememberedLogicalWidth.reset(); }
     void clearLastRememberedLogicalHeight() { m_lastRememberedLogicalHeight.reset(); }
 
-    const AtomString& nonce() const LIFETIME_BOUND { return m_nonce; }
-    void setNonce(const AtomString& value) { m_nonce = value; }
+    const RefPtr<AtomStringImpl>& nonce() const LIFETIME_BOUND { return m_nonce; }
+    void setNonce(AtomStringImpl* value) { m_nonce = value; }
 
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void initializeAttributeStyleMap(Ref<StylePropertyMap>&& map) { lazyInitialize(m_attributeStyleMap, WTF::move(map)); }
@@ -246,12 +246,12 @@ private:
 #endif
     ScrollPosition m_savedLayerScrollPosition;
 
-    String m_userInfo;
+    RefPtr<StringImpl> m_userInfo;
 
     std::unique_ptr<Style::ComputedStyle> m_computedStyle;
     std::unique_ptr<Style::ComputedStyle> m_displayContentsOrNoneStyle;
 
-    AtomString m_effectiveLang;
+    RefPtr<AtomStringImpl> m_effectiveLang;
     const std::unique_ptr<DatasetDOMStringMap> m_dataset;
     const std::unique_ptr<DOMTokenList> m_classList;
     const std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
@@ -268,7 +268,7 @@ private:
 
     HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 
-    HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> m_viewTransitionCapturedName;
+    HashMap<std::optional<Style::PseudoElementIdentifier>, RefPtr<AtomStringImpl>> m_viewTransitionCapturedName;
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
@@ -279,7 +279,7 @@ private:
     const std::unique_ptr<DOMTokenList> m_partList;
     SpaceSplitString m_partNames;
 
-    AtomString m_nonce;
+    RefPtr<AtomStringImpl> m_nonce;
 
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 
@@ -351,12 +351,15 @@ inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(const 
     return *result.iterator->value.get();
 }
 
-inline AtomString ElementRareData::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+inline AtomStringImpl* ElementRareData::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    return m_viewTransitionCapturedName.get(pseudoElementIdentifier);
+    auto iterator = m_viewTransitionCapturedName.find(pseudoElementIdentifier);
+    if (iterator == m_viewTransitionCapturedName.end())
+        return nullptr;
+    return iterator->value.get();
 }
 
-inline void ElementRareData::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
+inline void ElementRareData::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, RefPtr<AtomStringImpl> captureName)
 {
     m_viewTransitionCapturedName.set(pseudoElementIdentifier, captureName);
 }

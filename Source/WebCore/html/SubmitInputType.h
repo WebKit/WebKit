@@ -49,12 +49,12 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     bool appendFormData(DOMFormData&) const final;
     bool supportsRequired() const final;
     void handleDOMActivateEvent(Event&) final;
     bool canBeSuccessfulSubmitButton() final;
-    String defaultValue() const final;
+    RefPtr<StringImpl> defaultValue() const final;
 };
 
 } // namespace WebCore

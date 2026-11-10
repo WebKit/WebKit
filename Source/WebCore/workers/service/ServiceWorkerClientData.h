@@ -56,7 +56,7 @@ struct ServiceWorkerClientData {
     bool isVisible { false };
     bool isFocused { false };
     uint64_t focusOrder { 0 };
-    Vector<String> ancestorOrigins;
+    Vector<RefPtr<StringImpl>> ancestorOrigins;
     std::optional<bool> globalPrivacyControlEnabled;
 
     WEBCORE_EXPORT ServiceWorkerClientData isolatedCopy() const &;

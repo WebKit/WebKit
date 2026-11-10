@@ -72,9 +72,9 @@ public:
         ::WebGPU::Buffer&,
         uint64_t offset = 0,
         std::optional<uint64_t> = std::nullopt) final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
     void popDebugGroup() final;
-    void insertDebugMarker(String&& markerLabel) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     void writeTimestamp(::WebGPU::QuerySet&, uint32_t queryIndex) final;
     void resolveQuerySet(
         const ::WebGPU::QuerySet&,
@@ -84,7 +84,7 @@ public:
         uint64_t destinationOffset) final;
     RefPtr<::WebGPU::CommandBuffer> finish(const ::WebGPU::CommandBufferDescriptor&) final;
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

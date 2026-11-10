@@ -137,9 +137,9 @@ NODELETE static NSRange clampRange(NSRange rangeToClamp, NSRange extentRange)
 
 namespace WebCore {
 
-String Internals::userVisibleString(const DOMURL& url)
+RefPtr<StringImpl> Internals::userVisibleString(const DOMURL& url)
 {
-    return WTF::userVisibleString(url.href().createNSURL().get());
+    return StringImpl::create(protect(WTF::userVisibleString(url.href().createNSURL().get())).get());
 }
 
 bool Internals::userPrefersContrast() const
@@ -236,12 +236,12 @@ bool Internals::privatePlayerMuted(const HTMLMediaElement& element)
 }
 #endif
 
-String Internals::encodedPreferenceValue(const String& domain, const String& key)
+RefPtr<StringImpl> Internals::encodedPreferenceValue(StringImpl* domain, StringImpl* key)
 {
-    RetainPtr userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:domain.createNSString().get()]);
-    RetainPtr value = [userDefaults objectForKey:key.createNSString().get()];
+    RetainPtr userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:createNSString(domain).get()]);
+    RetainPtr value = [userDefaults objectForKey:createNSString(key).get()];
     RetainPtr data = retainPtr([NSKeyedArchiver archivedDataWithRootObject:value.get() requiringSecureCoding:YES error:nullptr]);
-    return [data base64EncodedStringWithOptions:0];
+    return StringImpl::create([data base64EncodedStringWithOptions:0]);
 }
 
 void Internals::setPresentationIntentHTMLInterchangeEnabled(bool enabled)
@@ -263,12 +263,12 @@ bool Internals::isRemoteUIAppForAccessibility()
 #endif
 }
 
-bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass)
+bool Internals::hasSandboxIOKitOpenAccessToClass(StringImpl* process, StringImpl* ioKitClass)
 {
     UNUSED_PARAM(process); // TODO: add support for getting PID of other WebKit processes.
     pid_t pid = getpid();
 
-    return !sandboxCheck(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), ioKitClass.utf8());
+    return !sandboxCheck(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), utf8(ioKitClass));
 }
 
 bool Internals::isIOKitAvailable()
@@ -319,7 +319,7 @@ DDScannerResult *Internals::fakeDataDetectorResultForTesting()
 RefPtr<SharedBuffer> Internals::pngDataForTesting()
 {
     NSBundle *webCoreBundle = [NSBundle bundleForClass:NSClassFromString(@"WebCoreBundleFinder")];
-    return SharedBuffer::createWithContentsOfFile([webCoreBundle pathForResource:@"missingImage" ofType:@"png"]);
+    return SharedBuffer::createWithContentsOfFile(StringImpl::create([webCoreBundle pathForResource:@"missingImage" ofType:@"png"]).get());
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -359,11 +359,11 @@ bool Internals::emitWebCoreLogs(unsigned logCount, bool useMainThread) const
     return true;
 }
 
-bool Internals::emitLogs(const String& logString, unsigned logCount, bool useMainThread) const
+bool Internals::emitLogs(StringImpl* logString, unsigned logCount, bool useMainThread) const
 {
-    auto blockPtr = makeBlockPtr([logString, logCount] {
+    auto blockPtr = makeBlockPtr([logString = RefPtr { logString }, logCount] {
         for (unsigned i = 0; i < logCount; i++)
-            RELEASE_LOG(Testing, "%s", logString.utf8());
+            RELEASE_LOG(Testing, "%s", utf8(logString));
     });
     if (useMainThread)
         dispatch_async(mainDispatchQueueSingleton(), blockPtr.get());

@@ -184,7 +184,7 @@ void WebPageProxy::didGeneratePageLoadTiming(const WebPageLoadTiming& timing)
     auto finishedLoadingDuration = timing.finishedLoading() - startTime;
     auto subresourcesFinishedLoadingDuration = timing.allSubresourcesFinishedLoading() - startTime;
 
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "didGeneratePageLoadTiming: url=%" SENSITIVE_LOG_STRING " firstVisualLayout=%.3f firstMeaningfulPaint=%.3f domContentLoaded=%.3f loadEvent=%.3f subresourcesFinished=%.3f", url.string().utf8(), firstVisualLayoutDuration.seconds(), firstMeaningfulPaintDuration.seconds(), documentFinishedLoadingDuration.seconds(), finishedLoadingDuration.seconds(), subresourcesFinishedLoadingDuration.seconds());
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "didGeneratePageLoadTiming: url=%" SENSITIVE_LOG_STRING " firstVisualLayout=%.3f firstMeaningfulPaint=%.3f domContentLoaded=%.3f loadEvent=%.3f subresourcesFinished=%.3f", utf8(url.string()), firstVisualLayoutDuration.seconds(), firstMeaningfulPaintDuration.seconds(), documentFinishedLoadingDuration.seconds(), finishedLoadingDuration.seconds(), subresourcesFinishedLoadingDuration.seconds());
 
     static bool shouldLogFrameTree = CFPreferencesGetAppBooleanValue(CFSTR("WebKitDebugLogFrameTreesWithPageLoadTiming"), kCFPreferencesCurrentApplication, nullptr);
     if (shouldLogFrameTree)
@@ -385,21 +385,21 @@ void WebPageProxy::handleClickForDataDetectionResult(const DataDetectorElementIn
 
 #endif
 
-void WebPageProxy::saveRecentSearches(IPC::Connection& connection, const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+void WebPageProxy::saveRecentSearches(IPC::Connection& connection, StringImpl* name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    MESSAGE_CHECK(!name.isNull(), connection);
+    MESSAGE_CHECK(name, connection);
 
     protect(websiteDataStore())->saveRecentSearches(name, searchItems);
 }
 
-void WebPageProxy::loadRecentSearches(IPC::Connection& connection, const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+void WebPageProxy::loadRecentSearches(IPC::Connection& connection, StringImpl* name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(name, connection, completionHandler({ }));
 
     protect(websiteDataStore())->loadRecentSearches(name, WTF::move(completionHandler));
 }
 
-std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
+std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardData(StringImpl* pasteboardName, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
     if (!hasRunningProcess()) {
         completionHandler();
@@ -555,19 +555,19 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
     loadParameters.dataDetectionReferenceDate = m_uiClient->dataDetectionReferenceDate();
 }
 
-static std::optional<SandboxExtension::Handle> createReadOnlySandboxExtensionForProcess(const WebProcessProxy& process, const String& path)
+static std::optional<SandboxExtension::Handle> createReadOnlySandboxExtensionForProcess(const WebProcessProxy& process, StringImpl* path)
 {
     auto token = protect(process.connection())->getAuditToken();
     ASSERT(token);
 
     return token
-        .and_then([&path](auto token) { return SandboxExtension::createHandleForReadByAuditToken(path, token); })
-        .or_else([&path] {
+        .and_then([path = RefPtr { path }](auto token) { return SandboxExtension::createHandleForReadByAuditToken(path, token); })
+        .or_else([path = RefPtr { path }] {
             return SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
         });
 }
 
-void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
+void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<RefPtr<StringImpl>>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "WebPageProxy::createSandboxExtensionsIfNeeded: %zu files", files.size());
 
@@ -579,8 +579,8 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     if (files.size() == 1) {
         BOOL isDirectory;
         Borrow borrowedFiles = files;
-        if ([[NSFileManager defaultManager] fileExistsAtPath:borrowedFiles[0].createNSString().get() isDirectory:&isDirectory] && !isDirectory) {
-            if (auto handle = createReadOnlySandboxExtensionForProcess(process, "/"_s))
+        if ([[NSFileManager defaultManager] fileExistsAtPath:createNSString(borrowedFiles[0]).get() isDirectory:&isDirectory] && !isDirectory) {
+            if (auto handle = createReadOnlySandboxExtensionForProcess(process, "/"_si))
                 fileReadHandle = WTF::move(*handle);
             else if (auto handle = createReadOnlySandboxExtensionForProcess(process, borrowedFiles[0]))
                 fileReadHandle = WTF::move(*handle);
@@ -591,10 +591,10 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     createSandboxExtensionsForUpload(process, files, fileUploadHandles);
 }
 
-void WebPageProxy::createSandboxExtensionsForUpload(const WebProcessProxy& process, const Vector<String>& files, Vector<SandboxExtension::Handle>& fileUploadHandles)
+void WebPageProxy::createSandboxExtensionsForUpload(const WebProcessProxy& process, const Vector<RefPtr<StringImpl>>& files, Vector<SandboxExtension::Handle>& fileUploadHandles)
 {
     for (auto& file : borrow(files)) {
-        if (![[NSFileManager defaultManager] fileExistsAtPath:file.createNSString().get()])
+        if (![[NSFileManager defaultManager] fileExistsAtPath:createNSString(file).get()])
             continue;
         if (auto handle = createReadOnlySandboxExtensionForProcess(process, file))
             fileUploadHandles.append(WTF::move(*handle));
@@ -619,14 +619,14 @@ void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragIt
 {
     auto& promisedAttachmentInfo = dragItem.promisedAttachmentInfo;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    MESSAGE_CHECK(promisedAttachmentInfo.attachmentIdentifier.isEmpty() || protect(preferences())->attachmentElementEnabled(), connection);
+    MESSAGE_CHECK(isEmpty(promisedAttachmentInfo.attachmentIdentifier) || protect(preferences())->attachmentElementEnabled(), connection);
 #endif
     for (auto& [type, data] : promisedAttachmentInfo.additionalTypesAndData) {
         // These are written to the platform drag pasteboard verbatim, so hold them to the same
         // standard as any other pasteboard write coming from the web process: it must never be able
         // to plant a file reference on the drag pasteboard. Editor::getPasteboardTypesAndDataForAttachment
         // never produces a file type, so this is not a limitation on any legitimate drag.
-        MESSAGE_CHECK(!type.isEmpty(), connection);
+        MESSAGE_CHECK(!isEmpty(type), connection);
         MESSAGE_CHECK(data, connection);
 #if PLATFORM(MAC)
         MESSAGE_CHECK(!PlatformPasteboard::isFilePasteboardType(type), connection);
@@ -642,7 +642,7 @@ void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragIt
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferReference& bufferCopy)
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, StringImpl* preferredFileName, const IPC::SharedBufferReference& bufferCopy)
 {
     if (bufferCopy.isEmpty())
         return;
@@ -652,11 +652,11 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
         return;
 
     RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
-    [fileWrapper setPreferredFilename:preferredFileName.createNSString().get()];
+    [fileWrapper setPreferredFilename:createNSString(preferredFileName).get()];
     attachment->setFileWrapper(fileWrapper.get());
 }
 
-void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& filePath)
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, StringImpl* filePath)
 {
     if (!filePath)
         return;
@@ -665,7 +665,7 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
     if (!pageClient)
         return;
 
-    RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initWithURL:adoptNS([[NSURL alloc] initFileURLWithPath:filePath.createNSString().get()]).get() options:0 error:nil]);
+    RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initWithURL:adoptNS([[NSURL alloc] initFileURLWithPath:createNSString(filePath).get()]).get() options:0 error:nil]);
     attachment->setFileWrapper(fileWrapper.get());
 }
 
@@ -697,7 +697,7 @@ static RefPtr<WebCore::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage 
     return bitmap;
 }
 
-RefPtr<WebCore::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
+RefPtr<WebCore::ShareableBitmap> WebPageProxy::iconForAttachment(StringImpl* fileName, StringImpl* contentType, StringImpl* title, FloatSize& size)
 {
 #if PLATFORM(IOS_FAMILY)
     auto iconAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);
@@ -733,7 +733,7 @@ void WebPageProxy::performDictionaryLookupAtLocationInFrame(WebCore::FrameIdenti
     } });
 }
 
-void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, InsertTextOptions&& options)
+void WebPageProxy::insertDictatedTextAsync(StringImpl* text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, InsertTextOptions&& options)
 {
     if (!hasRunningProcess())
         return;
@@ -767,7 +767,7 @@ void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternativ
 
     RetainPtr nsAlternatives = alternative.alternatives.get();
     auto context = pageClient->addDictationAlternatives(nsAlternatives.get());
-    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::AddDictationAlternative { nsAlternatives.get().primaryString, *context }, Messages::WebPage::AddDictationAlternative::Reply { [context, weakThis = WeakPtr { *this }](bool success) {
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::AddDictationAlternative { StringImpl::create(nsAlternatives.get().primaryString).get(), *context }, Messages::WebPage::AddDictationAlternative::Reply { [context, weakThis = WeakPtr { *this }](bool success) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && !success)
             protectedThis->removeDictationAlternatives(*context);
     } });
@@ -791,7 +791,7 @@ void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alterna
     sendToFocusedOrMainFrameProcess(Messages::WebPage::ClearDictationAlternatives(WTF::move(alternativesToClear)));
 }
 
-void WebPageProxy::setDictationStreamingOpacity(const String& hypothesisText, WebCore::CharacterRange streamingRangeInHypothesis, float opacity)
+void WebPageProxy::setDictationStreamingOpacity(StringImpl* hypothesisText, WebCore::CharacterRange streamingRangeInHypothesis, float opacity)
 {
     if (!hasRunningProcess())
         return;
@@ -809,7 +809,7 @@ void WebPageProxy::clearDictationStreamingOpacity()
 
 ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const URL& url)
 {
-    return { WKErrorDomain, WKErrorNavigationAppBoundDomain, url, localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain).get() };
+    return { StringImpl::create(WKErrorDomain).get(), WKErrorNavigationAppBoundDomain, url, StringImpl::create(localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain).get()).get() };
 }
 
 WebPageProxy::Internals::~Internals() = default;
@@ -838,12 +838,12 @@ IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const Web
     return &page->legacyMainFrameProcess().connection();
 }
 
-const String& WebPageProxy::Internals::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& WebPageProxy::Internals::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
     return page->websiteDataStore().configuration().boundInterfaceIdentifier();
 }
 
-void WebPageProxy::Internals::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxy::Internals::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     completionHandler(page->userAgent());
 }
@@ -854,12 +854,12 @@ CocoaWindow *WebPageProxy::Internals::paymentCoordinatorPresentingWindow(const W
     return pageClient ? pageClient->platformWindow() : nullptr;
 }
 
-const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& WebPageProxy::Internals::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
     return page->websiteDataStore().configuration().sourceApplicationBundleIdentifier();
 }
 
-const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
+const RefPtr<StringImpl>& WebPageProxy::Internals::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
 {
     return page->websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
 }
@@ -958,7 +958,7 @@ MediaUsageManager& WebPageProxy::mediaUsageManager()
     return *m_mediaUsageManager;
 }
 
-void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, StringImpl* bundleIdentifier, const URL& pageURL)
 {
     mediaUsageManager().addMediaSession(identifier, bundleIdentifier, pageURL);
 }
@@ -1008,7 +1008,7 @@ void WebPageProxy::exitExternalPlayback()
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(MAC)
 
-bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier, WebProcessProxy& process, WebCore::PageIdentifier pageID)
+bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, StringImpl* identifier, WebProcessProxy& process, WebCore::PageIdentifier pageID)
 {
     RetainPtr image = [fileWrapper icon];
     if (!image)
@@ -1199,7 +1199,7 @@ void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUI
         return;
     }
 
-    RetainPtr amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:retainPtr([request.engagementRequest.createNSString() dataUsingEncoding:NSUTF8StringEncoding]).get() options:0 error:nil])]);
+    RetainPtr amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:retainPtr([createNSString(request.engagementRequest) dataUsingEncoding:NSUTF8StringEncoding]).get() options:0 error:nil])]);
     [amsRequest setOriginatingURL:originatingURL.createNSURL().get()];
 
     auto amsBag = retainPtr([getAMSUIEngagementTaskClassSingleton() createBagForSubProfile]);
@@ -1316,10 +1316,10 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 bool WebPageProxy::isQuarantinedAndNotUserApproved(const URL& fileURL)
 {
     auto filePath = fileURL.fileSystemPath();
-    if (!filePath.endsWithIgnoringASCIICase(".webarchive"_s))
+    if (!endsWithIgnoringASCIICase(filePath, ".webarchive"_s))
         return false;
 
-    RetainPtr nsFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:filePath.createNSString().get()]);
+    RetainPtr nsFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:createNSString(filePath).get()]);
 
     qtn_file_t qf = qtn_file_alloc();
 
@@ -1349,12 +1349,12 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const URL& fileURL)
 
 void WebPageProxy::insertMultiRepresentationHEIC(NSData *data, NSString *altText)
 {
-    sendToFocusedOrMainFrameProcess(Messages::WebPage::InsertMultiRepresentationHEIC(span(data), altText));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::InsertMultiRepresentationHEIC(span(data), StringImpl::create(altText).get()));
 }
 
 #endif
 
-void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t> data)
+void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<RefPtr<StringImpl>>& types, std::span<const uint8_t> data)
 {
     sendToFocusedOrMainFrameProcess(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
 }
@@ -1371,7 +1371,7 @@ void WebPageProxy::setCocoaView(WKWebView *view)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, std::span<const uint8_t> data)
+void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<RefPtr<StringImpl>>& types, std::span<const uint8_t> data)
 {
     if (RefPtr process = processForElementContext(elementContext))
         process->send(Messages::WebPage::ReplaceImageForRemoveBackground(elementContext, types, data), *elementContext.webPageIdentifier);
@@ -1447,13 +1447,13 @@ void WebPageProxy::setMediaCapability(RefPtr<MediaCapability>&& capability)
         return;
     }
 
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().mediaCapability->environmentIdentifier().utf8(), internals().mediaCapability->webPageURL().string().utf8());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", utf8(internals().mediaCapability->environmentIdentifier()), utf8(internals().mediaCapability->webPageURL().string()));
     protect(legacyMainFrameProcess())->send(Messages::WebPage::SetDisplayCaptureEnvironment(protect(internals().mediaCapability)->environmentIdentifier()), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::deactivateMediaCapability(MediaCapability& capability)
 {
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8(), capability.webPageURL().string().utf8());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", utf8(capability.environmentIdentifier()), utf8(capability.webPageURL().string()));
     Ref processPool = protect(legacyMainFrameProcess())->processPool();
     Ref granter = processPool->extensionCapabilityGranter();
     granter->setMediaCapabilityActive(capability, false);
@@ -1541,13 +1541,13 @@ void WebPageProxy::setDisplayCaptureCapability(RefPtr<MediaCapability>&& capabil
         return;
     }
 
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setDisplayCaptureCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().displayCaptureCapability->environmentIdentifier().utf8(), internals().displayCaptureCapability->webPageURL().string().utf8());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setDisplayCaptureCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", utf8(internals().displayCaptureCapability->environmentIdentifier()), utf8(internals().displayCaptureCapability->webPageURL().string()));
     protect(legacyMainFrameProcess())->send(Messages::WebPage::SetDisplayCaptureEnvironment(protect(internals().displayCaptureCapability)->environmentIdentifier()), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::deactivateDisplayCaptureCapability(MediaCapability& capability)
 {
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateDisplayCaptureCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8(), capability.webPageURL().string().utf8());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateDisplayCaptureCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", utf8(capability.environmentIdentifier()), utf8(capability.webPageURL().string()));
     Ref processPool = protect(legacyMainFrameProcess())->processPool();
     Ref granter = processPool->extensionCapabilityGranter();
     granter->setMediaCapabilityActive(capability, false);
@@ -1921,7 +1921,7 @@ void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(IPC::Connec
 
 #endif // ENABLE(WRITING_TOOLS)
 
-void WebPageProxy::createTextIndicatorForElementWithID(const String& elementID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
+void WebPageProxy::createTextIndicatorForElementWithID(StringImpl* elementID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler(nil);
@@ -2076,7 +2076,7 @@ bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession:
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
-void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(std::expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(std::expected<std::pair<RefPtr<StringImpl>, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {
     if (isClosed())
         return completionHandler(makeUnexpected(WebCore::ImageDecodingError::Internal));
@@ -2086,7 +2086,7 @@ void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, Completio
     }, webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::getImageMetadata(Vector<uint8_t>&& data, CompletionHandler<void(std::expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+void WebPageProxy::getImageMetadata(Vector<uint8_t>&& data, CompletionHandler<void(std::expected<Vector<std::pair<RefPtr<StringImpl>, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {
     if (isClosed())
         return completionHandler(makeUnexpected(WebCore::ImageDecodingError::Internal));
@@ -2292,7 +2292,7 @@ void WebPageProxy::getAttributedStringsForRemoteFrames(IPC::Connection& connecti
     }
 }
 
-String WebPageProxy::presentingApplicationBundleIdentifier() const
+RefPtr<StringImpl> WebPageProxy::presentingApplicationBundleIdentifier() const
 {
     if (std::optional auditToken = presentingApplicationAuditToken()) {
         NSError *error = nil;
@@ -2300,11 +2300,11 @@ String WebPageProxy::presentingApplicationBundleIdentifier() const
         if (error)
             RELEASE_LOG_ERROR(WebRTC, "Failed to get attribution bundleID from audit token with error: %@.", error.localizedDescription);
         else
-            return bundleProxy.get().bundleIdentifier;
+            return StringImpl::create(bundleProxy.get().bundleIdentifier);
     }
 #if PLATFORM(MAC)
     else
-        return [NSRunningApplication currentApplication].bundleIdentifier;
+        return StringImpl::create([NSRunningApplication currentApplication].bundleIdentifier);
 #endif
 
     return { };
@@ -2324,8 +2324,8 @@ NSDictionary *WebPageProxy::getAccessibilityWebProcessDebugInfo()
     return @{
         @"axIsEnabled": [NSNumber numberWithBool:!WebCore::isAccessibilityModeOff(result.accessibilityMode)],
         @"axIsThreadInitialized": [NSNumber numberWithBool:result.accessibilityMode == WebCore::AccessibilityMode::AXThread],
-        @"axLiveTree": result.liveTree.createNSString().get(),
-        @"axIsolatedTree": result.isolatedTree.createNSString().get(),
+        @"axLiveTree": createNSString(result.liveTree).get(),
+        @"axIsolatedTree": createNSString(result.isolatedTree).get(),
         @"warnings": createNSArray(result.warnings).get(),
         @"axWebProcessRemoteHash": [NSNumber numberWithUnsignedInteger:result.remoteTokenHash],
         @"axWebProcessLocalHash": [NSNumber numberWithUnsignedInteger:result.webProcessLocalTokenHash]
@@ -2348,8 +2348,8 @@ NSArray *WebPageProxy::getAccessibilityWebProcessDebugInfoForAllProcesses()
             @"pid": [NSNumber numberWithInt:webProcess.processID()],
             @"axIsEnabled": [NSNumber numberWithBool:!WebCore::isAccessibilityModeOff(result.accessibilityMode)],
             @"axIsThreadInitialized": [NSNumber numberWithBool:result.accessibilityMode == WebCore::AccessibilityMode::AXThread],
-            @"axLiveTree": result.liveTree.createNSString().get(),
-            @"axIsolatedTree": result.isolatedTree.createNSString().get(),
+            @"axLiveTree": createNSString(result.liveTree).get(),
+            @"axIsolatedTree": createNSString(result.isolatedTree).get(),
             @"warnings": createNSArray(result.warnings).get(),
             @"axWebProcessRemoteHash": [NSNumber numberWithUnsignedInteger:result.remoteTokenHash],
             @"axWebProcessLocalHash": [NSNumber numberWithUnsignedInteger:result.webProcessLocalTokenHash]

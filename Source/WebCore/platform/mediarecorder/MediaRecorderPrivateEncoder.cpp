@@ -76,7 +76,7 @@ RefPtr<MediaRecorderPrivateEncoder> MediaRecorderPrivateEncoder::create(bool has
     auto containerType = mimeType.containerType();
     Ref encoder = adoptRef(*new MediaRecorderPrivateEncoder(hasAudio, hasVideo));
 
-    auto writer = MediaRecorderPrivateWriter::create(containerType.isEmpty() ? "video/mp4"_s : containerType, encoder->listener());
+    auto writer = MediaRecorderPrivateWriter::create(isEmpty(containerType) ? "video/mp4"_si : containerType, encoder->listener());
     if (!writer || !encoder->initialize(options, makeUniqueRefFromNonNullUniquePtr(WTF::move(writer))))
         return nullptr;
 
@@ -108,22 +108,22 @@ MediaRecorderPrivateEncoder::MediaRecorderPrivateEncoder(bool hasAudio, bool has
 
 MediaRecorderPrivateEncoder::~MediaRecorderPrivateEncoder() = default;
 
-static String codecStringForMediaVideoCodecId(FourCharCode codec)
+static RefPtr<StringImpl> codecStringForMediaVideoCodecId(FourCharCode codec)
 {
     switch (codec) {
-    case 'vp08': return "vp8"_s;
-    case kCMVideoCodecType_VP9: return "vp09.00.10.08"_s; // vp9, profile 0, level 1.0, 8 bits, "VideoRange"
-    case 'vp92': return "vp09.02.30.10"_s; // vp9, profile 0, level 1.0, 10 bits, "VideoRange"
-    case kCMVideoCodecType_AV1: return "av01.0.01M.08"_s; // av01, "Main", "Level_2_1", "Main", 8 bits, "VideoRange";
-    case kCMVideoCodecType_H264: return "avc1.42000a"_s; // AVC Baseline Level 1
-    case kCMVideoCodecType_HEVC: return "hev1.1.6.L93.B0"_s; // HEVC progressive, non-packed stream, Main Profile, Main Tier, Level 3.1
-    case kAudioFormatMPEG4AAC: return "mp4a.40.2"_s;
-    case kAudioFormatOpus: return "opus"_s;
-    case kAudioFormatLinearPCM: return "pcm"_s;
-    case kAudioFormatAppleLossless: return "alac"_s;
+    case 'vp08': return "vp8"_si;
+    case kCMVideoCodecType_VP9: return "vp09.00.10.08"_si; // vp9, profile 0, level 1.0, 8 bits, "VideoRange"
+    case 'vp92': return "vp09.02.30.10"_si; // vp9, profile 0, level 1.0, 10 bits, "VideoRange"
+    case kCMVideoCodecType_AV1: return "av01.0.01M.08"_si; // av01, "Main", "Level_2_1", "Main", 8 bits, "VideoRange";
+    case kCMVideoCodecType_H264: return "avc1.42000a"_si; // AVC Baseline Level 1
+    case kCMVideoCodecType_HEVC: return "hev1.1.6.L93.B0"_si; // HEVC progressive, non-packed stream, Main Profile, Main Tier, Level 3.1
+    case kAudioFormatMPEG4AAC: return "mp4a.40.2"_si;
+    case kAudioFormatOpus: return "opus"_si;
+    case kAudioFormatLinearPCM: return "pcm"_si;
+    case kAudioFormatAppleLossless: return "alac"_si;
     default:
         ASSERT_NOT_REACHED("Unsupported codec");
-        return ""_s;
+        return ""_si;
     }
 }
 
@@ -142,33 +142,33 @@ bool MediaRecorderPrivateEncoder::initialize(const MediaRecorderPrivateOptions& 
     m_audioCodec = isWebM ? kAudioFormatOpus : kAudioFormatMPEG4AAC;
 
     for (auto& codec : mimeType.codecs()) {
-        if (isWebM && (codec.startsWith("vp09.02"_s)))
+        if (isWebM && (startsWith(codec, "vp09.02"_s)))
             m_videoCodec = 'vp92';
-        else if (isWebM && (codec.startsWith("vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s)))
+        else if (isWebM && (startsWith(codec, "vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s)))
             m_videoCodec = kCMVideoCodecType_VP9;
-        else if (isWebM && (codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s)))
+        else if (isWebM && (startsWith(codec, "vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s)))
             m_videoCodec = 'vp08';
-        else if (codec == "opus"_s)
+        else if (equal(codec, "opus"_s))
             m_audioCodec = kAudioFormatOpus;
-        else if (codec == "pcm"_s)
+        else if (equal(codec, "pcm"_s))
             m_audioCodec = kAudioFormatLinearPCM;
-        else if (!isWebM && codec == "alac"_s)
+        else if (!isWebM && equal(codec, "alac"_s))
             m_audioCodec = kAudioFormatAppleLossless;
         else if (startsWithLettersIgnoringASCIICase(codec, "avc1"_s))
             m_videoCodec = kCMVideoCodecType_H264;
-        else if (!isWebM && (codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s)))
+        else if (!isWebM && (startsWith(codec, "hev1."_s) || startsWith(codec, "hvc1."_s)))
             m_videoCodec = kCMVideoCodecType_HEVC;
-        else if (!isWebM && codec.startsWith("av01.0"_s))
+        else if (!isWebM && startsWith(codec, "av01.0"_s))
             m_videoCodec = kCMVideoCodecType_AV1;
-        else if (!isWebM && codec.startsWith("mp4a.40.2"_s))
+        else if (!isWebM && startsWith(codec, "mp4a.40.2"_s))
             m_audioCodec = kAudioFormatMPEG4AAC;
-        else if (!isWebM && codec.startsWith("mp4a.40.5"_s))
+        else if (!isWebM && startsWith(codec, "mp4a.40.5"_s))
             m_audioCodec = kAudioFormatMPEG4AAC_HE;
-        else if (!isWebM && codec.startsWith("mp4a.40.23"_s))
+        else if (!isWebM && startsWith(codec, "mp4a.40.23"_s))
             m_audioCodec = kAudioFormatMPEG4AAC_LD;
-        else if (!isWebM && codec.startsWith("mp4a.40.29"_s))
+        else if (!isWebM && startsWith(codec, "mp4a.40.29"_s))
             m_audioCodec = kAudioFormatMPEG4AAC_HE_V2;
-        else if (!isWebM && codec.startsWith("mp4a.40.39"_s))
+        else if (!isWebM && startsWith(codec, "mp4a.40.39"_s))
             m_audioCodec = kAudioFormatMPEG4AAC_ELD;
         else if (!isWebM && startsWithLettersIgnoringASCIICase(codec, "mp4a"_s))
             m_audioCodec = kAudioFormatMPEG4AAC;
@@ -248,7 +248,7 @@ void MediaRecorderPrivateEncoder::close()
     stopRecording();
 }
 
-String MediaRecorderPrivateEncoder::mimeType() const
+RefPtr<StringImpl> MediaRecorderPrivateEncoder::mimeType() const
 {
     assertIsMainThread();
     return m_mimeType;
@@ -713,8 +713,8 @@ void MediaRecorderPrivateEncoder::processVideoEncoderActiveConfiguration(const V
         return;
     }
     maybeStartWriter();
-    if (configuration.codec.length()) {
-        callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, codec = configuration.codec.isolatedCopy()]() mutable {
+    if (length(configuration.codec)) {
+        callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, codec = isolatedCopy(configuration.codec)]() mutable {
             if (RefPtr protectedThis = weakThis.get()) {
                 assertIsMainThread();
                 protectedThis->m_videoCodecMimeType = WTF::move(codec);

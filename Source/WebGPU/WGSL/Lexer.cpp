@@ -112,7 +112,7 @@ Token Lexer<CharacterType>::makeIntegerToken(TokenType type, int64_t integerValu
 }
 
 template<typename CharacterType>
-Token Lexer<CharacterType>::makeIdentifierToken(String&& identifier)
+Token Lexer<CharacterType>::makeIdentifierToken(RefPtr<StringImpl>&& identifier)
 {
     return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTF::move(identifier) };
 }
@@ -342,7 +342,7 @@ Token Lexer<T>::nextToken()
                 shift(consumed);
             }
 
-            String view(StringImpl::createWithoutCopying(startOfToken.subspan(0, currentTokenLength())));
+            RefPtr<StringImpl> view(StringImpl::createWithoutCopying(startOfToken.subspan(0, currentTokenLength())));
 
             static constexpr SortedArrayMap keywords { WTF::toArray<std::pair<ComparableASCIILiteral, TokenType>>({
                 { "_"_s, TokenType::Underbar },

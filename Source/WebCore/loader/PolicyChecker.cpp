@@ -106,7 +106,7 @@ static bool shouldExecuteJavaScriptURLSynchronously(const URL& url)
 {
     // FIXME: Some sites rely on the javascript:'' loading synchronously, which is why we have this special case.
     // Blink has the same workaround (https://bugs.chromium.org/p/chromium/issues/detail?id=923585).
-    return url == "javascript:''"_s || url == "javascript:\"\""_s;
+    return equal(url.string(), "javascript:''"_s) || equal(url.string(), "javascript:\"\""_s);
 }
 
 PolicyChecker::PolicyChecker(LocalFrame& frame)
@@ -240,9 +240,9 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     bool requestIsJavaScriptURL = request.url().protocolIsJavaScript();
     bool isInitialEmptyDocumentLoad = !frameLoader->stateMachine().committedFirstRealDocumentLoad() && SecurityPolicy::shouldInheritSecurityOriginFromOwner(request.url()) && !substituteData.isValid();
     m_delegateIsDecidingNavigationPolicy = true;
-    String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    FromDownloadAttribute fromDownloadAttribute = action.downloadAttribute().isNull() ? FromDownloadAttribute::No : FromDownloadAttribute::Yes;
-    if (!action.downloadAttribute().isNull()) {
+    RefPtr<StringImpl> suggestedFilename = isEmpty(action.downloadAttribute()) ? nullAtom() : action.downloadAttribute();
+    FromDownloadAttribute fromDownloadAttribute = !action.downloadAttribute() ? FromDownloadAttribute::No : FromDownloadAttribute::Yes;
+    if (action.downloadAttribute()) {
         RefPtr document = frame->document();
         if (document && document->settings().navigationAPIEnabled()) {
             if (RefPtr window = document->window()) {
@@ -276,7 +276,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
                 frameLoader->setOriginalURLForDownloadRequest(request);
                 frameLoader->client().startDownload(request, suggestedFilename, fromDownloadAttribute);
             } else if (RefPtr document = frame->document())
-                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);
+                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_si);
             [[fallthrough]];
         case PolicyAction::Ignore:
             POLICYCHECKER_RELEASE_LOG_WITH_THIS(checkedThis, "checkNavigationPolicy: ignoring because policyAction from dispatchDecidePolicyForNavigationAction is Ignore");
@@ -328,7 +328,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     // The client may keep track of this navigation from here on, and learns that it ended only through this identifier.
     if (documentLoader && !documentLoader->navigationID())
         documentLoader->setNavigationID(NavigationIdentifier::generate());
-    auto clientRedirectSourceForHistory = documentLoader ? documentLoader->clientRedirectSourceForHistory() : String();
+    auto clientRedirectSourceForHistory = documentLoader ? documentLoader->clientRedirectSourceForHistory() : nullptr;
     auto navigationID = documentLoader ? documentLoader->navigationID() : std::nullopt;
     bool hasOpener = !!frame->opener();
     auto sandboxFlags = frame->effectiveSandboxFlags();
@@ -368,20 +368,20 @@ std::optional<HitTestResult> PolicyChecker::hitTestResult(const NavigationAction
     return protect(m_frame->eventHandler())->hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
 }
 
-void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<const FormSubmission>&& formSubmission, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)
+void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<const FormSubmission>&& formSubmission, AtomStringImpl* frameName, NewWindowPolicyDecisionFunction&& function)
 {
     if (m_frame->document() && m_frame->document()->isSandboxed(SandboxFlag::Popups))
-        return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
+        return function({ }, nullptr, nullptr, { }, ShouldContinuePolicyCheck::No);
 
     if (!LocalDOMWindow::allowPopUp(protect(m_frame)))
-        return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
+        return function({ }, nullptr, nullptr, { }, ShouldContinuePolicyCheck::No);
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, protect(*m_frame->document()));
 
     Ref frame = m_frame.get();
     RefPtr formState = formSubmission ? protect(formSubmission->state()): nullptr;
     frame->loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, hitTestResult(navigationAction), [frame, request,
-        formSubmission = WTF::move(formSubmission), frameName, navigationAction, function = WTF::move(function), blobURLLifetimeExtension = WTF::move(blobURLLifetimeExtension)] (PolicyAction policyAction) mutable {
+        formSubmission = WTF::move(formSubmission), frameName = RefPtr { frameName }, navigationAction, function = WTF::move(function), blobURLLifetimeExtension = WTF::move(blobURLLifetimeExtension)] (PolicyAction policyAction) mutable {
 
         switch (policyAction) {
         case PolicyAction::Download:
@@ -389,14 +389,14 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
                 frame->loader().setOriginalURLForDownloadRequest(request);
                 frame->loader().client().startDownload(request);
             } else if (RefPtr document = frame->document())
-                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);
+                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_si);
             [[fallthrough]];
         case PolicyAction::Ignore:
-            function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
+            function({ }, nullptr, nullptr, { }, ShouldContinuePolicyCheck::No);
             return;
         case PolicyAction::LoadWillContinueInAnotherProcess:
             ASSERT_NOT_REACHED();
-            function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
+            function({ }, nullptr, nullptr, { }, ShouldContinuePolicyCheck::No);
             return;
         case PolicyAction::Use:
             function(WTF::move(request), formSubmission, frameName, navigationAction, ShouldContinuePolicyCheck::Yes);

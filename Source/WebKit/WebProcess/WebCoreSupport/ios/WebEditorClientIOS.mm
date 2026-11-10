@@ -48,7 +48,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent& event)
         event.setDefaultHandled();
 }
 
-void WebEditorClient::setInsertionPasteboard(const String&)
+void WebEditorClient::setInsertionPasteboard(StringImpl*)
 {
     // This is used only by Mail, no need to implement it now.
     notImplemented();
@@ -88,7 +88,7 @@ bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment*)
     return false;
 }
 
-void WebEditorClient::updateStringForFind(const String& findString)
+void WebEditorClient::updateStringForFind(StringImpl* findString)
 {
     if (RefPtr page = m_page.get())
         page->updateStringForFind(findString);

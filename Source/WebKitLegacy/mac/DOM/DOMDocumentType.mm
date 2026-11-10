@@ -43,7 +43,7 @@
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->name().createNSString().autorelease();
+    return createNSString(IMPL->name()).autorelease();
 }
 
 - (DOMNamedNodeMap *)entities
@@ -59,13 +59,13 @@
 - (NSString *)publicId
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->publicId().createNSString().autorelease();
+    return createNSString(IMPL->publicId()).autorelease();
 }
 
 - (NSString *)systemId
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->systemId().createNSString().autorelease();
+    return createNSString(IMPL->systemId()).autorelease();
 }
 
 - (NSString *)internalSubset

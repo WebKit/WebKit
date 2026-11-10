@@ -62,8 +62,8 @@ void DNSResolveQueueCFNet::updateIsUsingProxy()
         return;
     }
 
-    RetainPtr<CFURLRef> httpCFURL = URL({ }, "http://example.com/"_s).createCFURL();
-    RetainPtr<CFURLRef> httpsCFURL = URL({ }, "https://example.com/"_s).createCFURL();
+    RetainPtr<CFURLRef> httpCFURL = URL({ }, "http://example.com/"_si).createCFURL();
+    RetainPtr<CFURLRef> httpsCFURL = URL({ }, "https://example.com/"_si).createCFURL();
 
     RetainPtr<CFArrayRef> httpProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpCFURL.get(), proxySettings.get()));
     RetainPtr<CFArrayRef> httpsProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpsCFURL.get(), proxySettings.get()));
@@ -117,9 +117,9 @@ NODELETE static std::optional<IPAddress> extractIPAddress(const struct sockaddr*
 
 static constexpr auto timeoutForDNSResolution = 60_s;
 
-void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<CompletionHandlerWrapper>&& completionHandler)
+void DNSResolveQueueCFNet::performDNSLookup(StringImpl* hostname, Ref<CompletionHandlerWrapper>&& completionHandler)
 {
-    OSObjectPtr hostEndpoint = adoptOSObject(nw_endpoint_create_host(hostname.utf8().legacyCStringPointer(), "0"));
+    OSObjectPtr hostEndpoint = adoptOSObject(nw_endpoint_create_host(utf8(hostname).legacyCStringPointer(), "0"));
     OSObjectPtr context = adoptOSObject(nw_context_create("WebKit DNS Lookup"));
     OSObjectPtr parameters = adoptOSObject(nw_parameters_create());
 
@@ -127,8 +127,8 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
     if (auto auditToken = applicationAuditToken())
         nw_parameters_set_source_application(parameters.get(), auditToken.value());
 #else
-    if (auto bundleID = applicationBundleIdentifier(); !bundleID.isEmpty())
-        nw_parameters_set_source_application_by_bundle_id(parameters.get(), bundleID.ascii().data());
+    if (auto bundleID = applicationBundleIdentifier(); !isEmpty(bundleID))
+        nw_parameters_set_source_application_by_bundle_id(parameters.get(), ascii(bundleID).data());
 #endif
 
     nw_context_set_privacy_level(context.get(), nw_context_privacy_level_silent);
@@ -182,14 +182,14 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
     ++m_prefetchedHostnameCountForTesting;
 }
 
-void DNSResolveQueueCFNet::platformResolve(const String& hostname)
+void DNSResolveQueueCFNet::platformResolve(StringImpl* hostname)
 {
     performDNSLookup(hostname, CompletionHandlerWrapper::create([](auto) {
         DNSResolveQueue::singleton().decrementRequestCount();
     }, std::nullopt));
 }
 
-void DNSResolveQueueCFNet::resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
+void DNSResolveQueueCFNet::resolve(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
 {
     auto wrapper = CompletionHandlerWrapper::create(WTF::move(completionHandler), identifier);
     performDNSLookup(hostname, wrapper.copyRef());

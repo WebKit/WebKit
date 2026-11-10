@@ -38,8 +38,8 @@ inline static bool enoughWidthForHyphenation(float availableWidth, float fontSiz
     return availableWidth > fontSize * 5 / 4;
 
 }
-bool canHyphenate(const AtomString& localeIdentifier);
-size_t lastHyphenLocation(StringView, size_t beforeIndex, const AtomString& localeIdentifier);
+bool canHyphenate(AtomStringImpl* localeIdentifier);
+size_t lastHyphenLocation(StringView, size_t beforeIndex, AtomStringImpl* localeIdentifier);
 
 } // namespace WebCore
 

@@ -80,57 +80,57 @@ static constexpr std::array<CSSValueID, 5> displayAlignmentMap {
 };
 static_assert(std::size(displayAlignmentMap) == static_cast<size_t>(WebCore::VTTAlignSetting::MaxValue) + 1, "displayAlignmentMap has wrong size");
 
-static const String& startKeyword()
+static const RefPtr<StringImpl>& startKeyword()
 {
-    static NeverDestroyed<const String> start(MAKE_STATIC_STRING_IMPL("start"));
+    static NeverDestroyed<const RefPtr<StringImpl>> start(MAKE_STATIC_STRING_IMPL("start"));
     return start;
 }
 
-static const String& centerKeyword()
+static const RefPtr<StringImpl>& centerKeyword()
 {
-    static NeverDestroyed<const String> center(MAKE_STATIC_STRING_IMPL("center"));
+    static NeverDestroyed<const RefPtr<StringImpl>> center(MAKE_STATIC_STRING_IMPL("center"));
     return center;
 }
 
-static const String& endKeyword()
+static const RefPtr<StringImpl>& endKeyword()
 {
-    static NeverDestroyed<const String> end(MAKE_STATIC_STRING_IMPL("end"));
+    static NeverDestroyed<const RefPtr<StringImpl>> end(MAKE_STATIC_STRING_IMPL("end"));
     return end;
 }
 
-static const String& leftKeyword()
+static const RefPtr<StringImpl>& leftKeyword()
 {
-    static NeverDestroyed<const String> left(MAKE_STATIC_STRING_IMPL("left"));
+    static NeverDestroyed<const RefPtr<StringImpl>> left(MAKE_STATIC_STRING_IMPL("left"));
     return left;
 }
 
-static const String& rightKeyword()
+static const RefPtr<StringImpl>& rightKeyword()
 {
-    static NeverDestroyed<const String> right(MAKE_STATIC_STRING_IMPL("right"));
+    static NeverDestroyed<const RefPtr<StringImpl>> right(MAKE_STATIC_STRING_IMPL("right"));
     return right;
 }
 
-static const String& verticalGrowingLeftKeyword()
+static const RefPtr<StringImpl>& verticalGrowingLeftKeyword()
 {
-    static NeverDestroyed<const String> verticalrl(MAKE_STATIC_STRING_IMPL("rl"));
+    static NeverDestroyed<const RefPtr<StringImpl>> verticalrl(MAKE_STATIC_STRING_IMPL("rl"));
     return verticalrl;
 }
 
-static const String& verticalGrowingRightKeyword()
+static const RefPtr<StringImpl>& verticalGrowingRightKeyword()
 {
-    static NeverDestroyed<const String> verticallr(MAKE_STATIC_STRING_IMPL("lr"));
+    static NeverDestroyed<const RefPtr<StringImpl>> verticallr(MAKE_STATIC_STRING_IMPL("lr"));
     return verticallr;
 }
 
-static const String& lineLeftKeyword()
+static const RefPtr<StringImpl>& lineLeftKeyword()
 {
-    static NeverDestroyed<const String> lineLeft(MAKE_STATIC_STRING_IMPL("line-left"));
+    static NeverDestroyed<const RefPtr<StringImpl>> lineLeft(MAKE_STATIC_STRING_IMPL("line-left"));
     return lineLeft;
 }
 
-static const String& lineRightKeyword()
+static const RefPtr<StringImpl>& lineRightKeyword()
 {
-    static NeverDestroyed<const String> lineRight(MAKE_STATIC_STRING_IMPL("line-right"));
+    static NeverDestroyed<const RefPtr<StringImpl>> lineRight(MAKE_STATIC_STRING_IMPL("line-right"));
     return lineRight;
 }
 
@@ -265,10 +265,10 @@ RenderPtr<RenderElement> VTTCueBox::createElementRenderer(Style::ComputedStyle&&
 
 // ----------------------------
 
-ExceptionOr<Ref<VTTCue>> VTTCue::create(Document& document, double start, double end, String&& content)
+ExceptionOr<Ref<VTTCue>> VTTCue::create(Document& document, double start, double end, RefPtr<StringImpl>&& content)
 {
     if (std::isnan(end) || end == -std::numeric_limits<double>::infinity())
-        return Exception { ExceptionCode::TypeError, "The provided endTime value is NaN or negative Infinity"_s };
+        return Exception { ExceptionCode::TypeError, "The provided endTime value is NaN or negative Infinity"_si };
 
     Ref cue = adoptRef(*new VTTCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTF::move(content)));
     cue->suspendIfNeeded();
@@ -282,7 +282,7 @@ Ref<VTTCue> VTTCue::create(Document& document, Ref<WebVTTCueData>&& data)
     return cue;
 }
 
-VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, String&& content)
+VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, RefPtr<StringImpl>&& content)
     : TextTrackCue(document, start, end)
     , m_content(WTF::move(content))
     , m_cueHighlightBox(HTMLSpanElement::create(spanTag, document))
@@ -304,7 +304,7 @@ VTTCue::VTTCue(Document& document, Ref<WebVTTCueData>&& cueData)
     setText(cueData->content());
     setStartTime(cueData->startTime());
     setEndTime(cueData->endTime());
-    setId(AtomString { cueData->id() });
+    setId(AtomStringImpl::add(cueData->id()).get());
     setCueSettings(cueData->settings());
 }
 
@@ -471,9 +471,9 @@ void VTTCue::setAlign(AlignSetting alignment)
     didChange();
 }
     
-void VTTCue::setText(const String& text)
+void VTTCue::setText(StringImpl* text)
 {
-    if (m_content == text)
+    if (equal(m_content, text))
         return;
     
     willChange();
@@ -520,7 +520,7 @@ RefPtr<DocumentFragment> VTTCue::getCueAsHTML()
     return clonedFragment;
 }
 
-String VTTCue::textWithoutMarkup()
+RefPtr<StringImpl> VTTCue::textWithoutMarkup()
 {
     RefPtr webVTTNodeTree = getOrCreateWebVTTNodeTree();
     if (!webVTTNodeTree)
@@ -568,7 +568,7 @@ void VTTCue::setIsActive(bool active)
 void VTTCue::setTrack(TextTrack* track)
 {
     TextTrackCue::setTrack(track);
-    if (!m_parsedRegionId.isEmpty()) {
+    if (!isEmpty(m_parsedRegionId)) {
         if (track != nullptr) {
             if (RefPtr regions = track->regions()) {
                 if (RefPtr region = regions->getRegionById(m_parsedRegionId))
@@ -596,7 +596,7 @@ VTTRegion* VTTCue::region()
     return &*m_region;
 }
 
-const String& VTTCue::regionId()
+const RefPtr<StringImpl>& VTTCue::regionId()
 {
     if (!m_region)
         return emptyString();
@@ -662,7 +662,7 @@ static bool isCueParagraphSeparator(char16_t character)
 
 void VTTCue::determineTextDirection()
 {
-    static NeverDestroyed<const String> rtTag(MAKE_STATIC_STRING_IMPL("rt"));
+    static NeverDestroyed<const RefPtr<StringImpl>> rtTag(MAKE_STATIC_STRING_IMPL("rt"));
     RefPtr webVTTNodeTree = getOrCreateWebVTTNodeTree();
     if (!webVTTNodeTree)
         return;
@@ -674,18 +674,18 @@ void VTTCue::determineTextDirection()
     StringBuilder paragraphBuilder;
     for (RefPtr<Node> node = webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(*node, webVTTNodeTree.get())) {
         // FIXME: The code does not match the comment above. This does not actually exclude Ruby Text Object descendant.
-        if (!node->isTextNode() || node->localName() == rtTag)
+        if (!node->isTextNode() || equal(node->localName(), rtTag))
             continue;
 
         paragraphBuilder.append(node->nodeValue());
     }
 
-    String paragraph = paragraphBuilder.toString();
-    if (!paragraph.length())
+    RefPtr<StringImpl> paragraph = paragraphBuilder.toString();
+    if (!length(paragraph))
         return;
 
-    for (size_t i = 0; i < paragraph.length(); ++i) {
-        char16_t current = paragraph[i];
+    for (size_t i = 0; i < length(paragraph); ++i) {
+        char16_t current = codeUnitAt(paragraph, i);
         if (!current || isCueParagraphSeparator(current))
             return;
 
@@ -969,10 +969,10 @@ void VTTCue::obtainCSSBoxes()
     // Note: This is contained by default in m_cueHighlightBox.
     displayTree->setUserAgentPart(UserAgentParts::cue());
 
-    if (!id().isEmpty())
+    if (!isEmpty(id()))
         displayTree->setAttributeWithoutSynchronization(HTMLNames::idAttr, id());
 
-    if (!track()->language().isEmpty())
+    if (!isEmpty(track()->language()))
         displayTree->setAttributeWithoutSynchronization(HTMLNames::langAttr, track()->language());
 
     m_cueHighlightBox->setUserAgentPart(UserAgentParts::internalCueBackground());
@@ -1000,7 +1000,7 @@ void VTTCue::obtainCSSBoxes()
 
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previousTimestamp, const MediaTime& movieTime)
 {
-    static NeverDestroyed<const String> timestampTag(MAKE_STATIC_STRING_IMPL("timestamp"));
+    static NeverDestroyed<const RefPtr<StringImpl>> timestampTag(MAKE_STATIC_STRING_IMPL("timestamp"));
     
     bool isPastNode = true;
     MediaTime currentTimestamp = previousTimestamp;
@@ -1008,7 +1008,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
         isPastNode = false;
     
     for (RefPtr<Node> child = root->firstChild(); child; child = NodeTraversal::next(*child, root)) {
-        if (child->nodeName() == timestampTag) {
+        if (equal(child->nodeName(), timestampTag)) {
             MediaTime currentTimestamp;
             bool check = WebVTTParser::collectTimeStamp(child->nodeValue(), currentTimestamp);
             ASSERT_UNUSED(check, check);
@@ -1022,7 +1022,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
             childElement->setIsPastNode(isPastNode);
 
         // Make an element id match a cue id for style matching purposes.
-        if (RefPtr childElement = dynamicDowncast<Element>(*child); !id().isEmpty() && childElement)
+        if (RefPtr childElement = dynamicDowncast<Element>(*child); !isEmpty(id()) && childElement)
             childElement->setIdAttribute(id());
     }
 }
@@ -1160,9 +1160,9 @@ VTTCue::CueSetting VTTCue::settingName(VTTScanner& input)
     return None;
 }
 
-void VTTCue::setCueSettings(const String& inputString)
+void VTTCue::setCueSettings(StringImpl* inputString)
 {
-    if (inputString.isEmpty())
+    if (isEmpty(inputString))
         return;
 
     VTTScanner input(inputString);
@@ -1368,8 +1368,8 @@ bool VTTCue::cueContentsMatch(const TextTrackCue& otherTextTrackCue) const
 {
     auto& other = downcast<VTTCue>(otherTextTrackCue);
     return TextTrackCue::cueContentsMatch(other)
-        && text() == other.text()
-        && cueSettings() == other.cueSettings()
+        && equal(text(), other.text())
+        && equal(cueSettings(), other.cueSettings())
         && position() == other.position()
         && line() == other.line()
         && size() == other.size()
@@ -1390,19 +1390,19 @@ void VTTCue::toJSON(JSON::Object& object) const
 {
     TextTrackCue::toJSON(object);
 
-    object.setString("text"_s, text());
-    object.setString("vertical"_s, convertEnumerationToString(vertical()));
-    object.setBoolean("snapToLines"_s, snapToLines());
+    object.setString("text"_si, text());
+    object.setString("vertical"_si, convertEnumerationToString(vertical()));
+    object.setBoolean("snapToLines"_si, snapToLines());
     if (m_linePosition)
-        object.setDouble("line"_s, *m_linePosition);
+        object.setDouble("line"_si, *m_linePosition);
     else
-        object.setString("line"_s, autoAtom());
+        object.setString("line"_si, autoAtom());
     if (m_textPosition)
-        object.setDouble("position"_s, *m_textPosition);
+        object.setDouble("position"_si, *m_textPosition);
     else
-        object.setString("position"_s, autoAtom());
-    object.setInteger("size"_s, m_cueSize);
-    object.setString("align"_s, convertEnumerationToString(align()));
+        object.setString("position"_si, autoAtom());
+    object.setInteger("size"_si, m_cueSize);
+    object.setString("align"_si, convertEnumerationToString(align()));
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -1426,7 +1426,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
     ASSERT(!m_speechUtterance);
     ASSERT(rate);
     ASSERT(track());
-    if (m_content.isEmpty() || !track()) {
+    if (isEmpty(m_content) || !track()) {
         completion(*this);
         return;
     }
@@ -1440,7 +1440,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
     });
 
     auto trackLanguage = track->validBCP47Language();
-    if (trackLanguage.isEmpty())
+    if (isEmpty(trackLanguage))
         trackLanguage = track->language();
 
     Ref speechUtterance = *m_speechUtterance;

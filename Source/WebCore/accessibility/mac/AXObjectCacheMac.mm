@@ -382,14 +382,14 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     AXPostNotificationWithUserInfo(protect(object.wrapper()), macNotification.get(), nil, skipSystemNotification);
 }
 
-void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
+void AXObjectCache::postPlatformAnnouncementNotification(StringImpl* message)
 {
     AX_ASSERT(isMainThread());
 
     processQueuedIsolatedNodeUpdates();
 
     RetainPtr userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
-        NSAccessibilityAnnouncementKey: message.createNSString().get(),
+        NSAccessibilityAnnouncementKey: createNSString(message).get(),
     };
     NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
 
@@ -409,8 +409,8 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject& obje
     RetainPtr userInfo = @{
         NSAccessibilityARIAAnnouncementPriority: notifyPriorityToAXValueString(notificationData.priority).get(),
         NSAccessibilityARIAAnnouncementInterrupt: interruptBehaviorToAXValueString(notificationData.interrupt).get(),
-        NSAccessibilityAnnouncementKey: notificationData.message.createNSString().get(),
-        NSAccessibilityAnnouncementLanguageKey: notificationData.language.createNSString().get()
+        NSAccessibilityAnnouncementKey: createNSString(notificationData.message).get(),
+        NSAccessibilityAnnouncementLanguageKey: createNSString(notificationData.language).get()
     };
 
     NSAccessibilityPostNotificationWithUserInfo(protect(object.wrapper()), NSAccessibilityAnnouncementRequestedNotification, userInfo);
@@ -439,8 +439,8 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
 
     processQueuedIsolatedNodeUpdates();
 
-    RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (const String& text) {
-        return text.createNSString();
+    RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (StringImpl* text) {
+        return createNSString(text);
     });
     RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] initWithDictionary:@{
         NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
@@ -671,9 +671,9 @@ static void addFirstTextMarker(NSMutableDictionary *change, AXObjectCache& cache
     [change setObject:bridge_id_cast(textMarkerDataRef.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
-static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, AccessibilityObject& object, AXTextEditType type, const String& string, const VisiblePosition& visiblePosition = { })
+static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, AccessibilityObject& object, AXTextEditType type, StringImpl* string, const VisiblePosition& visiblePosition = { })
 {
-    RetainPtr text = string.createNSString();
+    RetainPtr text = createNSString(string);
     NSUInteger length = [text length];
     if (!length)
         return nil;
@@ -693,9 +693,9 @@ static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, Acces
     return change.autorelease();
 }
 
-void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType type, const String& text, const VisiblePosition& position)
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType type, StringImpl* text, const VisiblePosition& position)
 {
-    if (!text.length())
+    if (!length(text))
         return;
 
     postTextReplacementPlatformNotification(object, AXTextEditType::Unknown, emptyString(), type, text, position);
@@ -718,7 +718,7 @@ void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, Acc
         AXPostNotificationWithUserInfo(protect(object.wrapper()), NSAccessibilityValueChangedNotification, userInfo.get());
 }
 
-void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType deletionType, StringImpl* deletedText, AXTextEditType insertionType, StringImpl* insertedText, const VisiblePosition& position)
 {
     RefPtr axObject = object;
     if (!axObject)
@@ -739,7 +739,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
         postUserInfoForChanges(*root, *axObject, changes.get());
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, StringImpl* deletedText, StringImpl* insertedText)
 {
     RefPtr axObject = object;
     if (!axObject)

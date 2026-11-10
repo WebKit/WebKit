@@ -70,7 +70,7 @@ public:
 
     NODELETE std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::FrameIdentifier, FrameInfoData&&);
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, RefPtr<StringImpl>&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::FrameIdentifier, FrameInfoData&&);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);

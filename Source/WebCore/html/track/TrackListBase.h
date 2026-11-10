@@ -83,7 +83,7 @@ protected:
     Vector<Ref<TrackBase>> m_inbandTracks;
 
 private:
-    void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
+    void scheduleTrackEvent(AtomStringImpl* eventName, Ref<TrackBase>&&);
 
     // EventTarget
     void refEventTarget() final { ref(); }

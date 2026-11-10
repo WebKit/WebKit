@@ -54,7 +54,7 @@ DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL& url, DocumentIs
 
 // As for Cross-Origin-Embedder-Policy, report-to is only used with a policy value and has to be a string.
 // https://github.com/WICG/document-isolation-policy/issues/10
-static std::pair<DocumentIsolationPolicyValue, String> parseDocumentIsolationPolicyHeader(StringView headerValue)
+static std::pair<DocumentIsolationPolicyValue, RefPtr<StringImpl>> parseDocumentIsolationPolicyHeader(StringView headerValue)
 {
     auto parsedItem = RFC8941::parseItemStructuredFieldValue(headerValue);
     if (!parsedItem)
@@ -62,11 +62,11 @@ static std::pair<DocumentIsolationPolicyValue, String> parseDocumentIsolationPol
 
     // FIXME: Support isolate-and-credentialless.
     auto* token = std::get_if<RFC8941::Token>(&parsedItem->first);
-    if (!token || token->string() != "isolate-and-require-corp"_s)
+    if (!token || !equal(token->string(), "isolate-and-require-corp"_s))
         return { };
 
-    auto* reportTo = parsedItem->second.getIf<String>("report-to"_s);
-    return { DocumentIsolationPolicyValue::IsolateAndRequireCORP, reportTo ? *reportTo : String { } };
+    auto* reportTo = parsedItem->second.getIf<RefPtr<StringImpl>>("report-to"_s);
+    return { DocumentIsolationPolicyValue::IsolateAndRequireCORP, reportTo ? *reportTo : nullptr };
 }
 
 DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse& response)
@@ -78,13 +78,13 @@ DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse& res
 
 void DocumentIsolationPolicy::addPolicyHeadersTo(ResourceResponse& response) const
 {
-    auto addHeader = [&response](HTTPHeaderName headerName, DocumentIsolationPolicyValue value, const String& reportingEndpoint) {
+    auto addHeader = [&response](HTTPHeaderName headerName, DocumentIsolationPolicyValue value, StringImpl* reportingEndpoint) {
         if (value == DocumentIsolationPolicyValue::None)
             return;
         ASSERT(value == DocumentIsolationPolicyValue::IsolateAndRequireCORP);
-        auto escapedReportingEndpoint = reportingEndpoint.isEmpty() ? std::nullopt : RFC8941::escapeString(reportingEndpoint);
+        auto escapedReportingEndpoint = isEmpty(reportingEndpoint) ? std::nullopt : RFC8941::escapeString(reportingEndpoint);
         if (!escapedReportingEndpoint)
-            response.setHTTPHeaderField(headerName, "isolate-and-require-corp"_s);
+            response.setHTTPHeaderField(headerName, "isolate-and-require-corp"_si);
         else
             response.setHTTPHeaderField(headerName, makeString("isolate-and-require-corp; report-to=\""_s, *escapedReportingEndpoint, '"'));
     };
@@ -92,7 +92,7 @@ void DocumentIsolationPolicy::addPolicyHeadersTo(ResourceResponse& response) con
     addHeader(HTTPHeaderName::DocumentIsolationPolicyReportOnly, reportOnlyValue, reportOnlyReportingEndpoint);
 }
 
-void sendDocumentIsolationPolicyCORPViolation(ReportingClient& reportingClient, const URL& contextURL, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
+void sendDocumentIsolationPolicyCORPViolation(ReportingClient& reportingClient, const URL& contextURL, StringImpl* endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
 {
     // https://fetch.spec.whatwg.org/#serialize-a-response-url-for-reporting
     URL serializedBlockedURL = blockedURL;
@@ -100,19 +100,20 @@ void sendDocumentIsolationPolicyCORPViolation(ReportingClient& reportingClient, 
     serializedBlockedURL.removeFragmentIdentifier();
 
     Ref reportBody = CORPViolationReportBody::create(disposition, serializedBlockedURL, destination);
-    Ref report = Report::create("dip"_s, contextURL.string(), WTF::move(reportBody));
+    Ref report = Report::create("dip"_si, contextURL.string(), WTF::move(reportBody));
     reportingClient.notifyReportObservers(WTF::move(report));
 
-    if (endpoint.isEmpty())
+    if (isEmpty(endpoint))
         return;
 
-    Ref reportFormData = Report::createReportFormDataForViolation("dip"_s, contextURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
-        body.setString("type"_s, "corp"_s);
-        body.setString("blockedURL"_s, serializedBlockedURL.string());
-        body.setString("destination"_s, convertEnumerationToString(destination));
-        body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
+    Ref reportFormData = Report::createReportFormDataForViolation("dip"_si, contextURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+        body.setString("type"_si, "corp"_si);
+        body.setString("blockedURL"_si, serializedBlockedURL.string());
+        body.setString("destination"_si, convertEnumerationToString(destination));
+        body.setString("disposition"_si, disposition == COEPDisposition::Reporting ? "reporting"_si : "enforce"_si);
     });
-    reportingClient.sendReportToEndpoints(contextURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::CORPViolation);
+    RefPtr<StringImpl> endpointToken { endpoint };
+    reportingClient.sendReportToEndpoints(contextURL, { }, singleElementSpan(endpointToken), WTF::move(reportFormData), ViolationReportType::CORPViolation);
 }
 
 } // namespace WebCore

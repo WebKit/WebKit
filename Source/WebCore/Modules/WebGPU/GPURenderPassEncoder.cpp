@@ -59,7 +59,7 @@ static void restorePipelineAfterInspectorHighlight(WebGPU::RenderPassEncoder& en
     encoder.setBlendConstant(convertToBacking(blendConstant));
 }
 
-GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
+GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, RefPtr<StringImpl>&& label, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_device(commandEncoder.device())
@@ -78,12 +78,12 @@ GPUDevice* GPURenderPassEncoder::device() const
     return m_device;
 }
 
-String GPURenderPassEncoder::label() const
+RefPtr<StringImpl> GPURenderPassEncoder::label() const
 {
     return m_overrideLabel ? *m_overrideLabel : m_label;
 }
 
-void GPURenderPassEncoder::setLabel(String&& label)
+void GPURenderPassEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     protect(backing())->setLabel(WTF::move(label));
@@ -190,13 +190,13 @@ ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPU
 {
     auto offset = checkedSum<uint64_t>(dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
-        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
+        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_si };
 
     protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
     return { };
 }
 
-void GPURenderPassEncoder::pushDebugGroup(String&& groupLabel)
+void GPURenderPassEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(backing())->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -206,7 +206,7 @@ void GPURenderPassEncoder::popDebugGroup()
     protect(backing())->popDebugGroup();
 }
 
-void GPURenderPassEncoder::insertDebugMarker(String&& markerLabel)
+void GPURenderPassEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(backing())->insertDebugMarker(WTF::move(markerLabel));
 }

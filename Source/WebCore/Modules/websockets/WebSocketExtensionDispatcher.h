@@ -43,19 +43,19 @@ public:
 
     void reset();
     void addProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
-    const String createHeaderValue() const;
+    const RefPtr<StringImpl> createHeaderValue() const;
 
-    bool processHeaderValue(const String&);
-    String acceptedExtensions() const;
-    NODELETE String failureReason() const;
+    bool processHeaderValue(StringImpl*);
+    RefPtr<StringImpl> acceptedExtensions() const;
+    NODELETE RefPtr<StringImpl> failureReason() const;
 
 private:
-    void appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters);
-    void fail(const String& reason);
+    void appendAcceptedExtension(StringImpl* extensionToken, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& extensionParameters);
+    void fail(StringImpl* reason);
 
     Vector<std::unique_ptr<WebSocketExtensionProcessor>> m_processors;
     StringBuilder m_acceptedExtensionsBuilder;
-    String m_failureReason;
+    RefPtr<StringImpl> m_failureReason;
 };
 
 } // namespace WebCore

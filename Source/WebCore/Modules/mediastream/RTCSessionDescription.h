@@ -47,23 +47,23 @@ class RTCSessionDescription final : public RefCounted<RTCSessionDescription>, pu
 public:
     struct Init {
         RTCSdpType type;
-        String sdp;
+        RefPtr<StringImpl> sdp;
     };
     NODELETE static Ref<RTCSessionDescription> create(RTCSessionDescriptionInit&&);
-    NODELETE static Ref<RTCSessionDescription> create(RTCSdpType, String&& sdp);
+    NODELETE static Ref<RTCSessionDescription> create(RTCSdpType, RefPtr<StringImpl>&& sdp);
 
     ~RTCSessionDescription();
 
     RTCSdpType type() const { return m_type; }
 
-    const String& sdp() const LIFETIME_BOUND { return m_sdp; }
-    void setSdp(String&& sdp) { m_sdp = WTF::move(sdp); }
+    const RefPtr<StringImpl>& sdp() const LIFETIME_BOUND { return m_sdp; }
+    void setSdp(RefPtr<StringImpl>&& sdp) { m_sdp = WTF::move(sdp); }
 
 private:
-    RTCSessionDescription(RTCSdpType, String&& sdp);
+    RTCSessionDescription(RTCSdpType, RefPtr<StringImpl>&& sdp);
 
     RTCSdpType m_type;
-    String m_sdp;
+    RefPtr<StringImpl> m_sdp;
 };
 
 } // namespace WebCore

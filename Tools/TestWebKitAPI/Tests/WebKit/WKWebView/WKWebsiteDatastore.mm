@@ -1435,7 +1435,7 @@ TEST(WKWebsiteDataStorePrivate, ThirdPartyCookieBlockingModeUnchangedBetweenView
 TEST(WKWebsiteDataStore, DoNotLogNetworkConnectionsInEphemeralSessions)
 {
     HTTPServer server { { }, HTTPServer::Protocol::Http };
-    server.addResponse("/index.html"_s, { "<html><body>Hello world</body></html>"_s });
+    server.addResponse("/index.html"_si, { "<html><body>Hello world</body></html>"_si });
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:WKWebsiteDataStore.nonPersistentDataStore];
@@ -2399,7 +2399,7 @@ static void writeResourceLoadStatisticsDatabase(NSURL *directory)
     [fileManager copyItemAtPath:sourceFile.path toPath:databaseFile.path error:nil];
 
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(databaseFile.path));
+    EXPECT_TRUE(database->open(StringImpl::create(databaseFile.path).get()));
     auto statement = database->prepareStatement("UPDATE ObservedDomains SET hadUserInteraction = 1, mostRecentUserInteractionTime = ? WHERE registrableDomain = 'webkit.org'"_s);
     EXPECT_TRUE(!!statement);
     EXPECT_TRUE(statement->bindDouble(1, seededInteractionDate().timeIntervalSince1970) == SQLITE_OK);

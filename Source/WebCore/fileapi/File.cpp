@@ -39,18 +39,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(File);
 
-Ref<File> File::createWithRelativePath(ScriptExecutionContext* context, const String& path, const String& relativePath)
+Ref<File> File::createWithRelativePath(ScriptExecutionContext* context, StringImpl* path, StringImpl* relativePath)
 {
     auto file = File::create(context, path);
     file->setRelativePath(relativePath);
     return file;
 }
 
-Ref<File> File::create(ScriptExecutionContext* context, const String& path, const String& replacementPath, const String& nameOverride, const std::optional<FileSystem::PlatformFileID>& fileID)
+Ref<File> File::create(ScriptExecutionContext* context, StringImpl* path, StringImpl* replacementPath, StringImpl* nameOverride, const std::optional<FileSystem::PlatformFileID>& fileID)
 {
-    String name;
-    String type;
-    String effectivePath = !replacementPath.isNull() ? replacementPath : path;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> type;
+    RefPtr<StringImpl> effectivePath = !!replacementPath ? replacementPath : path;
     computeNameAndContentType(effectivePath, nameOverride, name, type);
 
     auto internalURL = BlobURL::createInternalURL();
@@ -61,14 +61,14 @@ Ref<File> File::create(ScriptExecutionContext* context, const String& path, cons
     return file;
 }
 
-File::File(ScriptExecutionContext* context, URL&& url, String&& type, String&& path, String&& name)
+File::File(ScriptExecutionContext* context, URL&& url, RefPtr<StringImpl>&& type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name)
     : Blob(uninitializedContructor, context, WTF::move(url), WTF::move(type))
     , m_path(WTF::move(path))
     , m_name(WTF::move(name))
 {
 }
 
-File::File(ScriptExecutionContext* context, URL&& url, String&& type, String&& path, String&& name, const std::optional<FileSystem::PlatformFileID>& fileID)
+File::File(ScriptExecutionContext* context, URL&& url, RefPtr<StringImpl>&& type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name, const std::optional<FileSystem::PlatformFileID>& fileID)
     : Blob(uninitializedContructor, context, WTF::move(url), WTF::move(type))
     , m_path(WTF::move(path))
     , m_name(WTF::move(name))
@@ -76,7 +76,7 @@ File::File(ScriptExecutionContext* context, URL&& url, String&& type, String&& p
 {
 }
 
-File::File(DeserializationContructor, ScriptExecutionContext* context, const String& path, const URL& url, const String& type, const String& name, const std::optional<int64_t>& lastModified)
+File::File(DeserializationContructor, ScriptExecutionContext* context, StringImpl* path, const URL& url, StringImpl* type, StringImpl* name, const std::optional<int64_t>& lastModified)
     : Blob(deserializationContructor, context, url, type, { }, 0, path)
     , m_path(path)
     , m_name(name)
@@ -84,25 +84,25 @@ File::File(DeserializationContructor, ScriptExecutionContext* context, const Str
 {
 }
 
-File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
+File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, StringImpl* filename, const PropertyBag& propertyBag)
     : Blob(context, WTF::move(blobPartVariants), propertyBag)
     , m_name(filename)
     , m_lastModifiedDateOverride(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
 {
 }
 
-File::File(ScriptExecutionContext* context, const Blob& blob, const String& name)
+File::File(ScriptExecutionContext* context, const Blob& blob, StringImpl* name)
     : Blob(referencingExistingBlobConstructor, context, blob)
     , m_name(name)
 {
     ASSERT(!blob.isFile());
 }
 
-File::File(ScriptExecutionContext* context, const File& file, const String& name)
+File::File(ScriptExecutionContext* context, const File& file, StringImpl* name)
     : Blob(referencingExistingBlobConstructor, context, file)
     , m_path(file.path())
     , m_relativePath(file.relativePath())
-    , m_name(!name.isNull() ? name : file.name())
+    , m_name(name ? RefPtr<StringImpl> { name } : file.name())
     , m_lastModifiedDateOverride(file.m_lastModifiedDateOverride)
     , m_isDirectory(file.isDirectory())
 {
@@ -127,7 +127,7 @@ int64_t File::lastModified() const
     return timeClip(result);
 }
 
-void File::computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)
+void File::computeNameAndContentType(StringImpl* path, StringImpl* nameOverride, RefPtr<StringImpl>& effectiveName, RefPtr<StringImpl>& effectiveContentType)
 {
 #if ENABLE(FILE_REPLACEMENT)
     if (shouldReplaceFile(path)) {
@@ -135,20 +135,20 @@ void File::computeNameAndContentType(const String& path, const String& nameOverr
         return;
     }
 #endif
-    effectiveName = nameOverride.isEmpty() ? FileSystem::pathFileName(path) : nameOverride;
-    size_t index = effectiveName.reverseFind('.');
+    effectiveName = isEmpty(nameOverride) ? FileSystem::pathFileName(path) : RefPtr<StringImpl> { nameOverride };
+    size_t index = reverseFind(effectiveName, '.');
     if (index != notFound) {
         callOnMainThreadAndWait([&effectiveContentType, &effectiveName, index] {
-            effectiveContentType = MIMETypeRegistry::mimeTypeForExtension(StringView(effectiveName).substring(index + 1)).isolatedCopy();
+            effectiveContentType = isolatedCopy(MIMETypeRegistry::mimeTypeForExtension(StringView(effectiveName).substring(index + 1)));
         });
     }
 }
 
-String File::contentTypeForFile(const String& path)
+RefPtr<StringImpl> File::contentTypeForFile(StringImpl* path)
 {
-    String name;
-    String type;
-    computeNameAndContentType(path, String(), name, type);
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> type;
+    computeNameAndContentType(path, nullString(), name, type);
 
     return type;
 }

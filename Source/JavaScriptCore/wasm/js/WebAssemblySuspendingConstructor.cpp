@@ -89,7 +89,7 @@ Structure* WebAssemblySuspendingConstructor::createStructure(VM& vm, JSGlobalObj
 void WebAssemblySuspendingConstructor::finishCreation(VM& vm, WebAssemblySuspendingPrototype* prototype)
 {
     constexpr unsigned length = 1;
-    Base::finishCreation(vm, length, "WebAssembly.Suspending"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, length, "WebAssembly.Suspending"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 

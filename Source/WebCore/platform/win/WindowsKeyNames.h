@@ -40,9 +40,9 @@ class WindowsKeyNames {
 public:
     WEBCORE_EXPORT WindowsKeyNames();
 
-    WEBCORE_EXPORT String domKeyFromParams(WPARAM, LPARAM);
-    WEBCORE_EXPORT String domKeyFromChar(char16_t);
-    WEBCORE_EXPORT String domCodeFromLParam(LPARAM);
+    WEBCORE_EXPORT RefPtr<StringImpl> domKeyFromParams(WPARAM, LPARAM);
+    WEBCORE_EXPORT RefPtr<StringImpl> domKeyFromChar(char16_t);
+    WEBCORE_EXPORT RefPtr<StringImpl> domCodeFromLParam(LPARAM);
 
     // Windows has no dedicated AltGr key; it synthesizes AltGr as a left-Control
     // + right-Alt combination. Returns whether that combination should currently
@@ -69,7 +69,7 @@ private:
     struct PrintableKey {
         // The DOM key string, or a null String if the key produces no printable
         // character under the requested modifiers.
-        String key;
+        RefPtr<StringImpl> key;
         // Whether the matched modifier combination needed both Control and Alt,
         // i.e. the key is AltGraph-shifted on the active layout.
         bool isAltGraphShifted { false };
@@ -83,7 +83,7 @@ private:
     bool m_hasAltGraph = false;
 
     using VirtualKeyModifierSetPair = std::pair<unsigned, KeyModifierSet>;
-    using VirtualKeyToKeyMap = HashMap<VirtualKeyModifierSetPair, String, DefaultHash<VirtualKeyModifierSetPair>, PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<unsigned>, HashTraits<KeyModifierSet>>>;
+    using VirtualKeyToKeyMap = HashMap<VirtualKeyModifierSetPair, RefPtr<StringImpl>, DefaultHash<VirtualKeyModifierSetPair>, PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<unsigned>, HashTraits<KeyModifierSet>>>;
     VirtualKeyToKeyMap m_printableKeyCodeToKey;
 };
 

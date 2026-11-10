@@ -51,7 +51,7 @@ void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
         downcast<CachedStyleSheetClient>(client).setXSLStyleSheet(m_resourceRequest.url().string(), response().url(), m_sheet);
 }
 
-void CachedXSLStyleSheet::setEncoding(const String& chs)
+void CachedXSLStyleSheet::setEncoding(StringImpl* chs)
 {
     m_decoder->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
 }

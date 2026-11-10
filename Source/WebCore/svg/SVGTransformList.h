@@ -61,7 +61,7 @@ public:
     NODELETE std::optional<AffineTransform> concatenate() const;
 
     bool parse(StringView);
-    String valueAsString() const override;
+    RefPtr<StringImpl> valueAsString() const override;
 
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringView);
     NODELETE static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<Latin1Character>&);

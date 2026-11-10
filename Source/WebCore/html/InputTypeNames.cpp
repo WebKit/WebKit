@@ -33,127 +33,127 @@ namespace InputTypeNames {
 // The type names must be lowercased because they will be the return values of
 // input.type and input.type must be lowercase according to DOM Level 2.
 
-const AtomString& button()
+const RefPtr<AtomStringImpl>& button()
 {
     return HTMLNames::buttonTag->localName();
 }
 
-const AtomString& checkbox()
+const RefPtr<AtomStringImpl>& checkbox()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("checkbox"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("checkbox"_s);
     return name;
 }
 
-const AtomString& color()
+const RefPtr<AtomStringImpl>& color()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("color"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("color"_s);
     return name;
 }
 
-const AtomString& date()
+const RefPtr<AtomStringImpl>& date()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("date"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("date"_s);
     return name;
 }
 
-const AtomString& datetimelocal()
+const RefPtr<AtomStringImpl>& datetimelocal()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("datetime-local"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("datetime-local"_s);
     return name;
 }
 
-const AtomString& email()
+const RefPtr<AtomStringImpl>& email()
 {
     return emailAtom();
 }
 
-const AtomString& file()
+const RefPtr<AtomStringImpl>& file()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("file"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("file"_s);
     return name;
 }
 
-const AtomString& hidden()
+const RefPtr<AtomStringImpl>& hidden()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("hidden"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("hidden"_s);
     return name;
 }
 
-const AtomString& image()
+const RefPtr<AtomStringImpl>& image()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("image"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("image"_s);
     return name;
 }
 
-const AtomString& month()
+const RefPtr<AtomStringImpl>& month()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("month"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("month"_s);
     return name;
 }
 
-const AtomString& number()
+const RefPtr<AtomStringImpl>& number()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("number"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("number"_s);
     return name;
 }
 
-const AtomString& password()
+const RefPtr<AtomStringImpl>& password()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("password"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("password"_s);
     return name;
 }
 
-const AtomString& radio()
+const RefPtr<AtomStringImpl>& radio()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("radio"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("radio"_s);
     return name;
 }
 
-const AtomString& range()
+const RefPtr<AtomStringImpl>& range()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("range"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("range"_s);
     return name;
 }
 
-const AtomString& reset()
+const RefPtr<AtomStringImpl>& reset()
 {
     return resetAtom();
 }
 
-const AtomString& search()
+const RefPtr<AtomStringImpl>& search()
 {
     return searchAtom();
 }
 
-const AtomString& submit()
+const RefPtr<AtomStringImpl>& submit()
 {
     return submitAtom();
 }
 
-const AtomString& telephone()
+const RefPtr<AtomStringImpl>& telephone()
 {
     return telAtom();
 }
 
-const AtomString& text()
+const RefPtr<AtomStringImpl>& text()
 {
     return textAtom();
 }
 
-const AtomString& time()
+const RefPtr<AtomStringImpl>& time()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("time"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("time"_s);
     return name;
 }
 
-const AtomString& url()
+const RefPtr<AtomStringImpl>& url()
 {
     return urlAtom();
 }
 
-const AtomString& week()
+const RefPtr<AtomStringImpl>& week()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("week"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> name("week"_s);
     return name;
 }
 

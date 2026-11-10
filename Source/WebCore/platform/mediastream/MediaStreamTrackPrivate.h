@@ -98,12 +98,12 @@ class MediaStreamTrackPrivate final
 public:
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
-    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, RefPtr<StringImpl>&& id, std::function<void(Function<void()>&&)>&& postTask = { });
 
     WEBCORE_EXPORT virtual ~MediaStreamTrackPrivate();
 
-    const String& id() const LIFETIME_BOUND { return m_data.trackId; }
-    const String& label() const LIFETIME_BOUND { return m_data.label; }
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_data.trackId; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND { return m_data.label; }
 
     bool isActive() const { return enabled() && !ended() && !muted(); }
 
@@ -164,7 +164,7 @@ public:
     enum class ReadyState { None, Live, Ended };
     ReadyState readyState() const { return m_readyState; }
 
-    void setIdForTesting(String&& id) { m_data.trackId = WTF::move(id); }
+    void setIdForTesting(RefPtr<StringImpl>&& id) { m_data.trackId = WTF::move(id); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -186,7 +186,7 @@ public:
     size_t settingsCapabilitiesUpdateCount() const { return m_data.settingsCapabilitiesUpdateCount; }
 
 private:
-    MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);
+    MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, RefPtr<StringImpl>&& id, std::function<void(Function<void()>&&)>&&);
     MediaStreamTrackPrivate(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
 
     void initialize();
@@ -197,7 +197,7 @@ private:
     void sourceStopped(bool captureDidFail);
     void sourceMutedChanged(bool interrupted, bool muted);
     void sourceSettingsChanged(RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&, size_t);
-    void sourceConfigurationChanged(String&&, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&, size_t);
+    void sourceConfigurationChanged(RefPtr<StringImpl>&&, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&, size_t);
 
     void updateReadyState();
 

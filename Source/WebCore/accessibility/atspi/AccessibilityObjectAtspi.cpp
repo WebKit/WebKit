@@ -388,7 +388,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         if (!g_strcmp0(methodName, "GetRole"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", atspiObject->role()));
         else if (!g_strcmp0(methodName, "GetRoleName"))
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->roleName().utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", utf8(atspiObject->roleName())));
         else if (!g_strcmp0(methodName, "GetLocalizedRoleName"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", atspiObject->localizedRoleName()));
         else if (!g_strcmp0(methodName, "GetState")) {
@@ -441,10 +441,10 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         if (!g_strcmp0(propertyName, "Description"))
             return gVariantNewString(atspiObject->description());
         if (!g_strcmp0(propertyName, "Locale"))
-            return gVariantNewString(atspiObject->locale().utf8());
+            return gVariantNewString(utf8(atspiObject->locale()));
         if (!g_strcmp0(propertyName, "AccessibleId")) {
             auto objectID = atspiObject->m_coreObject->objectID();
-            return gVariantNewString(atspiObject->m_coreObject ? UTF8CStringView { String::number(objectID.toUInt64()).utf8() } : ""_s);
+            return gVariantNewString(atspiObject->m_coreObject ? UTF8CStringView { utf8(makeString(objectID.toUInt64())) } : ""_s);
         }
         if (!g_strcmp0(propertyName, "Parent"))
             return atspiObject->parentReference();
@@ -462,7 +462,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
 
 bool AccessibilityObjectAtspi::registerObject()
 {
-    if (!m_path.isNull())
+    if (m_path)
         return false;
 
     m_isRegistered = true;
@@ -501,10 +501,10 @@ bool AccessibilityObjectAtspi::registerObject()
 void AccessibilityObjectAtspi::didUnregisterObject()
 {
     m_isRegistered = false;
-    m_path = { };
+    m_path = nullptr;
 }
 
-const String& AccessibilityObjectAtspi::path()
+const RefPtr<StringImpl>& AccessibilityObjectAtspi::path()
 {
     registerObject();
     return m_path;
@@ -512,17 +512,17 @@ const String& AccessibilityObjectAtspi::path()
 
 GVariant* AccessibilityObjectAtspi::reference()
 {
-    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), path().utf8());
+    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), utf8(path()));
 }
 
 GVariant* AccessibilityObjectAtspi::hyperlinkReference()
 {
-    if (m_hyperlinkPath.isNull()) {
+    if (!m_hyperlinkPath) {
         registerObject();
         m_hyperlinkPath = AccessibilityAtspi::singleton().registerHyperlink(*this, { { const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions } });
     }
 
-    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), m_hyperlinkPath.utf8());
+    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), utf8(m_hyperlinkPath));
 }
 
 void AccessibilityObjectAtspi::setParent(std::optional<AccessibilityObjectAtspi*> atspiParent)
@@ -648,8 +648,8 @@ UTF8CString AccessibilityObjectAtspi::name() const
 
     if (m_coreObject->role() == AccessibilityRole::ListBoxOption || m_coreObject->role() == AccessibilityRole::MenuListOption) {
         auto value = m_coreObject->stringValue();
-        if (!value.isEmpty())
-            return value.utf8();
+        if (!isEmpty(value))
+            return utf8(value);
     }
 
     Vector<AccessibilityText> textOrder;
@@ -659,14 +659,14 @@ UTF8CString AccessibilityObjectAtspi::name() const
         // FIXME: This check is here because AccessibilityNodeObject::titleElementText()
         // appends an empty String for the LabelByElementText source when there is a
         // titleUIElement(). Removing this check makes some fieldsets lose their name.
-        if (text.text.isEmpty())
+        if (isEmpty(text.text))
             continue;
 
         // WebCore Accessibility should provide us with the text alternative computation
         // in the order defined by that spec. So take the first thing that our platform
         // does not expose via the AtkObject description.
         if (text.textSource != AccessibilityTextSource::Help && text.textSource != AccessibilityTextSource::Summary)
-            return text.text.utf8();
+            return utf8(text.text);
     }
 
     return ""_s;
@@ -686,12 +686,12 @@ UTF8CString AccessibilityObjectAtspi::description() const
         // in the order defined by that spec. So take the first thing that our platform
         // does not expose via the AtkObject name.
         if (text.textSource == AccessibilityTextSource::Help || text.textSource == AccessibilityTextSource::Summary)
-            return text.text.utf8();
+            return utf8(text.text);
 
         // If there is no other text alternative, the title tag contents will have been
         // used for the AtkObject name. We don't want to duplicate it here.
         if (text.textSource == AccessibilityTextSource::TitleTag && nameTextAvailable)
-            return text.text.utf8();
+            return utf8(text.text);
 
         nameTextAvailable = true;
     }
@@ -699,9 +699,9 @@ UTF8CString AccessibilityObjectAtspi::description() const
     return ""_s;
 }
 
-String AccessibilityObjectAtspi::locale() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::locale() const
 {
-    return m_coreObject ? m_coreObject->languageIncludingAncestors() : String();
+    return m_coreObject ? m_coreObject->languageIncludingAncestors() : nullptr;
 }
 
 static bool shouldIncludeOrientationState(const AXCoreObject& coreObject)
@@ -850,10 +850,10 @@ OptionSet<Atspi::State> AccessibilityObjectAtspi::states() const
     if (m_coreObject->isBusy())
         states.add(Atspi::State::Busy);
 
-    if (m_coreObject->invalidStatusIncludingInferred() != "false"_s)
+    if (!equal(m_coreObject->invalidStatusIncludingInferred(), "false"_s))
         states.add(Atspi::State::InvalidEntry);
 
-    if (liveObject && liveObject->supportsAutoComplete() && liveObject->autoCompleteValue() != "none"_s)
+    if (liveObject && liveObject->supportsAutoComplete() && !equal(liveObject->autoCompleteValue(), "none"_s))
         states.add(Atspi::State::SupportsAutocompletion);
 
     return states;
@@ -864,20 +864,20 @@ bool AccessibilityObjectAtspi::isDefunct() const
     return !m_coreObject;
 }
 
-String AccessibilityObjectAtspi::id() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::id() const
 {
     if (!m_coreObject)
         return { };
 
     if (auto* element = m_coreObject->element())
-        return element->getIdAttribute().string();
+        return element->getIdAttribute();
 
     return { };
 }
 
-HashMap<String, String> AccessibilityObjectAtspi::attributes() const
+HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> AccessibilityObjectAtspi::attributes() const
 {
-    HashMap<String, String> map;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map;
 #if PLATFORM(GTK)
     map.add("toolkit"_s, "WebKitGTK"_s);
 #elif PLATFORM(WPE)
@@ -893,41 +893,41 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         map.add("tag"_s, tagNameAsString(tagName));
 
     if (auto* element = m_coreObject->element()) {
-        String id = element->getIdAttribute().string();
-        if (!id.isEmpty())
+        RefPtr<StringImpl> id = element->getIdAttribute();
+        if (!isEmpty(id))
             map.add("id"_s, id);
     }
 
     int level = m_coreObject->isHeading() ? m_coreObject->headingLevel() : m_coreObject->hierarchicalLevel();
     if (level)
-        map.add("level"_s, String::number(level));
+        map.add("level"_s, makeString(level));
 
     int rowCount = m_coreObject->axRowCount();
     if (rowCount)
-        map.add("rowcount"_s, String::number(rowCount));
+        map.add("rowcount"_s, makeString(rowCount));
 
     int columnCount = m_coreObject->axColumnCount();
     if (columnCount)
-        map.add("colcount"_s, String::number(columnCount));
+        map.add("colcount"_s, makeString(columnCount));
 
     if (std::optional rowIndex = m_coreObject->axRowIndex())
-        map.add("rowindex"_s, String::number(*rowIndex));
+        map.add("rowindex"_s, makeString(*rowIndex));
 
     if (std::optional columnIndex = m_coreObject->axColumnIndex())
-        map.add("colindex"_s, String::number(*columnIndex));
+        map.add("colindex"_s, makeString(*columnIndex));
 
     if (auto* cell = dynamicDowncast<AccessibilityNodeObject>(m_coreObject.get()); cell && cell->isTableCell()) {
         int rowSpan = cell->axRowSpan();
         if (rowSpan != -1)
-            map.add("rowspan"_s, String::number(rowSpan));
+            map.add("rowspan"_s, makeString(rowSpan));
 
         int columnSpan = cell->axColumnSpan();
         if (columnSpan != -1)
-            map.add("colspan"_s, String::number(columnSpan));
+            map.add("colspan"_s, makeString(columnSpan));
     }
 
-    String placeholder = m_coreObject->placeholderValue();
-    if (!placeholder.isEmpty())
+    RefPtr<StringImpl> placeholder = m_coreObject->placeholderValue();
+    if (!isEmpty(placeholder))
         map.add("placeholder-text"_s, placeholder);
 
     if (liveObject && liveObject->supportsAutoComplete())
@@ -940,10 +940,10 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         map.add("current"_s, m_coreObject->currentValue());
 
     if (m_coreObject->supportsPosInSet())
-        map.add("posinset"_s, String::number(m_coreObject->posInSet()));
+        map.add("posinset"_s, makeString(m_coreObject->posInSet()));
 
     if (m_coreObject->supportsSetSize())
-        map.add("setsize"_s, String::number(m_coreObject->setSize()));
+        map.add("setsize"_s, makeString(m_coreObject->setSize()));
 
     // The Core AAM states that an explicitly-set value should be exposed, including "none".
     if (static_cast<AccessibilityObject*>(m_coreObject.get())->hasAttribute(HTMLNames::aria_sortAttr)) {
@@ -965,12 +965,12 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         }
     }
 
-    String isReadOnly = liveObject ? liveObject->readOnlyValue() : String();
-    if (!isReadOnly.isEmpty())
+    RefPtr<StringImpl> isReadOnly = liveObject ? liveObject->readOnlyValue() : nullptr;
+    if (!isEmpty(isReadOnly))
         map.add("readonly"_s, isReadOnly);
 
-    String valueDescription = m_coreObject->valueDescription();
-    if (!valueDescription.isEmpty())
+    RefPtr<StringImpl> valueDescription = m_coreObject->valueDescription();
+    if (!isEmpty(valueDescription))
         map.add("valuetext"_s, valueDescription);
 
     // According to the W3C Core Accessibility API Mappings 1.1, section 5.4.1 General Rules:
@@ -978,12 +978,12 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     // In the case of ATSPI, the mechanism to do so is an object attribute pair (xml-roles:"string").
     // We cannot use the computedRoleString for this purpose because it is not limited to elements
     // with ARIA roles, and it might not contain the actual ARIA role value (e.g. DPub ARIA).
-    String roleString = static_cast<AccessibilityObject*>(m_coreObject.get())->getAttribute(HTMLNames::roleAttr);
-    if (!roleString.isEmpty())
+    RefPtr<StringImpl> roleString = static_cast<AccessibilityObject*>(m_coreObject.get())->getAttribute(HTMLNames::roleAttr);
+    if (!isEmpty(roleString))
         map.add("xml-roles"_s, roleString);
 
-    String computedRoleString = m_coreObject->computedRoleString();
-    if (!computedRoleString.isEmpty()) {
+    RefPtr<StringImpl> computedRoleString = m_coreObject->computedRoleString();
+    if (!isEmpty(computedRoleString)) {
         map.add("computed-role"_s, computedRoleString);
 
         // The HTML AAM maps several elements to ARIA landmark roles. In order for the type of landmark
@@ -994,19 +994,19 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
             map.set("xml-roles"_s, computedRoleString);
     }
 
-    String roleDescription = m_coreObject->roleDescription();
-    if (!roleDescription.isEmpty())
+    RefPtr<StringImpl> roleDescription = m_coreObject->roleDescription();
+    if (!isEmpty(roleDescription))
         map.add("roledescription"_s, roleDescription);
 
-    String dropEffect = static_cast<AccessibilityObject*>(m_coreObject.get())->getAttribute(HTMLNames::aria_dropeffectAttr);
-    if (!dropEffect.isEmpty())
+    RefPtr<StringImpl> dropEffect = static_cast<AccessibilityObject*>(m_coreObject.get())->getAttribute(HTMLNames::aria_dropeffectAttr);
+    if (!isEmpty(dropEffect))
         map.add("dropeffect"_s, dropEffect);
 
     if (m_coreObject->supportsDragging())
         map.add("grabbed"_s, m_coreObject->isGrabbed() ? "true"_s : "false"_s);
 
-    String keyShortcuts = m_coreObject->keyShortcuts();
-    if (!keyShortcuts.isEmpty())
+    RefPtr<StringImpl> keyShortcuts = m_coreObject->keyShortcuts();
+    if (!isEmpty(keyShortcuts))
         map.add("keyshortcuts"_s, keyShortcuts);
 
     if (liveObject && (liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript) || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript)))
@@ -1023,8 +1023,8 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         bool isAtomic = liveContainer->liveRegionAtomic();
         if (isAtomic)
             map.add("container-atomic"_s, "true"_s);
-        const String& liveRole = roleString.isEmpty() ? computedRoleString : roleString;
-        if (!liveRole.isEmpty())
+        const RefPtr<StringImpl>& liveRole = isEmpty(roleString) ? computedRoleString : roleString;
+        if (!isEmpty(liveRole))
             map.add("container-live-role"_s, liveRole);
 
         if (liveContainer == m_coreObject) {
@@ -1042,7 +1042,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 void AccessibilityObjectAtspi::buildAttributes(GVariantBuilder* builder) const
 {
     for (const auto& it : attributes())
-        gVariantBuilderAdd(builder, "{ss}", it.key.utf8(), it.value.utf8());
+        gVariantBuilderAdd(builder, "{ss}", utf8(it.key), utf8(it.value));
 }
 
 RelationMap AccessibilityObjectAtspi::relationMap() const
@@ -1148,7 +1148,7 @@ void AccessibilityObjectAtspi::buildStates(GVariantBuilder* builder) const
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
 {
-    gVariantBuilderAdd(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8());
+    gVariantBuilderAdd(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), utf8(m_path));
     g_variant_builder_add(builder, "@(so)", AccessibilityAtspi::singleton().applicationReference());
     g_variant_builder_add(builder, "@(so)", parentReference());
 
@@ -1272,7 +1272,7 @@ Atspi::Role AccessibilityObjectAtspi::role() const
     return atspiRole(m_coreObject->role());
 }
 
-String AccessibilityObjectAtspi::effectiveRoleName() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::effectiveRoleName() const
 {
     auto effective = effectiveRole();
     if (!effective)
@@ -1280,34 +1280,34 @@ String AccessibilityObjectAtspi::effectiveRoleName() const
 
     switch (*effective) {
     case Atspi::Role::Image:
-        return "image"_s;
+        return "image"_si;
     case Atspi::Role::Text:
     case Atspi::Role::Static:
-        return "text"_s;
+        return "text"_si;
     case Atspi::Role::InvalidRole:
-        return "invalid"_s;
+        return "invalid"_si;
     case Atspi::Role::Panel:
-        return "panel"_s;
+        return "panel"_si;
     case Atspi::Role::PasswordText:
-        return "password text"_s;
+        return "password text"_si;
     case Atspi::Role::Table:
-        return "table"_s;
+        return "table"_si;
     case Atspi::Role::TableRow:
-        return "table row"_s;
+        return "table row"_si;
     case Atspi::Role::TableCell:
-        return "table cell"_s;
+        return "table cell"_si;
     case Atspi::Role::Section:
-        return "section"_s;
+        return "section"_si;
     case Atspi::Role::MathFraction:
-        return "math fraction"_s;
+        return "math fraction"_si;
     case Atspi::Role::MathRoot:
-        return "math root"_s;
+        return "math root"_si;
     case Atspi::Role::Subscript:
-        return "subscript"_s;
+        return "subscript"_si;
     case Atspi::Role::Superscript:
-        return "superscript"_s;
+        return "superscript"_si;
     case Atspi::Role::Landmark:
-        return "landmark"_s;
+        return "landmark"_si;
     default:
         break;
     }
@@ -1315,13 +1315,13 @@ String AccessibilityObjectAtspi::effectiveRoleName() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String AccessibilityObjectAtspi::roleName() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::roleName() const
 {
     if (!m_coreObject)
-        return "invalid"_s;
+        return "invalid"_si;
 
     auto effective = effectiveRoleName();
-    if (!effective.isEmpty())
+    if (!isEmpty(effective))
         return effective;
 
     return m_coreObject->rolePlatformString();

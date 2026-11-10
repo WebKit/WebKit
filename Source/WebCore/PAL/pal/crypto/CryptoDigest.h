@@ -48,14 +48,14 @@ public:
     PAL_EXPORT void addBytes(std::span<const uint8_t>);
     void addBytes(std::span<const std::byte> input) { addBytes(byteCast<uint8_t>(input)); }
     PAL_EXPORT Vector<uint8_t> computeHash();
-    String toHexString();
+    RefPtr<StringImpl> toHexString();
     PAL_EXPORT CryptoDigest();
 
 private:
     std::unique_ptr<CryptoDigestContext> m_context;
 };
 
-inline String CryptoDigest::toHexString()
+inline RefPtr<StringImpl> CryptoDigest::toHexString()
 {
     return WTF::toHexString(computeHash());
 }

@@ -83,13 +83,13 @@ public:
 
     void addMessageToConsole(std::unique_ptr<ConsoleMessage>);
 
-    void startTiming(JSC::JSGlobalObject*, const String& label);
-    void logTiming(JSC::JSGlobalObject*, const String& label, Ref<ScriptArguments>&&);
-    void stopTiming(JSC::JSGlobalObject*, const String& label);
-    void count(JSC::JSGlobalObject*, const String& label);
-    void countReset(JSC::JSGlobalObject*, const String& label);
+    void startTiming(JSC::JSGlobalObject*, StringImpl* label);
+    void logTiming(JSC::JSGlobalObject*, StringImpl* label, Ref<ScriptArguments>&&);
+    void stopTiming(JSC::JSGlobalObject*, StringImpl* label);
+    void count(JSC::JSGlobalObject*, StringImpl* label);
+    void countReset(JSC::JSGlobalObject*, StringImpl* label);
 
-    void reportHeapSnapshot(double timestamp, const String& snapshotData, const String& title);
+    void reportHeapSnapshot(double timestamp, StringImpl* snapshotData, StringImpl* title);
 
 protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
@@ -101,8 +101,8 @@ protected:
 
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount { 0 };
-    UncheckedKeyHashMap<String, unsigned> m_counts;
-    UncheckedKeyHashMap<String, MonotonicTime> m_times;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, unsigned> m_counts;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, MonotonicTime> m_times;
     bool m_enabled { false };
     bool m_isAddingMessageToFrontend { false };
     bool m_consoleClearAPIEnabled { true };

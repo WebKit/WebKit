@@ -42,8 +42,8 @@ class Theme {
 public:
     NODELETE static Theme& singleton();
 
-    virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
-    virtual String invertedNamedImage(const String&) const;
+    virtual void drawNamedImage(StringImpl*, GraphicsContext&, const FloatSize&) const;
+    virtual RefPtr<StringImpl> invertedNamedImage(StringImpl*) const;
 
     virtual InterfaceContrastPreference userPreferredContrast() const { return InterfaceContrastPreference::NoPreference; }
     virtual bool userPrefersReducedMotion() const { return false; }

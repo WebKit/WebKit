@@ -35,7 +35,7 @@ namespace WebKit {
 
 namespace WebExtensionDynamicScripts {
 
-std::optional<SourcePair> sourcePairForResource(const String& path, WebExtensionContext& extensionContext)
+std::optional<SourcePair> sourcePairForResource(StringImpl* path, WebExtensionContext& extensionContext)
 {
     Ref extension = extensionContext.extension();
     auto scriptStringResult = extension->resourceStringForPath(path, WebExtension::CacheResult::Yes);
@@ -98,7 +98,7 @@ void WebExtensionRegisteredScript::merge(WebExtensionRegisteredScriptParameters&
         parameters.world = m_parameters.world.value();
 }
 
-void WebExtensionRegisteredScript::addUserScript(const String& identifier, API::UserScript& userScript)
+void WebExtensionRegisteredScript::addUserScript(StringImpl* identifier, API::UserScript& userScript)
 {
     auto& userScripts = m_userScriptsMap.ensure(identifier, [&] {
         return UserScriptVector { };
@@ -106,7 +106,7 @@ void WebExtensionRegisteredScript::addUserScript(const String& identifier, API::
     userScripts.append(userScript);
 }
 
-void WebExtensionRegisteredScript::addUserStyleSheet(const String& identifier, API::UserStyleSheet& userStyleSheet)
+void WebExtensionRegisteredScript::addUserStyleSheet(StringImpl* identifier, API::UserStyleSheet& userStyleSheet)
 {
     auto& userStyleSheets = m_userStyleSheetsMap.ensure(identifier, [&] {
         return UserStyleSheetVector { };
@@ -114,13 +114,13 @@ void WebExtensionRegisteredScript::addUserStyleSheet(const String& identifier, A
     userStyleSheets.append(userStyleSheet);
 }
 
-void WebExtensionRegisteredScript::removeUserScriptsAndStyleSheets(const String& identifier)
+void WebExtensionRegisteredScript::removeUserScriptsAndStyleSheets(StringImpl* identifier)
 {
     removeUserScripts(identifier);
     removeUserStyleSheets(identifier);
 }
 
-void WebExtensionRegisteredScript::removeUserScripts(const String& identifier)
+void WebExtensionRegisteredScript::removeUserScripts(StringImpl* identifier)
 {
     auto userScripts = m_userScriptsMap.take(identifier);
     auto allUserContentControllers = m_extensionContext->extensionController()->allUserContentControllers();
@@ -131,7 +131,7 @@ void WebExtensionRegisteredScript::removeUserScripts(const String& identifier)
     }
 }
 
-void WebExtensionRegisteredScript::removeUserStyleSheets(const String& identifier)
+void WebExtensionRegisteredScript::removeUserStyleSheets(StringImpl* identifier)
 {
     auto userStyleSheets = m_userStyleSheetsMap.take(identifier);
     auto allUserContentControllers = m_extensionContext->extensionController()->allUserContentControllers();

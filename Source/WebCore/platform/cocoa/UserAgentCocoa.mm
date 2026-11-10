@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-String systemMarketingVersionForUserAgentString()
+RefPtr<StringImpl> systemMarketingVersionForUserAgentString()
 {
     // Use underscores instead of dots because when we first added the macOS version to the user agent string
     // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
     // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [systemMarketingVersionSingleton() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+    return StringImpl::create([systemMarketingVersionSingleton() stringByReplacingOccurrencesOfString:@"." withString:@"_"]);
 }
 
 } // namespace WebCore

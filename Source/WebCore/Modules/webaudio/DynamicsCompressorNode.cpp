@@ -57,11 +57,11 @@ ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudi
 
 DynamicsCompressorNode::DynamicsCompressorNode(BaseAudioContext& context, const DynamicsCompressorOptions& options)
     : AudioNode(context, NodeTypeDynamicsCompressor)
-    , m_threshold(AudioParam::create(context, "threshold"_s, options.threshold, -100, 0, AutomationRate::KRate, AutomationRateMode::Fixed))
-    , m_knee(AudioParam::create(context, "knee"_s, options.knee, 0, 40, AutomationRate::KRate, AutomationRateMode::Fixed))
-    , m_ratio(AudioParam::create(context, "ratio"_s, options.ratio, 1, 20, AutomationRate::KRate, AutomationRateMode::Fixed))
-    , m_attack(AudioParam::create(context, "attack"_s, options.attack, 0, 1, AutomationRate::KRate, AutomationRateMode::Fixed))
-    , m_release(AudioParam::create(context, "release"_s, options.release, 0, 1, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_threshold(AudioParam::create(context, "threshold"_si, options.threshold, -100, 0, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_knee(AudioParam::create(context, "knee"_si, options.knee, 0, 40, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_ratio(AudioParam::create(context, "ratio"_si, options.ratio, 1, 20, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_attack(AudioParam::create(context, "attack"_si, options.attack, 0, 1, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_release(AudioParam::create(context, "release"_si, options.release, 0, 1, AutomationRate::KRate, AutomationRateMode::Fixed))
 {
     addInput();
     addOutput(defaultNumberOfOutputChannels);
@@ -146,14 +146,14 @@ bool DynamicsCompressorNode::requiresTailProcessing() const
 ExceptionOr<void> DynamicsCompressorNode::setChannelCount(unsigned count)
 {
     if (count > 2)
-        return Exception { ExceptionCode::NotSupportedError, "DynamicsCompressorNode's channel count cannot be greater than 2"_s };
+        return Exception { ExceptionCode::NotSupportedError, "DynamicsCompressorNode's channel count cannot be greater than 2"_si };
     return AudioNode::setChannelCount(count);
 }
 
 ExceptionOr<void> DynamicsCompressorNode::setChannelCountMode(ChannelCountMode mode)
 {
     if (mode == ChannelCountMode::Max)
-        return Exception { ExceptionCode::NotSupportedError, "DynamicsCompressorNode's channel count mode cannot be set to 'max'"_s };
+        return Exception { ExceptionCode::NotSupportedError, "DynamicsCompressorNode's channel count mode cannot be set to 'max'"_si };
     return AudioNode::setChannelCountMode(mode);
 }
 

@@ -50,9 +50,9 @@ public:
     const Vector<CaptureDevice>& captureDevices() final;
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
     const Vector<CaptureDevice>& speakerDevices() const LIFETIME_BOUND { return m_speakerDevices; }
-    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, StringImpl*);
 
-    std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
+    std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(StringImpl*);
     
     void scheduleUpdateCaptureDevices();
     void scheduleMediaServicesWereReset();
@@ -60,11 +60,11 @@ public:
     void enableAllDevicesQuery();
     void disableAllDevicesQuery();
 
-    WEBCORE_EXPORT void setPreferredMicrophoneID(const String&);
-    const String& preferredMicrophoneID() const LIFETIME_BOUND { return m_preferredMicrophoneID; }
+    WEBCORE_EXPORT void setPreferredMicrophoneID(StringImpl*);
+    const RefPtr<StringImpl>& preferredMicrophoneID() const LIFETIME_BOUND { return m_preferredMicrophoneID; }
     void configurePreferredMicrophone();
 
-    WEBCORE_EXPORT void setPreferredSpeakerID(const String&);
+    WEBCORE_EXPORT void setPreferredSpeakerID(StringImpl*);
     bool isReceiverPreferredSpeaker() const { return m_isReceiverPreferredSpeaker; }
 
 private:
@@ -86,8 +86,8 @@ private:
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
     const Ref<WorkQueue> m_dispatchQueue;
-    String m_preferredMicrophoneID;
-    String m_preferredSpeakerID;
+    RefPtr<StringImpl> m_preferredMicrophoneID;
+    RefPtr<StringImpl> m_preferredSpeakerID;
     bool m_isReceiverPreferredSpeaker { false };
     mutable RetainPtr<AVAudioSessionPortDescription> m_lastDefaultMicrophone;
 };

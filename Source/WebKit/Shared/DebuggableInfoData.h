@@ -35,9 +35,9 @@ namespace WebKit {
 
 struct DebuggableInfoData {
     Inspector::DebuggableType debuggableType;
-    String targetPlatformName;
-    String targetBuildVersion;
-    String targetProductVersion;
+    RefPtr<StringImpl> targetPlatformName;
+    RefPtr<StringImpl> targetBuildVersion;
+    RefPtr<StringImpl> targetProductVersion;
     bool targetIsSimulator { false };
 
     static DebuggableInfoData empty();

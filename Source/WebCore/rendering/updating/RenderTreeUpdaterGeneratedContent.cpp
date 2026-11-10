@@ -358,7 +358,7 @@ NODELETE static const QuotesForLanguage* binaryFindQuotes(const QuotesForLanguag
     return binaryFindQuotes(key, subrange.subspan(subrange.size() / 2 + 1));
 }
 
-static const QuotesForLanguage* quotesForLanguage(const String& language)
+static const QuotesForLanguage* quotesForLanguage(StringImpl* language)
 {
 #if ASSERT_ENABLED
     // One time check that the table meets the constraints that the code below relies on.
@@ -385,13 +385,13 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
     }
 #endif // ASSERT_ENABLED
 
-    unsigned length = language.length();
+    unsigned length = WTF::length(language);
     if (!length)
         return nullptr;
 
     Vector<char> languageKeyBuffer(length);
     for (unsigned i = 0; i < length; ++i) {
-        char16_t character = toASCIILower(language[i]);
+        char16_t character = toASCIILower(codeUnitAt(language, i));
         if (!(isASCIILower(character) || character == '-'))
             return nullptr;
         languageKeyBuffer[i] = static_cast<char>(character);
@@ -435,7 +435,7 @@ static inline StringImpl* apostropheString()
 }
 
 // css-content-3: "If the depth is 0, the first pair is used, if the depth is 1, the second pair is used, etc."
-static String quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::ComputedStyle& style)
+static RefPtr<StringImpl> quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::ComputedStyle& style)
 {
     ASSERT(quoteType == QuoteType::OpenQuote || quoteType == QuoteType::CloseQuote);
     bool isOpenQuote = quoteType == QuoteType::OpenQuote;
@@ -452,7 +452,7 @@ static String quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::C
 // occurrence, minus the number of occurrences of close-quote in all generated text before and including the current occurence."
 // "A close-quote or no-close-quote that would make the quote depth negative is in error and is ignored (at rendering time):
 // the depth stays at 0 and no quote mark is inserted".
-static String quoteMarkAndAdvanceQuoteDepth(QuoteType quoteType, unsigned& quoteDepth, const Style::ComputedStyle& style)
+static RefPtr<StringImpl> quoteMarkAndAdvanceQuoteDepth(QuoteType quoteType, unsigned& quoteDepth, const Style::ComputedStyle& style)
 {
     switch (quoteType) {
     case QuoteType::OpenQuote:
@@ -539,7 +539,7 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderTextFragment* l
             m_quoteScopeStack.append({ scopeRoot, m_quoteScopeStack.last().quoteDepth });
 
         auto newQuoteMark = quoteMarkAndAdvanceQuoteDepth(*quote->quoteType(), m_quoteScopeStack.last().quoteDepth, quote->style());
-        if (!equal(quote->contentString(), newQuoteMark.impl()))
+        if (!equal(quote->contentString(), newQuoteMark.get()))
             quote->setContentString(newQuoteMark);
 
         m_previousUpdatedQuote = *quote;
@@ -593,9 +593,9 @@ static bool needsPseudoElementForAnimation(const Element& element, PseudoElement
     return stack->requiresPseudoElement() || stack->containsProperty(CSSPropertyID::Display);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, StringImpl* altText, Document& document, const Style::ComputedStyle&)
 {
-    if (value.text.value.isEmpty() && altText.isEmpty())
+    if (isEmpty(value.text.value) && isEmpty(altText))
         return { };
 
     auto contentRenderer = createRenderer<RenderTextFragment>(document, value.text.value);
@@ -603,7 +603,7 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text&
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, const String& altText, Document& document, const Style::ComputedStyle& pseudoStyle)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, StringImpl* altText, Document& document, const Style::ComputedStyle& pseudoStyle)
 {
     auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.image.value.ptr());
     contentRenderer->initializeStyle();
@@ -611,12 +611,12 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, const String&, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, StringImpl*, Document& document, const Style::ComputedStyle&)
 {
     return createRenderer<RenderCounter>(document, value);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, const String&, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, StringImpl*, Document& document, const Style::ComputedStyle&)
 {
     // The quote mark is only known once the quotes before this one are in the tree, see updateQuotesUpTo().
     auto contentRenderer = createRenderer<RenderTextFragment>(document, emptyString());
@@ -624,7 +624,7 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph& value, const String& altText, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph& value, StringImpl* altText, Document& document, const Style::ComputedStyle&)
 {
     auto contentRenderer = createRenderer<RenderText>(document, value.glyph);
     contentRenderer->setAltText(altText);
@@ -634,7 +634,7 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph
 void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const Style::ComputedStyle& style, PseudoElementType pseudoElementType)
 {
     if (auto* contentData = style.content().tryData()) {
-        auto altText = contentData->alt.value_or(String { nullString() });
+        auto altText = contentData->alt.value_or(RefPtr<StringImpl> { nullString() });
         for (auto& contentItem : contentData->visible) {
             WTF::switchOn(contentItem,
                 [&](const auto& item) {
@@ -864,12 +864,12 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
     auto textWithoutSuggestion = nodeBeforeWritingSuggestionsTextRenderer->text();
 
-    auto [prefix, suffix] = [&] -> std::pair<String, String> {
+    auto [prefix, suffix] = [&] -> std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> {
         if (!writingSuggestionData->supportsSuffix())
             return { textWithoutSuggestion, emptyString() };
 
         auto offset = writingSuggestionData->offset();
-        return { textWithoutSuggestion.substring(0, offset), textWithoutSuggestion.substring(offset) };
+        return { substring(textWithoutSuggestion, 0, offset), substring(textWithoutSuggestion, offset) };
     }();
 
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
@@ -889,7 +889,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
         writingSuggestionsText->setText(writingSuggestionData->content());
 
-        if (!suffix.isEmpty()) {
+        if (!isEmpty(suffix)) {
             auto* suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
             if (!suffixText) {
                 ASSERT_NOT_REACHED();
@@ -923,7 +923,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
             return;
         }
 
-        if (!suffix.isEmpty()) {
+        if (!isEmpty(suffix)) {
             auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
             m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(suffixRenderer), rendererAfterWritingSuggestions.get());
         }

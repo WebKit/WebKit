@@ -90,7 +90,7 @@ static inline ASCIILiteral svgAngleTypeToUnitString(SVGAngleValue::Type type)
     return { };
 }
 
-String SVGAngleValue::valueAsString() const
+RefPtr<StringImpl> SVGAngleValue::valueAsString() const
 {
     return CSS::formatCSSNumberValue(CSS::SerializableNumber { m_valueInSpecifiedUnits, svgAngleTypeToUnitString(m_unitType) });
 }

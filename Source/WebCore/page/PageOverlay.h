@@ -56,9 +56,9 @@ public:
     virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) = 0;
     virtual void didScrollFrame(PageOverlay&, LocalFrame&) { }
 
-    virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) { return false; }
-    virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)  { return false; }
-    virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)  { return { }; }
+    virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, RefPtr<StringImpl> /* attribute */, FloatPoint, RefPtr<StringImpl>&) { return false; }
+    virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, RefPtr<StringImpl> /* attribute */, FloatPoint, bool&)  { return false; }
+    virtual Vector<RefPtr<StringImpl>> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)  { return { }; }
 };
 
 class PageOverlay final : public RefCountedAndCanMakeWeakPtr<PageOverlay> {
@@ -99,9 +99,9 @@ public:
     bool mouseEvent(const PlatformMouseEvent&);
     void didScrollFrame(LocalFrame&);
 
-    bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint parameter, String& value);
-    bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint parameter, bool& value);
-    Vector<String> copyAccessibilityAttributeNames(bool parameterizedNames);
+    bool copyAccessibilityAttributeStringValueForPoint(RefPtr<StringImpl> attribute, FloatPoint parameter, RefPtr<StringImpl>& value);
+    bool copyAccessibilityAttributeBoolValueForPoint(RefPtr<StringImpl> attribute, FloatPoint parameter, bool& value);
+    Vector<RefPtr<StringImpl>> copyAccessibilityAttributeNames(bool parameterizedNames);
     
     void startFadeInAnimation();
     void startFadeOutAnimation();

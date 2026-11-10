@@ -59,7 +59,7 @@ public:
 
     ~CommandBuffer();
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     bool isValid() const final { return m_commandBuffer; }
 

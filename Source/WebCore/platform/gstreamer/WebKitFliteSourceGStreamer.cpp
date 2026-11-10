@@ -129,7 +129,7 @@ struct _WebKitFliteSrcPrivate {
     DataMutex<StreamingMembers> dataMutex;
 
     GstAudioInfo info;
-    String text;
+    RefPtr<StringImpl> text;
     cst_voice* currentVoice;
 };
 
@@ -188,7 +188,7 @@ static gboolean webkitFliteSrcStart(GstBaseSrc* baseSource)
     WebKitFliteSrc* src = WEBKIT_FLITE_SRC(baseSource);
     WebKitFliteSrcPrivate* priv = src->priv;
 
-    if (priv->text.isEmpty() || !priv->currentVoice) {
+    if (isEmpty(priv->text) || !priv->currentVoice) {
         GST_ERROR_OBJECT(src, "No utterance provided.");
         return FALSE;
     }
@@ -215,7 +215,7 @@ static GstFlowReturn webkitFliteSrcCreate(GstBaseSrc* baseSource, guint64 offset
     if (!members->didLoadUtterance) {
         members->didLoadUtterance = true;
 
-        GUniquePtr<cst_wave> wave(fliteLibrary()->textToWave(priv->text.utf8().legacyCStringPointer(), priv->currentVoice));
+        GUniquePtr<cst_wave> wave(fliteLibrary()->textToWave(utf8(priv->text).legacyCStringPointer(), priv->currentVoice));
         if (wave->sample_rate != priv->info.rate) {
             GstAudioInfo info;
             gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_S16, wave->sample_rate, priv->info.channels, nullptr);
@@ -297,7 +297,7 @@ static Vector<GUniquePtr<cst_voice>>& fliteVoices()
     return voices;
 }
 
-static cst_voice* fliteVoice(const String& name)
+static cst_voice* fliteVoice(StringImpl* name)
 {
     if (!name)
         return nullptr;
@@ -325,19 +325,19 @@ Vector<Ref<WebCore::PlatformSpeechSynthesisVoice>>& ensureFliteVoicesInitialized
         library->addLang("usenglish", library->usenglishInit, library->cmulexInit);
 
         for (auto& voice : fliteVoices())
-            voiceList.append(WebCore::PlatformSpeechSynthesisVoice::create(""_s, String::fromUTF8(voice->name), "en-US"_s, false, false));
+            voiceList.append(WebCore::PlatformSpeechSynthesisVoice::create(""_si, StringImpl::fromUTF8(voice->name).get(), "en-US"_si, false, false));
         if (!voiceList.isEmpty())
             voiceList[0]->setIsDefault(true);
     });
     return voiceList;
 }
 
-void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const WebCore::PlatformSpeechSynthesisVoice* platformSpeechSynthesisVoice, const String& text)
+void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const WebCore::PlatformSpeechSynthesisVoice* platformSpeechSynthesisVoice, StringImpl* text)
 {
     WebKitFliteSrcPrivate* priv = src->priv;
 
     cst_voice* voice = nullptr;
-    if (platformSpeechSynthesisVoice && !platformSpeechSynthesisVoice->name().isEmpty())
+    if (platformSpeechSynthesisVoice && !isEmpty(platformSpeechSynthesisVoice->name()))
         voice = fliteVoice(platformSpeechSynthesisVoice->name());
 
     // We use the first registered voice as default, where no voice is specified.

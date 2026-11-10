@@ -39,7 +39,7 @@ struct GPUObjectDescriptorBase {
 
     Ref<JSON::Object> toJSON() const;
 
-    String label;
+    RefPtr<StringImpl> label;
 };
 
 }

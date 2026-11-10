@@ -36,16 +36,16 @@ public:
     NODELETE static Ref<CSSFunctionRule> create(StyleRuleFunction&, CSSStyleSheet* parent);
 
     struct FunctionParameter {
-        String name;
-        String type;
-        std::optional<String> defaultValue;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> type;
+        std::optional<RefPtr<StringImpl>> defaultValue;
     };
 
-    NODELETE String name() const;
+    NODELETE RefPtr<StringImpl> name() const;
     Vector<FunctionParameter> getParameters() const;
-    String returnType() const;
+    RefPtr<StringImpl> returnType() const;
 
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
 
 private:
     NODELETE const StyleRuleFunction& styleRuleFunction() const;

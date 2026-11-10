@@ -87,24 +87,24 @@ public:
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;
     CommandResult<void> reload(std::optional<bool>&& ignoreCache, std::optional<bool>&& revalidateAllResources) final;
-    CommandResult<void> overrideUserAgent(const String&) final;
+    CommandResult<void> overrideUserAgent(StringImpl*) final;
     CommandResult<void> overrideSetting(Protocol::Page::Setting, std::optional<bool>&& value) final;
     CommandResult<void> overrideUserPreference(Protocol::Page::UserPreferenceName, std::optional<Protocol::Page::UserPreferenceValue>&&) final;
     CommandResult<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> getCookies() final;
     CommandResult<void> setCookie(Ref<JSON::Object>&&, std::optional<bool>&& shouldPartition) final;
-    CommandResult<void> deleteCookie(const String& cookieName, const String& url) final;
+    CommandResult<void> deleteCookie(StringImpl* cookieName, StringImpl* url) final;
     void getResourceTree(Ref<GetResourceTreeCallback>&&) final;
-    void getResourceContent(const Protocol::Network::FrameId&, const String& url, Ref<GetResourceContentCallback>&&) final;
-    CommandResult<void> setBootstrapScript(const String& source) final;
-    void searchInResource(const Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&) final;
-    void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&) final;
+    void getResourceContent(StringImpl*, StringImpl* url, Ref<GetResourceContentCallback>&&) final;
+    CommandResult<void> setBootstrapScript(StringImpl* source) final;
+    void searchInResource(StringImpl*, StringImpl* url, StringImpl* query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, StringImpl*, Ref<SearchInResourceCallback>&&) final;
+    void searchInResources(StringImpl*, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&) final;
 #if !PLATFORM(IOS_FAMILY)
     CommandResult<void> setShowRulers(bool) final;
 #endif
     CommandResult<void> setShowPaintRects(bool) final;
-    CommandResult<void> setEmulatedMedia(const String&) final;
-    CommandResult<String> snapshotNode(Protocol::DOM::NodeId) final;
-    CommandResult<String> snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem) final;
+    CommandResult<void> setEmulatedMedia(StringImpl*) final;
+    CommandResult<RefPtr<StringImpl>> snapshotNode(Protocol::DOM::NodeId) final;
+    CommandResult<RefPtr<StringImpl>> snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem) final;
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
     void archive(Ref<ArchiveCallback>&&) final;
 #endif
@@ -117,7 +117,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC message handlers from WebProcess PageAgentProxy
-    void frameNavigated(IPC::Connection&, WebCore::FrameIdentifier, const URL&, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&&, std::optional<WebCore::FrameIdentifier> parentFrameID, const String& name, const String& loaderId);
+    void frameNavigated(IPC::Connection&, WebCore::FrameIdentifier, const URL&, StringImpl* mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&&, std::optional<WebCore::FrameIdentifier> parentFrameID, StringImpl* name, StringImpl* loaderId);
     void domContentEventFired(double timestamp);
     void loadEventFired(double timestamp);
     void frameDetached(WebCore::FrameIdentifier);
@@ -128,7 +128,7 @@ private:
     // includes processes holding only a remote page that were never registered, so state sent there outlives disable().
     void forEachInstrumentedProcess(NOESCAPE const Function<void(WebKit::WebProcessProxy&, WebCore::PageIdentifier)>&);
 
-    Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const String* parentProtocolId, const HashMap<WebCore::FrameIdentifier, FrameResourceData>& resourcesByFrame) const;
+    Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const RefPtr<StringImpl>* parentProtocolId, const HashMap<WebCore::FrameIdentifier, FrameResourceData>& resourcesByFrame) const;
 
     const UniqueRef<PageFrontendDispatcher> m_frontendDispatcher;
     const Ref<PageBackendDispatcher> m_backendDispatcher;
@@ -140,8 +140,8 @@ private:
     // Latest paint-rects toggle, bootstrap script and setting overrides, sent to every instrumented process and replayed
     // to any process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
-    String m_bootstrapScript;
-    HashMap<String, bool> m_settingOverrides;
+    RefPtr<StringImpl> m_bootstrapScript;
+    HashMap<RefPtr<StringImpl>, bool> m_settingOverrides;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed
@@ -156,9 +156,9 @@ private:
     // See webkit.org/b/308896.
     struct CachedFrameDocumentInfo {
         URL url;
-        String mimeType;
+        RefPtr<StringImpl> mimeType;
         WebCore::SecurityOriginData securityOrigin;
-        String loaderId;
+        RefPtr<StringImpl> loaderId;
     };
     HashMap<WebCore::FrameIdentifier, CachedFrameDocumentInfo> m_cachedFrameDocumentInfo;
 };

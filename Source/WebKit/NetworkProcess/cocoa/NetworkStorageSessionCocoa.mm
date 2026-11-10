@@ -109,7 +109,7 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
-        if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain) {
+        if (RegistrableDomain::uncheckedCreateFromHost(StringImpl::create(nsCookie.domain).get()) == domain) {
             hasCookieForDomain = true;
             break;
         }
@@ -131,7 +131,7 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
-        if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain && nsCookie.sameSitePolicy != NSHTTPCookieSameSiteStrict) {
+        if (RegistrableDomain::uncheckedCreateFromHost(StringImpl::create(nsCookie.domain).get()) == domain && nsCookie.sameSitePolicy != NSHTTPCookieSameSiteStrict) {
             [oldCookiesToDelete addObject:nsCookie];
             RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> mutableProperties = adoptNS([[nsCookie properties] mutableCopy]);
             mutableProperties.get()[NSHTTPCookieSameSitePolicy] = NSHTTPCookieSameSiteStrict;
@@ -176,10 +176,10 @@ RetainPtr<NSArray> NetworkStorageSession::httpCookies(CFHTTPCookieStorageRef coo
     return [NSHTTPCookie _cf2nsCookies:cookies.get()];
 }
 
-String NetworkStorageSession::cookiePartitionIdentifierIfEnabled(const URL& firstParty) const
+RefPtr<StringImpl> NetworkStorageSession::cookiePartitionIdentifierIfEnabled(const URL& firstParty) const
 {
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
-    return isOptInCookiePartitioningEnabled() ? cookiePartitionIdentifier(firstParty) : String { };
+    return isOptInCookiePartitioningEnabled() ? cookiePartitionIdentifier(firstParty) : nullptr;
 #else
     UNUSED_PARAM(firstParty);
     return { };
@@ -194,11 +194,11 @@ RetainPtr<NSArray> NetworkStorageSession::cookiesForURL(const URL& firstParty, c
     return CookieStorageSession::cookiesForURL(firstParty, sameSiteInfo, url, thirdPartyCookieBlockingDecision, cookiePartitionIdentifierIfEnabled(firstParty));
 }
 
-std::pair<String, bool> NetworkStorageSession::cookiesForSession(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, CookiesFor cookiesFor, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
+std::pair<RefPtr<StringImpl>, bool> NetworkStorageSession::cookiesForSession(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, CookiesFor cookiesFor, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
     auto thirdPartyCookieBlockingDecision = thirdPartyCookieBlockingDecisionForRequest(firstParty, url, frameID, webPageProxyID, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker);
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && thirdPartyCookieBlockingDecision == ThirdPartyCookieBlockingDecision::All)
-        return { String(), false };
+        return { nullString(), false };
     return CookieStorageSession::cookiesForSession(firstParty, sameSiteInfo, url, cookiesFor, includeSecureCookies, thirdPartyCookieBlockingDecision, cookiePartitionIdentifierIfEnabled(firstParty));
 }
 
@@ -210,7 +210,7 @@ std::optional<Vector<Cookie>> NetworkStorageSession::cookiesForSessionAsVector(c
     return CookieStorageSession::cookiesForSessionAsVector(firstParty, sameSiteInfo, url, cookiesFor, includeSecureCookies, thirdPartyCookieBlockingDecision, cookiePartitionIdentifierIfEnabled(firstParty), options.name);
 }
 
-std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
+std::pair<RefPtr<StringImpl>, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
     return cookiesForSession(firstParty, sameSiteInfo, url, frameID, webPageProxyID, CookiesFor::DOMAccess, includeSecureCookies, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker);
 }
@@ -220,12 +220,12 @@ std::optional<Vector<Cookie>> NetworkStorageSession::cookiesForDOMAsVector(const
     return cookiesForSessionAsVector(firstParty, sameSiteInfo, url, frameID, webPageProxyID, CookiesFor::DOMAccess, includeSecureCookies, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker, WTF::move(options));
 }
 
-std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
+std::pair<RefPtr<StringImpl>, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
     return cookiesForSession(firstParty, sameSiteInfo, url, frameID, webPageProxyID, CookiesFor::HTTPHeader, includeSecureCookies, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker);
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, ApplyTrackingPrevention applyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<WebPageProxyIdentifier> webPageProxyID, ApplyTrackingPrevention applyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, StringImpl* cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
     auto thirdPartyCookieBlockingDecision = thirdPartyCookieBlockingDecisionForRequest(firstParty, url, frameID, webPageProxyID, shouldRelaxThirdPartyCookieBlocking, isKnownCrossSiteTracker);
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(thirdPartyCookieBlockingDecision))
@@ -275,12 +275,12 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     return CookieStorageSession::getRawCookies(firstParty, sameSiteInfo, url, thirdPartyCookieBlockingDecision, cookiePartitionIdentifierIfEnabled(firstParty), rawCookies);
 }
 
-void NetworkStorageSession::deleteCookie(const URL& firstParty, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler) const
+void NetworkStorageSession::deleteCookie(const URL& firstParty, const URL& url, StringImpl* cookieName, CompletionHandler<void()>&& completionHandler) const
 {
     CookieStorageSession::deleteCookie(firstParty, url, cookieName, cookiePartitionIdentifierIfEnabled(firstParty), WTF::move(completionHandler));
 }
 
-void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
+void NetworkStorageSession::getHostnamesWithCookies(HashSet<RefPtr<StringImpl>>& hostnames)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -293,7 +293,7 @@ void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
             ASSERT_NOT_REACHED();
             continue;
         }
-        hostnames.add(domain.get());
+        hostnames.add(StringImpl::create(domain.get()));
     }
 
     END_BLOCK_OBJC_EXCEPTIONS
@@ -330,22 +330,22 @@ void NetworkStorageSession::deleteCookiesMatching(NOESCAPE const Function<bool(N
 
 void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
 {
-    Vector<String> cachePartitions { cookiePartitionIdentifier(origin.topOrigin.toURL()) };
+    Vector<RefPtr<StringImpl>> cachePartitions { cookiePartitionIdentifier(origin.topOrigin.toURL()) };
     if (origin.topOrigin == origin.clientOrigin)
         cachePartitions.append({ });
     auto domain = origin.clientOrigin.host();
 
     deleteCookiesMatching([&domain, &cachePartitions](auto *cookie) {
         bool partitionMatched = std::ranges::any_of(cachePartitions, [&cookie](auto& cachePartition) {
-            return equalIgnoringNullity(cachePartition, String(cookie._storagePartition));
+            return equalIgnoringNullity(cachePartition, StringImpl::create(cookie._storagePartition));
         });
-        return partitionMatched && domain == String(cookie.domain);
+        return partitionMatched && equal(domain, StringImpl::create(cookie.domain));
     }, WTF::move(completionHandler));
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, ExemptAllowlistedCookies exemptAllowlistedCookies, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(std::span<const RefPtr<StringImpl>> hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, ExemptAllowlistedCookies exemptAllowlistedCookies, CompletionHandler<void()>&& completionHandler)
 {
-    HashSet<String> hostnamesSet;
+    HashSet<RefPtr<StringImpl>> hostnamesSet;
     for (auto& hostname : hostnames)
         hostnamesSet.add(hostname);
 
@@ -353,7 +353,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> ho
         if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
             return false;
         if (exemptAllowlistedCookies == ExemptAllowlistedCookies::Yes && m_exemptAllowlistedCookiesFromITP) {
-            if (Quirks::shouldExemptCookieFromITPDataRemoval(cookie.name))
+            if (Quirks::shouldExemptCookieFromITPDataRemoval(StringImpl::create(cookie.name).get()))
                 return false;
         }
 #if ENABLE(JS_COOKIE_CHECKING)
@@ -363,7 +363,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> ho
 #else
         UNUSED_PARAM(scriptWrittenCookiesOnly);
 #endif
-        return hostnamesSet.contains(String(cookie.domain));
+        return hostnamesSet.contains(StringImpl::create(cookie.domain).get());
     }, WTF::move(completionHandler));
 }
 
@@ -405,11 +405,11 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const URL& firstParty)
         // completionHandler synchronously. We crash if this invariant is not
         // met.
         bool wasCompletionHandlerCalled { false };
-        RetainPtr partitionKey = cookiePartitionIdentifier(firstParty).createNSString();
+        RetainPtr partitionKey = createNSString(cookiePartitionIdentifier(firstParty));
         auto completionHandler = [&wasCompletionHandlerCalled, &nsCookies, &host, &partitionKey, &firstParty] (NSArray *cookies) {
             wasCompletionHandlerCalled = true;
 
-            RetainPtr registrableDomain = RegistrableDomain { firstParty }.string().createNSString();
+            RetainPtr registrableDomain = createNSString(RegistrableDomain { firstParty }.string());
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in cookies) {
                 if (![nsCookie.domain hasSuffix:registrableDomain.get()])
@@ -460,7 +460,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
             return;
-        String host = domainForChangedCookie;
+        RefPtr<StringImpl> host = StringImpl::create(domainForChangedCookie);
         auto it = checkedThis->m_cookieChangeObservers.find(host);
         if (it == checkedThis->m_cookieChangeObservers.end())
             return;
@@ -485,7 +485,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
             return;
         }
 
-        String host = domainForRemovedCookies;
+        RefPtr<StringImpl> host = StringImpl::create(domainForRemovedCookies);
         auto it = checkedThis->m_cookieChangeObservers.find(host);
         if (it == checkedThis->m_cookieChangeObservers.end())
             return;
@@ -528,15 +528,15 @@ bool NetworkStorageSession::startListeningForCookieChangeNotifications(CookieCha
 
     if (!m_subscribedDomainsForCookieChanges)
         lazyInitialize(m_subscribedDomainsForCookieChanges, adoptNS([[NSMutableSet alloc] init]));
-    else if ([m_subscribedDomainsForCookieChanges containsObject:host.createNSString().get()])
+    else if ([m_subscribedDomainsForCookieChanges containsObject:createNSString(host).get()])
         return true;
 
-    [m_subscribedDomainsForCookieChanges addObject:host.createNSString().get()];
+    [m_subscribedDomainsForCookieChanges addObject:createNSString(host).get()];
     [nsCookieStorage() _setSubscribedDomainsForCookieChanges:m_subscribedDomainsForCookieChanges.get()];
     return true;
 }
 
-void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChangeObserver& observer, const HashSet<String>& hosts)
+void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChangeObserver& observer, const HashSet<RefPtr<StringImpl>>& hosts)
 {
     bool subscribedURLsChanged = false;
     for (auto& host : hosts) {
@@ -550,8 +550,8 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
         observers.remove(observer);
         if (observers.isEmptyIgnoringNullReferences()) {
             m_cookieChangeObservers.remove(it);
-            ASSERT([m_subscribedDomainsForCookieChanges containsObject:host.createNSString().get()]);
-            [m_subscribedDomainsForCookieChanges removeObject:host.createNSString().get()];
+            ASSERT([m_subscribedDomainsForCookieChanges containsObject:createNSString(host).get()]);
+            [m_subscribedDomainsForCookieChanges removeObject:createNSString(host).get()];
             subscribedURLsChanged = true;
         }
     }

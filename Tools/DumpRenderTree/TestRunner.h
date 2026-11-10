@@ -341,9 +341,9 @@ public:
     void removeChromeInputField();
     void focusWebView();
 
-    void setTextInChromeInputField(const String&);
+    void setTextInChromeInputField(StringImpl*);
     void selectChromeInputField();
-    String getSelectedTextInChromeInputField();
+    RefPtr<StringImpl> getSelectedTextInChromeInputField();
 
     void setBackingScaleFactor(double);
 
@@ -417,7 +417,7 @@ private:
     JSContextRef mainFrameJSContext();
 
     // UIScriptContextDelegate
-    void uiScriptDidComplete(const String&, unsigned callbackID) override;
+    void uiScriptDidComplete(StringImpl*, unsigned callbackID) override;
     
     void cacheTestRunnerCallback(unsigned index, JSValueRef);
     void callTestRunnerCallback(unsigned index, size_t argumentCount = 0, const JSValueRef arguments[] = nullptr);
@@ -503,7 +503,7 @@ private:
 
     struct UIScriptInvocationData {
         unsigned callbackID;
-        String scriptString;
+        RefPtr<StringImpl> scriptString;
     };
 
     RefPtr<WTR::UIScriptContext> m_UIScriptContext;

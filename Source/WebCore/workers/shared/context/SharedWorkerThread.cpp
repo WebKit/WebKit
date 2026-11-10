@@ -43,7 +43,7 @@ Ref<SharedWorkerThread> SharedWorkerThread::create(SharedWorkerIdentifier identi
 SharedWorkerThread::SharedWorkerThread(SharedWorkerIdentifier identifier, const WorkerParameters& parameters, const ScriptBuffer& sourceCode, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerObjectProxy& objectProxy, WorkerBadgeProxy& badgeProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
     : WorkerThread(parameters, sourceCode, loaderProxy, debuggerProxy, objectProxy, badgeProxy, startMode, topOrigin, connectionProxy, socketProvider, runtimeFlags)
     , m_identifier(identifier)
-    , m_name(parameters.name.isolatedCopy())
+    , m_name(isolatedCopy(parameters.name))
 {
     RELEASE_LOG(SharedWorker, "%p - SharedWorkerThread::SharedWorkerThread: m_identifier=%" PRIu64, this, m_identifier.toUInt64());
 }

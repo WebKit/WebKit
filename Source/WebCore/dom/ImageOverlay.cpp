@@ -80,35 +80,35 @@
 namespace WebCore {
 namespace ImageOverlay {
 
-static const AtomString& imageOverlayElementIdentifier()
+static const RefPtr<AtomStringImpl>& imageOverlayElementIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("image-overlay"_s);
     return identifier;
 }
 
-static const AtomString& imageOverlayDataDetectorClass()
+static const RefPtr<AtomStringImpl>& imageOverlayDataDetectorClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-data-detector-result"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("image-overlay-data-detector-result"_s);
     return className;
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-static const AtomString& imageOverlayLineClass()
+static const RefPtr<AtomStringImpl>& imageOverlayLineClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-line"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("image-overlay-line"_s);
     return className;
 }
 
-static const AtomString& imageOverlayTextClass()
+static const RefPtr<AtomStringImpl>& imageOverlayTextClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-text"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("image-overlay-text"_s);
     return className;
 }
 
-static const AtomString& imageOverlayBlockClass()
+static const RefPtr<AtomStringImpl>& imageOverlayBlockClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-block"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("image-overlay-block"_s);
     return className;
 }
 
@@ -238,9 +238,9 @@ IntRect containerRect(HTMLElement& element)
 
 static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
 {
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet));
+    static MainThreadNeverDestroyed<const RefPtr<StringImpl>> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, protect(shadowRoot.document()), false);
-    style->setTextContent(String { shadowStyle });
+    style->setTextContent(RefPtr<StringImpl> { shadowStyle.get() });
     shadowRoot.appendChild(WTF::move(style));
 }
 
@@ -355,7 +355,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             }
 
             for (size_t index = 0; index < result.blocks.size(); ++index) {
-                auto textContentByLine = result.blocks[index].text.split(newlineCharacter);
+                auto textContentByLine = split(result.blocks[index].text, newlineCharacter);
                 size_t lineIndex = 0;
                 for (Ref text : childrenOfType<Text>(elements.blocks[index])) {
                     if (textContentByLine.size() <= lineIndex)
@@ -407,7 +407,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 protect(textContainer->classList())->add(imageOverlayTextClass());
                 protect(textContainer)->setUserAgentPart(UserAgentParts::internalImageOverlayText());
                 lineContainer->appendChild(textContainer);
-                textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : String { child.text }));
+                textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : RefPtr<StringImpl> { child.text }));
                 lineElements.children.append(WTF::move(textContainer));
             }
 
@@ -434,7 +434,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         for (auto& block : result.blocks) {
             Ref blockContainer = HTMLDivElement::create(document.get());
             protect(blockContainer->classList())->add(imageOverlayBlockClass());
-            auto lines = block.text.split(newlineCharacter);
+            auto lines = split(block.text, newlineCharacter);
             for (auto&& textContent : WTF::move(lines)) {
                 if (blockContainer->hasChildNodes())
                     blockContainer->appendChild(HTMLBRElement::create(document.get()));
@@ -556,7 +556,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
             FloatSize targetSize { horizontalExtent - horizontalOffset, lineBounds.size.height() };
             if (targetSize.isEmpty()) {
-                textContainer->setInlineStyleProperty(CSSPropertyID::Transform, "scale(0, 0)"_s);
+                textContainer->setInlineStyleProperty(CSSPropertyID::Transform, "scale(0, 0)"_si);
                 continue;
             }
 
@@ -571,7 +571,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             }
 
             if (sizeBeforeTransform.isEmpty()) {
-                textContainer->setInlineStyleProperty(CSSPropertyID::Transform, "scale(0, 0)"_s);
+                textContainer->setInlineStyleProperty(CSSPropertyID::Transform, "scale(0, 0)"_si);
                 continue;
             }
 

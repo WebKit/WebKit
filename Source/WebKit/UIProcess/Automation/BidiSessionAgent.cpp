@@ -47,12 +47,12 @@ namespace WebKit {
 
 using namespace Inspector;
 
-static bool shouldReplayRealmCreatedEvents(const HashSet<AtomString>& events)
+static bool shouldReplayRealmCreatedEvents(const HashSet<RefPtr<AtomStringImpl>>& events)
 {
-    return events.contains(AtomString { BidiEventNames::Script::RealmCreated });
+    return events.contains(AtomStringImpl::add(BidiEventNames::Script::RealmCreated).ptr());
 }
 
-static bool subscriptionMatchesScope(const BidiEventSubscription& subscription, const HashSet<String>& browsingContexts)
+static bool subscriptionMatchesScope(const BidiEventSubscription& subscription, const HashSet<RefPtr<StringImpl>>& browsingContexts)
 {
     if (subscription.isGlobal())
         return true;
@@ -82,12 +82,12 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
 
     auto subscriptionID = WTF::createVersion4UUIDString();
 
-    HashSet<AtomString> atomEventNames;
+    HashSet<RefPtr<AtomStringImpl>> atomEventNames;
     for (const auto& event : events.get()) {
         auto eventName = event->asString();
 
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(eventName.isEmpty(), InvalidParameter, "Event name must be a valid string."_s);
-        atomEventNames.add(AtomString { eventName });
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(isEmpty(eventName), InvalidParameter, "Event name must be a valid string."_s);
+        atomEventNames.add(AtomStringImpl::add(eventName));
     }
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(contexts && userContexts, InvalidParameter, "Contexts and user contexts cannot be used together."_s);
@@ -99,7 +99,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
         for (const auto& userContextValue : *userContexts) {
-            String userContext;
+            RefPtr<StringImpl> userContext;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContextValue->asString(userContext), InvalidParameter, "User context must be a valid string."_s);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->isValidUserContext(userContext), NoSuchUserContext);
         }
@@ -118,7 +118,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
 
         for (const auto& context : *contexts) {
             auto browsingContext = context->asString();
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(browsingContext.isEmpty(), InvalidParameter, "Browsing context must be a valid non-empty string."_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(isEmpty(browsingContext), InvalidParameter, "Browsing context must be a valid non-empty string."_s);
 
             [[maybe_unused]] auto handles = session->extractBrowsingContextHandles(browsingContext);
             ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
@@ -148,20 +148,20 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
 void BidiSessionAgent::unsubscribeByEventName(RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&& callback)
 {
 IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
-    LOG_WITH_STREAM(Automation, stream << "BidiSessionAgent::unsubscribeByEventName: events="_s << (events ? events->toJSONString() : "null"_s));
+    LOG_WITH_STREAM(Automation, stream << "BidiSessionAgent::unsubscribeByEventName: events="_s << (events ? events->toJSONString() : "null"_si));
 IGNORE_GCC_WARNINGS_END
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!events || !events->length(), InvalidParameter, "At least one event name must be provided."_s);
 
-    HashMap<String, BidiEventSubscription> subscriptionsToKeep;
-    HashSet<String> matchedEvents;
+    HashMap<RefPtr<StringImpl>, BidiEventSubscription> subscriptionsToKeep;
+    HashSet<RefPtr<StringImpl>> matchedEvents;
     // FIXME: Process/validate list of event names (e.g. expanding if given only the module name)
     // https://bugs.webkit.org/show_bug.cgi?id=291371
-    HashSet<AtomString> eventNames;
+    HashSet<RefPtr<AtomStringImpl>> eventNames;
     for (const auto& event : *events) {
         auto eventName = event->asString();
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(eventName.isEmpty(), InvalidParameter, "Event name must be a valid non-empty string."_s);
-        eventNames.add(AtomString { eventName });
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(isEmpty(eventName), InvalidParameter, "Event name must be a valid non-empty string."_s);
+        eventNames.add(AtomStringImpl::add(eventName));
     }
 
     for (const auto& subscription : m_eventSubscriptions) {
@@ -202,7 +202,7 @@ IGNORE_GCC_WARNINGS_END
 void BidiSessionAgent::unsubscribe(RefPtr<JSON::Array>&& subscriptions, RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&& callback)
 {
 IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
-    LOG_WITH_STREAM(Automation, stream << "BidiSessionAgent::unsubscribe: subscriptions="_s << (subscriptions ? subscriptions->toJSONString() : "null"_s) << ", events="_s << (events ? events->toJSONString() : "null"_s));
+    LOG_WITH_STREAM(Automation, stream << "BidiSessionAgent::unsubscribe: subscriptions="_s << (subscriptions ? subscriptions->toJSONString() : "null"_si) << ", events="_s << (events ? events->toJSONString() : "null"_si));
 IGNORE_GCC_WARNINGS_END
 
     if (!subscriptions) {
@@ -210,7 +210,7 @@ IGNORE_GCC_WARNINGS_END
         return;
     }
 
-    Vector<String> subscriptionIDs;
+    Vector<RefPtr<StringImpl>> subscriptionIDs;
     for (auto& subscription : *subscriptions) {
         auto subscriptionID = subscription->asString();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!subscriptionID, InvalidParameter, "Subscription ID must be a valid string."_s);
@@ -234,10 +234,10 @@ IGNORE_GCC_WARNINGS_END
     callback({ });
 }
 
-bool BidiSessionAgent::eventIsEnabled(const String& eventName, const HashSet<String>& browsingContexts)
+bool BidiSessionAgent::eventIsEnabled(StringImpl* eventName, const HashSet<RefPtr<StringImpl>>& browsingContexts)
 {
     // https://w3c.github.io/webdriver-bidi/#event-is-enabled
-    AtomString atomEventName { eventName };
+    RefPtr<AtomStringImpl> atomEventName { AtomStringImpl::add(eventName) };
 
     if (!m_eventSubscriptionCounts.contains(atomEventName))
         return false;

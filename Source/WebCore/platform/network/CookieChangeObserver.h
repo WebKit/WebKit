@@ -38,8 +38,8 @@ struct Cookie;
 class CookieChangeObserver : public AbstractRefCountedAndCanMakeWeakPtr<CookieChangeObserver> {
 public:
     virtual ~CookieChangeObserver() { }
-    virtual void cookiesAdded(const String& host, const Vector<Cookie>&) = 0;
-    virtual void cookiesDeleted(const String& host, const Vector<Cookie>&) = 0;
+    virtual void cookiesAdded(StringImpl* host, const Vector<Cookie>&) = 0;
+    virtual void cookiesDeleted(StringImpl* host, const Vector<Cookie>&) = 0;
     virtual void allCookiesDeleted() = 0;
 };
 #endif

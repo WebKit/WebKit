@@ -63,20 +63,20 @@ class RTCRtpSender final : public RefCounted<RTCRtpSender>
     WTF_MAKE_TZONE_ALLOCATED(RTCRtpSender);
 public:
     static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, Ref<RTCRtpSenderBackend>&&);
-    NODELETE static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
+    NODELETE static Ref<RTCRtpSender> create(RTCPeerConnection&, RefPtr<StringImpl>&& trackKind, Ref<RTCRtpSenderBackend>&&);
     virtual ~RTCRtpSender();
 
-    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, StringImpl* kind);
 
     MediaStreamTrack* track() { return m_track.get(); }
 
     RTCDtlsTransport* transport() { return m_transport.get(); }
     void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
-    const String& trackId() const LIFETIME_BOUND { return m_trackId; }
-    const String& trackKind() const LIFETIME_BOUND { return m_trackKind; }
+    const RefPtr<StringImpl>& trackId() const LIFETIME_BOUND { return m_trackId; }
+    const RefPtr<StringImpl>& trackKind() const LIFETIME_BOUND { return m_trackKind; }
 
-    ExceptionOr<void> setMediaStreamIds(const FixedVector<String>&);
+    ExceptionOr<void> setMediaStreamIds(const FixedVector<RefPtr<StringImpl>>&);
     ExceptionOr<void> setStreams(const FixedVector<std::reference_wrapper<MediaStream>>&);
 
     bool isStopped() const { return m_isStopped; }
@@ -106,7 +106,7 @@ public:
     ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);
 
 private:
-    RTCRtpSender(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
+    RTCRtpSender(RTCPeerConnection&, RefPtr<StringImpl>&& trackKind, Ref<RTCRtpSenderBackend>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -118,8 +118,8 @@ private:
     bool m_isStopped { false };
     RefPtr<MediaStreamTrack> m_track;
     RefPtr<RTCDtlsTransport> m_transport;
-    String m_trackId;
-    String m_trackKind;
+    RefPtr<StringImpl> m_trackId;
+    RefPtr<StringImpl> m_trackKind;
     const Ref<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
     const RefPtr<RTCDTMFSender> m_dtmfSender;

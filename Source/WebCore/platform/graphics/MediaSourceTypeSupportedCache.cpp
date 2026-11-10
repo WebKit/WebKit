@@ -38,7 +38,7 @@ MediaSourceTypeSupportedCache& MediaSourceTypeSupportedCache::singleton()
     return cache.get();
 }
 
-std::optional<bool> MediaSourceTypeSupportedCache::lookup(const String& type) const
+std::optional<bool> MediaSourceTypeSupportedCache::lookup(StringImpl* type) const
 {
     Locker locker { m_lock };
     auto it = m_cache.find(type);
@@ -47,7 +47,7 @@ std::optional<bool> MediaSourceTypeSupportedCache::lookup(const String& type) co
     return it->value;
 }
 
-void MediaSourceTypeSupportedCache::store(const String& type, bool isSupported)
+void MediaSourceTypeSupportedCache::store(StringImpl* type, bool isSupported)
 {
     CacheUpdateCallback callback;
 
@@ -64,7 +64,7 @@ void MediaSourceTypeSupportedCache::store(const String& type, bool isSupported)
         callback(type, isSupported);
 }
 
-void MediaSourceTypeSupportedCache::initialize(HashMap<String, bool>&& results)
+void MediaSourceTypeSupportedCache::initialize(HashMap<RefPtr<StringImpl>, bool>&& results)
 {
     Locker locker { m_lock };
     ASSERT(m_cache.isEmpty());

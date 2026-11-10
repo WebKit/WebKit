@@ -149,12 +149,12 @@ const Vector<WeakPtr<PlatformGamepad>>& WebGamepadProvider::platformGamepads()
     return m_rawGamepads;
 }
 
-void WebGamepadProvider::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+void WebGamepadProvider::playEffect(unsigned gamepadIndex, StringImpl* gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
     WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::PlayGamepadEffect(gamepadIndex, gamepadID, type, parameters), WTF::move(completionHandler));
 }
 
-void WebGamepadProvider::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
+void WebGamepadProvider::stopEffects(unsigned gamepadIndex, StringImpl* gamepadID, CompletionHandler<void()>&& completionHandler)
 {
     WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::StopGamepadEffects(gamepadIndex, gamepadID), WTF::move(completionHandler));
 }

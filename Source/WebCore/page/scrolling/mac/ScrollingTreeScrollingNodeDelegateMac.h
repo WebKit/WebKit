@@ -75,7 +75,7 @@ public:
     void viewWillEndLiveResize() final;
     void viewSizeDidChange() final;
     void initScrollbars() final;
-    String scrollbarStateForOrientation(ScrollbarOrientation) const final;
+    RefPtr<StringImpl> scrollbarStateForOrientation(ScrollbarOrientation) const final;
 
     Vector<RetainPtr<CALayer>, 2> hitTestableScrollbarLayers() const final;
 

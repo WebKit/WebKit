@@ -49,7 +49,7 @@ public:
     const CSS::CustomIdent& name() const LIFETIME_BOUND { return m_name; }
 
     bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 

@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct AuthenticationExtensionsClientInputs {
     struct LargeBlobInputs {
-        String support;
+        RefPtr<StringImpl> support;
         std::optional<bool> read;
         std::optional<BufferSource> write;
     };
@@ -48,14 +48,14 @@ struct AuthenticationExtensionsClientInputs {
 
     struct PRFInputs {
         std::optional<AuthenticationExtensionsClientInputs::PRFValues> eval;
-        std::optional<Vector<KeyValuePair<String, AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
+        std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
     };
 
-    String appid;
+    RefPtr<StringImpl> appid;
     std::optional<bool> credProps;
     std::optional<AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<AuthenticationExtensionsClientInputs::PRFInputs> prf;
-    String crossDeviceFallbackURL;
+    RefPtr<StringImpl> crossDeviceFallbackURL;
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(std::span<const uint8_t>);

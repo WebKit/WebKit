@@ -103,15 +103,15 @@ public:
     using DataChannelInit = RTCDataChannelInit;
 
     struct CertificateParameters {
-        String name;
-        String hash;
-        String namedCurve;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> hash;
+        RefPtr<StringImpl> namedCurve;
         std::optional<uint32_t> modulusLength;
         RefPtr<Uint8Array> publicExponent;
         std::optional<double> expires;
     };
 
-    using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
+    using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>>;
     static void generateCertificate(JSC::JSGlobalObject&, AlgorithmIdentifier&&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
     // 4.3.2 RTCPeerConnection Interface
@@ -158,16 +158,16 @@ public:
     ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const FixedVector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
 
-    using AddTransceiverTrackOrKind = Variant<Ref<MediaStreamTrack>, String>;
+    using AddTransceiverTrackOrKind = Variant<Ref<MediaStreamTrack>, RefPtr<StringImpl>>;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(AddTransceiverTrackOrKind&&, RTCRtpTransceiverInit&&);
 
     // 6.1 Peer-to-peer data API
-    ExceptionOr<Ref<RTCDataChannel>> createDataChannel(String&&, RTCDataChannelInit&&);
+    ExceptionOr<Ref<RTCDataChannel>> createDataChannel(RefPtr<StringImpl>&&, RTCDataChannelInit&&);
 
     // 8.2 Statistics API
     void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
     // Used for testing
-    WEBCORE_EXPORT void gatherDecoderImplementationName(Function<void(String&&)>&&);
+    WEBCORE_EXPORT void gatherDecoderImplementationName(Function<void(RefPtr<StringImpl>&&)>&&);
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCPeerConnection; }
@@ -202,7 +202,7 @@ public:
     // EventTarget implementation.
     void dispatchEvent(Event&) final;
 
-    void dispatchDataChannelEvent(UniqueRef<RTCDataChannelHandler>&&, String&& label, RTCDataChannelInit&&);
+    void dispatchDataChannelEvent(UniqueRef<RTCDataChannelHandler>&&, RefPtr<StringImpl>&& label, RTCDataChannelInit&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -211,7 +211,7 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    void startGatheringStatLogs(Function<void(String&&)>&&);
+    void startGatheringStatLogs(Function<void(RefPtr<StringImpl>&&)>&&);
     void stopGatheringStatLogs();
 
     void clearTransports();
@@ -221,7 +221,7 @@ private:
 
     ExceptionOr<void> initializeWithConfiguration(RTCConfiguration&&);
 
-    ExceptionOr<Ref<RTCRtpTransceiver>> addReceiveOnlyTransceiver(String&&);
+    ExceptionOr<Ref<RTCRtpTransceiver>> addReceiveOnlyTransceiver(RefPtr<StringImpl>&&);
 
     void registerToController(RTCController&);
     void unregisterFromController();
@@ -293,8 +293,8 @@ private:
     RefPtr<RTCSessionDescription> m_currentRemoteDescription;
     RefPtr<RTCSessionDescription> m_pendingRemoteDescription;
 
-    String m_lastCreatedOffer;
-    String m_lastCreatedAnswer;
+    RefPtr<StringImpl> m_lastCreatedOffer;
+    RefPtr<StringImpl> m_lastCreatedAnswer;
     bool m_isLastCreatedOfferFresh { false };
     bool m_isLastCreatedAnswerFresh { false };
 };

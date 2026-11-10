@@ -38,8 +38,8 @@ class VisibleSelection;
 std::optional<TextList> parseTextList(StringView);
 bool areCompatibleListMarkers(const TextList&, const TextList&);
 
-Vector<std::pair<const QualifiedName&, AtomString>> nodeAttributesForSmartList(const StyledElement&, const TextList&);
+Vector<std::pair<const QualifiedName&, RefPtr<AtomStringImpl>>> nodeAttributesForSmartList(const StyledElement&, const TextList&);
 
-bool selectionAllowsSmartLists(const String&, const VisibleSelection&);
+bool selectionAllowsSmartLists(StringImpl*, const VisibleSelection&);
 
 } // namespace WebCore

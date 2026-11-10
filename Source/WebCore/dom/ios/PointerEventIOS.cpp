@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static const AtomString& pointerEventType(PlatformTouchPoint::TouchPhaseType phase)
+static const RefPtr<AtomStringImpl>& pointerEventType(PlatformTouchPoint::TouchPhaseType phase)
 {
     switch (phase) {
     case PlatformTouchPoint::TouchPhaseBegan:
@@ -67,13 +67,13 @@ Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Ve
     return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, canBubble, isCancelable, index, isPrimary, WTF::move(view), touchDelta));
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
+Ref<PointerEvent> PointerEvent::create(AtomStringImpl* type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
 {
     return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTF::move(view), touchDelta));
 }
 
 PointerEvent::PointerEvent(
-    const AtomString& type,
+    AtomStringImpl* type,
     const PlatformTouchEvent& event,
     const Vector<Ref<PointerEvent>>& coalescedEvents,
     const Vector<Ref<PointerEvent>>& predictedEvents,
@@ -127,7 +127,7 @@ PointerEvent::PointerEvent(
     m_twist = std::floor(180 - twistInDegrees);
 
     m_azimuthAngle = event.azimuthAngleAtIndex(index);
-    m_altitudeAngle = m_pointerType == penPointerEventType() ? event.altitudeAngleAtIndex(index) : piOverTwoDouble;
+    m_altitudeAngle = equal(m_pointerType, penPointerEventType()) ? event.altitudeAngleAtIndex(index) : piOverTwoDouble;
     auto tilt = tiltFromAngle(m_altitudeAngle, m_azimuthAngle);
     m_tiltX = tilt.tiltX;
     m_tiltY = tilt.tiltY;

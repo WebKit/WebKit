@@ -120,7 +120,7 @@ void PreconnectTask::didTimeout()
 {
     RELEASE_LOG_ERROR(Network, "%p - PreconnectTask::didTimeout", this);
     m_networkLoad->cancel();
-    m_completionHandler(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }, { }); // Deletes this.
+    m_completionHandler(ResourceError { nullString(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_si, ResourceError::Type::Timeout }, { }); // Deletes this.
 }
 
 void PreconnectTask::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)

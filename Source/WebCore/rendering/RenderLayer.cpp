@@ -1035,7 +1035,7 @@ void RenderLayer::updateLayerListsIfNeeded()
     }
 }
 
-String RenderLayer::name() const
+RefPtr<StringImpl> RenderLayer::name() const
 {
     if (!isReflection())
         return renderer().debugDescription();
@@ -3248,9 +3248,9 @@ RenderLayer::OverflowControlRects RenderLayer::overflowControlsRects() const
     return result;
 }
 
-String RenderLayer::debugDescription() const
+RefPtr<StringImpl> RenderLayer::debugDescription() const
 {
-    String compositedDescription;
+    RefPtr<StringImpl> compositedDescription;
     if (isComposited()) {
         TextStream stream;
         stream << " " << *backing();
@@ -6307,7 +6307,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
             if (renderer.style().usedUserSelect() != UserSelect::None)
                 request.setHasPaintedContent();
 
-            if (!renderText->text().containsOnly<isASCIIWhitespace>())
+            if (!containsOnly<isASCIIWhitespace>(renderText->text()))
                 request.setHasPaintedContent();
 
             if (request.isSatisfied())
@@ -7022,7 +7022,7 @@ void showLayerTree(const WebCore::RenderLayer* layer)
     if (!layer)
         return;
 
-    String output = externalRepresentation(&layer->renderer().frame(), {
+    RefPtr<StringImpl> output = externalRepresentation(&layer->renderer().frame(), {
         WebCore::RenderAsTextFlag::ShowAllLayers,
         WebCore::RenderAsTextFlag::ShowLayerNesting,
         WebCore::RenderAsTextFlag::ShowCompositedLayers,
@@ -7034,7 +7034,7 @@ void showLayerTree(const WebCore::RenderLayer* layer)
         WebCore::RenderAsTextFlag::DontUpdateLayout,
         WebCore::RenderAsTextFlag::ShowLayoutState,
     });
-    SAFE_FPRINTF(stderr, "\n%s\n", output.utf8());
+    SAFE_FPRINTF(stderr, "\n%s\n", utf8(output));
 }
 
 void showLayerTree(const WebCore::RenderObject* renderer)
@@ -7216,7 +7216,7 @@ void showPaintOrderTree(const WebCore::RenderLayer* layer)
     if (layer)
         outputPaintOrderTreeRecursive(stream, *layer, ""_s);
     
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(stream.release()));
 }
 
 void showPaintOrderTree(const WebCore::RenderObject* renderer)
@@ -7306,7 +7306,7 @@ void showLayerPositionTree(const WebCore::RenderLayer* root, const WebCore::Rend
     if (root)
         outputLayerPositionTreeRecursive(stream, *root, 0, mark);
 
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(stream.release()));
 }
 
 #endif

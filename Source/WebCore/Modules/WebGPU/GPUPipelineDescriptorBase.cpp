@@ -38,7 +38,7 @@ Ref<JSON::Object> GPUPipelineDescriptorBase::toJSON() const
             // `GPUPipelineLayout` is not JSON serializable.
         },
         [&](GPUAutoLayoutMode) {
-            json->setString("layout"_s, "auto"_s);
+            json->setString("layout"_si, "auto"_si);
         }
     );
     return json;

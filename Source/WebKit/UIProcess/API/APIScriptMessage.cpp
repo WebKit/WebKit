@@ -44,7 +44,7 @@ ScriptMessage::ScriptMessage(RetainPtr<id>&& body, WebKit::WebPageProxy& page, R
     , m_world(WTF::move(world)) { }
 #endif
 
-ScriptMessage::ScriptMessage(RefPtr<API::Object>&& body, WebKit::WebPageProxy& page, Ref<API::FrameInfo>&& frame, const WTF::String& name, Ref<API::ContentWorld>&& world)
+ScriptMessage::ScriptMessage(RefPtr<API::Object>&& body, WebKit::WebPageProxy& page, Ref<API::FrameInfo>&& frame, StringImpl* name, Ref<API::ContentWorld>&& world)
     : m_apiBody(WTF::move(body))
     , m_page(page)
     , m_frame(WTF::move(frame))

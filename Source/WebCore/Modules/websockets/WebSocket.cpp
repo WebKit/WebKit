@@ -110,21 +110,21 @@ NODELETE static bool isValidProtocolString(StringView protocol)
     return true;
 }
 
-static String encodeProtocolString(const String& protocol)
+static RefPtr<StringImpl> encodeProtocolString(StringImpl* protocol)
 {
     StringBuilder builder;
-    for (size_t i = 0; i < protocol.length(); i++) {
-        if (protocol[i] < 0x20 || protocol[i] > 0x7E)
-            builder.append("\\u"_s, hex(protocol[i], 4));
-        else if (protocol[i] == 0x5c)
+    for (size_t i = 0; i < length(protocol); i++) {
+        if (codeUnitAt(protocol, i) < 0x20 || codeUnitAt(protocol, i) > 0x7E)
+            builder.append("\\u"_s, hex(codeUnitAt(protocol, i), 4));
+        else if (codeUnitAt(protocol, i) == 0x5c)
             builder.append("\\\\"_s);
         else
-            builder.append(protocol[i]);
+            builder.append(codeUnitAt(protocol, i));
     }
     return builder.toString();
 }
 
-static String joinStrings(const Vector<String>& strings, ASCIILiteral separator)
+static RefPtr<StringImpl> joinStrings(const Vector<RefPtr<StringImpl>>& strings, ASCIILiteral separator)
 {
     StringBuilder builder;
     for (size_t i = 0; i < strings.size(); ++i) {
@@ -179,14 +179,14 @@ WebSocket::~WebSocket()
         channel->disconnect();
 }
 
-ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, const String& url)
+ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, StringImpl* url)
 {
-    return create(context, url, Vector<String> { });
+    return create(context, url, Vector<RefPtr<StringImpl>> { });
 }
 
-ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, const String& url, const Vector<String>& protocols)
+ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, StringImpl* url, const Vector<RefPtr<StringImpl>>& protocols)
 {
-    if (url.isNull())
+    if (!url)
         return Exception { ExceptionCode::SyntaxError };
 
     auto socket = adoptRef(*new WebSocket(context));
@@ -199,9 +199,9 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
     return socket;
 }
 
-ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, const String& url, const String& protocol)
+ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, StringImpl* url, StringImpl* protocol)
 {
-    return create(context, url, Vector<String> { FillWith { }, 1, protocol });
+    return create(context, url, Vector<RefPtr<StringImpl>> { FillWith { }, 1, protocol });
 }
 
 HashSet<CheckedPtr<WebSocket>>& WebSocket::allActiveWebSockets()
@@ -215,14 +215,14 @@ Lock& WebSocket::allActiveWebSocketsLock()
     return s_allActiveWebSocketsLock;
 }
 
-ExceptionOr<void> WebSocket::connect(const String& url)
+ExceptionOr<void> WebSocket::connect(StringImpl* url)
 {
-    return connect(url, Vector<String> { });
+    return connect(url, Vector<RefPtr<StringImpl>> { });
 }
 
-ExceptionOr<void> WebSocket::connect(const String& url, const String& protocol)
+ExceptionOr<void> WebSocket::connect(StringImpl* url, StringImpl* protocol)
 {
-    return connect(url, Vector<String> { FillWith { }, 1, protocol });
+    return connect(url, Vector<RefPtr<StringImpl>> { FillWith { }, 1, protocol });
 }
 
 void WebSocket::failAsynchronously()
@@ -238,7 +238,7 @@ void WebSocket::failAsynchronously()
     });
 }
 
-ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& protocols)
+ExceptionOr<void> WebSocket::connect(StringImpl* url, const Vector<RefPtr<StringImpl>>& protocols)
 {
     LOG_WITH_STREAM(Network, stream << "WebSocket "_s << this << " connect() url='"_s << url << "'"_s);
     m_url = URL { url };
@@ -273,13 +273,13 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     contentSecurityPolicy->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     if (!portAllowed(m_url) || isIPAddressDisallowed(m_url)) {
-        String message;
+        RefPtr<StringImpl> message;
         if (isIPAddressDisallowed(m_url))
             message = makeString("WebSocket address "_s, m_url.host(), " blocked"_s);
         else if (m_url.port())
             message = makeString("WebSocket port "_s, m_url.port().value(), " blocked"_s);
         else
-            message = "WebSocket without port blocked"_s;
+            message = "WebSocket without port blocked"_si;
         context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
         failAsynchronously();
         return { };
@@ -317,7 +317,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
             return Exception { ExceptionCode::SyntaxError };
         }
     }
-    HashSet<String> visited;
+    HashSet<RefPtr<StringImpl>> visited;
     for (auto& protocol : protocols) {
         if (!visited.add(protocol).isNewEntry) {
             context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("WebSocket protocols contain duplicates: '"_s, encodeProtocolString(protocol), '\''));
@@ -340,7 +340,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         }
     }
 
-    String protocolString;
+    RefPtr<StringImpl> protocolString;
     if (!protocols.isEmpty())
         protocolString = joinStrings(protocols, subprotocolSeparator());
 
@@ -365,12 +365,12 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     return { };
 }
 
-ExceptionOr<void> WebSocket::send(const String& message)
+ExceptionOr<void> WebSocket::send(StringImpl* message)
 {
     LOG_WITH_STREAM(Network, stream << "WebSocket "_s << this << " send() Sending String '"_s << message << "'"_s);
     if (m_state == CONNECTING)
         return Exception { ExceptionCode::InvalidStateError };
-    auto utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
+    auto utf8 = WTF::utf8(message, StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
         size_t payloadSize = utf8.length();
@@ -441,7 +441,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
     return { };
 }
 
-ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, const String& reason)
+ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, StringImpl* reason)
 {
     int code = optionalCode ? optionalCode.value() : static_cast<int>(ThreadableWebSocketChannel::CloseEventCodeNotSpecified);
     if (code == ThreadableWebSocketChannel::CloseEventCodeNotSpecified)
@@ -450,9 +450,9 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
         LOG_WITH_STREAM(Network, stream << "WebSocket "_s << this << " close() code="_s << code << " reason='"_s << reason << "'"_s);
         if (!(code == ThreadableWebSocketChannel::CloseEventCodeNormalClosure || (ThreadableWebSocketChannel::CloseEventCodeMinimumUserDefined <= code && code <= ThreadableWebSocketChannel::CloseEventCodeMaximumUserDefined)))
             return Exception { ExceptionCode::InvalidAccessError };
-        auto utf8 = reason.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
+        auto utf8 = WTF::utf8(reason, StrictConversionReplacingUnpairedSurrogatesWithFFFD);
         if (utf8.length() > maxReasonSizeInBytes) {
-            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
+            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_si);
             return Exception { ExceptionCode::SyntaxError };
         }
     }
@@ -462,7 +462,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
     if (m_state == CONNECTING) {
         m_state = CLOSING;
         if (RefPtr channel = m_channel)
-            channel->fail("WebSocket is closed before the connection is established."_s);
+            channel->fail("WebSocket is closed before the connection is established."_si);
         return { };
     }
     m_state = CLOSING;
@@ -491,12 +491,12 @@ uint64_t WebSocket::bufferedAmount() const
     return saturateAdd(m_bufferedAmount, m_bufferedAmountAfterClose);
 }
 
-String WebSocket::protocol() const
+RefPtr<StringImpl> WebSocket::protocol() const
 {
     return m_subprotocol;
 }
 
-String WebSocket::extensions() const
+RefPtr<StringImpl> WebSocket::extensions() const
 {
     return m_extensions;
 }
@@ -532,7 +532,7 @@ void WebSocket::suspend(ReasonForSuspension reason)
 
     if (reason == ReasonForSuspension::BackForwardCache) {
         // This will cause didClose() to be called.
-        channel->fail("WebSocket is closed due to suspension."_s);
+        channel->fail("WebSocket is closed due to suspension."_si);
         return;
     }
 
@@ -574,7 +574,7 @@ void WebSocket::didConnect()
     });
 }
 
-void WebSocket::didReceiveMessage(String&& message)
+void WebSocket::didReceiveMessage(RefPtr<StringImpl>&& message)
 {
     LOG_WITH_STREAM(Network, stream << "WebSocket "_s << this << " didReceiveMessage() Text message '"_s << message << "'"_s);
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [message = WTF::move(message)](auto& socket) mutable {
@@ -584,7 +584,7 @@ void WebSocket::didReceiveMessage(String&& message)
         if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
             RefPtr channel = socket.m_channel;
             if (auto* inspector = channel->channelInspector()) {
-                auto utf8Message = message.utf8();
+                auto utf8Message = utf8(message);
                 inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(byteCast<uint8_t>(utf8Message.span()), WebSocketFrame::OpCode::OpCodeText));
             }
         }
@@ -618,7 +618,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
     });
 }
 
-void WebSocket::didReceiveMessageError(String&& reason)
+void WebSocket::didReceiveMessageError(RefPtr<StringImpl>&& reason)
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [reason = WTF::move(reason)](auto& socket) {
@@ -656,10 +656,10 @@ void WebSocket::didStartClosingHandshake()
     });
 }
 
-void WebSocket::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void WebSocket::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, StringImpl* reason)
 {
     LOG(Network, "WebSocket %p didClose()", this);
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [unhandledBufferedAmount, closingHandshakeCompletion, code, reason](auto& socket) {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [unhandledBufferedAmount, closingHandshakeCompletion, code, reason = RefPtr { reason }](auto& socket) {
         if (!socket.m_channel)
             return;
 

@@ -146,7 +146,7 @@ void ScopeRuleSets::initializeUserStyle()
     RefPtr page = m_styleResolver.document().page();
     RefPtr localMainFrame = page ? dynamicDowncast<LocalFrame>(page->mainFrame()) : nullptr;
     if (!extensionStyleSheets->injectedUserStyleSheets().isEmpty() && page && localMainFrame && localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections())
-        protect(m_styleResolver.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
+        protect(m_styleResolver.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_si);
     else {
         collectRulesFromUserStyleSheets(extensionStyleSheets->injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
         if (page && localMainFrame && !extensionStyleSheets->injectedUserStyleSheets().isEmpty())
@@ -449,17 +449,26 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
     }).iterator->value.get();
 }
 
-const Vector<InvalidationRuleSet>* ScopeRuleSets::idInvalidationRuleSets(const AtomString& id) const
+template<typename Hash, typename HashTraits>
+static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(AtomStringImpl* key, HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<Vector<InvalidationRuleSet>>, Hash, HashTraits>& ruleSetMap, const HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<RuleFeatureVector>, Hash, HashTraits>& ruleFeatures)
+{
+    // Look up by raw pointer first so the common (cached) case does not ref the key.
+    if (auto it = ruleSetMap.find(key); it != ruleSetMap.end())
+        return it->value.get();
+    return ensureInvalidationRuleSets(RefPtr { key }, ruleSetMap, ruleFeatures);
+}
+
+const Vector<InvalidationRuleSet>* ScopeRuleSets::idInvalidationRuleSets(AtomStringImpl* id) const
 {
     return ensureInvalidationRuleSets(id, m_idInvalidationRuleSets, m_features.idRules);
 }
 
-const Vector<InvalidationRuleSet>* ScopeRuleSets::classInvalidationRuleSets(const AtomString& className) const
+const Vector<InvalidationRuleSet>* ScopeRuleSets::classInvalidationRuleSets(AtomStringImpl* className) const
 {
     return ensureInvalidationRuleSets(className, m_classInvalidationRuleSets, m_features.classRules);
 }
 
-const Vector<InvalidationRuleSet>* ScopeRuleSets::attributeInvalidationRuleSets(const AtomString& attributeName) const
+const Vector<InvalidationRuleSet>* ScopeRuleSets::attributeInvalidationRuleSets(AtomStringImpl* attributeName) const
 {
     return ensureInvalidationRuleSets(attributeName, m_attributeInvalidationRuleSets, m_features.attributeRules);
 }
@@ -474,10 +483,10 @@ const Vector<InvalidationRuleSet>* ScopeRuleSets::hasPseudoClassInvalidationRule
     return ensureInvalidationRuleSets(key, m_hasPseudoClassInvalidationRuleSets, m_features.hasPseudoClassRules);
 }
 
-const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQueries() const
+const HashSet<RefPtr<AtomStringImpl>>& ScopeRuleSets::customPropertyNamesInStyleContainerQueries() const
 {
     if (!m_customPropertyNamesInStyleContainerQueries) {
-        HashSet<AtomString> propertyNames;
+        HashSet<RefPtr<AtomStringImpl>> propertyNames;
 
         auto collectPropertyNames = [&](auto* ruleSet) {
             if (!ruleSet)

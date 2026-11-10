@@ -99,7 +99,7 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
         auto nextElement = nextAutofillableElement(start.ptr(), focusController);
 
         bool previousFieldIsTextField = previousElement && !previousElement->isPasswordField();
-        bool hasSecondPasswordFieldToFill = nextElement && nextElement->isPasswordField() && nextElement->value()->isEmpty();
+        bool hasSecondPasswordFieldToFill = nextElement && nextElement->isPasswordField() && isEmpty(nextElement->value().get());
 
         // Always allow AutoFill in a password field, even if we fill information only into it.
         return {{ previousFieldIsTextField ? WTF::move(previousElement) : nullptr, WTF::move(start), hasSecondPasswordFieldToFill ? WTF::move(nextElement) : nullptr }};
@@ -108,7 +108,7 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
         if (nextElement && is<HTMLInputElement>(*nextElement)) {
             if (nextElement->isPasswordField()) {
                 auto elementAfterNextElement = nextAutofillableElement(nextElement.get(), focusController);
-                bool hasSecondPasswordFieldToFill = elementAfterNextElement && elementAfterNextElement->isPasswordField() && elementAfterNextElement->value()->isEmpty();
+                bool hasSecondPasswordFieldToFill = elementAfterNextElement && elementAfterNextElement->isPasswordField() && isEmpty(elementAfterNextElement->value().get());
 
                 return {{ WTF::move(start), WTF::move(nextElement), hasSecondPasswordFieldToFill ? WTF::move(elementAfterNextElement) : nullptr }};
             }
@@ -123,23 +123,23 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
     return std::nullopt;
 }
 
-void AutofillElements::autofill(String username, String password)
+void AutofillElements::autofill(RefPtr<StringImpl> username, RefPtr<StringImpl> password)
 {
     if (m_username) {
         m_username->setValueForUser(username);
-        if (!username.isEmpty())
+        if (!isEmpty(username))
             m_username->didCompleteAutofill();
     }
 
     if (m_password) {
         m_password->setValueForUser(password);
-        if (!password.isEmpty())
+        if (!isEmpty(password))
             m_password->didCompleteAutofill();
     }
 
     if (m_secondPassword) {
         m_secondPassword->setValueForUser(password);
-        if (!password.isEmpty())
+        if (!isEmpty(password))
             m_secondPassword->didCompleteAutofill();
     }
 }

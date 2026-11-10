@@ -64,10 +64,10 @@ public:
     static ExceptionOr<Ref<AudioWorkletProcessor>> create(ScriptExecutionContext&);
     ~AudioWorkletProcessor();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     MessagePort& port() LIFETIME_BOUND { return m_port.get(); }
 
-    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, std::optional<ExceptionDetails>&);
+    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>>& paramValuesMap, std::optional<ExceptionDetails>&);
 
     JSValueInWrappedObject& jsInputsWrapper() LIFETIME_BOUND { return m_jsInputs; }
     JSValueInWrappedObject& jsOutputsWrapper() LIFETIME_BOUND { return m_jsOutputs; }
@@ -75,10 +75,10 @@ public:
 
 private:
     explicit AudioWorkletProcessor(AudioWorkletGlobalScope&, const AudioWorkletProcessorConstructionData&);
-    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBuffer&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
+    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBuffer&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
     const Ref<AudioWorkletGlobalScope> m_globalScope;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     const Ref<MessagePort> m_port;
     JSValueInWrappedObject m_jsInputs;
     JSValueInWrappedObject m_jsOutputs;

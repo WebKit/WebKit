@@ -106,7 +106,7 @@ bool AccessibilityScrollView::isRoot() const
     return *m_isRoot;
 }
 
-String AccessibilityScrollView::ownerDebugDescription() const
+RefPtr<StringImpl> AccessibilityScrollView::ownerDebugDescription() const
 {
     if (!m_frameOwnerElement) {
         StringBuilder builder;
@@ -120,10 +120,10 @@ String AccessibilityScrollView::ownerDebugDescription() const
     return makeString("owned by: "_s, renderer ? renderer->debugDescription() : protect(frameOwnerElement())->debugDescription());
 }
 
-String AccessibilityScrollView::extraDebugInfo() const
+RefPtr<StringImpl> AccessibilityScrollView::extraDebugInfo() const
 {
-    Vector<String> debugStrings = { ownerDebugDescription(), AccessibilityObject::extraDebugInfo() };
-    return makeStringByJoining(debugStrings, ","_s);
+    Vector<RefPtr<StringImpl>> debugStrings = { ownerDebugDescription(), AccessibilityObject::extraDebugInfo() };
+    return makeStringByJoining(debugStrings, ","_si);
 }
 
 void AccessibilityScrollView::detachRemoteParts(AccessibilityDetachmentType detachmentType)
@@ -674,7 +674,7 @@ bool AccessibilityScrollView::isHostingFrameRenderHidden() const
     return false;
 }
 
-String AccessibilityScrollView::hostingFrameName() const
+RefPtr<StringImpl> AccessibilityScrollView::hostingFrameName() const
 {
     if (isRoot())
         return m_inheritedFrameState.hostingFrameName;
@@ -683,8 +683,8 @@ String AccessibilityScrollView::hostingFrameName() const
     if (!frameOwner || (frameOwner->elementName() != ElementName::HTML_iframe && frameOwner->elementName() != ElementName::HTML_frame))
         return { };
 
-    const AtomString& ariaLabel = frameOwner->attributeWithoutSynchronization(aria_labelAttr);
-    if (!ariaLabel.isEmpty())
+    const RefPtr<AtomStringImpl>& ariaLabel = frameOwner->attributeWithoutSynchronization(aria_labelAttr);
+    if (!isEmpty(ariaLabel))
         return ariaLabel;
     return frameOwner->attributeWithoutSynchronization(titleAttr);
 }
@@ -697,7 +697,7 @@ void AccessibilityScrollView::setInheritedFrameState(InheritedFrameState state)
     bool ignoredStateChanged = m_inheritedFrameState.isAXHidden != state.isAXHidden
         || m_inheritedFrameState.isInert != state.isInert
         || m_inheritedFrameState.isRenderHidden != state.isRenderHidden;
-    bool nameChanged = m_inheritedFrameState.hostingFrameName != state.hostingFrameName;
+    bool nameChanged = !equal(m_inheritedFrameState.hostingFrameName, state.hostingFrameName);
     m_inheritedFrameState = WTF::move(state);
 
     CheckedPtr cache = axObjectCache();

@@ -53,9 +53,9 @@ void TreeScopeOrderedMap::clear()
     m_map.clear();
 }
 
-void TreeScopeOrderedMap::add(const AtomString& key, Element& element, const TreeScope& treeScope)
+void TreeScopeOrderedMap::add(AtomStringImpl* key, Element& element, const TreeScope& treeScope)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!key.isNull());
+    ASSERT_WITH_SECURITY_IMPLICATION(key);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &treeScope);
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope.rootNode().isShadowIncludingInclusiveAncestorOf(&element));
 
@@ -80,9 +80,9 @@ void TreeScopeOrderedMap::add(const AtomString& key, Element& element, const Tre
     entry.orderedList.clear();
 }
 
-void TreeScopeOrderedMap::remove(const AtomString& key, Element& element)
+void TreeScopeOrderedMap::remove(AtomStringImpl* key, Element& element)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!key.isNull());
+    ASSERT_WITH_SECURITY_IMPLICATION(key);
     m_map.checkConsistency();
     auto it = m_map.find(key);
 
@@ -103,9 +103,9 @@ void TreeScopeOrderedMap::remove(const AtomString& key, Element& element)
 }
 
 template <typename KeyMatchingFunction>
-inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const TreeScope& scope, NOESCAPE const KeyMatchingFunction& keyMatches) const
+inline RefPtr<Element> TreeScopeOrderedMap::get(AtomStringImpl* key, const TreeScope& scope, NOESCAPE const KeyMatchingFunction& keyMatches) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!key.isNull());
+    ASSERT_WITH_SECURITY_IMPLICATION(key);
     m_map.checkConsistency();
 
     auto it = m_map.find(key);
@@ -152,9 +152,9 @@ inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const Tre
 }
 
 template <typename KeyMatchingFunction>
-inline Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getAll(const AtomString& key, const TreeScope& scope, NOESCAPE const KeyMatchingFunction& keyMatches) const
+inline Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getAll(AtomStringImpl* key, const TreeScope& scope, NOESCAPE const KeyMatchingFunction& keyMatches) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!key.isNull());
+    ASSERT_WITH_SECURITY_IMPLICATION(key);
     m_map.checkConsistency();
 
     auto mapIterator = m_map.find(key);
@@ -178,68 +178,68 @@ inline Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrdere
     return &entry.orderedList;
 }
 
-RefPtr<Element> TreeScopeOrderedMap::getElementById(const AtomString& key, const TreeScope& scope) const
+RefPtr<Element> TreeScopeOrderedMap::getElementById(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return get(key, scope, [] (const AtomString& key, const Element& element) {
+    return get(key, scope, [] (AtomStringImpl* key, const Element& element) {
         return element.getIdAttribute() == key;
     });
 }
 
-RefPtr<Element> TreeScopeOrderedMap::getElementByName(const AtomString& key, const TreeScope& scope) const
+RefPtr<Element> TreeScopeOrderedMap::getElementByName(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return get(key, scope, [] (const AtomString& key, const Element& element) {
+    return get(key, scope, [] (AtomStringImpl* key, const Element& element) {
         return element.getNameAttribute() == key;
     });
 }
 
-RefPtr<HTMLMapElement> TreeScopeOrderedMap::getElementByMapName(const AtomString& key, const TreeScope& scope) const
+RefPtr<HTMLMapElement> TreeScopeOrderedMap::getElementByMapName(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return downcast<HTMLMapElement>(get(key, scope, [] (const AtomString& key, const Element& element) {
+    return downcast<HTMLMapElement>(get(key, scope, [] (AtomStringImpl* key, const Element& element) {
         auto* mapElement = dynamicDowncast<HTMLMapElement>(element);
         return mapElement && (mapElement->getName() == key || mapElement->getIdAttribute() == key);
     }));
 }
 
-RefPtr<HTMLImageElement> TreeScopeOrderedMap::getElementByUsemap(const AtomString& key, const TreeScope& scope) const
+RefPtr<HTMLImageElement> TreeScopeOrderedMap::getElementByUsemap(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return downcast<HTMLImageElement>(get(key, scope, [] (const AtomString& key, const Element& element) {
+    return downcast<HTMLImageElement>(get(key, scope, [] (AtomStringImpl* key, const Element& element) {
         // FIXME: HTML5 specification says we should match both image and object elements.
         auto* imageElement = dynamicDowncast<HTMLImageElement>(element);
         return imageElement && imageElement->matchesUsemap(key);
     }));
 }
 
-const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getElementsByLabelForAttribute(const AtomString& key, const TreeScope& scope) const
+const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getElementsByLabelForAttribute(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return getAll(key, scope, [] (const AtomString& key, const Element& element) {
+    return getAll(key, scope, [] (AtomStringImpl* key, const Element& element) {
         return is<HTMLLabelElement>(element) && element.attributeWithoutSynchronization(forAttr) == key;
     });
 }
 
-RefPtr<Element> TreeScopeOrderedMap::getElementByWindowNamedItem(const AtomString& key, const TreeScope& scope) const
+RefPtr<Element> TreeScopeOrderedMap::getElementByWindowNamedItem(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return get(key, scope, [] (const AtomString& key, const Element& element) {
+    return get(key, scope, [] (AtomStringImpl* key, const Element& element) {
         return WindowNameCollection::elementMatches(element, key);
     });
 }
 
-RefPtr<Element> TreeScopeOrderedMap::getElementByDocumentNamedItem(const AtomString& key, const TreeScope& scope) const
+RefPtr<Element> TreeScopeOrderedMap::getElementByDocumentNamedItem(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return get(key, scope, [] (const AtomString& key, const Element& element) {
+    return get(key, scope, [] (AtomStringImpl* key, const Element& element) {
         return DocumentNameCollection::elementMatches(element, key);
     });
 }
 
-const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getAllElementsById(const AtomString& key, const TreeScope& scope) const
+const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getAllElementsById(AtomStringImpl* key, const TreeScope& scope) const
 {
-    return getAll(key, scope, [] (const AtomString& key, const Element& element) {
+    return getAll(key, scope, [] (AtomStringImpl* key, const Element& element) {
         return element.getIdAttribute() == key;
     });
 }
 
-const Vector<AtomString> TreeScopeOrderedMap::keys() const
+const Vector<RefPtr<AtomStringImpl>> TreeScopeOrderedMap::keys() const
 {
-    return WTF::map(m_map, [](auto& entry) -> AtomString {
+    return WTF::map(m_map, [](auto& entry) -> RefPtr<AtomStringImpl> {
         return entry.key;
     });
 }

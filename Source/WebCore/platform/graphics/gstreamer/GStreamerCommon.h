@@ -120,11 +120,11 @@ bool isProtocolAllowed(const WTF::URL&);
 UTF8CStringView capsMediaType(const GstCaps*);
 std::optional<TrackID> getStreamIdFromPad(const GRefPtr<GstPad>&);
 std::optional<TrackID> getStreamIdFromStream(const GRefPtr<GstStream>&);
-std::optional<TrackID> parseStreamId(const String& stringId);
+std::optional<TrackID> parseStreamId(StringImpl* stringId);
 bool doCapsHaveType(const GstCaps*, ASCIILiteral);
 bool areEncryptedCaps(const GstCaps*);
-Vector<String> extractGStreamerOptionsFromCommandLine();
-void setGStreamerOptionsFromUIProcess(Vector<String>&&);
+Vector<RefPtr<StringImpl>> extractGStreamerOptionsFromCommandLine();
+void setGStreamerOptionsFromUIProcess(Vector<RefPtr<StringImpl>>&&);
 bool ensureGStreamerInitializedNonWebProcess();
 bool ensureGStreamerInitialized();
 void registerWebKitGStreamerElements();
@@ -324,17 +324,17 @@ enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX, Qualcomm };
 bool isGStreamerPluginAvailable(ASCIILiteral name);
 bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
 
-GstElement* createAutoAudioSink(const String& role);
-GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+GstElement* createAutoAudioSink(StringImpl* role);
+GstElement* createPlatformAudioSink(StringImpl* role, StringImpl* deviceId = nullptr, const GRefPtr<GstDevice>& = { });
 
 #if ENABLE(MEDIA_STREAM)
 // Resolves an audio output device ID ("default" or an existing persistent ID)
 // to its actual persistent ID and matching GstDevice.
-std::pair<String, GRefPtr<GstDevice>> gstResolveAudioOutputDevice(const String& deviceId);
+std::pair<RefPtr<StringImpl>, GRefPtr<GstDevice>> gstResolveAudioOutputDevice(StringImpl* deviceId);
 // Reconfigures an existing audio sink element (recursing into bins)
 // to use the given GstDevice as its output audio device.
 // Returns true if the sink was correctly reconfigured.
-bool gstApplyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>&, const String& deviceId);
+bool gstApplyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>&, StringImpl* deviceId);
 #endif
 
 bool webkitGstSetElementStateSynchronously(GstElement*, GstState, NOESCAPE const Function<bool(GstMessage*)>& = [](GstMessage*) -> bool {
@@ -344,7 +344,7 @@ bool webkitGstSetElementStateSynchronously(GstElement*, GstState, NOESCAPE const
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 
 // These functions should be used for elements not provided by WebKit itself and not provided by GStreamer -core.
-GstElement* makeGStreamerElement(UTF8CStringView factoryName, const String& name = emptyString());
+GstElement* makeGStreamerElement(UTF8CStringView factoryName, StringImpl* name = emptyString());
 
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure*, UTF8CStringView key);
@@ -359,7 +359,7 @@ Vector<T> gstStructureGetArray(const GstStructure*, UTF8CStringView key);
 template<typename T>
 Vector<T> gstStructureGetList(const GstStructure*, UTF8CStringView key);
 
-String gstStructureToJSONString(const GstStructure*);
+RefPtr<StringImpl> gstStructureToJSONString(const GstStructure*);
 
 // Converts each field name and value with glibVariadicType(), so typed strings can be passed as they are.
 // Supplies the terminating nullptr itself.
@@ -404,9 +404,9 @@ GRefPtr<GstBuffer> wrapSharedBuffer(Ref<SharedBuffer>&&);
 
 std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral);
 
-void registerActivePipeline(const GRefPtr<GstElement>&, const String& = emptyString());
+void registerActivePipeline(const GRefPtr<GstElement>&, StringImpl* = emptyString());
 void unregisterPipeline(const GRefPtr<GstElement>&);
-void unregisterPipeline(const String&);
+void unregisterPipeline(StringImpl*);
 
 class WebCoreLogObserver : public Logger::Observer {
     WTF_MAKE_TZONE_ALLOCATED(WebCoreLogObserver);
@@ -435,7 +435,7 @@ using GstId = GQuark;
 bool gstStructureForeach(const GstStructure*, NOESCAPE const Function<bool(GstId, const GValue*)>&);
 void gstStructureIdSetValue(GstStructure*, GstId, const GValue*);
 bool gstStructureMapInPlace(GstStructure*, NOESCAPE const Function<bool(GstId, GValue*)>&);
-String gstIdToString(GstId);
+RefPtr<StringImpl> gstIdToString(GstId);
 void gstStructureFilterAndMapInPlace(GstStructure*, NOESCAPE const Function<bool(GstId, GValue*)>&);
 
 #if USE(GBM)
@@ -448,10 +448,10 @@ bool setGstElementGLContext(GstElement*, ASCIILiteral contextType);
 
 GstStateChangeReturn gstElementLockAndSetState(GstElement*, GstState);
 
-GRefPtr<GstElement> createVideoConvertScaleElement(const String& name = emptyString());
+GRefPtr<GstElement> createVideoConvertScaleElement(StringImpl* name = emptyString());
 
-void dumpBinToDotFile(GstBin*, const String&, GstDebugGraphDetails = GST_DEBUG_GRAPH_SHOW_ALL);
-void dumpBinToDotFile(const GRefPtr<GstElement>&, const String&, GstDebugGraphDetails = GST_DEBUG_GRAPH_SHOW_ALL);
+void dumpBinToDotFile(GstBin*, StringImpl*, GstDebugGraphDetails = GST_DEBUG_GRAPH_SHOW_ALL);
+void dumpBinToDotFile(const GRefPtr<GstElement>&, StringImpl*, GstDebugGraphDetails = GST_DEBUG_GRAPH_SHOW_ALL);
 
 GstDebugLevel gstDebugLevelFromWTFLogLevel(WTFLogLevel);
 

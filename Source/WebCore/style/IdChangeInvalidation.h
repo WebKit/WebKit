@@ -34,22 +34,22 @@ namespace Style {
 
 class IdChangeInvalidation {
 public:
-    IdChangeInvalidation(Ref<Element>&&, const AtomString& oldId, const AtomString& newId);
+    IdChangeInvalidation(Ref<Element>&&, AtomStringImpl* oldId, AtomStringImpl* newId);
     ~IdChangeInvalidation();
 
 private:
-    void invalidateStyle(const AtomString&);
+    void invalidateStyle(AtomStringImpl*);
     void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
     const Ref<Element> m_element;
 
-    AtomString m_newId;
+    RefPtr<AtomStringImpl> m_newId;
 
     Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
-inline IdChangeInvalidation::IdChangeInvalidation(Ref<Element>&& element, const AtomString& oldId, const AtomString& newId)
+inline IdChangeInvalidation::IdChangeInvalidation(Ref<Element>&& element, AtomStringImpl* oldId, AtomStringImpl* newId)
     : m_isEnabled(element->needsStyleInvalidation())
     , m_element(WTF::move(element))
 {

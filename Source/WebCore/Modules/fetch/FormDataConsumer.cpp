@@ -83,7 +83,7 @@ void FormDataConsumer::read()
             consumePendingStream(*state);
             return;
         }
-        didFail(Exception { ExceptionCode::InvalidStateError, "Stream upload is missing state"_s });
+        didFail(Exception { ExceptionCode::InvalidStateError, "Stream upload is missing state"_si });
     });
 }
 
@@ -92,10 +92,10 @@ void FormDataConsumer::consumeData(const Vector<uint8_t>& content)
     consume(content.span());
 }
 
-void FormDataConsumer::consumeFile(const String& filename)
+void FormDataConsumer::consumeFile(StringImpl* filename)
 {
     m_isReadingFile = true;
-    m_fileQueue->dispatch([weakThis = WeakPtr { *this }, identifier = m_context->identifier(), path = filename.isolatedCopy()]() mutable {
+    m_fileQueue->dispatch([weakThis = WeakPtr { *this }, identifier = m_context->identifier(), path = isolatedCopy(filename)]() mutable {
         ScriptExecutionContext::postTaskTo(identifier, [weakThis = WTF::move(weakThis), content = FileSystem::readEntireFile(path)](auto&) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || !protectedThis->m_isReadingFile)
@@ -103,7 +103,7 @@ void FormDataConsumer::consumeFile(const String& filename)
 
             protectedThis->m_isReadingFile = false;
             if (!content) {
-                protectedThis->didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data file"_s });
+                protectedThis->didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data file"_si });
                 return;
             }
 
@@ -124,7 +124,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
             return;
 
         if (auto optionalErrorCode = loader->errorCode()) {
-            protectedThis->didFail(Exception { ExceptionCode::InvalidStateError, "Failed to read form data blob"_s });
+            protectedThis->didFail(Exception { ExceptionCode::InvalidStateError, "Failed to read form data blob"_si });
             return;
         }
 
@@ -136,14 +136,14 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
         if (blobLoader->isLoading())
             return;
     }
-    didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data blob"_s });
+    didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data blob"_si });
 }
 
 void FormDataConsumer::consumePendingStream(PendingStreamState& state)
 {
     RefPtr context = m_context;
     if (!context) {
-        didFail(Exception { ExceptionCode::InvalidStateError, "Context is gone"_s });
+        didFail(Exception { ExceptionCode::InvalidStateError, "Context is gone"_si });
         return;
     }
 
@@ -180,7 +180,7 @@ void FormDataConsumer::drainPendingStream()
     auto result = state->takeAvailableChunks();
 
     if (!result) {
-        didFail(Exception { ExceptionCode::NetworkError, "Stream upload failed"_s });
+        didFail(Exception { ExceptionCode::NetworkError, "Stream upload failed"_si });
         return;
     }
 

@@ -52,7 +52,7 @@ private:
     const Ref<Text> m_node;
     unsigned m_offset;
     unsigned m_count;
-    String m_text;
+    RefPtr<StringImpl> m_text;
 };
 
 } // namespace WebCore

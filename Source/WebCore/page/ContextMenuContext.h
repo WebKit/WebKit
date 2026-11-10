@@ -62,8 +62,8 @@ public:
     const HitTestResult& hitTestResult() const LIFETIME_BOUND { return m_hitTestResult; }
     Event* event() const { return m_event.get(); }
 
-    void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
-    const String& selectedText() const LIFETIME_BOUND { return m_selectedText; }
+    void setSelectedText(StringImpl* selectedText) { m_selectedText = selectedText; }
+    const RefPtr<StringImpl>& selectedText() const LIFETIME_BOUND { return m_selectedText; }
 
     bool hasEntireImage() const { return m_hasEntireImage; }
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }
@@ -86,7 +86,7 @@ private:
     Type m_type { Type::ContextMenu };
     HitTestResult m_hitTestResult;
     RefPtr<Event> m_event;
-    String m_selectedText;
+    RefPtr<StringImpl> m_selectedText;
     bool m_hasEntireImage { false };
     bool m_allowsFollowingLink { false };
     bool m_allowsFollowingImageURL { false };

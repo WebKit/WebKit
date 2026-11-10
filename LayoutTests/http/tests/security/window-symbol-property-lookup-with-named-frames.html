@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Symbol property lookups on same-origin and cross-origin windows that have child frames named like the symbols' descriptions.
+A symbol never matches a child frame name.</p>
+<iframe name="child" srcdoc="child"></iframe>
+<iframe name="Symbol(child)" srcdoc="Symbol(child)"></iframe>
+<iframe name="Symbol.toPrimitive" srcdoc="Symbol.toPrimitive"></iframe>
+<iframe id="crossOrigin" src="http://localhost:8000/security/resources/named-child-frames.html"></iframe>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+function describe(expression)
+{
+    try {
+        const value = eval(expression);
+        if (value === null || (typeof value !== "object" && typeof value !== "function"))
+            return typeof value === "string" ? JSON.stringify(value) : String(value);
+        if (value === window || value === crossOriginWindow)
+            return "the window itself";
+        for (let i = 0; i < frames.length; ++i) {
+            if (value === frames[i])
+                return "window.frames[" + i + "]";
+        }
+        return typeof value;
+    } catch (e) {
+        return "threw " + e.name;
+    }
+}
+
+const symbols = [
+    'Symbol("child")',
+    'Symbol.for("child")',
+    'Symbol("Symbol(child)")',
+    'Symbol.toPrimitive',
+    'Symbol.toStringTag',
+    'Symbol.iterator',
+    'Symbol.hasInstance',
+    'Symbol.isConcatSpreadable',
+];
+
+let crossOriginWindow;
+
+window.onload = () => {
+    crossOriginWindow = document.getElementById("crossOrigin").contentWindow;
+
+    log("Same-origin window:");
+    for (const expression of ['window.child', 'window["Symbol(child)"]', 'window["Symbol.toPrimitive"]', 'String(window)', 'window + ""', '`${window}`'])
+        log("  " + expression + ": " + describe(expression));
+    for (const symbol of symbols) {
+        log("  window[" + symbol + "]: " + describe("window[" + symbol + "]"));
+        log("  " + symbol + " in window: " + describe(symbol + " in window"));
+        log("  Object.getOwnPropertyDescriptor(window, " + symbol + "): " + describe("Object.getOwnPropertyDescriptor(window, " + symbol + ")"));
+    }
+
+    log("Cross-origin window:");
+    for (const expression of ['crossOriginWindow.child', 'crossOriginWindow["Symbol(child)"]', 'crossOriginWindow.length'])
+        log("  " + expression + ": " + describe(expression));
+    for (const symbol of symbols) {
+        log("  crossOriginWindow[" + symbol + "]: " + describe("crossOriginWindow[" + symbol + "]"));
+        log("  " + symbol + " in crossOriginWindow: " + describe(symbol + " in crossOriginWindow"));
+        log("  Object.getOwnPropertyDescriptor(crossOriginWindow, " + symbol + "): " + describe("Object.getOwnPropertyDescriptor(crossOriginWindow, " + symbol + ")"));
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

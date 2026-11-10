@@ -71,7 +71,7 @@ static void okButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
         WebCore::CredentialPersistence::Permanent : WebCore::CredentialPersistence::ForSession;
 
     // FIXME: Use a stack allocated WebKitCredential.
-    WebKitCredential* credential = webkitCredentialCreate(WebCore::Credential(String::fromUTF8(username), String::fromUTF8(password), persistence));
+    WebKitCredential* credential = webkitCredentialCreate(WebCore::Credential(StringImpl::fromUTF8(username), StringImpl::fromUTF8(password), persistence));
     webkit_authentication_request_authenticate(priv->request.get(), credential);
     webkit_credential_free(credential);
     webkitAuthenticationDialogDestroy(authDialog);
@@ -159,7 +159,7 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     const WebCore::AuthenticationChallenge& challenge = webkitAuthenticationRequestGetAuthenticationChallenge(priv->request.get())->core();
     // Prompt on the HTTP authentication dialog.
     GUniquePtr<char> prompt(SAFE_G_STRDUP_PRINTF(_("Authentication required by %s:%i"),
-        challenge.protectionSpace().host().utf8(), challenge.protectionSpace().port()));
+        utf8(challenge.protectionSpace().host()), challenge.protectionSpace().port()));
     GtkWidget* label = createLabelWithLineWrap(prompt.get());
 #if USE(GTK4)
     gtk_box_append(GTK_BOX(authBox), label);
@@ -168,10 +168,10 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_box_pack_start(GTK_BOX(authBox), label, FALSE, FALSE, 0);
 #endif
 
-    String realm = challenge.protectionSpace().realm();
-    if (!realm.isEmpty()) {
+    RefPtr<StringImpl> realm = challenge.protectionSpace().realm();
+    if (!isEmpty(realm)) {
         // Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
-        GUniquePtr<char> message(SAFE_G_STRDUP_PRINTF(_("The site says: “%s”"), realm.utf8()));
+        GUniquePtr<char> message(SAFE_G_STRDUP_PRINTF(_("The site says: “%s”"), utf8(realm)));
         label = createLabelWithLineWrap(message.get());
 #if USE(GTK4)
         gtk_box_append(GTK_BOX(authBox), label);
@@ -228,12 +228,12 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
 #endif
 
     gtk_entry_set_visibility(GTK_ENTRY(priv->passwordEntry), FALSE);
-    gtk_widget_set_visible(priv->rememberCheckButton, priv->credentialStorageMode != DisallowPersistentStorage && !realm.isEmpty());
+    gtk_widget_set_visible(priv->rememberCheckButton, priv->credentialStorageMode != DisallowPersistentStorage && !isEmpty(realm));
 
     const auto& credentialFromPersistentStorage = webkitAuthenticationRequestGetProposedCredential(priv->request.get());
     if (!credentialFromPersistentStorage.isEmpty()) {
-        gtk_entry_set_text(GTK_ENTRY(priv->loginEntry), credentialFromPersistentStorage.user().utf8().legacyCStringPointer());
-        gtk_entry_set_text(GTK_ENTRY(priv->passwordEntry), credentialFromPersistentStorage.password().utf8().legacyCStringPointer());
+        gtk_entry_set_text(GTK_ENTRY(priv->loginEntry), utf8(credentialFromPersistentStorage.user()).legacyCStringPointer());
+        gtk_entry_set_text(GTK_ENTRY(priv->passwordEntry), utf8(credentialFromPersistentStorage.password()).legacyCStringPointer());
 
 #if USE(GTK4)
         gtk_check_button_set_active(GTK_CHECK_BUTTON(priv->rememberCheckButton), TRUE);

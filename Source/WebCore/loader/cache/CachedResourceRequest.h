@@ -50,14 +50,14 @@ bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const Resource
 
 class CachedResourceRequest {
 public:
-    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, std::optional<ResourceLoadPriority> = std::nullopt, String&& charset = String());
+    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, std::optional<ResourceLoadPriority> = std::nullopt, RefPtr<StringImpl>&& charset = nullptr);
 
     ResourceRequest&& releaseResourceRequest() { return WTF::move(m_resourceRequest); }
     const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
     ResourceRequest& resourceRequest() LIFETIME_BOUND { return m_resourceRequest; }
 
-    const String& charset() const LIFETIME_BOUND { return m_charset; }
-    void setCharset(const String& charset) { m_charset = charset; }
+    const RefPtr<StringImpl>& charset() const LIFETIME_BOUND { return m_charset; }
+    void setCharset(StringImpl* charset) { m_charset = charset; }
 
     const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
     void setOptions(const ResourceLoaderOptions& options) { m_options = options; }
@@ -68,8 +68,8 @@ public:
     RequestPriority fetchPriority() const { return m_options.fetchPriority; }
 
     void setInitiator(Element&);
-    void setInitiatorType(const AtomString&);
-    const AtomString& initiatorType() const;
+    void setInitiatorType(AtomStringImpl*);
+    const RefPtr<AtomStringImpl>& initiatorType() const;
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching || m_options.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch; }
     void setCachingPolicy(CachingPolicy policy) { m_options.cachingPolicy = policy;  }
@@ -105,13 +105,13 @@ public:
     const SecurityOrigin* origin() const { return m_origin.get(); }
     SecurityOrigin* origin() { return m_origin.get(); }
 
-    bool hasFragmentIdentifier() const { return !m_fragmentIdentifier.isEmpty(); }
-    const String& fragmentIdentifier() const LIFETIME_BOUND { return m_fragmentIdentifier; }
-    String&& releaseFragmentIdentifier() { return WTF::move(m_fragmentIdentifier); }
-    void clearFragmentIdentifier() { m_fragmentIdentifier = { }; }
+    bool hasFragmentIdentifier() const { return !isEmpty(m_fragmentIdentifier); }
+    const RefPtr<StringImpl>& fragmentIdentifier() const LIFETIME_BOUND { return m_fragmentIdentifier; }
+    RefPtr<StringImpl>&& releaseFragmentIdentifier() { return WTF::move(m_fragmentIdentifier); }
+    void clearFragmentIdentifier() { m_fragmentIdentifier = nullptr; }
 
-    static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
-    static String acceptHeaderValueFromType(CachedResource::Type, bool usingSecureProtocol);
+    static RefPtr<StringImpl> splitFragmentIdentifierFromRequestURL(ResourceRequest&);
+    static RefPtr<StringImpl> acceptHeaderValueFromType(CachedResource::Type, bool usingSecureProtocol);
 
     NODELETE void setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     NODELETE void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
@@ -119,13 +119,13 @@ public:
 
 private:
     ResourceRequest m_resourceRequest;
-    String m_charset;
+    RefPtr<StringImpl> m_charset;
     ResourceLoaderOptions m_options;
     std::optional<ResourceLoadPriority> m_priority;
     RefPtr<Element> m_initiatorElement;
-    AtomString m_initiatorType;
+    RefPtr<AtomStringImpl> m_initiatorType;
     RefPtr<SecurityOrigin> m_origin;
-    String m_fragmentIdentifier;
+    RefPtr<StringImpl> m_fragmentIdentifier;
     bool m_isLinkPreload { false };
     bool m_ignoreForRequestCount { false };
 };

@@ -1238,11 +1238,11 @@ class YarrPatternConstructor {
         UnresolvedForwardReference(PatternAlternative* alternative, unsigned termIndex)
             : m_alternative(alternative)
             , m_termIndex(termIndex)
-            , m_namedGroup(String())
+            , m_namedGroup(nullString())
         {
         }
 
-        UnresolvedForwardReference(PatternAlternative* alternative, unsigned termIndex, const String namedGroup)
+        UnresolvedForwardReference(PatternAlternative* alternative, unsigned termIndex, const RefPtr<StringImpl> namedGroup)
             : m_alternative(alternative)
             , m_termIndex(termIndex)
             , m_namedGroup(namedGroup)
@@ -1256,10 +1256,10 @@ class YarrPatternConstructor {
 
         NODELETE bool hasNamedGroup()
         {
-            return !m_namedGroup.isNull();
+            return !!m_namedGroup;
         }
 
-        NODELETE const String namedGroup()
+        NODELETE const RefPtr<StringImpl> namedGroup()
         {
             return m_namedGroup;
         }
@@ -1267,7 +1267,7 @@ class YarrPatternConstructor {
     private:
         PatternAlternative* m_alternative;
         unsigned m_termIndex;
-        const String m_namedGroup;
+        const RefPtr<StringImpl> m_namedGroup;
     };
 
 public:
@@ -1308,7 +1308,7 @@ public:
         m_flags = m_initialFlags;
     }
 
-    void addCaptureGroupForName(const String groupName, unsigned subpatternId)
+    void addCaptureGroupForName(const RefPtr<StringImpl> groupName, unsigned subpatternId)
     {
         ASSERT(subpatternId);
 
@@ -1318,7 +1318,7 @@ public:
         auto& thisGroupNameSubpatternIds = addResult.iterator->value;
         if (addResult.isNewEntry) {
             while (m_pattern.m_captureGroupNames.size() < subpatternId)
-                m_pattern.m_captureGroupNames.append(String());
+                m_pattern.m_captureGroupNames.append(nullString());
             m_pattern.m_captureGroupNames.append(groupName);
 
             thisGroupNameSubpatternIds.append(subpatternId);
@@ -1601,7 +1601,7 @@ public:
         m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
     }
 
-    void atomParenthesesSubpatternBegin(bool capture, std::optional<String> optGroupName = std::nullopt)
+    void atomParenthesesSubpatternBegin(bool capture, std::optional<RefPtr<StringImpl>> optGroupName = std::nullopt)
     {
         unsigned subpatternId = m_pattern.m_numSubpatterns + 1;
         if (capture) {
@@ -1749,7 +1749,7 @@ public:
         m_pattern.m_containsBackreferences = true;
     }
 
-    void atomNamedBackReference(const String& subpatternName)
+    void atomNamedBackReference(StringImpl* subpatternName)
     {
         ASSERT(m_pattern.m_namedGroupToParenIndices.find(subpatternName) != m_pattern.m_namedGroupToParenIndices.end());
         auto parenIndices = m_pattern.m_namedGroupToParenIndices.get(subpatternName);
@@ -1791,7 +1791,7 @@ public:
         m_forwardReferencesInLookbehind.append(UnresolvedForwardReference(m_alternative, m_alternative->lastTermIndex(), subpatternName));
     }
 
-    void atomNamedForwardReference(const String& subpatternName)
+    void atomNamedForwardReference(StringImpl* subpatternName)
     {
         m_alternative->m_terms.append(PatternTerm::NamedForwardReference(m_flags));
 
@@ -2692,7 +2692,7 @@ public:
 
         // Finish padding out m_captureGroupNames vector.
         while (m_pattern.m_captureGroupNames.size() <= m_pattern.m_numSubpatterns)
-            m_pattern.m_captureGroupNames.append(String());
+            m_pattern.m_captureGroupNames.append(nullString());
 
         for (auto& namedGroupIndicies : m_pattern.m_namedGroupToParenIndices.values()) {
             if (namedGroupIndicies.size() == 2) {
@@ -2790,8 +2790,8 @@ public:
                     return false;
                 builder.append(static_cast<char16_t>(term.patternCharacter));
             }
-            String atom = builder.toString();
-            if (atom.length() > 0) {
+            RefPtr<StringImpl> atom = builder.toString();
+            if (length(atom) > 0) {
                 m_pattern.m_atom = WTF::move(atom);
                 m_pattern.m_specificPattern = SpecificPattern::Atom;
                 return true;

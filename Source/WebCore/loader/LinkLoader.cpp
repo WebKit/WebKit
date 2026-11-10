@@ -121,13 +121,13 @@ void LinkLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
     m_cachedLinkResource = nullptr;
 }
 
-void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document& document, MediaAttributeCheck mediaAttributeCheck)
+void LinkLoader::loadLinksFromHeader(StringImpl* headerValue, const URL& baseURL, Document& document, MediaAttributeCheck mediaAttributeCheck)
 {
-    if (headerValue.isEmpty())
+    if (isEmpty(headerValue))
         return;
     LinkHeaderSet headerSet(headerValue);
     for (auto& header : headerSet) {
-        if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
+        if (!header.valid() || isEmpty(header.url()) || isEmpty(header.rel()))
             continue;
         if ((mediaAttributeCheck == MediaAttributeCheck::MediaAttributeNotEmpty && !header.isViewportDependent())
             || (mediaAttributeCheck == MediaAttributeCheck::MediaAttributeEmpty && header.isViewportDependent())) {
@@ -149,13 +149,13 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     }
 }
 
-void LinkLoader::loadCompressionDictionariesFromHeader(const String& headerValue, const URL& baseURL, Document& document)
+void LinkLoader::loadCompressionDictionariesFromHeader(StringImpl* headerValue, const URL& baseURL, Document& document)
 {
-    if (headerValue.isEmpty())
+    if (isEmpty(headerValue))
         return;
     LinkHeaderSet headerSet(headerValue);
     for (auto& header : headerSet) {
-        if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
+        if (!header.valid() || isEmpty(header.url()) || isEmpty(header.rel()))
             continue;
 
         LinkRelAttribute relAttribute(document, header.rel());
@@ -175,21 +175,21 @@ void LinkLoader::loadCompressionDictionariesFromHeader(const String& headerValue
     }
 }
 
-std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, Document& document, ShouldLog shouldLogError, IsModulePreload isModulePreload)
+std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(StringImpl* as, Document& document, ShouldLog shouldLogError, IsModulePreload isModulePreload)
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"_s))
         return CachedResource::Type::RawResource;
     // `as` is an enumerated attribute, so its keywords are matched ASCII case-insensitively.
-    auto destination = parseEnumerationFromString<FetchRequestDestination>(as.convertToASCIILowercase());
+    auto destination = parseEnumerationFromString<FetchRequestDestination>(convertToASCIILowercase(as));
     if (!destination) {
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_si);
         return std::nullopt;
     }
     switch (*destination) {
     case FetchRequestDestination::EmptyString:
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> cannot have the empty string as `as` value"_s);
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> cannot have the empty string as `as` value"_si);
         return std::nullopt;
     case FetchRequestDestination::Audio:
         if (document.settings().mediaPreloadingEnabled())
@@ -215,7 +215,7 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         if (isModulePreload == IsModulePreload::Yes)
             return CachedResource::Type::JSON;
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_s);
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_si);
         return std::nullopt;
     case FetchRequestDestination::Manifest:
         return std::nullopt;
@@ -241,7 +241,7 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         if (isModulePreload == IsModulePreload::Yes)
             return CachedResource::Type::Text;
         if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `text` as `as` value"_s);
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `text` as `as` value"_si);
         return std::nullopt;
     case FetchRequestDestination::Track:
 #if ENABLE(VIDEO)
@@ -306,9 +306,9 @@ static RefPtr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedR
     return nullptr;
 }
 
-bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String& mimeType, Document& document)
+bool LinkLoader::isSupportedType(CachedResource::Type resourceType, StringImpl* mimeType, Document& document)
 {
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return true;
     switch (resourceType) {
     case CachedResource::Type::ImageResource:
@@ -402,7 +402,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
         return nullptr;
 
     URL url;
-    if (type == CachedResource::Type::ImageResource && !params.imageSrcSet.isEmpty()) {
+    if (type == CachedResource::Type::ImageResource && !isEmpty(params.imageSrcSet)) {
         auto sourceSize = SizesAttributeParser(params.imageSizes, document).effectiveSize();
         auto candidate = bestFitSourceForImageAttributes(document.deviceScaleFactor(), params.href.string(), params.imageSrcSet, sourceSize);
         url = document.encodingParseURL(URL({ }, candidate.string.toString()).string());
@@ -411,11 +411,11 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
 
     if (!url.isValid()) {
         if (params.relAttribute.isLinkModulePreload)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=modulepreload> has an invalid `href` value"_s);
-        else if (params.imageSrcSet.isEmpty())
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `href` value"_s);
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=modulepreload> has an invalid `href` value"_si);
+        else if (isEmpty(params.imageSrcSet))
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `href` value"_si);
         else
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `imagesrcset` value"_s);
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `imagesrcset` value"_si);
         return nullptr;
     }
     auto queries = MQ::MediaQueryParser::parse(params.media, document.cssParserContext());
@@ -442,7 +442,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
         return createPotentialAccessControlRequest(WTF::move(url), WTF::move(options), document, params.crossOrigin);
     }();
     linkRequest.setPriority(DefaultResourceLoadPriority::forResourceType(type.value()));
-    linkRequest.setInitiatorType("link"_s);
+    linkRequest.setInitiatorType("link"_atom);
     linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();
 
@@ -531,7 +531,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::loadCompressionDictionaryIfNeeded(
 
     URL url = document.encodingParseURL(params.href.string());
     if (!url.isValid()) {
-        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "rel=compression-dictionary has an invalid URL"_s);
+        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "rel=compression-dictionary has an invalid URL"_si);
         return nullptr;
     }
 
@@ -542,10 +542,10 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::loadCompressionDictionaryIfNeeded(
     options.destination = FetchOptions::Destination::CompressionDictionary;
 
     // No CORS is coerced to Anonymous, so this is always a CORS fetch.
-    auto crossOrigin = params.crossOrigin.isNull() ? String { "anonymous"_s } : params.crossOrigin;
+    auto crossOrigin = !params.crossOrigin ? "anonymous"_si : params.crossOrigin;
     auto linkRequest = createPotentialAccessControlRequest(ResourceRequest { WTF::move(url) }, WTF::move(options), document, crossOrigin);
     linkRequest.setPriority(DefaultResourceLoadPriority::forResourceType(CachedResource::Type::RawResource));
-    linkRequest.setInitiatorType("link"_s);
+    linkRequest.setInitiatorType("link"_atom);
     linkRequest.setIgnoreForRequestCount(true);
 
     RefPtr<CachedResource> cachedLinkResource;

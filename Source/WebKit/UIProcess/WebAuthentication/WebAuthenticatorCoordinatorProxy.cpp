@@ -97,7 +97,7 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connectio
             handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }));
     }
 
-    handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, std::nullopt }, WTF::move(handler));
+    handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), nullString(), nullptr, mediation, std::nullopt }, WTF::move(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
@@ -143,7 +143,7 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection,
         }
     }
 
-    handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, parentOrigin }, WTF::move(handler));
+    handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), nullString(), nullptr, mediation, parentOrigin }, WTF::move(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -155,9 +155,9 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
     bool shouldRequestConditionalRegistration = std::holds_alternative<PublicKeyCredentialCreationOptions>(data.options) && data.mediation == MediationRequirement::Conditional;
 
-    String username;
+    RefPtr<StringImpl> username;
     SecurityOriginData callerOrigin;
-    String relyingPartyIdentifier;
+    RefPtr<StringImpl> relyingPartyIdentifier;
     if (shouldRequestConditionalRegistration) {
         const auto& options = std::get<PublicKeyCredentialCreationOptions>(data.options);
         username = options.user.name;
@@ -221,7 +221,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
     Ref authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
     if (shouldRequestConditionalRegistration && !authenticatorManager->isMock() && !authenticatorManager->isVirtual()) {
-        auto callDelegateWithOrigins = [weakThis = WeakPtr { *this }, username, afterConsent = WTF::move(afterConsent), origin = origin->securityOrigin()](Vector<String>&& origins) mutable {
+        auto callDelegateWithOrigins = [weakThis = WeakPtr { *this }, username, afterConsent = WTF::move(afterConsent), origin = origin->securityOrigin()](Vector<RefPtr<StringImpl>>&& origins) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return afterConsent(false);
@@ -237,7 +237,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             });
         };
 
-        if (relyingPartyIdentifier.isEmpty())
+        if (isEmpty(relyingPartyIdentifier))
             callDelegateWithOrigins({ });
         else {
             RefPtr webPageProxy = m_webPageProxy.get();
@@ -289,7 +289,7 @@ void WebAuthenticatorCoordinatorProxy::removeExpiredAutofillEvents()
     });
 }
 
-void WebAuthenticatorCoordinatorProxy::recordAutofill(const String& username, const URL& url)
+void WebAuthenticatorCoordinatorProxy::recordAutofill(StringImpl* username, const URL& url)
 {
     removeExpiredAutofillEvents();
     m_recentAutofills.append({
@@ -299,11 +299,11 @@ void WebAuthenticatorCoordinatorProxy::recordAutofill(const String& username, co
     });
 }
 
-bool WebAuthenticatorCoordinatorProxy::removeMatchingAutofillEventForUsername(const String& username, const WebCore::SecurityOriginData& securityOrigin)
+bool WebAuthenticatorCoordinatorProxy::removeMatchingAutofillEventForUsername(StringImpl* username, const WebCore::SecurityOriginData& securityOrigin)
 {
     removeExpiredAutofillEvents();
     bool value = m_recentAutofills.removeLastMatching([&] (const AutofillEvent& event) {
-        return event.username == username && RegistrableDomain { event.url } == RegistrableDomain { securityOrigin };
+        return equal(event.username, username) && RegistrableDomain { event.url } == RegistrableDomain { securityOrigin };
     });
     return value;
 }
