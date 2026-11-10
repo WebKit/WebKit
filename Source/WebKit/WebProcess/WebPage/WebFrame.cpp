@@ -103,6 +103,8 @@
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/HandleUserInputEventResult.h>
+#include <WebCore/HistoryController.h>
+#include <WebCore/HistoryItem.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageData.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
@@ -588,6 +590,28 @@ static bool shouldClearWindowNameOnReplacement(const WebCore::RemoteFrame& remot
 
     RefPtr document = localFrame.document();
     return !document || !protect(document->securityOrigin())->isSameOriginAs(protect(remoteFrame.frameDocumentSecurityOriginOrOpaque()));
+}
+
+NODELETE static void setBackForwardItemIdentifier(HistoryItem& item, BackForwardItemIdentifier itemID)
+{
+    item.setItemID(itemID);
+    for (auto& child : item.children())
+        setBackForwardItemIdentifier(child, itemID);
+}
+
+void WebFrame::didAddHistoryItemToBackForwardItem(BackForwardFrameItemIdentifier frameItemID, BackForwardItemIdentifier itemID)
+{
+    RefPtr localFrame = coreLocalFrame();
+    if (!localFrame)
+        return;
+
+    RefPtr currentItem = localFrame->loader().history().currentItem();
+    if (!currentItem || currentItem->frameItemID() != frameItemID)
+        return;
+
+    // The UI process looks up the items by the identifier of the back/forward item they belong to, so updates have to
+    // carry it.
+    setBackForwardItemIdentifier(*currentItem, itemID);
 }
 
 void WebFrame::commitProvisionalFrame()

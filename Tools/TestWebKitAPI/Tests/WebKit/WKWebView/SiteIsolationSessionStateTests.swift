@@ -108,4 +108,58 @@ struct SiteIsolationSessionStateTests {
             #expect(restoredAlert == "destination:typed")
         }
     }
+
+    @Test(.timeLimit(.minutes(1)))
+    func crossSiteIframeThatHasNotNavigatedFormStateSavedWhenViewIsHiddenIsRestoredFromSessionState() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/example") {
+                "<iframe src='https://webkit.org/iframe'></iframe>"
+            }
+
+            Route("/iframe", headerFields: ["Content-Type": "text/html"]) {
+                """
+                <input id='input'>
+                <script>alert('iframe:' + input.value)</script>
+                """
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (webView, _) = siteIsolatedWebViewAndDelegate(configuration: .init(httpsProxyFor: serverConfiguration))
+            webView.navigationDelegate = navigationDelegate
+            webView.uiDelegate = alerts
+            #if WTF_PLATFORM_MAC
+            webView._windowOcclusionDetectionEnabled = false
+            #endif
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/example"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let iframeAlert = try await alerts.nextAlert()
+            #expect(iframeAlert == "iframe:")
+
+            let childFrame = try #require(await webView.firstChildFrame)
+            let childVisibilityState = {
+                try await webView.callJavaScript(returning: String.self, in: childFrame) { "return document.visibilityState" }
+            }
+            try await waitForCondition("the iframe to finish loading") {
+                try await webView.callJavaScript(returning: String.self, in: childFrame) { "return document.readyState" } == "complete"
+            }
+            #expect(try await childVisibilityState() == "visible")
+            try await webView.callJavaScript(in: childFrame) { "input.value = 'typed'" }
+
+            webView.removeFromTestWindow()
+            try await waitForCondition("the iframe to be hidden") {
+                try await childVisibilityState() == "hidden"
+            }
+
+            let sessionState = try #require(webView._sessionState)
+            let (restoredWebView, _) = siteIsolatedWebViewAndDelegate(configuration: .init(httpsProxyFor: serverConfiguration))
+            restoredWebView.navigationDelegate = navigationDelegate
+            restoredWebView.uiDelegate = alerts
+            restoredWebView._restore(sessionState, andNavigate: true)
+
+            let restoredAlert = try await alerts.nextAlert()
+            #expect(restoredAlert == "iframe:typed")
+        }
+    }
 }

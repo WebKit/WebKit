@@ -151,6 +151,7 @@ public:
     void destroyProvisionalFrame();
     void stopLoadingDueToProcessSwap(WebCore::NavigationIdentifier);
     void updateSandboxFlags(WebCore::SandboxFlags);
+    void didAddHistoryItemToBackForwardItem(WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier);
     DidCacheOutgoingDocument loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>, std::optional<BackForwardItemIdentifiers>&& cacheIdentifiers);
     WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
 
