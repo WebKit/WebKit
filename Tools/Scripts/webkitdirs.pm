@@ -4190,10 +4190,32 @@ sub runMacWebKitApp($;$$)
         push(@openCommand, commandLineArgumentsForRestrictedEnvironmentVariables("--env"), "--args", argumentsForRunAndDebugMacWebKitApp());
         return system(@openCommand);
     }
+    my $result;
     if (architecture()) {
-        return system "arch", "-" . architecture(), commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
+        $result = system "arch", "-" . architecture(), commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
+    } else {
+        $result = system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
     }
-    return system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
+    reportMacWebKitAppLaunchFailure($appPath, $result);
+    return $result;
+}
+
+# A process killed by a signal right at launch (typically SIGKILL from AMFI rejecting the code signature)
+# produces no output at all, so explain what probably happened.
+sub reportMacWebKitAppLaunchFailure($$)
+{
+    my ($appPath, $status) = @_;
+    return unless $status > 0;
+
+    my $signal = $status & 127;
+    return unless $signal;
+
+    print STDERR "\n@{[basename($appPath)]} was terminated by signal $signal.\n";
+    if ($signal == 9) {
+        print STDERR "SIGKILL at launch usually means the system rejected the app's code signature, e.g. it is ad-hoc signed but has restricted entitlements.\n";
+        print STDERR "Check the reason with: log show --last 1m --predicate 'process == \"amfid\" OR process == \"kernel\"' | grep -i " . basename($appPath) . "\n";
+        print STDERR "and verify the signature with: codesign -dvv --entitlements - " . ($appPath =~ s#/Contents/MacOS/[^/]+$##r) . "\n";
+    }
 }
 
 sub runUnixWebKitApp($)
