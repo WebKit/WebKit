@@ -467,6 +467,13 @@ void PageClientImpl::setFullScreenClientForTesting(std::unique_ptr<WebFullScreen
 
 void PageClientImpl::closeFullScreenManager()
 {
+#if ENABLE(WPE_PLATFORM)
+    if (m_view.wpeView()) {
+        static_cast<WKWPE::ViewPlatform&>(m_view).closeFullScreen();
+        return;
+    }
+#endif
+
     notImplemented();
 }
 

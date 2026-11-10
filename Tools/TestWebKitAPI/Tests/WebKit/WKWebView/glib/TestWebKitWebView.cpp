@@ -971,6 +971,36 @@ static void testWebViewFullScreen(FullScreenClientTest* test, gconstpointer)
     test->leaveFullScreenAndWaitUntilLeftFullScreen();
     g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Leave);
 }
+
+static void testWebViewFullScreenWebProcessTerminated(FullScreenClientTest* test, gconstpointer)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (Test::s_useWPELegacyAPI) {
+        g_test_skip("Leaving fullscreen when the web process ends is not implemented for the legacy API");
+        return;
+    }
+#endif
+
+    test->showInWindow();
+    test->loadHtml("<html><body>FullScreen test</body></html>", nullptr);
+    test->waitUntilLoadFinished();
+    test->requestFullScreenAndWaitUntilEnteredFullScreen();
+    g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Enter);
+
+    // The view leaves fullscreen when the web process ends.
+    test->m_event = FullScreenClientTest::None;
+    test->m_expectedWebProcessCrash = true;
+    webkit_web_view_terminate_web_process(test->webView());
+    g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Leave);
+
+    // A page loaded in a new web process can go fullscreen again.
+    test->loadHtml("<html><body>FullScreen test</body></html>", nullptr);
+    test->waitUntilLoadFinished();
+    test->requestFullScreenAndWaitUntilEnteredFullScreen();
+    g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Enter);
+    test->leaveFullScreenAndWaitUntilLeftFullScreen();
+    g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Leave);
+}
 #endif
 
 static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
@@ -2781,6 +2811,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "run-async-js-functions", testWebViewRunAsyncFunctions);
 #if ENABLE(FULLSCREEN_API)
     FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
+    FullScreenClientTest::add("WebKitWebView", "fullscreen-web-process-terminated", testWebViewFullScreenWebProcessTerminated);
 #endif
     WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
     // FIXME: implement mouse clicks in WPE.

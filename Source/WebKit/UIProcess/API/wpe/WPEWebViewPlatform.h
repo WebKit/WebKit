@@ -57,6 +57,7 @@ public:
     void exitFullScreen();
     void didExitFullScreen();
     void requestExitFullScreen();
+    void closeFullScreen();
 #endif
 
 #if ENABLE(GAMEPAD)

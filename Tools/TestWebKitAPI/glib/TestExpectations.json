@@ -72,6 +72,9 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"}}
+            },
+            "/webkit/WebKitWebView/fullscreen-web-process-terminated": {
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"}}
             }
         }
     },

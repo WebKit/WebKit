@@ -218,6 +218,20 @@ void ViewPlatform::requestExitFullScreen()
     if (auto* fullScreenManagerProxy = page().fullScreenManager())
         fullScreenManagerProxy->requestExitFullScreen();
 }
+
+void ViewPlatform::closeFullScreen()
+{
+    auto previousState = std::exchange(m_fullscreenState, WebFullScreenManagerProxy::FullscreenState::NotInFullscreen);
+    if (previousState != WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen && previousState != WebFullScreenManagerProxy::FullscreenState::InFullscreen)
+        return;
+
+    if (m_client->exitFullScreen(*this))
+        return;
+
+    auto* toplevel = wpe_view_get_toplevel(m_wpeView.get());
+    if (viewToplevelIsFullScreen(toplevel) && !m_viewWasAlreadyInFullScreen)
+        wpe_toplevel_unfullscreen(toplevel);
+}
 #endif // ENABLE(FULLSCREEN_API)
 
 #if ENABLE(GAMEPAD)
