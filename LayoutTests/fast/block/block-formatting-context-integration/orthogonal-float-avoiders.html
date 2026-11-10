@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 240px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.vertical { writing-mode: vertical-rl; background: lightblue; }
+.vertical-lr { writing-mode: vertical-lr; background: lightgreen; }
+</style>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 60px">vertical text beside the float</div></div>
+<div class="root"><div class="left"></div><div class="right"></div><div class="vertical-lr" style="height: 50px">vertical-lr between floats</div></div>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 40px; margin-left: 10px">vertical with a margin</div></div>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 20px">too wide vertical text that becomes many columns wide here</div></div>
+<div class="root"><div class="right"></div><div class="vertical" style="height: 40px; margin: 0 auto">auto margins</div></div>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 40px; margin: 0 auto">auto margins beside left</div></div>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 40px; margin-left: auto">auto start</div></div>
+<div class="root" style="direction: rtl"><div class="right"></div><div class="vertical" style="height: 40px">rtl container</div></div>
+<div class="root"><div class="left"></div><div class="vertical">auto height vertical</div></div>
+<div class="root" style="height: 100px"><div class="left"></div><div class="vertical" style="height: 50%">percent height</div></div>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 40px; width: 30px; overflow: hidden">fixed width</div></div>
+<div class="root"><div class="left"></div><div class="vertical" style="height: 40px; margin-left: -10px">negative margin</div></div>
+<div class="root vertical" style="height: 200px; width: auto"><div class="left"></div><div style="writing-mode: horizontal-tb; width: 80px; background: lightblue">horizontal in vertical root beside float</div></div>
