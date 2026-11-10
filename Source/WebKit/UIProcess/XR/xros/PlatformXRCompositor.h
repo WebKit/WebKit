@@ -87,6 +87,7 @@ private:
     void cleanUpVisibilityPropagationViewsIfNeeded();
 #endif
 #if ENABLE(WEBXR_LAYERS)
+    // FIXME: Release the compositor resources of destroyed layers (webkit.org/b/330091).
     void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, PlatformXRCoordinator::CreateCompositionLayerCallback&&) override { }
 #endif
 

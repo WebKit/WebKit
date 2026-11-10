@@ -81,7 +81,8 @@ public:
     PlatformXR::LayerHandle layerHandle() const final;
     WebXRSession* session() const;
 
-    void destroy() { }
+    bool isDestroyed() const final { return m_destroyed; }
+    void destroy();
 
     const Vector<RefPtr<WebGLOpaqueTexture>>& colorTextures() const { return m_colorTextures; }
     void setColorTextures(Vector<RefPtr<WebGLOpaqueTexture>>&&);
@@ -117,9 +118,11 @@ private:
     bool isXRCompositionLayer() const final { return true; }
 
     void recomputePose();
+    void destroyResources();
 
     WeakPtr<WebXRSession> m_session;
 
+    bool m_destroyed { false };
     bool m_isStatic { false };
     bool m_needsRedraw { true };
     XRLayerLayout m_layout { XRLayerLayout::Stereo };

@@ -76,6 +76,14 @@ public:
         Client,
         State
     };
+    enum class ImmersiveSessionState : uint8_t {
+        Idle,
+        RequestingPermissions,
+        PermissionsGranted,
+        SessionRunning,
+        SessionEndingFromWebContent,
+        SessionEndingFromSystem,
+    };
     void invalidate(InvalidationReason invalidateReason = InvalidationReason::State);
 
     bool hasActiveSession() const;
@@ -106,6 +114,7 @@ private:
 #endif
 #if ENABLE(WEBXR_LAYERS)
     void NODELETE createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
+    void deleteLayer(IPC::Connection&, PlatformXR::LayerHandle);
 #endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(Expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&&);
@@ -123,14 +132,6 @@ private:
     std::optional<PlatformXR::SessionMode> m_immersiveSessionMode;
     std::optional<WebCore::SecurityOriginData> m_immersiveSessionSecurityOriginData;
     std::optional<PlatformXR::Device::FeatureList> m_immersiveSessionGrantedFeatures;
-    enum class ImmersiveSessionState : uint8_t {
-        Idle,
-        RequestingPermissions,
-        PermissionsGranted,
-        SessionRunning,
-        SessionEndingFromWebContent,
-        SessionEndingFromSystem,
-    };
     ImmersiveSessionState m_immersiveSessionState { ImmersiveSessionState::Idle };
     void setImmersiveSessionState(ImmersiveSessionState, CompletionHandler<void(bool)>&&);
     void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);

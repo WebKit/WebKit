@@ -711,6 +711,9 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getSubImage(XRCompositionLayer
 {
     return WTF::switchOn(layer.init(),
         [&](const XRLayerInit& init) -> ExceptionOr<Ref<XRWebGLSubImage>> {
+            if (layer.isDestroyed())
+                return Exception { ExceptionCode::InvalidStateError, "Cannot get a subimage from a destroyed layer."_s };
+
             // FIXME: check that the layer is in the session layers list.
 
             if (layer.isXRProjectionLayer())
@@ -779,6 +782,9 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getSubImage(XRCompositionLayer
 
 ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getViewSubImage(XRProjectionLayer& layer, const WebXRView& view)
 {
+    if (layer.isDestroyed())
+        return Exception { ExceptionCode::InvalidStateError, "Cannot get a subimage from a destroyed layer."_s };
+
     XRTextureType textureType;
     GCGLenum colorFormat;
     GCGLenum depthFormat;

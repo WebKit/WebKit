@@ -129,6 +129,11 @@ std::optional<PlatformXR::LayerInfo> PlatformXRSystemProxy::createCompositionLay
     auto [layerInfo] = result.takeReply();
     return layerInfo;
 }
+
+void PlatformXRSystemProxy::deleteLayer(PlatformXR::LayerHandle handle)
+{
+    protect(m_page)->send(Messages::PlatformXRSystem::DeleteLayer(handle));
+}
 #endif
 
 #if USE(OPENXR)

@@ -49,6 +49,17 @@ class OpenXRSwapchain;
 class OpenXRCoordinator final : public PlatformXRCoordinator {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRCoordinator);
     struct RenderState;
+
+    struct Idle {
+    };
+    struct Active {
+        WeakPtr<PlatformXRCoordinatorSessionEventClient> sessionEventClient;
+        WebCore::PageIdentifier pageIdentifier;
+        Box<RenderState> renderState;
+        RefPtr<WorkQueue> renderQueue;
+        bool didStart { false };
+    };
+    enum class PollResult : bool;
 public:
     OpenXRCoordinator();
     virtual ~OpenXRCoordinator();
@@ -60,6 +71,7 @@ public:
 
 #if ENABLE(WEBXR_LAYERS)
     void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CreateCompositionLayerCallback&&) override;
+    void deleteLayer(WebPageProxy&, PlatformXR::LayerHandle) override;
 #endif
 
     void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) override;
@@ -82,16 +94,6 @@ private:
     void initializeSystem();
     void initializeBlendModes();
     void collectViewConfigurations();
-
-    struct Idle {
-    };
-    struct Active {
-        WeakPtr<PlatformXRCoordinatorSessionEventClient> sessionEventClient;
-        WebCore::PageIdentifier pageIdentifier;
-        Box<RenderState> renderState;
-        RefPtr<WorkQueue> renderQueue;
-        bool didStart { false };
-    };
     using State = Variant<Idle, Active>;
 
     void createSessionIfNeeded();
@@ -100,7 +102,6 @@ private:
     void cleanupInstanceAndAssociatedResources();
     void cleanupSessionAndAssociatedResources();
     bool collectSwapchainFormatsIfNeeded();
-    enum class PollResult : bool;
     PollResult pollEvents();
     std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount = 1) const;
     void createReferenceSpacesIfNeeded(Box<RenderState>);

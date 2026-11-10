@@ -57,6 +57,11 @@ OpenXRGraphicsBinding::ExportDescriptor OpenXRLayer::exportDescriptor() const
     return { .type = OpenXRGraphicsBinding::TextureType::Texture2D, .width = static_cast<uint32_t>(m_swapchain->width()), .height = static_cast<uint32_t>(m_swapchain->height()) };
 }
 
+void OpenXRLayer::releaseExportedTextures(OpenXRGraphicsBinding& graphicsBinding)
+{
+    m_swapchain->releaseExportedTextures(graphicsBinding);
+}
+
 // OpenXRLayerProjection
 
 std::unique_ptr<OpenXRLayerProjection> OpenXRLayerProjection::create(std::unique_ptr<OpenXRSwapchain>&& swapchain)

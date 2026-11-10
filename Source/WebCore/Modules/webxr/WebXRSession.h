@@ -58,6 +58,7 @@ class XRFrameRequestCallback;
 class WebCoreOpaqueRoot;
 class WebXRView;
 class WebXRReferenceSpace;
+class XRCompositionLayer;
 struct XRCanvasConfiguration;
 struct XRRenderStateInit;
 
@@ -86,6 +87,8 @@ public:
     XRVisibilityState visibilityState() const;
     const WebXRRenderState& NODELETE renderState() const;
     const WebXRInputSourceArray& inputSources() const LIFETIME_BOUND { return m_inputSources; }
+    const PlatformXR::FrameData& frameData() const LIFETIME_BOUND { return m_frameData; }
+    const WebXRReferenceSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
     RefPtr<PlatformXR::Device> device() const { return m_device; }
 
     const Vector<String> enabledFeatures() const;
@@ -121,9 +124,16 @@ public:
     struct View : PlatformXR::Device::ViewData {
         Ref<UnderlyingView> underlyingView;
     };
+
     const Vector<View>& views() const LIFETIME_BOUND { return m_views; }
-    const PlatformXR::FrameData& frameData() const LIFETIME_BOUND { return m_frameData; }
-    const WebXRReferenceSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
+
+    struct InitialRenderingDimensions {
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        uint32_t arrayLength { 0 };
+    };
+
+    enum class InitiatedBySystem : bool { No, Yes };
     bool posesCanBeReported(const Document&) const;
 
 #if ENABLE(WEBXR_HANDS)
@@ -141,15 +151,10 @@ public:
 
 #if ENABLE(WEBXR_LAYERS)
     unsigned maxRenderLayers() const;
+    void layerDestroyed(const XRCompositionLayer&);
 #endif
 
     void initializeTrackingAndRendering(std::optional<XRCanvasConfiguration>&&);
-
-    struct InitialRenderingDimensions {
-        uint32_t width { 0 };
-        uint32_t height { 0 };
-        uint32_t arrayLength { 0 };
-    };
     std::optional<InitialRenderingDimensions> initialRenderingDimensions() const { return m_initialRenderingDimensions; }
 
 private:
@@ -171,8 +176,6 @@ private:
 
     // VisibilityChangeClient
     void visibilityStateChanged() final;
-
-    enum class InitiatedBySystem : bool { No, Yes };
     void shutdown(InitiatedBySystem);
     void didCompleteShutdown();
 

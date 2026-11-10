@@ -156,6 +156,16 @@ std::optional<PlatformXR::LayerInfo> XRDeviceProxy::createCompositionLayer(Platf
 }
 #endif
 
+void XRDeviceProxy::deleteLayer(PlatformXR::LayerHandle handle)
+{
+#if ENABLE(WEBXR_LAYERS)
+    if (RefPtr xrSystem = m_xrSystem)
+        xrSystem->deleteLayer(handle);
+#else
+    UNUSED_PARAM(handle);
+#endif
+}
+
 void XRDeviceProxy::submitFrame(Vector<PlatformXR::DeviceLayer>&& layers)
 {
     if (RefPtr xrSystem = m_xrSystem.get()) {

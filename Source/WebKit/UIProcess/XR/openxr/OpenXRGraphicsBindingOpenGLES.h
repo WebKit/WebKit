@@ -77,6 +77,7 @@ public:
     std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture(uint64_t image, const OpenXRSwapchain&, const ExportDescriptor&) final;
     void commitFrame(uint64_t keyImage, const OpenXRSwapchain&, TextureType, const Vector<uint64_t>& images) final;
     void waitFrameFence(WTF::UnixFileDescriptor&&) final;
+    void releaseExportedTextures(uint64_t image) final;
     void releaseSessionGraphics() final;
 
 private:
@@ -110,8 +111,8 @@ private:
 #endif
 #if USE(GBM) || OS(ANDROID)
     // Exported texture per swapchain image (exported once, then reused). Shared across the session's
-    // swapchains, which assumes images live until session end (layers are add-only); if per-layer
-    // removal is added, evict here or a recycled GL name would alias a stale texture.
+    // swapchains, so entries are evicted by releaseExportedTextures() when a layer is deleted, or a
+    // recycled GL name would alias a stale texture.
     HashMap<PlatformGLObject, PlatformGLObject> m_exportedTexturesMap;
     std::array<PlatformGLObject, 2> m_fbosForBlitting { 0, 0 };
 #endif
