@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 150px; border: 1px solid; margin: 0 2px 4px 0; }
+.r { display: block; background: lightblue; }
+</style>
+<div class="root"><canvas class="r" id="canvas" width="40" height="20" style="width: fit-content; background: green"></canvas>after</div>
+<div class="root" id="root"><img class="r" style="width: max-content; max-width: 100%" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='40'><rect width='200' height='40' fill='green'/></svg>"></div>
+<div class="root"><canvas class="r" id="keyword" width="40" height="20" style="width: 100px; margin: 0 auto; background: green"></canvas></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("canvas").width = 90;
+document.getElementById("root").style.width = "100px";
+document.getElementById("keyword").style.width = "min-content";
+</script>

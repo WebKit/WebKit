@@ -564,11 +564,11 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     // keywords with its intrinsic sizes. A calc-size() goes with its basis. The box's own formatting context decides the inline size from a
     // preferred aspect ratio, a replaced element's natural one included (CSS 2.2 §10.3.4, css-sizing-4 §5.1). It resolves a stretch block size against the block size of the containing block the block formatting
     // context gives it (RenderBox::isBlockSizeResolvableForStretch).
-    // FIXME: The other sizing keywords, the keywords of a replaced element, and the -webkit-fill-available block sizes, which read the
-    // containing block's renderer.
+    // FIXME: The other sizing keywords, stretch for a replaced element, whose stretch-fit size beside floats is the space they leave, and the
+    // -webkit-fill-available block sizes, which read the containing block's renderer.
     auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
     auto isSupportedInlineSize = [&](auto& size) {
-        return size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced);
+        return size.isSpecified() || size.isIntrinsic() || (size.isIntrinsicOrStretch() && !isReplaced);
     };
     auto isFillAvailable = [](auto& size) {
         return size.isFillAvailable();
