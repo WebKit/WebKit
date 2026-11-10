@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<style>
+.grid {
+  inline-size: 300px;
+  block-size: 300px;
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 100%;
+}
+
+.viewport {
+  overflow: auto;
+  display: grid;
+  grid-template-rows: 100%;
+}
+
+.viewport::-webkit-scrollbar {
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+.viewport::-webkit-scrollbar-track {
+  background-color: gray;
+}
+
+.viewport::-webkit-scrollbar-thumb {
+  background-color: black;
+}
+
+.content {
+  background-color: green;
+  inline-size: 500px;
+}
+</style>
+
+<p>Test PASS if you see 290x500 content that is NOT vertically scrollable</p>
+
+<div class="grid">
+  <div class="viewport">
+    <div class="content"></div>
+  </div>
+</div>
