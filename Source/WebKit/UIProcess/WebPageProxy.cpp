@@ -6588,8 +6588,11 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     auto enhancedSecurity = securityRestrictionsSourceFrame ? securityRestrictionsSourceFrame->process().enhancedSecurity() : currentEnhancedSecurityState(websitePolicies.get());
 
-    if (RefPtr process = browsingContextGroup->processForSite(Site { navigation.currentRequest().url() }))
-        enhancedSecurity = process->process().enhancedSecurity();
+    bool enhancedSecurityExplicitlySet = websitePolicies && websitePolicies->isEnhancedSecurityExplicitlySet();
+    if (!enhancedSecurityExplicitlySet) {
+        if (RefPtr process = browsingContextGroup->processForSite(Site { navigation.currentRequest().url() }))
+            enhancedSecurity = process->process().enhancedSecurity();
+    }
 
     if (preferences->enhancedSecurityForceDisabled())
         enhancedSecurity = EnhancedSecurity::Disabled;
@@ -16867,10 +16870,9 @@ void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandle
 
 void WebPageProxy::isEnhancedSecurityEnabled(CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (protect(legacyMainFrameProcess())->isDummyProcessProxy())
+    if (!m_mainFrame)
         return completionHandler(false);
-
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebProcess::IsEnhancedSecurityEnabled(), WTF::move(completionHandler), 0);
+    protect(m_mainFrame->process())->sendWithAsyncReply(Messages::WebProcess::IsEnhancedSecurityEnabled(), WTF::move(completionHandler), 0);
 }
 
 #if !PLATFORM(COCOA)
