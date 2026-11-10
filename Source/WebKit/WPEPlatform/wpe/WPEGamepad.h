@@ -119,6 +119,9 @@ WPE_API void        wpe_gamepad_stop_input_monitor  (WPEGamepad      *gamepad);
 WPE_API void        wpe_gamepad_button_event        (WPEGamepad      *gamepad,
                                                      WPEGamepadButton button,
                                                      gboolean         is_pressed);
+WPE_API void        wpe_gamepad_analog_button_event (WPEGamepad      *gamepad,
+                                                     WPEGamepadButton button,
+                                                     gdouble          value);
 WPE_API void        wpe_gamepad_axis_event          (WPEGamepad      *gamepad,
                                                      WPEGamepadAxis   axis,
                                                      gdouble          value);

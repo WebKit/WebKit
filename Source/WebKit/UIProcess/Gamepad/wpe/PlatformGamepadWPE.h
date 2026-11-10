@@ -49,7 +49,7 @@ private:
     void playEffect(WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(CompletionHandler<void()>&&) final;
 
-    void buttonEvent(size_t button, bool isPressed);
+    void buttonEvent(size_t button, double value);
     void axisEvent(size_t axis, double value);
 
     void effectDelayTimerFired();

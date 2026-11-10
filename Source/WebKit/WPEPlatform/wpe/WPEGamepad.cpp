@@ -62,6 +62,7 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 enum {
     BUTTON_EVENT,
     AXIS_EVENT,
+    ANALOG_BUTTON_EVENT,
 
     LAST_SIGNAL
 };
@@ -120,7 +121,9 @@ static void wpe_gamepad_class_init(WPEGamepadClass* gamepadClass)
      * @button: a #WPEGamepadButton
      * @is_pressed: whether @button is pressed or not
      *
-     * Emitted when a button is pressed or released.
+     * Emitted when a digital button is pressed or released.
+     * This signal is only emitted for digital buttons, and is not emitted for analog buttons.
+     * For analog buttons, the #WPEGamepad::analog-button-event signal is emitted instead.
      */
     signals[BUTTON_EVENT] = g_signal_new(
         "button-event",
@@ -148,6 +151,29 @@ static void wpe_gamepad_class_init(WPEGamepadClass* gamepadClass)
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 2,
         WPE_TYPE_GAMEPAD_AXIS,
+        G_TYPE_DOUBLE);
+
+    /**
+     * WPEGamepad::analog-button-event:
+     * @gamepad: a #WPEGamepad
+     * @button: a #WPEGamepadButton
+     * @value: the value of @button (0.0-1.0)
+     *
+     * Emitted when an analog button value changes.
+     * This signal is only emitted for analog buttons, and is not emitted for digital buttons.
+     * The value of @button is normalized to the range 0.0-1.0, where 0.0 is not pressed and 1.0 is fully pressed.
+     * For digital buttons, the #WPEGamepad::button-event signal is emitted instead.
+     *
+     * Since: 2.56
+     */
+    signals[ANALOG_BUTTON_EVENT] = g_signal_new(
+        "analog-button-event",
+        G_TYPE_FROM_CLASS(gamepadClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        WPE_TYPE_GAMEPAD_BUTTON,
         G_TYPE_DOUBLE);
 }
 
@@ -237,6 +263,24 @@ void wpe_gamepad_axis_event(WPEGamepad* gamepad, WPEGamepadAxis axis, gdouble va
     g_return_if_fail(value >= -1. && value <= 1.);
 
     g_signal_emit(gamepad, signals[AXIS_EVENT], 0, axis, value);
+}
+
+/**
+ * wpe_gamepad_analog_button_event:
+ * @gamepad: a #WPEGamepad
+ * @button: a #WPEGamepadButton
+ * @value: the value of @button (0.0 - 1.0)
+ *
+ * Emit the signal #WPEGamepad::analog-button-event
+ *
+ * Since: 2.56
+ */
+void wpe_gamepad_analog_button_event(WPEGamepad* gamepad, WPEGamepadButton button, gdouble value)
+{
+    g_return_if_fail(WPE_IS_GAMEPAD(gamepad));
+    g_return_if_fail(value >= 0. && value <= 1.);
+
+    g_signal_emit(gamepad, signals[ANALOG_BUTTON_EVENT], 0, button, value);
 }
 
 /**
