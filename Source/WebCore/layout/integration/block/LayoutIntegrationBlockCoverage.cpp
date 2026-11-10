@@ -597,12 +597,12 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 
 // A box that avoids floats (RenderBox::avoidsFloats), which the block formatting context places beside the floats before it or below them
 // (BlockFormattingContext::placeBesideFloats).
-// FIXME: One beside floats with a shape, which the inline formatting context avoids by their margin box, with margin-trim, which discard
-// margins that clearance separates, a fieldset or a box with a block step, whose margins collapse once laid out, justify-self, the -webkit-
-// values of text-align, and a form control the block formatting context lays out as a block container, like a checkbox with display: block.
-static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
+// FIXME: One with margin-trim, which discards margins that clearance separates, a fieldset or a box with a block step, whose margins collapse
+// once laid out, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
+// container, like a checkbox with display: block.
+static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
 {
-    if (hasFloatsWithShape || box.isFieldset() || !box.style().blockStepSize().isNone())
+    if (box.isFieldset() || !box.style().blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasFloat;
     if (!isLaidOutThroughRenderTree && !Layout::BlockFormattingUtils::establishesIndependentFormattingContext(box))
         return BlockAvoidanceReason::ContentHasFloat;
@@ -630,7 +630,7 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
 }
 
 // What a float before a box in the block formatting context makes it need.
-static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree, bool hasFloatsWithShape)
+static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
     if (!box || box->isInline() || box->isFloating())
@@ -649,7 +649,7 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
     }
     // Form controls avoid floats too (RenderBox::avoidsFloats).
     if (isLaidOutThroughRenderTree || box->avoidsFloats()) {
-        if (auto reason = floatAvoiderAvoidanceReason(*box, rootContainer, hasFloatsWithShape, isLaidOutThroughRenderTree))
+        if (auto reason = floatAvoiderAvoidanceReason(*box, rootContainer, isLaidOutThroughRenderTree))
             return reason;
     }
     return { };
@@ -767,7 +767,6 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
     // out-of-flow box laid out by a containing block outside the root, of a float, or of a box laid out through the render tree, is not part
     // of it.
     auto hasFloats = false;
-    auto hasFloatsWithShape = false;
     for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
         // Its parent lays out a box excluded from normal layout, like a text control's placeholder (RenderBlock::layoutExcludedChildren).
@@ -778,13 +777,12 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
         auto laidOutThroughRenderTree = renderer && isLaidOutThroughRenderTree(*renderer);
         if (renderer) {
             if (hasFloats) {
-                if (auto reason = afterFloatAvoidanceReason(*renderer, rootContainer, laidOutThroughRenderTree, hasFloatsWithShape))
+                if (auto reason = afterFloatAvoidanceReason(*renderer, rootContainer, laidOutThroughRenderTree))
                     return reason;
             }
             if (auto reason = laidOutThroughRenderTree ? independentFormattingContextAvoidanceReason(downcast<RenderBox>(*renderer), rootContainer) : contentAvoidanceReason(*renderer, rootContainer))
                 return reason;
             hasFloats |= renderer->isFloating();
-            hasFloatsWithShape |= renderer->isFloating() && !renderer->style().shapeOutside().isNone();
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
         // The content of an atomic inline-level box or of an out-of-flow leaf container is not part of it either.
