@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { line-clamp: 2; width: 180px; border: 1px solid; margin: 2px; float: left; }
+.auto { line-clamp: auto; max-height: 36px; }
+p { margin: 3px 0; background: lightblue; }
+.box { height: 10px; background: green; }
+</style>
+<div class="clamp"><p>first</p><p>second</p><p>after the clamp point</p></div>
+<div class="clamp"><div><p>one</p><div><p>two</p><p>three</p></div></div><p>four</p></div>
+<div class="clamp">inline content only that wraps onto more lines than the clamp lets through</div>
+<div class="clamp"><p>one</p><div class="box"></div><p>two lines of text that wrap here</p><p>hidden</p></div>
+<div class="clamp" style="line-clamp: 3"><p>fits</p><p>within</p></div>
+<div class="clamp"><p style="margin-bottom: 10px">one</p><p>two</p><div style="display: flow-root">flow-root</div><div style="display: flex">flex</div></div>
+<div class="clamp" style="position: relative"><p>one</p><p>two</p><div style="position: relative"><div style="position: absolute; top: 0">in an invisible box</div></div><div style="position: absolute; left: 100px">static</div></div>
+<div class="clamp" style="line-clamp: 3">before <span>inline <div>block in inline</div> after</span> tail<br>hidden</div>
+<div class="clamp" style="line-clamp: 4">l1<br>l2 <span><div>b1<br>b2</div></span> l5</div>
+<div class="clamp auto"><p>one</p><p>two</p><p>three</p><p>four</p></div>
+<div class="clamp auto">inline content only that wraps onto more lines than the block size lets through</div>
+<div class="clamp auto"><p>one</p><div class="box"></div><div class="box" style="background: blue"></div><p>after</p></div>
+<div class="clamp auto" style="text-wrap: balance"><p>some balanced text that wraps onto lines</p><p>more</p></div>
+<div style="clear: both">before <div class="clamp" style="display: inline-block; float: none">inline-block<br>line-clamp<br>container</div> after</div>

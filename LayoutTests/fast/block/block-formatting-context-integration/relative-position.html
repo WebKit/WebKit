@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.box { background: rgba(0, 128, 0, 0.5); margin: 10px 5%; padding: 4px; }
+.abs { position: absolute; right: 0; bottom: 0; width: 20px; height: 10px; background: blue; }
+.fixed { position: fixed; width: 20px; height: 10px; background: blue; }
+</style>
+<div class="root" id="root">
+  <div class="box" style="position: relative; left: 20px; top: 5px">relative</div>
+  <div class="box" style="position: relative; left: 10%; top: -8px">percentage and negative offsets</div>
+  <div style="position: relative; top: 10px; margin-top: 30px"><div class="box" style="margin-top: 20px; position: relative; right: 15px">nested, margins collapse</div></div>
+  <div style="display: flow-root; position: relative; left: 30px"><div class="box">flow-root</div></div>
+  <div style="height: 50px; position: relative"><div class="box" style="position: relative; top: 20%">percentage of a definite height</div></div>
+  <div class="box" style="position: relative; top: 15px"><div>containing block of an absolutely positioned box</div><div class="abs"></div></div>
+  <div class="box">after</div>
+</div>
+<div class="root" style="transform: translateX(0)">
+  <div class="box" style="position: relative; left: 20px; top: 10px"><div>static position of a fixed positioned box</div><div class="fixed"></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.body.offsetHeight;
+</script>

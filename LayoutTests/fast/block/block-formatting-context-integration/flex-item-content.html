@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.flex { display: flex; width: 400px; background: lightgray; margin-bottom: 10px; }
+.flex > div { background: rgba(0, 0, 255, 0.2); }
+.flex > div > div { background: rgba(0, 128, 0, 0.3); }
+</style>
+<div class="flex" id="resized">
+  <div style="flex: 1; padding: 5px"><div style="margin: 10px 0">margins stay inside</div><div style="margin-top: 20px; padding: 0 10%">percentage padding</div></div>
+  <div style="width: 30%; margin: 8px"><div>stretched</div><div style="height: 40px"></div></div>
+  <div style="align-self: flex-start"><div style="margin-bottom: 15px">not stretched</div></div>
+</div>
+<div class="flex" style="flex-direction: column; height: 200px">
+  <div style="flex: 1"><div style="height: 30px"></div><div style="margin: 10px 20px">flexed</div></div>
+  <div style="flex: 2; min-height: 0"><div style="max-height: 20px; height: 100px"></div><div style="display: flow-root"><div style="margin: 5px">flow-root</div></div></div>
+</div>
+<div class="flex" style="flex-wrap: wrap">
+  <div style="width: 250px"><div>first line</div></div>
+  <div style="width: 250px"><div style="margin: 10px 0">second line</div><div style="display: flex"><span>nested flex</span></div></div>
+</div>
+<div class="flex" style="display: -webkit-box">
+  <div style="-webkit-box-flex: 1"><div style="margin: 10px 0">-webkit-box item</div></div>
+  <div style="width: 100px; padding: 5px"><div style="height: 30px"></div><div style="margin-top: 5px">fixed width</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "300px";
+document.body.offsetHeight;
+</script>

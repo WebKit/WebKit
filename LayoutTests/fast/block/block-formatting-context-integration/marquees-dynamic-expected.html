@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+marquee { width: 300px; border: 1px solid; margin: 2px; display: block; }
+.b { background: lightblue; }
+</style>
+<marquee scrollamount="0"><div class="b" id="text">text</div><div class="b" id="width">width</div></marquee>
+<marquee scrollamount="0" id="direction"><div class="b">direction</div></marquee>
+<marquee scrollamount="0" id="resized"><div class="b">resized marquee</div></marquee>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer text in the block child";
+document.getElementById("width").style.width = "60px";
+document.getElementById("direction").direction = "up";
+document.getElementById("resized").style.width = "150px";
+</script>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; height: 140px; background: lightgray; margin-bottom: 5px; font-family: monospace; font-size: 10px; line-height: 12px; }
+.oof { position: absolute; overflow: hidden; background: rgba(0, 128, 0, 0.5); }
+.tall { width: 30px; height: 200px; background: blue; }
+</style>
+<div class="root">
+  <div class="oof" style="top: 5px; left: 5px; width: 80px; height: 40px">clipped text that is longer than the box is tall<div class="tall"></div></div>
+  <div class="oof" style="top: 5px; left: 100px">fit-content<div style="margin: 5px 0 10px; height: 10px; background: blue"></div></div>
+  <div class="oof" style="top: 60px; left: 5px; right: 150px; bottom: 5px; padding: 3px; border: 2px solid black">stretched by its insets<div class="tall"></div></div>
+  <div class="oof" style="overflow: clip; top: 60px; left: 170px; width: 60px; height: 40px">clip<div class="tall"></div></div>
+  <div class="oof" style="display: flex; top: 5px; left: 200px; width: 90px; height: 30px">flex<div class="tall"></div></div>
+  <div class="oof" style="width: 1px; height: 1px; clip: rect(0 0 0 0); white-space: nowrap">visually hidden</div>
+</div>
+<div class="root">
+  <div class="oof" id="text" style="top: 5px; left: 5px; width: 100px; height: 50px">x<div class="tall"></div></div>
+  <div class="oof" id="moved" style="top: 5px; left: 120px; width: 60px; height: 40px">moved<div class="tall"></div></div>
+  <div class="oof" id="resized" style="top: 70px; left: 5px; width: 60px; height: 40px">resized<div class="tall"></div></div>
+  <div><div class="oof" style="width: 50px; height: 30px; margin-left: 200px">static position</div></div>
+  <div style="display: flow-root; overflow: clip; width: 80px; height: 20px; margin: 50px 0 0 200px; background: orange">in-flow clip<div class="tall"></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that got longer and wraps";
+document.body.offsetHeight;
+document.getElementById("moved").style.top = "50px";
+document.getElementById("resized").style.width = "150px";
+document.getElementById("resized").style.height = "60px";
+</script>

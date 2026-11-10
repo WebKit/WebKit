@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 250px; border: 1px solid; margin: 0 2px 4px 0; }
+.sl { float: left; width: 60px; height: 60px; background: orange; shape-outside: polygon(0 0, 100% 0, 0 100%); }
+.sr { float: right; width: 60px; height: 60px; background: tan; shape-outside: polygon(0 0, 100% 0, 100% 100%); }
+.box { width: 60px; height: 30px; background: orange; }
+.rtl { direction: rtl; }
+.ltr { direction: ltr; }
+</style>
+<div class="root"><div class="rtl"><div class="sl"></div></div><div>ltr text beside the shaped float that the rtl container placed</div></div>
+<div class="root"><div class="rtl"><div class="sr"></div><div class="ltr">ltr text in the rtl container beside its shaped float</div></div></div>
+<div class="root rtl"><div class="ltr"><div class="sl"></div></div><div>rtl text beside the shaped float that the ltr container placed</div></div>
+<div class="root"><div class="rtl"><div class="sl" style="shape-outside: inset(0 round 0 60px 0 0); shape-margin: 5px"></div></div><div>rounded inset with a shape margin beside the text of the root</div></div>
+<div class="root"><div class="rtl"><div class="sr" style="shape-outside: circle(50% at 100% 0)"></div></div><div class="rtl"><div class="ltr">circle at the top right corner beside the ltr text</div></div></div>
+<div class="root"><div class="rtl"><div class="sl"></div></div><div style="position: relative; height: 60px"><div style="height: 30px"></div><span style="position: absolute">oof</span><div>block</div></div></div>
+<div class="root"><div class="rtl"><div class="box" style="float: inline-start"></div><div class="box" style="float: inline-end; background: tan"></div></div><div>text between the inline-start and inline-end floats</div></div>
+<div class="root"><div class="rtl"><div style="height: 12px">block-level floats</div><div class="box" style="float: inline-start"></div><div class="box" style="float: inline-end; background: tan"></div></div><div>text between them</div></div>
+<div class="root"><div class="box" style="float: left"></div><div class="rtl"><div style="clear: inline-end; background: lightgreen">cleared</div><div style="clear: inline-start">not cleared</div></div></div>
+<div class="root"><div class="rtl"><span><div class="box" style="float: inline-start"></div><div style="clear: inline-end; width: 20px; height: 40px; background: blue"></div></span></div></div>

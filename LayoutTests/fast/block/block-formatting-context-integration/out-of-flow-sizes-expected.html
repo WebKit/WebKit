@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 400px; height: 150px; padding: 10px; border: 5px solid gray; background: lightgray; margin-bottom: 10px; }
+.abs { position: absolute; background: rgba(0, 128, 0, 0.6); }
+.box { height: 20px; background: lightblue; }
+</style>
+<div class="root" id="root">
+  <div class="abs" style="inset: 10px 50% 20px 5%; padding: 3px"><div class="box" style="height: 50%"></div></div>
+  <div class="abs" style="left: 0; right: 0; width: 100px; height: 20px; margin: 0 auto; background: blue"></div>
+  <div class="abs" style="top: 0; bottom: 0; height: 40px; margin: auto 0; right: 10px; width: 30px; background: purple"></div>
+  <div class="abs" style="left: 0; right: 0; bottom: 0; max-width: 200px; min-height: 15px; box-sizing: border-box; border: 2px solid black">
+    <div class="abs" style="top: 5px; right: 5px; width: 20px; height: 20px; background: orange"></div>
+    <div>text inside</div>
+  </div>
+  <div class="box"></div>
+  <div class="abs" style="width: 50px; height: 10px; margin-left: 15px; background: brown"></div>
+</div>
+<div class="root" dir="rtl">
+  <div class="box" style="margin-right: 30px"></div>
+  <div class="abs" style="width: 60px; height: 20px; background: blue"></div>
+  <div class="abs" style="left: 20px; width: 60px; bottom: 0; height: 20px; background: green"></div>
+  <div style="transform: translateX(0); height: 60px; margin: 10px 40px; border: 3px solid black; direction: ltr">
+    <div class="abs" style="right: 0; left: 0; top: 0; bottom: 50%; margin: 0 auto; width: 300px; background: orange"></div>
+    <div></div>
+  </div>
+</div>
+<div class="root" style="height: 50px"><div class="abs" style="width: 60px; aspect-ratio: 2 / 1; background: green"></div><div class="box"></div></div>
+<div class="root" style="writing-mode: horizontal-bt; height: 60px; position: relative"><div class="box"></div><div class="abs" style="left: 0; right: 0; top: 0; bottom: 34px"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.height = "200px";
+document.getElementById("root").style.width = "360px";
+</script>
