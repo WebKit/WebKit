@@ -27,10 +27,12 @@
 
 #if ENABLE(GPU_PROCESS_MODEL)
 
+#include "ModelTypes.h"
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebModelIdentifier.h"
 #include <WebCore/NodeIdentifier.h>
+#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -121,6 +123,7 @@ private:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;
     const bool m_standardDynamicRange { false };
+    HashMap<int64_t, WebModel::MeshDescriptor, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_meshDescriptors;
 };
 
 } // namespace WebKit
