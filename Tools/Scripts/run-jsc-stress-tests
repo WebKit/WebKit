@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -149,6 +149,7 @@ $doNotMessWithVMPath = false
 $cloop = false
 $jitTests = true
 $memoryLimited = false
+$disabledKeys = Set.new
 $outputDir = Pathname.new("results")
 $verbosity = 0
 $bundle = nil
@@ -190,6 +191,8 @@ def usage
     puts "--platform                  Indicate the target platform we are running on."
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
     puts "                            Skip tests tagged with //@skip if $memoryLimited"
+    puts "--disabled-keys             Comma-separated keys (repeatable). Skip tests tagged with"
+    puts "                            //@ skip if $disabledKeys&.include?(\"<KEY>\") for any listed key."
     puts "--no-jit                    Do not run JIT specific tests."
     puts "--force-collectContinuously Enable the collectContinuously mode even if disabled on this"
     puts "                            platform."
@@ -240,6 +243,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--cloop', GetoptLong::NO_ARGUMENT],
                ['--platform', GetoptLong::REQUIRED_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
+               ['--disabled-keys', GetoptLong::REQUIRED_ARGUMENT],
                ['--no-jit', GetoptLong::NO_ARGUMENT],
                ['--force-collectContinuously', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
@@ -290,6 +294,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $platform = arg
     when '--memory-limited'
         $memoryLimited = true
+    when '--disabled-keys'
+        $disabledKeys.merge(arg.split(',').map(&:strip).reject(&:empty?))
     when '--no-jit'
         $jitTests = false
     when '--force-collectContinuously'
@@ -936,6 +942,19 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
     addRunCommandConfig(config)
 end
 
+def layoutTestHeaderListsDisabledKey
+    return false if $disabledKeys.empty? or $extraFilesBaseDir.basename.to_s != "script-tests"
+    wrapper = $extraFilesBaseDir + "../#{$benchmark.to_s.sub(/\.js\z/, "")}.html"
+    return false unless wrapper.file?
+    firstLine = File.open(wrapper, "rb") { | inp | inp.gets } || ""
+    return false unless firstLine =~ /webkit-test-runner \[ (.*?) \]/
+    $1.split(" ").any? {
+        | pair |
+        name, value = pair.split("=", 2)
+        name == "skipIfDisabled" and value and value.split(",").any? { | key | $disabledKeys.include?(key) }
+    }
+end
+
 # Returns true if there were run commands found in the file ($benchmarkDirectory +
 # $benchmark), in which case those run commands have already been executed. Otherwise
 # returns false, in which case you're supposed to add your own run commands.
@@ -945,6 +964,10 @@ def parseRunCommands
     $skipped = false
 
     Dir.chdir($outputDir) {
+        if layoutTestHeaderListsDisabledKey
+            skip
+            next
+        end
         File.open($benchmarkDirectory + $benchmark) {
             | inp |
             inp.each_line {
