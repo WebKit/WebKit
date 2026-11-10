@@ -31,6 +31,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
+#if ENABLE(WEB_THREAD_DISABLEMENT)
+#include "FloatingPointEnvironment.h"
+#endif
+
 namespace WebCore {
 
 bool shouldUseWebThread()
@@ -47,6 +51,12 @@ static inline void initializeMainThreadWebCore()
     JSC::initialize();
     WTF::initializeMainThread();
     WebCore::populateJITOperations();
+#if ENABLE(WEB_THREAD_DISABLEMENT)
+    // Workers propagate the main thread's fenv, which StartWebThread() used to save.
+    auto& floatingPointEnvironment = FloatingPointEnvironment::singleton();
+    if (!floatingPointEnvironment.isInitialized())
+        floatingPointEnvironment.saveMainThreadEnvironment();
+#endif
 }
 
 void initializeMainThreadIfNeeded()

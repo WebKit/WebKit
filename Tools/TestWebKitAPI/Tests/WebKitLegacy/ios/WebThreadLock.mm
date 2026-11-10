@@ -29,6 +29,7 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <wtf/RetainPtr.h>
@@ -80,6 +81,23 @@ TEST(WebKitLegacy, WebThreadRunWithoutWebThread)
     });
     Util::run(&done);
     EXPECT_TRUE(ranOnMainThread);
+}
+
+TEST(WebKitLegacy, DedicatedWorkerWithoutWebThread)
+{
+    ASSERT_FALSE(WebThreadIsEnabled());
+
+    RetainPtr window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr webView = adoptNS([[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [window addSubview:webView.get()];
+    [webView loadHTMLString:@"<script>"
+        "const worker = new Worker(URL.createObjectURL(new Blob(['postMessage(1.5 * 2)'])));"
+        "worker.onmessage = (event) => { document.title = 'result:' + event.data; };"
+        "</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScriptFromString:@"document.title"] isEqualToString:@"result:3"];
+    }));
 }
 
 }

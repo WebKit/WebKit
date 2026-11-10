@@ -736,7 +736,10 @@ static void StartWebThread()
         Locker locker { startupLock };
 
         // Propagate the mainThread's fenv to workers & the web thread.
-        FloatingPointEnvironment::singleton().saveMainThreadEnvironment();
+        // It may already have been saved by initializeMainThreadIfNeeded().
+        auto& floatingPointEnvironment = FloatingPointEnvironment::singleton();
+        if (!floatingPointEnvironment.isInitialized())
+            floatingPointEnvironment.saveMainThreadEnvironment();
 
         pthread_create(&webThread, &tattr, RunWebThread, nullptr);
         pthread_attr_destroy(&tattr);

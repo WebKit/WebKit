@@ -40,6 +40,7 @@ public:
     WEBCORE_EXPORT void enableDenormalSupport();
     WEBCORE_EXPORT void saveMainThreadEnvironment();
     void propagateMainThreadEnvironment();
+    bool isInitialized() const { return m_isInitialized; }
 
     NODELETE WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
 
@@ -57,6 +58,7 @@ public:
     void enableDenormalSupport() { }
     void saveMainThreadEnvironment() { }
     void propagateMainThreadEnvironment() { }
+    bool isInitialized() const { return false; }
     NODELETE WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
 };
 
