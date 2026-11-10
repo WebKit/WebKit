@@ -16,7 +16,11 @@ function imageLoaded(event)
         untrustedLoadEvents++;
 }
 
-let stallFor = new URLSearchParams(location.search).get("stallFor");
-document.write(`<img id="image" onload="imageLoaded(event)" src="/resources/load-and-stall.py?name=square100.png&mimeType=image/png&stallAt=0&stallFor=${stallFor}&rand=${Math.random()}">`);
+let params = new URLSearchParams(location.search);
+let token = params.get("token");
+let imageURL = token
+    ? `/resources/load-when-released.py?name=square100.png&mimeType=image/png&token=${token}`
+    : `/resources/load-and-stall.py?name=square100.png&mimeType=image/png&stallAt=0&stallFor=${params.get("stallFor")}&rand=${Math.random()}`;
+document.write(`<img id="image" onload="imageLoaded(event)" src="${imageURL}">`);
 </script>
 <p>A frame that records its lifecycle events while an image stalls its load.</p>

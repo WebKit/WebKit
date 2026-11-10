@@ -12,6 +12,7 @@ Events: readystatechange:interactive, DOMContentLoaded, readystatechange:complet
 -- Running test case: SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.LoadFinishesWhileHeld
 PASS: Should find the cross-site frame target.
 PASS: The frame should be parsed while its image is still loading.
+PASS: The held frame's interval should not advance while a frame is paused.
 PASS: The held frame should finish loading.
 PASS: The events after the frame was parsed should not be dispatched while it is held.
 PASS: A load event dispatched by script should be dispatched at once while the frame is held.
