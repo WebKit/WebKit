@@ -294,14 +294,4 @@ bool RenderSVGPath::isRenderingDisabled() const
     return !hasPath() || path().isEmpty();
 }
 
-void RenderSVGPath::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
-{
-    if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
-        if (!oldStyle || style().d() != oldStyle->d())
-            pathElement->pathDidChange();
-    }
-
-    RenderSVGShape::styleDidChange(diff, oldStyle);
-}
-
 }

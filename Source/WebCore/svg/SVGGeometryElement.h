@@ -47,11 +47,17 @@ public:
     float pathLength() const { return m_pathLength->currentValue(); }
     SVGAnimatedNumber& pathLengthAnimated() { return m_pathLength; }
 
+    void invalidatePathDependencies();
+    void invalidatePathDependenciesForStyleChange();
+
 protected:
     SVGGeometryElement(const QualifiedName&, Document&, const SVGPropertyRegistry&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
+    Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
+    void removingSteps(RemovalType, ContainerNode&) override;
 
 private:
     bool isSVGGeometryElement() const override { return true; }

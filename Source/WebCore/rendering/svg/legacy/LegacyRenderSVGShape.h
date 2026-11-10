@@ -109,6 +109,8 @@ protected:
 
     bool fillRequiresClip() const { return m_fillRequiresClip; }
 
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+
 private:
     // Hit-detection separated for the fill and the stroke
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = WindRule::NonZero);
