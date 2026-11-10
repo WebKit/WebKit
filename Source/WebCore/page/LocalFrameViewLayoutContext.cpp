@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LocalFrameViewLayoutContext.h"
 
+#include "ContainerNodeInlines.h"
 #include "DebugPageOverlays.h"
 #include "Document.h"
 #include "DocumentEnums.h"
@@ -100,8 +101,16 @@ public :
 
         checkAndReportNeedsLayoutError(m_renderView);
 
-        for (auto* descendant = m_renderView.firstChild(); descendant; descendant = descendant->nextInPreOrder(&m_renderView))
+        // Style-interleaved layout doesn't lay out the content of query containers with unresolved descendants (see RenderBlock::layout()).
+        CheckedRef styleScope = m_renderView.document().styleScope();
+        for (auto* descendant = m_renderView.firstChild(); descendant;) {
             checkAndReportNeedsLayoutError(*descendant);
+            if (styleScope->isQueryContainerWithUnresolvedDescendants(dynamicDowncast<Element>(descendant->node()))) {
+                descendant = descendant->nextInPreOrderAfterChildren(&m_renderView);
+                continue;
+            }
+            descendant = descendant->nextInPreOrder(&m_renderView);
+        }
     }
 
 private:
@@ -198,6 +207,8 @@ void LocalFrameViewLayoutContext::interleavedLayout()
     Ref protectedView(view());
 
     performLayout(false);
+
+    RenderBlock::restoreLayoutBitsAfterInterleavedLayout();
 
     Style::DocumentScope::LayoutDependencyUpdateContext layoutDependencyUpdateContext;
     protect(document()->styleScope())->invalidateForLayoutDependencies(layoutDependencyUpdateContext);

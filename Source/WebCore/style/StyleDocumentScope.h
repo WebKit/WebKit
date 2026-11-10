@@ -93,6 +93,11 @@ public:
     const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
     void updateAnchorPositioningStateAfterStyleResolution();
 
+    // Query containers whose descendants the current style resolution pass left unresolved.
+    // Style-interleaved layout sizes them without laying out their content.
+    void setQueryContainersWithUnresolvedDescendants(WeakHashSet<const Element, WeakPtrImplWithEventTargetData>&& containers) { m_queryContainersWithUnresolvedDescendants = WTF::move(containers); }
+    bool isQueryContainerWithUnresolvedDescendants(const Element* element) const { return element && m_queryContainersWithUnresolvedDescendants.contains(*element); }
+
     std::optional<size_t> lastSuccessfulPositionOptionIndexFor(const Styleable&);
     void setLastSuccessfulPositionOptionIndexMap(HashMap<WeakStyleable, size_t>&&);
     void forgetLastSuccessfulPositionOptionIndex(const Styleable&);
@@ -137,6 +142,8 @@ private:
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 
     AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
+
+    WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_queryContainersWithUnresolvedDescendants;
 };
 
 }

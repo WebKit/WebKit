@@ -250,6 +250,10 @@ public:
 
     static void relayoutRenderBlockForScrollbarChange(RenderBlock&);
 
+    // Gives the query containers that a style-interleaved layout sized without laying out their content back their
+    // layout bits, so the layout after style resolution lays them out.
+    static void restoreLayoutBitsAfterInterleavedLayout();
+
     enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
     bool paintChild(RenderBox&, PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect, PaintBlockType paintType = PaintAsBlock);
 

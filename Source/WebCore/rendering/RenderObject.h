@@ -767,6 +767,12 @@ public:
     inline void setNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     enum class HadSkippedLayout { No, Yes };
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
+
+    // The bits that tell what kind of layout this renderer needs, for code that puts off a layout.
+    class NeedsLayoutState;
+    NeedsLayoutState needsLayoutState() const;
+    // Adds the bits without marking ancestors.
+    void restoreNeedsLayoutState(NeedsLayoutState);
     void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::ContainingBlockChain, const RenderBoxModelObject* ancestorUpdateBoundary = nullptr);
     void clearContentLogicalWidthsInvalidation() { m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, { }); }
 
@@ -1231,6 +1237,30 @@ private:
         CapturedInViewTransition                            = 1 << 22
     };
 
+public:
+    static constexpr OptionSet<StateFlag> needsLayoutStateFlags {
+        StateFlag::NeedsLayout,
+        StateFlag::NeedsOutOfFlowMovementLayout,
+        StateFlag::NormalChildNeedsLayout,
+        StateFlag::OutOfFlowChildNeedsLayout,
+        StateFlag::NeedsSimplifiedNormalFlowLayout,
+        StateFlag::OutOfFlowChildNeedsStaticPositionLayout,
+    };
+
+    class NeedsLayoutState {
+    public:
+        NeedsLayoutState() = default;
+
+    private:
+        friend class RenderObject;
+        explicit NeedsLayoutState(OptionSet<StateFlag> flags)
+            : m_flags(flags)
+        {
+        }
+        OptionSet<StateFlag> m_flags;
+    };
+
+private:
     class StateBitfields {
         enum PositionedState {
             IsStaticallyPositioned = 0,
@@ -1258,6 +1288,8 @@ private:
             ASSERT(flags() == newFlags);
         }
         void clearFlag(StateFlag flag) { setFlag(flag, false); }
+        void addFlags(OptionSet<StateFlag> flags) { m_flags = (this->flags() | flags).toRaw(); }
+        void clearFlags(OptionSet<StateFlag> flags) { m_flags = (this->flags() - flags).toRaw(); }
 
         bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
         bool isRelativelyPositioned() const { return m_positionedState == IsRelativelyPositioned; }

@@ -1,0 +1,13 @@
+Text in a container that changes.
+Text in a container that doesn't change.
+Tests that the layout that resolves size container queries doesn't make query containers that it didn't need to lay out do layout afterwards.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('child').getBoundingClientRect().height is 30
+PASS internals.lastInlineLayoutInfo(document.getElementById('clean-container')).sequenceNumber is sequenceNumberBefore
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

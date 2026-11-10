@@ -87,6 +87,7 @@
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
 #include "StyleContainmentCheckerInlines.h"
+#include "StyleDocumentScope.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "TextUtil.h"
@@ -491,11 +492,57 @@ NODELETE static bool canContainDescendantScrollbarChanges(const RenderBlock& ren
     return layoutContext.subtreeScrollbarChangesState().has_value() && renderBlock.style().logicalWidth().isFixed();
 }
 
+// Query containers that a style-interleaved layout sized without laying out their content.
+struct QueryContainerSkippedByInterleavedLayout {
+    LayoutSize borderBoxSizeBeforeInterleavedLayout;
+    std::optional<RenderObject::NeedsLayoutState> needsLayoutStateToRestore;
+};
+
+static SingleThreadWeakHashMap<RenderBlock, QueryContainerSkippedByInterleavedLayout>& queryContainersSkippedByInterleavedLayout()
+{
+    static NeverDestroyed<SingleThreadWeakHashMap<RenderBlock, QueryContainerSkippedByInterleavedLayout>> containers;
+    return containers;
+}
+
+void RenderBlock::restoreLayoutBitsAfterInterleavedLayout()
+{
+    for (auto [container, state] : queryContainersSkippedByInterleavedLayout()) {
+        auto needsLayoutState = std::exchange(state.needsLayoutStateToRestore, std::nullopt);
+        if (!needsLayoutState)
+            continue;
+        container.restoreNeedsLayoutState(*needsLayoutState);
+        // The ancestors were laid out during the interleaved layout.
+        container.scheduleLayout(container.markContainingBlocksForLayout());
+    }
+}
+
 void RenderBlock::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     auto& layoutContext = this->layoutContext();
+
+    // A style-interleaved layout runs before the descendants of query containers have their style resolved.
+    // It only needs the size of these containers, so don't lay out content that is about to be restyled.
+    // The block size of a grid with size containment depends on its tracks, so it is laid out normally.
+    if (document().styleScope().isQueryContainerWithUnresolvedDescendants(element()) && !(isRenderGrid() && shouldApplySizeContainment())) {
+        auto& state = queryContainersSkippedByInterleavedLayout().ensure(*this, [&] {
+            return QueryContainerSkippedByInterleavedLayout { borderBoxSize(), { } };
+        }).iterator->value;
+        state.needsLayoutStateToRestore = needsLayoutState();
+
+        // Keep the block size from the last layout, unless size containment determines it.
+        // The descendants keep their layout bits, so the layout after style resolution lays out the content.
+        updateLogicalWidth();
+        updateLogicalHeight();
+        clearNeedsLayout();
+        return;
+    }
+
+    // The size computed by the interleaved layout was only for evaluating container queries.
+    // Start from the earlier size, so the layout handles a size change as usual.
+    if (auto& containers = queryContainersSkippedByInterleavedLayout(); !containers.isEmptyIgnoringNullReferences() && containers.contains(*this))
+        setBorderBoxSize(containers.take(*this).borderBoxSizeBeforeInterleavedLayout);
 
     // Table cells call layoutBlock directly, so don't add any logic here. Put code into layoutBlock().
     {

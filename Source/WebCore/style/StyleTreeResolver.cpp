@@ -97,6 +97,7 @@ TreeResolver::TreeResolver(Document& document, std::unique_ptr<Update> update)
 
 TreeResolver::~TreeResolver()
 {
+    m_document->styleScope().setQueryContainersWithUnresolvedDescendants({ });
     m_document->styleScope().updateAnchorPositioningStateAfterStyleResolution();
 }
 
@@ -1592,15 +1593,18 @@ std::unique_ptr<Update> TreeResolver::resolve()
     m_parentStack.clear();
     popScope();
 
+    WeakHashSet<const Element, WeakPtrImplWithEventTargetData> containersWithUnresolvedDescendants;
     for (auto& [element, state] : m_queryContainerStates) {
         // Ensure that resumed resolution reaches the container.
         if (!state.invalidated) {
             protect(element)->invalidateForResumingQueryContainerResolution();
             state.invalidated = true;
+            containersWithUnresolvedDescendants.add(element.get());
 
             m_needsInterleavedLayout = true;
         }
     }
+    m_document->styleScope().setQueryContainersWithUnresolvedDescendants(WTF::move(containersWithUnresolvedDescendants));
 
     for (const auto& [weakAnchorPositioned, state] : m_treeResolutionState.anchorPositionedStates) {
         auto anchorPositioned = weakAnchorPositioned.styleable();

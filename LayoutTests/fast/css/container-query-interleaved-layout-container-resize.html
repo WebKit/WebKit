@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .inline-size { container-type: inline-size; width: 400px; }
+    .half { width: 50%; height: 10px; }
+    .size { container-type: size; position: relative; width: 100px; height: 200px; }
+    .bottom { position: absolute; bottom: 0; height: 10px; width: 10px; }
+    .grid { display: grid; container-type: size; grid-template-rows: 100px 50px; width: 100px; }
+    .grid-child { color: red; }
+    @container (height >= 150px) {
+        .grid-child { color: green; }
+    }
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="inline-size-container" class="inline-size"><div id="half" class="half"></div></div>
+<div id="size-container" class="size"><div id="bottom" class="bottom"></div></div>
+<div class="grid"><div id="grid-child" class="grid-child">grid</div></div>
+<div id="console"></div>
+<script>
+description("Tests that the layout that resolves size container queries handles a change of the container size like any other layout.");
+jsTestIsAsync = true;
+
+window.addEventListener("load", async () => {
+    const inlineSizeContainer = document.getElementById("inline-size-container");
+    const sizeContainer = document.getElementById("size-container");
+
+    debug("The block size of a grid with size containment comes from its tracks.");
+    shouldBeEqualToString("getComputedStyle(document.getElementById('grid-child')).color", "rgb(0, 128, 0)");
+
+    await UIHelper.renderingUpdate();
+
+    debug("");
+    debug("Children are laid out again when the container width changes.");
+    inlineSizeContainer.style.width = "300px";
+    await UIHelper.renderingUpdate();
+    shouldBe("document.getElementById('half').getBoundingClientRect().width", "150");
+
+    debug("");
+    debug("Out-of-flow descendants are laid out again when the container height changes.");
+    sizeContainer.style.height = "300px";
+    await UIHelper.renderingUpdate();
+    shouldBe("document.getElementById('bottom').offsetTop", "290");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

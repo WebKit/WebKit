@@ -1,0 +1,18 @@
+grid
+Tests that the layout that resolves size container queries handles a change of the container size like any other layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The block size of a grid with size containment comes from its tracks.
+PASS getComputedStyle(document.getElementById('grid-child')).color is "rgb(0, 128, 0)"
+
+Children are laid out again when the container width changes.
+PASS document.getElementById('half').getBoundingClientRect().width is 150
+
+Out-of-flow descendants are laid out again when the container height changes.
+PASS document.getElementById('bottom').offsetTop is 290
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -93,6 +93,7 @@
 #include "ScrollAnchoringController.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleDocumentScope.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include "StyleTransformResolver.h"
@@ -550,14 +551,12 @@ void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
 
     if (hasLayer())
         downcast<RenderLayerModelObject>(*this).layer()->setSelfAndChildrenNeedPositionUpdate();
-    m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
-    setOutOfFlowChildNeedsLayoutBit(false);
-    setNeedsSimplifiedNormalFlowLayoutBit(false);
-    setNormalChildNeedsLayoutBit(false);
-    setOutOfFlowChildNeedsStaticPositionLayoutBit(false);
-    setNeedsOutOfFlowMovementLayoutBit(false);
+    m_stateBitfields.clearFlags(needsLayoutStateFlags);
 #if ASSERT_ENABLED
     auto checkIfOutOfFlowDescendantsNeedLayout = [&](auto& renderBlock) {
+        // Style-interleaved layout doesn't lay out the content of query containers with unresolved descendants (see RenderBlock::layout()).
+        if (document().styleScope().isQueryContainerWithUnresolvedDescendants(dynamicDowncast<Element>(node())))
+            return;
         if (auto* outOfFlowDescendants = renderBlock.outOfFlowBoxes()) {
             for (auto& renderer : *outOfFlowDescendants)
                 ASSERT(!renderer.needsLayout());
@@ -566,6 +565,18 @@ void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
     if (auto* renderBlock = dynamicDowncast<RenderBlock>(*this))
         checkIfOutOfFlowDescendantsNeedLayout(*renderBlock);
 #endif // ASSERT_ENABLED
+}
+
+auto RenderObject::needsLayoutState() const -> NeedsLayoutState
+{
+    return NeedsLayoutState { m_stateBitfields.flags() & needsLayoutStateFlags };
+}
+
+void RenderObject::restoreNeedsLayoutState(NeedsLayoutState state)
+{
+    if (state.m_flags.contains(StateFlag::NeedsLayout) && !selfNeedsLayout() && hasLayer())
+        setLayerNeedsFullRepaint();
+    m_stateBitfields.addFlags(state.m_flags);
 }
 
 void RenderObject::scheduleLayout(RenderElement* layoutRoot)
