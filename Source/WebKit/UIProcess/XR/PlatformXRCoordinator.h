@@ -74,7 +74,7 @@ public:
 
 #if ENABLE(WEBXR_LAYERS)
     using CreateCompositionLayerCallback = CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>;
-    virtual void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CreateCompositionLayerCallback&&) = 0;
+    virtual void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, PlatformXR::LayerUpdateMode, CreateCompositionLayerCallback&&) = 0;
     virtual void deleteLayer(WebPageProxy&, PlatformXR::LayerHandle) { }
 #endif
 

@@ -44,27 +44,36 @@ class OpenXRSwapchain {
 public:
     enum class HasAlpha { No, Yes };
     static std::unique_ptr<OpenXRSwapchain> create(XrSession, const XrSwapchainCreateInfo&, HasAlpha, const OpenXRGraphicsBinding&);
-    ~OpenXRSwapchain();
+    virtual ~OpenXRSwapchain();
 
-    std::optional<uint64_t> acquireImage();
-    void releaseImage();
+    virtual std::optional<uint64_t> acquireImage();
+    virtual void releaseImage();
     XrSwapchain swapchain() const { return m_swapchain; }
     int32_t width() const { return m_createInfo.width; }
     int32_t height() const { return m_createInfo.height; }
     WebCore::IntSize size() const { return WebCore::IntSize(width(), height()); }
     int64_t format() const { return m_createInfo.format; }
-    uint64_t acquiredTexture() const { return m_acquiredTexture; }
+    // FIXME: Rename to acquiredImage() to be consistent with acquireImage() and releaseImage().
+    virtual uint64_t acquiredTexture() const { return m_acquiredTexture; }
+
+    // Whether there is a new image to commit and release, the last released one to submit again, or nothing to submit.
+    enum class SubmissionState : uint8_t { None, LastReleasedImage, NewImage };
+    virtual SubmissionState submissionState(bool) const { return SubmissionState::NewImage; }
+
     HasAlpha hasAlpha() const { return m_hasAlpha; }
     size_t imageCount() const { return m_imageHandles.size(); }
     void releaseExportedTextures(OpenXRGraphicsBinding&) const;
 
-private:
+protected:
     OpenXRSwapchain(XrSwapchain, const XrSwapchainCreateInfo&, Vector<uint64_t>&&, HasAlpha);
 
+    // FIXME: Rename to m_acquiredImage.
+    uint64_t m_acquiredTexture { 0 };
+
+private:
     XrSwapchain m_swapchain;
     XrSwapchainCreateInfo m_createInfo;
     Vector<uint64_t> m_imageHandles;
-    uint64_t m_acquiredTexture { 0 };
     HasAlpha m_hasAlpha;
 };
 

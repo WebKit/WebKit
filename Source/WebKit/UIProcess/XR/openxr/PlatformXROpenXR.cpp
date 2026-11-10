@@ -183,7 +183,7 @@ bool OpenXRCoordinator::collectSwapchainFormatsIfNeeded()
     return true;
 }
 
-std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount) const
+std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount, PlatformXR::LayerUpdateMode updateMode) const
 {
     auto format = m_graphicsBinding->selectColorFormat(m_supportedSwapchainFormats, alpha);
     auto sampleCount = m_viewConfigurationViews.isEmpty() ? 1 : m_viewConfigurationViews.first().recommendedSwapchainSampleCount;
@@ -197,6 +197,7 @@ std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t wid
     info.faceCount = faceCount;
     info.sampleCount = sampleCount;
     info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
+    info.createFlags = updateMode == PlatformXR::LayerUpdateMode::Static ? XR_SWAPCHAIN_CREATE_STATIC_IMAGE_BIT : 0;
 
     return OpenXRSwapchain::create(m_session, info, alpha ? OpenXRSwapchain::HasAlpha::Yes : OpenXRSwapchain::HasAlpha::No, *m_graphicsBinding);
 }
@@ -239,7 +240,7 @@ void OpenXRCoordinator::createLayerProjection(uint32_t width, uint32_t height, b
 }
 
 #if ENABLE(WEBXR_LAYERS)
-void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout, CreateCompositionLayerCallback&& reply)
+void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout, PlatformXR::LayerUpdateMode updateMode, CreateCompositionLayerCallback&& reply)
 {
     if (type == PlatformXR::CompositionLayerType::Equirect) {
 #if !defined(XR_KHR_composition_layer_equirect2)
@@ -272,7 +273,7 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
     WTF::switchOn(m_state,
         [&](Idle&) { reply(std::nullopt); },
         [&](Active& active) {
-            active.renderQueue->dispatch([this, type, size, layout, completionHandler = WTF::move(reply)] mutable {
+            active.renderQueue->dispatch([this, type, size, layout, updateMode, completionHandler = WTF::move(reply)] mutable {
                 if (!collectSwapchainFormatsIfNeeded()) {
                     RELEASE_LOG(XR, "OpenXRCoordinator: no supported swapchain formats");
                     callOnMainRunLoop([completion = WTF::move(completionHandler)] mutable {
@@ -283,7 +284,7 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
 
                 bool alpha = false;
                 uint32_t faceCount = type == PlatformXR::CompositionLayerType::Cube ? 6 : 1;
-                auto swapchain = createSwapchain(size.width(), size.height(), alpha, faceCount);
+                auto swapchain = createSwapchain(size.width(), size.height(), alpha, faceCount, updateMode);
                 if (!swapchain) {
                     RELEASE_LOG(XR, "OpenXRCoordinator: failed to create swapchain");
                     callOnMainRunLoop([completion = WTF::move(completionHandler)] mutable {
@@ -314,7 +315,7 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
                     ASSERT(layout == PlatformXR::LayerLayout::Mono || layout == PlatformXR::LayerLayout::Stereo);
                     if (layout == PlatformXR::LayerLayout::Mono)
                         layer = OpenXRCubeLayer::create(WTF::move(swapchain), nullptr, layout);
-                    else if (auto rightSwapchain = createSwapchain(size.width(), size.height(), alpha, faceCount))
+                    else if (auto rightSwapchain = createSwapchain(size.width(), size.height(), alpha, faceCount, updateMode))
                         layer = OpenXRCubeLayer::create(WTF::move(swapchain), WTF::move(rightSwapchain), layout);
 #endif
                     break;

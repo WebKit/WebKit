@@ -70,7 +70,7 @@ public:
     void createLayerProjection(uint32_t, uint32_t, bool, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&) override;
 
 #if ENABLE(WEBXR_LAYERS)
-    void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CreateCompositionLayerCallback&&) override;
+    void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, PlatformXR::LayerUpdateMode, CreateCompositionLayerCallback&&) override;
     void deleteLayer(WebPageProxy&, PlatformXR::LayerHandle) override;
 #endif
 
@@ -103,7 +103,7 @@ private:
     void cleanupSessionAndAssociatedResources();
     bool collectSwapchainFormatsIfNeeded();
     PollResult pollEvents();
-    std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount = 1) const;
+    std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount = 1, PlatformXR::LayerUpdateMode = PlatformXR::LayerUpdateMode::Dynamic) const;
     void createReferenceSpacesIfNeeded(Box<RenderState>);
 #if ENABLE(WEBXR_HIT_TEST)
     XrSpace spaceForHitTest(const PlatformXR::NativeOriginInformation&) const;

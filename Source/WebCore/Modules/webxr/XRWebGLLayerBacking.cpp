@@ -223,7 +223,7 @@ ExceptionOr<XRWebGLLayerBacking::XRLayerSwapchains> XRWebGLLayerBacking::createC
         arrayLength = computeArrayLength(useTextureArray, slicesPerLayer);
     }
 
-    auto layerInfo = device->createCompositionLayer(layerType, layerSize, layerLayout);
+    auto layerInfo = device->createCompositionLayer(layerType, layerSize, layerLayout, init.isStatic ? PlatformXR::LayerUpdateMode::Static : PlatformXR::LayerUpdateMode::Dynamic);
     if (!layerInfo)
         return Exception { ExceptionCode::OperationError, "Unable to create a composition layer."_s };
 
