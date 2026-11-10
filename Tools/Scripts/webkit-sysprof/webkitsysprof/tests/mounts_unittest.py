@@ -1,8 +1,5 @@
-"""Fine-grained tests for webkitsysprof.mounts: the /proc/mounts and
-/proc/<pid>/mountinfo line parsers, and the translation of a path recorded inside
-some pid's own mount namespace back into a real path on this machine (a Python port
-of libsysprof's own SysprofMountNamespace, restricted to ordinary bind mounts --
-see the module docstring for what is deliberately left out and why).
+"""Tests for webkitsysprof.mounts: the /proc/mounts and mountinfo parsers, and
+the translation of a path in a pid's mount namespace to a host path.
 """
 
 import unittest
@@ -24,8 +21,7 @@ class ParseProcMountsTest(unittest.TestCase):
         )
 
     def test_a_btrfs_line_s_subvolume_is_extracted_from_its_options(self):
-        # Only btrfs carries a subvolume; sysprof_document_load_mounts() only ever
-        # looks for "subvol=" in a btrfs line's own options column.
+        # sysprof_document_load_mounts() reads "subvol=" only for btrfs.
         self.assertEqual(
             parse_proc_mounts(
                 "/dev/sda1 / btrfs rw,relatime,subvol=/@root,compress=zstd 0 0\n"
@@ -33,7 +29,9 @@ class ParseProcMountsTest(unittest.TestCase):
             [MountDevice("/dev/sda1", "/", "/@root")],
         )
 
-    def test_a_non_btrfs_line_never_gets_a_subvolume_even_with_a_look_alike_option(self):
+    def test_a_non_btrfs_line_never_gets_a_subvolume_even_with_a_look_alike_option(
+        self,
+    ):
         self.assertEqual(
             parse_proc_mounts("/dev/sda1 / ext4 rw,subvol=/should-not-count 0 0\n"),
             [MountDevice("/dev/sda1", "/", None)],
@@ -63,8 +61,7 @@ class ParseProcMountsTest(unittest.TestCase):
 
 class ParseMountinfoTest(unittest.TestCase):
     def test_an_ordinary_bind_mount_line_is_parsed(self):
-        # Real line from a container-sdk-rootdir-wrapper capture: root names the
-        # real host directory /sdk/webkit was bind-mounted from.
+        # From a container-sdk-rootdir-wrapper capture. Root is the host directory.
         line = (
             "20849 20805 252:1 /home/user/webkit/WebKitBuild/lib "
             "/sdk/webkit/WebKitBuild/lib ro,nosuid,nodev,relatime "
@@ -85,9 +82,7 @@ class ParseMountinfoTest(unittest.TestCase):
         )
 
     def test_optional_fields_before_the_separator_are_skipped_over(self):
-        # proc(5): an arbitrary number of "tag[:value]" optional fields can appear
-        # between the mount options and the "-" separator; the columns after it
-        # (filesystem type, mount source, super options) must still land right.
+        # proc(5) allows any number of optional fields before the "-" separator.
         line = "36 35 98:0 / /mnt1 rw,noatime master:1 shared:2 - ext3 /dev/root rw,errors=continue\n"
 
         self.assertEqual(
@@ -96,10 +91,10 @@ class ParseMountinfoTest(unittest.TestCase):
         )
 
     def test_a_line_with_enough_fields_but_no_separator_is_skipped(self):
-        # 10 whitespace-separated fields (the bare minimum this checks for at all),
-        # but none of them is the "-" that proc(5) says always follows the
-        # optional fields -- a malformed line this parser must not misread.
-        line = "36 35 98:0 / /mnt1 rw,noatime master:1 shared:2 unbindable:3 propagate:4\n"
+        # Enough fields, but no "-" separator.
+        line = (
+            "36 35 98:0 / /mnt1 rw,noatime master:1 shared:2 unbindable:3 propagate:4\n"
+        )
 
         self.assertEqual(parse_mountinfo(line), [])
 
@@ -137,9 +132,6 @@ class MountTranslatorTest(unittest.TestCase):
         )
 
     def test_the_most_specific_mount_point_is_tried_first(self):
-        # Both the root mount and the more specific /sdk/webkit bind mount cover
-        # the same path; the longer (more specific) mount point must come first,
-        # since it is the one actually meant to answer for that subtree.
         translator = MountTranslator(
             host_mount_devices=[MountDevice("/dev/sda1", "/", None)],
             mounts_by_pid={
@@ -156,8 +148,7 @@ class MountTranslatorTest(unittest.TestCase):
             translator.translate(100, "/sdk/webkit/libfoo.so"),
             [
                 "/home/user/webkit/libfoo.so",
-                # The root mount also matches (everything is under "/"), giving the
-                # path back unchanged as a second, less specific candidate.
+                # From the root mount.
                 "/sdk/webkit/libfoo.so",
             ],
         )
@@ -176,18 +167,15 @@ class MountTranslatorTest(unittest.TestCase):
 
         self.assertEqual(translator.translate(100, "/usr/lib/libc.so.6"), [])
 
-    def test_a_mount_whose_device_is_not_one_of_this_machine_s_own_has_no_candidate(self):
-        # e.g. a path that only ever existed inside a container image layer, with
-        # no bind mount back to a real host directory: this machine's own
-        # /proc/mounts has nothing on that device, so there is nothing to
-        # translate it to (matches the ordinary "not resolved" fallback exactly).
+    def test_a_mount_whose_device_is_not_one_of_this_machine_s_own_has_no_candidate(
+        self,
+    ):
+        # A path only inside a container image layer, with no host bind mount.
         translator = MountTranslator(
             host_mount_devices=[MountDevice("/dev/sda1", "/", None)],
             mounts_by_pid={
                 100: [
-                    MountInfoEntry(
-                        "/jhbuild/install", "/", "overlay", "overlay", "rw"
-                    )
+                    MountInfoEntry("/jhbuild/install", "/", "overlay", "overlay", "rw")
                 ]
             },
         )
@@ -200,10 +188,7 @@ class MountTranslatorTest(unittest.TestCase):
         self.assertEqual(translator.translate(999, "/sdk/webkit/libfoo.so"), [])
 
     def test_a_btrfs_subvolume_is_folded_out_of_the_translated_path(self):
-        # The mount's own root is relative to the whole filesystem, including
-        # whichever subvolume it was mounted from; once the host device is known
-        # to be mounted from that same subvolume, the subvolume prefix is not part
-        # of the real path and must be stripped back out.
+        # The mount root includes the subvolume, which the host path does not.
         translator = MountTranslator(
             host_mount_devices=[MountDevice("/dev/sda1", "/", "/@root")],
             mounts_by_pid={

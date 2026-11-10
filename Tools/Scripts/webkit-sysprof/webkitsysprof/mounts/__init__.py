@@ -1,25 +1,10 @@
-"""Translates a path recorded inside a profiled process's own mount namespace
-(e.g. a container's bind-mounted view of the world) back into a path reachable from
-wherever this tool is running now.
+"""Translates a path from a profiled process's mount namespace (e.g. a container
+bind mount like `/sdk/webkit`) to a path on this machine.
 
-This is a Python port of libsysprof's own SysprofMountNamespace (see
-sysprof-mount-namespace.c and sysprof-mount.c), restricted to the case that
-actually arises for a WebKit capture: an ordinary bind mount (such as
-Tools/Scripts/container-sdk-rootdir-wrapper's `/sdk/webkit`, or any other bind
-mount a container puts a real host directory at) of a filesystem this machine
-still has mounted somewhere. It deliberately leaves out overlayfs- and
-OVERLAY-frame-based translation (sysprof's `is_overlay` mounts and its
-`fs_type == "overlay"` branch): a path that only exists inside a container image
-layer, with no bind mount back to a real host directory, has nothing on this
-machine to translate to either way, so those cases fall through to "no
-candidates" here exactly as they would if this simply hadn't been implemented.
-
-The data this needs is the capture's own bundled copy of `/proc/mounts` (this
-machine's real mount table, as sysprof-cli itself saw it while recording -- see
-`parser.direct_parser`'s decoding of that file) and, per profiled process, that
-process's own `/proc/<pid>/mountinfo` (its view from inside whatever mount
-namespace it was running in). Both are ordinary things sysprof-cli bundles into
-every capture; nothing here is specific to any one container convention.
+Port of libsysprof's SysprofMountNamespace (sysprof-mount-namespace.c,
+sysprof-mount.c) limited to bind mounts. Overlay translation is left out, since an
+image-only path has no host file to translate to anyway. Inputs are the capture's
+bundled `/proc/mounts` and each process's `/proc/<pid>/mountinfo`.
 """
 
 from typing import Dict, List, NamedTuple, Optional, Sequence
@@ -44,38 +29,32 @@ class MountInfoEntry(NamedTuple):
 
 
 def parse_proc_mounts(text: str) -> List[MountDevice]:
-    """The (fs_spec, mount_point, subvolume) of every line of a bundled
-    /proc/mounts, in file order -- the same order `find_device` below trusts when
-    more than one entry shares an fs_spec (e.g. the same filesystem bind-mounted
-    at two places): the earlier line wins, exactly as libsysprof's own
-    sysprof_mount_namespace_find_device() does by returning its first match.
+    """Parses a bundled /proc/mounts, keeping file order. As in
+    sysprof_mount_namespace_find_device(), the first entry for an fs_spec wins.
     """
     devices = []
     for line in text.splitlines():
-        # mirrors g_strsplit(line, " ", 5): device, mount_point, fstype, options,
-        # and everything else (the dump/pass columns /proc/mounts also carries)
-        # folded into one last field neither of them needs.
+        # Mirrors g_strsplit(line, " ", 5).
         parts = line.split(" ", 4)
         if len(parts) != 5:
             continue
-        fs_spec, mount_point, filesystem_type, options = parts[0], parts[1], parts[2], parts[3]
+        fs_spec, mount_point, filesystem_type, options = parts[:4]
         subvolume = None
         if filesystem_type == "btrfs":
             for option in options.split(","):
                 if option.startswith("subvol="):
-                    subvolume = option[len("subvol="):]
+                    subvolume = option.split("=", 1)[1]
                     break
         devices.append(MountDevice(fs_spec, mount_point, subvolume))
     return devices
 
 
 def parse_mountinfo(text: str) -> List[MountInfoEntry]:
-    """Every line of one process's own /proc/<pid>/mountinfo, in file order.
+    """Parses a /proc/<pid>/mountinfo, keeping file order.
 
-    See proc(5) for the format: mount_id parent_id major:minor root mount_point
-    options [optional fields...] "-" filesystem_type mount_source super_options.
-    The optional fields are of unbounded number, so where the "-" separator
-    actually falls has to be found rather than assumed at a fixed index.
+    Format (proc(5)): mount_id parent_id major:minor root mount_point options
+    [optional fields...] "-" fstype mount_source super_options. The number of
+    optional fields varies, so the "-" is searched for.
     """
     entries = []
     for line in text.splitlines():
@@ -97,7 +76,9 @@ def parse_mountinfo(text: str) -> List[MountInfoEntry]:
         mount_source = parts[separator + 2]
         superblock_options = parts[separator + 3]
         entries.append(
-            MountInfoEntry(mount_point, root, filesystem_type, mount_source, superblock_options)
+            MountInfoEntry(
+                mount_point, root, filesystem_type, mount_source, superblock_options
+            )
         )
     return entries
 
@@ -109,7 +90,7 @@ def _superblock_option(options: Optional[str], key: str) -> Optional[str]:
         if option == key:
             return ""
         if option.startswith(key + "="):
-            return option[len(key) + 1:]
+            return option.split("=", 1)[1]
     return None
 
 
@@ -117,7 +98,8 @@ def _relative_path(mount: MountInfoEntry, path: str) -> Optional[str]:
     if mount.mount_point == "/":
         return path
     if path.startswith(mount.mount_point + "/"):
-        return path[len(mount.mount_point):]
+        start = len(mount.mount_point)
+        return path[start:]
     return None
 
 
@@ -130,7 +112,7 @@ def _find_device(
         if subvolume is not None:
             if device.subvolume != subvolume:
                 continue
-            # Sysprof's own convention for e.g. Silverblue/GNOME OS style systems.
+            # Sysprof skips this for Silverblue/GNOME OS style systems.
             if device.mount_point == "/sysroot":
                 continue
         return device
@@ -138,13 +120,9 @@ def _find_device(
 
 
 class MountTranslator:
-    """Ports sysprof_mount_namespace_translate()'s non-overlay branch: candidate
-    real paths for a path recorded inside some pid's own mount namespace, longest
-    (most specific) matching mount first, the same order a caller should try them
-    in. An empty list means nothing here could translate it -- not that the
-    original path is wrong, just that this translator has nothing to say about it
-    (e.g. no mountinfo was ever bundled for that pid, or the path names something
-    that only ever existed inside a container image with no real host backing).
+    """Port of sysprof_mount_namespace_translate()'s non-overlay branch. Returns
+    candidate host paths, most specific mount first, or an empty list if nothing
+    translates.
     """
 
     def __init__(
@@ -176,7 +154,8 @@ class MountTranslator:
                 if root == subvolume:
                     root = "/"
                 elif root.startswith(subvolume + "/"):
-                    root = root[len(subvolume):]
+                    start = len(subvolume)
+                    root = root[start:]
 
             candidates.append(
                 _join_mount_relative_paths(device.mount_point, root, relative)
@@ -185,10 +164,7 @@ class MountTranslator:
 
 
 def _join_mount_relative_paths(*parts: str) -> str:
-    """g_build_filename(device_mount_point, root, relative, NULL): joins path
-    segments with exactly one "/" between them, regardless of which ones already
-    carry a leading or trailing one.
-    """
+    """Like g_build_filename(): exactly one "/" between segments."""
     result = parts[0] or "/"
     for part in parts[1:]:
         result = result.rstrip("/") + "/" + part.lstrip("/")

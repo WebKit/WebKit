@@ -1,5 +1,4 @@
 import argparse
-import bisect
 import logging
 import re
 import collections
@@ -8,17 +7,49 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 from ..parser import parse
 from . import explanations
-from ..cycles import PHASES, calculate_frame_cycles
+from .explanations import CLASS_LABELS, PHASE_LABELS, STATE_LABELS
+from ..compositions import (
+    CLASSES,
+    COMPOSITOR_CLASS,
+    DISCARDED_MARK,
+    GAP_IDLE_REFRESHES,
+    IDLE,
+    NO_REASON_CLASS,
+    STALLED,
+    STALLED_REFRESHES,
+    STATES,
+    MAYBE_SUSPENDED,
+    SUSPENDED,
+    UNKNOWN,
+    UNRECORDED_CLASS,
+    UPDATE_CLASS,
+    CompositionModel,
+    reason_order,
+    calculate_compositions,
+    clip_segments,
+    in_window,
+)
+from ..updates import (
+    ANOMALY,
+    APPROXIMATE,
+    BEHIND_PREVIOUS_FRAME,
+    COMPOSITED,
+    EXACT,
+    OTHER,
+    PENDING,
+    TILE_WAIT,
+    UNCOMPOSITED,
+    UPDATE_PHASES,
+    calculate_rendering_updates,
+    is_old_capture,
+)
 from ..utils import (
-    UsageError,
+    marks_by_process,
     check_timespan_holds_data,
-    mark_begin,
-    median_vblank_interval,
     msec_to_sec,
     nsec_to_msec,
     nsec_to_sec,
     parse_timespan_argument,
-    merged_spans,
     display_refreshes,
     intervals_between_marks,
     sample_statistics,
@@ -26,10 +57,8 @@ from ..utils import (
     trim_marks_by_name_to_timespan,
 )
 
-# Columns of the statistics tables, as (label, statistics key, percentile) triples.
-# The percentile is None for statistics that are not percentiles. The median is taken
-# from the "median" key rather than from the 50th percentile: both describe the same
-# quantity, but the former is exact while the latter is interpolated.
+# (label, statistics key, percentile or None) per table column. The median column
+# reads the exact "median" key, not the interpolated 50th percentile.
 STATISTICS_COLUMNS: List[Tuple[str, str, Optional[int]]] = [
     ("#", "n", None),
     ("mean", "mean", None),
@@ -41,9 +70,8 @@ STATISTICS_COLUMNS: List[Tuple[str, str, Optional[int]]] = [
     ("max", "max", None),
 ]
 
-# Derived from the columns, so the percentiles computed and the ones printed cannot
-# drift apart. The 50th is not a column - the median column prints the exact value -
-# but stays for the JSON report, whose consumers already read it.
+# Derived from the columns so computed and printed percentiles cannot drift apart.
+# The 50th is kept for JSON report consumers.
 PERCENTILE_SHOWN_AS_MEDIAN = 50
 RELEVANT_PERCENTILES = sorted(
     {percentile for _, _, percentile in STATISTICS_COLUMNS if percentile is not None}
@@ -71,23 +99,14 @@ MARKS_RELEVANT_FOR_STATISTICS = [
     "SkiaBackingStoreTileUpdate",
 ]
 
-# PaintTile messages look like "Skia/CPU threaded, dirty region 768x512+256+56",
-# where the geometry is "<x>x<y>+<width>+<height>".
+# PaintTile geometry, e.g. "dirty region 768x512+256+56": <x>x<y>+<width>+<height>.
 DIRTY_REGION_RE = re.compile(r"(\d+)x(\d+)\+(\d+)\+(\d+)")
-REASONS_RE = re.compile(r"^reasons:([^|\n]*)")
 TASKS_RE = re.compile(r"^tasks:\s*(\d+)")
 SUBTREES_RE = re.compile(r"^subtrees:\s*(\d+)")
 TILES_RE = re.compile(r"^dirty tiles:\s*(\d+)")
 
 
-def _frame_rendering_reason(message: str) -> str:
-    """Why a frame was composited, as the DidRenderFrame message tells it."""
-    match = REASONS_RE.match(message.strip())
-    return (match.group(1).strip() if match is not None else "") or "_none"
-
-
 def _counted(message: str, pattern: "re.Pattern[str]") -> Optional[int]:
-    """The number the pattern names in a mark message, None where it does not."""
     match = pattern.match(message.strip())
     return int(match.group(1)) if match is not None else None
 
@@ -134,9 +153,6 @@ def analyze(args: argparse.Namespace) -> None:
     untrimmed_data = sysprof_data_with_marks_by_name(parsed_data)
     data = trim_marks_by_name_to_timespan(untrimmed_data, timespan_begin, timespan_end)
     logging.info("Preparing report...")
-    # Frame cycles are built from the untrimmed capture and only then cut down to
-    # the timespan: trimming drops the marks that cross a timespan boundary, and a
-    # cycle at that boundary needs them.
     report = _prepare_report(data, untrimmed_data)
 
     logging.info("Rendering report...")
@@ -156,7 +172,6 @@ def _prepare_report(
     sysprof_data: Dict[str, Any],
     untrimmed_sysprof_data: Dict[str, Any],
 ) -> Dict[str, Any]:
-    # TODO: Dropped frames.
     # TODO: Interaction latency.
     # TODO: System metrics.
     timespan_begin = sysprof_data["document"]["timespan"]["begin"]
@@ -174,179 +189,264 @@ def _prepare_report(
             mark_statistics[mark_name][input_name] = _calculate_statistics(
                 mark_statistics[mark_name][input_name]
             )
-    report = {
+    # Built from the untrimmed capture: trimming drops marks crossing the window edge,
+    # the replay needs every message, and an edge update may find its frame beyond it.
+    model = calculate_compositions(untrimmed_sysprof_data)
+    updates = calculate_rendering_updates(untrimmed_sysprof_data, model)
+    return {
         "document": document,
         "statistics": mark_statistics,
         "rendering": _prepare_rendering_report(
-            sysprof_data, display_refreshes(sysprof_data)
+            sysprof_data, display_refreshes(sysprof_data), model
         ),
-        "frame_cycle": _prepare_frame_cycle_report(
-            untrimmed_sysprof_data,
-            timespan_begin,
-            timespan_end,
-            # From the whole capture, not from the window: a narrow window holds
-            # too few vblanks, and the cycles come from the whole capture too.
-            median_vblank_interval(
-                display_refreshes(untrimmed_sysprof_data)
-            ),
+        "compositions": _prepare_composition_report(
+            model, timespan_begin, timespan_end
+        ),
+        "rendering_updates": _prepare_rendering_update_report(
+            untrimmed_sysprof_data, model, updates, timespan_begin, timespan_end
         ),
     }
-
-    return report
 
 
 def _prepare_rendering_report(
-    sysprof_data: Dict[str, Any], vblanks: Sequence[Dict[str, Any]]
+    sysprof_data: Dict[str, Any],
+    vblanks: Sequence[Dict[str, Any]],
+    model: CompositionModel,
 ) -> Dict[str, Any]:
-    document_duration = nsec_to_sec(
-        sysprof_data["document"]["timespan"]["end"]
-        - sysprof_data["document"]["timespan"]["begin"]
-    )
-    intervals = intervals_between_marks(vblanks)
-    vblanks_per_rendering_update = _calculate_vblanks_per_rendering_update(
-        vblanks, sysprof_data["marks"].get("LayerTreeHostRenderingUpdate", [])
-    )
-    did_render_frames = sysprof_data["marks"].get("DidRenderFrame", [])
-    report = {
+    return {
         "vblanks": len(vblanks),
-        "vblank_interval_statistics": _calculate_statistics(intervals),
-        "frames_rendered": len(did_render_frames),
-        "theoretical_fps": (
-            len(did_render_frames) / document_duration
-            if document_duration > 0
-            else None
+        "vblank_interval_statistics": _calculate_statistics(
+            intervals_between_marks(vblanks)
         ),
-        "frame_rendering_reasons": collections.Counter(
-            [_frame_rendering_reason(mark["message"]) for mark in did_render_frames]
-        ),
-        "frame_compositions_per_vblank_statistics": _calculate_statistics(
-            _calculate_frame_compositions_per_vblank(vblanks, did_render_frames)
-        ),
-        "vblanks_per_rendering_update": {
-            "n_greater_than_1": len(
-                [1 for vpru in vblanks_per_rendering_update if vpru > 1]
-            ),
-            "statistics": _calculate_statistics(vblanks_per_rendering_update),
-        },
+        "reference_interval": model.reference,
+        "reference_interval_source": model.reference_source,
+        "reference_interval_marks": model.reference_marks,
+        "discarded_frames": len(sysprof_data["marks"].get(DISCARDED_MARK, [])),
     }
-    return report
 
 
-def _covered_duration(cycles: Sequence[Dict[str, Any]]) -> float:
-    """How much of the timeline the cycles span, in milliseconds.
+def _duration_sec(timespan_begin: int, timespan_end: int) -> Optional[float]:
+    duration = nsec_to_sec(timespan_end - timespan_begin)
+    return duration if duration > 0 else None
 
-    Their spans are merged rather than summed, since the cycles of two processes
-    rendering at once overlap and would otherwise cover more time than there is.
-    """
-    return nsec_to_msec(
-        sum(
-            end - begin
-            for begin, end in merged_spans(
-                (cycle["begin_nsec"], cycle["end_nsec"]) for cycle in cycles
+
+def _prepare_composition_report(
+    model: CompositionModel, timespan_begin: int, timespan_end: int
+) -> Dict[str, Any]:
+    compositions = in_window(
+        model.compositions, timespan_begin, timespan_end, "frame_nsec"
+    )
+    # Every process with a compositor timeline, so idle windows still report states.
+    pids = sorted(
+        {composition["pid"] for composition in model.compositions}
+        | set(model.aborted_by_pid)
+        | set(model.replay.segments_by_pid)
+    )
+    compositions_by_pid = marks_by_process(compositions)
+    by_pid = len(pids) > 1
+    groups: Dict[Tuple[Any, ...], List[Dict[str, Any]]] = {}
+    for composition in compositions:
+        key = (composition["pid"] if by_pid else None, composition["combination"])
+        groups.setdefault(key, []).append(composition)
+    rows = []
+    for (pid, combination), group in groups.items():
+        row = {
+            "class": group[0]["class"],
+            "reasons": group[0]["reasons"],
+            "combination": combination,
+            "n": len(group),
+            # Of the row's process where rows are per process.
+            "share": len(group)
+            / (len(compositions_by_pid[pid]) if by_pid else len(compositions)),
+        }
+        for key in ("duration", "flush", "upload", "paint"):
+            row[key + "_statistics"] = _calculate_statistics(
+                [composition[key] for composition in group]
             )
+        if by_pid:
+            row["pid"] = pid
+        rows.append(row)
+    rows.sort(
+        key=lambda row: (
+            row.get("pid") or 0,
+            CLASSES.index(row["class"]),
+            -row["n"],
+            row["combination"],
         )
     )
-
-
-def _cycle_in_vblank_intervals(
-    cycles: int,
-    median_duration: float,
-    vblank_interval: Optional[float],
-) -> Tuple[Optional[float], Optional[str]]:
-    if not cycles:
-        return None, "no_cycles"
-    if vblank_interval is None:
-        return None, "no_vblank_interval"
-    if not vblank_interval:
-        return None, "zero_vblank_interval"
-    if not median_duration:
-        return None, "zero_length_cycle"
-    return median_duration / vblank_interval, None
-
-
-def _prepare_frame_cycle_report(
-    sysprof_data: Dict[str, Any],
-    timespan_begin: int,
-    timespan_end: int,
-    vblank_interval: Optional[float],
-) -> Dict[str, Any]:
-    cycles = calculate_frame_cycles(sysprof_data, timespan_begin, timespan_end)
-    durations = [cycle["duration"] for cycle in cycles]
-    resolved = [cycle for cycle in cycles if cycle["phases"] is not None]
-    # The phase statistics cover the resolved cycles only, so the duration they are
-    # shares of has to cover the same ones. Taken from all cycles instead, the four
-    # shares do not sum to 100%.
-    resolved_durations = [cycle["duration"] for cycle in resolved]
-
-    duration_statistics = _calculate_statistics(durations)
-    median_duration = duration_statistics.get("median", 0.0)
-    analyzed_duration = nsec_to_msec(timespan_end - timespan_begin)
-    overrunning = [cycle for cycle in resolved if cycle["composition_overrun"] > 0]
-    intervals_per_cycle, unknown_reason = _cycle_in_vblank_intervals(
-        len(cycles), median_duration, vblank_interval
+    by_reason: Dict[str, int] = collections.Counter(
+        reason
+        for composition in compositions
+        for reason in composition["reasons"] or []
     )
+    by_class = collections.Counter(composition["class"] for composition in compositions)
     return {
-        "cycles": len(cycles),
-        "processes": len({cycle["pid"] for cycle in cycles}),
-        "duration_statistics": duration_statistics,
-        "implied_fps": 1 / msec_to_sec(median_duration) if median_duration else None,
-        "coverage": (
-            _covered_duration(cycles) / analyzed_duration
-            if analyzed_duration > 0
-            else None
-        ),
-        "capture_vblank_interval": vblank_interval,
-        "vblank_intervals_per_cycle": intervals_per_cycle,
-        "vblank_intervals_per_cycle_unknown": unknown_reason,
-        "phase_statistics": {
-            phase: _calculate_statistics([cycle["phases"][phase] for cycle in resolved])
-            for phase in PHASES
+        "compositions": len(compositions),
+        "capture_compositions": len(model.compositions),
+        "processes": len(pids),
+        "by_combination": rows,
+        "by_reason": dict(by_reason),
+        "by_class": {klass: by_class.get(klass, 0) for klass in CLASSES},
+        # Keyed by str, as JSON does, so the report round-trips.
+        "per_process": {
+            str(pid): _composition_process_report(
+                pid,
+                compositions_by_pid.get(pid, []),
+                model,
+                timespan_begin,
+                timespan_end,
+            )
+            for pid in pids
         },
-        "resolved_duration_statistics": _calculate_statistics(resolved_durations),
-        "overrunning_composition_statistics": _calculate_statistics(
-            [cycle["composition_overrun"] for cycle in overrunning]
-        ),
     }
 
 
-def _calculate_frame_compositions_per_vblank(
-    vblanks: Sequence[Dict[str, Any]], compositing_finishes: Sequence[Dict[str, Any]]
-) -> List[int]:
-    """Compositions finished within each interval between two consecutive vblanks."""
-    if len(vblanks) < 2:
-        return []
-    vblank_ends = [vblank["end_time"] for vblank in vblanks]
-    compositions_per_interval = [0] * (len(vblanks) - 1)
-    for compositing_finish in compositing_finishes:
-        # Each interval runs from one refresh to the next, the later one included,
-        # so a composition ending exactly on a refresh belongs to the interval that
-        # ends there.
-        interval = bisect.bisect_left(vblank_ends, compositing_finish["end_time"]) - 1
-        if not 0 <= interval < len(compositions_per_interval):
-            # Composited before the first vblank of the timespan or after the last
-            # one, so there is no interval between two refreshes it belongs to.
-            continue
-        compositions_per_interval[interval] += 1
-    return compositions_per_interval
+def _composition_process_report(
+    pid: int,
+    compositions: Sequence[Dict[str, Any]],
+    model: CompositionModel,
+    timespan_begin: int,
+    timespan_end: int,
+) -> Dict[str, Any]:
+    active = [c["interval"] for c in compositions if c["active"]]
+    interval_statistics = _calculate_statistics(active)
+    median = interval_statistics.get("median")
+    duration = _duration_sec(timespan_begin, timespan_end)
+    long_intervals = [c for c in compositions if c["active"] and c["missed_refreshes"]]
+    segments = clip_segments(
+        model.replay.segments_by_pid.get(pid, []), timespan_begin, timespan_end
+    )
+    state_time = {state: 0.0 for state in STATES}
+    state_longest = {state: 0.0 for state in STATES}
+    unknown_by_detail: Dict[str, float] = {}
+    for begin, end, state, detail in segments:
+        length = nsec_to_msec(end - begin)
+        state_time[state] += length
+        state_longest[state] = max(state_longest[state], length)
+        if state == UNKNOWN:
+            key = detail or "unknown"
+            unknown_by_detail[key] = unknown_by_detail.get(key, 0.0) + length
+    total = sum(state_time.values())
+    idle = [
+        nsec_to_msec(end - begin) for begin, end, state, _ in segments if state == IDLE
+    ]
+    mismatches = model.replay.mismatches_by_pid.get(pid, {})
+    return {
+        "compositions": len(compositions),
+        "aborted": len(
+            [
+                begin
+                for begin in model.aborted_by_pid.get(pid, [])
+                if timespan_begin <= begin < timespan_end
+            ]
+        ),
+        "typical_frame_rate": 1 / msec_to_sec(median) if median else None,
+        "frames_per_refresh": (
+            model.reference / median if median and model.reference else None
+        ),
+        "average_frame_rate": len(compositions) / duration if duration else None,
+        "active_interval_statistics": interval_statistics,
+        "long_intervals": len(long_intervals),
+        "missed_refreshes": sum(c["missed_refreshes"] for c in long_intervals),
+        "state_time": state_time,
+        "state_shares": {
+            state: (time / total if total else None)
+            for state, time in state_time.items()
+        },
+        "state_longest": state_longest,
+        "unknown_by_detail": unknown_by_detail,
+        "idle_stretches": {
+            "n": len(idle),
+            "total": sum(idle),
+            "max": max(idle) if idle else None,
+        },
+        "replay_messages": model.replay.messages_by_pid.get(pid, 0),
+        "replay_mismatches": sum(mismatches.values()),
+        "replay_mismatches_by_kind": mismatches,
+        "suspended_stretches": sum(
+            1 for segment in segments if segment[3] == SUSPENDED
+        ),
+        # Scheduled for longer than a refresh, which a suspend leaving no mark explains.
+        "probably_suspended_stretches": sum(
+            1 for segment in segments if segment[3] == MAYBE_SUSPENDED
+        ),
+        "stalled": sum(1 for segment in segments if segment[3] == STALLED),
+        "idle_fallback": model.replay.fallback_by_pid.get(pid, False),
+    }
 
 
-def _calculate_vblanks_per_rendering_update(
-    vblanks: Sequence[Dict[str, Any]], rendering_updates: Sequence[Dict[str, Any]]
-) -> List[int]:
-    """How many display refreshes each rendering update spanned."""
-    if not vblanks:
-        return []
-    vblank_ends = [vblank["end_time"] for vblank in vblanks]
-    counts = []
-    for rendering_update in rendering_updates:
-        begin, end = mark_begin(rendering_update), rendering_update["end_time"]
-        if end < vblank_ends[0] or begin > vblank_ends[-1]:
-            # Outside the refreshes the timespan holds, so they say nothing about
-            # this update, rather than saying it spanned none of them.
-            continue
-        first = bisect.bisect_right(vblank_ends, begin)
-        counts.append(max(bisect.bisect_right(vblank_ends, end) - first, 1))
-    return counts
+def _prepare_rendering_update_report(
+    sysprof_data: Dict[str, Any],
+    model: CompositionModel,
+    updates: Sequence[Dict[str, Any]],
+    timespan_begin: int,
+    timespan_end: int,
+) -> Dict[str, Any]:
+    in_timespan = in_window(updates, timespan_begin, timespan_end, "begin_nsec")
+    updates_by_pid = marks_by_process(in_timespan)
+    pids = list(updates_by_pid)
+    duration = _duration_sec(timespan_begin, timespan_end)
+    per_process = {}
+    for pid, process_updates in updates_by_pid.items():
+        asked = [u for u in process_updates if u["asked"]]
+        composited = [u for u in asked if u["outcome"] == COMPOSITED]
+        statuses = collections.Counter(u["pairing"]["status"] for u in composited)
+        reasons = collections.Counter(
+            reason for u in composited for reason in u["pairing"]["reasons"]
+        )
+        begins = [u["begin_nsec"] for u in process_updates]
+        per_process[str(pid)] = {
+            "updates": len(process_updates),
+            "asked": len(asked),
+            "composited": len(composited),
+            "uncomposited": sum(1 for u in asked if u["outcome"] == UNCOMPOSITED),
+            "pending": sum(1 for u in asked if u["outcome"] == PENDING),
+            "pairing": {
+                status: statuses.get(status, 0)
+                for status in (EXACT, APPROXIMATE, ANOMALY)
+            }
+            | {"reasons": dict(reasons)},
+            "update_interval_statistics": _calculate_statistics(
+                [nsec_to_msec(b - a) for a, b in zip(begins, begins[1:])]
+            ),
+            "update_rate": len(process_updates) / duration if duration else None,
+            "duration_statistics": _calculate_statistics(
+                [u["duration"] for u in process_updates]
+            ),
+            "refresh_intervals_statistics": _calculate_statistics(
+                [
+                    u["refresh_intervals"]
+                    for u in process_updates
+                    if u["refresh_intervals"] is not None
+                ]
+            ),
+            "latency_statistics": _calculate_statistics(
+                [
+                    nsec_to_msec(
+                        model.compositions[u["frame"]]["frame_nsec"] - u["begin_nsec"]
+                    )
+                    for u in composited
+                ]
+            ),
+            "phase_statistics": {
+                phase: _calculate_statistics([u["phases"][phase] for u in composited])
+                for phase in UPDATE_PHASES
+            },
+            "phase_present": {
+                phase: sum(1 for u in composited if u["phases"][phase] > 0)
+                for phase in UPDATE_PHASES
+            },
+            "deferred_for_tiles": sum(u["deferred_for_tiles"] for u in composited),
+            "deferred_for_tiles_statistics": _calculate_statistics(
+                [u["deferred_for_tiles"] for u in composited]
+            ),
+        }
+    return {
+        "updates": len(in_timespan),
+        "processes": len(pids),
+        "old_capture": is_old_capture(sysprof_data, model),
+        "per_process": per_process,
+    }
 
 
 def _calculate_statistics_input_data(
@@ -380,70 +480,9 @@ def _render_text_report(report: Dict[str, Any], explain: bool = False) -> None:
     )
     print("Duration: {:.4f} [s]".format(_analyzed_duration_sec(report)))
 
-    print()
-    print("Rendering:")
-    print(f"- vblanks: {report['rendering']['vblanks']}")
-    vblank_interval_statistics = _statistics_to_strings(
-        report["rendering"]["vblank_interval_statistics"]
-    )
-    print(
-        "- vblank intervals: (min: {}, median: {}, max: {})".format(
-            vblank_interval_statistics["min"],
-            vblank_interval_statistics["median"],
-            vblank_interval_statistics["max"],
-        )
-    )
-    vblanks_per_rendering_update_statistics = _statistics_to_strings(
-        report["rendering"]["vblanks_per_rendering_update"]["statistics"], "{:.4g}"
-    )
-    print("- vblanks per LayerTreeHostRenderingUpdate: ", end="")
-    print(
-        "(min: {}, {}, max: {})".format(
-            vblanks_per_rendering_update_statistics["min"],
-            ", ".join(_percentile_strings(vblanks_per_rendering_update_statistics)),
-            vblanks_per_rendering_update_statistics["max"],
-        )
-    )
-    print(
-        "  - more than 1 per update: {}".format(
-            report["rendering"]["vblanks_per_rendering_update"]["n_greater_than_1"]
-        )
-    )
-    print(f"- frames rendered: {report['rendering']['frames_rendered']}")
-    theoretical_fps = report["rendering"]["theoretical_fps"]
-    print(
-        "- theoretical FPS: {}".format(
-            "{:.2f}".format(theoretical_fps) if theoretical_fps is not None else "-"
-        )
-    )
-    print("- frame rendering reasons:")
-    for reason in sorted(report["rendering"]["frame_rendering_reasons"].keys()):
-        print(
-            "  - {}: {}".format(
-                explanations.TEXT_UNNAMED_FRAME_RENDERING_REASONS.get(reason, reason),
-                report["rendering"]["frame_rendering_reasons"][reason],
-            )
-        )
-    frame_compositions_per_vblank_statistics = _statistics_to_strings(
-        report["rendering"]["frame_compositions_per_vblank_statistics"], "{:.4g}"
-    )
-    print(
-        "- frame compositions per vblank:"
-        " (min: {}, mean: {}, median: {}, max: {})".format(
-            frame_compositions_per_vblank_statistics["min"],
-            frame_compositions_per_vblank_statistics["mean"],
-            frame_compositions_per_vblank_statistics["median"],
-            frame_compositions_per_vblank_statistics["max"],
-        )
-    )
-    if explain:
-        print()
-        print(_theoretical_fps_explanation(report))
-
-    _render_frame_cycle_numbers(report["frame_cycle"])
-    if explain:
-        print()
-        print(explanations.TEXT_FRAME_CYCLE)
+    _render_rendering_numbers(report, explain)
+    _render_composition_numbers(report, explain)
+    _render_rendering_update_numbers(report, explain)
 
     print()
     print("Statistics (durations):")
@@ -492,48 +531,360 @@ def _render_text_report(report: Dict[str, Any], explain: bool = False) -> None:
 
 
 def _analyzed_duration_sec(report: Dict[str, Any]) -> float:
-    """How long the analyzed timespan is, in seconds."""
     return msec_to_sec(
         report["document"]["timespan"]["end"] - report["document"]["timespan"]["begin"]
     )
 
 
-def _theoretical_fps_explanation(report: Dict[str, Any]) -> str:
+def _render_rendering_numbers(report: Dict[str, Any], explain: bool) -> None:
     rendering = report["rendering"]
-    if rendering["theoretical_fps"] is None:
-        return explanations.TEXT_UNKNOWN_THEORETICAL_FPS.format(
-            frames=rendering["frames_rendered"],
-            refresh_rate=_refresh_rate_explanation(report),
+    print()
+    print("Rendering:")
+    print(
+        "- refresh interval: {}, discarded frames: {}".format(
+            _reference_text(rendering), rendering["discarded_frames"]
         )
-    return explanations.TEXT_THEORETICAL_FPS.format(
-        frames=rendering["frames_rendered"],
-        duration=_analyzed_duration_sec(report),
-        fps="{:.2f}".format(rendering["theoretical_fps"]),
-        refresh_rate=_refresh_rate_explanation(report),
+    )
+    print(
+        "- vblanks: {} DisplayLinkUpdate marks (the display link only runs while"
+        " the main thread observes it)".format(rendering["vblanks"])
+    )
+    vblank_interval_statistics = _statistics_to_strings(
+        rendering["vblank_interval_statistics"]
+    )
+    print(
+        "- vblank intervals: (min: {}, median: {}, max: {})".format(
+            vblank_interval_statistics["min"],
+            vblank_interval_statistics["median"],
+            vblank_interval_statistics["max"],
+        )
+    )
+    if explain:
+        print()
+        print(_reference_explanation(rendering))
+
+
+def _reference_text(rendering: Dict[str, Any]) -> str:
+    interval = rendering["reference_interval"]
+    if interval is None:
+        return "unknown (no presentation feedback, display link or frame intervals)"
+    source = rendering["reference_interval_source"]
+    what = (
+        "the median frame interval, no refresh was traced"
+        if source == "frame intervals"
+        else "from {} {} marks".format(rendering["reference_interval_marks"], source)
+    )
+    return "{:.3f} ms ({:.2f} Hz, {})".format(interval, 1 / msec_to_sec(interval), what)
+
+
+def _reference_explanation(rendering: Dict[str, Any]) -> str:
+    return explanations.TEXT_REFERENCE_INTERVAL.format(
+        source=rendering["reference_interval_source"] or "nothing"
     )
 
 
-def _refresh_rate_explanation(report: Dict[str, Any]) -> str:
-    rendering = report["rendering"]
-    interval = rendering["vblank_interval_statistics"].get("median")
-    vblanks = rendering["vblanks"]
-    if interval:
-        refresh_rate = explanations.TEXT_REFRESH_RATE.format(
-            rate=1 / msec_to_sec(interval), interval=interval
+def _process_prefix(pid: Any, processes: int) -> str:
+    return "[{}] ".format(pid) if processes > 1 else ""
+
+
+def _percent(share: Optional[float]) -> str:
+    return "-" if share is None else "{:.1f}%".format(share * 100)
+
+
+def _spread(statistics: Dict[str, Any], number: str = "{:.4f}") -> str:
+    strings = _statistics_to_strings(statistics, number)
+    return "(min: {}, {}, max: {})".format(
+        strings["min"], ", ".join(_percentile_strings(strings)), strings["max"]
+    )
+
+
+def _frame_rate_text(process: Dict[str, Any], reference: Optional[float]) -> str:
+    rate = process["typical_frame_rate"]
+    if rate is None:
+        return "-"
+    median = process["active_interval_statistics"]["median"]
+    text = "{:.1f} fps".format(rate)
+    per_refresh = process["frames_per_refresh"]
+    if per_refresh:
+        refreshes = 1 / per_refresh
+        if abs(refreshes - round(refreshes)) < 0.05 and round(refreshes) >= 1:
+            whole = round(refreshes)
+            text += (
+                ", one frame per refresh"
+                if whole == 1
+                else (", one frame per {} refreshes".format(whole))
+            )
+        else:
+            text += ", one frame per {:.2f} refreshes".format(refreshes)
+    text += " (median active frame interval {:.3f} ms".format(median)
+    if reference:
+        text += ", refresh {:.3f} ms".format(reference)
+    return text + ")"
+
+
+def _compositor_time_parts(process: Dict[str, Any]) -> List[str]:
+    """One "state: share (details)" per compositor state, longest first."""
+    shares = process["state_shares"]
+    parts = []
+    for state in sorted(
+        (state for state in STATES if process["state_time"][state] > 0),
+        key=lambda state: -process["state_time"][state],
+    ):
+        part = "{}: {}".format(STATE_LABELS[state], _percent(shares[state]))
+        if state == IDLE:
+            stretches = process["idle_stretches"]
+            part += " ({} stretch{}, longest {:.1f} ms)".format(
+                stretches["n"],
+                "" if stretches["n"] == 1 else "es",
+                stretches["max"],
+            )
+        elif state == UNKNOWN:
+            part += " ({})".format(
+                ", ".join(
+                    "{} {:.1f} ms".format(detail, time)
+                    for detail, time in sorted(
+                        process["unknown_by_detail"].items(), key=lambda item: -item[1]
+                    )
+                )
+            )
+        parts.append(part)
+    return parts
+
+
+def _render_composition_numbers(report: Dict[str, Any], explain: bool) -> None:
+    compositions = report["compositions"]
+    reference = report["rendering"]["reference_interval"]
+    processes = compositions["processes"]
+    print()
+    print("Compositions:")
+    print("- compositions: {}".format(compositions["compositions"]))
+    if not compositions["per_process"]:
+        print("- no compositions here: the capture holds no RenderLayerTree marks")
+        if explain:
+            print()
+            print(explanations.TEXT_COMPOSITIONS)
+        return
+    if not compositions["capture_compositions"]:
+        print("- no RenderLayerTree of the capture holds a DidRenderFrame")
+    for pid, process in compositions["per_process"].items():
+        prefix = "- " + _process_prefix(pid, processes)
+        if processes > 1:
+            print("{}compositions: {}".format(prefix, process["compositions"]))
+        if process["aborted"]:
+            print("{}aborted: {}".format(prefix, process["aborted"]))
+        average = process["average_frame_rate"]
+        print(
+            "{}average frame rate: {} (over the analyzed duration)".format(
+                prefix, "-" if average is None else "{:.2f} fps".format(average)
+            )
         )
-    elif interval is None:
-        refresh_rate = explanations.TEXT_REFRESH_RATE_WITHOUT_INTERVAL.format(
-            vblanks=vblanks, plural="" if vblanks == 1 else "s"
+        print(
+            "{}typical frame rate: {}".format(
+                prefix, _frame_rate_text(process, reference)
+            )
         )
-    else:
-        refresh_rate = explanations.TEXT_REFRESH_RATE_ZERO_INTERVAL.format(vblanks=vblanks)
-    return refresh_rate
+        print(
+            "{}active frame interval: {} [ms]".format(
+                prefix, _spread(process["active_interval_statistics"])
+            )
+        )
+        active = process["active_interval_statistics"].get("n", 0)
+        if reference:
+            print(
+                "{}long frame intervals: {} of {} active, {} missed refresh{}".format(
+                    prefix,
+                    process["long_intervals"],
+                    active,
+                    process["missed_refreshes"],
+                    "" if process["missed_refreshes"] == 1 else "es",
+                )
+            )
+        parts = _compositor_time_parts(process)
+        print("{}compositor time:{}".format(prefix, "" if parts else " -"))
+        for part in parts:
+            print("  - {}".format(part))
+        if process["idle_fallback"]:
+            print(
+                "{}compositor states: no ScheduleComposition or FrameComplete state"
+                " messages, so a gap of more than {} refreshes between compositions"
+                " counts as idle".format(prefix, GAP_IDLE_REFRESHES)
+            )
+        if process["replay_mismatches"]:
+            print(
+                # The replay runs over the whole capture, whatever the window.
+                "{}replay mismatches: {} of {} messages in the whole capture".format(
+                    prefix, process["replay_mismatches"], process["replay_messages"]
+                )
+            )
+        if process["suspended_stretches"] or process["probably_suspended_stretches"]:
+            print(
+                "{}suspended stretches: {}, probably suspended: {}".format(
+                    prefix,
+                    process["suspended_stretches"],
+                    process["probably_suspended_stretches"],
+                )
+            )
+        if process["stalled"]:
+            print(
+                "{}stalled: {} (awaiting FrameComplete for more than {} refreshes)".format(
+                    prefix, process["stalled"], STALLED_REFRESHES
+                )
+            )
+
+    if compositions["compositions"]:
+        print("- by reasons:")
+        _render_combination_table(compositions)
+        by_class = compositions["by_class"]
+        print(
+            "  update-driven: {}, compositor-driven: {}".format(
+                by_class[UPDATE_CLASS], by_class[COMPOSITOR_CLASS]
+            )
+        )
+        if by_class[NO_REASON_CLASS]:
+            print("- no reason (unexpected): {}".format(by_class[NO_REASON_CLASS]))
+        if by_class[UNRECORDED_CLASS]:
+            print("- unrecorded: {}".format(by_class[UNRECORDED_CLASS]))
+        by_reason = compositions["by_reason"]
+        if by_reason:
+            print(
+                "- by reason (a composition with several reasons counts toward"
+                " each): {}".format(
+                    ", ".join(
+                        "{} {}".format(reason, by_reason[reason])
+                        for reason in sorted(by_reason, key=reason_order)
+                    )
+                )
+            )
+    if explain:
+        print()
+        print(explanations.TEXT_COMPOSITIONS)
+        print()
+        print(explanations.TEXT_COMPOSITOR_STATES)
+
+
+def _render_combination_table(compositions: Dict[str, Any]) -> None:
+    by_pid = compositions["processes"] > 1
+    header = (["pid"] if by_pid else []) + [
+        "class",
+        "reasons",
+        "#",
+        "share",
+        "duration median",
+        "P99",
+        "flush median",
+        "upload median",
+        "paint median",
+    ]
+    rows = [header]
+    for row in compositions["by_combination"]:
+        duration = _statistics_to_strings(row["duration_statistics"], "{:.3f}")
+        rows.append(
+            ([str(row["pid"])] if by_pid else [])
+            + [
+                CLASS_LABELS[row["class"]],
+                row["combination"],
+                str(row["n"]),
+                "{:.2f}%".format(row["share"] * 100),
+                duration["median"],
+                duration["percentiles"][99],
+            ]
+            + [
+                _statistics_to_strings(row[key + "_statistics"], "{:.3f}")["median"]
+                for key in ("flush", "upload", "paint")
+            ]
+        )
+    _render_statistics_rows_to_stdout(
+        rows, indent="  ", left_columns=3 if by_pid else 2
+    )
+
+
+def _render_rendering_update_numbers(report: Dict[str, Any], explain: bool) -> None:
+    updates = report["rendering_updates"]
+    processes = updates["processes"]
+    print()
+    print("Rendering updates:")
+    if not updates["per_process"]:
+        print("- updates: 0")
+        if explain:
+            print()
+            print(explanations.TEXT_RENDERING_UPDATES)
+        return
+    if updates["old_capture"]:
+        print(
+            "- pairing approximate (old capture): no RequestCompositionForRenderingUpdate"
+            " marks, so every update counts as asking when it ends"
+        )
+    for pid, process in updates["per_process"].items():
+        prefix = "- " + _process_prefix(pid, processes)
+        print(
+            "{}updates: {}, asked for a composition: {}, composited: {}".format(
+                prefix, process["updates"], process["asked"], process["composited"]
+            )
+        )
+        if process["uncomposited"]:
+            print("{}uncomposited: {}".format(prefix, process["uncomposited"]))
+        if process["pending"]:
+            print("{}pending at capture end: {}".format(prefix, process["pending"]))
+        pairing = process["pairing"]
+        if pairing[APPROXIMATE] or pairing[ANOMALY]:
+            print(
+                "{}pairing: {} approximate, {} anomalies ({})".format(
+                    prefix,
+                    pairing[APPROXIMATE],
+                    pairing[ANOMALY],
+                    ", ".join(
+                        "{} {}".format(reason.replace("_", " "), n)
+                        for reason, n in sorted(pairing["reasons"].items())
+                    ),
+                )
+            )
+        rate = process["update_rate"]
+        print(
+            "{}update interval: {} [ms], update rate {} (how often the page produced"
+            " new content, not a frame rate)".format(
+                prefix,
+                _spread(process["update_interval_statistics"]),
+                "-" if rate is None else "{:.2f} /s".format(rate),
+            )
+        )
+        print(
+            "{}update duration in refresh intervals: {}".format(
+                prefix, _spread(process["refresh_intervals_statistics"], "{:.4g}")
+            )
+        )
+        if not process["composited"]:
+            continue
+        print(
+            "{}update-to-frame latency of the {} composited updates: {} [ms]".format(
+                prefix, process["composited"], _spread(process["latency_statistics"])
+            )
+        )
+        phases = process["phase_statistics"]
+        present = process["phase_present"]
+        for phase in UPDATE_PHASES:
+            if phase == OTHER and not present[OTHER]:
+                continue
+            line = "  - {}: {:.3f} ms median".format(
+                PHASE_LABELS[phase], phases[phase]["median"]
+            )
+            if phase in (TILE_WAIT, BEHIND_PREVIOUS_FRAME, OTHER):
+                line += ", in {} of {} updates".format(
+                    present[phase], process["composited"]
+                )
+            if phase == TILE_WAIT:
+                line += ", compositions deferred for tiles: {}".format(
+                    process["deferred_for_tiles"]
+                )
+            print(line)
+    if explain:
+        print()
+        print(explanations.TEXT_RENDERING_UPDATES)
 
 
 def _percentile_strings(strings: Dict[str, Any]) -> List[str]:
-    """The percentiles of a statistic, and its median among them, in order.
+    """Percentile strings in order, with the median in place of P50.
 
-    Takes the strings _statistics_to_strings() built, not the statistic itself.
+    Takes the output of _statistics_to_strings().
     """
     return [
         (
@@ -545,126 +896,22 @@ def _percentile_strings(strings: Dict[str, Any]) -> List[str]:
     ]
 
 
-def _analyzed_cycles(frame_cycle: Dict[str, Any]) -> int:
-    """How many cycles the phase statistics were taken from."""
-    return frame_cycle["resolved_duration_statistics"].get("n", 0)
-
-
-def _render_frame_cycle_numbers(frame_cycle: Dict[str, Any]) -> None:
-    print()
-    print("Frame cycle:")
-    print(f"- cycles: {frame_cycle['cycles']}")
-    if frame_cycle["processes"] > 1:
-        print(
-            "- rendered by {} processes, whose frames the medians below"
-            " describe together".format(frame_cycle["processes"])
-        )
-
-    if frame_cycle["cycles"] == 0:
-        print(
-            "- no cycles here: no two consecutive LayerTreeHostRenderingUpdate"
-            " marks of one process begin within the analyzed timespan"
-        )
-        return
-
-    duration_statistics = _statistics_to_strings(frame_cycle["duration_statistics"])
-    print(
-        "- cycle duration: (min: {}, {}, max: {}) [ms]".format(
-            duration_statistics["min"],
-            ", ".join(_percentile_strings(duration_statistics)),
-            duration_statistics["max"],
-        )
-    )
-    implied_fps = frame_cycle["implied_fps"]
-    print(
-        "- implied FPS (1000 / median cycle): {}".format(
-            "{:.2f}".format(implied_fps) if implied_fps is not None else "-"
-        )
-    )
-    coverage = frame_cycle["coverage"]
-    print(
-        "- cycles cover {} of the analyzed duration".format(
-            "{:.1f}%".format(coverage * 100) if coverage is not None else "-"
-        )
-    )
-    if frame_cycle["vblank_intervals_per_cycle"] is None:
-        print(
-            "- median cycle in vblank intervals: - ({})".format(
-                explanations.UNKNOWN_VBLANK_INTERVALS_PER_CYCLE[
-                    frame_cycle["vblank_intervals_per_cycle_unknown"]
-                ]
-            )
-        )
-    else:
-        print(
-            "- median cycle in vblank intervals: {:.2f}"
-            " ({:.4f} ms per vblank, from the whole capture)".format(
-                frame_cycle["vblank_intervals_per_cycle"],
-                frame_cycle["capture_vblank_interval"],
-            )
-        )
-
-    # Shares of the median duration of the analyzed cycles, not of all of them,
-    # since the phase medians cover the analyzed ones only.
-    median_duration = frame_cycle["resolved_duration_statistics"].get("median", 0)
-    analyzed = "{} of {} cycles analyzed".format(
-        _analyzed_cycles(frame_cycle), frame_cycle["cycles"]
-    )
-    # Each phase is its own median, and medians do not add up, so the shares below
-    # need not total 100%.
-    if median_duration:
-        analyzed += ", median analyzed cycle {:.4f} ms".format(median_duration)
-    print(f"- phases (median, {analyzed}):")
-    shares_shown = False
-    for phase in PHASES:
-        label = phase.replace("_", " ")
-        phase_statistics = frame_cycle["phase_statistics"][phase]
-        if not phase_statistics:
-            print(f"  - {label}: -")
-            continue
-        share = "-"
-        if median_duration:
-            share = "{:.1f}%".format(phase_statistics["median"] / median_duration * 100)
-            shares_shown = True
-        print(
-            "  - {}: {:.4f} ms ({} of the cycle)".format(
-                label, phase_statistics["median"], share
-            )
-        )
-    if shares_shown:
-        print(
-            "  (each phase is a median of its own,"
-            " so the shares need not total 100%)"
-        )
-    overrun_statistics = frame_cycle["overrunning_composition_statistics"]
-    if not _analyzed_cycles(frame_cycle):
-        print("- composition overrunning the cycle: -")
-    elif overrun_statistics:
-        print(
-            "- composition overrunning the cycle: in {} of {} analyzed cycles,"
-            " by {:.4f} ms median".format(
-                overrun_statistics["n"],
-                _analyzed_cycles(frame_cycle),
-                overrun_statistics["median"],
-            )
-        )
-    else:
-        print(
-            "- composition overrunning the cycle: in none of {} analyzed"
-            " cycles".format(_analyzed_cycles(frame_cycle))
-        )
-
-
-def _render_statistics_rows_to_stdout(statistics_rows: List[List[str]]) -> None:
+def _render_statistics_rows_to_stdout(
+    statistics_rows: List[List[str]], indent: str = "", left_columns: int = 0
+) -> None:
+    """Print a table whose first row is the header and first columns left-aligned."""
     column_max_sizes = [
         max([len(row[col]) for row in statistics_rows])
         for col in range(len(statistics_rows[0]))
     ]
+    format_str = " | ".join(
+        "{{:{}{}}}".format("<" if col < left_columns else ">", cms)
+        for col, cms in enumerate(column_max_sizes)
+    )
     for i, statistics_row in enumerate(statistics_rows):
-        format_str = " | ".join(["{{:>{}}}".format(cms) for cms in column_max_sizes])
-        print("|", format_str.format(*statistics_row), "|")
+        print(indent + "|", format_str.format(*statistics_row), "|")
         if i == 0:
-            print("|", format_str.format(*"-" * len(statistics_row)), "|")
+            print(indent + "|", format_str.format(*"-" * len(statistics_row)), "|")
 
 
 def _prepare_statistics_rows(
@@ -694,7 +941,7 @@ def _prepare_statistics_row(
 def _statistics_to_strings(
     statistic: Dict[str, Any], number: str = "{:.4f}"
 ) -> Dict[str, Any]:
-    """The numbers of a statistic as strings, `-` where it holds none."""
+    """Format a statistic's numbers as strings, `-` where missing."""
 
     def format_statistic(
         data: Dict[str, Any],
