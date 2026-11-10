@@ -7529,6 +7529,7 @@
 		807547D380B36BF6457BF6C4 /* ColorAppearance.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FE1D51155B617031EC275F /* ColorAppearance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5A8EA984E6E737343E65221A /* ImageContentSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9696F89359DB2093C05E5988 /* ImageContentSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DECA8791265D4C1DBC7BA7F1 /* PageAnimationAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D2ED4C387044AEAE6FA67C /* PageAnimationAgent.h */; };
+		9C554D2BF88D45A991C78CD1 /* FrameAnimationAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F7DAB2D8C5640B1A62996F7 /* FrameAnimationAgent.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -24152,6 +24153,8 @@
 		E0BA4176CB20FD04A40E4570 /* ImageRenditionOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRenditionOptions.cpp; sourceTree = "<group>"; };
 		61D2ED4C387044AEAE6FA67C /* PageAnimationAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAnimationAgent.h; sourceTree = "<group>"; };
 		9829198B5E944BBE98399502 /* PageAnimationAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageAnimationAgent.cpp; sourceTree = "<group>"; };
+		3F7DAB2D8C5640B1A62996F7 /* FrameAnimationAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameAnimationAgent.h; sourceTree = "<group>"; };
+		7F8B5F35BEE543E688673B33 /* FrameAnimationAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameAnimationAgent.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41814,6 +41817,8 @@
 		F3EB1F302F43B92600725B79 /* frame */ = {
 			isa = PBXGroup;
 			children = (
+				7F8B5F35BEE543E688673B33 /* FrameAnimationAgent.cpp */,
+				3F7DAB2D8C5640B1A62996F7 /* FrameAnimationAgent.h */,
 				400C21138DBC3903728D8422 /* FrameCanvasAgent.cpp */,
 				518D45FAE796E9227D55E5E1 /* FrameCanvasAgent.h */,
 				F3EB1F2F2F43B92600725B79 /* FrameConsoleAgent.cpp */,
@@ -45982,6 +45987,7 @@
 				2D9153F028AE0E330073A385 /* FragmentDirectiveRangeFinder.h in Headers */,
 				2DDF3EE42C8D94B30047786D /* FragmentDirectiveUtilities.h in Headers */,
 				46B95196207D633A00A7D2DD /* Frame.h in Headers */,
+				9C554D2BF88D45A991C78CD1 /* FrameAnimationAgent.h in Headers */,
 				C29A677B6FFF4FA53C6C54D3 /* FrameCanvasAgent.h in Headers */,
 				F3EB1F322F43B92600725B79 /* FrameConsoleAgent.h in Headers */,
 				DAED203116F244480070EC0F /* FrameConsoleClient.h in Headers */,

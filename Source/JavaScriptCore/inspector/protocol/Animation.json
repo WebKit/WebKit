@@ -2,7 +2,7 @@
     "domain": "Animation",
     "description": "Domain for tracking/modifying Web Animations, as well as CSS (declarative) animations and transitions.",
     "debuggableTypes": ["web-page"],
-    "targetTypes": ["page"],
+    "targetTypes": ["frame", "page"],
     "types": [
         {
             "id": "AnimationId",
@@ -113,11 +113,13 @@
         },
         {
             "name": "startTracking",
-            "description": "Start tracking animations. This will produce a `trackingStart` event."
+            "description": "Start tracking animations. This will produce a `trackingStart` event.",
+            "targetTypes": ["page"]
         },
         {
             "name": "stopTracking",
-            "description": "Stop tracking animations. This will produce a `trackingComplete` event."
+            "description": "Stop tracking animations. This will produce a `trackingComplete` event.",
+            "targetTypes": ["page"]
         }
     ],
     "events": [
@@ -160,6 +162,7 @@
         {
             "name": "trackingStart",
             "description": "Dispatched after `startTracking` command.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" }
             ]
@@ -167,6 +170,7 @@
         {
             "name": "trackingUpdate",
             "description": "Fired for each phase of Web Animation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" },
                 { "name": "event", "$ref": "TrackingUpdate" }
@@ -175,6 +179,7 @@
         {
             "name": "trackingComplete",
             "description": "Dispatched after `stopTracking` command.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" }
             ]

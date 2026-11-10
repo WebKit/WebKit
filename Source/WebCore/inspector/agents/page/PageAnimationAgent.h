@@ -40,12 +40,19 @@ public:
     explicit PageAnimationAgent(PageAgentContext&);
     ~PageAnimationAgent();
 
+    // AnimationBackendDispatcherHandler
+    Inspector::Protocol::ErrorStringOr<void> enable() override;
+    Inspector::Protocol::ErrorStringOr<void> disable() override;
+
 private:
+    NODELETE bool isSiteIsolationEnabled() const;
+
     bool matchesCurrentContext(ScriptExecutionContext*) const override;
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> pushStyleablePathToFrontend(const Styleable&) override;
     Inspector::Protocol::DOM::NodeId pushStyleableElementToFrontend(const Styleable&) override;
 
     WeakRef<Page> m_inspectedPage;
+    bool m_enabledUnderSiteIsolation { false };
 };
 
 } // namespace WebCore

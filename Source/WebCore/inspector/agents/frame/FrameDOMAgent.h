@@ -57,6 +57,8 @@ class RegisteredEventListener;
 class RenderObject;
 class ShadowRoot;
 
+struct Styleable;
+
 enum class PlatformEventModifier : uint8_t;
 
 // FrameDOMAgent is the per-frame DOM agent for Site Isolation.
@@ -171,6 +173,8 @@ public:
     Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
     Vector<Ref<Node>> boundNodes() const;
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> pushStyleablePathToFrontend(const Styleable&);
+    Inspector::Protocol::DOM::NodeId pushStyleableElementToFrontend(const Styleable&);
     InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
     Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&) const;
     bool ownsElementSelection() const;
@@ -196,6 +200,7 @@ private:
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&);
     void pushChildNodesToFrontend(Inspector::Protocol::DOM::NodeId, int depth = 1);
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Inspector::Protocol::ErrorString&, Node*);
+    Inspector::Protocol::DOM::NodeId pushStyleableNodePathToFrontend(Inspector::Protocol::ErrorString&, const Styleable&);
 
     void setDocument(Document*);
     void relayoutDocument();
