@@ -87,6 +87,7 @@ webkit.org/b/330882 http/tests/inspector/network/fetch-network-data.html [ Failu
 webkit.org/b/330882 http/tests/inspector/network/har/har-page.html [ Failure ]
 webkit.org/b/330882 http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
 webkit.org/b/330883 http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html [ Failure ]
+webkit.org/b/330956 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Pass Failure ]
 webkit.org/b/312828 http/tests/inspector/network/resource-mime-type.html [ Failure Timeout ]
 webkit.org/b/327494 http/tests/inspector/network/intercept-request-fragment.html [ Failure ]
 webkit.org/b/327494 http/tests/inspector/network/intercept-request-main-resource-with-response.html [ Failure ]
