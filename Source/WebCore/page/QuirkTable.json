@@ -605,6 +605,21 @@
             ]
         },
         {
+            "bugs": ["rdar://73582895"],
+            "comment": "home.nest.com checks the Google session from an accounts.google.com iframe. Treating the pair as a login pair keeps the popup sign-in's storage access across tabs.",
+            "matches": ["*://*.nest.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsSingleOwnerLoginStorageAccessQuirk",
+                    "secondaryURL": ["*://*.google.com/*"]
+                },
+                {
+                    "id": "NeedsStorageAccessOnLoginButtonClickQuirk",
+                    "elementSelector": "[data-test=\"google-button-login\"], [data-test=\"google-button-login\"] *"
+                }
+            ]
+        },
+        {
             "bugs": ["rdar://49403416"],
             "matches": ["*://mail.google.com/*"],
             "behaviors": [{ "id": "NeedsGMailOverflowScrollQuirk" }]
