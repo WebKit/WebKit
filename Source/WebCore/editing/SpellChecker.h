@@ -42,6 +42,7 @@ class SpellChecker;
 class TextCheckerClient;
 
 class SpellCheckRequest final : public TextCheckingRequest {
+    WTF_MAKE_TZONE_ALLOCATED(SpellCheckRequest);
 public:
     static RefPtr<SpellCheckRequest> create(OptionSet<TextCheckingType>, TextCheckingProcessType, const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange);
     virtual ~SpellCheckRequest();

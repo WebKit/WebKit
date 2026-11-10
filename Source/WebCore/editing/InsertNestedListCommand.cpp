@@ -33,8 +33,11 @@
 #include "InsertListCommand.h"
 #include "ModifySelectionListLevel.h"
 #include "SimpleRange.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InsertNestedListCommand);
 
 void InsertNestedListCommand::insertUnorderedList(Document& document)
 {

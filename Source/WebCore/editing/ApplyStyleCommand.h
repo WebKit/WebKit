@@ -28,6 +28,7 @@
 #include "CompositeEditCommand.h"
 #include "HTMLElement.h"
 #include "WritingDirection.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ enum ShouldIncludeTypingStyle {
 };
 
 class ApplyStyleCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ApplyStyleCommand);
 public:
     enum class InlineStyleRemovalMode : uint8_t { IfNeeded, Always, None };
     enum class AddStyledElement : bool { No, Yes };

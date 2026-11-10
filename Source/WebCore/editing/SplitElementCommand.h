@@ -26,10 +26,12 @@
 #pragma once
 
 #include "EditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SplitElementCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SplitElementCommand);
 public:
     static Ref<SplitElementCommand> create(Ref<Element>&& element, Ref<Node>&& splitPointChild)
     {

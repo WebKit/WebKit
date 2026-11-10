@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DocumentFragment;
 
 class MoveSelectionCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(MoveSelectionCommand);
 public:
     static Ref<MoveSelectionCommand> create(Ref<DocumentFragment>&& fragment, const Position& position, bool smartInsert = false, bool smartDelete = false)
     {

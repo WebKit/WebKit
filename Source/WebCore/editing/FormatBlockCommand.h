@@ -28,6 +28,7 @@
 #include "ApplyBlockElementCommand.h"
 #include "EditAction.h"
 #include "QualifiedName.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class Range;
 class VisiblePosition;
 
 class FormatBlockCommand : public ApplyBlockElementCommand {
+    WTF_MAKE_TZONE_ALLOCATED(FormatBlockCommand);
 public:
     static Ref<FormatBlockCommand> create(Ref<Document>&& document, const QualifiedName& tagName)
     {
