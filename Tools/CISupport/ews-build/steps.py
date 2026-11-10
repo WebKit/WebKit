@@ -134,10 +134,11 @@ class GitHub(object):
     BLOCKED_LABEL = 'merging-blocked'
     SKIP_EWS_LABEL = 'skip-ews'
     NO_FAILURE_LIMITS_LABEL = 'no-failure-limits'
+    NO_REBASE_LABEL = 'ews-no-rebase'
     LABELS = [
         MERGE_QUEUE_LABEL, UNSAFE_MERGE_QUEUE_LABEL, SAFE_MERGE_QUEUE_LABEL,
         REQUEST_MERGE_QUEUE_LABEL, BLOCKED_LABEL,
-        SKIP_EWS_LABEL, NO_FAILURE_LIMITS_LABEL,
+        SKIP_EWS_LABEL, NO_FAILURE_LIMITS_LABEL, NO_REBASE_LABEL,
     ]
 
     @classmethod
@@ -391,6 +392,12 @@ class GitHubMixin(object):
     def _is_pr_in_merge_queue(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
             if label.get('name', '') in (GitHub.MERGE_QUEUE_LABEL, GitHub.UNSAFE_MERGE_QUEUE_LABEL):
+                return 1
+        return 0
+
+    def _has_no_rebase_label(self, pr_json):
+        for label in (pr_json or {}).get('labels', {}):
+            if label.get('name', '') == GitHub.NO_REBASE_LABEL:
                 return 1
         return 0
 
@@ -1405,27 +1412,34 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             stdioLogName=stdioLogName, **overrides
         )
 
-    def getCommandList(self):
+    def remoteAndBranch(self):
         remote, repo_name = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/', 1)
         if '-' in repo_name:
             remote = f"{remote}-{repo_name.split('-', 1)[-1]}"
+        return remote, self.getProperty('github.head.ref', DEFAULT_BRANCH)
+
+    def getFetchCommandList(self):
+        remote, pr_branch = self.remoteAndBranch()
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
-        pr_branch = self.getProperty('github.head.ref', DEFAULT_BRANCH)
 
         return [
             ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
             self.shell_command(f'git remote add {remote} {GITHUB_URL}{project}.git || {self.shell_exit_0()}'),
             ['git', 'remote', 'set-url', remote, f'{GITHUB_URL}{project}.git'],
             ['git', 'fetch', remote, pr_branch],
+        ]
+
+    def getCommandList(self):
+        remote, pr_branch = self.remoteAndBranch()
+        return self.getFetchCommandList() + [
             ['git', 'checkout', '--progress', '-B', pr_branch],
             ['git', 'cherry-pick', '--allow-empty', f'HEAD..remotes/{remote}/{pr_branch}'],
         ]
 
-    def run(self):
-        self.commands = []
-        for command in self.getCommandList():
-            self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+    def setCommands(self, commands):
+        self.commands = [util.ShellArg(command=command, logname='stdio', haltOnFailure=True) for command in commands]
 
+    def setGitEnvironment(self):
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.env = dict(
             GIT_COMMITTER_NAME='EWS',
@@ -1434,6 +1448,9 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             GIT_PASSWORD=access_token,
         )
 
+    def run(self):
+        self.setCommands(self.getCommandList())
+        self.setGitEnvironment()
         return super().run()
 
     def getResultSummary(self):
@@ -1442,6 +1459,49 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         if self.results != SUCCESS:
             return {'step': 'Failed to checkout and rebase branch from PR {}'.format(self.getProperty('github.number'))}
         return super().getResultSummary()
+
+
+class CheckOutPullRequestBase(CheckOutPullRequest):
+    # For PRs too broad to rebase onto the tip of their base branch. got_revision is updated so that
+    # later steps and triggered queues (through ews_revision) all use the commit the PR branched from.
+    name = 'checkout-pull-request-base'
+    description = ['checking-out-pull-request-base']
+    descriptionDone = ['Checked out base of pull request']
+
+    def doStepIf(self, step):
+        return (
+            super().doStepIf(step)
+            and GitHub.NO_REBASE_LABEL in (self.getProperty('github_labels') or [])
+            and not CheckOutSpecificRevision.doCheckOutSpecificRevision(self)
+        )
+
+    @defer.inlineCallbacks
+    def run(self):
+        remote, pr_branch = self.remoteAndBranch()
+        self.setGitEnvironment()
+        self.setCommands(self.getFetchCommandList())
+        rc = yield steps.ShellSequence.run(self)
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        command = yield self.makeRemoteShellCommand(command=['git', 'merge-base', 'HEAD', f'remotes/{remote}/{pr_branch}'], collectStdout=True)
+        yield self.runCommand(command)
+        revision = (command.stdout or '').strip()
+        if command.didFail() or not revision:
+            return defer.returnValue(FAILURE)
+
+        self.setCommands([['git', 'checkout', '--progress', revision]])
+        rc = yield steps.ShellSequence.run(self)
+        if rc == SUCCESS:
+            self.setProperty('got_revision', revision)
+        return defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'Skipped checking out base of pull request'}
+        if self.results != SUCCESS:
+            return {'step': 'Failed to checkout base of PR {}'.format(self.getProperty('github.number'))}
+        return {'step': f"Checked out {self.getProperty('got_revision', '?')[:12]}, the base of PR {self.getProperty('github.number')}"}
 
 
 class AnalyzeChange(buildstep.BuildStep, AddToLogMixin):
@@ -1905,6 +1965,19 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         defer.returnValue(FAILURE)
 
     @defer.inlineCallbacks
+    def reject_no_rebase_label(self, pr_number):
+        reason = f"PR {pr_number} has '{GitHub.NO_REBASE_LABEL}' label"
+        yield self._addToLog('stdio', f'{reason}\n')
+        comment = f"This PR has the `{GitHub.NO_REBASE_LABEL}` label, so EWS did not rebase it onto the tip of `{self.getProperty('github.base.ref', DEFAULT_BRANCH)}`. "
+        comment += 'Please remove the label and make sure EWS re-runs before landing.'
+        comment += f"\n\nRejecting {self.getProperty('github.head.sha', f'#{pr_number}')} from merge queue."
+        self.setProperty('comment_text', comment)
+        self.setProperty('build_finish_summary', reason)
+        self.descriptionDone = reason
+        self.build.addStepsAfterCurrentStep([LeaveComment(alwaysRun=True), BlockPullRequest(alwaysRun=True)])
+        defer.returnValue(FAILURE)
+
+    @defer.inlineCallbacks
     def run(self):
         pr_number = self.getProperty('github.number', self.getProperty('pr_number', ''))
         branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
@@ -1994,6 +2067,9 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             merge_queue = self._is_pr_in_merge_queue(pr_json)
             if merge_queue == 0:
                 rc = yield self.skip_build("PR {} does not have a merge queue label".format(pr_number))
+                return defer.returnValue(rc)
+            if self._has_no_rebase_label(pr_json):
+                rc = yield self.reject_no_rebase_label(pr_number)
                 return defer.returnValue(rc)
 
         draft = self._is_pr_draft(pr_json) if self.verifyNoDraftForMergeQueue else 0
@@ -2599,7 +2675,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         yield self._addToLog('stdio', f'Checking the status of PR {pr_number}...\n')
         project = self.getProperty('project') or CANONICAL_GITHUB_PROJECT
         owner, name = project.split('/', 1)
-        query_body = '{repository(owner: "%s", name: "%s") {pullRequest(number: %s) {commits (last:1) {edges {node {commit {oid } } } } } } }' % (owner, name, pr_number)
+        query_body = '{repository(owner: "%s", name: "%s") {pullRequest(number: %s) {labels (first:100) {nodes {name } } commits (last:1) {edges {node {commit {oid } } } } } } }' % (owner, name, pr_number)
         query = {'query': query_body}
 
         response = yield self.query_graph_ql(query)
@@ -2613,8 +2689,25 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             yield self._addToLog('stderr', 'Failed to retrieve commit hash.\n')
             defer.returnValue(None)
 
+        labels = ((response['data']['repository']['pullRequest'].get('labels') or {}).get('nodes') or [])
+        if any(label.get('name') == GitHub.NO_REBASE_LABEL for label in labels):
+            yield self.rejectNoRebaseLabel(pr_number)
+            defer.returnValue(self.EWS_WEBKIT_FAILED)
+
         rc = yield self.getQueueStatusFromList(head_sha, pr_number)
         defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def rejectNoRebaseLabel(self, pr_number):
+        yield self._addToLog('stdio', f"PR {pr_number} has '{GitHub.NO_REBASE_LABEL}' label.\n")
+        failed_status_check = self.getProperty('failed_status_check')
+        failed_status_check.append(pr_number)
+        self.setProperty('failed_status_check', failed_status_check)
+        comment = f'This PR has the `{GitHub.NO_REBASE_LABEL}` label, so EWS did not rebase it onto the tip of its base branch. '
+        comment += 'Please remove the label, make sure EWS re-runs and re-apply `safe-merge-queue` label.'
+        comment += f'\n\nRejecting #{pr_number} from merge queue.'
+        self.setProperty('comment_text', comment)
+        self.steps_to_add += [LeaveComment()]
 
     @defer.inlineCallbacks
     def getQueueStatusFromList(self, change_id, pr_number):
