@@ -1,33 +1,5 @@
 set_property(DIRECTORY . PROPERTY FOLDER "WebInspectorUI")
 
-set(InspectorFiles
-    ${WEBINSPECTORUI_DIR}/UserInterface/*.html
-    ${WEBINSPECTORUI_DIR}/UserInterface/Base/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Controllers/*.css
-    ${WEBINSPECTORUI_DIR}/UserInterface/Controllers/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Debug/*.css
-    ${WEBINSPECTORUI_DIR}/UserInterface/Debug/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/External/CodeMirror/*.css
-    ${WEBINSPECTORUI_DIR}/UserInterface/External/CodeMirror/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/External/Esprima/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/External/three.js/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Models/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Protocol/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Proxies/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Test/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Views/*.css
-    ${WEBINSPECTORUI_DIR}/UserInterface/Views/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Workers/Formatter/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Workers/HeapSnapshot/*.js
-    ${WEBINSPECTORUI_DIR}/UserInterface/Images/*.png
-    ${WEBINSPECTORUI_DIR}/UserInterface/Images/*.svg
-    ${WEBINSPECTORUI_DIR}/Localizations/en.lproj/localizedStrings.js
-)
-
-file(GLOB InspectorFilesDependencies
-    ${InspectorFiles}
-)
-
 set(InspectorResourceScripts
     ${WEBINSPECTORUI_DIR}/Scripts/combine-resources.pl
     ${WEBINSPECTORUI_DIR}/Scripts/copy-user-interface-resources.pl
@@ -71,10 +43,17 @@ if (NOT DEFINED INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST)
     set(INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST NO)
 endif ()
 
+# copy-user-interface-resources.pl walks UserInterface/ itself, so a depfile
+# listing everything there stands in for the tree as a dependency.
+webkit_get_directory_depfile_command(InspectorFilesDepfileCommand
+    OUTPUT ${CMAKE_BINARY_DIR}/inspector-resources.stamp
+    DEPFILE ${CMAKE_BINARY_DIR}/inspector-resources.stamp.d
+    DIRECTORIES ${WEBINSPECTORUI_DIR}/UserInterface ${WEBINSPECTORUI_DIR}/Localizations
+)
+
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/inspector-resources.stamp
-    DEPENDS ${InspectorFilesDependencies}
-            ${InspectorResourceScripts}
+    DEPENDS ${InspectorResourceScripts}
             ${WebInspectorUI_DERIVED_SOURCES_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
             ${WebCore_PRIVATE_HEADERS_DIR}/InspectorNativeFunctionParameters.json
             ${WEBINSPECTORUI_DIR}/UserInterface/Models/NativeFunctionParameters-overrides.json
@@ -83,6 +62,8 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E make_directory ${WebInspectorUI_LOCALIZED_STRINGS_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy "${WEBINSPECTORUI_DIR}/Localizations/en.lproj/localizedStrings.js" ${WebInspectorUI_LOCALIZED_STRINGS_DIR}/localizedStrings.js
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/inspector-resources.stamp
+    COMMAND ${InspectorFilesDepfileCommand}
+    DEPFILE ${CMAKE_BINARY_DIR}/inspector-resources.stamp.d
     VERBATIM
 )
 

@@ -1114,6 +1114,62 @@ function(WEBKIT_SYMLINK_FILES target_name)
     add_custom_target(${target_name} ALL DEPENDS ${dst_files})
 endfunction()
 
+# Copies the contents of SOURCE into DESTINATION, merging with what's already
+# there. A depfile listing every file and directory in SOURCE re-runs the copy
+# when anything in the tree is edited, added or removed, without globbing at
+# configure time. EXCLUDE patterns skip matching SOURCE-relative paths;
+# DELETE_DESTINATION removes DESTINATION first.
+function(WEBKIT_COPY_DIRECTORY target_name)
+    set(options DELETE_DESTINATION)
+    set(oneValueArgs SOURCE DESTINATION)
+    set(multiValueArgs EXCLUDE)
+    cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    if (opt_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "WEBKIT_COPY_DIRECTORY(${target_name}): unknown arguments: ${opt_UNPARSED_ARGUMENTS}")
+    endif ()
+
+    set(script "${CMAKE_SOURCE_DIR}/Source/cmake/copy-tree-with-depfile.py")
+    set(stamp "${CMAKE_CURRENT_BINARY_DIR}/${target_name}.stamp")
+    set(args --source "${opt_SOURCE}" --dest "${opt_DESTINATION}" --stamp "${stamp}" --depfile "${stamp}.d")
+    foreach (pattern IN LISTS opt_EXCLUDE)
+        list(APPEND args --exclude "${pattern}")
+    endforeach ()
+    if (opt_DELETE_DESTINATION)
+        list(APPEND args --delete-destination)
+    endif ()
+
+    add_custom_command(OUTPUT "${stamp}"
+        COMMAND ${Python_EXECUTABLE} "${script}" ${args}
+        DEPFILE "${stamp}.d"
+        DEPENDS "${script}"
+        COMMENT "Copying ${opt_SOURCE}"
+        VERBATIM
+    )
+    add_custom_target(${target_name} ALL DEPENDS "${stamp}")
+    set_property(TARGET ${target_name} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${opt_DESTINATION}")
+endfunction()
+
+# Sets out_var to a COMMAND that writes DEPFILE, listing every file and
+# directory under DIRECTORIES as dependencies of OUTPUT. Append it to an
+# add_custom_command whose tool reads those directories itself, and pass the
+# same DEPFILE there. The tool's command line must not depend on what's in the
+# directories, since only the depfile sees them change.
+function(webkit_get_directory_depfile_command out_var)
+    set(oneValueArgs OUTPUT DEPFILE)
+    set(multiValueArgs DIRECTORIES)
+    cmake_parse_arguments(opt "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    if (opt_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "webkit_get_directory_depfile_command: unknown arguments: ${opt_UNPARSED_ARGUMENTS}")
+    endif ()
+
+    set(command ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Source/cmake/copy-tree-with-depfile.py")
+    foreach (directory IN LISTS opt_DIRECTORIES)
+        list(APPEND command --source "${directory}")
+    endforeach ()
+    list(APPEND command --depfile "${opt_DEPFILE}" --depfile-target "${opt_OUTPUT}")
+    set(${out_var} ${command} PARENT_SCOPE)
+endfunction()
+
 # Helper macros for debugging CMake problems.
 macro(WEBKIT_DEBUG_DUMP_COMMANDS)
     set(CMAKE_VERBOSE_MAKEFILE ON)

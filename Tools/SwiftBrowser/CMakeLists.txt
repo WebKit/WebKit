@@ -54,6 +54,10 @@ configure_file(${SWIFTBROWSER_DIR}/Resources/mac/Info.plist
 
 set(SwiftBrowser_Resources_Directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SwiftBrowser.app/Contents/Resources)
 WEBKIT_XCRUN(_swiftbrowser_actool -f actool)
+webkit_get_directory_depfile_command(_swiftbrowser_assets_depfile_command
+    OUTPUT ${SwiftBrowser_Resources_Directory}/Assets.car
+    DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/Assets.car.d
+    DIRECTORIES ${SWIFTBROWSER_DIR}/Resources/Assets.xcassets)
 add_custom_command(
     OUTPUT ${SwiftBrowser_Resources_Directory}/Assets.car
     COMMAND ${CMAKE_COMMAND} -E make_directory ${SwiftBrowser_Resources_Directory}
@@ -63,7 +67,8 @@ add_custom_command(
         --output-format human-readable-text
         --output-partial-info-plist ${CMAKE_CURRENT_BINARY_DIR}/assets-partial-Info.plist
         ${SWIFTBROWSER_DIR}/Resources/Assets.xcassets
-    DEPENDS ${SWIFTBROWSER_DIR}/Resources/Assets.xcassets
+    COMMAND ${_swiftbrowser_assets_depfile_command}
+    DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/Assets.car.d
     COMMENT "Compiling SwiftBrowser asset catalog"
     VERBATIM)
 add_custom_target(SwiftBrowserAssets ALL DEPENDS ${SwiftBrowser_Resources_Directory}/Assets.car)

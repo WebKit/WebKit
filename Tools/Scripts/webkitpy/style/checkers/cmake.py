@@ -87,6 +87,7 @@ class CMakeChecker(object):
     ]
 
     categories = [
+        'command/glob',
         'list/duplicate',
         'list/emptyline',
         'list/order',
@@ -96,6 +97,7 @@ class CMakeChecker(object):
     def __init__(self, file_path, handle_style_error):
         self._handle_style_error = handle_style_error
         self._tab_checker = TabChecker(file_path, handle_style_error)
+        self._in_file_command = False
 
     def check(self, lines, line_numbers=None):
         self._tab_checker.check(lines)
@@ -121,6 +123,7 @@ class CMakeChecker(object):
                                      'No space before ")"')
         self._check_no_space_cmds(line_number, l)
         self._check_one_space_cmds(line_number, l)
+        self._check_no_glob(line_number, l, line_content)
         self._check_indent(line_number, line_content)
 
     def _check_trailing_whitespace(self, line_number, line_content):
@@ -153,6 +156,26 @@ class CMakeChecker(object):
            (not search(r'(^|\ +)' + cmd.lower() + r'\ *\(', line_content)):
             msg = 'Use lowercase command "' + cmd.lower() + '"'
             self._handle_style_error(line_number, 'command/lowercase', 5, msg)
+
+    def _check_no_glob(self, line_number, line_content, raw_line):
+        # A configure-time glob only sees the files that existed when CMake last
+        # ran, and CONFIGURE_DEPENDS makes every build re-glob. Catch both
+        # file(GLOB ...) and a file( whose GLOB comes on a later line, after any
+        # blank lines or comments. Globs of directories outside the source tree
+        # can be allowed with a "# NOLINT" comment on the GLOB line.
+        code = re.sub(r'#.*', '', line_content).strip()
+        glob = r'GLOB(_RECURSE)?(\s|\)|$)'
+        if self._in_file_command:
+            if not code:
+                return
+            found = searchIgnorecase(r'^' + glob, code)
+            self._in_file_command = False
+        else:
+            found = searchIgnorecase(r'(^|\s)file\s*\(\s*' + glob, code)
+            self._in_file_command = bool(searchIgnorecase(r'(^|\s)file\s*\($', code))
+        if found and not search(r'\bNOLINT\b', raw_line):
+            msg = 'Do not use file(GLOB) or file(GLOB_RECURSE). List the files explicitly, or use WEBKIT_COPY_DIRECTORY to copy a whole directory.'
+            self._handle_style_error(line_number, 'command/glob', 5, msg)
 
     def _check_indent(self, line_number, line_content):
         #TODO (halton): add indent checking

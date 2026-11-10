@@ -417,25 +417,91 @@ set(_log_messages_generated
 
 list(APPEND WebKit_MESSAGES_IN_FILES LogStream)
 
-file(GLOB _webkit_cocoa_serialization_files RELATIVE "${WEBKIT_DIR}"
-    "${WEBKIT_DIR}/Platform/cocoa/*.serialization.in"
-    "${WEBKIT_DIR}/Shared/ApplePay/*.serialization.in"
-    "${WEBKIT_DIR}/Shared/Cocoa/*.serialization.in"
-    "${WEBKIT_DIR}/Shared/RemoteLayerTree/*.serialization.in"
-    "${WEBKIT_DIR}/Shared/cf/*.serialization.in"
-    "${WEBKIT_DIR}/Shared/mac/*.serialization.in"
-    "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree/*.serialization.in"
-)
-list(APPEND WebKit_SERIALIZATION_IN_FILES ${_webkit_cocoa_serialization_files})
-unset(_webkit_cocoa_serialization_files)
-
 list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Platform/cocoa/MediaPlaybackTargetContextSerialized.serialization.in
+
     Shared/AdditionalFonts.serialization.in
     Shared/AlternativeTextClient.serialization.in
     Shared/AppPrivacyReportTestingData.serialization.in
     Shared/PushMessageForTesting.serialization.in
     Shared/TextAnimationTypes.serialization.in
     Shared/ViewWindowCoordinates.serialization.in
+
+    Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in
+    Shared/ApplePay/PaymentSetupConfiguration.serialization.in
+
+    Shared/Cocoa/CacheStoragePolicy.serialization.in
+    Shared/Cocoa/CoreIPCAVOutputContext.serialization.in
+    Shared/Cocoa/CoreIPCArray.serialization.in
+    Shared/Cocoa/CoreIPCAuditToken.serialization.in
+    Shared/Cocoa/CoreIPCCFCharacterSet.serialization.in
+    Shared/Cocoa/CoreIPCCFType.serialization.in
+    Shared/Cocoa/CoreIPCCFURL.serialization.in
+    Shared/Cocoa/CoreIPCCVPixelBufferRef.serialization.in
+    Shared/Cocoa/CoreIPCColor.serialization.in
+    Shared/Cocoa/CoreIPCContacts.serialization.in
+    Shared/Cocoa/CoreIPCDDScannerResult.serialization.in
+    Shared/Cocoa/CoreIPCData.serialization.in
+    Shared/Cocoa/CoreIPCDate.serialization.in
+    Shared/Cocoa/CoreIPCDateComponents.serialization.in
+    Shared/Cocoa/CoreIPCDictionary.serialization.in
+    Shared/Cocoa/CoreIPCError.serialization.in
+    Shared/Cocoa/CoreIPCLocale.serialization.in
+    Shared/Cocoa/CoreIPCNSCFObject.serialization.in
+    Shared/Cocoa/CoreIPCNSShadow.serialization.in
+    Shared/Cocoa/CoreIPCNSURLCredential.serialization.in
+    Shared/Cocoa/CoreIPCNSURLProtectionSpace.serialization.in
+    Shared/Cocoa/CoreIPCNSURLRequest.serialization.in
+    Shared/Cocoa/CoreIPCNSValue.serialization.in
+    Shared/Cocoa/CoreIPCNull.serialization.in
+    Shared/Cocoa/CoreIPCPKDateComponentsRange.serialization.in
+    Shared/Cocoa/CoreIPCPKPayment.serialization.in
+    Shared/Cocoa/CoreIPCPKPaymentMerchantSession.serialization.in
+    Shared/Cocoa/CoreIPCPKPaymentMethod.serialization.in
+    Shared/Cocoa/CoreIPCPKPaymentSetupFeature.serialization.in
+    Shared/Cocoa/CoreIPCPKPaymentToken.serialization.in
+    Shared/Cocoa/CoreIPCPKShippingMethod.serialization.in
+    Shared/Cocoa/CoreIPCPassKit.serialization.in
+    Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in
+    Shared/Cocoa/CoreIPCPlist.serialization.in
+    Shared/Cocoa/CoreIPCPresentationIntent.serialization.in
+    Shared/Cocoa/CoreIPCString.serialization.in
+    Shared/Cocoa/CoreIPCStringSet.serialization.in
+    Shared/Cocoa/CoreIPCURL.serialization.in
+    Shared/Cocoa/CursorContext.serialization.in
+    Shared/Cocoa/DataDetectionResult.serialization.in
+    Shared/Cocoa/GestureTypes.serialization.in
+    Shared/Cocoa/InsertTextOptions.serialization.in
+    Shared/Cocoa/InteractionInformationAtPosition.serialization.in
+    Shared/Cocoa/InteractionInformationRequest.serialization.in
+    Shared/Cocoa/RemoteObjectInvocation.serialization.in
+    Shared/Cocoa/RevealItem.serialization.in
+    Shared/Cocoa/SecItemRequestData.serialization.in
+    Shared/Cocoa/SecItemResponseData.serialization.in
+    Shared/Cocoa/SharedCARingBuffer.serialization.in
+    Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+
+    Shared/RemoteLayerTree/BufferAndBackendInfo.serialization.in
+    Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
+    Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in
+    Shared/RemoteLayerTree/RemoteScrollingUIState.serialization.in
+
+    Shared/cf/CFTypes.serialization.in
+    Shared/cf/CoreIPCBoolean.serialization.in
+    Shared/cf/CoreIPCCFArray.serialization.in
+    Shared/cf/CoreIPCCFDictionary.serialization.in
+    Shared/cf/CoreIPCCGColorSpace.serialization.in
+    Shared/cf/CoreIPCNumber.serialization.in
+    Shared/cf/CoreIPCSecAccessControl.serialization.in
+    Shared/cf/CoreIPCSecCertificate.serialization.in
+    Shared/cf/CoreIPCSecKeychainItem.serialization.in
+    Shared/cf/CoreIPCSecTrust.serialization.in
+
+    Shared/mac/CoreIPCDDSecureActionContext.serialization.in
+    Shared/mac/PDFContextMenuItem.serialization.in
+    Shared/mac/WebHitTestResultPlatformData.serialization.in
+
+    WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemoteProperties.serialization.in
 )
 
 
@@ -1263,26 +1329,6 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h PROPERTIE
 
 set(WebKit_USE_PREFIX_HEADER ON)
 
-# WebKit's Swift compile loads `framework module WebKit_Private` via -fmodule-map-file
-# and resolves header paths relative to the modulemap's framework root (a parent of
-# Modules/). The build-tree layout is `WebKit/PrivateHeaders/WebKit/X.h` to support
-# `<WebKit/X.h>` includes, which doesn't match the framework's expected
-# `WebKit.framework/PrivateHeaders/X.h` (flat). Stage a real WebKit.framework
-# directory before the compile so the umbrella header lookup succeeds.
-# WebKit_CopyHeaders / WebKit_CopyPrivateHeaders are defined later in
-# CMakeLists.txt; defer the add_dependencies until those targets exist.
-add_custom_target(WebKit_StageFrameworkHeaders
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/SymlinkHeaders.cmake
-        ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Headers
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/SymlinkHeaders.cmake
-        ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/PrivateHeaders
-    COMMENT "Staging WebKit.framework Headers/, PrivateHeaders/"
-)
-add_dependencies(WebKit WebKit_StageFrameworkHeaders)
-cmake_language(DEFER CALL add_dependencies WebKit_StageFrameworkHeaders WebKit_CopyHeaders WebKit_CopyPrivateHeaders)
-
 endif ()
 
 if (WEBKIT_SDK_IS_IOS_FAMILY)
@@ -1366,9 +1412,6 @@ add_custom_target(WebKit_MigrateHeaders
     COMMENT "Migrating WebCore/WebKitLegacy headers into WebKit.framework/{Headers,PrivateHeaders}/"
 )
 add_dependencies(WebKit_MigrateHeaders WebCore_CopyPrivateHeaders WebKitLegacy_CopyHeaders)
-if (TARGET WebKit_StageFrameworkHeaders)
-    add_dependencies(WebKit_MigrateHeaders WebKit_StageFrameworkHeaders)
-endif ()
 add_dependencies(WebKit WebKit_MigrateHeaders)
 unset(_migrate_pairs_file)
 unset(_migrate_pairs_content)
@@ -1772,24 +1815,161 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.h
 )
 
-file(GLOB _webkit_api_headers RELATIVE "${WEBKIT_DIR}"
-    "${WEBKIT_DIR}/GPUProcess/graphics/Model/*.h"
-    "${WEBKIT_DIR}/Shared/API/Cocoa/*.h"
-    "${WEBKIT_DIR}/UIProcess/API/Cocoa/*.h"
-    "${WEBKIT_DIR}/UIProcess/API/ios/*.h"
-    "${WEBKIT_DIR}/UIProcess/DigitalCredentials/*.h"
-    "${WEBKIT_DIR}/UIProcess/ios/fullscreen/*.h"
-    "${WEBKIT_DIR}/WebKitSwift/IdentityDocumentServices/*.h"
-)
-# UIProcess/API/Cocoa/WebKitLegacy.h is not in pbxproj; Xcode stages
-# WebKit.framework/Headers/WebKitLegacy.h via the migrate phase by renaming
-# WebKitLegacy/PrivateHeaders/WebKit.h. Letting the glob pick it up here would
-# stage the full Mac-style WebKitLegacy umbrella into WebKit.framework/PrivateHeaders/,
+# UIProcess/API/Cocoa/WebKitLegacy.h is deliberately absent. It is not in pbxproj;
+# Xcode stages WebKit.framework/Headers/WebKitLegacy.h via the migrate phase by
+# renaming WebKitLegacy/PrivateHeaders/WebKit.h. Listing it here would stage the
+# full Mac-style WebKitLegacy umbrella into WebKit.framework/PrivateHeaders/,
 # auto-discovering a `WebKit_Private.WebKitLegacy` submodule that conflicts
 # with the WebKitLegacy framework module's `WebFrame` definition.
-list(FILTER _webkit_api_headers EXCLUDE REGEX "/WebKitLegacy\\.h$")
-list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS ${_webkit_api_headers})
-unset(_webkit_api_headers)
+list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
+    GPUProcess/graphics/Model/Float3.h
+    GPUProcess/graphics/Model/Float4x4.h
+    GPUProcess/graphics/Model/MeshImpl.h
+    GPUProcess/graphics/Model/ModelObjectHeap.h
+    GPUProcess/graphics/Model/ModelTypes.h
+    GPUProcess/graphics/Model/RemoteMesh.h
+    GPUProcess/graphics/Model/WebKitMesh.h
+
+    Shared/API/Cocoa/WKBrowsingContextHandleInternal.h
+    Shared/API/Cocoa/WKDataDetectorTypesInternal.h
+    Shared/API/Cocoa/_WKDragActionsInternal.h
+    Shared/API/Cocoa/_WKFrameHandleInternal.h
+    Shared/API/Cocoa/_WKHitTestResultInternal.h
+    Shared/API/Cocoa/_WKRemoteObjectInterfaceInternal.h
+    Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h
+    Shared/API/Cocoa/_WKRenderingProgressEventsInternal.h
+    Shared/API/Cocoa/_WKSameDocumentNavigationTypeInternal.h
+
+    UIProcess/API/Cocoa/WKBackForwardListInternal.h
+    UIProcess/API/Cocoa/WKBackForwardListItemInternal.h
+    UIProcess/API/Cocoa/WKContentRuleListInternal.h
+    UIProcess/API/Cocoa/WKContentRuleListStoreInternal.h
+    UIProcess/API/Cocoa/WKContentWorldConfigurationInternal.h
+    UIProcess/API/Cocoa/WKContentWorldInternal.h
+    UIProcess/API/Cocoa/WKContextMenuElementInfoInternal.h
+    UIProcess/API/Cocoa/WKDOMNodeSnapshotInternal.h
+    UIProcess/API/Cocoa/WKDownloadInternal.h
+    UIProcess/API/Cocoa/WKErrorInternal.h
+    UIProcess/API/Cocoa/WKFindResultInternal.h
+    UIProcess/API/Cocoa/WKFormInfoInternal.h
+    UIProcess/API/Cocoa/WKFrameInfoInternal.h
+    UIProcess/API/Cocoa/WKHTTPCookieStoreInternal.h
+    UIProcess/API/Cocoa/WKHitTestResultInternal.h
+    UIProcess/API/Cocoa/WKImmersiveEnvironmentInternal.h
+    UIProcess/API/Cocoa/WKJSHandleInternal.h
+    UIProcess/API/Cocoa/WKNavigationActionInternal.h
+    UIProcess/API/Cocoa/WKNavigationDataInternal.h
+    UIProcess/API/Cocoa/WKNavigationInternal.h
+    UIProcess/API/Cocoa/WKNavigationResponseInternal.h
+    UIProcess/API/Cocoa/WKOpenPanelParametersInternal.h
+    UIProcess/API/Cocoa/WKPreferencesInternal.h
+    UIProcess/API/Cocoa/WKPreviewActionItemInternal.h
+    UIProcess/API/Cocoa/WKPreviewElementInfoInternal.h
+    UIProcess/API/Cocoa/WKProcessPoolInternal.h
+    UIProcess/API/Cocoa/WKScriptMessageInternal.h
+    UIProcess/API/Cocoa/WKScrollGeometry.h
+    UIProcess/API/Cocoa/WKSecurityOriginInternal.h
+    UIProcess/API/Cocoa/WKUIDelegateInternal.h
+    UIProcess/API/Cocoa/WKURLSchemeTaskInternal.h
+    UIProcess/API/Cocoa/WKUserContentControllerInternal.h
+    UIProcess/API/Cocoa/WKUserScriptInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionActionInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionCommandInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionContextInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionControllerConfigurationInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionControllerInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionDataRecordInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionDataTypeInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionMatchPatternInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionMessagePortInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionTabConfigurationInternal.h
+    UIProcess/API/Cocoa/WKWebExtensionWindowConfigurationInternal.h
+    UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h
+    UIProcess/API/Cocoa/WKWebViewInternal.h
+    UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h
+    UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h
+    UIProcess/API/Cocoa/WKWebsiteDataStoreInternal.h
+    UIProcess/API/Cocoa/WKWindowFeaturesInternal.h
+    UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h
+    UIProcess/API/Cocoa/_WKAppHighlightInternal.h
+    UIProcess/API/Cocoa/_WKApplicationManifestInternal.h
+    UIProcess/API/Cocoa/_WKAttachmentInternal.h
+    UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientOutputsInternal.h
+    UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponseInternal.h
+    UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponseInternal.h
+    UIProcess/API/Cocoa/_WKAuthenticatorResponseInternal.h
+    UIProcess/API/Cocoa/_WKAutomationSessionInternal.h
+    UIProcess/API/Cocoa/_WKContentRuleListActionInternal.h
+    UIProcess/API/Cocoa/_WKContextMenuElementInfoInternal.h
+    UIProcess/API/Cocoa/_WKCustomHeaderFieldsInternal.h
+    UIProcess/API/Cocoa/_WKDataTaskInternal.h
+    UIProcess/API/Cocoa/_WKDownloadInternal.h
+    UIProcess/API/Cocoa/_WKElementActionInternal.h
+    UIProcess/API/Cocoa/_WKFeatureInternal.h
+    UIProcess/API/Cocoa/_WKFrameTreeNodeInternal.h
+    UIProcess/API/Cocoa/_WKGeolocationPositionInternal.h
+    UIProcess/API/Cocoa/_WKInspectorConfigurationInternal.h
+    UIProcess/API/Cocoa/_WKInspectorDebuggableInfoInternal.h
+    UIProcess/API/Cocoa/_WKInspectorExtensionInternal.h
+    UIProcess/API/Cocoa/_WKInspectorInternal.h
+    UIProcess/API/Cocoa/_WKInspectorWindowInternal.h
+    UIProcess/API/Cocoa/_WKLinkIconParametersInternal.h
+    UIProcess/API/Cocoa/_WKMediaCapturePermissionPromptConfigurationInternal.h
+    UIProcess/API/Cocoa/_WKModalContainerInfoInternal.h
+    UIProcess/API/Cocoa/_WKNotificationDataInternal.h
+    UIProcess/API/Cocoa/_WKPageLoadTimingInternal.h
+    UIProcess/API/Cocoa/_WKProcessPoolConfigurationInternal.h
+    UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerInternal.h
+    UIProcess/API/Cocoa/_WKResourceLoadInfoInternal.h
+    UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstPartyInternal.h
+    UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdPartyInternal.h
+    UIProcess/API/Cocoa/_WKSessionStateInternal.h
+    UIProcess/API/Cocoa/_WKSystemPreferencesInternal.h
+    UIProcess/API/Cocoa/_WKTargetedElementInfoInternal.h
+    UIProcess/API/Cocoa/_WKTargetedElementRequestInternal.h
+    UIProcess/API/Cocoa/_WKTextExtractionInternal.h
+    UIProcess/API/Cocoa/_WKTextInputContextInternal.h
+    UIProcess/API/Cocoa/_WKTextManipulationItemInternal.h
+    UIProcess/API/Cocoa/_WKTextRunInternal.h
+    UIProcess/API/Cocoa/_WKThumbnailViewInternal.h
+    UIProcess/API/Cocoa/_WKTouchEventGeneratorInternal.h
+    UIProcess/API/Cocoa/_WKUserContentExtensionStoreInternal.h
+    UIProcess/API/Cocoa/_WKUserContentFilterInternal.h
+    UIProcess/API/Cocoa/_WKUserContentWorldInternal.h
+    UIProcess/API/Cocoa/_WKUserInitiatedActionInternal.h
+    UIProcess/API/Cocoa/_WKUserStyleSheetInternal.h
+    UIProcess/API/Cocoa/_WKVisitedLinkStoreInternal.h
+    UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponseInternal.h
+    UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h
+    UIProcess/API/Cocoa/_WKWebExtensionNotificationInternal.h
+    UIProcess/API/Cocoa/_WKWebExtensionSidebarInternal.h
+    UIProcess/API/Cocoa/_WKWebPushActionInternal.h
+    UIProcess/API/Cocoa/_WKWebPushDaemonConnectionInternal.h
+    UIProcess/API/Cocoa/_WKWebPushMessageInternal.h
+    UIProcess/API/Cocoa/_WKWebPushSubscriptionDataInternal.h
+    UIProcess/API/Cocoa/_WKWebsiteDataSizeInternal.h
+    UIProcess/API/Cocoa/_WKWebsiteDataStoreConfigurationInternal.h
+
+    UIProcess/API/ios/WKWebViewIOS.h
+
+    UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.h
+
+    UIProcess/ios/fullscreen/WKFullScreenViewController.h
+    UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.h
+    UIProcess/ios/fullscreen/WKFullscreenStackView.h
+
+    WebKitSwift/IdentityDocumentServices/WKISO18013Request.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentController.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentDelegate.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentError.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentMobileDocumentRequest.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentOpenID4VPRequest.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentRawRequest.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentRequest.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentResponse.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentRawRequestValidator.h
+)
 
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKDOMNodeSnapshot.h
@@ -1862,13 +2042,18 @@ else ()
     set(_actool_platform "iphoneos")
 endif ()
 WEBKIT_XCRUN(_actool -f actool)
+webkit_get_directory_depfile_command(_wk_xcassets_depfile_command
+    OUTPUT ${_wk_assets_staging}/Assets.car
+    DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/Assets.car.d
+    DIRECTORIES ${_wk_xcassets})
 add_custom_command(
     OUTPUT ${_wk_assets_staging}/Assets.car
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_wk_assets_staging}
     COMMAND ${_actool} --compile ${_wk_assets_staging}
         --platform ${_actool_platform} --minimum-deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET}
         ${_wk_xcassets}
-    DEPENDS ${_wk_xcassets}
+    COMMAND ${_wk_xcassets_depfile_command}
+    DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/Assets.car.d
     COMMENT "Compiling WebKit asset catalogs"
     VERBATIM)
 add_custom_target(WebKit_Assets DEPENDS ${_wk_assets_staging}/Assets.car)
@@ -2376,15 +2561,6 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     if (WEBKIT_SDK_IS_MACCATALYST)
         list(APPEND _sb_extra_includes "${WEBKIT_SDK_MIN_VERSION_FLAG}")
     endif ()
-    file(GLOB _sb_additions "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/macosx*-additions.sdk/usr/local/include")
-    list(SORT _sb_additions)
-    list(REVERSE _sb_additions)
-    foreach (_d IN LISTS _sb_additions)
-        if (EXISTS "${_d}/AvailabilityProhibitedInternal.h")
-            list(APPEND _sb_extra_includes "-isystem" "${_d}")
-            break ()
-        endif ()
-    endforeach ()
     if (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures/AppleFeatures.h")
         list(APPEND _sb_extra_includes "-isystem" "${CMAKE_BINARY_DIR}/generated-stubs")
     endif ()
@@ -2441,20 +2617,22 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
         ${WEBKIT_DIR}/Resources/SafeBrowsing.xcassets
         ${WEBKIT_DIR}/HTTPSBrowsingWarning.xcassets
     )
-    list(TRANSFORM _wk_xcassets APPEND "/*" OUTPUT_VARIABLE _wk_xcassets_globs)
-    # FIXME: GLOB isn't suitable for incremental builds (rdar://188725492)
-    file(GLOB_RECURSE _wk_xcassets_contents LIST_DIRECTORIES true ${_wk_xcassets_globs})
     WEBKIT_XCRUN(_actool -f actool)
     set(_actool_ui_framework_family)
     if (WEBKIT_SDK_IS_MACCATALYST)
         set(_actool_ui_framework_family --ui-framework-family uikit)
     endif ()
+    webkit_get_directory_depfile_command(_wk_xcassets_depfile_command
+        OUTPUT ${WebKit_RESOURCES_DIR}/Assets.car
+        DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/Assets.car.d
+        DIRECTORIES ${_wk_xcassets})
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/Assets.car
         COMMAND ${_actool} --compile ${WebKit_RESOURCES_DIR} --output-format human-readable-text
             --platform macosx --target-device mac --minimum-deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET}
             ${_actool_ui_framework_family}
             ${_wk_xcassets}
-        DEPENDS ${_wk_xcassets} ${_wk_xcassets_contents}
+        COMMAND ${_wk_xcassets_depfile_command}
+        DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/Assets.car.d
         COMMENT "Compiling WebKit asset catalogs"
         VERBATIM)
     add_custom_target(WebKit_Assets DEPENDS ${WebKit_RESOURCES_DIR}/Assets.car)

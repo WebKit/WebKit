@@ -301,7 +301,7 @@ function(GI_INTROSPECT namespace nsversion header)
         endif ()
         if (IS_DIRECTORY "${src}")
             if (EXISTS "${src}")
-                file(GLOB src_files LIST_DIRECTORIES FALSE "${src}/*.c" "${src}/*.cpp")
+                file(GLOB src_files LIST_DIRECTORIES FALSE "${src}/*.c" "${src}/*.cpp") # NOLINT
                 if (src_files)
                     list(APPEND gir_srcs ${src_files})
                 else ()

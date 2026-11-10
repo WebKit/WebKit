@@ -1,3 +1,29 @@
+# Fonts for layout tests. ActivateFontsCocoa.mm registers fonts from the
+# injected bundle's Resources/. AHEM is the critical one -- layout tests assume
+# it for pixel-perfect metric consistency.
+set(_wtr_fonts
+    "${WebKitTestRunner_DIR}/fonts/AHEM____.TTF"
+    "${WebKitTestRunner_DIR}/fonts/FakeHelvetica-Helvetica-400.ttf"
+    "${WebKitTestRunner_DIR}/fonts/FakeHelvetica-Helvetica-500.ttf"
+    "${WebKitTestRunner_DIR}/fonts/FakeHelvetica-Helvetica2-400.ttf"
+    "${WebKitTestRunner_DIR}/fonts/FakeHelvetica-Helvetica2-500.ttf"
+    "${WebKitTestRunner_DIR}/fonts/FakeHelvetica-SingleExtendedCharacter.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKit Layout Tests 2.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKit Layout Tests.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher100.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher200.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher300.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher400.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher500.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher600.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher700.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher800.ttf"
+    "${WebKitTestRunner_DIR}/fonts/WebKitWeightWatcher900.ttf"
+    "${WebKitTestRunner_DIR}/FakeHelvetica-ArmenianCharacter.ttf"
+    "${WebKitTestRunner_DIR}/FontWithFeatures.otf"
+    "${WebKitTestRunner_DIR}/FontWithFeatures.ttf"
+)
+
 if (WEBKIT_PLATFORM_MAC)
 
 # TestRunnerShared/CMakeLists.txt defines TestRunnerShared_DIR; this file uses the old name.
@@ -66,16 +92,6 @@ else ()
     )
 endif ()
 
-# ActivateFontsCocoa.mm registers fonts from the bundle's Resources/.
-# AHEM is the critical one -- layout tests assume it for pixel-perfect metric consistency.
-file(GLOB _wtr_fonts
-    "${WebKitTestRunner_DIR}/fonts/*.ttf"
-    "${WebKitTestRunner_DIR}/fonts/*.TTF"
-    "${WebKitTestRunner_DIR}/fonts/*.otf"
-    "${WebKitTestRunner_DIR}/FakeHelvetica-ArmenianCharacter.ttf"
-    "${WebKitTestRunner_DIR}/FontWithFeatures.ttf"
-    "${WebKitTestRunner_DIR}/FontWithFeatures.otf"
-)
 set_property(TARGET TestRunnerInjectedBundle APPEND PROPERTY RESOURCE "${_wtr_fonts}")
 target_sources(TestRunnerInjectedBundle PRIVATE ${_wtr_fonts})
 
@@ -236,17 +252,8 @@ set_target_properties(TestRunnerInjectedBundle PROPERTIES
     CODE_SIGN_BUNDLE "$<TARGET_BUNDLE_DIR:TestRunnerInjectedBundle>"
 )
 
-# Fonts for layout tests.
-file(GLOB _wktr_fonts
-    "${WebKitTestRunner_DIR}/fonts/*.ttf"
-    "${WebKitTestRunner_DIR}/fonts/*.TTF"
-    "${WebKitTestRunner_DIR}/fonts/*.otf"
-    "${WebKitTestRunner_DIR}/FakeHelvetica-ArmenianCharacter.ttf"
-    "${WebKitTestRunner_DIR}/FontWithFeatures.ttf"
-    "${WebKitTestRunner_DIR}/FontWithFeatures.otf"
-)
-set_property(TARGET TestRunnerInjectedBundle APPEND PROPERTY RESOURCE "${_wktr_fonts}")
-target_sources(TestRunnerInjectedBundle PRIVATE ${_wktr_fonts})
+set_property(TARGET TestRunnerInjectedBundle APPEND PROPERTY RESOURCE "${_wtr_fonts}")
+target_sources(TestRunnerInjectedBundle PRIVATE ${_wtr_fonts})
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WebKit_FRAMEWORK_HEADERS_DIR}

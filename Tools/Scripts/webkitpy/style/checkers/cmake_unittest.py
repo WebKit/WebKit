@@ -159,3 +159,46 @@ class CMakeCheckerTest(unittest.TestCase):
             (58, 'list/emptyline', 5, 'There should be exactly one empty line instead of 2 between "b/a.a" and "c/a.a".'),
             (72, 'list/emptyline', 5, 'There should be exactly one empty line instead of 0 between "a" and "c/a.a".'),
             ])
+
+    def test_glob(self):
+        """Test that file(GLOB) and file(GLOB_RECURSE) are rejected."""
+        errors = []
+
+        def _mock_handle_style_error(line_number, category, confidence,
+                                     message):
+            errors.append((line_number, category))
+
+        checker = CMakeChecker("foo.cmake", _mock_handle_style_error)
+
+        lines = [
+            'file(GLOB sources "*.cpp")\n',
+            '    file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp")\n',
+            'file(\n',
+            '    GLOB sources "*.cpp")\n',
+            '# file(GLOB sources "*.cpp")\n',
+            'message("file(GLOB sources)")\n',
+            'file(MAKE_DIRECTORY ${dir})\n',
+            'set_property(GLOBAL APPEND PROPERTY JOB_POOLS pool=1)\n',
+            'file(\n',
+            '    WRITE ${file} "GLOB")\n',
+            'file(GLOBAL_THING)\n',
+            'file(\n',
+            '\n',
+            '    GLOB sources "*.cpp")\n',
+            'file( # comment\n',
+            '    # Another comment\n',
+            '    GLOB sources "*.cpp")\n',
+            'file(GLOB sources "/opt/*.dll") # NOLINT\n',
+            'file(\n',
+            '    GLOB sources "/opt/*.dll") # NOLINT(command/glob)\n',
+        ]
+        checker.check(lines)
+
+        self.assertEqual(errors, [
+            (1, 'command/glob'),
+            (2, 'command/glob'),
+            (4, 'command/glob'),
+            (14, 'command/glob'),
+            (15, 'whitespace/parentheses'),
+            (17, 'command/glob'),
+        ])

@@ -163,7 +163,30 @@ endif ()
 
 if (NOT USE_LIBWEBRTC)
     set(_webm_parser_dir "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser")
-    file(GLOB _webm_parser_srcs "${_webm_parser_dir}/src/*.cc")
+    set(_webm_parser_srcs
+        "${_webm_parser_dir}/src/ancestory.cc"
+        "${_webm_parser_dir}/src/bit_utils.cc"
+        "${_webm_parser_dir}/src/block_header_parser.cc"
+        "${_webm_parser_dir}/src/block_parser.cc"
+        "${_webm_parser_dir}/src/buffer_reader.cc"
+        "${_webm_parser_dir}/src/callback.cc"
+        "${_webm_parser_dir}/src/date_parser.cc"
+        "${_webm_parser_dir}/src/file_reader.cc"
+        "${_webm_parser_dir}/src/float_parser.cc"
+        "${_webm_parser_dir}/src/id_element_parser.cc"
+        "${_webm_parser_dir}/src/id_parser.cc"
+        "${_webm_parser_dir}/src/istream_reader.cc"
+        "${_webm_parser_dir}/src/master_parser.cc"
+        "${_webm_parser_dir}/src/parser_utils.cc"
+        "${_webm_parser_dir}/src/segment_parser.cc"
+        "${_webm_parser_dir}/src/size_parser.cc"
+        "${_webm_parser_dir}/src/skip_parser.cc"
+        "${_webm_parser_dir}/src/unknown_parser.cc"
+        "${_webm_parser_dir}/src/var_int_parser.cc"
+        "${_webm_parser_dir}/src/virtual_block_parser.cc"
+        "${_webm_parser_dir}/src/void_parser.cc"
+        "${_webm_parser_dir}/src/webm_parser.cc"
+    )
     add_library(WebMParser OBJECT ${_webm_parser_srcs})
     target_include_directories(WebMParser PRIVATE "${_webm_parser_dir}/include" "${_webm_parser_dir}")
     target_compile_definitions(WebMParser PRIVATE WEBRTC_WEBKIT_BUILD)

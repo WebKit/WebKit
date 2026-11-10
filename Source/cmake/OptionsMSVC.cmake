@@ -60,7 +60,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
 # applocal looks in debug/bin for Debug builds, which release-only vcpkg doesn't have.
 if (DEFINED VCPKG_TARGET_TRIPLET AND DEFINED _VCPKG_INSTALLED_DIR)
     set(VCPKG_APPLOCAL_DEPS OFF)
-    file(GLOB _vcpkg_dlls "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/*.dll")
+    file(GLOB _vcpkg_dlls "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/*.dll") # NOLINT
     if (_vcpkg_dlls)
         file(COPY ${_vcpkg_dlls} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     endif ()

@@ -684,20 +684,10 @@ if (ENABLE_WEBGPU)
     endif ()
 
     # Resources used by MetalCompilationTests and TypeCheckingTests.
-    # FIXME: Globbing is hazardous for incremental builds, tracking a
-    # workaround in rdar://188725492.
-    file(GLOB TestWGSL_SHADERS "${TESTWEBKITAPI_DIR}/Tests/WGSL/shaders/*.wgsl")
-    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/copied-wgsl-shaders.stamp"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${TESTWEBKITAPI_DIR}/Tests/WGSL/shaders"
-            "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/shaders"
-        COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/copied-wgsl-shaders.stamp"
-        DEPENDS ${TestWGSL_SHADERS}
-        COMMENT "Copying WGSL test shaders")
-    set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} PROPERTY
-        ADDITIONAL_CLEAN_FILES "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/shaders")
-    add_custom_target(TestWGSLShaders
-        DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/copied-wgsl-shaders.stamp")
+    WEBKIT_COPY_DIRECTORY(TestWGSLShaders
+        SOURCE "${TESTWEBKITAPI_DIR}/Tests/WGSL/shaders"
+        DESTINATION "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/shaders"
+    )
     add_dependencies(TestWGSL TestWGSLShaders)
 endif ()
 
@@ -1151,41 +1141,24 @@ file(CONFIGURE OUTPUT ${_resources_info_plist} CONTENT [[
 </plist>
 ]] @ONLY)
 
-set(_resources_dst_files)
-function(_testwebkitapi_stage_resources source_root skip_pattern)
-    file(GLOB_RECURSE _entries CONFIGURE_DEPENDS RELATIVE "${source_root}" "${source_root}/*")
-    foreach (_rel IN LISTS _entries)
-        if (skip_pattern AND _rel MATCHES "${skip_pattern}")
-            continue ()
-        endif ()
-        set(_src "${source_root}/${_rel}")
-        set(_dst "${_resources_dir}/${_rel}")
-        set(_walk "${_dst}")
-        while (NOT _walk STREQUAL "${_resources_dir}" AND NOT _walk STREQUAL "/")
-            get_filename_component(_walk "${_walk}" DIRECTORY)
-            if (IS_SYMLINK "${_walk}")
-                file(REMOVE "${_walk}")
-            endif ()
-        endwhile ()
-        get_filename_component(_dst_dir "${_dst}" DIRECTORY)
-        file(MAKE_DIRECTORY "${_dst_dir}")
-        add_custom_command(OUTPUT "${_dst}"
-            COMMAND ${CMAKE_COMMAND} -E copy "${_src}" "${_dst}"
-            MAIN_DEPENDENCY "${_src}"
-            VERBATIM
-        )
-        list(APPEND _resources_dst_files "${_dst}")
-    endforeach ()
-    set(_resources_dst_files "${_resources_dst_files}" PARENT_SCOPE)
-endfunction()
-
 # Top-level Resources/ files go to the bundle root. Skip platform subdirs
 # handled separately (cocoa/) or only built for other ports (glib/).
-_testwebkitapi_stage_resources("${TESTWEBKITAPI_DIR}/Resources" "^(cocoa|glib)/")
+WEBKIT_COPY_DIRECTORY(TestWebKitAPI_CopyResources
+    SOURCE "${TESTWEBKITAPI_DIR}/Resources"
+    DESTINATION "${_resources_dir}"
+    EXCLUDE cocoa glib
+)
 # cocoa/ files (and nested subdirs like web-extension/, *.appex/, *.mlmodelc/)
 # are staged with the cocoa/ prefix stripped so paths match what tests pass to
 # URLForResource:.
-_testwebkitapi_stage_resources("${TESTWEBKITAPI_DIR}/Resources/cocoa" "")
+WEBKIT_COPY_DIRECTORY(TestWebKitAPI_CopyCocoaResources
+    SOURCE "${TESTWEBKITAPI_DIR}/Resources/cocoa"
+    DESTINATION "${_resources_dir}"
+)
+# Both copies merge into the same directory, so run cocoa/ second. They must not
+# share any paths: after an incremental build, a shared path holds whichever
+# version was copied last, not necessarily cocoa/'s.
+add_dependencies(TestWebKitAPI_CopyCocoaResources TestWebKitAPI_CopyResources)
 
 # The shipped quirk table, which the Quirks tests parse.
 add_custom_command(OUTPUT "${_resources_dir}/QuirkTable.json"
@@ -1193,9 +1166,9 @@ add_custom_command(OUTPUT "${_resources_dir}/QuirkTable.json"
     MAIN_DEPENDENCY "${WEBCORE_DIR}/page/QuirkTable.json"
     VERBATIM
 )
-list(APPEND _resources_dst_files "${_resources_dir}/QuirkTable.json")
 
-add_custom_target(TestWebKitAPIResources ALL DEPENDS ${_resources_dst_files})
+add_custom_target(TestWebKitAPIResources ALL DEPENDS "${_resources_dir}/QuirkTable.json")
+add_dependencies(TestWebKitAPIResources TestWebKitAPI_CopyResources TestWebKitAPI_CopyCocoaResources)
 # Ensure all test targets depend on the resources bundle.
 foreach (_test_target TestWTF TestJavaScriptCore TestWebCore TestWebKitLegacy TestWebKit TestIPC TestWGSL)
     if (TARGET ${_test_target})
