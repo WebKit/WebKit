@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 150px; border: 1px solid; margin: 0 2px 4px 0; }
+.r { display: block; background: lightblue; }
+</style>
+<div class="root"><img class="r" style="width: fit-content" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='40'><rect width='200' height='40' fill='green'/></svg>"></div>
+<div class="root"><img class="r" style="width: min-content; margin: 0 auto" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='30'><rect width='60' height='30' fill='green'/></svg>"></div>
+<div class="root"><img class="r" style="width: max-content; max-width: 100%" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='40'><rect width='200' height='40' fill='green'/></svg>"></div>
+<div class="root"><img class="r" style="width: 100%; max-width: fit-content" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='40'><rect width='80' height='40' fill='green'/></svg>"></div>
+<div class="root"><img class="r" style="min-width: max-content; width: 10px" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='20'><rect width='50' height='20' fill='green'/></svg>"></div>
+<div class="root"><canvas class="r" width="40" height="20" style="width: fit-content; background: green"></canvas></div>
+<div class="root"><svg class="r" style="width: min-content" viewBox="0 0 20 10"><rect width="20" height="10" fill="green"/></svg></div>
+<div class="root"><img class="r" style="width: fit-content; aspect-ratio: 2; height: 30px" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>"></div>
+<div class="root"><div style="float: left; width: 50px; height: 30px; background: orange"></div><img class="r" style="width: fit-content" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='20'><rect width='60' height='20' fill='green'/></svg>"></div>
