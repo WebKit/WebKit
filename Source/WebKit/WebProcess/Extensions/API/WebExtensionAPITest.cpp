@@ -217,6 +217,8 @@ void WebExtensionAPITest::assertTrue(JSContextRef context, bool actualValue, con
     recordAssertionIfNeeded(actualValue, message, location, outExceptionString);
 
     WebProcess::singleton().send(Messages::WebExtensionController::TestResult(actualValue, message, location.first, location.second), webExtensionControllerProxy->identifier());
+
+    failRunOutsideTestIfNeeded(webExtensionControllerProxy->identifier(), actualValue, message, location);
 }
 
 void WebExtensionAPITest::assertFalse(JSContextRef context, bool actualValue, const String& message, String& outExceptionString)
@@ -247,6 +249,8 @@ void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValueRef actualVa
     recordAssertionIfNeeded(deepEqual, message, location, outExceptionString);
 
     WebProcess::singleton().send(Messages::WebExtensionController::TestEqual(deepEqual, expectedJSONValue, actualJSONValue, message, location.first, location.second), webExtensionControllerProxy->identifier());
+
+    failRunOutsideTestIfNeeded(webExtensionControllerProxy->identifier(), deepEqual, message, location);
 }
 
 String WebExtensionAPITest::combineMessages(const String& messageOne, const String& messageTwo)
@@ -276,6 +280,8 @@ void WebExtensionAPITest::assertEquals(JSContextRef context, bool result, const 
     recordAssertionIfNeeded(result, message, location, outExceptionString);
 
     WebProcess::singleton().send(Messages::WebExtensionController::TestEqual(result, expectedString, actualString, message, location.first, location.second), webExtensionControllerProxy->identifier());
+
+    failRunOutsideTestIfNeeded(webExtensionControllerProxy->identifier(), result, message, location);
 }
 
 void WebExtensionAPITest::assertEq(JSContextRef context, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString)
@@ -325,7 +331,7 @@ void WebExtensionAPITest::assertThrows(JSContextRef context, JSValueRef function
     assertEquals(context, JSValueIsEqual(context, expectedError, exceptionMessageValue, nullptr), debugString(context, expectedError), debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception that didn't equal"_s), outExceptionString);
 }
 
-JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef function, const String& message)
+JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef function, const String& message, String& outExceptionString)
 {
     JSValueRef exceptionValue = nullptr;
     JSValueRef result = callObjectWithArguments<0>(function, context, { }, &exceptionValue, false);
@@ -346,14 +352,14 @@ JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef func
     // Clear the exception since it was caught.
     exceptionValue = nullptr;
 
-    fail(context, combineMessages(message, makeString("Function threw an exception: "_s, debugString(context, exceptionMessageValue))));
+    assertTrue(context, false, combineMessages(message, makeString("Function threw an exception: "_s, debugString(context, exceptionMessageValue))), outExceptionString);
 
     return JSValueMakeUndefined(context);
 }
 
-JSValueRef WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValueRef function, const String& message)
+JSValueRef WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValueRef function, const String& message, String& outExceptionString)
 {
-    JSValueRef result = assertSafe(context, function, message);
+    JSValueRef result = assertSafe(context, function, message, outExceptionString);
     if (!isThenable(context, result))
         return result;
 
@@ -373,6 +379,50 @@ JSValueRef WebExtensionAPITest::runTests(JSContextRef context, Vector<Protected<
         invokeMethod<1>(context, testResultPromises, "push"_s, { addTest(context, testFunction.get(), "test.runTests()"_s) });
 
     return invokeMethod<1>(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), toJSString("Promise"_s).get(), nullptr), "all"_s, { testResultPromises });
+}
+
+std::optional<unsigned> WebExtensionAPITest::beginAsyncAssertion()
+{
+    if (!m_testInProgress)
+        return std::nullopt;
+
+    ++m_pendingAsyncAssertions;
+
+    return m_testGeneration;
+}
+
+void WebExtensionAPITest::settleAsyncAssertion(std::optional<unsigned> generation, NOESCAPE const Function<void()>& recordAssertions)
+{
+    if (!generation) {
+        recordAssertions();
+        return;
+    }
+
+    if (m_testInProgress && *generation == m_testGeneration) {
+        --m_pendingAsyncAssertions;
+        recordAssertions();
+        return;
+    }
+
+    // The test that started this assertion already finished and was reported, so its result must not fail the current test.
+    bool hitAssertion = std::exchange(m_hitAssertion, false);
+    auto assertionMessage = std::exchange(m_assertionMessage, String { });
+
+    recordAssertions();
+
+    m_hitAssertion = hitAssertion;
+    m_assertionMessage = WTF::move(assertionMessage);
+}
+
+void WebExtensionAPITest::failRunOutsideTestIfNeeded(WebExtensionControllerIdentifier identifier, bool result, const String& message, std::pair<String, unsigned> location)
+{
+    if (result || m_runningTest || m_notifiedFailure)
+        return;
+
+    // No queued test is running to fail, so finish the run like notifyFail() instead of waiting for a timeout.
+    m_notifiedFailure = true;
+
+    WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(nullString(), false, message, location.first, location.second), identifier);
 }
 
 void WebExtensionAPITest::recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, String& outExceptionString)

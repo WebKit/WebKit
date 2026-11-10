@@ -59,36 +59,51 @@ JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef p
         return JSValueMakeNull(context);
 
     auto *nsMessage = message.createNSString().get();
+    auto generation = beginAsyncAssertion();
+
+    // A failed assertion rejects the returned promise, so awaiting it throws like the other assertions.
     auto promiseHandler = ^(JSValue *result, JSValue *error) {
-        if (result || !error) {
-            String falseException = nullString();
-            assertEquals(context, false, expectedError ? debugString(context, expectedError) : "(any error)"_s, result ? debugString(context, result.JSValueRef) : "(no error)"_s, combineMessages(nsMessage, "Promise did not reject with an error"_s), falseException);
-            [rejectCallback callWithArguments:nil];
-            return;
-        }
+        bool passed = true;
+        String failureMessage;
 
-        JSValueRef errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"].JSValueRef : error.JSValueRef;
-
-        // By default, JSValueRef is set to an undefined value in the JS implementation.
-        // It should not be possible to get a null value here.
-        if (JSValueIsUndefined(context, expectedError) || !expectedError) {
+        settleAsyncAssertion(generation, [&] {
             String falseException = nullString();
-            assertEquals(context, true, "(any error)"_s, debugString(context, errorMessageValue), combineMessages(nsMessage, "Promise rejected with an error"_s), falseException);
+
+            if (result || !error) {
+                passed = false;
+                failureMessage = combineMessages(nsMessage, "Promise did not reject with an error"_s);
+                assertEquals(context, false, expectedError ? debugString(context, expectedError) : "(any error)"_s, result ? debugString(context, result.JSValueRef) : "(no error)"_s, failureMessage, falseException);
+                return;
+            }
+
+            JSValueRef errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"].JSValueRef : error.JSValueRef;
+
+            // By default, JSValueRef is set to an undefined value in the JS implementation.
+            // It should not be possible to get a null value here.
+            if (JSValueIsUndefined(context, expectedError) || !expectedError) {
+                assertEquals(context, true, "(any error)"_s, debugString(context, errorMessageValue), combineMessages(nsMessage, "Promise rejected with an error"_s), falseException);
+                return;
+            }
+
+            if (isRegularExpression(context, expectedError)) {
+                JSValueRef testResult = invokeMethod<1>(context, expectedError, "test"_s, { errorMessageValue });
+                passed = JSValueToBoolean(context, testResult);
+                failureMessage = combineMessages(nsMessage, "Promise rejected with an error that didn't match the regular expression"_s);
+                assertEquals(context, passed, debugString(context, expectedError), debugString(context, errorMessageValue), failureMessage, falseException);
+                return;
+            }
+
+            passed = JSValueIsEqual(context, expectedError, errorMessageValue, nullptr);
+            failureMessage = combineMessages(nsMessage, "Promise rejected with an error that didn't equal"_s);
+            assertEquals(context, passed, debugString(context, expectedError), debugString(context, errorMessageValue), failureMessage, falseException);
+        });
+
+        if (passed) {
             [resolveCallback callWithArguments:nil];
             return;
         }
 
-        if (isRegularExpression(context, expectedError)) {
-            String falseException = nullString();
-            JSValueRef testResult = invokeMethod<1>(context, expectedError, "test"_s, { errorMessageValue });
-            assertEquals(context, JSValueToBoolean(context, testResult), debugString(context, expectedError), debugString(context, errorMessageValue), combineMessages(nsMessage, "Promise rejected with an error that didn't match the regular expression"_s), falseException);
-            [resolveCallback callWithArguments:nil];
-            return;
-        }
-
-        String falseException = nullString();
-        assertEquals(context, JSValueIsEqual(context, expectedError, errorMessageValue, nullptr), debugString(context, expectedError), debugString(context, errorMessageValue), combineMessages(nsMessage, "Promise rejected with an error that didn't equal"_s), falseException);
-        [resolveCallback callWithArguments:nil];
+        [rejectCallback callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:failureMessage.createNSString().get() inContext:toJSContext(context)] ]];
     };
 
     [promise invokeMethod:@"then" withArguments:@[
@@ -107,8 +122,10 @@ JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef p
 JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef promiseRef, const String& message)
 {
     __block JSValue *resolveCallback;
+    __block JSValue *rejectCallback;
     JSValue *resultPromise = [JSValue valueWithNewPromiseInContext:toJSContext(context) fromExecutor:^(JSValue *resolve, JSValue *reject) {
         resolveCallback = resolve;
+        rejectCallback = reject;
     }];
 
     // Wrap in a native promise for consistency.
@@ -120,17 +137,29 @@ JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef 
     // The handler runs after this function returns, so it needs its own copy of the message.
     String messageCopy = message;
 
+    auto generation = beginAsyncAssertion();
+
+    // A failed assertion rejects the returned promise, so awaiting it throws like the other assertions.
     auto promiseHandler = ^(JSValue *result, JSValue *error) {
+        String failureMessage;
+
+        settleAsyncAssertion(generation, [&] {
+            if (!error) {
+                succeed(context, @"Promise resolved without an error");
+                return;
+            }
+
+            JSValue *errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"] : error;
+            failureMessage = combineMessages(messageCopy, makeString("Promise rejected with an error: "_s, debugString(context, errorMessageValue.JSValueRef)));
+            fail(context, failureMessage);
+        });
+
         if (!error) {
-            succeed(context, @"Promise resolved without an error");
             [resolveCallback callWithArguments:@[ result ]];
             return;
         }
 
-        JSValue *errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"] : error;
-        fail(context, combineMessages(messageCopy, makeString("Promise rejected with an error: "_s, debugString(context, errorMessageValue.JSValueRef))));
-
-        [resolveCallback callWithArguments:nil];
+        [rejectCallback callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:failureMessage.createNSString().get() inContext:toJSContext(context)] ]];
     };
 
     [promise invokeMethod:@"then" withArguments:@[
@@ -202,19 +231,30 @@ void WebExtensionAPITest::startNextTest()
 {
     auto test = m_testQueue.takeFirst();
 
+    m_testInProgress = true;
+    m_pendingAsyncAssertions = 0;
+    ++m_testGeneration;
+
     WebProcess::singleton().send(Messages::WebExtensionController::TestStarted(test.testName, test.location.first, test.location.second), test.webExtensionControllerIdentifier);
 
     JSValueRef exception = nullptr;
     JSValueRef result = callObjectWithArguments<0>(test.testFunction.get(), test.testFunction.context().get(), { }, &exception);
 
     auto testComplete = [this, protectedThis = Ref { *this }, test](JSValue *result, JSValue *error) {
-        if (error || m_hitAssertion) {
+        bool hasPendingAssertions = m_pendingAsyncAssertions;
+
+        m_testInProgress = false;
+        m_pendingAsyncAssertions = 0;
+
+        if (error || m_hitAssertion || hasPendingAssertions) {
             NSString *errorMessage;
             if (error) {
                 JSValue *errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"] : error;
                 errorMessage = debugString(test.testFunction.context().get(), errorMessageValue.JSValueRef).createNSString().get();
             } else if (!m_assertionMessage.isNull())
                 errorMessage = m_assertionMessage.createNSString().get();
+            else if (hasPendingAssertions)
+                errorMessage = @"The test finished with an assertion promise still pending. Await browser.test.assertRejects() and browser.test.assertResolves().";
 
             errorMessage = errorMessage ? combineMessages("Promise rejected with an error: "_s, errorMessage).createNSString().get() : @"Promise rejected without an error";
 

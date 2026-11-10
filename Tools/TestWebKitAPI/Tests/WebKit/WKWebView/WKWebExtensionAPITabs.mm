@@ -3707,7 +3707,7 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
         @"  port.postMessage('Hello')",
 
         @"  port.onDisconnect.addListener(() => {",
-        @"    browser.test.fail('Should not trigger the onDisconnect event for the port that called disconnect()')",
+        @"    browser.test.assertTrue(false, 'Should not trigger the onDisconnect event for the port that called disconnect()')",
         @"  })",
 
         @"  port.disconnect()",
@@ -3924,7 +3924,7 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
         @"    results = await browser.tabs.executeScript(tabId, { allFrames: false, code: \"document.body.style.background = 'pink'\" })",
         @"    browser.test.assertEq(results[0], 'pink')",
 
-        @"    browser.test.assertSafeResolve(() => browser.tabs.executeScript(tabId, { allFrames: false, frameId: 0, file: 'executeScript.js' }))",
+        @"    await browser.test.assertSafeResolve(() => browser.tabs.executeScript(tabId, { allFrames: false, frameId: 0, file: 'executeScript.js' }))",
 
         @"    browser.test.notifyPass()",
         @"  }",

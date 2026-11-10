@@ -221,7 +221,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
         @"  browser.test.assertEq(results?.[0]?.result, blueValue, 'Result should be')",
         @"  browser.test.assertEq(results?.[0]?.frameId, 0, 'Frame should be')",
 
-        @"  browser.test.assertSafeResolve(() => browser.scripting.executeScript({ target: { tabId, frameIds: [0], allFrames: false }, func: () => {} }))",
+        @"  await browser.test.assertSafeResolve(() => browser.scripting.executeScript({ target: { tabId, frameIds: [0], allFrames: false }, func: () => {} }))",
 
         @"  browser.test.notifyPass()",
         @"})",

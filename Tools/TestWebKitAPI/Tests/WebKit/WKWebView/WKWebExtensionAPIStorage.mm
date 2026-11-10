@@ -343,7 +343,7 @@ TEST(WKWebExtensionAPIStorage, Set)
 
         // Ensure there isn't a maximum item quota if the storageArea isn't sync.
         @"await browser.storage?.local?.clear()",
-        @"browser.test.assertSafeResolve(() => browser.storage?.local?.set({ 'key': 'a'.repeat(8193) }))",
+        @"await browser.test.assertSafeResolve(() => browser.storage?.local?.set({ 'key': 'a'.repeat(8193) }))",
 
         @"browser.test.notifyPass()",
     ]);

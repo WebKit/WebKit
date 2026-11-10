@@ -73,6 +73,7 @@ static NSError *managerError(NSString *description)
     bool _done;
     bool _receivedMessage;
     bool _runningTestFromQueue;
+    NSString *_lastAssertionFailureMessage;
     NSMutableDictionary *_messages;
     NSMutableArray<TestWebExtensionWindow *> *_windows;
     void (^_doneHandler)(NSError *);
@@ -493,6 +494,8 @@ static NSError *managerError(NSString *description)
     if (result || _runningTestFromQueue)
         return;
 
+    _lastAssertionFailureMessage = [message copy] ?: @"";
+
     if (!message.length)
         message = @"Assertion failed with no message.";
 
@@ -503,6 +506,8 @@ static NSError *managerError(NSString *description)
 {
     if (result || _runningTestFromQueue)
         return;
+
+    _lastAssertionFailureMessage = [message copy] ?: @"";
 
     if (!message.length)
         message = @"Expected equality of these values";
@@ -563,7 +568,7 @@ static NSError *managerError(NSString *description)
 
 - (void)_webExtensionController:(WKWebExtensionController *)controller recordTestFinishedWithName:(NSString *)testName result:(BOOL)result message:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
-    if (_runningTestFromQueue) {
+    if (_runningTestFromQueue && testName.length) {
         _runningTestFromQueue = NO;
 
         NSMutableDictionary<NSString *, id> *testResults = [_testResults mutableCopy];
@@ -574,8 +579,12 @@ static NSError *managerError(NSString *description)
     }
 
     // Record the failure before signalling, so that an async waiter cannot resume and finish the
-    // test before the failure has been attributed to it.
-    if (!result) {
+    // test before the failure has been attributed to it. A failed assertion outside a queued test
+    // also finishes the run, and has already been recorded with its details.
+    bool repeatsAssertion = [_lastAssertionFailureMessage isEqualToString:message ?: @""];
+    _lastAssertionFailureMessage = nil;
+
+    if (!result && !repeatsAssertion) {
         if (!message.length)
             message = @"Test failed with no message.";
 

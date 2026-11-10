@@ -332,7 +332,7 @@ TEST(WKWebExtensionAPIRuntime, GetBackgroundPageForServiceWorker)
 TEST(WKWebExtensionAPIRuntime, SetUninstallURL)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertSafeResolve(() => browser.runtime.setUninstallURL('https://example.com/uninstall'))",
+        @"await browser.test.assertSafeResolve(() => browser.runtime.setUninstallURL('https://example.com/uninstall'))",
         @"browser.test.notifyPass()"
     ]);
 
@@ -1788,7 +1788,7 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToOpenedWindow)
 
     auto *mainScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener(() => {",
-        @"  browser.test.fail('Main page should not receive messages intended for opened window')",
+        @"  browser.test.assertTrue(false, 'Main page should not receive messages intended for opened window')",
         @"})",
     ]);
 
@@ -1878,7 +1878,7 @@ TEST(WKWebExtensionAPITabs, ConnectFromBackgroundToOpenedWindow)
 
     auto *mainScript = Util::constructScript(@[
         @"browser.runtime.onConnect.addListener(() => {",
-        @"  browser.test.fail('Main page should not receive connections intended for opened window')",
+        @"  browser.test.assertTrue(false, 'Main page should not receive connections intended for opened window')",
         @"})",
     ]);
 
@@ -2437,7 +2437,7 @@ TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScript)
         @"port?.postMessage('Message from content script to background')",
 
         @"port?.onDisconnect.addListener(() => {",
-        @"  browser.test.fail('Should not trigger the onDisconnect event for the port that called disconnect()')",
+        @"  browser.test.assertTrue(false, 'Should not trigger the onDisconnect event for the port that called disconnect()')",
         @"})",
 
         @"port?.disconnect()"
@@ -2974,7 +2974,7 @@ TEST(WKWebExtensionAPIRuntime, InstalledEvent)
 TEST(WKWebExtensionAPIRuntime, OpenOptionsPage)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertSafeResolve(() => browser.runtime.openOptionsPage())"
+        @"await browser.test.assertSafeResolve(() => browser.runtime.openOptionsPage())"
     ]);
 
     auto resources = @{

@@ -33,6 +33,7 @@
 #include "WebExtensionAPIWebNavigationEvent.h"
 #include "WebExtensionControllerIdentifier.h"
 #include <wtf/Deque.h>
+#include <wtf/Function.h>
 
 namespace WebKit {
 
@@ -66,9 +67,9 @@ public:
     JSValueRef assertResolves(JSContextRef, JSValueRef promise, const String& message);
 
     void assertThrows(JSContextRef, JSValueRef function, JSValueRef expectedError, const String& message, String& outExceptionString);
-    JSValueRef assertSafe(JSContextRef, JSValueRef function, const String& message);
+    JSValueRef assertSafe(JSContextRef, JSValueRef function, const String& message, String& outExceptionString);
 
-    JSValueRef assertSafeResolve(JSContextRef, JSValueRef function, const String& message);
+    JSValueRef assertSafeResolve(JSContextRef, JSValueRef function, const String& message, String& outExceptionString);
 
     JSValueRef addTest(JSContextRef, JSValueRef testFunction);
     JSValueRef runTests(JSContextRef, Vector<Protected<JSValueRef>> testFunctions);
@@ -89,8 +90,12 @@ private:
 
     Deque<Test> m_testQueue;
     bool m_runningTest { false };
+    bool m_testInProgress { false };
+    bool m_notifiedFailure { false };
     bool m_hitAssertion { false };
     String m_assertionMessage;
+    unsigned m_testGeneration { 0 };
+    unsigned m_pendingAsyncAssertions { 0 };
 
     template<size_t ArgumentCount>
     JSValueRef invokeMethod(JSContextRef, JSValueRef, const String& method, std::array<JSValueRef, ArgumentCount>&& arguments, JSValueRef* exception = nullptr);
@@ -101,7 +106,10 @@ private:
     JSValueRef addTest(JSContextRef, JSValueRef testFunction, String callingAPIName);
     void assertEquals(JSContextRef, bool result, const String& expectedString, const String& actualString, const String& message, String& outExceptionString);
     void startNextTest();
+    std::optional<unsigned> beginAsyncAssertion();
+    void settleAsyncAssertion(std::optional<unsigned> generation, NOESCAPE const Function<void()>& recordAssertions);
     void recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, String& outExceptionString);
+    void failRunOutsideTestIfNeeded(WebExtensionControllerIdentifier, bool result, const String& message, std::pair<String, unsigned> location);
 };
 
 } // namespace WebKit

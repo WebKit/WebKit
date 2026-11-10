@@ -84,10 +84,10 @@
     [RaisesStringException, NeedsScriptContext, ProcessArgumentsLeftToRight] void assertThrows(any function, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
 
     // Asserts the function does not throw an exception.
-    [NeedsScriptContext] any assertSafe(any function, [Optional] DOMString message);
+    [RaisesStringException, NeedsScriptContext] any assertSafe(any function, [Optional] DOMString message);
 
     // Asserts the function does not throw an exception and the result promise is resolved.
-    [NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
+    [RaisesStringException, NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
 
     // Adds a test represented by a promise. If the promise is resolved, the test passes; if the promise is rejected, the test fails.
     [NeedsScriptContext] any addTest(any function);
