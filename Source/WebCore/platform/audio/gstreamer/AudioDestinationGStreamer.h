@@ -41,6 +41,7 @@ public:
 
     bool isPlaying() override { return m_isPlaying; }
     unsigned framesPerBuffer() const final;
+    MediaTime outputLatency() const final;
 
     bool handleMessage(GstMessage*, bool handleLatencyMessage);
     void notifyIsPlaying(bool);

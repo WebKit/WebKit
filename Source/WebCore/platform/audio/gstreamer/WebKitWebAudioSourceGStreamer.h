@@ -34,5 +34,7 @@ GType webkit_web_audio_src_get_type();
 void webkitWebAudioSourceSetDestination(WebKitWebAudioSrc*, const RefPtr<WebCore::AudioDestinationGStreamer>&);
 void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc*, Function<void(Function<void()>&&)>&&);
 void webkitWebAudioSourceSetSilent(WebKitWebAudioSrc*, bool);
+size_t webkitWebAudioSourceFramesPerBuffer();
+GstClockTime webkitWebAudioSourceGetOutputLatency(WebKitWebAudioSrc*);
 
 #endif // USE(GSTREAMER)

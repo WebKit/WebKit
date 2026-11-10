@@ -40,6 +40,15 @@
 
 using namespace WebCore;
 
+// Number of WebAudio render quanta packed in each GstBuffer pushed downstream.
+// A WebAudio render quantum is `AudioUtilities::renderQuantumSize` frames.
+static constexpr size_t renderQuantaPerBuffer = 4;
+
+// Maximum number of buffers queued in the appsrc before the rendering task
+// blocks. It defines how far ahead of the playback WebAudio renders its audio
+// frames. It also defines the appsrc maximum latency.
+static constexpr size_t maxQueuedBuffers = 2;
+
 typedef struct _WebKitWebAudioSrcClass   WebKitWebAudioSrcClass;
 typedef struct _WebKitWebAudioSrcPrivate WebKitWebAudioSrcPrivate;
 
@@ -79,6 +88,14 @@ struct _WebKitWebAudioSrcPrivate {
     guint64 numberOfSamples;
     bool runningTimeReset { false };
 
+    // Latency configured in the pipeline, received through the upstream
+    // LATENCY event.
+    std::atomic<GstClockTime> pipelineLatency { 0 };
+
+    // Delay between the rendering of the last buffer and its playback by the
+    // sink, GST_CLOCK_TIME_NONE until measured.
+    std::atomic<GstClockTime> outputLatency { GST_CLOCK_TIME_NONE };
+
     GRefPtr<GstBufferPool> pool;
 
     bool hasRenderedAudibleFrame { false };
@@ -87,6 +104,7 @@ struct _WebKitWebAudioSrcPrivate {
     Function<void(Function<void()>&&)> dispatchToRenderThreadFunction WTF_GUARDED_BY_LOCK(dispatchToRenderThreadLock);
 
     bool dispatchDone WTF_GUARDED_BY_LOCK(dispatchLock);
+    bool didPushBuffer WTF_GUARDED_BY_LOCK(dispatchLock) { false };
     Lock dispatchLock;
     Condition dispatchCondition;
 
@@ -178,13 +196,23 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     WebKitWebAudioSrc* src = WEBKIT_WEB_AUDIO_SRC(object);
     WebKitWebAudioSrcPrivate* priv = src->priv;
 
-    priv->framesToPull = AudioUtilities::renderQuantumSize;
+    priv->framesToPull = webkitWebAudioSourceFramesPerBuffer();
     priv->bufferSize = sizeof(float) * priv->framesToPull;
 
     GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(src), GST_ELEMENT_FLAG_SOURCE);
     gst_bin_set_suppressed_flags(GST_BIN_CAST(src), static_cast<GstElementFlags>(GST_ELEMENT_FLAG_SOURCE | GST_ELEMENT_FLAG_SINK));
 
     gst_element_add_pad(GST_ELEMENT(src), priv->sourcePad);
+
+    gst_pad_add_probe(priv->sourcePad, GST_PAD_PROBE_TYPE_EVENT_UPSTREAM, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        auto* event = GST_PAD_PROBE_INFO_EVENT(info);
+        if (GST_EVENT_TYPE(event) == GST_EVENT_LATENCY) {
+            GstClockTime latency;
+            gst_event_parse_latency(event, &latency);
+            static_cast<WebKitWebAudioSrcPrivate*>(userData)->pipelineLatency.store(latency);
+        }
+        return GST_PAD_PROBE_OK;
+    }, priv, nullptr);
 
     priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcRenderIteration), src, nullptr));
     gst_task_set_lock(priv->task.get(), &priv->mutex);
@@ -229,14 +257,6 @@ static GRefPtr<GstBuffer> webKitWebAudioSrcAllocateBuffer(WebKitWebAudioSrc* src
     ASSERT(buffer);
     gst_buffer_add_audio_meta(buffer.get(), &priv->info, priv->framesToPull, nullptr);
 
-    {
-        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_WRITE);
-        ASSERT(mappedBuffer);
-        const auto& bus = destination->renderBus();
-        for (unsigned channelIndex = 0; channelIndex < bus->numberOfChannels(); channelIndex++)
-            bus->setChannelMemory(channelIndex, spanReinterpretCast<float>(mappedBuffer.mutableSpan<uint8_t>().subspan(channelIndex * priv->bufferSize)).first(priv->framesToPull));
-    }
-
     return buffer;
 }
 
@@ -245,9 +265,11 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
     auto* src = WEBKIT_WEB_AUDIO_SRC(element.get());
     auto* priv = src->priv;
 
-    auto notifyDispatchOnExit = makeScopeExit([priv] {
+    bool didPushBuffer = false;
+    auto notifyDispatchOnExit = makeScopeExit([priv, &didPushBuffer] {
         Locker locker { priv->dispatchLock };
         priv->dispatchDone = true;
+        priv->didPushBuffer = didPushBuffer;
         priv->dispatchCondition.notifyOne();
     });
 
@@ -266,19 +288,55 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
     priv->numberOfSamples += priv->framesToPull;
     GstClockTime duration = gst_util_uint64_scale(priv->framesToPull, GST_SECOND, priv->sampleRate);
 
-    AudioIOPosition outputTimestamp;
-    outputTimestamp.position = Seconds::fromNanoseconds(timestamp);
-    auto now = static_cast<double>((g_get_monotonic_time() + GST_TIME_AS_USECONDS(timestamp)) / 1000000.0);
-    outputTimestamp.timestamp = MonotonicTime::fromRawSeconds(now);
+    if (priv->runningTimeReset) {
+        priv->runningTimeReset = false;
+        gst_pad_set_offset(priv->sourcePad, -timestamp);
+    }
+
+    // Estimate the outputLatency, that is to say the delay until the first
+    // frame of the buffer is rendered by the sink.
+    auto playbackTime = MonotonicTime::now();
+    if (GST_STATE(element.get()) == GST_STATE_PLAYING) {
+        auto currentRunningTime = gst_element_get_current_running_time(element.get());
+        if (GST_CLOCK_TIME_IS_VALID(currentRunningTime)) {
+            auto bufferRunningTime = static_cast<GstClockTimeDiff>(timestamp) + gst_pad_get_offset(priv->sourcePad);
+            auto renderingTime = bufferRunningTime + static_cast<GstClockTimeDiff>(priv->pipelineLatency.load());
+            auto delay = renderingTime - static_cast<GstClockTimeDiff>(currentRunningTime);
+            playbackTime += Seconds::fromNanoseconds(delay);
+            priv->outputLatency.store(static_cast<GstClockTime>(std::max<GstClockTimeDiff>(delay, 0)));
+        }
+    }
 
     // FIXME: Add support for local/live audio input.
     const auto& bus = destination->renderBus();
-    if (bus) [[likely]]
-        destination->callRenderCallback(*bus, priv->framesToPull, outputTimestamp);
+    if (bus) [[likely]] {
+        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_WRITE);
+        ASSERT(mappedBuffer);
+        auto data = mappedBuffer.mutableSpan<uint8_t>();
+        constexpr size_t quantumSizeInBytes = sizeof(float) * AudioUtilities::renderQuantumSize;
 
-    if (!priv->hasRenderedAudibleFrame && !bus->isSilent()) {
-        destination->notifyIsPlaying(true);
-        priv->hasRenderedAudibleFrame = true;
+        // WebAudio renders by quanta of AudioUtilities::renderQuantumSize
+        // frames. So we call the rendering callback `renderQuantaPerBuffer`
+        // times, pointing the render bus to the right location, each time, in
+        // the same GstBuffer.
+        for (size_t quantumIndex = 0; quantumIndex < renderQuantaPerBuffer; quantumIndex++) {
+            for (unsigned channelIndex = 0; channelIndex < bus->numberOfChannels(); channelIndex++) {
+                auto offset = channelIndex * priv->bufferSize + quantumIndex * quantumSizeInBytes;
+                bus->setChannelMemory(channelIndex, spanReinterpretCast<float>(data.subspan(offset, quantumSizeInBytes)));
+            }
+
+            GstClockTime quantumOffset = gst_util_uint64_scale(quantumIndex * AudioUtilities::renderQuantumSize, GST_SECOND, priv->sampleRate);
+            AudioIOPosition outputTimestamp;
+            outputTimestamp.position = Seconds::fromNanoseconds(timestamp + quantumOffset);
+            outputTimestamp.timestamp = playbackTime + Seconds::fromNanoseconds(quantumOffset);
+
+            destination->callRenderCallback(*bus, AudioUtilities::renderQuantumSize, outputTimestamp);
+
+            if (!priv->hasRenderedAudibleFrame && !bus->isSilent()) {
+                destination->notifyIsPlaying(true);
+                priv->hasRenderedAudibleFrame = true;
+            }
+        }
     }
 
     GST_BUFFER_TIMESTAMP(buffer.get()) = timestamp;
@@ -292,11 +350,6 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
             zeroSpan(mappedBuffer.mutableSpan<uint8_t>());
     }
 
-    if (priv->runningTimeReset) {
-        priv->runningTimeReset = false;
-        gst_pad_set_offset(priv->sourcePad, -timestamp);
-    }
-
     // Leak the buffer ref, because gst_app_src_push_buffer steals it.
     GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(priv->source.get()), buffer.leakRef());
     if (ret != GST_FLOW_OK) {
@@ -304,7 +357,9 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
         if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
             GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to push buffer on %s flow: %s", GST_OBJECT_NAME(priv->source.get()), gst_flow_get_name(ret)));
         gst_task_stop(priv->task.get());
+        return;
     }
+    didPushBuffer = true;
 }
 
 static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
@@ -319,28 +374,33 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
     {
         Locker locker { priv->dispatchLock };
         priv->dispatchDone = false;
+        priv->didPushBuffer = false;
     }
 
-    if (!priv->dispatchToRenderThreadLock.tryLock())
-        return;
+    if (priv->dispatchToRenderThreadLock.tryLock()) {
+        Locker locker { AdoptLock, priv->dispatchToRenderThreadLock };
 
-    Locker locker { AdoptLock, priv->dispatchToRenderThreadLock };
+        if (!priv->dispatchToRenderThreadFunction)
+            webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTF::move(buffer));
+        else {
+            priv->dispatchToRenderThreadFunction([buffer = WTF::move(buffer), protectedThis = GRefPtr<GstElement>(GST_ELEMENT_CAST(src))] mutable {
+                if (!protectedThis)
+                    return;
+                webKitWebAudioSrcRenderAndPushFrames(protectedThis, WTF::move(buffer));
+            });
+        }
 
-    if (!priv->dispatchToRenderThreadFunction)
-        webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTF::move(buffer));
-    else {
-        priv->dispatchToRenderThreadFunction([buffer = WTF::move(buffer), protectedThis = GRefPtr<GstElement>(GST_ELEMENT_CAST(src))]() mutable {
-            if (!protectedThis)
-                return;
-            webKitWebAudioSrcRenderAndPushFrames(protectedThis, WTF::move(buffer));
-        });
-    }
-
-    {
-        Locker locker { priv->dispatchLock };
+        Locker dispatchLocker { priv->dispatchLock };
         if (!priv->dispatchDone)
             priv->dispatchCondition.wait(priv->dispatchLock);
     }
+
+    // Normally, the task is paced by the appsrc blocking when its queue is
+    // full. But when no buffer was pushed, we can still wait for a buffer
+    // duration to avoid spinning.
+    Locker locker { priv->dispatchLock };
+    if (!priv->didPushBuffer)
+        priv->dispatchCondition.waitFor(priv->dispatchLock, Seconds(priv->framesToPull / priv->sampleRate));
 }
 
 static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, GstStateChange transition)
@@ -364,7 +424,11 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
 
         priv->pool = adoptGRef(gst_buffer_pool_new());
         GstStructure* config = gst_buffer_pool_get_config(priv->pool.get());
-        gst_buffer_pool_config_set_params(config, nullptr, priv->bufferSize * bus->numberOfChannels(), 0, 0);
+
+        // Pre-allocate the buffers queued in appsrc, plus the one being
+        // rendered, plus the one held downstream.
+        gst_buffer_pool_config_set_params(config, nullptr, priv->bufferSize * bus->numberOfChannels(), maxQueuedBuffers + 2, 0);
+
         gst_buffer_pool_set_config(priv->pool.get(), config);
         if (!gst_buffer_pool_set_active(priv->pool.get(), TRUE))
             return GST_STATE_CHANGE_FAILURE;
@@ -400,6 +464,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
         priv->pool = nullptr;
         priv->hasRenderedAudibleFrame = false;
         priv->runningTimeReset = true;
+        priv->outputLatency.store(GST_CLOCK_TIME_NONE);
         break;
     default:
         break;
@@ -417,7 +482,10 @@ void webkitWebAudioSourceSetDestination(WebKitWebAudioSrc* src, const RefPtr<Aud
     auto numberOfChannels = bus->numberOfChannels();
     priv->caps = adoptGRef(getGStreamerAudioCaps(priv->sampleRate, numberOfChannels));
     gst_audio_info_from_caps(&priv->info, priv->caps.get());
-    g_object_set(priv->source.get(), "max-bytes", static_cast<guint64>(2 * priv->bufferSize * numberOfChannels), "caps", priv->caps.get(), nullptr);
+    g_object_set(priv->source.get(), "max-bytes", static_cast<guint64>(maxQueuedBuffers * priv->bufferSize * numberOfChannels), "caps", priv->caps.get(), nullptr);
+
+    auto bufferDuration = gst_util_uint64_scale(priv->framesToPull, GST_SECOND, priv->sampleRate);
+    g_object_set(priv->source.get(), "min-latency", static_cast<gint64>(0), "max-latency", static_cast<gint64>(maxQueuedBuffers * bufferDuration), nullptr);
 }
 
 void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc* src, Function<void(Function<void()>&&)>&& function)
@@ -429,6 +497,20 @@ void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc* sr
 void webkitWebAudioSourceSetSilent(WebKitWebAudioSrc* src, bool isSilent)
 {
     src->priv->isSilent.store(isSilent);
+}
+
+size_t webkitWebAudioSourceFramesPerBuffer()
+{
+    return renderQuantaPerBuffer * AudioUtilities::renderQuantumSize;
+}
+
+GstClockTime webkitWebAudioSourceGetOutputLatency(WebKitWebAudioSrc* src)
+{
+    // Until a buffer is rendered in PLAYING, fallback to the pipeline latency.
+    auto latency = src->priv->outputLatency.load();
+    if (!GST_CLOCK_TIME_IS_VALID(latency))
+        return src->priv->pipelineLatency.load();
+    return latency;
 }
 
 #undef GST_CAT_DEFAULT
