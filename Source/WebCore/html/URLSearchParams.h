@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -36,6 +37,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class URLSearchParams : public RefCounted<URLSearchParams> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(URLSearchParams, WEBCORE_EXPORT);
 public:
     ~URLSearchParams();
 

@@ -51,6 +51,7 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -62,6 +63,7 @@ using namespace HTMLNames;
 /* PDFJSDocumentParser: this receives the PDF bytes */
 
 class PDFJSDocumentParser final : public RawDataDocumentParser {
+    WTF_MAKE_TZONE_ALLOCATED(PDFJSDocumentParser);
 public:
     static Ref<PDFJSDocumentParser> create(PDFJSDocument& document)
     {
@@ -79,6 +81,8 @@ private:
     void appendBytes(DocumentWriter&, std::span<const uint8_t>) override;
     void finish() override;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFJSDocumentParser);
 
 inline PDFJSDocument& PDFJSDocumentParser::document() const
 {
@@ -100,6 +104,7 @@ void PDFJSDocumentParser::finish()
 /* PDFJSDocumentEventListener: event listener for the PDFJSDocument iframe */
 
 class PDFJSDocumentEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(PDFJSDocumentEventListener);
 public:
     static Ref<PDFJSDocumentEventListener> create(PDFJSDocument& document) { return adoptRef(*new PDFJSDocumentEventListener(document)); }
 
@@ -115,6 +120,8 @@ private:
 
     WeakPtr<PDFJSDocument, WeakPtrImplWithEventTargetData> m_document;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFJSDocumentEventListener);
 
 void PDFJSDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {

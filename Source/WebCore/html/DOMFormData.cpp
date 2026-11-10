@@ -36,10 +36,13 @@
 #include "ExceptionOr.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 template class mpark::variant<WTF::Ref<WebCore::File>, WTF::String>;
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMFormData);
 
 DOMFormData::DOMFormData(ScriptExecutionContext* context, const PAL::TextEncoding& encoding)
     : ContextDestructionObserver(context)

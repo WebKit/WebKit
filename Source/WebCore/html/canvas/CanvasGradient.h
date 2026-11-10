@@ -27,6 +27,7 @@
 #pragma once
 
 #include "FloatPoint.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class CanvasGradient : public RefCounted<CanvasGradient> {
+    WTF_MAKE_TZONE_ALLOCATED(CanvasGradient);
 public:
     static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1);
     static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);

@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CloseWatcher.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CloseWatcherManager final : public RefCounted<CloseWatcherManager> {
+    WTF_MAKE_TZONE_ALLOCATED(CloseWatcherManager);
 public:
     CloseWatcherManager();
 

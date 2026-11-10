@@ -29,11 +29,13 @@
 
 #include "GraphicsTypesGL.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebGLActiveInfo : public RefCounted<WebGLActiveInfo> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebGLActiveInfo);
 public:
     static Ref<WebGLActiveInfo> create(const String& name, GCGLenum type, GCGLint size)
     {

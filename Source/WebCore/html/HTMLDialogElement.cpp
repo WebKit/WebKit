@@ -51,6 +51,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDialogElement::DialogCloseWatcherEventListener);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
