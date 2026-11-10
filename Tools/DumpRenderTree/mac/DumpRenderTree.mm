@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -284,6 +284,7 @@ static int printTestCount;
 static int checkForWorldLeaks;
 static BOOL printSeparators;
 static std::set<std::string> allowedHosts;
+static std::set<std::string> disabledKeys;
 static std::set<std::string> localhostAliases;
 static std::string webCoreLogging;
 
@@ -1010,7 +1011,8 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"print-test-count", no_argument, &printTestCount, YES},
         {"world-leaks", no_argument, &checkForWorldLeaks, NO},
         {"webcore-logging", required_argument, nullptr, 'w'},
-        {"localhost-alias", required_argument, nullptr, 'l'},
+        { "disabled-keys", required_argument, nullptr, 'k' },
+        { "localhost-alias", required_argument, nullptr, 'l' },
         { "ip-address-space-overrides", required_argument, nullptr, 'i' },
         {nullptr, 0, nullptr, 0}
     };
@@ -1028,6 +1030,9 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
             break;
         case 'a': // "allowed-host"
             allowedHosts.insert(optarg);
+            break;
+        case 'k': // "disabled-keys"
+            disabledKeys.merge(WTR::parseDisabledKeys(optarg));
             break;
         case 'l': // "localhost-alias"
             localhostAliases.insert(optarg);
@@ -1894,7 +1899,7 @@ static NSURL *computeTestURL(NSString *pathOrURLString, NSString **relativeTestP
     return [NSURL fileURLWithPath:absolutePath];
 }
 
-static WTR::TestOptions testOptionsForTest(const WTR::TestCommand& command)
+static WTR::TestOptions testOptionsForTest(const WTR::TestCommand& command, WTR::TestFeatures testHeaderFeatures)
 {
     // hack for cases when useDollarVM will be reset before injectInternalsObject is called in DRT
     {
@@ -1903,7 +1908,7 @@ static WTR::TestOptions testOptionsForTest(const WTR::TestCommand& command)
     }
     WTR::TestFeatures features = WTR::TestOptions::defaults();
     WTR::merge(features, WTR::hardcodedFeaturesBasedOnPathForTest(command));
-    WTR::merge(features, WTR::featureDefaultsFromTestHeaderForTest(command, WTR::TestOptions::keyTypeMapping()));
+    WTR::merge(features, WTF::move(testHeaderFeatures));
 
     return WTR::TestOptions { WTF::move(features) };
 }
@@ -1913,6 +1918,12 @@ static void runTest(const std::string& inputLine)
     ASSERT(!inputLine.empty());
 
     auto command = WTR::parseInputLine(inputLine);
+    WTF::setCrashLogMessage(makeString("CRASHING TEST: "_s, String::fromUTF8(command.pathOrURL.c_str())).utf8());
+    auto testHeader = WTR::testHeaderForTest(command, WTR::TestOptions::keyTypeMapping());
+    if (auto disabledKey = WTR::firstDisabledKeyForTest(command, testHeader, disabledKeys)) {
+        WTR::dumpSkippedTestReply(*disabledKey);
+        return;
+    }
     auto pathOrURL = command.pathOrURL;
     dumpPixelsForCurrentTest = command.shouldDumpPixels || dumpPixelsForAllTests;
 
@@ -1947,7 +1958,7 @@ static void runTest(const std::string& inputLine)
     auto message = makeString("CRASHING TEST: "_s, testPath);
     WTF::setCrashLogMessage(message.utf8());
 
-    auto options = testOptionsForTest(command);
+    auto options = testOptionsForTest(command, WTF::move(testHeader.features));
 
     if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value()))
         createGlobalWebViewAndOffscreenWindow();

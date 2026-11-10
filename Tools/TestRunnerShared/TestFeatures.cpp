@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,16 @@
 
 #include "TestCommand.h"
 #include "WPTFunctions.h"
+#include <algorithm>
+#include <cstdio>
 #include <fstream>
+#include <iterator>
 #include <string>
+#include <wtf/ASCIICType.h>
 #include <wtf/StdFilesystem.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WTR {
 
@@ -273,6 +279,8 @@ static std::vector<std::string> parseStringTestHeaderValueAsStringVector(const s
     return result;
 }
 
+static constexpr std::string_view skipIfDisabledHeaderKey { "skipIfDisabled" };
+
 static bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string value, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     auto keyType = [&keyTypeMap](auto& key) {
@@ -325,7 +333,7 @@ static bool parseTestHeaderFeature(TestFeatures& features, std::string key, std:
     return false;
 }
 
-static std::optional<TestFeatures> parseTestHeaderString(const std::string& pairString, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+static std::optional<TestFeatures> parseTestHeaderString(const std::string& pairString, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap, std::vector<std::string>* skipIfDisabledKeys = nullptr)
 {
     TestFeatures features;
 
@@ -345,7 +353,9 @@ static std::optional<TestFeatures> parseTestHeaderString(const std::string& pair
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
 
-        if (!parseTestHeaderFeature(features, key, value, path, keyTypeMap)) {
+        if (skipIfDisabledKeys && key == skipIfDisabledHeaderKey) {
+            std::ranges::move(parseStringTestHeaderValueAsStringVector(value), std::back_inserter(*skipIfDisabledKeys));
+        } else if (!parseTestHeaderFeature(features, key, value, path, keyTypeMap)) {
             if (!path.empty())
                 LOG_ERROR("Unknown key, '%s', in test header in %s", key.c_str(), path.string().c_str());
             else
@@ -357,7 +367,7 @@ static std::optional<TestFeatures> parseTestHeaderString(const std::string& pair
     return features;
 }
 
-static TestFeatures parseTestHeader(std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+static TestHeader parseTestHeader(std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     std::error_code ec;
     if (!std::filesystem::exists(path, ec))
@@ -382,10 +392,12 @@ static TestFeatures parseTestHeader(std::filesystem::path path, const std::unord
         return { };
     }
     std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
-    return parseTestHeaderString(pairString, path, keyTypeMap).value_or(TestFeatures { });
+    TestHeader header;
+    header.features = parseTestHeaderString(pairString, path, keyTypeMap, &header.skipIfDisabledKeys).value_or(TestFeatures { });
+    return header;
 }
 
-TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+TestHeader testHeaderForTest(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     return parseTestHeader(command.absolutePath, keyTypeMap);
 }
@@ -407,6 +419,105 @@ TestFeatures featureFromAdditionalHeaderOption(const TestCommand& command, const
 std::optional<TestFeatures> parseAdditionalHeaderString(const std::string& additionalHeader, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     return parseTestHeaderString(additionalHeader, std::filesystem::path(), keyTypeMap);
+}
+
+std::set<std::string> parseDisabledKeys(const std::string& commaSeparatedKeys)
+{
+    std::set<std::string> keys;
+    for (auto& item : parseStringTestHeaderValueAsStringVector(commaSeparatedKeys)) {
+        auto begin = std::ranges::find_if_not(item, isASCIIWhitespace<char>);
+        auto end = std::find_if_not(item.rbegin(), std::make_reverse_iterator(begin), isASCIIWhitespace<char>).base();
+        std::string key { begin, end };
+        if (key.empty())
+            continue;
+        if (std::ranges::none_of(key, [](char character) { return isASCIIWhitespace(character) || character == '"' || character == '\''; }))
+            keys.insert(WTF::move(key));
+        else
+            SAFE_FPRINTF(stderr, "WARNING: Ignoring invalid --disabled-keys key '%s': keys must not contain whitespace or quotes\n", UTF8CStringView::unsafeFromUTF8(key.c_str()));
+    }
+    return keys;
+}
+
+std::optional<std::string> firstDisabledKeyForTest(const TestCommand& command, const TestHeader& testHeader, const std::set<std::string>& disabledKeys)
+{
+    if (command.isReference) {
+        if (!testHeader.skipIfDisabledKeys.empty())
+            SAFE_FPRINTF(stderr, "WARNING: Ignoring skipIfDisabled in reference file: %s\n", UTF8CStringView::unsafeFromUTF8(command.absolutePath.string().c_str()));
+        return std::nullopt;
+    }
+    for (auto& key : testHeader.skipIfDisabledKeys) {
+        if (disabledKeys.contains(key))
+            return key;
+    }
+    for (auto& key : testHeader.skipIfDisabledKeys) {
+        if (auto disabledKey = similarDisabledKey(key, disabledKeys))
+            SAFE_FPRINTF(stderr, "WARNING: skipIfDisabled key '%s' is close to --disabled-keys key '%s' in test file: %s\n", UTF8CStringView::unsafeFromUTF8(key.c_str()), UTF8CStringView::unsafeFromUTF8(disabledKey->c_str()), UTF8CStringView::unsafeFromUTF8(command.absolutePath.string().c_str()));
+    }
+    return std::nullopt;
+}
+
+static std::string withDigitRunsMasked(const std::string& key)
+{
+    std::string result;
+    bool previousWasDigit = false;
+    for (char character : key) {
+        bool isDigit = isASCIIDigit(character);
+        if (!isDigit)
+            result += character;
+        else if (!previousWasDigit)
+            result += '\0';
+        previousWasDigit = isDigit;
+    }
+    return result;
+}
+
+static std::string lowercased(std::string string)
+{
+    std::ranges::transform(string, string.begin(), toASCIILower<char>);
+    return string;
+}
+
+static size_t editDistance(const std::string& a, const std::string& b)
+{
+    std::vector<std::vector<size_t>> distance(a.size() + 1, std::vector<size_t>(b.size() + 1));
+    for (size_t i = 0; i <= a.size(); ++i)
+        distance[i][0] = i;
+    for (size_t j = 0; j <= b.size(); ++j)
+        distance[0][j] = j;
+    for (size_t i = 1; i <= a.size(); ++i) {
+        for (size_t j = 1; j <= b.size(); ++j) {
+            size_t substitutionCost = a[i - 1] == b[j - 1] ? 0 : 1;
+            distance[i][j] = std::min({ distance[i - 1][j] + 1, distance[i][j - 1] + 1, distance[i - 1][j - 1] + substitutionCost });
+            if (i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1])
+                distance[i][j] = std::min(distance[i][j], distance[i - 2][j - 2] + 1);
+        }
+    }
+    return distance[a.size()][b.size()];
+}
+
+std::optional<std::string> similarDisabledKey(const std::string& headerKey, const std::set<std::string>& disabledKeys)
+{
+    auto maskedHeaderKey = withDigitRunsMasked(headerKey);
+    auto lowercasedHeaderKey = lowercased(maskedHeaderKey);
+    for (auto& disabledKey : disabledKeys) {
+        auto maskedDisabledKey = withDigitRunsMasked(disabledKey);
+        if (maskedHeaderKey == maskedDisabledKey)
+            continue;
+        size_t maximumDistance = std::min(maskedHeaderKey.size(), maskedDisabledKey.size()) >= 8 ? 2 : 1;
+        if (editDistance(lowercasedHeaderKey, lowercased(maskedDisabledKey)) <= maximumDistance)
+            return disabledKey;
+    }
+    return std::nullopt;
+}
+
+void dumpSkippedTestReply(const std::string& disabledKey)
+{
+    fputs("Content-Type: text/x-webkit-skipped\nskipIfDisabled: ", stdout);
+    fputs(disabledKey.c_str(), stdout);
+    fputs("\n#EOF\n#EOF\n", stdout);
+    fputs("#EOF\n", stderr);
+    fflush(stdout);
+    fflush(stderr);
 }
 
 } // namespace WTF

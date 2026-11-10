@@ -186,11 +186,21 @@ class Printer(object):
             ndigits = int(math.log10(len(num))) + 1
         return ndigits
 
-    def print_results(self, run_time, run_results, summarized_results):
+    def print_results(self, run_time, run_results, summarized_results, skipped_by_disabled_keys):
         self._print_timing_statistics(run_time, run_results)
-        self._print_one_line_summary(run_results.total - run_results.expected_skips,
-                                     run_results.expected - run_results.expected_skips,
-                                     run_results.unexpected)
+        total = run_results.total - run_results.expected_skips
+        keys = '' if self._options.dry_run else ','.join(self._port.disabled_keys())
+        all_skipped_by_keys = keys and not total and skipped_by_disabled_keys == run_results.expected_skips
+        if all_skipped_by_keys and skipped_by_disabled_keys == 1:
+            self._print_quiet('The test was skipped by --disabled-keys=%s.' % keys)
+        elif all_skipped_by_keys and skipped_by_disabled_keys:
+            self._print_quiet('All %d tests were skipped by --disabled-keys=%s.' % (skipped_by_disabled_keys, keys))
+        else:
+            self._print_one_line_summary(total, run_results.expected - run_results.expected_skips, run_results.unexpected)
+            if keys:
+                self._print_quiet('%s skipped by --disabled-keys=%s' % (pluralize(skipped_by_disabled_keys, 'test'), keys))
+        if keys:
+            self._print_quiet('')
         self._report_finished(run_results)
 
     def _report_finished(self, run_results):

@@ -69,6 +69,10 @@
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		2B7E14D63A5F60718293C1A3 /* SyntheticNSEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */; };
+		2C4F7A1E2FB1C0D000A1B202 /* JSBasics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F7A1E2FB1C0D000A1B201 /* JSBasics.cpp */; };
+		2C4F7A1E2FB1C0D000A1B204 /* TestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F7A1E2FB1C0D000A1B203 /* TestCommand.cpp */; };
+		2C4F7A1E2FB1C0D000A1B206 /* TestFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F7A1E2FB1C0D000A1B205 /* TestFeatures.cpp */; };
+		2C4F7A1E2FB1C0D000A1B208 /* WPTFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F7A1E2FB1C0D000A1B207 /* WPTFunctions.cpp */; };
 		3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDAF428D1638A004DA950 /* libicucore.tbd */; };
 		3A5DDB0C28D53325004DA950 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		3A5DDB2C28D5525E004DA950 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
@@ -430,6 +434,10 @@
 		2B648DBA28C1C1F700791F2B /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B7E14D63A5F60718293C1A1 /* SyntheticNSEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyntheticNSEvent.h; path = ../TestRunnerShared/mac/SyntheticNSEvent.h; sourceTree = "<group>"; };
 		2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyntheticNSEvent.mm; path = ../TestRunnerShared/mac/SyntheticNSEvent.mm; sourceTree = "<group>"; };
+		2C4F7A1E2FB1C0D000A1B201 /* JSBasics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSBasics.cpp; path = ../TestRunnerShared/Bindings/JSBasics.cpp; sourceTree = "<group>"; };
+		2C4F7A1E2FB1C0D000A1B203 /* TestCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestCommand.cpp; path = ../TestRunnerShared/TestCommand.cpp; sourceTree = "<group>"; };
+		2C4F7A1E2FB1C0D000A1B205 /* TestFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestFeatures.cpp; path = ../TestRunnerShared/TestFeatures.cpp; sourceTree = "<group>"; };
+		2C4F7A1E2FB1C0D000A1B207 /* WPTFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WPTFunctions.cpp; path = ../TestRunnerShared/WPTFunctions.cpp; sourceTree = "<group>"; };
 		3A15785328D1505B00142DB1 /* TestWGSL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWGSL; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5DDAF228D1637A004DA950 /* libicu.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libicu.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5DDAF428D1638A004DA950 /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
@@ -795,6 +803,7 @@
 				JavaScriptCore/StrongBlock.cpp,
 				JavaScriptCore/WeakSet.cpp,
 				Misc/TestRunnerTests.cpp,
+				TestRunnerShared/TestFeaturesTests.cpp,
 				TestWebKitAPIAdditionsHook.mm,
 				WebCore/AffineTransform.cpp,
 				WebCore/AnimationFrameRate.cpp,
@@ -2115,10 +2124,14 @@
 		DD7024AE302CE42A009B6CC0 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				2C4F7A1E2FB1C0D000A1B201 /* JSBasics.cpp */,
 				7A1C4E2F2E8B9D0100A1B2D0 /* QuirkTable.json */,
 				2B7E14D63A5F60718293C1A1 /* SyntheticNSEvent.h */,
 				2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */,
+				2C4F7A1E2FB1C0D000A1B203 /* TestCommand.cpp */,
+				2C4F7A1E2FB1C0D000A1B205 /* TestFeatures.cpp */,
 				CC1FEED000000000000FF001 /* WebFoundTextRange.cpp */,
+				2C4F7A1E2FB1C0D000A1B207 /* WPTFunctions.cpp */,
 			);
 			name = Shared;
 			sourceTree = SOURCE_ROOT;
@@ -2636,7 +2649,10 @@
 		7CCE7E881A41144E00447C4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				2C4F7A1E2FB1C0D000A1B202 /* JSBasics.cpp in Sources */,
 				2B7E14D63A5F60718293C1A3 /* SyntheticNSEvent.mm in Sources */,
+				2C4F7A1E2FB1C0D000A1B204 /* TestCommand.cpp in Sources */,
+				2C4F7A1E2FB1C0D000A1B206 /* TestFeatures.cpp in Sources */,
 				5C9D922C22D7DE12008E9266 /* UnifiedSource1-nonARC.mm in Sources */,
 				5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */,
 				5C9D922D22D7DE19008E9266 /* UnifiedSource2-nonARC.mm in Sources */,
@@ -2697,6 +2713,7 @@
 				F5971BD071D50EA78EF87EE5 /* UnifiedSource53-nonARC.mm in Sources */,
 				07AA54552F8200000000A055 /* UnifiedSource54-nonARC.mm in Sources */,
 				07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */,
+				2C4F7A1E2FB1C0D000A1B208 /* WPTFunctions.cpp in Sources */,
 			);
 		};
 		8DD76F990486AA7600D96B5E /* Sources */ = {

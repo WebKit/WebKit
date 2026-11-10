@@ -451,7 +451,14 @@ endif ()
 # TestWebKit definitions
 if (ENABLE_WEBKIT)
     set(TestWebKit_SOURCES
+        ${TOOLS_DIR}/TestRunnerShared/Bindings/JSBasics.cpp
+        ${TOOLS_DIR}/TestRunnerShared/TestCommand.cpp
+        ${TOOLS_DIR}/TestRunnerShared/TestFeatures.cpp
+        ${TOOLS_DIR}/TestRunnerShared/WPTFunctions.cpp
+
         Helpers/Utilities.cpp
+
+        Tests/TestRunnerShared/TestFeaturesTests.cpp
 
         Tests/WebKit/WKPage/AboutBlankLoad.cpp
         Tests/WebKit/WKPage/CanHandleRequest.cpp
@@ -527,6 +534,8 @@ if (ENABLE_WEBKIT)
         ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
         ${PAL_FRAMEWORK_HEADERS_DIR}
         ${TESTWEBKITAPI_DIR}
+        ${TOOLS_DIR}/TestRunnerShared
+        ${TOOLS_DIR}/TestRunnerShared/Bindings
         ${WTF_FRAMEWORK_HEADERS_DIR}
         ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
         ${WebKit_FRAMEWORK_HEADERS_DIR}

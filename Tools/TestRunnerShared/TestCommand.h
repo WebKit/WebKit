@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ struct TestCommand {
     bool shouldDumpPixels { false };
     bool forceDumpPixels { false };
     bool dumpJSConsoleLogInStdErr { false };
+    bool isReference { false };
 };
 
 TestCommand parseInputLine(const std::string& inputLine);

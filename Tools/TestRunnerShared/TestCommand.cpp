@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,6 +116,8 @@ TestCommand parseInputLine(const std::string& inputLine)
             result.absolutePath = tokenizer.next();
         else if (arg == "--force-dump-pixels")
             result.forceDumpPixels = true;
+        else if (arg == "--reference")
+            result.isReference = true;
         else
             die(inputLine);
     }

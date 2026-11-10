@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -70,9 +71,19 @@ enum class TestHeaderKeyType : uint8_t {
 
     Unknown
 };
-TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
+
+struct TestHeader {
+    TestFeatures features;
+    std::vector<std::string> skipIfDisabledKeys;
+};
+
+TestHeader testHeaderForTest(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 TestFeatures featureFromAdditionalHeaderOption(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 std::optional<TestFeatures> parseAdditionalHeaderString(const std::string&, const std::unordered_map<std::string, TestHeaderKeyType>&);
+std::set<std::string> parseDisabledKeys(const std::string& commaSeparatedKeys);
+std::optional<std::string> firstDisabledKeyForTest(const TestCommand&, const TestHeader&, const std::set<std::string>& disabledKeys);
+std::optional<std::string> similarDisabledKey(const std::string& headerKey, const std::set<std::string>& disabledKeys);
+void dumpSkippedTestReply(const std::string& disabledKey);
 
 }

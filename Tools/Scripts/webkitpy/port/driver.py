@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2015-2025 Apple Inc. All rights reserved.
+# Copyright (c) 2015-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -46,7 +46,7 @@ _log = logging.getLogger(__name__)
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, additional_header=None, args=None, self_comparison_header=None, force_dump_pixels=False):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, additional_header=None, args=None, self_comparison_header=None, force_dump_pixels=False, is_reference=False):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
@@ -56,9 +56,10 @@ class DriverInput(object):
         self.self_comparison_header = self_comparison_header
         self.additional_header = additional_header
         self.force_dump_pixels = force_dump_pixels
+        self.is_reference = is_reference
 
     def __repr__(self):
-        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, additional_header={}, self_comparison_header={}, force_dump_pixels={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.additional_header, self.self_comparison_header, self.force_dump_pixels)
+        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, additional_header={}, self_comparison_header={}, force_dump_pixels={}, is_reference={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.additional_header, self.self_comparison_header, self.force_dump_pixels, self.is_reference)
 
 
 class DriverOutput(object):
@@ -87,8 +88,8 @@ class DriverOutput(object):
     metrics_patterns.append((re.compile('scrolled to [0-9]+,[0-9]+'), 'scrolled'))
 
     def __init__(self, text, image, image_hash, audio, crash=False,
-            test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
-            crashed_pid=None, crash_log=None, pid=None):
+                 test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
+                 crashed_pid=None, crash_log=None, pid=None, skipped_key=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = string_utils.decode(text, target_type=str) if text else None
         self.image = image  # May be empty-string if the test crashes.
@@ -104,6 +105,11 @@ class DriverOutput(object):
         self.timeout = timeout
         self.error = error  # stderr output
         self.pid = pid
+        self.skipped_key = skipped_key
+
+    @property
+    def skipped(self):
+        return self.skipped_key is not None
 
     def has_stderr(self):
         return bool(self.error)
@@ -147,6 +153,8 @@ class DriverPostTestOutput(object):
 
 class Driver(object):
     """object for running test(s) using DumpRenderTree/WebKitTestRunner."""
+
+    SKIPPED_CONTENT_TYPE = 'text/x-webkit-skipped'
 
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         """Initialize a Driver to subsequently run tests.
@@ -218,6 +226,7 @@ class Driver(object):
         test_begin_time = time.time()
         self._driver_timed_out = False
         self._crash_report_from_driver = None
+        self._skipped_key = None
         self.error_from_test = ''
         self.err_seen_eof = False
 
@@ -276,10 +285,10 @@ class Driver(object):
                     crash_log += '\nstdout:\n%s\nstderr:\n%s\n' % (text, self.error_from_test)
 
         return DriverOutput(text, image, actual_image_hash, audio,
-            crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
-            timeout=timed_out or driver_timed_out, error=self.error_from_test,
-            crashed_process_name=self._crashed_process_name,
-            crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
+                            crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
+                            timeout=timed_out or driver_timed_out, error=self.error_from_test,
+                            crashed_process_name=self._crashed_process_name,
+                            crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid, skipped_key=self._skipped_key)
 
     def do_post_tests_work(self):
         if not self._server_process:
@@ -554,6 +563,10 @@ class Driver(object):
                 self._profiler.profile_after_exit()
         self._delete_temporal_directories()
 
+    def _disabled_keys_args(self):
+        disabled_keys = self._port.disabled_keys()
+        return ['--disabled-keys', ','.join(disabled_keys)] if disabled_keys else []
+
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper()
         cmd.append(self._port._path_to_driver())
@@ -583,6 +596,8 @@ class Driver(object):
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')
             cmd.append(allowed_host)
+
+        cmd.extend(self._disabled_keys_args())
 
         for feature in self._port.internal_feature():
             cmd.append('--internal-feature')
@@ -667,7 +682,7 @@ class Driver(object):
         elif self.is_web_platform_test(driver_input.test_name) or self.is_webkit_specific_web_platform_test(driver_input.test_name) or self.is_http_test(driver_input):
             command = self.test_to_uri(driver_input)
             command += "'--absolutePath'"
-            absPath = self._port.abspath_for_test(driver_input.test_name, self._target_host)
+            absPath = self._port.abspath_for_test(self._port.test_name_and_variant(driver_input.test_name)[0], self._target_host)
             if sys.platform == 'cygwin':
                 absPath = path.cygpath(absPath)
             command += absPath
@@ -689,6 +704,8 @@ class Driver(object):
             command += "'--additional-header'%s" % driver_input.additional_header
         if driver_input.force_dump_pixels:
             command += "'--force-dump-pixels"
+        if driver_input.is_reference and self._port.disabled_keys():
+            command += "'--reference"
 
         # --pixel-test must be the last argument, because the hash is optional,
         # and any argument put in its place will be incorrectly consumed as the hash.
@@ -705,6 +722,9 @@ class Driver(object):
             self._measurements['Malloc'] = float(block.malloc)
         if block.js_heap:
             self._measurements['JSHeap'] = float(block.js_heap)
+        if block.content_type == self.SKIPPED_CONTENT_TYPE:
+            match = re.search(r'^skipIfDisabled: (\S+)$', block.decoded_content or '', re.MULTILINE)
+            self._skipped_key = match.group(1) if match else '?'
         if block.content_type == 'audio/wav':
             return (None, block.decoded_content)
         return (block.decoded_content, None)
