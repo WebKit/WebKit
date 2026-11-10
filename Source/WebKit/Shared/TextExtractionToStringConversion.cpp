@@ -2326,6 +2326,45 @@ static bool isUninformativeImage(const TextExtraction::Item& item, const TextExt
     return parentIsActionable || !previousSibling || !previousSibling->hasData<TextExtraction::TextItemData>();
 }
 
+static TextExtraction::Item mergeTextItems(std::span<const TextExtraction::Item> textItems)
+{
+    auto mergedItem = textItems.front();
+    if (textItems.size() == 1)
+        return mergedItem;
+
+    TextExtraction::TextItemData mergedData;
+    StringBuilder mergedContent;
+    for (auto& textItem : textItems) {
+        auto& textData = std::get<TextExtraction::TextItemData>(textItem.data);
+        auto leadingWhitespaceLength = textData.content.find([](auto character) {
+            return !isASCIIWhitespace(character);
+        });
+        if (leadingWhitespaceLength == notFound)
+            continue;
+
+        if (!mergedContent.isEmpty())
+            mergedContent.append(' ');
+
+        auto shiftedRange = [&](CharacterRange range) {
+            auto location = std::max<uint64_t>(range.location, leadingWhitespaceLength) - leadingWhitespaceLength;
+            return CharacterRange { location + mergedContent.length(), range.length };
+        };
+
+        for (auto& [url, range] : textData.links)
+            mergedData.links.append({ url, shiftedRange(range) });
+
+        if (!mergedData.selectedRange && textData.selectedRange)
+            mergedData.selectedRange = shiftedRange(*textData.selectedRange);
+
+        mergedContent.append(textData.content.trim(isASCIIWhitespace));
+        mergedItem.rectInRootView.unite(textItem.rectInRootView);
+    }
+
+    mergedData.content = mergedContent.toString();
+    mergedItem.data = WTF::move(mergedData);
+    return mergedItem;
+}
+
 static bool isIdentityFreeContainer(const TextExtraction::Item& item, const std::optional<TextExtraction::ContainerType>& containerType, const TextExtractionAggregator& aggregator)
 {
     if (!aggregator.useTextTreeOutput() || !containerType || aggregator.includeTagName())
@@ -2509,8 +2548,7 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
         }
     }
 
-    std::optional<size_t> inlinedTextChildIndex;
-    std::optional<size_t> elidedTextChildIndex;
+    std::optional<std::pair<size_t, size_t>> skippedTextChildRange;
     if (aggregator.useTextTreeOutput() && item.children.size() > 1 && shouldInlineSingleTextLabel(item)) {
         size_t textChildCount = 0;
         size_t firstTextChildIndex = 0;
@@ -2522,34 +2560,37 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
             }
         }
 
-        std::optional<size_t> candidateIndex;
-        if (item.children[0].hasData<TextExtraction::TextItemData>())
-            candidateIndex = 0;
-        else if (textChildCount == 1)
-            candidateIndex = firstTextChildIndex;
+        size_t trailingTextChildCount = 0;
+        for (size_t i = item.children.size(); i > 0 && item.children[i - 1].hasData<TextExtraction::TextItemData>(); --i)
+            ++trailingTextChildCount;
 
-        if (candidateIndex) {
-            auto& textChild = borrowedChildren[*candidateIndex];
-            if (auto textData = textChild.dataAs<TextExtraction::TextItemData>()) {
-                auto trimmed = textData->content.trim(isASCIIWhitespace);
-                if (!trimmed.isEmpty()) {
-                    aggregator.collectTextMapping(trimmed, item.frameIdentifier, identifier, item.nodeIdentifier ? ExtractedNodeInfo::IsInteractive::Yes : ExtractedNodeInfo::IsInteractive::No);
-                    if (childTextNodeIsRedundant(aggregator, item, trimmed))
-                        elidedTextChildIndex = *candidateIndex;
-                    else {
-                        inlinedTextChildIndex = *candidateIndex;
-                        addPartsForItem(textChild, std::optional { identifier }, line, aggregator, includeRectForParentItem);
-                    }
-                }
+        std::optional<std::pair<size_t, size_t>> candidateRange;
+        if (trailingTextChildCount > 1 && trailingTextChildCount == textChildCount)
+            candidateRange = { item.children.size() - trailingTextChildCount, item.children.size() };
+        else if (item.children[0].hasData<TextExtraction::TextItemData>())
+            candidateRange = { 0, 1 };
+        else if (textChildCount == 1)
+            candidateRange = { firstTextChildIndex, firstTextChildIndex + 1 };
+
+        if (candidateRange) {
+            auto [start, end] = *candidateRange;
+            auto textChildren = borrowedChildren->span().subspan(start, end - start);
+            auto textChild = mergeTextItems(textChildren);
+            auto trimmed = std::get<TextExtraction::TextItemData>(textChild.data).content.trim(isASCIIWhitespace);
+            if (!trimmed.isEmpty()) {
+                auto interactivity = item.nodeIdentifier ? ExtractedNodeInfo::IsInteractive::Yes : ExtractedNodeInfo::IsInteractive::No;
+                for (auto& child : textChildren)
+                    aggregator.collectTextMapping(std::get<TextExtraction::TextItemData>(child.data).content, item.frameIdentifier, identifier, interactivity);
+                aggregator.collectTextMapping(trimmed, item.frameIdentifier, identifier, interactivity);
+                skippedTextChildRange = candidateRange;
+                if (!childTextNodeIsRedundant(aggregator, item, trimmed))
+                    addPartsForItem(textChild, std::optional { identifier }, line, aggregator, includeRectForParentItem);
             }
         }
     }
 
     for (size_t i = 0; i < item.children.size(); ++i) {
-        if (inlinedTextChildIndex && i == *inlinedTextChildIndex)
-            continue;
-
-        if (elidedTextChildIndex && i == *elidedTextChildIndex)
+        if (skippedTextChildRange && i >= skippedTextChildRange->first && i < skippedTextChildRange->second)
             continue;
 
         auto& child = borrowedChildren[i];

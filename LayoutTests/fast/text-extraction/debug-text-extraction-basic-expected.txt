@@ -38,6 +38,11 @@ root
                 role=status 'Ready' […]
                 button uid=… 'Update Status' […]
                     canvas uid=… […]
+                button uid=… 'Password: ********' […]
+                    canvas uid=… […]
+                button uid=… 'Email:' […]
+                    canvas uid=… […]
+                    'jane@example.com' […]
             label='Figure 1'
                 canvas uid=… […]
             textarea uid=… 'This is a text box' […]
