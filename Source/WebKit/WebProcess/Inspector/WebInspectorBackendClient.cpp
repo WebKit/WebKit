@@ -263,15 +263,10 @@ void WebInspectorBackendClient::highlightFrame(LocalFrame& frame)
         return;
     }
 
-#if !PLATFORM(IOS_FAMILY)
     if (RefPtr overlay = ensureHighlightOverlayForFrame(frame)) {
         overlay->stopFadeOutAnimation();
         overlay->setNeedsDisplay();
     }
-#else
-    // iOS highlights go through a page-level singleton with no frame parameter.
-    highlight();
-#endif
 }
 
 void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
@@ -281,7 +276,6 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
     if (!corePage)
         return;
 
-#if !PLATFORM(IOS_FAMILY)
     // Only uninstall an overlay this client installed; otherwise this is the page path.
     if (!m_frameHighlightOverlays.contains(frame)) {
         hideHighlight();
@@ -304,10 +298,6 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
         // https://bugs.webkit.org/show_bug.cgi?id=195933
         page->drawingArea()->setNeedsDisplay();
     }
-#endif
-#else
-    UNUSED_PARAM(frame);
-    hideHighlight();
 #endif
 }
 
