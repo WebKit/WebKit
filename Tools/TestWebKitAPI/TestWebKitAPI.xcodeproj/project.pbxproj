@@ -611,6 +611,7 @@
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift,
+				WebKit/WKWebView/ProcessSwapBackForwardTests.swift,
 				WebKit/WKWebView/SiteIsolationAnimationControlTests.swift,
 				WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift,
 				WebKit/WKWebView/SiteIsolationBackForwardTests.swift,
