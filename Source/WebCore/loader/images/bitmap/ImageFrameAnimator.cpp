@@ -93,7 +93,7 @@ void ImageFrameAnimator::timerFired()
     Ref source = m_source.get();
 
     // Don't advance to nextFrame if the next frame is being decoded.
-    if (source->isPendingDecodingAtIndex(nextFrameIndex(), m_nextFrameSubsamplingLevel, m_nextFrameOptions))
+    if (source->hasPendingDecodingRequestAtIndex(nextFrameIndex(), m_nextFrameSubsamplingLevel, ImageAnimatingState::Yes, m_nextFrameOptions))
         return;
 
     advanceAnimation();

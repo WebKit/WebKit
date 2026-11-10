@@ -26,7 +26,6 @@
 #pragma once
 
 #include "BitmapImageDescriptor.h"
-#include "ImageFrameWorkQueue.h"
 #include "ImageSource.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
@@ -59,10 +58,12 @@ public:
     void didDecodeProperties(unsigned decodedPropertiesSize);
 
     // Animation
+    bool isAnimated() const final;
+    bool isAnimating() const final;
     bool isAnimationAllowed() const;
 
     // Decoding & animation
-    bool isPendingDecodingAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
+    bool hasPendingDecodingRequestAtIndex(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&) const;
     void destroyNativeImageAtIndex(unsigned index, std::optional<DecodingDestination> = std::nullopt);
     void imageFrameAtIndexAvailable(unsigned index, ImageAnimatingState, DecodingStatus);
     void imageFrameDecodeAtIndexHasFinished(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&, RefPtr<NativeImage>&&);
@@ -98,7 +99,6 @@ private:
 
     // State
     ImageFrameAnimator* frameAnimator() const;
-    ImageFrameWorkQueue& workQueue() const;
 
     // Encoded and decoded data
     void encodedDataStatusChanged(EncodedDataStatus);
@@ -119,16 +119,14 @@ private:
     bool startAnimation(SubsamplingLevel, const DecodingOptions&);
     void stopAnimation() final;
     void resetAnimation() final;
-    bool isAnimated() const final;
-    bool isAnimating() const final;
     bool hasEverAnimated() const final;
 
     // Decoding
     DecodingDestination preferredDecodingDestination(GraphicsContext&, const ImageDrawDescriptor&) const final;
     NODELETE std::optional<DecodingDestination> compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     bool isLargeForDecoding() const final;
-    NODELETE bool isDecodingWorkQueueIdle() const;
-    void stopDecodingWorkQueue() final;
+    bool hasPendingDecodingRequests() const;
+    void cancelPendingDecodingRequests() final;
     void decode(Function<void(DecodingStatus)>&& decodeCallback) final;
     void callDecodeCallbacks(DecodingStatus);
     void imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState, DecodingStatus);
@@ -209,7 +207,7 @@ private:
     // Testing support
     unsigned decodeCountForTesting() const final { return m_decodeCountForTesting; }
     unsigned blankDrawCountForTesting() const final { return m_blankDrawCountForTesting; }
-    void setMinimumDecodingDurationForTesting(Seconds) final;
+    void setMinimumDecodingDurationForTesting(Seconds minimumDecodingDurationForTesting) final { m_minimumDecodingDurationForTesting = minimumDecodingDurationForTesting; }
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) final { m_clearDecoderAfterAsyncFrameRequestForTesting = enabled; }
     void setAsyncDecodingEnabledForTesting(bool enabled) final { m_isAsyncDecodingEnabledForTesting = enabled; }
     bool isAsyncDecodingEnabledForTesting() const final { return m_isAsyncDecodingEnabledForTesting; }
@@ -227,7 +225,6 @@ private:
     BitmapImageDescriptor m_descriptor;
     mutable RefPtr<ImageDecoder> m_decoder;
     const std::unique_ptr<ImageFrameAnimator> m_frameAnimator;
-    mutable RefPtr<ImageFrameWorkQueue> m_workQueue;
     Vector<Function<void(DecodingStatus)>> m_decodeCallbacks;
 
     // ImageFrame
@@ -238,6 +235,7 @@ private:
     // Testing support
     unsigned m_decodeCountForTesting { 0 };
     unsigned m_blankDrawCountForTesting { 0 };
+    Seconds m_minimumDecodingDurationForTesting;
     bool m_isAsyncDecodingEnabledForTesting { false };
     bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
     bool m_hasHDRContentForTesting { false };
