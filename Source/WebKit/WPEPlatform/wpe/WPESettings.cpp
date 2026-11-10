@@ -326,6 +326,9 @@ gboolean wpe_settings_set_value(WPESettings* settingsObject, const char* key, GV
     g_return_val_if_fail(!error || !*error, FALSE);
     g_return_val_if_fail(key && *key == '/', FALSE);
 
+    // Consume the floating reference now, so that it's released on every return path.
+    GRefPtr<GVariant> protectedValue = value;
+
     auto iter = settingsObject->priv->settings.find(UTF8CString::unsafeFromUTF8(key));
     if (iter == settingsObject->priv->settings.end()) {
         g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", key);
@@ -351,7 +354,7 @@ gboolean wpe_settings_set_value(WPESettings* settingsObject, const char* key, GV
     }
 
     auto previousValue = iter->value.value();
-    iter->value.setValue = value;
+    iter->value.setValue = WTF::move(protectedValue);
     iter->value.setByApplication = source == WPE_SETTINGS_SOURCE_APPLICATION;
 
     if (g_variant_compare(previousValue.get(), value))

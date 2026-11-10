@@ -259,6 +259,9 @@ static void testSettingsHelperAPI(WPEMockPlatformTest* test, gconstpointer)
 
     g_assert_false(wpe_settings_set_string(settings, "/wpe-platform/a-key", "invalid", WPE_SETTINGS_SOURCE_PLATFORM, &error.outPtr()));
     g_assert_error(error.get(), WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_INCORRECT_TYPE);
+
+    g_assert_false(wpe_settings_set_int32(settings, "/wpe-platform/not-registered", 1, WPE_SETTINGS_SOURCE_PLATFORM, &error.outPtr()));
+    g_assert_error(error.get(), WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED);
 }
 
 void beforeAll()
