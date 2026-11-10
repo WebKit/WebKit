@@ -122,7 +122,6 @@ if options.json_output is not None:
     runner.dump_results_to_json_file(options.json_output)
 
 if options.report_urls and not runner.upload_results(options):
-    _log.error('Failed to upload results')
     retval = retval or 1
 
 sys.exit(retval)

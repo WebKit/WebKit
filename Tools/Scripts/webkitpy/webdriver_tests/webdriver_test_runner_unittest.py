@@ -24,6 +24,8 @@ import os
 import unittest
 from unittest import mock
 
+from webkitcorepy import OutputCapture
+
 from webkitpy.common.host_mock import MockHost
 from webkitpy.results.upload import Upload
 from webkitpy.tool.mocktool import MockOptions
@@ -112,5 +114,8 @@ class WebDriverTestRunnerUploadTest(unittest.TestCase):
         self.assertEqual(uploads[0].suite, 'webdriver-tests-custom')
 
     def test_failed_upload(self):
-        succeeded, _ = self.upload(self.runner([]), upload_options(report_urls=['https://results.webkit.org', 'https://example.com']), succeeds=False)
+        with OutputCapture() as captured:
+            succeeded, _ = self.upload(self.runner([]), upload_options(report_urls=['https://results.webkit.org', 'https://example.com']), succeeds=False)
         self.assertFalse(succeeded)
+        self.assertIn('Failed to upload test results to https://results.webkit.org\n', captured.root.log.getvalue())
+        self.assertIn('Failed to upload test results to https://example.com\n', captured.root.log.getvalue())
