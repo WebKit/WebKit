@@ -180,5 +180,9 @@ extension SwiftTestingABI.__CommandLineArguments_v0 {
         self.skip = runnerConfiguration.skip
         self.listTests = runnerConfiguration.listTests
         self.parallel = runnerConfiguration.parallel
+
+        // Pin the schema `SwiftTestingABI` decodes; without it, Swift Testing uses its newest schema, and the 6.5 schema
+        // omits event `messages` and changes `isKnown`.
+        self.eventStreamVersion = "6.3"
     }
 }

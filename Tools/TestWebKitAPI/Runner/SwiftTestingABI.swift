@@ -44,6 +44,7 @@ extension SwiftTestingABI {
         var skip: [String]? = nil
         var repetitions: Int? = nil
         var parallel: Bool? = nil
+        var eventStreamVersion: String? = nil
 
         init() {
         }
