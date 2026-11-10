@@ -855,8 +855,9 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
 
     // Its inline size and margins in a space, and where its border box starts in it, like RenderBlockFlow::determineLogicalLeftPositionForChild:
     // auto margins share the space (RenderBox::computeLogicalWidth with containingBlockAvailableLineWidth), and otherwise a float may sit in
-    // the start margin. A stretch-fit size, of an auto inline size too, goes to the end of the space, or to the end margin
-    // (RenderBox::shrinkLogicalWidthToAvoidFloats), while percentages still refer to the containing block.
+    // a positive start margin, and a negative one pulls the box back only where no float is. A stretch-fit size, of an auto inline size too,
+    // goes to the end of the space, or to a positive end margin, and negative margins add to it (RenderBox::shrinkLogicalWidthToAvoidFloats),
+    // while percentages still refer to the containing block.
     CheckedRef style = box.style();
     auto writingMode = root().writingMode();
     CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
@@ -884,7 +885,10 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto containingBlockBorderBoxInlineSize = std::optional<LayoutUnit> { };
     auto placementIn = [&](LayoutUnit spaceStart, LayoutUnit spaceEnd) {
         auto geometry = boxState.geometry;
-        auto stretchFitInlineSize = std::min(contentBoxEnd - marginEnd, spaceEnd) - std::max(contentBoxStart + marginStart, spaceStart);
+        auto marginInFloats = [](LayoutUnit margin, LayoutUnit floatsInlineSize) {
+            return std::min(std::max(0_lu, margin), floatsInlineSize);
+        };
+        auto stretchFitInlineSize = spaceEnd - spaceStart - marginStart - marginEnd + marginInFloats(marginStart, spaceStart - contentBoxStart) + marginInFloats(marginEnd, contentBoxEnd - spaceEnd);
         if (!hasOwnInlineSize) {
             computeInlineSizeAndMargins(box, containingBlockState, geometry, stretchFitInlineSize + marginStart + marginEnd);
             return Placement { WTF::move(geometry), spaceStart, spaceEnd };
@@ -989,8 +993,15 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     // Its end margin still takes what makes the equality true in the containing block, past the floats (RenderBox::computeLogicalWidth).
     if (containingBlockState.inlineRange.size() && BlockFormattingUtils::ignoresEndMarginWhenOverConstrained(box, containingBlockStyle))
         geometry.setHorizontalMargin({ geometry.marginStart(), containingBlockState.inlineRange.size() - geometry.borderBoxWidth() - geometry.marginStart() });
-    // An auto start margin is in the space, and a float may sit in another one (RenderBlockFlow::determineLogicalLeftPositionForChild).
-    auto borderBoxStart = marginStartLength.isAuto() ? placement.spaceStart + geometry.marginStart() : std::max(contentBoxStart + geometry.marginStart(), placement.spaceStart);
+    // An auto start margin is in the space, a float may sit in a positive one, and a negative one pulls the box back only where no float is
+    // (RenderBlockFlow::determineLogicalLeftPositionForChild).
+    auto borderBoxStart = [&] {
+        if (marginStartLength.isAuto())
+            return placement.spaceStart + geometry.marginStart();
+        if (placement.spaceStart > contentBoxStart)
+            return std::max(contentBoxStart + geometry.marginStart(), placement.spaceStart);
+        return contentBoxStart + geometry.marginStart();
+    }();
     geometry.setLeft(borderBoxStart);
     // Below the hypothetical position the floats put it, as clearance would (resolveBorderBoxLogicalTops).
     if (borderBoxLogicalTop > hypotheticalBorderBoxLogicalTop) {
