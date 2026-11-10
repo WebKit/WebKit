@@ -8,6 +8,7 @@ http/tests/security/referrer-policy-header-no-referrer-when-downgrade.html [ Cra
 http/tests/security/referrer-policy-header-no-referrer.html [ Crash ]
 http/tests/security/referrer-policy-header-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
+webkit.org/b/330942 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-parser-interaction.html [ Pass Crash ]
 
 #######################
 # Tests that time out #
