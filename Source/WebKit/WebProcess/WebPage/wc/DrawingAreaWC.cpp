@@ -31,6 +31,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "GraphicsLayerWC.h"
 #include "ImageBufferShareableBitmapBackend.h"
+#include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteWCLayerTreeHostProxy.h"
@@ -346,6 +347,10 @@ void DrawingAreaWC::sendUpdateNonAC()
     IntSize bitmapSize = bounds.size();
     float deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
     auto image = createImageBuffer(bitmapSize, deviceScaleFactor);
+    if (!image) {
+        RELEASE_LOG(Process, "Failed to create ImageBuffer for DrawingAreaWC");
+        return;
+    }
     auto rects = m_dirtyRegion.rects();
     if (shouldPaintBoundsRect(bounds, rects)) {
         rects.clear();
