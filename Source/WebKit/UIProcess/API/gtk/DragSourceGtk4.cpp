@@ -69,6 +69,7 @@ static GRefPtr<GdkTexture> dragIconTexture(RefPtr<ShareableBitmap>&& iconImage)
 void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image, IntPoint&& imageHotspot)
 {
     if (m_drag) {
+        g_signal_handlers_disconnect_by_data(m_drag.get(), this);
         gdk_drag_drop_done(m_drag.get(), FALSE);
         m_drag = nullptr;
     }
@@ -124,6 +125,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         if (drag.m_drag.get() != gtkDrag)
             return;
 
+        g_signal_handlers_disconnect_by_data(gtkDrag, userData);
         drag.m_selectionData = std::nullopt;
         drag.m_drag = nullptr;
 
@@ -144,6 +146,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         if (drag.m_drag.get() != gtkDrag)
             return;
 
+        g_signal_handlers_disconnect_by_data(gtkDrag, userData);
         drag.m_selectionData = std::nullopt;
         drag.m_drag = nullptr;
     }), this);
