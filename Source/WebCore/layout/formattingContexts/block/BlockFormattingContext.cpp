@@ -230,6 +230,15 @@ void BlockFormattingContext::handleBlockLevelBoxEnd(const RenderBox& box)
     m_blockLayoutState.setClampAfterBox(nullptr);
 }
 
+// The root's floats for placing a float or a box with clear, whose inline-start and inline-end values resolve against the inline direction of
+// its containing block (UsedStyle::floating), which the floating context takes from its root (FloatingContext::isStartPositioned). Positions
+// stay in the root's coordinates.
+FloatingContext BlockFormattingContext::floatingContextForSidesOf(const RenderBox& box, const PlacedFloats& floats) const
+{
+    CheckedRef containingBlock = *box.containingBlock();
+    return { containingBlock->layoutBox(), floats, { }, m_blockLayoutState.containingBlockStates().first().geometry.borderBoxWidth() };
+}
+
 // Before its block-start margin joins the adjoining margins: clearance is decided once the margins give the block container its top, its
 // hypothetical position (CSS 2.2 §9.5.2).
 std::optional<ContainingBlockState::Clearance> BlockFormattingContext::clearanceAtBlockStart(const RenderBox& blockContainer) const
@@ -238,7 +247,6 @@ std::optional<ContainingBlockState::Clearance> BlockFormattingContext::clearance
     if (!blockContainer.layoutBox().hasFloatClear() || !placedFloats || placedFloats->isEmpty())
         return { };
     // The floats waiting for their block container's top are where that top would be now, and go with it.
-    auto& rootState = m_blockLayoutState.containingBlockStates().first();
     auto& pendingFloats = m_blockLayoutState.pendingFloats();
     auto blockEndOfFloatsToClear = [&](NOESCAPE const Function<bool(const PlacedFloats::Item&)>& includesFloat) -> std::optional<LayoutUnit> {
         auto floats = PlacedFloats { root().layoutBox() };
@@ -248,7 +256,7 @@ std::optional<ContainingBlockState::Clearance> BlockFormattingContext::clearance
         }
         if (floats.isEmpty())
             return { };
-        return FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() }.blockEndOfFloatsToClear(blockContainer.layoutBox());
+        return floatingContextForSidesOf(blockContainer, floats).blockEndOfFloatsToClear(blockContainer.layoutBox());
     };
     auto isPending = [&](auto& floatItem) {
         return pendingFloats.containsIf([&](auto& pending) {
@@ -973,7 +981,7 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto borderBoxLogicalTop = hypotheticalBorderBoxLogicalTop;
     // Its clear comes first (RenderBlockFlow::getClearDelta).
     if (box.layoutBox().hasFloatClear()) {
-        if (auto floatsLogicalBottom = floatingContext.blockEndOfFloatsToClear(box.layoutBox()))
+        if (auto floatsLogicalBottom = floatingContextForSidesOf(box, floats).blockEndOfFloatsToClear(box.layoutBox()))
             borderBoxLogicalTop = std::max(borderBoxLogicalTop, *floatsLogicalBottom);
     }
     auto [placement, fits] = placementAt(borderBoxLogicalTop);
@@ -1177,8 +1185,7 @@ void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult
     auto marginBoxLogicalTop = containingBlockState.borderBoxLogicalTop ? m_blockLayoutState.marginCollapse().collapsedLogicalBottom() - *containingBlockState.borderBoxLogicalTop : containingBlockState.borderAndPaddingBefore;
     geometry.setTop(marginBoxLogicalTop + geometry.marginBefore());
     auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
-    auto& rootState = m_blockLayoutState.containingBlockStates().first();
-    auto floatingContext = FloatingContext { root().layoutBox(), placedFloats, { }, rootState.geometry.borderBoxWidth() };
+    auto floatingContext = floatingContextForSidesOf(box, placedFloats);
     // In the root's logical coordinates, which mirror those of a containing block whose inline direction is the opposite.
     auto isOpposite = containingBlockState.hasInlineDirectionOppositeToRoot;
     auto containingBlockInlineSize = containingBlockState.geometry.borderBoxWidth();

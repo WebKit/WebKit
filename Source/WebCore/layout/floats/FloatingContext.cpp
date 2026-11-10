@@ -356,7 +356,7 @@ NODELETE static bool floatContainsLine(const Rect& floatBoxRect, LayoutUnit cand
     return floatBoxRect.top() < candidateBottom && floatBoxRect.bottom() > candidateTop;
 }
 
-static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const PlacedFloats::Item& floatItem, const Rect& marginRect, LayoutUnit candidateTop, LayoutUnit candidateHeight)
+static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const PlacedFloats::Item& floatItem, const Rect& marginRect, LayoutUnit candidateTop, LayoutUnit candidateHeight, WritingMode placedFloatsWritingMode)
 {
     RefPtr shape = floatItem.shape();
     if (!shape)
@@ -372,6 +372,11 @@ static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const P
     auto segment = shape->getExcludedInterval(positionInShape, std::max(candidateHeight, 1_lu));
     if (!segment.isValid)
         return { };
+    // The interval is in the inline direction of the float's containing block, which may be the opposite of the placed floats' one.
+    if (shape->writingMode().isInlineOpposing(placedFloatsWritingMode)) {
+        auto borderBoxInlineSize = borderRect.width().toFloat();
+        segment = { borderBoxInlineSize - segment.logicalRight, borderBoxInlineSize - segment.logicalLeft };
+    }
 
     // FIXME: This is potentially slow.
     auto bottom = candidateTop + 1_lu;
@@ -384,14 +389,14 @@ static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const P
     return std::pair { std::max(shapeLeft, marginRect.left()), bottom };
 }
 
-static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeFloatEdgeAndBottom(const PlacedFloats::Item& floatItem, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
+static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeFloatEdgeAndBottom(const PlacedFloats::Item& floatItem, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight, WritingMode placedFloatsWritingMode)
 {
     auto marginRect = floatItem.absoluteRectWithMargin();
     if (!floatContainsLine(marginRect, candidateTop, candidateBottom, candidateHeight))
         return { };
 
     if (floatItem.shape())
-        return computeShapeEdge(floatItem, marginRect, candidateTop, candidateHeight);
+        return computeShapeEdge(floatItem, marginRect, candidateTop, candidateHeight, placedFloatsWritingMode);
 
     auto edge = floatItem.isStartPositioned() ? marginRect.right() : marginRect.left();
     return std::pair { edge, marginRect.bottom() };
@@ -414,6 +419,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     }
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
     auto candidateHeight = adjustedCandidateBottom - adjustedCandidateTop;
+    auto placedFloatsWritingMode = placedFloats.blockFormattingContextRoot().style().writingMode();
 
     auto constraints = Constraints { };
     if (mayBeAboveLastFloat == MayBeAboveLastFloat::No) {
@@ -421,7 +427,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             if ((constraints.start && floatItem.isStartPositioned()) || (constraints.end && !floatItem.isStartPositioned()))
                 continue;
 
-            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem, adjustedCandidateTop, adjustedCandidateBottom, candidateHeight);
+            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem, adjustedCandidateTop, adjustedCandidateBottom, candidateHeight, placedFloatsWritingMode);
             if (!edgeAndBottom)
                 continue;
 
@@ -437,7 +443,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         }
     } else {
         for (auto& floatItem : placedFloats.list() | std::views::reverse) {
-            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem, adjustedCandidateTop, adjustedCandidateBottom, candidateHeight);
+            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem, adjustedCandidateTop, adjustedCandidateBottom, candidateHeight, placedFloatsWritingMode);
             if (!edgeAndBottom)
                 continue;
 
@@ -462,7 +468,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             constraints.end->move(-adjustingDelta);
     }
 
-    if (placedFloats.blockFormattingContextRoot().style().writingMode().isInlineOpposing(root().writingMode())) {
+    if (placedFloatsWritingMode.isInlineOpposing(root().writingMode())) {
         // FIXME: Move it under coordinateMappingIsRequired when the integration codepath starts initiating the floating state with the
         // correct containing block (i.e. when the float comes from the parent BFC).
 
