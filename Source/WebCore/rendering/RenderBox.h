@@ -689,7 +689,7 @@ private:
 
     void updateShapeOutsideInfoAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle, Style::Difference);
 
-    void updateGridPositionAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle);
+    void updateGridPositionAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle, Style::Difference);
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, unsigned stepCount, Element** stopElement);
 

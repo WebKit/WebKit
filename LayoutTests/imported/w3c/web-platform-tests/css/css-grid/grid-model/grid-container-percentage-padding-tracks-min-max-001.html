@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: percentage tracks and max-width of a grid item grid container resolve against its own box and its grid area</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#padding-props">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="match" href="grid-container-percentage-padding-tracks-min-max-001-ref.html">
+<meta name="assert" content="The parent grid is laid out by a different path than the nested one, because the nested grid has a percentage max-width and border-box sizing. The nested grid is in a 300px grid area with 10% (30px) padding and a 350px wide box capped by max-width 50% of the area (150px). Its 50% 50% columns resolve against its own 90px content box (45px each).">
+<style>
+.o { display: grid; width: 400px; grid-template-columns: 100px 300px; }
+.i { display: grid; grid-template-columns: 50% 50%; padding: 10%; width: 350px; max-width: 50%; box-sizing: border-box; background: yellow; }
+.i > div { height: 10px; background: green; }
+.i > div:nth-child(2) { background: blue; }
+</style>
+<div class="o"><div></div><div class="i"><div></div><div></div></div></div>

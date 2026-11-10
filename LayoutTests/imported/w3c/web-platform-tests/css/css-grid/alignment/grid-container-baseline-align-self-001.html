@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: Baseline of a grid item aligned with align-self: end</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<meta name="assert" content="The baseline of a grid container is the alignment baseline of the item providing it at its final position, so an item with align-self: end contributes its baseline from the bottom of its grid area.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.ref { width: 10px; height: 100px; background: gray; }
+.flex { display: flex; position: relative; align-items: baseline; margin-bottom: 10px; }
+.last { align-items: last baseline; }
+.fc { display: flex; }
+.grid { display: grid; grid-template-columns: 100px 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.fc')">
+<div id="log"></div>
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="4">
+    <div class="grid" style="grid-template-rows: 100px;">
+      <div style="align-self: end; padding-top: 4px;">A</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="4">
+    <div class="grid" style="grid-template-rows: 100px;">
+      <div style="align-self: end; padding-top: 4px;">A</div>
+    </div>
+  </div>
+</div>
+<!-- Same row, the first item in column 1 provides the first baseline and is end aligned while the other one is not. -->
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="4">
+    <div class="grid" style="grid-template-rows: 100px;">
+      <div style="align-self: end; padding-top: 4px;">A</div>
+      <div style="padding-top: 30px;">B</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="4">
+    <div class="grid" style="grid-template-rows: 100px;">
+      <div style="padding-top: 30px;">A</div>
+      <div style="align-self: end; padding-top: 4px;">B</div>
+    </div>
+  </div>
+</div>

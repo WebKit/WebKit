@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: a nested grid container's percentage padding is also used for the baseline that a flex container aligns to</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#padding-props">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="match" href="grid-container-percentage-padding-baseline-001-ref.html">
+<meta name="assert" content="The outer grid is a flex item with baseline alignment, so it is laid out by a different path than the nested grid. The nested grid is in a 300px column, so its 10% padding is 30px and its first baseline, which X aligns to, is 30px below the top of the nested grid.">
+<style>
+.f { display: flex; align-items: baseline; }
+.o { display: grid; width: 400px; grid-template-columns: 300px 100px; }
+.i { display: grid; grid-template-columns: 50px; padding: 10%; background: yellow; }
+</style>
+<div class="f"><span>X</span><div class="o"><div class="i"><span>Y</span></div></div></div>

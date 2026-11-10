@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: computed grid-template-columns with items placed using an integer and a line name</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-slot">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#resolved-track-list">
+<meta name="assert" content="The resolved value of grid-template-columns lists the implicit tracks created by an item placed at the Nth line with a name, before the explicit tracks for a negative N and after them for a positive one.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.grid { display: grid; width: 400px; grid-template-columns: [foo] 50px [bar foo] 60px; grid-template-rows: 20px; grid-auto-columns: 30px 40px; }
+</style>
+<div id="trailing" class="grid"><div style="grid-column: foo 4"></div></div>
+<div id="leading" class="grid"><div style="grid-column: -4 foo"></div></div>
+<div id="leadingTwo" class="grid"><div style="grid-column: -3 bar / foo 3"></div></div>
+<script>
+function columns(id) { return getComputedStyle(document.getElementById(id)).gridTemplateColumns; }
+test(() => {
+    assert_equals(columns("trailing"), "[foo] 50px [bar foo] 60px 30px 40px 30px");
+}, "foo 4 adds implicit tracks after the explicit ones");
+test(() => {
+    assert_equals(columns("leading"), "30px 40px [foo] 50px [bar foo] 60px");
+}, "-4 foo adds implicit tracks before the explicit ones");
+test(() => {
+    assert_equals(columns("leadingTwo"), "30px 40px [foo] 50px [bar foo] 60px 30px");
+}, "a start counting past the start edge and an end counting past the end edge add tracks on both sides");
+</script>

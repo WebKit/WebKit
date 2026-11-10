@@ -31,148 +31,49 @@
 namespace WebCore {
 namespace Layout {
 
-// Convert a 1-indexed explicit CSS grid line into a 0-indexed grid line.
-// https://www.w3.org/TR/css-grid-1/#line-placement
-//
-// Positive lines count forward from the start of the explicit grid: grid-column-start: 1 maps to 0.
-// Negative lines count backward from the *end* of the explicit grid: grid-column-start: -1 maps to
-// the last line (explicitTrackCount). The mapping is a single linear formula that stays correct as
-// a negative line counts past the start edge into the leading implicit grid, producing a negative
-// index. For example, with 3 explicit columns (lines 0..3):
-//     -1 -> 3 (last line), -4 -> 0 (first line), -5 -> -1, -6 -> -2 (two lines before the start).
-// A negative index is not a valid matrix position on its own; GridFormattingContext computes the
-// most-negative line across all items and shifts every line forward by that magnitude (the number
-// of leading implicit tracks) so, e.g., -2 above maps to matrix column 0. See GridPosition::create().
-NODELETE static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
-{
-    ASSERT(position.isExplicit());
-    auto line = position.explicitPosition();
-    // A value of zero makes the declaration invalid.
-    ASSERT(line);
-    return line > 0 ? line - 1 : static_cast<int>(explicitTrackCount) + 1 + line;
-}
-
-UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount)
-{
-    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount);
-    if (!explicitRange) {
-        // An axis with no explicit line is auto-positioned; carry the span forward for the
-        // placement algorithm to resolve.
-        size_t span = 1;
-        if (start.isSpan())
-            span = start.spanPosition();
-        else if (end.isSpan())
-            span = end.spanPosition();
-        return AutoPosition { span };
-    }
-
-    // Shift the resolved range forward by the number of leading implicit tracks. That count is the
-    // magnitude of the most-negative line across all items, so applying it maps every line to a
-    // non-negative matrix index.
-    auto [rawStartLine, rawEndLine] = *explicitRange;
-    int startLine = rawStartLine + static_cast<int>(leadingImplicitTracksCount);
-    int endLine = rawEndLine + static_cast<int>(leadingImplicitTracksCount);
-
-    ASSERT(startLine >= 0 && endLine >= 0);
-    ASSERT(startLine < endLine);
-    return DefinitePosition { static_cast<size_t>(startLine), static_cast<size_t>(endLine) };
-}
-
-std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount)
-{
-    // An axis is only definite when one of its edges references an explicit line. Anything
-    // else (auto/auto, span/auto, auto/span) is auto-positioned and has no explicit line range.
-    if (!start.isExplicit() && !end.isExplicit())
-        return { };
-
-    int startLine = 0;
-    int endLine = 0;
-    if (start.isExplicit() && end.isExplicit()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount);
-        endLine = explicitLineToIndex(end, explicitTrackCount);
-
-        // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
-        // "If the placement for a grid item contains two lines, and the start line is further
-        // end-ward than the end line, swap the two lines."
-        if (startLine > endLine)
-            std::swap(startLine, endLine);
-        // "If the start line is equal to the end line, remove the end line." An item with only a
-        // start line occupies the one track after it.
-        else if (startLine == endLine)
-            endLine = startLine + 1;
-    } else if (start.isExplicit() && end.isSpan()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount);
-        endLine = startLine + end.spanPosition();
-    } else if (start.isSpan() && end.isExplicit()) {
-        endLine = explicitLineToIndex(end, explicitTrackCount);
-        startLine = endLine - static_cast<int>(start.spanPosition());
-    } else if (start.isExplicit() && end.isAuto()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount);
-        endLine = startLine + 1;
-    } else {
-        ASSERT(start.isAuto() && end.isExplicit());
-        endLine = explicitLineToIndex(end, explicitTrackCount);
-        startLine = endLine - 1;
-    }
-
-    return std::pair { startLine, endLine };
-}
-
-size_t UnplacedGridItem::GridPosition::span() const
+size_t UnplacedGridItem::AxisPosition::span() const
 {
     if (auto* definitePosition = std::get_if<DefinitePosition>(&m_position))
         return definitePosition->endLine - definitePosition->startLine;
     return std::get<AutoPosition>(m_position).span;
 }
 
-UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition columnStart, Style::GridPosition columnEnd,
-    Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount,
-    size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount)
+UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, AxisPosition nonAutoFlowPosition, AxisPosition autoFlowPosition)
     : m_layoutBox(layoutBox)
-    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, leadingImplicitColumnsCount))
-    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, leadingImplicitRowsCount))
+    , m_nonAutoFlowPosition(nonAutoFlowPosition)
+    , m_autoFlowPosition(autoFlowPosition)
 {
 }
 
-bool UnplacedGridItem::hasDefiniteRowPosition() const
+bool UnplacedGridItem::hasDefiniteAutoFlowPosition() const
 {
-    return m_rowPosition.isDefinite();
+    return m_autoFlowPosition.isDefinite();
 }
 
-bool UnplacedGridItem::hasDefiniteColumnPosition() const
+bool UnplacedGridItem::hasDefiniteNonAutoFlowPosition() const
 {
-    return m_columnPosition.isDefinite();
+    return m_nonAutoFlowPosition.isDefinite();
 }
 
-bool UnplacedGridItem::hasAutoColumnPosition() const
+size_t UnplacedGridItem::nonAutoFlowSpanSize() const
 {
-    return m_columnPosition.isAuto();
+    return m_nonAutoFlowPosition.span();
 }
 
-bool UnplacedGridItem::hasAutoRowPosition() const
+size_t UnplacedGridItem::autoFlowSpanSize() const
 {
-    return m_rowPosition.isAuto();
+    return m_autoFlowPosition.span();
 }
 
-size_t UnplacedGridItem::columnSpanSize() const
+WTF::Range<size_t> UnplacedGridItem::definiteAutoFlowRange() const
 {
-    return m_columnPosition.span();
-}
-
-size_t UnplacedGridItem::rowSpanSize() const
-{
-    return m_rowPosition.span();
-}
-
-WTF::Range<size_t> UnplacedGridItem::definiteRowRange() const
-{
-    auto& definitePosition = m_rowPosition.definitePosition();
+    auto& definitePosition = m_autoFlowPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
 }
 
-WTF::Range<size_t> UnplacedGridItem::definiteColumnRange() const
+WTF::Range<size_t> UnplacedGridItem::definiteNonAutoFlowRange() const
 {
-    auto& definitePosition = m_columnPosition.definitePosition();
+    auto& definitePosition = m_nonAutoFlowPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
 }
 

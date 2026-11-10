@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A floated grid container's width counts the auto-fill rows of its stretch min-height</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-min-height-stretch-float-001-ref.html">
+<meta name="assert" content="The intrinsic width of a grid container resolves a stretch min-height like layout does, so repeat(auto-fill) makes 4 rows: the 190px containing block height is not a multiple of the 50px rows. The items are placed in the first and the last row, and share one column only if there are 4 rows, so the float is 100px wide. The grey background shows the width of the float.">
+<style>
+.containing-block { width: 400px; height: 190px; }
+.grid {
+  float: left;
+  display: grid;
+  grid-auto-columns: 100px;
+  grid-template-rows: repeat(auto-fill, 50px);
+  min-height: stretch;
+  background: grey;
+}
+.grid > div:nth-child(1) { grid-row: 1; background: green; }
+.grid > div:nth-child(2) { grid-row: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

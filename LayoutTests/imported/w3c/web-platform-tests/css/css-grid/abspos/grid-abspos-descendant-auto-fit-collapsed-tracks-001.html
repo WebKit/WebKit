@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: absolutely positioned descendant placed against collapsed auto-fit tracks</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#valdef-repeat-auto-fit">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#collapsed-gutter">
+<link rel="match" href="grid-abspos-descendant-auto-fit-collapsed-tracks-001-ref.html">
+<meta name="assert" content="The gutters around collapsed auto-fit tracks coincide, and that is accounted for when an absolutely positioned descendant, whose containing block is the grid container, is placed against grid lines.">
+<style>
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 100px);
+  column-gap: 20px;
+  width: 580px;
+  height: 200px;
+}
+.item {
+  width: 10px;
+  height: 10px;
+}
+.abspos {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: green;
+  border-left: 1px solid black;
+}
+</style>
+<!-- Five columns, and the second, third and fifth ones are collapsed. -->
+<div class="grid">
+  <div class="item" style="grid-column: 1"></div>
+  <div class="item" style="grid-column: 4">
+    <div class="abspos" style="top: 0; grid-column: 4 / 5"></div>
+    <div class="abspos" style="top: 20px; grid-column: 4 / auto"></div>
+    <div class="abspos" style="top: 40px; grid-column: auto / 5"></div>
+    <div class="abspos" style="top: 60px; grid-column: 1 / 4"></div>
+    <div class="abspos" style="top: 80px; grid-column: 2 / 4"></div>
+    <div class="abspos" style="top: 120px; grid-column: 1 / 6"></div>
+    <div class="abspos" style="top: 140px; grid-column: 3 / 5"></div>
+  </div>
+</div>

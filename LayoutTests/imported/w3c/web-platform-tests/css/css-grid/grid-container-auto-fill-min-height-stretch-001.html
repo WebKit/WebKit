@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A stretch min-height is a definite minimum size, so repeat(auto-fill) repeats the smallest number of times that fills it</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-min-height-stretch-001-ref.html">
+<meta name="assert" content="A stretch min-height is a definite minimum size, so repeat(auto-fill) repeats the smallest number of times that fills it. The 190px containing block is not a multiple of the 20px tracks, so the count tells the two cases apart: 10 rows. The item on grid-row: -2 is in the last row, so it shows the number of rows.">
+<style>
+.containing-block { width: 200px; height: 190px; }
+.grid {
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: repeat(auto-fill, 20px);
+  min-height: stretch;
+}
+.grid > div:nth-child(1) { grid-row: 1; background: green; }
+.grid > div:nth-child(2) { grid-row: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

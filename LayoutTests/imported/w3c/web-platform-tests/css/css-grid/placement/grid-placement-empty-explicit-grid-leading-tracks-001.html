@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: implicit tracks between an item placed before the explicit grid and line 1 of an empty explicit grid</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#explicit-grids">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#implicit-grids">
+<meta name="assert" content="A grid container without track definitions has an explicit grid with one grid line in each axis, which is line 1 and also line -1. An item placed before that line is in a leading implicit track, and the implicit tracks between the item and line 1 exist and count in the size of the grid.">
+<style>
+.grid {
+    display: grid;
+    position: relative;
+    float: left;
+    clear: left;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 20px;
+}
+.grid > div { background: silver; }
+</style>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- css-grid-1 section 7.1 (#explicit-grids): "the explicit grid still contains one grid line in each axis".
+     With a lone item before that line the size of the (shrink-to-fit) grid shows whether the implicit tracks between the item and
+     line 1 exist. They are kept, so the grid is as wide (or high) as the tracks from the start of the item to line 1.
+     Chrome drops those tracks and sizes the grid to the item alone (30x20 for "auto / -3", 60x20 for "-5 / -3", and 30x20 instead
+     of 30x60 for the row case "auto / -3"), so those cases fail in Chrome. -->
+
+<!-- Lone item ending at line -3: three tracks up to line 1. -->
+<div class="grid" data-expected-width="90" data-expected-height="20">
+  <div style="grid-column: auto / -3" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>
+
+<!-- Lone item from line -5 to line -3: two tracks for the item and two tracks up to line 1. This one has an explicit start, so it
+     guards the placement of an item with two negative lines. -->
+<div class="grid" data-expected-width="120" data-expected-height="20">
+  <div style="grid-column: -5 / -3" data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="20">a</div>
+</div>
+
+<!-- Lone item ending at line -1: one track up to line 1, the same in every engine. -->
+<div class="grid" data-expected-width="30" data-expected-height="20">
+  <div style="grid-column: auto / -1" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>
+
+<!-- The same in the row axis: lone item ending at line -3. -->
+<div class="grid" data-expected-width="30" data-expected-height="60">
+  <div style="grid-row: auto / -3" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>

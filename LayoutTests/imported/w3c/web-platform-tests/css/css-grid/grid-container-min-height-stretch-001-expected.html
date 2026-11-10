@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: reference for grid container min-height sizing</title>
+<style>
+.grid {
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: 1fr 1fr;
+  height: 200px;
+}
+.grid > div:nth-child(1) { background: green; }
+.grid > div:nth-child(2) { background: lime; }
+</style>
+<div class="grid"><div></div><div></div></div>

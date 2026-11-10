@@ -25,17 +25,32 @@
 
 #pragma once
 
-#include "StyleGridPosition.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Range.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace Layout {
 
 class ElementBox;
-class GridLayout;
+
+// Grid item placement is written in terms of grid-auto-flow instead of columns and rows. From
+// https://drafts.csswg.org/css-grid-1/#grid-auto-flow-property:
+// "row: The auto-placement algorithm places items by filling each row in turn, adding new rows as necessary."
+// The auto-flow tracks are the tracks that grid-auto-flow names (rows for row, columns for column): the implicit
+// grid grows by adding them. The non-auto-flow tracks are the others. GridItemPlacer is the only place that maps
+// between these and the columns and rows of the style and of GridAreaLines.
+//
+// A grid area in the flow-relative terms: the lines of the non-auto-flow tracks and of the auto-flow tracks it spans.
+struct FlowRelativeAreaLines {
+    size_t nonAutoFlowStartLine { 0 };
+    size_t nonAutoFlowEndLine { 0 };
+    size_t autoFlowStartLine { 0 };
+    size_t autoFlowEndLine { 0 };
+};
 
 class UnplacedGridItem {
-private:
+public:
     // https://drafts.csswg.org/css-grid-1/#placement
     // A definite value for any two of Start, End, and Span in a given dimension implies
     // a definite value for the third.
@@ -54,13 +69,15 @@ private:
         size_t span { 1 };
     };
 
-    class GridPosition {
+    class AxisPosition {
     public:
-        // explicitTrackCount is the number of explicit tracks in the axis, used to resolve negative
-        // lines against the end of the explicit grid. The leading implicit track count then shifts
-        // negative resolved lines forward so the range maps to non-negative matrix indices. See
-        // UnplacedGridItem::resolveDefinitePosition().
-        NODELETE static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount);
+        AxisPosition(DefinitePosition position)
+            : m_position(position)
+        {
+            ASSERT(position.startLine < position.endLine);
+        }
+        AxisPosition(AutoPosition position)
+            : m_position(position) { }
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -72,50 +89,36 @@ private:
     private:
         using Value = Variant<DefinitePosition, AutoPosition>;
 
-        GridPosition(DefinitePosition position)
-            : m_position(position) { }
-        GridPosition(AutoPosition position)
-            : m_position(position) { }
-
         Value m_position;
     };
 
-public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount);
+    UnplacedGridItem(const ElementBox&, AxisPosition nonAutoFlowPosition, AxisPosition autoFlowPosition);
 
-    NODELETE bool hasDefiniteRowPosition() const;
-    NODELETE bool hasDefiniteColumnPosition() const;
-    NODELETE bool hasAutoColumnPosition() const;
-    NODELETE bool hasAutoRowPosition() const;
-    size_t columnSpanSize() const;
-    size_t rowSpanSize() const;
+    const ElementBox& layoutBox() const { return m_layoutBox; }
 
-    WTF::Range<size_t> definiteRowRange() const;
-    WTF::Range<size_t> definiteColumnRange() const;
+    NODELETE bool hasDefiniteAutoFlowPosition() const;
+    NODELETE bool hasDefiniteNonAutoFlowPosition() const;
+    size_t nonAutoFlowSpanSize() const;
+    size_t autoFlowSpanSize() const;
 
-    // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
-    // axis is auto-positioned. explicitTrackCount is used to resolve negative lines against the end
-    // of the explicit grid; the resolved lines may still be negative for negative line placements
-    // that count past the start edge, and the leading implicit track count is applied later in
-    // GridPosition::create().
-    NODELETE static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount);
+    WTF::Range<size_t> definiteAutoFlowRange() const;
+    WTF::Range<size_t> definiteNonAutoFlowRange() const;
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;
 
     // https://drafts.csswg.org/css-grid-1/#typedef-grid-row-start-grid-line
-    GridPosition m_columnPosition;
-    GridPosition m_rowPosition;
-
-    friend class GridFormattingContext;
+    // The position in the non-auto-flow tracks and in the auto-flow tracks.
+    AxisPosition m_nonAutoFlowPosition;
+    AxisPosition m_autoFlowPosition;
 };
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
 struct UnplacedGridItems {
     // 1. Position anything that’s not auto-positioned.
     Vector<UnplacedGridItem> nonAutoPositionedItems;
-    // 2. Process the items locked to a given row.
-    Vector<UnplacedGridItem> definiteRowPositionedItems;
+    // 2. Process the items locked to a given auto-flow track (a row for grid-auto-flow: row).
+    Vector<UnplacedGridItem> definiteAutoFlowPositionedItems;
     // 4. Position the remaining grid items.
     Vector<UnplacedGridItem> autoPositionedItems;
 };

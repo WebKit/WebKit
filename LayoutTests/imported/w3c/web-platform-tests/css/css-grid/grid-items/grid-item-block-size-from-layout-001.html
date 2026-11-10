@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<title>CSS Grid: a grid item's block size is its laid-out border-box size</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<meta name="assert" content="A fieldset with a legend and a collapsed-border table with padding size their rows by their laid-out border box.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<style>
+.grid {
+  display: grid;
+  grid-template-columns: 200px;
+  width: 200px;
+  margin-bottom: 10px;
+}
+/* min-width: 0 on the fieldset and box-sizing: content-box on the table override the user agent styles
+   that would otherwise send these items to the legacy grid implementation. */
+fieldset {
+  margin: 0;
+  padding: 4px;
+  border: 2px solid;
+  min-width: 0;
+}
+legend {
+  padding: 0;
+  font: 20px/30px monospace;
+}
+.child { height: 20px; }
+table {
+  border-collapse: collapse;
+  padding: 15px;
+  box-sizing: content-box;
+}
+td {
+  padding: 0;
+  border: 1px solid;
+  height: 20px;
+}
+</style>
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- 30px legend in the top border area + 4px padding + 20px child + 4px padding + 2px bottom border. -->
+<div class="grid" data-expected-height="60">
+  <fieldset style="align-self: start" data-expected-height="60"><legend>L</legend><div class="child"></div></fieldset>
+</div>
+
+<!-- Stretched, so the row is sized by the intrinsic block size. -->
+<div class="grid" data-expected-height="60">
+  <fieldset data-expected-height="60"><legend>L</legend><div class="child"></div></fieldset>
+</div>
+
+<!-- A collapsed-border table ignores its padding. Stretched, so the row is sized by the intrinsic block size. -->
+<div class="grid" data-expected-height="22">
+  <table data-expected-height="22"><tr><td>x</td></tr></table>
+</div>
+
+<!-- The same table with a fit-content block size. -->
+<div class="grid" data-expected-height="22">
+  <table style="align-self: start" data-expected-height="22"><tr><td>x</td></tr></table>
+</div>
+</body>

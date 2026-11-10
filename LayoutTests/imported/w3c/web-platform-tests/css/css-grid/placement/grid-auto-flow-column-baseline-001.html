@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: baseline of a grid with column auto-flow</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#propdef-grid-auto-flow">
+<meta name="assert" content="The first baseline set of a grid container comes from the first grid item in row-major grid order, which with column auto-flow can differ from placement order.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.wrap')">
+<style>
+.wrap { position: relative; }
+.grid { display: grid; grid-auto-flow: column; width: 100px; grid-template-rows: 20px 60px; grid-auto-columns: 30px; background: lightgray; }
+.grid > div { background: green; }
+.box { display: inline-block; width: 50px; height: 40px; background: blue; vertical-align: baseline; }
+.inline { display: inline-block; vertical-align: baseline; }
+</style>
+<!-- The first item is placed in row 2, the second in row 1. The baseline comes from the second item. -->
+<div class="wrap" id="w1" style="width: 300px;"><div class="box" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="40"></div><div class="inline" data-offset-x="50" data-offset-y="20" data-expected-width="100" data-expected-height="80"><div class="grid">
+  <div data-offset-x="50" data-offset-y="40" data-expected-width="30" data-expected-height="60" style="grid-row: 2"></div>
+  <div data-offset-x="80" data-offset-y="20" data-expected-width="30" data-expected-height="20"></div>
+  <div data-offset-x="80" data-offset-y="40" data-expected-width="30" data-expected-height="60"></div>
+</div></div></div>
+<!-- Both items are in row 1. The first item in document order is in the later column, so the baseline comes from the second item. -->
+<div class="wrap" id="w2" style="width: 300px;"><div class="box" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="40"></div><div class="inline" data-offset-x="50" data-offset-y="20" data-expected-width="100" data-expected-height="80"><div class="grid">
+  <div data-offset-x="80" data-offset-y="20" data-expected-width="30" data-expected-height="10" style="grid-column: 2; height: 10px"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="30" data-expected-height="20"></div>
+</div></div></div>

@@ -39,6 +39,7 @@ class RenderGrid;
 
 namespace Layout {
 class ElementBox;
+class GridLinePositions;
 struct GridLayoutConstraints;
 struct UsedTrackSizes;
 }
@@ -51,10 +52,14 @@ public:
     ~GridLayout();
 
     void updateFormattingContextGeometries();
+    void clearGridItemGridAreas();
 
     void layout();
 
-    static void invalidateFormattingContextRootRenderer(RenderGrid&);
+    static void resetStateOnLayoutPathChange(RenderGrid&);
+    static void clearGridItemGridAreasLeftByGridFormattingContext(RenderGrid&);
+    // The grid container's border box minimum and maximum inline size transferred through its aspect-ratio, from RenderBox.
+    static std::pair<LayoutUnit, LayoutUnit> transferredInlineAxisMinMaxSizes(const RenderGrid&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidths();
 
@@ -66,10 +71,11 @@ private:
 
     void updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects);
     void updateFormattingContextRootRendererBeforeLayout();
-    void updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
-    void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
+    void updateGridItemGridAreas(const Layout::GridLinePositions& columnLines, const Layout::GridLinePositions& rowLines, const Layout::GridItemRects&);
+    void updateFormattingContextRootRenderer(const Layout::UsedTrackSizes&, LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, bool autoRepeatColumnsTruncatedByLimit, bool autoRepeatRowsTruncatedByLimit, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
+    void layoutOutOfFlowBoxes();
     void updateOverflow(RenderGrid&);
-    void populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes&, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
+    void populateGridPositions(const Layout::GridLinePositions& columnLines, const Layout::GridLinePositions& rowLines);
 
     const Layout::ElementBox& gridBox() const { return *m_gridBox; }
     Layout::ElementBox& gridBox() { return *m_gridBox; }

@@ -1,0 +1,7 @@
+
+PASS .fc, .inline 1
+PASS .fc, .inline 2
+PASS .fc, .inline 3
+B
+B
+

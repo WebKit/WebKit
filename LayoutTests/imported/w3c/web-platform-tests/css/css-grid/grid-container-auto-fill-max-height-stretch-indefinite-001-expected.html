@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: reference for repeat(auto-fill) with a stretch size that is not definite</title>
+<style>
+.grid {
+  display: grid;
+  grid-auto-columns: 100px;
+  grid-template-rows: 20px;
+}
+.grid > div:nth-child(1) { grid-row: 1; background: green; }
+.grid > div:nth-child(2) { grid-row: 1; background: lime; }
+</style>
+<div class="grid"><div></div><div></div></div>

@@ -1,0 +1,11 @@
+
+PASS .fc 1
+PASS .fc 2
+PASS .fc 3
+PASS .fc 4
+A
+B
+A
+B
+A
+A

@@ -43,6 +43,10 @@ struct ExplicitGridTrackSizes {
     Vector<Style::GridTrackSize> rowTrackSizes;
     WTF::Range<size_t> columnAutoRepeatTracksIndexes;
     WTF::Range<size_t> rowAutoRepeatTracksIndexes;
+    // Whether the limit on the number of tracks left out auto-repeated tracks the container would have fitted. Integration reads it to
+    // write the RenderGrid state that the resolved track list is built from, and NamedGridLines to drop the names the limit cut off.
+    bool columnAutoRepeatTruncatedByLimit { false };
+    bool rowAutoRepeatTruncatedByLimit { false };
 
     size_t columnsCount() const { return columnTrackSizes.size(); }
     size_t rowsCount() const { return rowTrackSizes.size(); }

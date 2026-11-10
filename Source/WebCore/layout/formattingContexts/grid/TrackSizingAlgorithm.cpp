@@ -656,7 +656,6 @@ static std::optional<LayoutUnit> computeFreeSpace(std::optional<LayoutUnit> avai
 // https://drafts.csswg.org/css-grid-1/#algo-stretch
 static void stretchAutoTracks(std::optional<LayoutUnit> freeSpace, UnsizedTracks& unsizedTracks, const StyleContentAlignmentData& usedContentAlignment)
 {
-    ASSERT(!unsizedTracks.isEmpty());
     if (unsizedTracks.isEmpty())
         return;
 

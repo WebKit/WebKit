@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Reference for CSS Grid: a grid container's percentage padding resolves against the flex container when it is a flex item</title>
+<style>
+.o { display: flex; width: 400px; padding: 30px; background: lightgray; }
+.i { display: grid; grid-template-columns: 50px; padding: 40px; background: yellow; }
+.i > div { height: 10px; background: green; }
+</style>
+<div class="o"><div class="i"><div></div></div></div>

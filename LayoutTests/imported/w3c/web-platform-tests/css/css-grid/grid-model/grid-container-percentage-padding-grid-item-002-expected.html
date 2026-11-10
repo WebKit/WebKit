@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Reference for CSS Grid: a grid container's percentage padding and margin resolve against its grid area when its parent grid uses another layout path</title>
+<style>
+.o { display: grid; width: 400px; grid-template-columns: 100px 300px; grid-template-areas: 'a b'; }
+.i { display: grid; grid-template-columns: 50px; padding: 30px; margin-left: 30px; background: yellow; }
+.i > div { height: 10px; background: green; }
+</style>
+<div class="o"><div></div><div class="i"><div></div></div></div>

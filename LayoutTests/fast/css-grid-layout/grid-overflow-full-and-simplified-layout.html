@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+#scroller { overflow: auto; width: 60px; height: 40px; position: absolute; left: 400px; top: 300px; }
+#grid, #scrollerGrid { display: grid; position: relative; width: 30px; grid-template-columns: 30px; grid-template-rows: 10px; box-shadow: 0 0 0 50px red; background-color: blue; }
+#item, #scrollerItem { background-color: yellow; }
+#oof, #scrollerOOF { position: absolute; left: 80px; top: 0; width: 10px; height: 5px; background-color: green; }
+</style>
+</head>
+<body>
+<div style="position: absolute; left: 100px; top: 300px;"><div id="grid"><div id="item"><div id="oof"></div></div></div></div>
+<div id="scroller"><div id="scrollerGrid"><div id="scrollerItem"><div id="scrollerOOF"></div></div></div></div>
+<script>
+description("The overflow of a grid container must not depend on whether the last layout was a full or a simplified layout.");
+
+var grid = document.getElementById("grid");
+var scroller = document.getElementById("scroller");
+var oof = document.getElementById("oof");
+var scrollerGrid = document.getElementById("scrollerGrid");
+var scrollerOOF = document.getElementById("scrollerOOF");
+
+// The grid in the scroller shows the scrollable overflow, the other one the repaint rects: a repaint rect is clipped to the scroller.
+function setOOFLeft(value) { oof.style.left = scrollerOOF.style.left = value; }
+function setGridWidth(value) { grid.style.width = scrollerGrid.style.width = value; }
+
+function colorChangeRepaintRects(color) {
+    internals.startTrackingRepaints();
+    grid.style.backgroundColor = color;
+    document.body.offsetTop;
+    var rects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    return rects;
+}
+
+document.body.offsetTop;
+
+// Full layout (the initial one): the shadow extends the grid by 50px on every side.
+var afterFullLayout = colorChangeRepaintRects("green");
+var scrollWidthAfterFullLayout = scroller.scrollWidth;
+
+// Only the out-of-flow descendant moves: the grid takes a simplified layout.
+setOOFLeft("110px");
+document.body.offsetTop;
+var afterSimplifiedLayout = colorChangeRepaintRects("blue");
+var scrollWidthAfterSimplifiedLayout = scroller.scrollWidth;
+
+// A full layout of the grid again, with the out-of-flow descendant where it started.
+setOOFLeft("80px");
+setGridWidth("31px");
+document.body.offsetTop;
+setGridWidth("30px");
+document.body.offsetTop;
+var afterSecondFullLayout = colorChangeRepaintRects("green");
+var scrollWidthAfterSecondFullLayout = scroller.scrollWidth;
+
+shouldBe("scrollWidthAfterFullLayout", "90");
+shouldBe("scrollWidthAfterSimplifiedLayout", "120");
+shouldBe("scrollWidthAfterSecondFullLayout", "90");
+shouldBe("afterSimplifiedLayout", "afterFullLayout");
+shouldBe("afterSecondFullLayout", "afterFullLayout");
+shouldBeTrue("afterFullLayout.indexOf('(rect 50 250 130 110)') != -1");
+</script>
+</body>
+</html>

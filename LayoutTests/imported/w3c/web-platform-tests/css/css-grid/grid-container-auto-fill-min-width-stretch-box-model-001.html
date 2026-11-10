@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A stretch min-width subtracts the margin, border and padding for repeat(auto-fill)</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-min-width-stretch-box-model-001-ref.html">
+<meta name="assert" content="The stretch min-width of a floated grid container fills the 400px containing block's width minus the container's margin (20px and 10px), border (5px) and padding (10px): 340px of content, which is not a multiple of the 60px columns. repeat(auto-fill) makes the smallest number of 60px columns that fulfills 340px, which is 6 (360px). The item on grid-column: -2 is in the last column, so it shows the number of columns.">
+<style>
+.containing-block { width: 400px; }
+.grid {
+  float: left;
+  display: grid;
+  grid-auto-rows: 20px;
+  grid-template-columns: repeat(auto-fill, 60px);
+  min-width: stretch;
+  margin: 0 10px 0 20px;
+  padding: 10px;
+  border: 5px solid;
+  background: grey;
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

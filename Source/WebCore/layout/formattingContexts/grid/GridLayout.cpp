@@ -28,8 +28,8 @@
 
 #include "GridAreaLines.h"
 #include "GridItemRect.h"
-#include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
+#include "GridLinePositions.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "PlacedGridItem.h"
@@ -83,7 +83,7 @@ auto computeGridItemRects = [](const PlacedGridItems& placedGridItems, const Bor
     return gridItemRects;
 };
 
-static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, const LayoutUnit usedColumnGap, const LayoutUnit usedRowGap, const UsedTrackSizes& usedTrackSizes)
+static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, const GridLinePositions& columnLines, const GridLinePositions& rowLines)
 {
     auto gridItemsCount = gridItems.size();
     GridAreaSizes gridAreaSizes;
@@ -91,8 +91,8 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
     gridAreaSizes.blockSizes.reserveInitialCapacity(gridItemsCount);
 
     for (auto& gridItem : gridItems) {
-        auto columnsSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), usedTrackSizes.columnSizes, usedColumnGap);
-        auto rowsSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.rowStartLine(), gridItem.rowEndLine(), usedTrackSizes.rowSizes, usedRowGap);
+        auto columnsSize = columnLines.areaSize(gridItem.columnStartLine(), gridItem.columnEndLine());
+        auto rowsSize = rowLines.areaSize(gridItem.rowStartLine(), gridItem.rowEndLine());
         gridAreaSizes.inlineSizes.append(columnsSize);
         gridAreaSizes.blockSizes.append(rowsSize);
     }
@@ -101,12 +101,12 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
 
 // https://drafts.csswg.org/css-align-3/#align-by-baseline
 static Vector<std::optional<LayoutUnit>> computeBaselineAlignedMarginBoxPositions(const PlacedGridItems& placedGridItems, LogicalBoxAxis alignmentAxis, const Vector<UsedMargins>& usedMargins,
-    const Vector<LayoutUnit>& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes, const TrackSizes& trackSizes, const BitVector& collapsedTracksList, LayoutUnit gap, const IntegrationUtils& integrationUtils)
+    const Vector<LayoutUnit>& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes, const GridLinePositions& lines, const IntegrationUtils& integrationUtils)
 {
     auto gridAreaStartPosition = [&](size_t gridItemIndex) {
         auto& gridItem = placedGridItems[gridItemIndex];
         auto startLine = alignmentAxis == LogicalBoxAxis::Inline ? gridItem.columnStartLine() : gridItem.rowStartLine();
-        return GridLayoutUtils::computeGridLinePosition(startLine, trackSizes, collapsedTracksList, gap);
+        return lines.positionAsStartLine(startLine);
     };
 
     // https://drafts.csswg.org/css-align-3/#synthesize-baseline
@@ -160,12 +160,12 @@ static Vector<std::optional<LayoutUnit>> computeBaselineAlignedMarginBoxPosition
 }
 
 GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
-    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const UsedTrackSizes& usedTrackSizes, const GridLayoutState& gridLayoutState)
+    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const GridLinePositions& columnLines, const GridLinePositions& rowLines)
 {
     auto& formattingContext = this->formattingContext();
 
     CheckedRef formattingContextRootStyle = formattingContext.root().style();
-    auto gridAreaSizes = computeGridAreaSizes(placedGridItems, gridLayoutState.usedColumnGap, gridLayoutState.usedRowGap, usedTrackSizes);
+    auto gridAreaSizes = computeGridAreaSizes(placedGridItems, columnLines, rowLines);
 
     auto [ usedInlineSizes, usedBlockSizes ] = layoutGridItems(placedGridItems, gridAreaSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
@@ -177,9 +177,9 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
     // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
     // are finalized, grid items can be aligned within their grid areas.
     auto inlineAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Inline, usedInlineMargins, usedInlineSizes,
-        gridAreaSizes.inlineSizes, usedTrackSizes.columnSizes, gridLayoutState.collapsedColumnTracksList, gridLayoutState.usedColumnGap, formattingContext.integrationUtils());
+        gridAreaSizes.inlineSizes, columnLines, formattingContext.integrationUtils());
     auto blockAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Block, usedBlockMargins, usedBlockSizes,
-        gridAreaSizes.blockSizes, usedTrackSizes.rowSizes, gridLayoutState.collapsedRowTracksList, gridLayoutState.usedRowGap, formattingContext.integrationUtils());
+        gridAreaSizes.blockSizes, rowLines, formattingContext.integrationUtils());
 
     auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins, usedInlineSizes, gridAreaSizes.inlineSizes, inlineAxisBaselineAlignedMarginBoxPositions);
     auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins, usedBlockSizes, gridAreaSizes.blockSizes, blockAxisBaselineAlignedMarginBoxPositions);
@@ -300,7 +300,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
                 gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);
             usedInlineSizes.append(inlineUsedSize);
             usedBlockSizes.append(blockUsedSize);
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), { inlineUsedSize, blockUsedSize }, gridAreaInlineSize, gridAreaBlockSize);
             continue;
         }
 
@@ -313,13 +313,11 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         bool hasFitContentBlockSize = GridLayoutUtils::hasFitContentBlockSize(gridItem);
         if (!hasFitContentBlockSize) {
             auto usedBlockSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, usedBlockSize, gridAreaInlineSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), { inlineUsedSize, usedBlockSize }, gridAreaInlineSize, gridAreaBlockSize);
             usedBlockSizes.append(usedBlockSize);
         } else {
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, { }, gridAreaInlineSize);
-            // The item's padding in its box geometry is resolved against the grid container rather than
-            // the grid area, so only take the content box size from it.
-            usedBlockSizes.append(formattingContext.geometryForGridItem(gridItem.layoutBox()).contentBoxHeight() + blockBorderAndPadding);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), { inlineUsedSize, { } }, gridAreaInlineSize, gridAreaBlockSize);
+            usedBlockSizes.append(integrationUtils.borderBoxSizeForGridItem(gridItem.layoutBox(), LogicalBoxAxis::Block));
         }
     }
     return { usedInlineSizes, usedBlockSizes };

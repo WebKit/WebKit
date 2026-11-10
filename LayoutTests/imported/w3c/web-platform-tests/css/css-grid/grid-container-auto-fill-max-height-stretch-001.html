@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A stretch max-height is a definite maximum size, so repeat(auto-fill) repeats the largest number of times that fits it</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-max-height-stretch-001-ref.html">
+<meta name="assert" content="A stretch max-height is a definite maximum size, so repeat(auto-fill) repeats the largest number of times that fits it. The 190px containing block is not a multiple of the 20px tracks, so the count tells the two cases apart: 9 rows. The item on grid-row: -2 is in the last row, so it shows the number of rows.">
+<style>
+.containing-block { width: 200px; height: 190px; }
+.grid {
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: repeat(auto-fill, 20px);
+  max-height: stretch;
+}
+.grid > div:nth-child(1) { grid-row: 1; background: green; }
+.grid > div:nth-child(2) { grid-row: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

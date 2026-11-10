@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: measuring the intrinsic size of a laid out grid keeps the grid areas of its items</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="help" href="https://drafts.csswg.org/css-box-3/#padding-physical">
+<meta name="assert" content="A percentage padding of a grid item resolves against the width of its grid area, also when the flex container the grid is in measures the contributions of the grid after the grid was laid out.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+#flex { display: flex; width: 400px; }
+#grid {
+  display: grid;
+  grid-template-columns: 100px 50px;
+  column-gap: 10px;
+  padding: 0 10%;
+}
+#item2 { padding-left: 10%; height: 10px; }
+</style>
+<div id="flex"><div id="grid"><div id="item1"></div><div id="item2"></div></div></div>
+<script>
+test(() => {
+  // The grid area of the second item is 50px wide. The flex container measures the grid's min-content and max-content
+  // contributions after the grid was laid out and does not lay it out again.
+  assert_equals(getComputedStyle(document.getElementById("item2")).paddingLeft, "5px");
+}, "Percentage padding of a grid item after the grid was measured again");
+</script>

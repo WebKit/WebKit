@@ -1,0 +1,5 @@
+Tests that the repaint rect of a grid container includes its box-shadow.
+(repaint rects
+  (rect 50 40 120 120)
+)
+

@@ -2082,9 +2082,14 @@ layout/formattingContexts/grid/GridFormattingContext.cpp @header:RenderStyleGett
 layout/formattingContexts/grid/GridItemPlacer.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridItemSizingFunctions.cpp
 layout/formattingContexts/grid/GridLayout.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridLayoutContextBuilder.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridLinePositions.cpp
 layout/formattingContexts/grid/GridLayoutUtils.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridLineResolution.cpp
 layout/formattingContexts/grid/GridSizer.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/ImplicitGrid.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/NamedGridLines.cpp
+layout/formattingContexts/grid/NamedLineResolver.cpp
 layout/formattingContexts/grid/PlacedGridItem.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/TrackSizingAlgorithm.cpp
 layout/formattingContexts/grid/UnplacedGridItem.cpp

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: column auto-flow with 'width: max-content'</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#propdef-grid-auto-flow">
+<meta name="assert" content="The max-content width of a grid with column auto-flow sums the tracks created by column placement.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; grid-auto-flow: column; width: max-content; background: lightgray; margin-bottom: 10px; grid-template-rows: 20px 30px; grid-auto-columns: 40px 70px; column-gap: 10px; }
+.grid > div { background: green; }
+.grid > .wide { width: 90px; }
+</style>
+<div class="grid" data-expected-width="170" data-expected-height="50">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="40" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="40" data-expected-height="30"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="70" data-expected-height="20"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="90" data-expected-height="30" class="wide" style="grid-row: 2"></div>
+  <div data-offset-x="130" data-offset-y="0" data-expected-width="40" data-expected-height="20"></div>
+</div>
+<div class="grid" data-expected-width="250" data-expected-height="50" style="width: fit-content;">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="120" data-expected-height="20" style="grid-column: span 2"></div>
+  <div data-offset-x="130" data-offset-y="0" data-expected-width="40" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="180" data-offset-y="0" data-expected-width="70" data-expected-height="20"></div>
+</div>

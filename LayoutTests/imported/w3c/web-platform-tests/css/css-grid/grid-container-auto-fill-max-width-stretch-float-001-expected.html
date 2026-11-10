@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: reference for a floated grid container with a stretch max-width</title>
+<style>
+.grid {
+  display: grid;
+  grid-auto-rows: 50px;
+  grid-template-columns: repeat(7, 50px);
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: 7; background: lime; }
+</style>
+<div class="grid"><div></div><div></div></div>

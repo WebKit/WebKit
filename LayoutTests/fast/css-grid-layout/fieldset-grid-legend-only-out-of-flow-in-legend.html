@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script>if (window.testRunner) testRunner.dumpAsText();</script>
+<style>
+.f { display: grid; position: relative; margin: 0; padding: 0; border: 2px solid; width: 200px; font: 20px/30px monospace; }
+legend { padding: 0; font: 10px/12px monospace; }
+.a { position: absolute; width: 5px; height: 5px; background: red; }
+</style>
+<fieldset id="f1" class="f" contenteditable><legend>L<span id="a1" class="a" style="bottom: 0"></span></legend></fieldset>
+<fieldset id="f2" class="f" contenteditable><legend>L<span id="a2" class="a" style="top: 50%"></span></legend></fieldset>
+<fieldset id="f3" class="f" contenteditable><legend>L<span id="a3" class="a" style="top: 0; bottom: 0; height: auto"></span></legend></fieldset>
+<fieldset id="f4" class="f"><legend>L<span id="a4" class="a" style="bottom: 0"></span></legend></fieldset>
+<pre id="out"></pre>
+<script>
+for (const i of [1, 2, 3, 4]) {
+    const f = document.getElementById("f" + i), a = document.getElementById("a" + i);
+    const fr = f.getBoundingClientRect(), ar = a.getBoundingClientRect();
+    document.getElementById("out").textContent += `f${i}: fieldset h ${f.offsetHeight}, abspos top ${ar.top - fr.top} h ${ar.height}\n`;
+}
+</script>

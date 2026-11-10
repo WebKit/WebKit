@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: grid-row placement with a line name alone, grid-area and auto-flow: column</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-slot">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<meta name="assert" content="An item whose grid-row or grid-column start or end is a line name alone is placed at the first line named name-start (for the start) or name-end (for the end) in either axis, including with grid-area and grid-auto-flow: column.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 400px; background: lightgray; margin-bottom: 10px; grid-auto-flow: row; grid-auto-rows: 10px; }
+.grid > div { background: green; }
+</style>
+<!-- rows: a lone name with foo-start and foo-end lines, and grid-area: foo -->
+<div class="grid" style="grid-template-columns: [foo-start] 50px 60px [foo-end] 70px; grid-template-rows: 20px [foo-start] 30px 40px [foo-end] 10px;">
+  <div data-offset-x="110" data-offset-y="20" data-expected-width="70" data-expected-height="70" style="grid-row: foo"></div>
+  <div data-offset-x="180" data-offset-y="20" data-expected-width="220" data-expected-height="30" style="grid-row-start: foo"></div>
+  <div data-offset-x="180" data-offset-y="50" data-expected-width="220" data-expected-height="40" style="grid-row-end: foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="110" data-expected-height="70" style="grid-area: foo"></div>
+</div>
+<!-- rows: only [foo] lines, no line, and foo-end before foo-start -->
+<div class="grid" style="grid-template-columns: 50px 60px; grid-template-rows: 20px [foo] 30px [foo] 40px; grid-auto-rows: 10px;">
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="30" style="grid-row: foo"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="60" data-expected-height="70" style="grid-row: foo / span 2"></div>
+  <div data-offset-x="255" data-offset-y="20" data-expected-width="145" data-expected-height="30" style="grid-column: foo; grid-row: foo 2 / foo"></div>
+</div>
+<!-- rows: no line with the name, and a lone name that creates leading implicit rows -->
+<div class="grid" style="grid-template-columns: 50px 60px; grid-template-rows: 20px [foo-end] 30px; grid-auto-rows: 10px 15px;">
+  <div data-offset-x="0" data-offset-y="45" data-expected-width="50" data-expected-height="40" style="grid-row: foo"></div>
+  <div data-offset-x="0" data-offset-y="10" data-expected-width="50" data-expected-height="35" style="grid-row: span 2 / foo"></div>
+  <div data-offset-x="110" data-offset-y="0" data-expected-width="290" data-expected-height="45" style="grid-row: span 3 / foo"></div>
+  <div data-offset-x="50" data-offset-y="25" data-expected-width="60" data-expected-height="20" style="grid-column: 2; grid-row: auto / foo"></div>
+</div>
+<!-- grid-auto-flow: column with a lone name on either axis -->
+<div class="grid" style="grid-auto-flow: column; grid-template-columns: [foo-start] 50px [foo-end] 60px; grid-template-rows: [foo-start] 20px [foo-end] 30px; grid-auto-columns: 15px; grid-auto-rows: 10px;">
+  <div data-offset-x="15" data-offset-y="20" data-expected-width="50" data-expected-height="30" style="grid-column: foo"></div>
+  <div data-offset-x="65" data-offset-y="0" data-expected-width="60" data-expected-height="20" style="grid-row: foo"></div>
+  <div data-offset-x="15" data-offset-y="0" data-expected-width="50" data-expected-height="20" style="grid-area: foo"></div>
+  <div data-offset-x="125" data-offset-y="0" data-expected-width="15" data-expected-height="50" style="grid-row: foo / span 2"></div>
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="65" data-expected-height="20" style="grid-column: span 2 / foo; grid-row: foo"></div>
+</div>
+<!-- grid-area: foo with names in only some of the lines and axes -->
+<div class="grid" style="grid-template-columns: 50px [foo-start] 60px 70px; grid-template-rows: 20px 30px [foo-end] 40px; grid-auto-columns: 15px; grid-auto-rows: 10px;">
+  <div data-offset-x="50" data-offset-y="50" data-expected-width="145" data-expected-height="50" style="grid-area: foo"></div>
+  <div data-offset-x="50" data-offset-y="100" data-expected-width="145" data-expected-height="10" style="grid-area: foo / foo / auto / foo"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="145" data-expected-height="20" style="grid-area: auto / foo"></div>
+</div>

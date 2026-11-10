@@ -25,20 +25,46 @@
 
 #pragma once
 
+#include "GridFormattingContext.h"
 #include "GridLayoutConstraints.h"
-#include "StyleContentAlignmentData.h"
+#include "GridLayoutContext.h"
+#include "GridTypeAliases.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 namespace Layout {
 
-struct GridLayoutState {
-    const GridLayoutConstraints gridLayoutConstraints;
-    const StyleContentAlignmentData usedJustifyContent;
-    const StyleContentAlignmentData usedAlignContent;
-    const LayoutUnit usedColumnGap;
-    const LayoutUnit usedRowGap;
-    const BitVector collapsedColumnTracksList;
-    const BitVector collapsedRowTracksList;
+class ElementBox;
+
+// What differs, in one axis, between laying out a grid and measuring it.
+struct GridAxisLayoutContextInput {
+    // The container size that the number of auto-repeat repetitions is resolved against.
+    AutoRepeatConstraint autoRepeat;
+    // https://drafts.csswg.org/css-grid-1/#track-sizes
+    // True when the size of the grid container depends on the size of its tracks in this axis, in which case
+    // percentages in this axis' track sizes are treated as auto.
+    bool containerSizeDependsOnTracks { false };
+};
+
+struct GridLayoutContextInput {
+    GridAxisLayoutContextInput inlineAxis;
+    GridAxisLayoutContextInput blockAxis;
+    // layout() sizes the rows a second time against the container's used block size, so it needs the row track sizes as
+    // specified. Only layout() sets this.
+    bool keepSpecifiedRowTrackSizes { false };
+};
+
+// Builds a GridLayoutContext from the grid container's style and its in-flow children.
+class GridLayoutContextBuilder {
+public:
+    explicit GridLayoutContextBuilder(const ElementBox& gridBox);
+
+    GridLayoutContext build(const GridLayoutContextInput&) const;
+
+private:
+    PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
+
+    const CheckedRef<const ElementBox> m_gridBox;
 };
 
 } // namespace Layout

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<title>Auto-placed grid items with column auto-flow that do not fit in the maximum number of grid tracks are clamped to it</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#overlarge-grids">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<script src="../../resources/testharness.js">
+test(() => {
+    let grid = createGrid("grid-auto-flow: column", ["grid-column: 1; grid-row: span 10", "grid-column: 2; grid-row: span 3", "grid-column: 1; grid-row: span 2"]);
+    // Only the column with the overflowing item is affected.
+    assert_array_equals(itemRects(grid), ["0,0,10,100", "10,0,10,30", "0,90,10,10"]);
+}, "Row axis: the other columns are placed as usual");
+
+// 3 leading implicit tracks and an auto-fill that is cut by the limit (16 repetitions fit, 4 are kept and the last of them is cut).
+test(() => {
+    let grid = createGrid("grid-auto-flow: column; width: 1000px; grid-template-columns: repeat(auto-fill, 10px 20px 30px); grid-auto-columns: 40px", ["grid-row: 1; grid-column: span 3 / 1"]);
+    assert_array_equals(itemRects(grid), ["0,0,120,10"]);
+}, "Column axis: leading implicit tracks and an auto-repeat that is cut by the limit");
+
+test(() => {
+    let grid = createGrid("grid-auto-flow: column; height: 1000px; grid-template-columns: 10px; grid-template-rows: repeat(auto-fill, 10px 20px 30px); grid-auto-rows: 40px", ["grid-column: 1; grid-row: span 3 / 1"]);
+    assert_array_equals(itemRects(grid), ["0,0,10,120"]);
+}, "Row axis: leading implicit tracks and an auto-repeat that is cut by the limit");
+</script>
+<script src="../../resources/testharnessreport.js">
+test(() => {
+    let grid = createGrid("grid-auto-flow: column", ["grid-column: 1; grid-row: span 10", "grid-column: 2; grid-row: span 3", "grid-column: 1; grid-row: span 2"]);
+    // Only the column with the overflowing item is affected.
+    assert_array_equals(itemRects(grid), ["0,0,10,100", "10,0,10,30", "0,90,10,10"]);
+}, "Row axis: the other columns are placed as usual");
+
+// 3 leading implicit tracks and an auto-fill that is cut by the limit (16 repetitions fit, 4 are kept and the last of them is cut).
+test(() => {
+    let grid = createGrid("grid-auto-flow: column; width: 1000px; grid-template-columns: repeat(auto-fill, 10px 20px 30px); grid-auto-columns: 40px", ["grid-row: 1; grid-column: span 3 / 1"]);
+    assert_array_equals(itemRects(grid), ["0,0,120,10"]);
+}, "Column axis: leading implicit tracks and an auto-repeat that is cut by the limit");
+
+test(() => {
+    let grid = createGrid("grid-auto-flow: column; height: 1000px; grid-template-columns: 10px; grid-template-rows: repeat(auto-fill, 10px 20px 30px); grid-auto-rows: 40px", ["grid-column: 1; grid-row: span 3 / 1"]);
+    assert_array_equals(itemRects(grid), ["0,0,10,120"]);
+}, "Row axis: leading implicit tracks and an auto-repeat that is cut by the limit");
+</script>
+<style>
+.grid { display: grid; grid-auto-columns: 10px; grid-auto-rows: 10px; }
+.float { float: left; }
+</style>
+<div id="container"></div>
+<script>
+// This is grid-max-tracks-limit-auto-placement.html with the rows and columns swapped: the limit is 10 tracks, and every track is
+// 10px. With column auto-flow the auto-flow tracks are the columns, so the items that start or end past the last column are the
+// ones that are placed by the auto-placement algorithm, and the rows are the other axis. The expected values are the transposed
+// ones of that test, which are the ones Chrome gives (see there).
+if (window.internals)
+    window.internals.setGridMaxTracksLimit(10);
+
+function createGrid(gridStyle, itemStyles, className = "grid", wrapperStyle = "")
+{
+    container.innerHTML = `<div style="${wrapperStyle}"><div class="${className}" style="${gridStyle}">${itemStyles.map(style => `<div style="${style}"></div>`).join("")}</div></div>`;
+    return container.firstChild.firstChild;
+}
+
+// The position and size of each item in the grid, as "left,top,width,height".
+function itemRects(grid)
+{
+    let gridRect = grid.getBoundingClientRect();
+    return [...grid.children].map(item => {
+        let rect = item.getBoundingClientRect();
+        return [rect.left - gridRect.left, rect.top - gridRect.top, rect.width, rect.height].join(",");
+    });
+}
+
+for (let flow of ["column", "column dense"]) {
+    // The items are in the same column and have no row: the next free row is past the end of the limited grid.
+    test(() => {
+        let grid = createGrid(`grid-auto-flow: ${flow}`, ["grid-column: 1; grid-row: span 10", "grid-column: 1; grid-row: span 10", "grid-column: 1; grid-row: span 1"]);
+        assert_array_equals(itemRects(grid), ["0,0,10,100", "0,90,10,10", "0,90,10,10"]);
+        assert_equals(grid.offsetHeight, 100, "the grid has 10 rows, not 20");
+    }, `Row axis: items that start past the last row are placed in it (${flow})`);
+
+    test(() => {
+        let grid = createGrid(`grid-auto-flow: ${flow}`, ["grid-column: 1; grid-row: span 7", "grid-column: 1; grid-row: span 5", "grid-column: 1; grid-row: span 1"]);
+        assert_array_equals(itemRects(grid), ["0,0,10,70", "0,70,10,30", "0,90,10,10"]);
+        assert_equals(grid.offsetHeight, 100, "the grid has 10 rows, not 12");
+    }, `Row axis: the span of an item that ends past the last row is clamped to it (${flow})`);
+
+    // The tracks are in one row, so every item that is auto-positioned in the column axis is placed after the one before.
+    for (let [description, row] of [["with an automatic row", ""], ["with a definite row", "grid-row: 1;"]]) {
+        test(() => {
+            let grid = createGrid(`grid-template-rows: 10px; grid-auto-flow: ${flow}`, [`${row} grid-column: span 10`, `${row} grid-column: span 10`, `${row} grid-column: span 1`], "grid float");
+            assert_array_equals(itemRects(grid), ["0,0,100,10", "90,0,10,10", "90,0,10,10"]);
+            assert_equals(grid.offsetWidth, 100, "the grid has 10 columns, not 20");
+        }, `Column axis: items that start past the last column are placed in it, ${description} (${flow})`);
+
+        test(() => {
+            let grid = createGrid(`grid-template-rows: 10px; grid-auto-flow: ${flow}`, [`${row} grid-column: span 7`, `${row} grid-column: span 5`, `${row} grid-column: span 1`], "grid float");
+            assert_array_equals(itemRects(grid), ["0,0,70,10", "70,0,30,10", "90,0,10,10"]);
+            assert_equals(grid.offsetWidth, 100, "the grid has 10 columns, not 12");
+        }, `Column axis: the span of an item that ends past the last column is clamped to it, ${description} (${flow})`);
+    }
+}
+
+test(() => {
+    let grid = createGrid("grid-auto-flow: column", ["grid-column: 1; grid-row: span 10", "grid-column: 2; grid-row: span 3", "grid-column: 1; grid-row: span 2"]);
+    // Only the column with the overflowing item is affected.
+    assert_array_equals(itemRects(grid), ["0,0,10,100", "10,0,10,30", "0,90,10,10"]);
+}, "Row axis: the other columns are placed as usual");
+
+// 3 leading implicit tracks and an auto-fill that is cut by the limit (16 repetitions fit, 4 are kept and the last of them is cut).
+test(() => {
+    let grid = createGrid("grid-auto-flow: column; width: 1000px; grid-template-columns: repeat(auto-fill, 10px 20px 30px); grid-auto-columns: 40px", ["grid-row: 1; grid-column: span 3 / 1"]);
+    assert_array_equals(itemRects(grid), ["0,0,120,10"]);
+}, "Column axis: leading implicit tracks and an auto-repeat that is cut by the limit");
+
+test(() => {
+    let grid = createGrid("grid-auto-flow: column; height: 1000px; grid-template-columns: 10px; grid-template-rows: repeat(auto-fill, 10px 20px 30px); grid-auto-rows: 40px", ["grid-column: 1; grid-row: span 3 / 1"]);
+    assert_array_equals(itemRects(grid), ["0,0,10,120"]);
+}, "Row axis: leading implicit tracks and an auto-repeat that is cut by the limit");
+</script>

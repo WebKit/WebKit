@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Layout {
 
+class NamedLineResolver;
+
 struct GridItemPlacementResult {
     GridAreas gridAreas;
     size_t columnsCount { 0 };
@@ -44,7 +46,7 @@ public:
     NODELETE GridItemPlacer(GridAutoFlowOptions);
 
     // Runs the grid item placement algorithm over the grid's in-flow children.
-    GridItemPlacementResult placeItems(const LogicalGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const;
+    GridItemPlacementResult placeItems(const LogicalGridItems&, LeadingImplicitTracks, const NamedLineResolver& columnNamedLineResolver, const NamedLineResolver& rowNamedLineResolver, size_t maxTracks) const;
 
 private:
     const GridAutoFlowOptions m_autoFlowOptions;

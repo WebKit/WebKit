@@ -1,0 +1,14 @@
+The repaint rect of a grid container includes the box-shadow of a nested grid container that is its grid item.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+(repaint rects
+  (rect 70 70 120 90)
+)
+
+PASS repaintRects.indexOf('(rect 70 70 120 90)') != -1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

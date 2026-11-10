@@ -51,6 +51,7 @@ public:
     void setFormattingContextRootGeometry(LayoutUnit availableLogicalWidth);
     void setFormattingContextContentGeometry(std::optional<LayoutUnit> availableLogicalWidth, std::optional<Layout::IntrinsicWidthMode>);
     void updateBoxGeometryAfterIntegrationLayout(const Layout::ElementBox&, LayoutUnit availableWidth);
+    void updateGridItemGeometryAfterLayout(const Layout::ElementBox& gridItem, LayoutUnit gridAreaInlineSize);
 
     Layout::ConstraintsForInlineContent formattingContextConstraints(LayoutUnit availableWidth);
 

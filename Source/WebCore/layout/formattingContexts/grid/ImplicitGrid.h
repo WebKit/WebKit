@@ -34,55 +34,63 @@ namespace WebCore {
 
 namespace Layout {
 
-struct GridAutoFlowOptions;
-struct LeadingImplicitTracks;
+enum class PackingStrategy : bool;
 struct UnplacedGridItems;
 
 // https://drafts.csswg.org/css-grid-1/#implicit-grids
 class ImplicitGrid {
 public:
+    // maxTracks is the limit on the number of tracks around the explicit grid (https://drafts.csswg.org/css-grid-1/#overlarge-grids).
     // Builds the implicit grid that the grid item placement algorithm starts from: the explicit grid,
     // grown to cover every definite item placement that falls outside of it and wide enough for the
-    // largest column span among the items without a definite column position.
-    static ImplicitGrid createInitialGrid(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
+    // largest span in the non-auto-flow tracks among the items without a definite position there.
+    static ImplicitGrid createInitialGrid(const UnplacedGridItems&, size_t leadingNonAutoFlowTracksCount, size_t leadingAutoFlowTracksCount, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount, size_t maxTracks);
 
-    ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount);
+    ImplicitGrid(size_t totalNonAutoFlowTracksCount, size_t totalAutoFlowTracksCount, size_t maxNonAutoFlowTracksCount, size_t maxAutoFlowTracksCount);
 
-    size_t rowsCount() const { return m_gridMatrix.size(); }
-    size_t columnsCount() const { return m_columnsCount; }
+    size_t autoFlowTracksCount() const { return m_gridMatrix.size(); }
+    size_t nonAutoFlowTracksCount() const { return m_nonAutoFlowTracksCount; }
 
-    GridAreaLines insertUnplacedGridItem(const UnplacedGridItem&);
-    GridAreaLines insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions);
-    void determineImplicitGridColumns(const Vector<UnplacedGridItem>&);
-    GridAreaLines insertAutoPositionedItem(const UnplacedGridItem&, GridAutoFlowOptions);
+    FlowRelativeAreaLines insertUnplacedGridItem(const UnplacedGridItem&);
+    FlowRelativeAreaLines insertDefiniteAutoFlowItem(const UnplacedGridItem&, PackingStrategy);
+    void determineImplicitGridNonAutoFlowTracks(const Vector<UnplacedGridItem>&);
+    FlowRelativeAreaLines insertAutoPositionedItem(const UnplacedGridItem&, PackingStrategy);
 
 private:
-    using RowCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
-    NODELETE std::optional<size_t> findFirstAvailableColumnPosition(WTF::Range<size_t> rowRange, size_t columnSpan, size_t startSearchColumn) const;
-    std::optional<size_t> findColumnPositionForDefiniteRowItem(WTF::Range<size_t> rowRange, size_t columnSpan, GridAutoFlowOptions) const;
-    void growColumnsForDefiniteRowItem(size_t columnSpan, WTF::Range<size_t> rowRange);
-    NODELETE bool isCellRangeEmpty(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange) const;
-    NODELETE GridAreaLines markAreaAsOccupied(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange);
+    using AutoFlowTrackCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
+    NODELETE std::optional<size_t> findFirstAvailableNonAutoFlowPosition(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, size_t startSearchPosition) const;
+    std::optional<size_t> findNonAutoFlowPositionForDefiniteAutoFlowItem(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, PackingStrategy) const;
+    size_t growNonAutoFlowTracksForDefiniteAutoFlowItem(size_t nonAutoFlowSpan, WTF::Range<size_t> autoFlowRange);
+    NODELETE bool isCellRangeEmpty(WTF::Range<size_t> nonAutoFlowRange, WTF::Range<size_t> autoFlowRange) const;
+    NODELETE FlowRelativeAreaLines markAreaAsOccupied(WTF::Range<size_t> nonAutoFlowRange, WTF::Range<size_t> autoFlowRange);
+
+    size_t nonAutoFlowSpanLimitedToGrid(const UnplacedGridItem&) const;
 
     // Helper functions for auto-positioned items
-    void growColumnsToFit(size_t requiredCount);
-    void growRowsToFit(size_t requiredRowIndex);
-    GridAreaLines placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridItem&, GridAutoFlowOptions);
-    GridAreaLines placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem&, GridAutoFlowOptions);
+    void growNonAutoFlowTracksToFit(size_t requiredCount);
+    void growAutoFlowTracksToFit(size_t requiredAutoFlowIndex);
+    FlowRelativeAreaLines placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(const UnplacedGridItem&, PackingStrategy);
+    FlowRelativeAreaLines placeAutoPositionedItemWithAutoPositionInBothAxes(const UnplacedGridItem&, PackingStrategy);
 
     GridMatrix m_gridMatrix;
 
-    // The width of every row. BitVector::size() reports the inline bit capacity rather than the
-    // number of bits asked for, so the grid has to remember how wide it actually is.
-    size_t m_columnsCount { 0 };
+    // The number of cells in every auto-flow track. BitVector::size() reports the inline bit capacity rather than the
+    // number of bits asked for, so the grid has to remember how many it actually has.
+    size_t m_nonAutoFlowTracksCount { 0 };
 
-    // Per-row cursors for sparse packing in Step 2 (definite row items only).
-    RowCursors m_rowCursors;
+    // https://drafts.csswg.org/css-grid-1/#overlarge-grids
+    // The most non-auto-flow and auto-flow tracks the grid may have: the leading implicit tracks plus the limit on the tracks after the explicit grid start.
+    // Growing stops here, and an item that would go past it gets a clamped grid area.
+    size_t m_maxNonAutoFlowTracksCount { 0 };
+    size_t m_maxAutoFlowTracksCount { 0 };
+
+    // Per-auto-flow-track cursors for sparse packing in Step 2 (items with a definite auto-flow position only).
+    AutoFlowTrackCursors m_autoFlowTrackCursors;
 
     // Global cursor for Step 4 (auto-positioned items with both axes automatic).
-    // Tracks the current insertion point as (row, column) to ensure monotonic placement.
-    size_t m_autoPlacementCursorRow { 0 };
-    size_t m_autoPlacementCursorColumn { 0 };
+    // Tracks the current insertion point as (auto-flow position, non-auto-flow position) to ensure monotonic placement.
+    size_t m_autoPlacementCursorAutoFlowPosition { 0 };
+    size_t m_autoPlacementCursorNonAutoFlowPosition { 0 };
 };
 
 } // namespace Layout
