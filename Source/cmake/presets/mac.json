@@ -1,0 +1,255 @@
+{
+    "version": 4,
+    "include": ["cocoa.json"],
+    "configurePresets": [
+        {
+            "name": "mac",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "macosx.internal;macosx"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
+            "name": "mac-release",
+            "displayName": "macOS Release",
+            "inherits": ["mac", "release"],
+            "binaryDir": "WebKitBuild/cmake-mac/Release",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                },
+                "CMAKE_CXX_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                },
+                "CMAKE_OBJC_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                },
+                "CMAKE_OBJCXX_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                }
+            }
+        },
+        {
+            "name": "mac-debug",
+            "displayName": "macOS Debug",
+            "inherits": ["mac", "debug"],
+            "binaryDir": "WebKitBuild/cmake-mac/Debug"
+        },
+        {
+            "name": "mac-performance",
+            "displayName": "macOS Development (Release, PGO, ThinLTO, ccache) (Requires internal SDK or custom PGO_PROFILE_PATH)",
+            "inherits": ["mac-release"],
+            "cacheVariables": {
+                "USE_PGO_PROFILE": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "LTO_MODE": {
+                    "type": "STRING",
+                    "value": "thin"
+                }
+            }
+        },
+        {
+            "name": "mac-dev-release",
+            "displayName": "macOS Development (Release, ccache, compile_commands)",
+            "inherits": ["mac-release", "dev"]
+        },
+        {
+            "name": "mac-dev-debug",
+            "displayName": "macOS Development (Debug, ccache, compile_commands)",
+            "inherits": ["mac-debug", "dev"]
+        },
+        {
+            "name": "mac-dev-debug-o3",
+            "displayName": "macOS Development (Debug O3 optimization, ccache, compile_commands)",
+            "inherits": ["mac-debug", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/DebugO3",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_CXX_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_OBJC_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_OBJCXX_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "USE_PCH_CODEGEN": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
+            "name": "mac-dev-relwithdebinfo",
+            "displayName": "macOS Development (RelWithDebInfo -- optimized + debuggable)",
+            "inherits": ["mac", "relwithdebinfo", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/RelWithDebInfo",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                },
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                },
+                "CMAKE_OBJC_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                },
+                "CMAKE_OBJCXX_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                }
+            }
+        },
+        {
+            "name": "mac-asan",
+            "displayName": "macOS ASan (AddressSanitizer, RelWithDebInfo, ccache)",
+            "inherits": ["mac", "relwithdebinfo", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/ASan",
+            "cacheVariables": {
+                "ENABLE_SANITIZERS": {
+                    "type": "STRING",
+                    "value": "address"
+                }
+            }
+        },
+        {
+            "name": "mac-tsan",
+            "displayName": "macOS TSan (ThreadSanitizer, RelWithDebInfo, ccache)",
+            "inherits": ["mac", "relwithdebinfo", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/TSan",
+            "cacheVariables": {
+                "ENABLE_SANITIZERS": {
+                    "type": "STRING",
+                    "value": "thread"
+                },
+                "USE_SYSTEM_MALLOC": {
+                    "type": "BOOL",
+                    "value": "ON"
+                }
+            }
+        },
+        {
+            "name": "mac-rosetta",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_OSX_ARCHITECTURES": {
+                    "type": "STRING",
+                    "value": "x86_64"
+                }
+            }
+        },
+        {
+            "name": "mac-rosetta-release",
+            "displayName": "macOS x86_64/Rosetta Release",
+            "inherits": ["mac-rosetta", "mac-release"],
+            "binaryDir": "WebKitBuild/cmake-mac-rosetta/Release"
+        },
+        {
+            "name": "mac-rosetta-debug",
+            "displayName": "macOS x86_64/Rosetta Debug",
+            "inherits": ["mac-rosetta", "mac-debug"],
+            "binaryDir": "WebKitBuild/cmake-mac-rosetta/Debug"
+        },
+        {
+            "name": "mac-rosetta-dev-release",
+            "displayName": "macOS x86_64/Rosetta Development (Release, ccache, compile_commands)",
+            "inherits": ["mac-rosetta-release", "dev"]
+        },
+        {
+            "name": "mac-rosetta-dev-debug",
+            "displayName": "macOS x86_64/Rosetta Development (Debug, ccache, compile_commands)",
+            "inherits": ["mac-rosetta-debug", "dev"]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "mac-release",
+            "displayName": "macOS Release",
+            "configurePreset": "mac-release"
+        },
+        {
+            "name": "mac-debug",
+            "displayName": "macOS Debug",
+            "configurePreset": "mac-debug"
+        },
+        {
+            "name": "mac-performance",
+            "displayName": "macOS Performance",
+            "configurePreset": "mac-performance"
+        },
+        {
+            "name": "mac-dev-release",
+            "displayName": "macOS Development Release",
+            "configurePreset": "mac-dev-release"
+        },
+        {
+            "name": "mac-dev-debug",
+            "displayName": "macOS Development Debug",
+            "configurePreset": "mac-dev-debug"
+        },
+        {
+            "name": "mac-dev-debug-o3",
+            "displayName": "macOS Development Debug O3",
+            "configurePreset": "mac-dev-debug-o3"
+        },
+        {
+            "name": "mac-dev-relwithdebinfo",
+            "displayName": "macOS Development RelWithDebInfo",
+            "configurePreset": "mac-dev-relwithdebinfo"
+        },
+        {
+            "name": "mac-asan",
+            "displayName": "macOS ASan",
+            "configurePreset": "mac-asan"
+        },
+        {
+            "name": "mac-tsan",
+            "displayName": "macOS TSan",
+            "configurePreset": "mac-tsan"
+        },
+        {
+            "name": "mac-rosetta-release",
+            "displayName": "macOS x86_64/Rosetta Release",
+            "configurePreset": "mac-rosetta-release"
+        },
+        {
+            "name": "mac-rosetta-debug",
+            "displayName": "macOS x86_64/Rosetta Debug",
+            "configurePreset": "mac-rosetta-debug"
+        },
+        {
+            "name": "mac-rosetta-dev-release",
+            "displayName": "macOS x86_64/Rosetta Development Release",
+            "configurePreset": "mac-rosetta-dev-release"
+        },
+        {
+            "name": "mac-rosetta-dev-debug",
+            "displayName": "macOS x86_64/Rosetta Development Debug",
+            "configurePreset": "mac-rosetta-dev-debug"
+        }
+    ]
+}

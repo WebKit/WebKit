@@ -117,13 +117,22 @@ class CompileDB:
 
 def resolve_preset_build_dir(presetName):
     presets = {}
-    for name in ('CMakePresets.json', 'CMakeUserPresets.json'):
-        path = os.path.join(WEBKIT_ROOT, name)
-        if not os.path.isfile(path):
-            continue
+    loaded = set()
+
+    def loadPresets(path):
+        path = os.path.realpath(path)
+        if path in loaded or not os.path.isfile(path):
+            return
+        loaded.add(path)
         with open(path) as f:
-            for p in json.load(f).get('configurePresets', []):
-                presets[p['name']] = p
+            data = json.load(f)
+        for include in data.get('include', []):
+            loadPresets(os.path.join(os.path.dirname(path), include))
+        for p in data.get('configurePresets', []):
+            presets[p['name']] = p
+
+    for name in ('CMakePresets.json', 'CMakeUserPresets.json'):
+        loadPresets(os.path.join(WEBKIT_ROOT, name))
 
     def findBinaryDir(name, seen):
         if name in seen or name not in presets:
