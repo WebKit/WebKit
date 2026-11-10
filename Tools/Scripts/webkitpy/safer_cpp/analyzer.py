@@ -89,7 +89,7 @@ class CompileDB:
     def _buildBundleIndex(self):
         index = {}
         for path, entry in self.byFile.items():
-            if '/unified-sources/UnifiedSource' not in path:
+            if '/unified-sources/' not in path or 'UnifiedSource' not in os.path.basename(path):
                 continue
             try:
                 with open(path) as f:
@@ -414,6 +414,58 @@ def add_compile_commands_arguments(parser):
     for port in ('gtk', 'wpe'):
         where.add_argument('--' + port, action='store_const', const=port, dest='port',
                            help='use the {} build-webkit tree (honors set-webkit-configuration and WEBKIT_OUTPUTDIR)'.format(port.upper()))
+
+
+def find_ninja(buildDir):
+    try:
+        with open(os.path.join(buildDir, 'CMakeCache.txt')) as f:
+            for line in f:
+                if line.startswith('CMAKE_MAKE_PROGRAM:'):
+                    program = line.split('=', 1)[1].strip()
+                    if os.path.isfile(program):
+                        return program
+    except OSError:
+        pass
+    return shutil.which('ninja')
+
+
+def run_ninja(buildDir, targets, verbose):
+    ninja = find_ninja(buildDir)
+    if not ninja:
+        sys.exit("error: cannot find ninja to update '{}'; pass --no-prepare to analyze it as is".format(buildDir))
+    argv = [ninja] + targets
+    if verbose:
+        sys.stderr.write('(cd {} && {})\n'.format(shlex.quote(buildDir), ' '.join(shlex.quote(a) for a in argv)))
+    # Not `ninja -C`: Source/cmake/ninja-wrapper writes into its working directory.
+    proc = subprocess.run(argv, cwd=buildDir, capture_output=True, text=True)
+    if proc.returncode != 0:
+        sys.stderr.write(proc.stdout + proc.stderr)
+        sys.exit("error: could not update '{}' (see above); pass --no-prepare to analyze it as is".format(buildDir))
+
+
+def is_ninja_build_dir(compileCommandsPath):
+    return os.path.isfile(os.path.join(os.path.dirname(compileCommandsPath), 'build.ninja'))
+
+
+# Reconfigures CMake if any of its inputs changed since the last configure.
+def update_compile_commands(compileCommandsPath, verbose):
+    run_ninja(os.path.dirname(compileCommandsPath), ['build.ninja'], verbose)
+
+
+def cmake_target_for_entry(entry):
+    m = re.search(r'(.*)CMakeFiles/([^/]+)\.dir/', entry.get('output') or entry['command'])
+    return (m.group(1), m.group(2)) if m else None
+
+
+# Sub-targets like WebCoreDOMAndRendering include sources that their parent target
+# generates without depending on it, so update the parent's prerequisites too.
+def prepare_build(compileCommandsPath, db, entries, verbose):
+    wanted = {t for t in map(cmake_target_for_entry, entries) if t}
+    allTargets = {t for t in map(cmake_target_for_entry, db.byFile.values()) if t}
+    targets = sorted({'cmake_object_order_depends_target_' + name for directory, name in allTargets
+                      if any(directory == d and n.startswith(name) for d, n in wanted)})
+    if targets:
+        run_ninja(os.path.dirname(compileCommandsPath), targets, verbose)
 
 
 def resolve_compile_commands_path(args):

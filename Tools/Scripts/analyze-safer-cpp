@@ -44,7 +44,8 @@ sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 
 from webkitpy.safer_cpp.analyzer import (  # noqa: E402
     HEADER_EXT, SOURCE_EXT, WEBKIT_CHECKERS, WEBKIT_ROOT, CompileDB, add_compile_commands_arguments,
-    drop_unavailable_checkers, project_for_path, resolve_analyzer_clang, resolve_compile_commands_path, rewrite_argv)
+    drop_unavailable_checkers, is_ninja_build_dir, prepare_build, project_for_path, resolve_analyzer_clang,
+    resolve_compile_commands_path, rewrite_argv, update_compile_commands)
 from webkitpy.safer_cpp.checkers import Checker, PROJECTS  # noqa: E402
 
 
@@ -176,26 +177,37 @@ def map_header_to_tu(headerPath, db):
     return None
 
 
+# Ordered by preference: a header is C++, so borrow flags from a C++ translation unit.
+CXX_SOURCE_EXT = ('.cpp', '.cc', '.cxx', '.mm')
+
+
 def find_flags_entry(headerPath, db):
-    headerDir = os.path.dirname(headerPath)
     _, projectRoot = project_for_path(headerPath)
-    fallback = None
-    for path, entry in db.byFile.items():
-        if '/unified-sources/UnifiedSource' in path:
-            continue
-        if os.path.splitext(path)[1] not in SOURCE_EXT:
-            continue
-        if os.path.dirname(path) == headerDir:
-            return entry
-        if fallback is None and projectRoot and path.startswith(projectRoot + os.sep):
-            fallback = entry
-    return fallback
+    if not projectRoot:
+        return None
+    directory = os.path.dirname(headerPath)
+    while directory == projectRoot or directory.startswith(projectRoot + os.sep):
+        try:
+            names = os.listdir(directory)
+        except OSError:
+            names = []
+        for ext in CXX_SOURCE_EXT:
+            for name in sorted(n for n in names if os.path.splitext(n)[1] == ext):
+                entry = db.lookup(os.path.join(directory, name))
+                if entry:
+                    return entry
+        directory = os.path.dirname(directory)
+    return None
 
 
 def write_header_shim(headerPath, entry, tmpDir):
     ext = '.mm' if os.path.splitext(entry['file'])[1] in ('.m', '.mm') else '.cpp'
     shim = os.path.join(tmpDir, 'analyze-header' + ext)
+    _, projectRoot = project_for_path(headerPath)
+    config = os.path.join(projectRoot, 'config.h') if projectRoot else None
     with open(shim, 'w') as f:
+        if config and os.path.isfile(config):
+            f.write('#include "{}"\n'.format(config))
         f.write('#include "{}"\n'.format(headerPath))
     return shim
 
@@ -233,7 +245,7 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         usage='%(prog)s [-h] [--base BASE] [--clang CLANG] [--download-toolchain]\n'
               '                         [--cmake-preset CMAKE_PRESET | --compile-commands PATH | --gtk | --wpe]\n'
-              '                         [--checker NAME] [--ignore-expectations] [-j N] [-v]\n'
+              '                         [--checker NAME] [--ignore-expectations] [--no-prepare] [-j N] [-v]\n'
               '                         [--changed-files | FILE ...]',
         epilog='examples:\n'
                '  analyze-safer-cpp Source/WebCore/dom/Document.cpp\n'
@@ -260,6 +272,9 @@ def parse_args():
                         help='show all checker warnings, ignoring SaferCPPExpectations')
     parser.add_argument('-j', type=int, default=os.cpu_count(), metavar='N',
                         help='analyze N files in parallel (default: number of CPUs)')
+    parser.add_argument('--no-prepare', action='store_true',
+                        help='do not reconfigure the build or update its copied headers and '
+                             'generated sources before analyzing')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='print each rewritten clang command')
 
@@ -276,7 +291,11 @@ def parse_args():
 def main():
     args = parse_args()
 
-    db = CompileDB(resolve_compile_commands_path(args))
+    compileCommandsPath = resolve_compile_commands_path(args)
+    prepare = not args.no_prepare and is_ninja_build_dir(compileCommandsPath)
+    if prepare:
+        update_compile_commands(compileCommandsPath, args.verbose)
+    db = CompileDB(compileCommandsPath)
     clang = resolve_analyzer_clang(args, db)
     args.checkers = drop_unavailable_checkers(args.checkers, clang, args.explicit_checkers)
     expectations = Expectations()
@@ -324,6 +343,9 @@ def main():
     if not workItems:
         print('Nothing to analyze.')
         return 0
+
+    if prepare:
+        prepare_build(compileCommandsPath, db, [entry for _, entry, _ in workItems], args.verbose)
 
     def runOne(item):
         tu, entry, header_only = item

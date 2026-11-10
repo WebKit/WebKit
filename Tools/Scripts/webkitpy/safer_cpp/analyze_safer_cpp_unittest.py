@@ -149,5 +149,117 @@ class AnalyzeSaferCppCheckerOptionTest(unittest.TestCase):
             self.assertIn("unknown checker 'bogus.Checker'", proc.stderr)
 
 
+def write_empty_clang(path):
+    with open(path, 'w') as f:
+        f.write('#!/bin/sh\nexit 0\n')
+    os.chmod(path, 0o755)
+
+
+@unittest.skipIf(sys.platform.startswith('win'), 'fake clang stub is a POSIX shell script')
+class AnalyzeSaferCppHeaderFlagsTest(unittest.TestCase):
+    def test_header_borrows_flags_from_a_sibling_in_a_unified_bundle(self):
+        webkitRoot = os.path.dirname(os.path.dirname(os.path.dirname(ANALYZE_SAFER_CPP)))
+        header = os.path.join(webkitRoot, 'Source', 'WebCore', 'rendering', 'PaintInfo.h')
+        thirdParty = os.path.join(webkitRoot, 'Source', 'WebCore', 'PAL', 'ThirdParty', 'dav1d', 'src', 'cdf.c')
+        with tempfile.TemporaryDirectory() as directory:
+            fakeClang = os.path.join(directory, 'fake-clang')
+            write_empty_clang(fakeClang)
+            bundleDir = os.path.join(directory, 'unified-sources')
+            os.mkdir(bundleDir)
+            bundle = os.path.join(bundleDir, 'UnifiedSource1.cpp')
+            with open(bundle, 'w') as f:
+                f.write('#include "rendering/RenderBox.cpp"\n')
+            compileCommands = os.path.join(directory, 'compile_commands.json')
+            with open(compileCommands, 'w') as f:
+                json.dump([{'directory': directory, 'file': path, 'command': 'clang++ -c {} -o {}.o'.format(path, path)}
+                           for path in (thirdParty, bundle)], f)
+
+            proc = subprocess.run(
+                [sys.executable, ANALYZE_SAFER_CPP, header, '--compile-commands', compileCommands, '--clang', fakeClang, '-v'],
+                capture_output=True, text=True)
+            self.assertIn('/unified-sources/UnifiedSource1.cpp)', proc.stderr)
+            self.assertNotIn('cdf.c', proc.stderr)
+
+
+@unittest.skipIf(sys.platform.startswith('win'), 'fake clang stub is a POSIX shell script')
+class AnalyzeSaferCppUnifiedBundleTest(unittest.TestCase):
+    def test_source_in_a_prefixed_unified_bundle_is_analyzed(self):
+        webkitRoot = os.path.dirname(os.path.dirname(os.path.dirname(ANALYZE_SAFER_CPP)))
+        source = os.path.join(webkitRoot, 'Source', 'WebKit', 'Platform', 'IPC', 'Connection.cpp')
+        with tempfile.TemporaryDirectory() as directory:
+            fakeClang = os.path.join(directory, 'fake-clang')
+            write_empty_clang(fakeClang)
+            bundleDir = os.path.join(directory, 'unified-sources')
+            os.mkdir(bundleDir)
+            bundle = os.path.join(bundleDir, 'PlatformUnifiedSource-Platform-1.cpp')
+            with open(bundle, 'w') as f:
+                f.write('#include "Platform/IPC/Connection.cpp"\n')
+            compileCommands = os.path.join(directory, 'compile_commands.json')
+            with open(compileCommands, 'w') as f:
+                json.dump([{'directory': directory, 'file': bundle, 'command': 'clang++ -c {} -o {}.o'.format(bundle, bundle)}], f)
+
+            proc = subprocess.run(
+                [sys.executable, ANALYZE_SAFER_CPP, source, '--compile-commands', compileCommands, '--clang', fakeClang, '--no-prepare'],
+                capture_output=True, text=True)
+            self.assertNotIn('SKIP', proc.stdout)
+            self.assertIn('1 file(s) analyzed', proc.stdout)
+
+
+@unittest.skipIf(sys.platform.startswith('win'), 'fake ninja stub is a POSIX shell script')
+class AnalyzeSaferCppPrepareTest(unittest.TestCase):
+    def run_with_fake_ninja(self, directory, ninjaExitCode, extraArgs=(), otherTargets=()):
+        fakeClang = os.path.join(directory, 'fake-clang')
+        write_empty_clang(fakeClang)
+        log = os.path.join(directory, 'ninja.log')
+        fakeNinja = os.path.join(directory, 'fake-ninja')
+        with open(fakeNinja, 'w') as f:
+            f.write('#!/bin/sh\necho "$@" >> {}\nexit {}\n'.format(log, ninjaExitCode))
+        os.chmod(fakeNinja, 0o755)
+        with open(os.path.join(directory, 'CMakeCache.txt'), 'w') as f:
+            f.write('CMAKE_MAKE_PROGRAM:FILEPATH={}\n'.format(fakeNinja))
+        open(os.path.join(directory, 'build.ninja'), 'w').close()
+        source = os.path.join(directory, 'repro.cpp')
+        with open(source, 'w') as f:
+            f.write('int main() { return 0; }\n')
+        compileCommands = os.path.join(directory, 'compile_commands.json')
+        entries = []
+        for target in ('ReproSub',) + tuple(otherTargets):
+            path = source if target == 'ReproSub' else os.path.join(directory, target + '.cpp')
+            output = 'CMakeFiles/{}.dir/{}.o'.format(target, os.path.basename(path))
+            entries.append({'directory': directory, 'file': path, 'output': output,
+                            'command': 'clang++ -c {} -o {}'.format(path, output)})
+        with open(compileCommands, 'w') as f:
+            json.dump(entries, f)
+        proc = subprocess.run(
+            [sys.executable, ANALYZE_SAFER_CPP, source, '--compile-commands', compileCommands, '--clang', fakeClang] + list(extraArgs),
+            capture_output=True, text=True)
+        ninjaCalls = open(log).read().splitlines() if os.path.exists(log) else []
+        return proc, ninjaCalls
+
+    def test_reconfigures_and_updates_the_targets_of_analyzed_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc, ninjaCalls = self.run_with_fake_ninja(directory, 0)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(ninjaCalls, ['build.ninja', 'cmake_object_order_depends_target_ReproSub'])
+
+    def test_updates_the_parent_of_a_sub_target_but_not_other_siblings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc, ninjaCalls = self.run_with_fake_ninja(directory, 0, otherTargets=('Repro', 'ReproTestSupport'))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(ninjaCalls, ['build.ninja', 'cmake_object_order_depends_target_Repro cmake_object_order_depends_target_ReproSub'])
+
+    def test_failed_update_stops_the_run(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc, _ = self.run_with_fake_ninja(directory, 1)
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertIn('--no-prepare', proc.stderr)
+
+    def test_no_prepare_skips_ninja(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc, ninjaCalls = self.run_with_fake_ninja(directory, 1, ['--no-prepare'])
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(ninjaCalls, [])
+
+
 if __name__ == '__main__':
     unittest.main()
