@@ -2563,17 +2563,19 @@ RenderLayer* RenderLayer::enclosingCompositingLayer(IncludeSelfOrNot includeSelf
     return nullptr;
 }
 
+static RenderLayer* repaintTargetForLayer(const RenderLayer& layer)
+{
+    if (compositedWithOwnBackingStore(layer))
+        return const_cast<RenderLayer*>(&layer);
+
+    if (layer.paintsIntoProvidedBacking())
+        return layer.backingProviderLayer();
+
+    return nullptr;
+}
+
 RenderLayer::EnclosingCompositingLayerStatus RenderLayer::enclosingCompositingLayerForRepaint(IncludeSelfOrNot includeSelf) const
 {
-    auto repaintTargetForLayer = [](const RenderLayer& layer) -> RenderLayer* {
-        if (compositedWithOwnBackingStore(layer))
-            return const_cast<RenderLayer*>(&layer);
-        
-        if (layer.paintsIntoProvidedBacking())
-            return layer.backingProviderLayer();
-        
-        return nullptr;
-    };
     auto isEligibleForFullRepaintCheck = [&](const auto& layer) {
         return layer.isSelfPaintingLayer() && !layer.renderer().hasPotentiallyScrollableOverflow() && !is<RenderView>(layer.renderer());
     };
@@ -2596,16 +2598,6 @@ RenderLayer::EnclosingCompositingLayerStatus RenderLayer::enclosingCompositingLa
 
 RenderLayer* RenderLayer::enclosingRepaintTargetLayer(IncludeSelfOrNot includeSelf) const
 {
-    auto repaintTargetForLayer = [](const RenderLayer& layer) -> RenderLayer* {
-        if (compositedWithOwnBackingStore(layer))
-            return const_cast<RenderLayer*>(&layer);
-
-        if (layer.paintsIntoProvidedBacking())
-            return layer.backingProviderLayer();
-
-        return nullptr;
-    };
-
     if (includeSelf == IncludeSelf) {
         if (auto* repaintTarget = repaintTargetForLayer(*this))
             return repaintTarget;
@@ -5376,8 +5368,15 @@ ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
 
 bool RenderLayer::clipCrossesPaintingBoundary() const
 {
-    return parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)
-        || parent()->enclosingRepaintTargetLayer() != enclosingRepaintTargetLayer();
+    if (parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers))
+        return true;
+
+    // In this case, enclosingRepaintTargetLayer() starts at parent() and finds the same target as
+    // parent()->enclosingRepaintTargetLayer().
+    if (paintOrderParent() == parent() && !repaintTargetForLayer(*this))
+        return false;
+
+    return parent()->enclosingRepaintTargetLayer() != enclosingRepaintTargetLayer();
 }
 
 void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
