@@ -1282,8 +1282,9 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
     result.outOfFlowBoxes.append({ box, staticInlinePosition(), staticBlockPosition });
 }
 
-// A replaced element, a flex container or a WebVTT cue box, whose own formatting context lays it out through the render tree; the block
-// formatting context places it, and sizes the flex container (css-position-3 §4.3), whose block size comes from its content when it is auto.
+// A replaced element, a flex container, a WebVTT cue box or a block container whose content the block formatting context does not lay out as a
+// nested root, whose own formatting context lays it out through the render tree; the block formatting context places it, and sizes it when
+// it is not replaced (css-position-3 §4.3), from its content when its block size is auto.
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
@@ -1335,7 +1336,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
 
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
-    if (!is<RenderBlockFlow>(outOfFlowBox) || outOfFlowBox.isRenderVTTCue())
+    if (!is<RenderBlockFlow>(outOfFlowBox) || outOfFlowBox.isRenderVTTCue() || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(outOfFlowBox))
         return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition, defaultAnchor);
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
