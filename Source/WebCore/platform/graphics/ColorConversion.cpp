@@ -371,7 +371,7 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputC
 
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, const ColorSpace& outputColorSpace)
 {
-#if USE(CG)
+#if ENABLE(DESTINATION_COLOR_SPACE_ARBITRARY_CONVERSION)
     return platformConvertColorComponents(inputColorSpace, inputColorComponents, outputColorSpace);
 #else
     return callWithColorType(inputColorComponents, inputColorSpace, [outputColorSpace] (const auto& inputColor) {

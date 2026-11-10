@@ -35,6 +35,41 @@
 
 namespace WebCore {
 
+static PixelBufferFormat renderingFormat([[maybe_unused]] const ColorSpace& destinationColorSpace)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (destinationColorSpace.usesExtendedRange())
+        return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, destinationColorSpace };
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_ARBITRARY_CONVERSION)
+    return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, destinationColorSpace };
+#else
+    // FIXME: Platforms that don't support arbitrary conversion must use the conservative choice for now.
+    return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+#endif
+}
+
+static PixelFormat imageBufferPixelFormat([[maybe_unused]] const ColorSpace& colorSpace)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (colorSpace.usesExtendedRange())
+        return PixelFormat::RGBA16F;
+#endif
+    return PixelFormat::BGRA8;
+}
+
+static const ColorSpace& imageColorSpace(const ColorSpace& contextColorSpace)
+{
+    if (contextColorSpace.supportsOutput() && contextColorSpace.usesRGBColorModel())
+        return contextColorSpace;
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    return ColorSpace::ExtendedSRGB();
+#else
+    return ColorSpace::SRGB();
+#endif
+}
+
 void MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gradient, const FloatRect& destination)
 {
     if (context.paintingDisabled())
@@ -47,9 +82,11 @@ void MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gr
     if (pixelSize.isEmpty())
         return;
 
-    RefPtr image = gradient.renderedImage(pixelSize, scale);
+    auto& colorSpace = imageColorSpace(context.colorSpace());
+
+    RefPtr image = gradient.renderedImage(pixelSize, scale, colorSpace);
     if (!image) {
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+        auto format = renderingFormat(colorSpace);
         auto bufferSize = PixelBuffer::computeBufferSize(format.pixelFormat, pixelSize);
         if (bufferSize.hasOverflowed())
             return;
@@ -65,7 +102,7 @@ void MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gr
         if (!source)
             return;
 
-        RefPtr imageBuffer = context.createImageBuffer(pixelSize, 1, ColorSpace::SRGB(), RenderingMode::Unaccelerated);
+        RefPtr imageBuffer = context.createImageBuffer(pixelSize, 1, colorSpace, RenderingMode::Unaccelerated, std::nullopt, { imageBufferPixelFormat(colorSpace) });
         if (!imageBuffer)
             return;
 

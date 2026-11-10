@@ -664,8 +664,89 @@ TEST(Color, ConvertComponentTypeOfPremultiplied)
 
 TEST(Color, ColorComponentsOfPremultiplied)
 {
-    EXPECT_EQ(asColorComponents(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.unresolved())), (ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }));
-    EXPECT_EQ(asColorComponents(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.resolved())), (ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }));
+    EXPECT_TRUE((asColorComponents(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.unresolved())) == Premultiplied { unresolvedColor(ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }) }));
+    EXPECT_TRUE((asColorComponents(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.resolved())) == Premultiplied { resolvedColor(ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }) }));
+}
+
+using ResolvedComponents = ResolvedColorType<ColorComponents<float, 4>>;
+using UnresolvedComponents = UnresolvedColorType<ColorComponents<float, 4>>;
+
+static_assert(std::same_as<decltype(resolvedColor(std::declval<ColorComponents<float, 4>>())), ResolvedComponents>);
+static_assert(std::same_as<decltype(unresolvedColor(std::declval<ColorComponents<float, 4>>())), UnresolvedComponents>);
+
+static_assert(CanWrapInPremultiplied<ResolvedComponents>);
+static_assert(CanWrapInPremultiplied<UnresolvedComponents>);
+static_assert(!CanWrapInPremultiplied<ColorComponents<float, 4>>);
+
+static_assert(CanResolve<ResolvedComponents>);
+static_assert(!CanResolve<UnresolvedComponents>);
+static_assert(CanResolve<ResolvedPremultiplied<ColorComponents<float, 4>>>);
+static_assert(!CanResolve<UnresolvedPremultiplied<ColorComponents<float, 4>>>);
+
+// Components don't say which one is a hue, so they can't be premultiplied, only tagged as premultiplied.
+static_assert(!CanPremultiply<ResolvedComponents>);
+static_assert(!CanPremultiply<UnresolvedComponents>);
+
+static_assert(!std::is_convertible_v<ColorComponents<float, 4>, ResolvedComponents>);
+static_assert(!std::is_convertible_v<ColorComponents<float, 4>, UnresolvedComponents>);
+static_assert(!std::is_convertible_v<UnresolvedComponents, ResolvedComponents>);
+static_assert(std::is_convertible_v<ResolvedComponents, ColorComponents<float, 4>>);
+static_assert(!std::is_convertible_v<ResolvedComponents, ResolvedPremultiplied<ColorComponents<float, 4>>>);
+static_assert(!std::is_convertible_v<ResolvedPremultiplied<ColorComponents<float, 4>>, ColorComponents<float, 4>>);
+
+// The components of a color keep its tags.
+static_assert(std::same_as<decltype(asColorComponents(std::declval<ResolvedSRGBA>())), ResolvedComponents>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<UnresolvedSRGBA>())), UnresolvedComponents>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<ResolvedColorType<SRGBA<uint8_t>>>())), ResolvedColorType<ColorComponents<uint8_t, 4>>>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<ResolvedColorType<LCHA<float>>>())), ResolvedComponents>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<ResolvedPremultiplied<SRGBA<float>>>())), ResolvedPremultiplied<ColorComponents<float, 4>>>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<UnresolvedPremultiplied<SRGBA<float>>>())), UnresolvedPremultiplied<ColorComponents<float, 4>>>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<ResolvedComponents>())), ResolvedComponents>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<UnresolvedComponents>())), UnresolvedComponents>);
+static_assert(std::same_as<decltype(asColorComponents(std::declval<ResolvedPremultiplied<ColorComponents<float, 4>>>())), ResolvedPremultiplied<ColorComponents<float, 4>>>);
+
+TEST(Color, ResolvedColorComponents)
+{
+    auto [c1, c2, c3, alpha] = resolvedColor(ColorComponents<float, 4> { std::numeric_limits<float>::quiet_NaN(), 0.5f, 0.25f, std::numeric_limits<float>::quiet_NaN() });
+    EXPECT_FLOAT_EQ(c1, 0.0f);
+    EXPECT_FLOAT_EQ(c2, 0.5f);
+    EXPECT_FLOAT_EQ(c3, 0.25f);
+    EXPECT_FLOAT_EQ(alpha, 0.0f);
+}
+
+TEST(Color, UnresolvedColorComponents)
+{
+    auto color = unresolvedColor(ColorComponents<float, 4> { std::numeric_limits<float>::quiet_NaN(), 0.5f, 0.25f, 1.0f });
+    EXPECT_TRUE(color.anyComponentIsNone());
+
+    auto [c1, c2, c3, alpha] = color;
+    EXPECT_TRUE(std::isnan(c1));
+    EXPECT_FLOAT_EQ(c2, 0.5f);
+    EXPECT_FLOAT_EQ(c3, 0.25f);
+    EXPECT_FLOAT_EQ(alpha, 1.0f);
+
+    EXPECT_FALSE(unresolvedColor(ColorComponents<float, 4> { 1.0f, 0.5f, 0.25f, 1.0f }).anyComponentIsNone());
+}
+
+TEST(Color, PremultipliedColorComponents)
+{
+    auto color = Premultiplied { resolvedColor(ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }) };
+    EXPECT_EQ(asColorComponents(color.resolved()), (ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }));
+
+    auto [c1, c2, c3, alpha] = color;
+    EXPECT_FLOAT_EQ(c1, 0.5f);
+    EXPECT_FLOAT_EQ(c2, 0.25f);
+    EXPECT_FLOAT_EQ(c3, 0.125f);
+    EXPECT_FLOAT_EQ(alpha, 0.5f);
+}
+
+TEST(Color, ConvertComponentTypeOfPremultipliedColorComponents)
+{
+    auto bytes = convertComponentType<uint8_t>(Premultiplied { resolvedColor(ColorComponents<float, 4> { 0.5f, 0.25f, 0.0f, 0.5f }) });
+    EXPECT_TRUE((bytes == Premultiplied { asColorComponents(SRGBA<uint8_t> { 128, 64, 0, 128 }.resolved()) }));
+
+    auto floats = convertComponentType<float>(bytes);
+    EXPECT_EQ(asColorComponents(floats.resolved()), (ColorComponents<float, 4> { 128 / 255.0f, 64 / 255.0f, 0.0f, 128 / 255.0f }));
 }
 
 TEST(Color, PackedColorFromPremultiplied)

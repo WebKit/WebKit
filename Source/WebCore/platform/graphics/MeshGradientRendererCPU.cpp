@@ -30,20 +30,41 @@
 #include "GeometryUtilities.h"
 #include "IntSize.h"
 #include "MeshGradient.h"
+#include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
+#include <wtf/Float16.h>
 
 namespace WebCore {
 
-static constexpr unsigned bytesPerPixel = 4;
-
-static void writePixel(const PixelBufferConversionView& destination, int x, int y, ResolvedPremultiplied<SRGBA<uint8_t>> color)
+static bool isSupportedFormat(const PixelBufferFormat& format)
 {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (format.pixelFormat == PixelFormat::RGBA16F)
+        return true;
+#endif
+    return format.pixelFormat == PixelFormat::RGBA8;
+}
+
+static void writePixel(const PixelBufferConversionView& destination, int x, int y, const ResolvedPremultiplied<ColorComponents<float, 4>>& color)
+{
+    auto bytesPerPixel = PixelBuffer::bytesPerPixel(destination.format.pixelFormat);
     auto pixel = destination.rows.subspan(static_cast<size_t>(y) * destination.bytesPerRow + static_cast<size_t>(x) * bytesPerPixel, bytesPerPixel);
+
     auto [red, green, blue, alpha] = color;
-    pixel[0] = red;
-    pixel[1] = green;
-    pixel[2] = blue;
-    pixel[3] = alpha;
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (destination.format.pixelFormat == PixelFormat::RGBA16F) {
+        std::array components { WTF::convertFloat32ToFloat16(red), WTF::convertFloat32ToFloat16(green), WTF::convertFloat32ToFloat16(blue), WTF::convertFloat32ToFloat16(alpha) };
+        memcpySpan(pixel, asByteSpan(std::span { components }));
+        return;
+    }
+#endif
+
+    auto clampedToAlpha = [&](float component) {
+        return std::clamp(component, 0.0f, alpha);
+    };
+    auto components = convertComponentType<uint8_t>(Premultiplied { resolvedColor(ColorComponents<float, 4> { clampedToAlpha(red), clampedToAlpha(green), clampedToAlpha(blue), alpha }) }).resolved().components;
+    memcpySpan(pixel, asByteSpan(std::span { components }));
 }
 
 // Twice the signed area of the triangle (from, to, point). The sign says which side of that edge the point is on.
@@ -69,9 +90,9 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
     if (!area || !std::isfinite(area))
         return;
 
-    auto colorA = asColorComponents(a.color);
-    auto colorB = asColorComponents(b.color);
-    auto colorC = asColorComponents(c.color);
+    auto colorA = a.color.resolved();
+    auto colorB = b.color.resolved();
+    auto colorC = c.color.resolved();
 
     // Only visit the pixels within the triangle's bounds, clipped to the destination.
     auto clamped = [](float value, int maximum) {
@@ -102,7 +123,10 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
             color += colorB * weightB;
             color += colorC * weightC;
 
-            writePixel(destination, x, y, convertComponentType<uint8_t>(Premultiplied { makeFromComponentsClamping<SRGBA<float>>(color).resolved() }));
+            // Rounding can put the sum of the weights a little greater than 1 so we need to clamp alpha to keep it in the 0-1 range.
+            color[3] = clampedAlpha(color[3]);
+
+            writePixel(destination, x, y, Premultiplied { resolvedColor(color) });
         }
     }
 }
@@ -110,22 +134,25 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
 bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBufferConversionView& destination, const IntSize& size, float scale)
 {
     ASSERT(destination.format.alphaFormat == AlphaPremultiplication::Premultiplied);
-    ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8);
-    ASSERT(destination.format.colorSpace == ColorSpace::SRGB());
+
+    if (!isSupportedFormat(destination.format)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 
     if (size.isEmpty())
         return true;
 
-    if (destination.bytesPerRow < size.width() * bytesPerPixel || destination.rows.size() / destination.bytesPerRow < static_cast<size_t>(size.height()))
+    if (destination.bytesPerRow < size.width() * PixelBuffer::bytesPerPixel(destination.format.pixelFormat) || destination.rows.size() / destination.bytesPerRow < static_cast<size_t>(size.height()))
         return false;
 
-    auto background = convertComponentType<uint8_t>(gradient.premultipliedSRGBBackgroundColor());
+    auto background = gradient.premultipliedBackgroundColor(destination.format.colorSpace);
     for (int y = 0; y < size.height(); ++y) {
         for (int x = 0; x < size.width(); ++x)
             writePixel(destination, x, y, background);
     }
 
-    for (auto& triangle : gradient.triangles(scale))
+    for (auto& triangle : gradient.triangles(scale, destination.format.colorSpace))
         drawTriangle(destination, size, triangle);
 
     return true;

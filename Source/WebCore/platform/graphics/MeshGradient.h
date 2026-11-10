@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+class ColorSpace;
 class NativeImage;
 
 class MeshGradient final : public ThreadSafeRefCounted<MeshGradient>, public CanMakeThreadSafeCheckedPtr<MeshGradient> {
@@ -57,7 +58,7 @@ public:
 
     struct Vertex {
         FloatPoint position;
-        ResolvedPremultiplied<SRGBA<float>> color;
+        ResolvedPremultiplied<ColorComponents<float, 4>> color;
     };
 
     struct Triangle {
@@ -78,11 +79,11 @@ public:
     const Point& point(unsigned row, unsigned column) const LIFETIME_BOUND { return m_points[index(row, column)]; }
     const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
 
-    WEBCORE_EXPORT ResolvedPremultiplied<SRGBA<float>> premultipliedSRGBBackgroundColor() const;
+    WEBCORE_EXPORT ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedBackgroundColor(const ColorSpace&) const;
 
-    WEBCORE_EXPORT Vector<Triangle> triangles(float scale) const;
+    WEBCORE_EXPORT Vector<Triangle> triangles(float scale, const ColorSpace&) const;
 
-    RefPtr<NativeImage> renderedImage(const IntSize& pixelSize, float scale) const;
+    RefPtr<NativeImage> renderedImage(const IntSize& pixelSize, float scale, const ColorSpace&) const;
     void setRenderedImage(const IntSize& pixelSize, float scale, Ref<NativeImage>&&) const;
 
     void addObserver(WeakRef<RenderingResourceObserver>&& observer) const

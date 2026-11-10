@@ -308,8 +308,11 @@ bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
 #if USE(CG)
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColor(const Color&);
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColorInDestinationStandardRange(const Color&, const ColorSpace&);
-WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName, ColorComponents<float, 4>, const ColorSpace&);
 WEBCORE_EXPORT std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef);
+#endif
+
+#if ENABLE(DESTINATION_COLOR_SPACE_ARBITRARY_CONVERSION)
+WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName, ColorComponents<float, 4>, const ColorSpace&);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);

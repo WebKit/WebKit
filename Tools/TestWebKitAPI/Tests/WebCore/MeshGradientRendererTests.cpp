@@ -27,12 +27,21 @@
 
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/MeshGradient.h>
 #include <WebCore/MeshGradientRendererCPU.h>
+#include <WebCore/PixelBuffer.h>
 #include <WebCore/PixelBufferConversion.h>
 #include <algorithm>
 #include <cmath>
+#include <wtf/Float16.h>
+
+#if USE(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#include <wtf/RetainPtr.h>
+#endif
 
 namespace TestWebKitAPI {
 
@@ -258,5 +267,119 @@ TEST(MeshGradientRenderer, CPUNonFinitePositions)
         }
     }
 }
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB) && ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+
+TEST(MeshGradientRenderer, CPUExtendedRange)
+{
+    // Display P3 green is outside of sRGB, so in extended sRGB its red and blue are negative.
+    IntSize size { 8, 8 };
+    Color green { DisplayP3<float> { 0, 1, 0, 1 } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green }, green);
+
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, ColorSpace::ExtendedSRGB() };
+    Vector<uint8_t> bytes(static_cast<size_t>(size.width()) * size.height() * 8);
+    ASSERT_TRUE(MeshGradientRendererCPU { }.render(gradient, { format, static_cast<unsigned>(size.width()) * 8, bytes.mutableSpan() }, size, 1));
+
+    auto components = spanReinterpretCast<const uint16_t>(bytes.span());
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[0]), -0.51f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[1]), 1.02f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[2]), -0.31f, 0.01f);
+    EXPECT_EQ(WTF::convertFloat16ToFloat32(components[3]), 1.0f);
+}
+
+TEST(MeshGradientRenderer, CPUEightBitsInDestinationColorSpace)
+{
+    IntSize size { 8, 8 };
+    Color green { DisplayP3<float> { 0, 1, 0, 1 } };
+    Color halfGreen { DisplayP3<float> { 0, 1, 0, 0.5f } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green }, green);
+
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::DisplayP3() };
+    auto renderedPixel = [&](const MeshGradient& mesh) -> std::array<int, 4> {
+        Vector<uint8_t> bytes(static_cast<size_t>(size.width()) * size.height() * 4);
+        EXPECT_TRUE(MeshGradientRendererCPU { }.render(mesh, { format, static_cast<unsigned>(size.width()) * 4, bytes.mutableSpan() }, size, 1));
+        return { bytes[0], bytes[1], bytes[2], bytes[3] };
+    };
+
+    auto pixel = renderedPixel(gradient);
+    EXPECT_LE(pixel[0], 1);
+    EXPECT_GE(pixel[1], 254);
+    EXPECT_LE(pixel[2], 1);
+    EXPECT_EQ(pixel[3], 255);
+
+    // Components are premultiplied after they are converted, or the transfer function would change their ratio to alpha.
+    pixel = renderedPixel(makeMeshGradient(srgb, size, 2, 2, { halfGreen, halfGreen, halfGreen, halfGreen }));
+    EXPECT_LE(pixel[0], 1);
+    EXPECT_NEAR(pixel[1], 128, 1);
+    EXPECT_LE(pixel[2], 1);
+    EXPECT_NEAR(pixel[3], 128, 1);
+}
+
+#if USE(CG)
+
+TEST(MeshGradientRenderer, DrawInColorSpaceWithoutBuiltInConversion)
+{
+    IntSize size { 8, 8 };
+    Color green { ExtendedSRGBA<float> { 0, 1, 0, 1 } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green });
+
+    // sRGB green is well inside Rec. 2020, so 8 bits in that color space have to hold it without any clipping.
+    ColorSpace colorSpace { adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020_sRGBGamma)) };
+    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    MeshGradientRendererCPU { }.draw(imageBuffer->context(), gradient, FloatRect { { }, size });
+
+    RefPtr pixels = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() }, { { }, size });
+    auto bytes = pixels->bytes();
+    EXPECT_LE(bytes[0], 2);
+    EXPECT_GE(bytes[1], 253);
+    EXPECT_LE(bytes[2], 2);
+    EXPECT_EQ(bytes[3], 255);
+}
+
+#endif // USE(CG)
+
+TEST(MeshGradientRenderer, DrawInDestinationColorSpace)
+{
+    IntSize size { 8, 8 };
+    Color green { DisplayP3<float> { 0, 1, 0, 1 } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green });
+
+    auto draw = [&](const ColorSpace& colorSpace) -> std::array<uint8_t, 4> {
+        RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+        MeshGradientRendererCPU { }.draw(imageBuffer->context(), gradient, FloatRect { { }, size });
+        RefPtr pixels = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace }, { { }, size });
+        auto bytes = pixels->bytes();
+        return { bytes[0], bytes[1], bytes[2], bytes[3] };
+    };
+
+    // sRGB can't show this color, so it clips. Display P3 can, and must not get the image cached for sRGB.
+    EXPECT_EQ(draw(ColorSpace::SRGB()), (std::array<uint8_t, 4> { 0, 255, 0, 255 }));
+
+    auto pixel = draw(ColorSpace::DisplayP3());
+    EXPECT_LE(pixel[0], 2);
+    EXPECT_GE(pixel[1], 253);
+    EXPECT_LE(pixel[2], 2);
+    EXPECT_EQ(pixel[3], 255);
+}
+
+TEST(MeshGradientRenderer, DrawInExtendedRangeDestination)
+{
+    IntSize size { 8, 8 };
+    Color green { DisplayP3<float> { 0, 1, 0, 1 } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green });
+
+    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::ExtendedSRGB(), PixelFormat::RGBA16F);
+    MeshGradientRendererCPU { }.draw(imageBuffer->context(), gradient, FloatRect { { }, size });
+
+    RefPtr pixels = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, ColorSpace::ExtendedSRGB() }, { { }, size });
+    auto components = spanReinterpretCast<const uint16_t>(pixels->bytes());
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[0]), -0.51f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[1]), 1.02f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[2]), -0.31f, 0.01f);
+    EXPECT_EQ(WTF::convertFloat16ToFloat32(components[3]), 1.0f);
+}
+
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB) && ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
 
 } // namespace TestWebKitAPI

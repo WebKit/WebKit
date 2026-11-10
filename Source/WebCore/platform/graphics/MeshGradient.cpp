@@ -30,6 +30,7 @@
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
 #include "ColorNormalization.h"
+#include "ColorSpace.h"
 #include "ColorTypes.h"
 #include "ColorUtilities.h"
 #include "NativeImage.h"
@@ -89,7 +90,22 @@ static ColorComponents<float, 4> toInterpolationComponents(const ColorInterpolat
     return components;
 }
 
-static ResolvedPremultiplied<SRGBA<float>> toPremultipliedSRGB(const ColorInterpolationMethod& method, ColorComponents<float, 4> components)
+static ColorSpace vertexColorSpace(const ColorSpace& colorSpace)
+{
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    if (colorSpace == ColorSpace::SRGB())
+        return ColorSpace::ExtendedSRGB();
+#endif
+    return colorSpace.asExtended().value_or(colorSpace);
+}
+
+static ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedInColorSpace(const ExtendedSRGBA<float>& color, const ColorSpace& colorSpace)
+{
+    auto [red, green, blue, alpha] = convertAndResolveColorComponents(ColorSpaceName::ExtendedSRGB, asColorComponents(color.resolved()), colorSpace);
+    return Premultiplied { resolvedColor(ColorComponents<float, 4> { red * alpha, green * alpha, blue * alpha, alpha }) };
+}
+
+static ResolvedPremultiplied<ColorComponents<float, 4>> toPremultipliedVertexColor(const ColorInterpolationMethod& method, ColorComponents<float, 4> components, const ColorSpace& colorSpace)
 {
     components[3] = clampedAlpha(components[3]);
 
@@ -106,11 +122,9 @@ static ResolvedPremultiplied<SRGBA<float>> toPremultipliedSRGB(const ColorInterp
     if (hueIndex)
         components[*hueIndex] = normalizeHue(components[*hueIndex]);
 
-    auto srgb = WTF::switchOn(method.colorSpace, [&]<typename MethodColorSpace>(const MethodColorSpace&) {
-        return convertColor<SRGBA<float>>(makeColorTypeByNormalizingComponents<typename MethodColorSpace::ColorType>(components).resolved());
-    });
-
-    return premultiplied(srgb.resolved());
+    return premultipliedInColorSpace(WTF::switchOn(method.colorSpace, [&]<typename MethodColorSpace>(const MethodColorSpace&) {
+        return convertColor<ExtendedSRGBA<float>>(makeColorTypeByNormalizingComponents<typename MethodColorSpace::ColorType>(components).resolved());
+    }), colorSpace);
 }
 
 // MARK: - Bicubic Bézier patches
@@ -372,17 +386,18 @@ MeshGradient::~MeshGradient()
         observer->willDestroyMeshGradient(*this);
 }
 
-ResolvedPremultiplied<SRGBA<float>> MeshGradient::premultipliedSRGBBackgroundColor() const
+ResolvedPremultiplied<ColorComponents<float, 4>> MeshGradient::premultipliedBackgroundColor(const ColorSpace& colorSpace) const
 {
-    return premultiplied(m_backgroundColor.toColorTypeLossy<SRGBA<float>>().resolved());
+    return premultipliedInColorSpace(m_backgroundColor.toColorTypeLossy<ExtendedSRGBA<float>>(), vertexColorSpace(colorSpace));
 }
 
-RefPtr<NativeImage> MeshGradient::renderedImage(const IntSize& pixelSize, float scale) const
+RefPtr<NativeImage> MeshGradient::renderedImage(const IntSize& pixelSize, float scale, const ColorSpace& colorSpace) const
 {
     Locker locker { m_renderedImageLock };
-    if (m_renderedImagePixelSize != pixelSize || m_renderedImageScale != scale)
+    RefPtr renderedImage = m_renderedImage;
+    if (!renderedImage || m_renderedImagePixelSize != pixelSize || m_renderedImageScale != scale || renderedImage->colorSpace() != colorSpace)
         return nullptr;
-    return m_renderedImage;
+    return renderedImage;
 }
 
 void MeshGradient::setRenderedImage(const IntSize& pixelSize, float scale, Ref<NativeImage>&& image) const
@@ -411,8 +426,10 @@ unsigned MeshGradient::subdivisions(const Patch& patch, float scale) const
     return static_cast<unsigned>(std::clamp(std::ceil(size / targetTriangleSize), 1.0f, static_cast<float>(maximumSubdivisions)));
 }
 
-auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
+auto MeshGradient::triangles(float scale, const ColorSpace& colorSpace) const -> Vector<Triangle>
 {
+    auto colorSpaceOfVertices = vertexColorSpace(colorSpace);
+
     unsigned patchRows = m_rows - 1;
     unsigned patchColumns = m_columns - 1;
 
@@ -450,7 +467,7 @@ auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
                     auto position = patch.position.evaluate(basisU, basisV);
                     auto color = patch.color.evaluate(basisU, basisV);
 
-                    grid.append({ position.scaled(scale), toPremultipliedSRGB(m_colorInterpolationMethod, color) });
+                    grid.append({ position.scaled(scale), toPremultipliedVertexColor(m_colorInterpolationMethod, color, colorSpaceOfVertices) });
                 }
             }
 

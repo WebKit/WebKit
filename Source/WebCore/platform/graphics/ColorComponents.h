@@ -43,10 +43,10 @@ struct ColorComponents {
     }
 
     template<typename ...Ts>
+        requires (sizeof...(Ts) == N)
     constexpr ColorComponents(Ts ...input)
         : components {{ input ... }}
     {
-        static_assert(sizeof...(Ts) == N);
     }
 
     template<typename F>

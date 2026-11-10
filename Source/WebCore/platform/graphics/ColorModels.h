@@ -125,6 +125,83 @@ private:
     }
 };
 
+// Color components can also be resolved or unresolved, for colors in a color space that is only known at runtime.
+
+template<typename ColorType> constexpr ResolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>> asColorComponents(const ResolvedColorType<ColorType>&);
+template<typename ColorType> constexpr UnresolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>> asColorComponents(const UnresolvedColorType<ColorType>&);
+
+template<typename T> struct ResolvedColorType<ColorComponents<T, 4>> : ColorComponents<T, 4> {
+    using CanonicalType = ColorComponents<T, 4>;
+    using ComponentType = T;
+
+    constexpr auto resolved() const { return *this; }
+    constexpr auto unresolved() const { return *this; }
+
+    constexpr bool operator==(const ResolvedColorType&) const = default;
+
+private:
+    template<typename C> friend constexpr ResolvedColorType<C> resolvedColor(C);
+    template<typename ColorType> friend constexpr ResolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>> asColorComponents(const ResolvedColorType<ColorType>&);
+
+    explicit constexpr ResolvedColorType(const ColorComponents<T, 4>& components)
+        : ColorComponents<T, 4> { resolveColorComponents(components) }
+    {
+    }
+
+    enum class AlreadyResolved { Yes };
+    constexpr ResolvedColorType(const ColorComponents<T, 4>& components, AlreadyResolved)
+        : ColorComponents<T, 4> { components }
+    {
+    }
+};
+
+template<typename T> struct UnresolvedColorType<ColorComponents<T, 4>> : ColorComponents<T, 4> {
+    using CanonicalType = ColorComponents<T, 4>;
+    using ComponentType = T;
+
+    constexpr auto unresolved() const { return *this; }
+
+    constexpr bool anyComponentIsNone() const
+    {
+        auto [c1, c2, c3, alpha] = *this;
+        return std::isnan(c1) || std::isnan(c2) || std::isnan(c3) || std::isnan(alpha);
+    }
+
+    constexpr bool operator==(const UnresolvedColorType&) const = default;
+
+private:
+    template<typename C> friend constexpr UnresolvedColorType<C> unresolvedColor(C);
+    template<typename ColorType> friend constexpr UnresolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>> asColorComponents(const UnresolvedColorType<ColorType>&);
+
+    explicit constexpr UnresolvedColorType(const ColorComponents<T, 4>& components)
+        : ColorComponents<T, 4> { components }
+    {
+    }
+};
+
+// The components of a resolved or unresolved color are tagged the same way.
+
+template<typename ColorType> constexpr ResolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>> asColorComponents(const ResolvedColorType<ColorType>& color)
+{
+    using Components = ResolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>>;
+    return Components { asColorComponents(static_cast<const ExposedColorType<ColorType>&>(color)), Components::AlreadyResolved::Yes };
+}
+
+template<typename ColorType> constexpr UnresolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>> asColorComponents(const UnresolvedColorType<ColorType>& color)
+{
+    using Components = UnresolvedColorType<ColorComponents<typename ColorType::ComponentType, 4>>;
+    return Components { asColorComponents(static_cast<const ExposedColorType<ColorType>&>(color)) };
+}
+
+template<typename T> constexpr ResolvedColorType<ColorComponents<T, 4>> asColorComponents(const ResolvedColorType<ColorComponents<T, 4>>& components)
+{
+    return components;
+}
+
+template<typename T> constexpr UnresolvedColorType<ColorComponents<T, 4>> asColorComponents(const UnresolvedColorType<ColorComponents<T, 4>>& components)
+{
+    return components;
+}
 
 // MARK: - Color Model support types.
 
@@ -407,7 +484,6 @@ template<typename ColorType> inline constexpr bool UsesXYZModel = std::is_same_v
 
 
 // get<> overload (along with std::tuple_size and std::tuple_element below) to support destructuring of explicitly resolved and unresolved colors.
-
 template<size_t I, typename ColorType> constexpr typename ColorType::ComponentType get(const ExposedColorType<ColorType>& color)
 {
     return asColorComponents(color)[I];
@@ -441,15 +517,19 @@ private:
 template<typename ColorType> using ResolvedPremultiplied = Premultiplied<ResolvedColorType<ColorType>>;
 template<typename ColorType> using UnresolvedPremultiplied = Premultiplied<UnresolvedColorType<ColorType>>;
 
+// The components of a premultiplied color are tagged as premultiplied too.
 template<typename ColorType> constexpr auto asColorComponents(const Premultiplied<ColorType>& color)
 {
-    return asColorComponents(color.unresolved());
+    if constexpr (IsResolvedColorType<ColorType>)
+        return Premultiplied { asColorComponents(color.resolved()) };
+    else
+        return Premultiplied { asColorComponents(color.unresolved()) };
 }
 
 // get<> overload (along with std::tuple_size and std::tuple_element below) to support destructuring of premultiplied colors.
 template<size_t I, typename ColorType> constexpr typename ColorType::ComponentType get(const Premultiplied<ColorType>& color)
 {
-    return asColorComponents(color)[I];
+    return asColorComponents(color.unresolved())[I];
 }
 
 template<typename> inline constexpr bool IsPremultiplied = false;
