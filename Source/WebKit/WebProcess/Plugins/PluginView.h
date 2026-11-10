@@ -31,6 +31,7 @@
 #include "PDFPluginIdentifier.h"
 #include "WebFoundTextRange.h"
 #include <WebCore/FindOptions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -94,6 +95,7 @@ public:
     void layerHostingStrategyDidChange() final;
 
     WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
     const URL& mainResourceURL() const LIFETIME_BOUND { return m_mainResourceURL; }
 
     WebCore::FetchOptionsDestination fetchDestination() const;
@@ -189,7 +191,7 @@ public:
     void effectiveAppearanceDidChange();
 
 private:
-    PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
+    PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&, WebCore::FrameIdentifier);
     virtual ~PluginView();
 
     bool isPluginView() const final { return true; }
@@ -250,6 +252,7 @@ private:
     const Ref<WebCore::HTMLPlugInElement> m_pluginElement;
     const Ref<PDFPluginBase> m_plugin;
     WeakPtr<WebPage> m_webPage;
+    const WebCore::FrameIdentifier m_frameID;
     URL m_mainResourceURL;
     bool m_shouldUseManualLoader { false };
 

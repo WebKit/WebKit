@@ -18254,6 +18254,17 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::computePagesForPrinti
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTF::move(callback));
 }
 
+#if ENABLE(PDF_PLUGIN)
+void WebPageProxy::setFrameHasPDFPlugin(IPC::Connection& connection, FrameIdentifier frameID, bool hasPDFPlugin)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != this || &frame->process() != WebProcessProxy::fromConnection(connection).ptr())
+        return;
+
+    frame->setHasPDFPlugin(hasPDFPlugin);
+}
+#endif
+
 #if PLATFORM(COCOA)
 bool WebPageProxy::shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame)
 {
@@ -18278,8 +18289,20 @@ bool WebPageProxy::shouldLaunchPrintProcess(const WebFrameProxy* rootFrame)
     if (!protect(preferences())->remoteSnapshottingPrintProcessEnabled())
         return false;
 
-    // FIXME: Launch the print process only when the UI process knows that the frames have PDF content.
-    return shouldUseRemoteSnapshotting(rootFrame);
+    if (!shouldUseRemoteSnapshotting(rootFrame))
+        return false;
+
+    if (m_alwaysUsePrintProcessForRemoteSnapshottingForTesting)
+        return true;
+
+#if ENABLE(PDF_PLUGIN)
+    for (RefPtr frame = rootFrame; frame; frame = frame->traverseNext(rootFrame)) {
+        if (frame->hasPDFPlugin())
+            return true;
+    }
+#endif
+
+    return false;
 }
 
 void WebPageProxy::launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame)

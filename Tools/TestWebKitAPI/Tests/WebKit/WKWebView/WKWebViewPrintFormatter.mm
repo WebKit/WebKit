@@ -333,6 +333,7 @@ TEST(WKWebView, PrintFormatterLaunchesPrintProcess)
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 600));
+    [webView _setAlwaysUsePrintProcessForRemoteSnapshottingForTesting:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
 
@@ -368,6 +369,7 @@ TEST(WKWebView, PrintFormatterDrawsInPrintProcess)
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 600));
+    [webView _setAlwaysUsePrintProcessForRemoteSnapshottingForTesting:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
 

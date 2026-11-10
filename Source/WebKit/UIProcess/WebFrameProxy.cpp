@@ -400,6 +400,9 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_title = String();
     m_MIMEType = contentType;
     m_containsPluginDocument = containsPluginDocument;
+#if ENABLE(PDF_PLUGIN)
+    m_hasPDFPlugin = false;
+#endif
     m_documentSecurityPolicy = WTF::move(documentSecurityPolicy);
     m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(cspOriginsThatUpgradeInsecureNavigations);
     m_lastActivationTimestamp = -MonotonicTime::infinity();

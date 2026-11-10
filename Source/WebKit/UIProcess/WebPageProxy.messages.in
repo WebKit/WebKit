@@ -581,6 +581,10 @@ messages -> WebPageProxy {
     [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisResetState()
 #endif
 
+#if ENABLE(PDF_PLUGIN)
+    SetFrameHasPDFPlugin(WebCore::FrameIdentifier frameID, bool hasPDFPlugin)
+#endif
+
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID) -> (std::optional<int32_t> selectedItem)
 #endif

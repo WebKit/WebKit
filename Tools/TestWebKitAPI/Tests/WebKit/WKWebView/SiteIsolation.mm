@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/NSItemProviderAdditions.h"
+#import "Helpers/cocoa/PDFTestHelpers.h"
 #import "Helpers/cocoa/ProcessTerminationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
@@ -22028,16 +22029,18 @@ static pid_t printProcessIdentifier(WKWebView *webView)
     return result;
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> loadPageForPrintProcess(const HTTPServer& server, bool enablePrintProcess = true, bool enableLockdownMode = false, WKProcessPool *processPool = nil)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> loadPageForPrintProcess(const HTTPServer& server, bool enablePrintProcess = true, bool enableLockdownMode = false, WKProcessPool *processPool = nil, bool alwaysUsePrintProcess = true)
 {
     RetainPtr configuration = server.httpsProxyConfiguration();
     if (processPool)
         [configuration setProcessPool:processPool];
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", enablePrintProcess);
+    setFeatureEnabled(configuration.get(), @"UnifiedPDFEnabled", true);
     if (enableLockdownMode)
         [configuration defaultWebpagePreferences].lockdownModeEnabled = YES;
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView _setAlwaysUsePrintProcessForRemoteSnapshottingForTesting:alwaysUsePrintProcess];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
     return { webView, navigationDelegate };
@@ -22159,6 +22162,150 @@ TEST(SiteIsolation, PrintProcessIsNotLaunchedForDisplaySnapshots)
     }];
     Util::run(&done);
     EXPECT_EQ(printProcessIdentifier(webView.get()), 0);
+}
+
+static bool printingLaunchesPrintProcess(TestWKWebView *webView)
+{
+    computePagesForPrinting(webView);
+    return printProcessIdentifier(webView);
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> loadPageWithPDFContentCheck(const HTTPServer& server)
+{
+    return loadPageForPrintProcess(server, true, false, nil, false);
+}
+
+static HTTPResponse pdfResponse()
+{
+    return { { { "Content-Type"_s, "application/pdf"_s } }, testPDFData().get() };
+}
+
+TEST(SiteIsolation, PrintProcessIsNotLaunchedWithoutPDFContent)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithPDFContentCheck(server);
+
+    EXPECT_FALSE(printingLaunchesPrintProcess(webView.get()));
+    RetainPtr data = createPDF(webView.get());
+    EXPECT_EQ(printProcessIdentifier(webView.get()), 0);
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+}
+
+TEST(SiteIsolation, PrintProcessIsLaunchedForPDFContent)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { ""_s } },
+        { "/embed"_s, { "<body>Subframe<embed src='/test.pdf' type='application/pdf'></body>"_s } },
+        { "/object"_s, { "<body>Subframe<object data='/test.pdf' type='application/pdf'></object></body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+#if PLATFORM(IOS_FAMILY)
+    // iOS shows a PDF loaded in a subframe as an image document, not with the PDF plugin.
+    constexpr bool expectPrintProcessForPDFDocument = false;
+#else
+    constexpr bool expectPrintProcessForPDFDocument = true;
+#endif
+    for (auto [subframePath, expectPrintProcess] : { std::pair { "/embed"_s, true }, { "/object"_s, true }, { "/test.pdf"_s, expectPrintProcessForPDFDocument } }) {
+        server.setResponse("/mainframe"_s, { makeString("<body>Mainframe<iframe src='https://b.com"_s, subframePath, "'></iframe></body>"_s) });
+        auto [webView, navigationDelegate] = loadPageWithPDFContentCheck(server);
+
+        EXPECT_EQ(printingLaunchesPrintProcess(webView.get()), expectPrintProcess) << subframePath.characters();
+    }
+}
+
+TEST(SiteIsolation, PrintProcessIsLaunchedForPDFAddedByScript)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithPDFContentCheck(server);
+
+    // Reading a property of the embed element loads its plugin synchronously.
+    [webView objectByEvaluatingJavaScript:@"let embed = document.createElement('embed'); embed.type = 'application/pdf'; embed.src = '/test.pdf'; document.body.appendChild(embed); embed.loadPlugin; true" inFrame:[webView firstChildFrame]];
+    EXPECT_TRUE(printingLaunchesPrintProcess(webView.get()));
+}
+
+TEST(SiteIsolation, PrintProcessIsNotLaunchedAfterPDFIsRemoved)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe<embed id='pdf' src='/test.pdf' type='application/pdf'></body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithPDFContentCheck(server);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('pdf').remove(); document.body.offsetHeight; true" inFrame:[webView firstChildFrame]];
+    EXPECT_FALSE(printingLaunchesPrintProcess(webView.get()));
+}
+
+TEST(SiteIsolation, PrintProcessIsNotLaunchedAfterFrameNavigatesAwayFromPDF)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe<embed src='/test.pdf' type='application/pdf'></body>"_s } },
+        { "/subframe2"_s, { "<body>Subframe2</body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithPDFContentCheck(server);
+
+    [webView evaluateJavaScript:@"location.href = '/subframe2'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    [navigationDelegate waitForDidFinishLoadInSubframe];
+    EXPECT_FALSE(printingLaunchesPrintProcess(webView.get()));
+}
+
+TEST(SiteIsolation, PrintProcessIsLaunchedForPDFInRootFrameProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<embed src='/test.pdf' type='application/pdf'><iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithPDFContentCheck(server);
+
+    EXPECT_TRUE(printingLaunchesPrintProcess(webView.get()));
+}
+
+TEST(SiteIsolation, PrintProcessIsLaunchedForPDFRestoredFromBackForwardCache)
+{
+    auto pageHTML = "<body><embed src='/test.pdf' type='application/pdf'><iframe src='https://c.com/subframe'></iframe></body>"_s;
+    HTTPServer server({
+        { "/a"_s, { pageHTML } },
+        { "/b"_s, { pageHTML } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
+    setFeatureEnabled(configuration.get(), @"UnifiedPDFEnabled", true);
+    setFeatureEnabled(configuration.get(), @"MultiProcessBackForwardCacheEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView objectByEvaluatingJavaScript:@"window.__marker = true"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    Vector<ExpectedFrameTree> expectedAfterGoBack = {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://c.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
+        Util::spinRunLoop();
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__marker ? true : false"] boolValue]);
+
+    EXPECT_TRUE(printingLaunchesPrintProcess(webView.get()));
 }
 
 TEST(SiteIsolation, PrintProcessExitsWhenIdle)

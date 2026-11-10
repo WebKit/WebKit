@@ -1111,6 +1111,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     protect(_page->configuration().processPool())->setPrintProcessIdleTimeoutForTesting(Seconds { timeout });
 }
 
+- (void)_setAlwaysUsePrintProcessForRemoteSnapshottingForTesting:(BOOL)alwaysUse
+{
+    _page->setAlwaysUsePrintProcessForRemoteSnapshottingForTesting(alwaysUse);
+}
+
 - (void)_printProcessDrawingCountsForTesting:(void(^)(NSUInteger, NSUInteger))completionHandler
 {
     Ref gpuProcess = WebKit::GPUProcessProxy::getOrCreate();

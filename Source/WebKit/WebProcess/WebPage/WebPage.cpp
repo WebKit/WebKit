@@ -7182,12 +7182,37 @@ void WebPage::addPluginView(PluginView& pluginView)
 {
     ASSERT(!m_pluginViews.contains(pluginView));
     m_pluginViews.add(pluginView);
+    updateFrameHasPDFPlugin(pluginView.frameID());
 }
 
 void WebPage::removePluginView(PluginView& pluginView)
 {
     ASSERT(m_pluginViews.contains(pluginView));
     m_pluginViews.remove(pluginView);
+    updateFrameHasPDFPlugin(pluginView.frameID());
+}
+
+bool WebPage::frameHasPDFPlugin(LocalFrame& frame) const
+{
+    RefPtr document = frame.document();
+    if (!document)
+        return false;
+
+    for (auto& pluginView : m_pluginViews) {
+        if (&pluginView.pluginElement().document() == document)
+            return true;
+    }
+    return false;
+}
+
+void WebPage::updateFrameHasPDFPlugin(FrameIdentifier frameID)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    RefPtr localFrame = frame->coreLocalFrame();
+    send(Messages::WebPageProxy::SetFrameHasPDFPlugin(frameID, localFrame && frameHasPDFPlugin(*localFrame)));
 }
 
 #endif // ENABLE(PDF_PLUGIN)
@@ -8744,6 +8769,16 @@ void WebPage::didCommitLoad(WebFrame* frame)
         m_textManipulationIncludesSubframes = false;
     else if (m_textManipulationIncludesSubframes)
         startTextManipulationForFrame(*protect(frame->coreLocalFrame()));
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr coreFrame = frame->coreLocalFrame()) {
+        for (RefPtr<Frame> descendant = coreFrame; descendant; descendant = descendant->tree().traverseNext(coreFrame.get())) {
+            RefPtr localDescendant = dynamicDowncast<LocalFrame>(*descendant);
+            if (localDescendant && frameHasPDFPlugin(*localDescendant))
+                send(Messages::WebPageProxy::SetFrameHasPDFPlugin(localDescendant->frameID(), true));
+        }
+    }
+#endif
 
     if (!frame->isRootFrame())
         return;

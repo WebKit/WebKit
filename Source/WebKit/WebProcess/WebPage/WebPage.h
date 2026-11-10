@@ -2352,6 +2352,10 @@ private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
     void constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters&);
+#if ENABLE(PDF_PLUGIN)
+    bool frameHasPDFPlugin(WebCore::LocalFrame&) const;
+    void updateFrameHasPDFPlugin(WebCore::FrameIdentifier);
+#endif
 
     void stopLoadingInRootFrames(WebCore::AbortOngoingNavigation);
 

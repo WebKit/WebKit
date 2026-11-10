@@ -2121,6 +2121,7 @@ public:
     std::optional<IPC::AsyncReplyID> drawRectToImage(WebFrameProxy&, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
     std::optional<IPC::AsyncReplyID> drawPagesToPDF(WebFrameProxy&, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
     void drawToPDF(const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void setAlwaysUsePrintProcessForRemoteSnapshottingForTesting(bool alwaysUse) { m_alwaysUsePrintProcessForRemoteSnapshottingForTesting = alwaysUse; }
 #if PLATFORM(IOS_FAMILY)
     PrintPageInfo computePageInfoForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&);
     std::optional<IPC::AsyncReplyID> drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
@@ -3400,6 +3401,9 @@ private:
 #else
     void didGeneratePageLoadTiming(const WebPageLoadTiming&) { }
 #endif
+#if ENABLE(PDF_PLUGIN)
+    void setFrameHasPDFPlugin(IPC::Connection&, WebCore::FrameIdentifier, bool hasPDFPlugin);
+#endif
 
     void resolveAccessibilityHitTestForTesting(IPC::Connection&, WebCore::FrameIdentifier, WebCore::IntPoint, CompletionHandler<void(String)>&&);
 #if PLATFORM(MAC)
@@ -4335,6 +4339,9 @@ private:
     bool m_canRunModal { false };
 
     bool m_isPerformingDOMPrintOperation { false };
+#if PLATFORM(COCOA)
+    bool m_alwaysUsePrintProcessForRemoteSnapshottingForTesting { false };
+#endif
 
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
 
