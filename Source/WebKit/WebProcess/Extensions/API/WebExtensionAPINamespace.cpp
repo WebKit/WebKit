@@ -78,7 +78,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     if (name == "bookmarks"_s)
-        return page->corePage()->settings().webExtensionBookmarksEnabled() && extensionContext->hasPermission("bookmarks"_s);
+        return page && page->corePage() && page->corePage()->settings().webExtensionBookmarksEnabled() && extensionContext->hasPermission("bookmarks"_s);
 #endif
 
     if (name == "commands"_s)

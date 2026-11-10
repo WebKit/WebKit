@@ -111,7 +111,14 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
     if (auto *url = objectForKey<NSString>(bookmark, urlKey))
         parameters.url = String(url);
 
-    parameters.index = objectForKey<NSNumber>(bookmark, indexKey).unsignedLongValue;
+    if (auto *index = objectForKey<NSNumber>(bookmark, indexKey)) {
+        if (index.longLongValue < 0) {
+            *outExceptionString = toErrorString(nullString(), indexKey, @"it must not be negative").createNSString().autorelease();
+            return;
+        }
+
+        parameters.index = index.unsignedLongLongValue;
+    }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksCreate(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
         if (!result) {
@@ -163,6 +170,11 @@ void WebExtensionAPIBookmarks::getSubTree(NSString *bookmarkIdentifier, Ref<WebE
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksGetSubTree(bookmarkIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        if (result.value().isEmpty()) {
+            callback->call(toJSValueRef(callback->globalContext(), @[ ]));
             return;
         }
 
@@ -240,8 +252,14 @@ void WebExtensionAPIBookmarks::move(NSString *bookmarkIdentifier, NSDictionary *
     if (auto *parentIdentifier = objectForKey<NSString>(destination, parentIdKey))
         parameters.parentIdentifier = String(parentIdentifier);
 
-    if (auto *index = objectForKey<NSNumber>(destination, indexKey))
+    if (auto *index = objectForKey<NSNumber>(destination, indexKey)) {
+        if (index.longLongValue < 0) {
+            *outExceptionString = toErrorString(nullString(), indexKey, @"it must not be negative").createNSString().autorelease();
+            return;
+        }
+
         parameters.index = index.unsignedLongLongValue;
+    }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksMove(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
         if (!result) {

@@ -112,6 +112,18 @@
 
 @end
 
+@interface TestMinimalBookmarkNode : NSObject <_WKWebExtensionBookmark>
+@end
+
+@implementation TestMinimalBookmarkNode
+
+- (NSString *)identifierForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return @"minimal";
+}
+
+@end
+
 static NSMutableDictionary *findParentInMockTree(NSMutableArray<NSMutableDictionary *> *tree, NSString *parentId)
 {
     for (NSMutableDictionary *node in tree) {
@@ -921,5 +933,99 @@ TEST_F(WKWebExtensionAPIBookmarks, InvalidIdentifiersAndChanges)
     Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
 }
 
+TEST_F(WKWebExtensionAPIBookmarks, CreateForwardsOnlySpecifiedIndex)
+{
+    auto *script = @[
+        @"await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+        @"await browser.bookmarks.create({ title: 'Blog', url: 'https://webkit.org/blog/', index: 3 })",
+        @"browser.test.assertThrows(() => browser.bookmarks.create({ title: 'Negative', url: 'https://webkit.org/', index: -1 }), /The 'index' value is invalid, because it must not be negative/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    __block RetainPtr<NSMutableArray> receivedIndexes = adoptNS([[NSMutableArray alloc] init]);
+    manager.get().internalDelegate.createBookmarkWithParentIdentifier = ^(NSString *parentId, NSNumber *index, NSString *url, NSString *title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
+        [receivedIndexes addObject:index ?: NSNull.null];
+        completionHandler(adoptNS([[TestBookmarkNode alloc] initWithDictionary:@{ @"id": @"1", @"title": title, @"url": url, @"index": index ?: @0 }]).get(), nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(receivedIndexes.get().count, 2u);
+    EXPECT_TRUE([receivedIndexes.get()[0] isEqual:NSNull.null]);
+    EXPECT_EQ([receivedIndexes.get()[1] integerValue], 3);
 }
-#endif
+
+TEST_F(WKWebExtensionAPIBookmarks, MoveRejectsNegativeIndex)
+{
+    auto *script = @[
+        @"browser.test.assertThrows(() => browser.bookmarks.move('1', { index: -1 }), /The 'index' value is invalid, because it must not be negative/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, DelegateCompletesAfterReturning)
+{
+    auto *script = @[
+        @"let created = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+        @"browser.test.assertEq('1', created.id, 'The created bookmark should be returned')",
+        @"let tree = await browser.bookmarks.getTree()",
+        @"browser.test.assertEq(1, tree.length, 'The tree should have one node')",
+        @"browser.test.assertEq('WebKit', tree[0].title, 'The tree should have the created bookmark')",
+        @"await browser.bookmarks.remove(created.id)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    auto bookmarkDictionary = @{ @"id": @"1", @"title": @"WebKit", @"url": @"https://webkit.org/", @"index": @0 };
+
+    manager.get().internalDelegate.createBookmarkWithParentIdentifier = ^(NSString *parentId, NSNumber *index, NSString *url, NSString *title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            completionHandler(adoptNS([[TestBookmarkNode alloc] initWithDictionary:bookmarkDictionary]).get(), nil);
+        });
+    };
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            completionHandler(@[ adoptNS([[TestBookmarkNode alloc] initWithDictionary:bookmarkDictionary]).get() ], nil);
+        });
+    };
+
+    manager.get().internalDelegate.removeBookmarkWithIdentifier = ^(NSString *bookmarkIdentifier, BOOL removeFolderWithChildren, void (^completionHandler)(NSError *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            completionHandler(nil);
+        });
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, GetTreeWithBookmarkMissingOptionalMethods)
+{
+    auto *script = @[
+        @"let tree = await browser.bookmarks.getTree()",
+        @"browser.test.assertEq(1, tree.length, 'The tree should have one node')",
+        @"browser.test.assertEq('minimal', tree[0].id, 'The identifier should come from the delegate')",
+        @"browser.test.assertEq('', tree[0].title, 'The title should default to empty')",
+        @"browser.test.assertEq(0, tree[0].index, 'The index should default to zero')",
+        @"browser.test.assertEq('folder', tree[0].type, 'A node without a URL should be a folder')",
+        @"browser.test.assertTrue(tree[0].parentId === undefined, 'A top-level node should not have a parentId')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *)) {
+        completionHandler(@[ adoptNS([[TestMinimalBookmarkNode alloc] init]).get() ], nil);
+    };
+
+    [manager loadAndRun];
+}
+
+} // namespace TestWebKitAPI
+
+#endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
