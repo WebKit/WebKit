@@ -3457,7 +3457,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
     if (isTopColorChanging) {
         [self didChangeValueForKey:RetainPtr { NSStringFromSelector(@selector(_sampledTopFixedPositionContentColor)) }.get()];
-#if ENABLE(MANAGED_UIREFRESHCONTROL_APPEARANCE)
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
         [self _updateRefreshControlAppearance];
 #endif
     }

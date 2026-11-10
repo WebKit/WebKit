@@ -280,7 +280,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
         [internalDelegate _updateScrollViewBackground];
     }
 
-#if ENABLE(MANAGED_UIREFRESHCONTROL_APPEARANCE)
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
     if (self.refreshControl)
         [internalDelegate _updateRefreshControlAppearance];
 #endif
@@ -296,7 +296,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     RetainPtr internalDelegate = _internalDelegate.get();
     [internalDelegate _resetCachedScrollViewBackgroundColor];
 
-#if ENABLE(MANAGED_UIREFRESHCONTROL_APPEARANCE)
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
     if (self.refreshControl)
         [internalDelegate _updateRefreshControlAppearance];
 #endif
@@ -429,7 +429,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 - (void)setRefreshControl:(UIRefreshControl *)refreshControl
 {
     [super setRefreshControl:refreshControl];
-#if ENABLE(MANAGED_UIREFRESHCONTROL_APPEARANCE)
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
     [self.internalDelegate _updateRefreshControlAppearance];
 #endif
 }

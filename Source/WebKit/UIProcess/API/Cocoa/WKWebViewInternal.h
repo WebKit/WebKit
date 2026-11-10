@@ -736,7 +736,7 @@ struct LiveResizeSnapshotState {
 #endif
 #endif
 
-#if ENABLE(MANAGED_UIREFRESHCONTROL_APPEARANCE)
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
 - (void)_updateRefreshControlAppearance;
 #endif
 
