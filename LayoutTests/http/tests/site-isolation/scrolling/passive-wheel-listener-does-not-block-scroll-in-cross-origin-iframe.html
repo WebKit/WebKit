@@ -63,7 +63,7 @@ window.addEventListener('load', async () => {
     for (let i = 0; i < 20; ++i) {
         await UIHelper.renderingUpdate();
         result = await queryFrame();
-        if (result.scrollY > 0)
+        if (result.scrollY > 0 && result.lastEvent)
             break;
     }
 
