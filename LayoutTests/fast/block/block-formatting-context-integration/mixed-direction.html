@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; padding: 0 30px 0 10px; border-left: 4px solid; }
+.root div { background: rgba(0, 0, 0, 0.15); }
+</style>
+<div class="root">
+  <div style="direction: rtl; width: 200px; padding-left: 7px; padding-right: 21px; border-left: 3px solid; border-right: 9px solid; margin-left: 12px">
+    <div style="width: 50px; height: 10px"></div>
+    <div style="width: 50px; height: 10px; margin-left: auto"></div>
+    <div style="direction: ltr; width: 120px; padding-left: 5px; border-right: 2px solid">
+      <div style="width: 30px; height: 10px; margin-left: 6px"></div>
+      <div style="width: 30px; height: 10px; margin-right: auto; margin-left: auto"></div>
+    </div>
+    <div style="width: 300px; height: 5px"></div>
+  </div>
+  <div style="direction: rtl; height: 8px; margin-right: 15px"></div>
+</div>

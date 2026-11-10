@@ -115,6 +115,11 @@ public:
     NODELETE bool isInOrthogonalIntrinsicContributionLayout(const RenderBox&) const;
     NODELETE bool isComputingIntrinsicLogicalWidthFor(const RenderBox&) const;
 
+    // The block formatting context roots whose floats the block formatting context placed, which the render tree's float lists do not have
+    // then (LayoutIntegration::BlockLayout).
+    void addRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow&);
+    bool removeRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow&);
+
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
         SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
@@ -302,6 +307,7 @@ private:
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
     SingleThreadWeakHashSet<RenderBox> m_boxesInOrthogonalIntrinsicContributionLayout;
     SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalWidthComputationList;
+    SingleThreadWeakHashSet<RenderBlockFlow> m_rootsWithFloatsPlacedByBlockFormattingContext;
     Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
     std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;

@@ -88,9 +88,10 @@ public:
 
     virtual void buildDisplayPaths(DisplayPaths&) const = 0;
 
+    WritingMode writingMode() const { return m_writingMode; }
+
 protected:
     float shapeMargin() const { return m_margin; }
-    WritingMode writingMode() const { return m_writingMode; }
     NODELETE static bool shouldFlipStartAndEndPoints(WritingMode);
 
 private:

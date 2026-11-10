@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; width: 300px; border: 1px solid; margin-bottom: 4px; }
+.float { float: left; width: 100px; height: 30px; background: orange; }
+.right { float: right; width: 60px; height: 50px; background: tan; }
+.avoider { overflow: hidden; background: lightblue; border: 2px solid blue; padding: 1px; }
+.leaf { background: lightgreen; }
+marquee { display: block; width: 280px; border: 1px solid green; }
+</style>
+<div class="root"><div class="float"></div><div class="avoider" style="width: min-content">min-content box text</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="width: max-content">max-content box text that is long enough</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="width: fit-content">fit-content short</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="width: fit-content">fit-content box text that is long enough to wrap around</div></div>
+<div class="root"><div class="float"></div><div class="right"></div><div class="avoider" style="width: fit-content">fit-content between two floats text text</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="min-width: max-content">min-width max-content text</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="min-width: fit-content">min-width fit-content text that wraps a lot</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="max-width: min-content">max-width min-content</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="width: stretch; margin-left: 20px">stretch</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="min-width: stretch; width: 50px">min-width stretch</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="max-width: stretch; width: 400px">max-width stretch</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="aspect-ratio: 2; height: 20px">ratio</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="aspect-ratio: 4">ratio with an auto height</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="width: calc-size(fit-content, size + 10px)">calc-size</div></div>
+<div class="root"><div class="float"></div><div class="avoider" style="width: fit-content; margin: 0 auto">auto margins</div></div>
+<div class="root"><div class="float"></div><input style="display: block" value="input"></div>
+<div class="root"><div class="float"></div><button style="display: block">button text that is longer than the space beside</button></div>
+<div class="root"><div class="right"></div><button style="display: block; margin-left: auto">auto margin button</button></div>
+<div class="root"><div class="float"></div><select style="display: block"><option>select option</option></select></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: flex; width: fit-content">flex fit-content box</div></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: flex; min-width: max-content">flex min-width max-content text</div></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: grid; width: stretch">grid stretch</div></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: flex; aspect-ratio: 3">flex ratio</div></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: flex; width: fit-content; max-width: stretch">flex fit-content with a max-width that stretches</div></div>
+<div class="root"><div class="float"></div><div class="leaf" style="display: flex; aspect-ratio: 8; width: stretch">flex ratio stretch</div></div>
+<div class="root"><div class="float"></div><math display="block" class="leaf"><mi>x</mi><mo>+</mo><mi>y</mi></math></div>
+<div class="root"><div class="float"></div><table class="leaf" style="max-width: 150px"><tr><td>table max-width with text that wraps</td></tr></table></div>
+<div class="root"><div class="float"></div><table class="leaf" style="min-width: 250px"><tr><td>table min-width</td></tr></table></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0"><div class="float"></div><div class="avoider">marquee child</div></marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0"><div class="float"></div><div class="leaf" style="display: flex">marquee flex child that is long enough to wrap</div></marquee></div>

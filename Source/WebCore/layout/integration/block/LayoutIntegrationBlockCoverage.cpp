@@ -1,0 +1,983 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "LayoutIntegrationBlockCoverage.h"
+
+#include "AnchorPositionEvaluator.h"
+#include "BlockFormattingUtils.h"
+#include "BlockMarginCollapse.h"
+#include "Document.h"
+#include "LocalFrameViewInlines.h"
+#include "LocalFrameViewLayoutContext.h"
+#include "RenderAncestorIterator.h"
+#include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
+#include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderGrid.h"
+#include "RenderLayoutState.h"
+#include "RenderLineBreak.h"
+#include "RenderListItem.h"
+#include "RenderObjectInlines.h"
+#include "RenderReplaced.h"
+#include "RenderTable.h"
+#include "RenderView.h"
+#include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
+
+namespace WebCore {
+namespace LayoutIntegration {
+
+enum class BlockAvoidanceReason : uint8_t {
+    BlockFormattingContextIntegrationDisabled,
+    NotABlockFormattingContextRoot,
+    RootIsRenderView,
+    RootHasListMarker,
+    RootIsMultiColumnFlow,
+    RootHasUnsupportedRenderer,
+    RootHasUnsupportedWritingMode,
+    RootIsPaginated,
+    RootIsInLegacyLineClampContext,
+    RootIsInLineGridContext,
+    RootHasColumns,
+    ContentHasFloat,
+    ContentHasOutOfFlowBox,
+    ContentHasOutOfFlowNonBlockContainer,
+    ContentHasListMarker,
+    ContentHasStretchedQuirksModeBody,
+    ContentHasUnsupportedRenderer,
+    ContentHasFormattingContextRoot,
+    ContentHasInlineBoxContainingBlock,
+    ContentHasBlockInInline,
+    ContentHasUnsupportedInlineBox,
+    ContentHasOrthogonalFlow,
+    ContentHasSizingKeyword,
+    ContentHasStretchBlockSize,
+    ContentHasUnmeasurableIntrinsicInlineSize,
+    ContentHasQuirksModePercentageHeight,
+    ContentHasNestedQuirkContainer,
+    ContentHasAnchorPositioning,
+    ContentHasOutOfFlowSelfAlignment,
+    ContentHasLineClamp,
+    ContentHasLineGrid,
+};
+
+// A list item lays out its content like any other block container (RenderListItem::layoutBlock), unless it has a marker: an outside one,
+// which it lays out and places itself (RenderListItem::layoutExcludedChildren, placeExcludedMarker), or an inside one, which is inline content.
+static bool hasListMarker(const RenderElement& renderer)
+{
+    CheckedPtr listItem = dynamicDowncast<RenderListItem>(renderer);
+    return listItem && listItem->markerRenderer();
+}
+
+// The -webkit-left, -webkit-right and -webkit-center values of text-align move block-level children too (RenderBox::computeInlineDirectionMargins).
+static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlockFlow& rootContainer)
+{
+    if (!rootContainer.document().settings().blockFormattingContextIntegrationEnabled())
+        return BlockAvoidanceReason::BlockFormattingContextIntegrationDisabled;
+    if (!rootContainer.createsNewFormattingContext())
+        return BlockAvoidanceReason::NotABlockFormattingContextRoot;
+    // Not RenderView, list items with a marker, table captions, multi-column flows or form controls, which lay out their content their
+    // own way.
+    if (rootContainer.isRenderView())
+        return BlockAvoidanceReason::RootIsRenderView;
+    if (hasListMarker(rootContainer))
+        return BlockAvoidanceReason::RootHasListMarker;
+    if (rootContainer.isRenderMultiColumnFlow())
+        return BlockAvoidanceReason::RootIsMultiColumnFlow;
+    // A text control lays out its inner text with the block formatting context and adjusts it after (RenderTextControlSingleLine::layout), and
+    // its placeholder itself (RenderTextControl::layoutExcludedChildren). A WebVTT cue box moves itself after (RenderVTTCue::layout). A table
+    // caption, a file input and an SVG foreignObject only size and place themselves their own way.
+    auto isSupportedRenderer = [&] {
+        switch (rootContainer.type()) {
+        case RenderObject::Type::BlockFlow:
+        case RenderObject::Type::ListItem:
+        case RenderObject::Type::TableCell:
+        case RenderObject::Type::TableCaption:
+        case RenderObject::Type::FileUploadControl:
+        case RenderObject::Type::VTTCue:
+        case RenderObject::Type::SVGForeignObject:
+        case RenderObject::Type::LegacySVGForeignObject:
+            return true;
+        default:
+            return rootContainer.isRenderTextControl() || rootContainer.isRenderTextControlInnerBlock();
+        }
+    };
+    if (!isSupportedRenderer())
+        return BlockAvoidanceReason::RootHasUnsupportedRenderer;
+    // FIXME: horizontal-bt, whose inline content the inline formatting context places from the border and padding at the top, its block-end
+    // side (BoxGeometryUpdater::formattingContextConstraints).
+    if (rootContainer.writingMode().isHorizontal() && rootContainer.writingMode().isBlockFlipped())
+        return BlockAvoidanceReason::RootHasUnsupportedWritingMode;
+    CheckedRef layoutContext = rootContainer.view().frameView().layoutContext();
+    if (auto* layoutState = layoutContext->layoutState()) {
+        if (layoutState->isPaginated())
+            return BlockAvoidanceReason::RootIsPaginated;
+        // FIXME: -webkit-line-clamp, which clamps the content of a -webkit-box at its clamp point (LegacyLineClampUpdater).
+        if (layoutState->legacyLineClamp())
+            return BlockAvoidanceReason::RootIsInLegacyLineClampContext;
+        // The layout state has no entry for the boxes inside the block formatting context, so their inline content would see the
+        // root's line grid at the wrong offset.
+        if (layoutState->lineGrid())
+            return BlockAvoidanceReason::RootIsInLineGridContext;
+    }
+    if (rootContainer.enclosingFragmentedFlow())
+        return BlockAvoidanceReason::RootIsPaginated;
+    CheckedRef style = rootContainer.style();
+    if (!style->lineGrid().isNone())
+        return BlockAvoidanceReason::RootIsInLineGridContext;
+    if (style->specifiesColumns() || rootContainer.multiColumnFlow())
+        return BlockAvoidanceReason::RootHasColumns;
+    return { };
+}
+
+// Only display: flow-root, overflow other than visible, align-content and out-of-flow boxes. The other ways to establish a block formatting
+// context also contain or fragment the content. Not a form control, which lays out its content its own way.
+static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
+{
+    if (Layout::BlockFormattingUtils::isFormControlBlockContainer(blockContainer))
+        return false;
+    CheckedRef style = blockContainer.style();
+    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() || style->display() == Style::DisplayType::BlockFlowRoot || !style->alignContent().isNormal() || blockContainer.isOutOfFlowPositioned();
+    // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
+    // An out-of-flow box sizes itself in its own writing mode (OutOfFlowGeometry).
+    auto isSupportedWritingMode = !blockContainer.isWritingModeRoot() || (blockContainer.isOutOfFlowPositioned() && !(blockContainer.writingMode().isHorizontal() && blockContainer.writingMode().isBlockFlipped()));
+    return isSupportedRoot && isSupportedWritingMode && !blockContainer.isFieldset()
+        && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer)
+        && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All
+        && style->overflowContinue() == OverflowContinue::Normal;
+}
+
+static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox, const RenderBlockFlow& rootContainer);
+
+static bool isAtomicInlineLevelBox(const RenderObject& renderer)
+{
+    return renderer.isInline() && is<RenderBox>(renderer) && !is<RenderLineBreak>(renderer);
+}
+
+static bool hasStretchBlockSize(const RenderBox& box)
+{
+    CheckedRef style = box.style();
+    auto writingMode = box.writingMode();
+    return style->logicalHeight(writingMode).isStretch() || style->logicalMinHeight(writingMode).isStretch() || style->logicalMaxHeight(writingMode).isStretch();
+}
+
+// In quirks mode a percentage block size looks past the containing blocks with an auto block size (RenderBox::computePercentageLogicalHeight).
+// The block formatting context gives a leaf the block size its own percentages resolve against (BlockIntegrationUtils::layoutIndependentFormattingContext),
+// but the render tree resolves the ones inside it, which reach past the leaf when every containing block up to and including the leaf has an
+// auto block size, to containing blocks whose geometry the block formatting context writes once all of its content is laid out. Those of
+// out-of-flow boxes resolve against their containing block (PositionedLayoutConstraints).
+// FIXME: The stretch block sizes in quirks mode.
+static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
+{
+    if (!leaf.document().inQuirksMode())
+        return false;
+    auto isInsideLeaf = [&](const RenderBox& containingBlock) {
+        return &containingBlock == &leaf || containingBlock.isDescendantOf(&leaf);
+    };
+    // A replaced element gives the boxes of its shadow content its content box size as their fixed size, like the controls of a media element
+    // (RenderReplaced::layoutShadowContent).
+    auto isShadowContentOfReplacedElement = [](const RenderBox& box) {
+        return is<RenderReplaced>(box.parent());
+    };
+    auto resolvesOutsideLeaf = [&](const RenderBox& box) {
+        auto isHorizontalWritingMode = box.isHorizontalWritingMode();
+        for (CheckedPtr containingBlock = box.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+            if (isShadowContentOfReplacedElement(*containingBlock) || !box.skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontalWritingMode != containingBlock->isHorizontalWritingMode()))
+                return false;
+        }
+        return true;
+    };
+    // A replaced element resolves one against the available block size of its containing block instead, which looks past the ones with an
+    // auto block size too (RenderBox::availableLogicalHeightUsing), unless that is a flex container (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight).
+    auto replacedElementResolvesOutsideLeaf = [&](const RenderBox& replaced) {
+        for (CheckedPtr containingBlock = replaced.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+            CheckedRef style = containingBlock->style();
+            if (!style->logicalHeight().isAuto() || isShadowContentOfReplacedElement(*containingBlock) || containingBlock->isRenderTableCell() || containingBlock->isOutOfFlowPositioned() || style->aspectRatio().hasRatio())
+                return false;
+            if (containingBlock == replaced.containingBlock() && containingBlock->isFlexibleBoxIncludingDeprecated())
+                return false;
+        }
+        return true;
+    };
+    if (hasStretchBlockSize(leaf))
+        return true;
+    // The block formatting context gives a replaced leaf the available block size of its containing block (ContainingBlockState::replacedElementAvailableBlockSize).
+    // FIXME: The ones inside an out-of-flow box, whose available block size can come from its containing block, or a box with a preferred aspect ratio,
+    // whose available block size is its border box block size (RenderBox::availableLogicalHeightUsing).
+    if (leaf.isRenderReplaced() && Layout::BlockFormattingUtils::hasPercentageBlockSize(leaf, leaf.writingMode())) {
+        for (CheckedPtr ancestor = leaf.parent(); ancestor && ancestor != &rootContainer; ancestor = ancestor->parent()) {
+            if (ancestor->isOutOfFlowPositioned() || ancestor->style().aspectRatio().hasRatio())
+                return true;
+        }
+    }
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
+        if (descendant->isOutOfFlowPositioned() || !Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+            continue;
+        // The percentage block size of a table row or cell is a share of the table's (RenderTableSection::distributeExtraLogicalHeightToPercentRows).
+        if (isShadowContentOfReplacedElement(descendant) || descendant->isRenderTableRow() || descendant->isRenderTableCell())
+            continue;
+        if (hasStretchBlockSize(descendant) || (descendant->isRenderReplaced() ? replacedElementResolvesOutsideLeaf(descendant) : resolvesOutsideLeaf(descendant)))
+            return true;
+    }
+    return false;
+}
+
+static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer);
+
+// The inline formatting context lays out an atomic inline-level box through the render tree, with the containing block size the block
+// formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
+static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
+{
+    if (hasPercentageBlockSizeInQuirksMode(box, rootContainer))
+        return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
+    return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
+}
+
+static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
+{
+    if (is<RenderLineBreak>(renderer))
+        return { };
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer))
+        return atomicInlineLevelBoxAvoidanceReason(*box, rootContainer);
+    // Inline boxes, ruby ones and ::first-letter included, which the inline formatting context lays out.
+    auto display = renderer.style().display();
+    auto isInlineBox = display == Style::DisplayType::InlineFlow || display == Style::DisplayType::InlineRuby || display == Style::DisplayType::RubyBase || display == Style::DisplayType::RubyText;
+    if (renderer.type() != RenderObject::Type::Inline || !isInlineBox)
+        return BlockAvoidanceReason::ContentHasUnsupportedInlineBox;
+    return { };
+}
+
+// BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
+// between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
+// A block-level independent formatting context root the block formatting context lays out through the render tree
+// (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a button, a flex (-webkit-box included) or grid
+// container, selects, range inputs and the text control's one around its inner text and decorations included, a form control block
+// container, a frameset, which takes the size of the viewport (RenderFrameSet::layout), a MathML box or table, or a block formatting context
+// root whose content the block formatting context cannot lay out.
+static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
+{
+    if (renderer.isInline() || renderer.isFloatingOrOutOfFlowPositioned())
+        return false;
+    if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
+        return true;
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer); box && Layout::BlockFormattingUtils::isFormControlBlockContainer(*box))
+        return true;
+#if ENABLE(MATHML)
+    if (renderer.isRenderMathMLBlock() || renderer.isRenderMathMLTable())
+        return true;
+#endif
+    switch (renderer.type()) {
+    case RenderObject::Type::Button:
+    case RenderObject::Type::Table:
+    case RenderObject::Type::FlexibleBox:
+    case RenderObject::Type::MenuList:
+    case RenderObject::Type::Slider:
+    case RenderObject::Type::TextControlInnerContainer:
+    case RenderObject::Type::DeprecatedFlexibleBox:
+    case RenderObject::Type::Grid:
+    case RenderObject::Type::FrameSet:
+        return true;
+    case RenderObject::Type::BlockFlow:
+    case RenderObject::Type::ListItem:
+    case RenderObject::Type::TextControlInnerBlock: {
+        auto& blockContainer = downcast<RenderBlockFlow>(renderer);
+        return blockContainer.createsNewFormattingContext() && !hasListMarker(blockContainer) && !canUseForNestedBlockLayout(blockContainer);
+    }
+    default:
+        return false;
+    }
+}
+
+// Whether the percentage block sizes of a box resolve against the content box block sizes of the containing blocks on the way to an ancestor
+// that come from their styles, which BlockFormattingContext::computeIntrinsicInlineSizes gets from that ancestor down. Not the ones that come
+// from the layout: of a box with a preferred aspect ratio and an auto block size, from its inline size, and a stretch block size or a
+// percentage block-axis padding. Nor those of an out-of-flow ancestor, from its insets, or of a flex or grid item or a table cell, which its
+// container gives it while it measures it (GridTrackSizingAlgorithm, RenderTableSection::relayoutCellIfFlexed).
+static bool resolvesPercentageBlockSizesFromStyles(const RenderBox& box, const RenderBlockFlow& ancestor)
+{
+    for (CheckedPtr containingBlock = box.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+        CheckedRef style = containingBlock->style();
+        auto writingMode = containingBlock->writingMode();
+        if ((style->aspectRatio().hasRatio() && style->logicalHeight(writingMode).isAuto()) || hasStretchBlockSize(*containingBlock)
+            || style->paddingBefore(writingMode).isPercentOrCalculated() || style->paddingAfter(writingMode).isPercentOrCalculated())
+            return false;
+        if (containingBlock == &ancestor)
+            return !ancestor.isOutOfFlowPositioned() && !ancestor.isFlexItemIncludingDeprecated() && !ancestor.isGridItem() && !ancestor.isRenderTableCell();
+        // A containing block whose block size does not depend on its own containing block's.
+        if (!containingBlock->isAnonymous() && !Layout::BlockFormattingUtils::hasPercentageBlockSize(*containingBlock, writingMode) && (!style->logicalHeight(writingMode).isAuto() || !containingBlock->document().inQuirksMode()))
+            return true;
+    }
+    return false;
+}
+
+static bool hasAvailableInlineSpaceFromStyle(const RenderBox& orthogonalBox)
+{
+    CheckedPtr containingBlock = orthogonalBox.containingBlock();
+    if (!containingBlock || containingBlock->isRenderMultiColumnFlow())
+        return false;
+    CheckedRef style = containingBlock->style();
+    if (style->logicalHeight().isFixed())
+        return true;
+    return style->logicalHeight().isAuto() && (style->logicalMaxHeight().isNone() || style->logicalMaxHeight().isMaxContent()) && !style->aspectRatio().hasRatio()
+        && !orthogonalBox.document().inQuirksMode();
+}
+
+static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
+{
+    for (CheckedPtr<const RenderObject> descendant = &box; descendant;) {
+        // Out-of-flow boxes add nothing to the intrinsic sizes of their parent.
+        if (descendant != &box && descendant->isOutOfFlowPositioned()) {
+            descendant = descendant->nextInPreOrderAfterChildren(&box);
+            continue;
+        }
+        // FIXME: A block-level box in inline content, which the inline formatting context measures through the render tree
+        // (LineBuilder::handleBlockContent).
+        if (CheckedPtr element = dynamicDowncast<RenderElement>(*descendant); element && element != &box && element->isBlockLevelBox() && element->parent()->isInlineBox())
+            return false;
+        auto isBlockLevelFloat = [&] {
+            CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant->parent());
+            return descendant->isFloating() && parentBlockContainer && !parentBlockContainer->childrenInline();
+        };
+        // The own formatting context of a box laid out through the render tree, or of a float among block-level boxes, measures it
+        // (RenderBox::minContentLogicalWidthContribution), an orthogonal one by laying it out (RenderBox::computeIntrinsicLogicalHeight), and
+        // so does the inline formatting context for an atomic inline-level box (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage
+        // block size, which an aspect ratio turns into an inline size, resolves against the block size of the containing block from its style
+        // there too (RenderBox::computePercentageLogicalHeight), and so does the available inline space of an orthogonal box when it is fixed,
+        // or indefinite in standards mode, which leaves the size of the initial containing block (RenderBox::perpendicularContainingBlockLogicalHeight).
+        // FIXME: Percentage padding, which resolves against its inline size, which the block formatting context writes once all of it is laid
+        // out, and the other block sizes of the containing block of an orthogonal box, which come from the last layout of the render tree.
+        if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant) || isBlockLevelFloat())) {
+            CheckedRef leaf = downcast<RenderBox>(*descendant);
+            CheckedRef style = leaf->style();
+            auto writingMode = leaf->writingMode();
+            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
+                return false;
+            if (writingMode.isOrthogonal(leaf->parent()->writingMode()) && !hasAvailableInlineSpaceFromStyle(leaf))
+                return false;
+            descendant = descendant->nextInPreOrderAfterChildren(&box);
+            continue;
+        }
+        // Those of the box itself are its formatting context's.
+        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && blockContainer != &box && !blockContainer->isInline()) {
+            CheckedRef style = blockContainer->style();
+            auto writingMode = blockContainer->writingMode();
+            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
+                return false;
+            // A preferred aspect ratio gives an inline size from the block size and transfers the min and max block sizes, which can be
+            // percentages of the block size of the containing block.
+            if (style->aspectRatio().hasRatio() && Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, writingMode) && !resolvesPercentageBlockSizesFromStyles(*blockContainer, box))
+                return false;
+        }
+        descendant = descendant->nextInPreOrder(&box);
+    }
+    return true;
+}
+
+// The block formatting context lays out the out-of-flow boxes whose containing block it lays out.
+static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox, const RenderBlockFlow& rootContainer)
+{
+    CheckedPtr containingBlock = outOfFlowBox.containingBlock();
+    return containingBlock == &rootContainer || containingBlock->isDescendantOf(&rootContainer);
+}
+
+// An out-of-flow flex container, buttons, range inputs and selects included, grid container, -webkit-box or WebVTT cue box, whose own
+// formatting context lays it out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext), and its content like that of a leaf.
+// Not a fieldset, whose legend sits in its border.
+static bool isOutOfFlowLeafContainer(const RenderElement& outOfFlowBox)
+{
+    switch (outOfFlowBox.type()) {
+    case RenderObject::Type::FlexibleBox:
+    case RenderObject::Type::Button:
+    case RenderObject::Type::Slider:
+    case RenderObject::Type::MenuList:
+    case RenderObject::Type::Grid:
+    case RenderObject::Type::DeprecatedFlexibleBox:
+        return !outOfFlowBox.isFieldset();
+    case RenderObject::Type::VTTCue:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const RenderBox& outOfFlowBox)
+{
+    // Block containers, which establish a block formatting context for their content, replaced elements, and the containers whose own
+    // formatting context lays them out.
+    auto isReplaced = outOfFlowBox.isRenderReplaced() || outOfFlowBox.isRenderOrLegacyRenderSVGRoot();
+    auto isLeafContainer = isOutOfFlowLeafContainer(outOfFlowBox);
+    auto isBlockContainer = outOfFlowBox.type() == RenderObject::Type::BlockFlow || (outOfFlowBox.isRenderListItem() && !hasListMarker(outOfFlowBox));
+    if (!isBlockContainer && !isReplaced && !isLeafContainer)
+        return BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer;
+    // FIXME: An orthogonal replaced element, whose own formatting context gives its size in its writing mode, not in its containing block's.
+    if (CheckedPtr containingBlock = outOfFlowBox.containingBlock(); isReplaced && containingBlock && outOfFlowBox.writingMode().isOrthogonal(containingBlock->writingMode()))
+        return BlockAvoidanceReason::ContentHasOrthogonalFlow;
+    // FIXME: An orthogonal leaf container, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
+    if (isLeafContainer && outOfFlowBox.isWritingModeRoot())
+        return BlockAvoidanceReason::ContentHasOrthogonalFlow;
+    // FIXME: A positioned inline box with a direction of its own as its containing block, whose writing mode the containing block takes
+    // (css-position-3 §2.1).
+    if (CheckedPtr container = outOfFlowBox.container(); container && container->isInlineBox() && container->writingMode() != outOfFlowBox.containingBlock()->writingMode())
+        return BlockAvoidanceReason::ContentHasInlineBoxContainingBlock;
+    CheckedRef style = outOfFlowBox.style();
+    // Style resolution gives anchor() and anchor-size() their values and picks the position-try fallback (Style::AnchorPositionEvaluator).
+    // FIXME: position-area and anchor-center without a default anchor, which leave the render tree path in between static and anchored
+    // positioning (PositionedLayoutConstraints::captureInsets, resolveAlignmentValue).
+    if (Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(style.get()) && !Style::AnchorPositionEvaluator::defaultAnchorForBox(outOfFlowBox))
+        return BlockAvoidanceReason::ContentHasAnchorPositioning;
+    // FIXME: A grid that aligns the static position of its out-of-flow child (PositionedLayoutConstraints::remainingSpaceForStaticAlignment).
+    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(outOfFlowBox.parent()); grid && !style->alignSelf().resolve(&grid->style()).isNormalStretchOrLegacy())
+        return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
+    // Its own formatting context sizes a replaced element, from its natural size and aspect ratio.
+    if (isReplaced)
+        return { };
+    // FIXME: calc-size() and the legacy intrinsic and min-intrinsic keywords; lengths, percentages, calc() and the sizing keywords otherwise
+    // (css-sizing-3 §3.2, css-sizing-4 §6.1), -webkit-fill-available included.
+    auto isSupportedSize = [](auto& size) {
+        return (size.isSpecified() || size.isIntrinsic() || size.isStretch()) && !size.isCalcSize();
+    };
+    // A calc-size() answers to the keyword of its basis, auto included.
+    auto isAuto = [](auto& size) {
+        return size.isAuto() && !size.isCalcSize();
+    };
+    if (!(isAuto(style->width()) || isSupportedSize(style->width())) || !(isAuto(style->height()) || isSupportedSize(style->height()))
+        || !(isAuto(style->minWidth()) || isSupportedSize(style->minWidth())) || !(isAuto(style->minHeight()) || isSupportedSize(style->minHeight()))
+        || !(style->maxWidth().isNone() || isSupportedSize(style->maxWidth())) || !(style->maxHeight().isNone() || isSupportedSize(style->maxHeight())))
+        return BlockAvoidanceReason::ContentHasSizingKeyword;
+    auto writingMode = outOfFlowBox.writingMode();
+    auto hasIntrinsicInlineSize = style->logicalWidth(writingMode).isIntrinsic() || style->logicalMinWidth(writingMode).isIntrinsic() || style->logicalMaxWidth(writingMode).isIntrinsic();
+    // FIXME: The min-content and max-content inline sizes a preferred aspect ratio transfers from the block size (css-sizing-4 §5.2).
+    if (hasIntrinsicInlineSize && style->aspectRatio().hasRatio())
+        return BlockAvoidanceReason::ContentHasSizingKeyword;
+    // An auto inline size with an auto inset, or with a self-alignment other than normal and stretch, is the fit-content size (css-position-3 §4.3),
+    // from the inline sizes of the content, and so is the automatic minimum of one a preferred aspect ratio gives (css-sizing-4 §5.1), and
+    // the min-content, max-content and fit-content keywords in the inline axis. The self-alignment is in the writing mode of the containing
+    // block, whose block axis is the box's inline axis in an orthogonal flow.
+    CheckedPtr containingBlock = outOfFlowBox.containingBlock();
+    auto isOrthogonal = containingBlock && writingMode.isOrthogonal(containingBlock->writingMode());
+    auto inlineAxisAlignment = isOrthogonal ? style->alignSelf().resolve() : style->justifySelf().resolve();
+    auto needsContentInlineSizes = hasIntrinsicInlineSize
+        || (style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(inlineAxisAlignment.isNormal() || inlineAxisAlignment.isStretch()) || style->aspectRatio().hasRatio()));
+    // The render tree measures a leaf container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
+    if (needsContentInlineSizes && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
+        return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
+    return { };
+}
+
+// The render tree lays out the content of a leaf (an atomic inline-level box or a box laid out through the render tree), and registers the
+// out-of-flow boxes it finds on their containing block (RenderBlock::addOutOfFlowBox). The block formatting context lays out the ones whose
+// containing block it lays out, outside the leaf, from their static position (on their layer, or a flex container's), which it moves out of
+// the leaf through the boxes in between (BlockLayout::layoutOutOfFlowBoxes): inline boxes, which add nothing to it, and in-flow boxes with
+// the block flow direction of the containing block, whose positions are in its coordinates, outside fragmented flows.
+static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
+{
+    auto isSupportedBoxInBetween = [](const RenderElement& box, const RenderBlock& containingBlock) {
+        if (box.isInlineBox())
+            return true;
+        return is<RenderBox>(box) && !box.isOutOfFlowPositioned() && box.writingMode().blockDirection() == containingBlock.writingMode().blockDirection() && !box.isRenderFragmentedFlow();
+    };
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
+        if (!descendant->isOutOfFlowPositioned())
+            continue;
+        CheckedPtr containingBlock = descendant->containingBlock();
+        if (containingBlock == &leaf || containingBlock->isDescendantOf(&leaf) || !isLaidOutByBlockFormattingContext(descendant, rootContainer))
+            continue;
+        if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
+            return reason;
+        // Its static position comes from its block container, or from a grid container, which puts it at the start of its content box
+        // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box. The block formatting
+        // context lays out its content too.
+        CheckedPtr staticPositionBlock = descendant->parent();
+        while (staticPositionBlock->isInlineBox())
+            staticPositionBlock = staticPositionBlock->parent();
+        auto hasSupportedStaticPosition = is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid() || staticPositionBlock->isRenderFlexibleBox();
+        CheckedPtr outOfFlowBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant);
+        if (!hasSupportedStaticPosition || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
+            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+        for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
+            if (!isSupportedBoxInBetween(*box, *containingBlock))
+                return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+        }
+    }
+    return { };
+}
+
+static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
+{
+    if (box.parent()->isInlineBox()) {
+        // FIXME: Anonymous block-level boxes in inline content, and a fieldset, whose block-start margin takes its legend's, which the inline
+        // formatting context does not get (BlockLevelBoxInInlineContent).
+        if (box.isAnonymous() || box.isFieldset())
+            return BlockAvoidanceReason::ContentHasBlockInInline;
+    } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
+        return BlockAvoidanceReason::ContentHasBlockInInline;
+    if (hasPercentageBlockSizeInQuirksMode(box, rootContainer))
+        return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
+    // Quirks mode: a body laid out through the render tree stretches to the viewport from the size of its renderer's ancestors
+    // (RenderBox::computeLogicalHeight), which the block formatting context has not committed yet.
+    if (box.stretchesToViewport())
+        return BlockAvoidanceReason::ContentHasStretchedQuirksModeBody;
+    CheckedRef style = box.style();
+    auto writingMode = box.writingMode();
+    // The block formatting context decides the inline size from lengths, percentages, calc() and stretch, the stretch-fit inline size
+    // (BlockFormattingUtils::inlineSizeAndMargins); the box's own formatting context resolves the min-content, max-content and fit-content
+    // keywords with its intrinsic sizes. A calc-size() goes with its basis. The box's own formatting context decides the inline size from a
+    // preferred aspect ratio, a replaced element's natural one included (CSS 2.2 §10.3.4, css-sizing-4 §5.1). It resolves a stretch block size against the block size of the containing block the block formatting
+    // context gives it (RenderBox::isBlockSizeResolvableForStretch).
+    // FIXME: The other sizing keywords, the keywords of a replaced element, and the -webkit-fill-available block sizes, which read the
+    // containing block's renderer.
+    auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
+    auto isSupportedInlineSize = [&](auto& size) {
+        return size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced);
+    };
+    auto isFillAvailable = [](auto& size) {
+        return size.isFillAvailable();
+    };
+    if (!(style->logicalWidth(writingMode).isAuto() || isSupportedInlineSize(style->logicalWidth(writingMode)))
+        || !(style->logicalMinWidth(writingMode).isAuto() || isSupportedInlineSize(style->logicalMinWidth(writingMode)))
+        || !(style->logicalMaxWidth(writingMode).isNone() || isSupportedInlineSize(style->logicalMaxWidth(writingMode))))
+        return BlockAvoidanceReason::ContentHasSizingKeyword;
+    if (isFillAvailable(style->logicalHeight(writingMode)) || isFillAvailable(style->logicalMinHeight(writingMode)) || isFillAvailable(style->logicalMaxHeight(writingMode)))
+        return BlockAvoidanceReason::ContentHasStretchBlockSize;
+    return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
+}
+
+// A float, which the inline formatting context places in inline content and the block formatting context among block-level boxes (CSS 2.2
+// §9.5.1), and its own formatting context lays out through the render tree.
+// FIXME: An initial letter, which the inline formatting context sinks into the lines after it, and floats in a line-clamp container, which
+// hides those after the clamp point.
+static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
+{
+    CheckedRef style = floatBox.style();
+    if (style->pseudoElementType() == PseudoElementType::FirstLetter && style->initialLetter().drop())
+        return BlockAvoidanceReason::ContentHasFloat;
+    // From the tree: coverage is also asked outside of layout, where there is no layout state to have the line-clamp container in.
+    for (CheckedPtr ancestor = floatBox.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*ancestor); blockContainer && blockContainer->establishesLineClampContainer())
+            return BlockAvoidanceReason::ContentHasFloat;
+    }
+    for (CheckedPtr containingBlock = floatBox.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+        // margin-trim at the block-end edge moves the boxes the margins collapse through at the end of the content, and their floats would
+        // have to move with them (placeChildrenAtTrimmedBlockEnd).
+        if (containingBlock->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd))
+            return BlockAvoidanceReason::ContentHasFloat;
+        if (containingBlock == &rootContainer)
+            break;
+    }
+    return atomicInlineLevelBoxAvoidanceReason(floatBox, rootContainer);
+}
+
+// A box that avoids floats (RenderBox::avoidsFloats), which the block formatting context places beside the floats before it or below them
+// (BlockFormattingContext::placeBesideFloats).
+// FIXME: One with margin-trim, which discards margins that clearance separates, a fieldset or a box with a block step, whose margins collapse
+// once laid out, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
+// container, like a checkbox with display: block.
+static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
+{
+    if (box.isFieldset() || !box.style().blockStepSize().isNone())
+        return BlockAvoidanceReason::ContentHasFloat;
+    if (!isLaidOutThroughRenderTree && !Layout::BlockFormattingUtils::establishesIndependentFormattingContext(box))
+        return BlockAvoidanceReason::ContentHasFloat;
+    CheckedRef style = box.style();
+    CheckedRef containingBlockStyle = box.containingBlock()->style();
+    auto containingBlockWritingMode = containingBlockStyle->writingMode();
+    auto isSupportedInlineMargin = [](auto& margin) {
+        return margin.isAuto() || margin.isFixed() || margin.isPercentOrCalculated();
+    };
+    if (!isSupportedInlineMargin(style->marginStart(containingBlockWritingMode)) || !isSupportedInlineMargin(style->marginEnd(containingBlockWritingMode)))
+        return BlockAvoidanceReason::ContentHasFloat;
+    if (Layout::BlockFormattingUtils::isAlignedByJustifySelf(box, containingBlockStyle))
+        return BlockAvoidanceReason::ContentHasFloat;
+    auto textAlign = containingBlockStyle->textAlign();
+    if (textAlign == Style::TextAlign::WebKitCenter || textAlign == Style::TextAlign::WebKitLeft || textAlign == Style::TextAlign::WebKitRight)
+        return BlockAvoidanceReason::ContentHasFloat;
+    for (CheckedPtr<const RenderBlock> ancestor = box.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        auto marginTrim = ancestor->style().marginTrim();
+        if (marginTrim.contains(Style::MarginTrimSide::BlockStart) || marginTrim.contains(Style::MarginTrimSide::BlockEnd))
+            return BlockAvoidanceReason::ContentHasFloat;
+        if (ancestor == &rootContainer)
+            break;
+    }
+    return { };
+}
+
+// What a float before a box in the block formatting context makes it need.
+static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
+{
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box || box->isInline() || box->isFloating())
+        return { };
+    if (box->isOutOfFlowPositioned())
+        return { };
+    // FIXME: clear with margin-trim, which discards margins that clearance separates.
+    if (box->style().clear() != Clear::None) {
+        for (CheckedPtr<const RenderBlock> ancestor = dynamicDowncast<RenderBlock>(*box); ancestor; ancestor = ancestor->containingBlock()) {
+            auto marginTrim = ancestor->style().marginTrim();
+            if (marginTrim.contains(Style::MarginTrimSide::BlockStart) || marginTrim.contains(Style::MarginTrimSide::BlockEnd))
+                return BlockAvoidanceReason::ContentHasFloat;
+            if (ancestor == &rootContainer)
+                break;
+        }
+    }
+    // Form controls avoid floats too (RenderBox::avoidsFloats).
+    if (isLaidOutThroughRenderTree || box->avoidsFloats()) {
+        if (auto reason = floatAvoiderAvoidanceReason(*box, rootContainer, isLaidOutThroughRenderTree))
+            return reason;
+    }
+    return { };
+}
+
+static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
+{
+    // Floats outside the root stay out of its block formatting context.
+    if (renderer.isFloating())
+        return floatAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
+    if (renderer.isOutOfFlowPositioned()) {
+        // Its static position comes from the block formatting context its parent takes part in, or from the inline formatting context of the
+        // inline content it is in, which registers it on its containing block too (RenderBlockFlow::markInlineContentDirtyForLayout).
+        if (CheckedPtr parent = renderer.parent(); !is<RenderBlockFlow>(*parent) && !parent->isInlineBox())
+            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+        // A containing block outside the root lays it out through the render tree path.
+        if (!isLaidOutByBlockFormattingContext(renderer, rootContainer))
+            return { };
+        if (auto reason = outOfFlowBoxAvoidanceReason(downcast<RenderBox>(renderer)))
+            return reason;
+        // A replaced element has no block container checks to pass.
+        if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
+            return { };
+        // Nor does a leaf container, whose content the render tree lays out.
+        if (isOutOfFlowLeafContainer(renderer))
+            return outOfFlowBoxesInLeafAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
+    } else if (renderer.isInline())
+        return inlineContentAvoidanceReason(renderer, rootContainer);
+    // Block boxes only: not list items with a marker, replaced elements, tables, flex or grid containers or form control block containers.
+    // A form control or a legend fits its content (BlockFormattingUtils::autoInlineSizeFitsContent).
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
+    if (hasListMarker(renderer))
+        return BlockAvoidanceReason::ContentHasListMarker;
+    if (!blockContainer || (blockContainer->type() != RenderObject::Type::BlockFlow && !blockContainer->isRenderListItem() && !blockContainer->isRenderTextControlInnerBlock()))
+        return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
+    if (!blockContainer->isOutOfFlowPositioned()) {
+        if (blockContainer->parent()->isInlineBox()) {
+            // FIXME: Anonymous block-level boxes in inline content.
+            if (blockContainer->isAnonymous())
+                return BlockAvoidanceReason::ContentHasBlockInInline;
+        } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !parent || parent->childrenInline())
+            return BlockAvoidanceReason::ContentHasBlockInInline;
+    }
+    if (blockContainer->createsNewFormattingContext() && !isSupportedBlockFormattingContextRoot(*blockContainer))
+        return BlockAvoidanceReason::ContentHasFormattingContextRoot;
+    // Its layer is positioned once layout is done, which also offsets a relatively or sticky positioned box without moving anything else
+    // (CSS 2.2 §9.4.3, css-position-3 §3.4), and BlockLayout::updateRenderers updates its transform.
+
+    CheckedRef style = blockContainer->style();
+    // Lengths, percentages and calc(); min-content, max-content and fit-content, from the inline sizes of the content in the inline axis and
+    // the block size of the content in the block axis (css-sizing-3 §3.2); stretch (css-sizing-4 §6.1) and -webkit-fill-available, the
+    // available block size up the containing block chain in the block axis (BlockFormattingUtils::fillAvailableBlockSize); and calc-size()
+    // with any of these as its basis (css-values-5 §11). Not the intrinsic and min-intrinsic keywords.
+    auto isSupportedSize = [](auto& size) {
+        return size.isSpecified() || size.isIntrinsicOrStretch();
+    };
+    if ((!style->logicalWidth().isAuto() && !isSupportedSize(style->logicalWidth()))
+        || (!style->logicalMinWidth().isAuto() && !isSupportedSize(style->logicalMinWidth()))
+        || (!style->logicalMaxWidth().isNone() && !isSupportedSize(style->logicalMaxWidth()))
+        || (!style->logicalHeight().isAuto() && !isSupportedSize(style->logicalHeight()))
+        || (!style->logicalMinHeight().isAuto() && !isSupportedSize(style->logicalMinHeight()))
+        || (!style->logicalMaxHeight().isNone() && !isSupportedSize(style->logicalMaxHeight())))
+        return BlockAvoidanceReason::ContentHasSizingKeyword;
+    // A box resolves both stretch and -webkit-fill-available block sizes with one size (BlockFormattingContext::stretchFitBorderBoxBlockSize).
+    // FIXME: -webkit-fill-available inside an out-of-flow box, whose available block size comes from its insets.
+    auto isStretch = [&](auto& size) {
+        return size.isStretch() && !size.isFillAvailable();
+    };
+    if (Layout::BlockFormattingUtils::hasFillAvailableBlockSize(*blockContainer, blockContainer->writingMode())) {
+        if (isStretch(style->logicalHeight()) || isStretch(style->logicalMinHeight()) || isStretch(style->logicalMaxHeight()))
+            return BlockAvoidanceReason::ContentHasSizingKeyword;
+        for (CheckedPtr ancestor = blockContainer->parent(); ancestor && ancestor != &rootContainer; ancestor = ancestor->parent()) {
+            if (ancestor->isOutOfFlowPositioned())
+                return BlockAvoidanceReason::ContentHasSizingKeyword;
+        }
+    }
+    // So do an auto inline size that justify-self makes fit the content (BlockFormattingUtils::inlineSizeAndMargins).
+    CheckedRef parentStyle = blockContainer->parent()->style();
+    auto fitsContent = style->logicalWidth().isAuto() && Layout::BlockFormattingUtils::autoInlineSizeFitsContent(*blockContainer, parentStyle);
+    if ((Layout::BlockFormattingUtils::hasIntrinsicInlineSize(*blockContainer, blockContainer->writingMode()) || fitsContent) && !canComputeContentInlineSizes(*blockContainer))
+        return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
+    // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize), and an
+    // auto inline size from a definite block size (BlockFormattingUtils::aspectRatioBorderBoxInlineSize), whose automatic minimum is the
+    // min-content size.
+    // Its own percentages resolve against the containing block, and when the render tree measures the root it does it from what the root's
+    // last layout of the box left behind.
+    if (style->aspectRatio().hasRatio() && !style->logicalHeight().isAuto() && style->logicalWidth().isAuto() && style->logicalMinWidth().isAuto()) {
+        if (!canComputeContentInlineSizes(*blockContainer) || (Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, blockContainer->writingMode()) && !resolvesPercentageBlockSizesFromStyles(*blockContainer, rootContainer)))
+            return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
+    }
+    // In quirks mode a percentage block size looks past the containing blocks with an auto block size (BlockFormattingUtils::definiteContentBoxBlockSize).
+    // FIXME: The stretch block sizes in quirks mode.
+    if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isStretch() || style->logicalMinHeight().isStretch() || style->logicalMaxHeight().isStretch()))
+        return BlockAvoidanceReason::ContentHasStretchBlockSize;
+    // Quirks mode: every body element is a quirk container (RenderBlockFlow::MarginInfo), but the block formatting context keeps track of only one.
+    if (Layout::BlockMarginCollapse::isQuirkContainer(*blockContainer)) {
+        for (CheckedRef ancestor : ancestorsOfType<RenderBlockFlow>(*blockContainer)) {
+            if (Layout::BlockMarginCollapse::isQuirkContainer(ancestor))
+                return BlockAvoidanceReason::ContentHasNestedQuirkContainer;
+        }
+    }
+
+    // The layout state has no entry for the boxes inside the block formatting context, which is where line-clamp and line grids reach the
+    // inline content below them.
+    if (!style->maxLines().isAuto())
+        return BlockAvoidanceReason::ContentHasLineClamp;
+    if (!style->lineGrid().isNone())
+        return BlockAvoidanceReason::ContentHasLineGrid;
+    return { };
+}
+
+static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const RenderBlockFlow& rootContainer)
+{
+    // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one. The content of an
+    // out-of-flow box laid out by a containing block outside the root, of a float, or of a box laid out through the render tree, is not part
+    // of it.
+    auto hasFloats = false;
+    for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
+        CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
+        // Its parent lays out a box excluded from normal layout, like a text control's placeholder (RenderBlock::layoutExcludedChildren).
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(*descendant); box && box->isExcludedFromNormalLayout()) {
+            descendant = descendant->nextInPreOrderAfterChildren(&rootContainer);
+            continue;
+        }
+        auto laidOutThroughRenderTree = renderer && isLaidOutThroughRenderTree(*renderer);
+        if (renderer) {
+            if (hasFloats) {
+                if (auto reason = afterFloatAvoidanceReason(*renderer, rootContainer, laidOutThroughRenderTree))
+                    return reason;
+            }
+            if (auto reason = laidOutThroughRenderTree ? independentFormattingContextAvoidanceReason(downcast<RenderBox>(*renderer), rootContainer) : contentAvoidanceReason(*renderer, rootContainer))
+                return reason;
+            hasFloats |= renderer->isFloating();
+        }
+        auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
+        // The content of an atomic inline-level box or of an out-of-flow leaf container is not part of it either.
+        auto skipsContent = (isOutOfFlowBox && (!isLaidOutByBlockFormattingContext(*renderer, rootContainer) || isOutOfFlowLeafContainer(*renderer)))
+            || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant) || descendant->isRenderReplaced() || (renderer && renderer->isFloating());
+        descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
+    }
+    return { };
+}
+
+static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const RenderBlockFlow& rootContainer)
+{
+    if (auto reason = rootAvoidanceReason(rootContainer))
+        return reason;
+    return descendantsAvoidanceReason(rootContainer);
+}
+
+bool canUseForNestedBlockLayout(const RenderBlockFlow& blockContainer)
+{
+    return isSupportedBlockFormattingContextRoot(blockContainer) && !descendantsAvoidanceReason(blockContainer);
+}
+
+bool canUseForBlockLayout(const RenderBlockFlow& rootContainer)
+{
+    return !blockLayoutAvoidanceReason(rootContainer);
+}
+
+CheckedPtr<RenderBlockFlow> coveredBlockFormattingContextRoot(RenderBlock& blockContainer)
+{
+    for (CheckedPtr<RenderElement> ancestor = &blockContainer; ancestor; ancestor = ancestor->parent()) {
+        CheckedPtr ancestorBlockContainer = dynamicDowncast<RenderBlockFlow>(*ancestor);
+        if (!ancestorBlockContainer)
+            return nullptr;
+        if (!ancestorBlockContainer->createsNewFormattingContext())
+            continue;
+        if (canUseForBlockLayout(*ancestorBlockContainer))
+            return ancestorBlockContainer;
+        // An in-flow root whose content the block formatting context it is in lays out.
+        if (ancestorBlockContainer->isOutOfFlowPositioned() || !canUseForNestedBlockLayout(*ancestorBlockContainer))
+            return nullptr;
+    }
+    return nullptr;
+}
+
+bool canUseForIntrinsicInlineSizes(const RenderBlockFlow& rootContainer)
+{
+    return canUseForBlockLayout(rootContainer) && canComputeContentInlineSizes(rootContainer);
+}
+
+static ASCIILiteral description(BlockAvoidanceReason reason)
+{
+    switch (reason) {
+    case BlockAvoidanceReason::BlockFormattingContextIntegrationDisabled:
+        return "disabled"_s;
+    case BlockAvoidanceReason::NotABlockFormattingContextRoot:
+        return "not a root"_s;
+    case BlockAvoidanceReason::RootIsRenderView:
+        return "root: render view"_s;
+    case BlockAvoidanceReason::RootHasListMarker:
+        return "root: list item with a marker"_s;
+    case BlockAvoidanceReason::RootIsMultiColumnFlow:
+        return "root: multi-column flow"_s;
+    case BlockAvoidanceReason::RootHasUnsupportedRenderer:
+        return "root: other renderer"_s;
+    case BlockAvoidanceReason::RootHasUnsupportedWritingMode:
+        return "root: horizontal-bt writing mode"_s;
+    case BlockAvoidanceReason::RootIsPaginated:
+        return "root: paginated"_s;
+    case BlockAvoidanceReason::RootIsInLegacyLineClampContext:
+        return "root: in -webkit-line-clamp"_s;
+    case BlockAvoidanceReason::RootIsInLineGridContext:
+        return "root: in line grid"_s;
+    case BlockAvoidanceReason::RootHasColumns:
+        return "root: columns"_s;
+    case BlockAvoidanceReason::ContentHasFloat:
+        return "float"_s;
+    case BlockAvoidanceReason::ContentHasOutOfFlowBox:
+        return "out-of-flow box in inline or leaf content"_s;
+    case BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer:
+        return "out-of-flow table or other renderer"_s;
+    case BlockAvoidanceReason::ContentHasListMarker:
+        return "list item with a marker"_s;
+    case BlockAvoidanceReason::ContentHasStretchedQuirksModeBody:
+        return "quirks mode body leaf"_s;
+    case BlockAvoidanceReason::ContentHasUnsupportedRenderer:
+        return "other renderer"_s;
+    case BlockAvoidanceReason::ContentHasFormattingContextRoot:
+        return "formatting context root (contain, columns, ...)"_s;
+    case BlockAvoidanceReason::ContentHasInlineBoxContainingBlock:
+        return "out-of-flow box in a positioned inline box"_s;
+    case BlockAvoidanceReason::ContentHasBlockInInline:
+        return "block-in-inline"_s;
+    case BlockAvoidanceReason::ContentHasUnsupportedInlineBox:
+        return "unsupported inline box"_s;
+    case BlockAvoidanceReason::ContentHasOrthogonalFlow:
+        return "orthogonal writing mode"_s;
+    case BlockAvoidanceReason::ContentHasSizingKeyword:
+        return "sizing keyword or calc-size()"_s;
+    case BlockAvoidanceReason::ContentHasStretchBlockSize:
+        return "stretch block size"_s;
+    case BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize:
+        return "intrinsic size of unmeasurable content"_s;
+    case BlockAvoidanceReason::ContentHasQuirksModePercentageHeight:
+        return "quirks mode percentage height"_s;
+    case BlockAvoidanceReason::ContentHasNestedQuirkContainer:
+        return "nested quirk container"_s;
+    case BlockAvoidanceReason::ContentHasAnchorPositioning:
+        return "anchor positioning"_s;
+    case BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment:
+        return "out-of-flow self alignment"_s;
+    case BlockAvoidanceReason::ContentHasLineClamp:
+        return "line-clamp"_s;
+    case BlockAvoidanceReason::ContentHasLineGrid:
+        return "line grid"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView& renderView)
+{
+    // A block-level box is placed by the block formatting context of its block container, which the new block formatting context lays
+    // out when the root of that block formatting context is covered.
+    struct BlockFormattingContext {
+        // Why its root stays on the render tree path, or the root when the new block formatting context lays it out.
+        std::optional<BlockAvoidanceReason> avoidanceReason;
+        CheckedPtr<const RenderBlockFlow> coveredRoot;
+        size_t areaIndex { 0 };
+    };
+    // The area of each block formatting context: its root's border box without the roots of the block formatting contexts inside it, which
+    // may overflow it. RenderView's is the canvas around the document, not block content.
+    auto areas = Vector<std::pair<double, bool>> { };
+    auto area = [](const LayoutRect& rect) {
+        return rect.width().toDouble() * rect.height().toDouble();
+    };
+    auto blockFormattingContextOf = [&](const RenderBlockFlow& root, std::optional<size_t> enclosingAreaIndex) {
+        auto avoidanceReason = blockLayoutAvoidanceReason(root);
+        auto rootArea = is<RenderView>(root) ? 0. : area(root.borderBoxRect());
+        if (enclosingAreaIndex)
+            areas[*enclosingAreaIndex].first -= rootArea;
+        areas.append({ rootArea, !avoidanceReason });
+        return BlockFormattingContext { avoidanceReason, avoidanceReason ? nullptr : &root, areas.size() - 1 };
+    };
+    auto coverage = BlockLayoutCoverage { };
+    auto uncoveredBoxes = Vector<std::pair<BlockAvoidanceReason, unsigned>> { };
+    auto renderersToVisit = Vector<std::pair<CheckedRef<const RenderElement>, BlockFormattingContext>> { { renderView, blockFormattingContextOf(renderView, { }) } };
+    while (!renderersToVisit.isEmpty()) {
+        auto [renderer, blockFormattingContext] = renderersToVisit.takeLast();
+        auto& avoidanceReason = blockFormattingContext.avoidanceReason;
+        for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
+            // The view places the document element itself (RenderView::layout), in no block formatting context.
+            if (is<RenderBlockFlow>(renderer) && !is<RenderView>(renderer) && is<RenderBox>(child) && !child->isInline()) {
+                ++coverage.boxes;
+                if (!avoidanceReason)
+                    ++coverage.coveredBoxes;
+                else {
+                    auto index = uncoveredBoxes.findIf([&](auto& entry) {
+                        return entry.first == *avoidanceReason;
+                    });
+                    if (index != notFound)
+                        ++uncoveredBoxes[index].second;
+                    else
+                        uncoveredBoxes.append({ *avoidanceReason, 1 });
+                }
+            }
+            CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(child);
+            if (!blockContainer || !blockContainer->createsNewFormattingContext()) {
+                renderersToVisit.append({ child, blockFormattingContext });
+                continue;
+            }
+            // The block formatting context a root is in lays out its content when it supports the root: an in-flow block-level box of its
+            // own, or an out-of-flow box whose containing block it lays out.
+            auto isLaidOutByEnclosingBlockFormattingContext = [&] {
+                if (!blockFormattingContext.coveredRoot || !canUseForNestedBlockLayout(*blockContainer))
+                    return false;
+                if (blockContainer->isOutOfFlowPositioned()) {
+                    CheckedRef coveredRoot = *blockFormattingContext.coveredRoot;
+                    return isLaidOutByBlockFormattingContext(*blockContainer, coveredRoot);
+                }
+                return is<RenderBlockFlow>(renderer) && !blockContainer->isInline() && !blockContainer->isFloating();
+            };
+            renderersToVisit.append({ child, isLaidOutByEnclosingBlockFormattingContext() ? blockFormattingContext : blockFormattingContextOf(*blockContainer, blockFormattingContext.areaIndex) });
+        }
+    }
+    for (auto [contextArea, isCovered] : areas) {
+        contextArea = std::max(0., contextArea);
+        coverage.area += contextArea;
+        if (isCovered)
+            coverage.coveredArea += contextArea;
+    }
+    std::ranges::sort(uncoveredBoxes, [](auto& a, auto& b) {
+        return a.second > b.second;
+    });
+    coverage.uncoveredBoxes = uncoveredBoxes.map([](auto& entry) {
+        return std::pair { description(entry.first), entry.second };
+    });
+    return coverage;
+}
+
+} // namespace LayoutIntegration
+} // namespace WebCore

@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; margin: 0; }
+.c { background: lightblue; margin: 4px 0; }
+.wrap { width: 300px; border: 1px solid; display: inline-block; vertical-align: top; }
+</style>
+<div class="wrap">
+<div class="c" style="contain: size">size<div style="height: 30px"></div></div>
+<div class="c" style="contain: size; contain-intrinsic-size: 100px 25px">cis</div>
+<div class="c" style="contain: inline-size">inline-size<div style="height: 30px"></div></div>
+<div class="c" style="contain: layout">layout<div style="margin-top: 20px">child margin</div></div>
+<div class="c" style="contain: paint">paint<div style="margin-top: 20px; height: 30px; width: 400px">overflow</div></div>
+<div class="c" style="contain: strict; contain-intrinsic-block-size: 40px">strict</div>
+<div class="c" style="contain: content">content<div style="margin-bottom: 15px">x</div></div>
+<div style="width: min-content; border: 1px solid"><div class="c" style="contain: inline-size; contain-intrinsic-inline-size: 80px">min-content of contained</div></div>
+<div style="width: max-content; border: 1px solid"><div class="c" style="contain: size">max-content of size contained</div></div>
+<div class="c" style="content-visibility: auto">auto visible</div>
+<div class="c" style="content-visibility: hidden; contain-intrinsic-size: auto 30px">hidden</div>
+<div class="c" style="contain: size; contain-intrinsic-block-size: auto 30px">auto 30px</div>
+<span style="display: inline-block; contain: size layout; contain-intrinsic-size: 50px 20px; background: pink"></span>text after
+<div class="c" style="contain: layout; margin-top: 10px"><div style="margin-top: 10px">collapse?</div></div>
+</div>
+<style>
+body { font: 10px monospace; margin: 0; }
+.cb { position: relative; width: 110px; height: 50px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.oof { position: absolute; background: lightblue; }
+</style>
+<div class="cb"><div class="oof" style="contain: size">size<div style="height: 30px; width: 60px"></div></div></div>
+<div class="cb"><div class="oof" style="contain: size layout">size layout<div style="height: 30px; width: 60px"></div></div></div>
+<div class="cb"><div class="oof" style="contain: strict">strict</div></div>
+<div class="cb"><div class="oof" style="contain: size layout; contain-intrinsic-size: 70px 25px">cis</div></div>
+<div class="cb"><div class="oof" style="contain: size layout; contain-intrinsic-size: auto 70px auto 25px">cis auto</div></div>
+<div class="cb"><div class="oof" style="contain: size layout; width: 100px; padding: 3px">width</div></div>
+<div class="cb"><div class="oof" style="contain: size layout; left: 10px; right: 10px">stretch</div></div>
+<div class="cb"><div class="oof" style="contain: inline-size layout">inline-size<div style="height: 30px; width: 60px"></div></div></div>
+<div class="cb"><div class="oof" style="contain: size layout; contain-intrinsic-block-size: 40px; top: 0; bottom: 0">insets</div></div>
+<div class="cb"><div class="oof" style="contain: size layout; display: flex">flex</div></div>
+<div class="cb"><div class="oof" style="contain: size layout; min-height: 20px; max-width: 30px">minmax</div></div>

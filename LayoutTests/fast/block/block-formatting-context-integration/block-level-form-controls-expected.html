@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px monospace; }
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; vertical-align: top; }
+input, textarea, select, progress, meter, legend { display: block; margin: 4px 0; }
+</style>
+<div class="root">
+  <input value="text">
+  <input type="search" value="search">
+  <input type="number" value="12" style="margin: 6px auto">
+  <textarea rows="2">text area</textarea>
+  <select><option>one</option><option>a longer option</option></select>
+  <select size="3"><option>list</option><option>box</option></select>
+  <input type="range" style="width: 50%">
+  <progress value="0.4"></progress>
+  <meter value="0.7"></meter>
+  <input type="file">
+  <input type="checkbox" checked>
+  <legend>a legend outside of a fieldset</legend>
+</div>
+<div class="root">
+  <input value="half" style="width: 50%">
+  <textarea style="width: 200px; margin-left: auto">right</textarea>
+  <select style="max-width: 80px"><option>an option that is too wide</option></select>
+  <input type="search" style="min-width: 250px" value="wide">
+  <div style="margin-top: 10px"><input style="margin-top: 20px" value="collapsing margins"></div>
+  <legend style="padding: 4px; border: 2px solid">padded legend</legend>
+</div>
+<div class="root" dir="rtl"><input value="right to left"><select><option>select</option></select><textarea>text</textarea><legend>legend</legend></div>
+<div class="root" style="writing-mode: vertical-lr; height: 200px; width: auto; display: inline-block"><input value="vertical"><select><option>select</option></select><textarea>text</textarea></div>

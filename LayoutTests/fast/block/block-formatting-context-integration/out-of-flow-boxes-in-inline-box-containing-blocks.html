@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/14px monospace; }
+.root { width: 160px; border: 1px solid; margin: 2px; padding: 3px; display: inline-block; vertical-align: top; }
+.rel { position: relative; background: lightyellow; border: 2px solid orange; padding: 0 4px; }
+.a { position: absolute; background: lightblue; }
+.plain { position: relative; }
+</style>
+<div class="root">text <span class="rel">inline<span class="a" style="top: 0; left: 0; width: 20px; height: 8px"></span></span> text</div>
+<div class="root">text <span class="rel">inline<span class="a" style="right: 0; bottom: 0; width: 20px; height: 8px"></span></span> text</div>
+<div class="root">text <span class="rel">inline<span class="a" style="inset: 0">stretch</span></span> text</div>
+<div class="root">a <span class="rel">across two lines of text here<span class="a" style="inset: 0; opacity: 0.5"></span></span> b</div>
+<div class="root">text <span class="plain">inline<div class="a" style="width: 30px; height: 6px"></div> more</span> text</div>
+<div class="root">text <span class="plain">inline<span class="a" style="width: 30px; height: 6px; margin-top: 2px"></span> more</span> text</div>
+<div class="root">text <span class="rel">percent<span class="a" style="left: 50%; top: 100%; width: 50%; height: 5px"></span></span> text</div>
+<div class="root">text <span class="rel">margins<span class="a" style="inset: 0; width: 10px; height: 6px; margin: auto"></span></span></div>
+<div class="root"><div>before</div>text <span class="rel">anonymous block<span class="a" style="top: 0; left: 2px; width: 10px; height: 6px"></span></span><div>after</div></div>
+<div class="root" style="direction: rtl">text <span class="rel">right to left across lines<span class="a" style="top: 0; left: 0; width: 10px; height: 6px"></span></span></div>
+<div class="root" style="writing-mode: vertical-rl; height: 120px; width: auto">text <span class="rel">vertical<span class="a" style="top: 0; left: 0; width: 6px; height: 10px"></span></span> text</div>
+<div class="root">text <span class="rel"><span>nested <span class="a" style="bottom: 0; left: 0; width: 10px; height: 6px"></span></span></span> text</div>
