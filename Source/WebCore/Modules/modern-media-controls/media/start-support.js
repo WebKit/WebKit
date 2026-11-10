@@ -81,6 +81,9 @@ class StartSupport extends MediaControllerSupport
         if (host && host.inWindowFullscreen)
             return false;
 
+        if (this.mediaController.isFullscreen)
+            return false;
+
         if (host && host.shouldForceControlsDisplay)
             return true;
 
@@ -94,9 +97,6 @@ class StartSupport extends MediaControllerSupport
             return false;
 
         if (media instanceof HTMLAudioElement)
-            return false;
-
-        if (this.mediaController.isFullscreen)
             return false;
 
         if (media.error)

@@ -73,6 +73,8 @@ enum DeviceType {
     readonly attribute DOMString spatialVideoProjectionKind;
     readonly attribute long? spatialVideoHorizontalFieldOfView;
     undefined spatialCameraDidMove(unrestricted double yaw, unrestricted double pitch, unrestricted double fieldOfView);
+    undefined setSpatialVideoRendererActive(boolean active);
+    readonly attribute boolean isInElementFullscreen;
     readonly attribute boolean isAVExperienceControllerFullscreenEnabled;
 
     readonly attribute DOMString externalDeviceDisplayName;

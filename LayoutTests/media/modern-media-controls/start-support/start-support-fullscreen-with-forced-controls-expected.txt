@@ -1,0 +1,14 @@
+Testing that StartSupport does not show the start button in fullscreen even when the host forces the controls to be displayed, as it does for a video that uses element fullscreen.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+In fullscreen, forced controls do not become a start button:
+PASS controls.showsStartButton is false
+
+Inline, forced controls still show the start button:
+PASS controls.showsStartButton is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

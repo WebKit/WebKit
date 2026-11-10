@@ -297,6 +297,11 @@ double HTMLVideoElement::fieldOfView() const
     return m_cameraFieldOfView.value_or(defaultFieldOfView());
 }
 
+void HTMLVideoElement::setSpatialVideoRendererActive(bool active)
+{
+    m_spatialVideoRendererActive = active;
+}
+
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
 {
     RefPtr player = this->player();

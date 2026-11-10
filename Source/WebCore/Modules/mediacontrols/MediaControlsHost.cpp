@@ -39,6 +39,7 @@
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
 #include "DOMRect.h"
+#include "DocumentFullscreen.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "DocumentView.h"
@@ -408,6 +409,22 @@ void MediaControlsHost::spatialCameraDidMove(double yaw, double pitch, double fi
 {
     if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement.get()))
         videoElement->spatialCameraDidMove(yaw, pitch, fieldOfView);
+}
+
+void MediaControlsHost::setSpatialVideoRendererActive(bool active)
+{
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement))
+        videoElement->setSpatialVideoRendererActive(active);
+}
+
+bool MediaControlsHost::isInElementFullscreen() const
+{
+#if ENABLE(FULLSCREEN_API)
+    Ref mediaElement = m_mediaElement;
+    return protect(protect(mediaElement->document())->fullscreen())->fullscreenElement() == mediaElement.ptr();
+#else
+    return false;
+#endif
 }
 
 bool MediaControlsHost::isAVExperienceControllerFullscreenEnabled() const

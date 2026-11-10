@@ -93,6 +93,11 @@ class LayoutTraits
         return GestureRecognizer.SupportsTouches;
     }
 
+    reservesFullscreenDragGestures()
+    {
+        return false;
+    }
+
     supportsAirPlay()
     {
         throw "Derived class must implement this function.";
