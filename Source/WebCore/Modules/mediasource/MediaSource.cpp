@@ -1066,10 +1066,12 @@ void MediaSource::detachFromElement()
     if (detachable())
         m_readyStateBeforeDetached = readyState();
 
+    // Queue endstreaming ahead of sourceclose.
+    elementDetached();
+
     // 1. Set the readyState attribute to "closed".
     // 7. Queue a task to fire a simple event named sourceclose at the MediaSource.
     setReadyState(ReadyState::Closed);
-    elementDetached();
 
     // 2. Update duration to NaN.
     // Step is done in duration() method which will now always return invalidTime() if MediaSource is not detachable.
