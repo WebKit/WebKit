@@ -1,0 +1,3 @@
+
+PASS navigator.wakeLock.request() aborts if the document becomes not active due to iframe removal
+
