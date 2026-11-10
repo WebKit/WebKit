@@ -5826,9 +5826,12 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(IPC_TESTING_API)
     if ((m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))) {
         protect(WebProcess::singleton().parentProcessConnection())->setIgnoreInvalidMessageForTesting();
+#if ENABLE(GPU_PROCESS)
         assertIsMainRunLoop();
         if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
             gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
+#endif // ENABLE(GPU_PROCESS)
+
 #if ENABLE(MODEL_PROCESS)
         if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
             modelProcessConnection->connection().setIgnoreInvalidMessageForTesting();
