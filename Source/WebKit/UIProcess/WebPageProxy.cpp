@@ -9173,6 +9173,11 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
             return;
     }
 
+    frameWasRemoved(frameID, frame.get(), &connection);
+}
+
+void WebPageProxy::frameWasRemoved(FrameIdentifier frameID, WebFrameProxy* frame, IPC::Connection* sender)
+{
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
@@ -9188,7 +9193,7 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
     // of launching a new one.
     RefPtr frameProcess = frame ? &frame->frameProcess() : nullptr;
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
+        if (!webProcess.hasConnection() || &webProcess.connection() == sender)
             return;
         RefPtr removedFrameProcess = frameProcess && &frameProcess->process() == &webProcess ? frameProcess : nullptr;
         webProcess.sendWithAsyncReply(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), [preventProcessShutdownScope = webProcess.shutdownPreventingScope(), removedFrameProcess = WTF::move(removedFrameProcess)] { }, pageID);

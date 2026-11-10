@@ -10406,6 +10406,77 @@ TEST(SiteIsolation, RemoteTimelinesAndAnimationsClearedWhenIframeProcessCrashes)
 }
 #endif // ENABLE(THREADED_ANIMATIONS)
 
+TEST(SiteIsolation, SiblingIframeKeepsTopOriginAfterOtherIframeCrash)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe><iframe src='https://apple.com/apple'></iframe>"_s } },
+        { "/webkit"_s, { "webkit"_s } },
+        { "/apple"_s, { "apple"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<NSArray<_WKFrameTreeNode *>> childFrames = [webView mainFrame].childFrames;
+    ASSERT_EQ([childFrames count], 2u);
+    RetainPtr<WKFrameInfo> webKitFrame = [childFrames objectAtIndex:0].info;
+    RetainPtr<WKFrameInfo> appleFrame = [childFrames objectAtIndex:1].info;
+    EXPECT_WK_STREQ([appleFrame securityOrigin].host, "apple.com");
+
+    // Location caches its ancestor origins, so look at them from a new document each time.
+    NSString *ancestorState = @"(() => {"
+        "    const frame = document.createElement('iframe');"
+        "    document.body.appendChild(frame);"
+        "    return JSON.stringify([Array.from(frame.contentWindow.location.ancestorOrigins), frame.contentWindow.isSecureContext]);"
+        "})()";
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:ancestorState inFrame:appleFrame.get()], "[[\"https://apple.com\",\"https://example.com\"],true]");
+
+    pid_t webKitProcess = [webKitFrame _processIdentifier];
+    EXPECT_NE(webKitProcess, [appleFrame _processIdentifier]);
+    kill(webKitProcess, SIGKILL);
+    while (processStillRunning(webKitProcess))
+        Util::spinRunLoop();
+    Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:ancestorState inFrame:appleFrame.get()], "[[\"https://apple.com\",\"https://example.com\"],true]");
+}
+
+TEST(SiteIsolation, NestedIframeRemovedWhenParentIframeProcessCrashes)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html><iframe src='https://apple.com/apple'></iframe>"_s } },
+        { "/apple"_s, { "apple"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame, { { RemoteFrame } } } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s, { { RemoteFrame } } } }
+        }, { RemoteFrame,
+            { { RemoteFrame, { { "https://apple.com"_s } } } }
+        },
+    });
+    _WKFrameTreeNode *webKitFrame = [webView mainFrame].childFrames.firstObject;
+    pid_t webKitProcess = webKitFrame.info._processIdentifier;
+    pid_t appleProcess = webKitFrame.childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(webKitProcess, appleProcess);
+
+    kill(webKitProcess, SIGKILL);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(appleProcess);
+    }));
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        },
+    });
+}
+
 #if defined(NDEBUG) && PLATFORM(MAC)
 TEST(SiteIsolation, UnresponsiveProcessKeydown)
 {

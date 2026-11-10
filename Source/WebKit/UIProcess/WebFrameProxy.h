@@ -278,11 +278,7 @@ public:
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess() const;
     void notifyParentOfLoadCompletion(WebProcessProxy&);
 
-    enum class ClearFrameTreeSyncData : bool {
-        No,
-        Yes
-    };
-    void remoteProcessDidTerminate(WebProcessProxy&, ClearFrameTreeSyncData);
+    void remoteProcessDidTerminate(WebProcessProxy&);
 
     Ref<WebCore::FrameTreeSyncData> calculateFrameTreeSyncData() const;
     void broadcastFrameTreeSyncData(Ref<WebCore::FrameTreeSyncData>&&);

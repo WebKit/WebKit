@@ -257,7 +257,7 @@ void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTermi
     if (RefPtr drawingArea = page->drawingArea())
         drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
     if (RefPtr mainFrame = page->mainFrame())
-        mainFrame->remoteProcessDidTerminate(process, WebFrameProxy::ClearFrameTreeSyncData::Yes);
+        mainFrame->remoteProcessDidTerminate(process);
     page->dispatchProcessDidTerminate(process, reason);
 }
 

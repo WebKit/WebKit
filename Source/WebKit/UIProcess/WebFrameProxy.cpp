@@ -879,22 +879,21 @@ bool WebFrameProxy::isFocused() const
     return webPage && webPage->focusedFrame() == this;
 }
 
-void WebFrameProxy::remoteProcessDidTerminate(WebProcessProxy& process, ClearFrameTreeSyncData clearFrameTreeSyncData)
+void WebFrameProxy::remoteProcessDidTerminate(WebProcessProxy& process)
 {
-    // Only clear the FrameTreeSyncData on all child processes once, when handling the main frame.
-    // No point in clearing it multiple times in a tight loop.
-    // Site isolation may have been disabled after this remote page was created.
-    RefPtr webPage = page();
-    if (clearFrameTreeSyncData == ClearFrameTreeSyncData::Yes && webPage && protect(webPage->preferences())->siteIsolationEnabled())
-        broadcastFrameTreeSyncData(FrameTreeSyncData::create());
-
     if (RefPtr provisionalFrame = m_provisionalFrame; provisionalFrame && provisionalFrame->process().coreProcessIdentifier() == process.coreProcessIdentifier())
         cancelProvisionalFrame(process);
 
-    for (Ref child : m_childFrames)
-        child->remoteProcessDidTerminate(process, ClearFrameTreeSyncData::No);
+    for (Ref child : copyToVector(m_childFrames))
+        child->remoteProcessDidTerminate(process);
     if (process.coreProcessIdentifier() != this->process().coreProcessIdentifier())
         return;
+
+    if (RefPtr page = m_page) {
+        for (Ref child : copyToVector(m_childFrames))
+            page->frameWasRemoved(child->frameID(), child.ptr(), nullptr);
+    }
+
     if (m_frameLoadState.state() == FrameLoadState::State::Finished)
         return;
 
