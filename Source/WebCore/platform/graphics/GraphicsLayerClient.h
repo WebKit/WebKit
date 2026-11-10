@@ -102,6 +102,12 @@ public:
     // initialized to identity already. Returns false if the layer has no transform.
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const { return false; }
 
+#if ENABLE(THREADED_ANIMATIONS)
+    // Provides the time at which the current rendering update started, used as a reference to threaded
+    // animations will move layers to in upcoming frames.
+    virtual std::optional<MonotonicTime> renderingUpdateTimestamp() const { return std::nullopt; }
+#endif
+
     // Allows the client to modify a layer position used during the visibleRect calculation, for example to ignore
     // scroll overhang.
     virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const { }

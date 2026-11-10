@@ -784,6 +784,15 @@ bool RenderLayerCompositor::backdropRootIsOpaque(const GraphicsLayer* layer) con
     return !viewHasTransparentBackground();
 }
 
+#if ENABLE(THREADED_ANIMATIONS)
+std::optional<MonotonicTime> RenderLayerCompositor::renderingUpdateTimestamp() const
+{
+    if (auto timestamp = page().lastRenderingUpdateTimestamp())
+        return timestamp;
+    return std::nullopt;
+}
+#endif
+
 void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer*)
 {
     scheduleRenderingUpdate();

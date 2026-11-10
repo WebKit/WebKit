@@ -458,6 +458,9 @@ private:
     bool backdropRootIsOpaque(const GraphicsLayer*) const override;
     bool isFlushingLayers() const override { return m_flushingLayers; }
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
+#if ENABLE(THREADED_ANIMATIONS)
+    std::optional<MonotonicTime> renderingUpdateTimestamp() const override;
+#endif
 
     // Copy the accelerated compositing related flags from Settings
     void cacheAcceleratedCompositingFlags();

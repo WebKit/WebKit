@@ -222,6 +222,9 @@ public:
         bool ancestorWithTransformAnimationIntersectsCoverageRect { false };
         bool ancestorIsNonAxisAligned { false };
         bool backdropRootIsOpaque { false };
+#if ENABLE(THREADED_ANIMATIONS)
+        std::optional<MonotonicTime> renderingUpdateTimestamp;
+#endif
     };
     bool needsCommit(const CommitState&);
     void recursiveCommitChanges(CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
@@ -420,8 +423,11 @@ private:
         TransformationMatrix animatingTransform;
     };
     
-    VisibleAndCoverageRects computeVisibleAndCoverageRect(TransformState&, bool accumulateTransform, ComputeVisibleRectFlags = RespectAnimatingTransforms) const;
+    VisibleAndCoverageRects computeVisibleAndCoverageRect(TransformState&, bool accumulateTransform, ComputeVisibleRectFlags = RespectAnimatingTransforms, const TransformationMatrix* animatingTransform = nullptr) const;
     bool adjustCoverageRect(VisibleAndCoverageRects&, const FloatRect& oldVisibleRect) const;
+#if ENABLE(THREADED_ANIMATIONS)
+    bool adjustCoverageRectForTransformAnimations(VisibleAndCoverageRects&, const TransformState&, bool accumulateTransform, const CommitState&);
+#endif
 
     const FloatRect& visibleRect() const LIFETIME_BOUND { return m_visibleRect; }
     const FloatRect& coverageRect() const LIFETIME_BOUND { return m_coverageRect; }
@@ -746,6 +752,9 @@ private:
     FloatRect m_visibleRect;
     FloatRect m_previousCommittedVisibleRect;
     FloatRect m_coverageRect; // Area for which we should maintain backing store, in the coordinate space of this layer.
+#if ENABLE(THREADED_ANIMATIONS)
+    Vector<FloatRect> m_rectsForTransformAnimationTileCoverage; // Areas for which we should have tiles converage, in the coordinate space of this layer.
+#endif
     FloatSize m_sizeAtLastCoverageRectUpdate;
     FloatSize m_pixelAlignmentOffset;
 

@@ -441,6 +441,74 @@ ResolvedEffectTiming AcceleratedEffect::resolvedTiming(WebAnimationTime timeline
     });
 }
 
+std::optional<double> AcceleratedEffect::progressUntilNextTransformRelatedStep(double iterationProgress) const
+{
+    auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, const TimingFunction* timingFunction) -> std::optional<double> {
+        RefPtr stepsTimingFunction = dynamicDowncast<StepsTimingFunction>(timingFunction);
+        if (!stepsTimingFunction || intervalEndProgress <= intervalStartProgress)
+            return std::nullopt;
+
+        auto numberOfSteps = stepsTimingFunction->numberOfSteps();
+        auto intervalProgress = intervalEndProgress - intervalStartProgress;
+        auto iterationProgressMappedToCurrentInterval = (iterationProgress - intervalStartProgress) / intervalProgress;
+        auto nextStepProgress = std::ceil(iterationProgressMappedToCurrentInterval * numberOfSteps) / numberOfSteps;
+        return (nextStepProgress - iterationProgressMappedToCurrentInterval) * intervalProgress;
+    };
+
+    if (RefPtr stepsTimingFunction = dynamicDowncast<StepsTimingFunction>(m_timing.timingFunction))
+        return progressUntilNextStepInInterval(0, 1, stepsTimingFunction.get());
+
+    if (!is<LinearTimingFunction>(m_timing.timingFunction))
+        return std::nullopt;
+
+    // A missing interval start keyframe stands for the implicit 0% keyframe, which uses the default keyframe timing function.
+    auto timingFunctionForIntervalStartKeyframe = [&](const Keyframe* keyframe) -> const TimingFunction* {
+        if (keyframe)
+            return timingFunctionForKeyframe(*keyframe);
+        return m_animationType == WebAnimationType::CSSAnimation ? m_defaultKeyframeTimingFunction.get() : nullptr;
+    };
+
+    const Keyframe* intervalStartKeyframe = nullptr;
+    double intervalStartProgress = 0;
+    for (auto& keyframe : m_keyframes) {
+        if (!keyframe.animatedProperties().containsAny(transformRelatedAcceleratedProperties))
+            continue;
+        if (keyframe.offset() > iterationProgress) {
+            RefPtr timingFunction = timingFunctionForIntervalStartKeyframe(intervalStartKeyframe);
+            return progressUntilNextStepInInterval(intervalStartProgress, keyframe.offset(), timingFunction);
+        }
+        intervalStartKeyframe = &keyframe;
+        intervalStartProgress = keyframe.offset();
+    }
+
+    // We're in the interval ending with the implicit 100% keyframe.
+    RefPtr timingFunction = timingFunctionForIntervalStartKeyframe(intervalStartKeyframe);
+    return progressUntilNextStepInInterval(intervalStartProgress, 1, timingFunction);
+}
+
+std::optional<Seconds> AcceleratedEffect::timeUntilNextTransformRelatedStep(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+{
+    // FIXME: it will be useful to make this function more general and use it to sparingly
+    // schedule display links in the UI process in cases where the only monotonic animations
+    // running are using steps() easing.
+    if (m_paused || !m_playbackRate)
+        return std::nullopt;
+
+    auto resolvedTiming = this->resolvedTiming(timelineTime, timelineDuration);
+    if (resolvedTiming.phase != AnimationEffectPhase::Active || !resolvedTiming.simpleIterationProgress)
+        return std::nullopt;
+
+    auto iterationDuration = m_timing.iterationDuration.time();
+    if (!iterationDuration)
+        return std::nullopt;
+
+    auto progressUntilNextStep = progressUntilNextTransformRelatedStep(*resolvedTiming.simpleIterationProgress);
+    if (!progressUntilNextStep)
+        return std::nullopt;
+
+    return *iterationDuration * *progressUntilNextStep / std::abs(m_playbackRate);
+}
+
 void AcceleratedEffect::apply(AcceleratedEffectValues& values, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
 {
     auto resolvedTiming = this->resolvedTiming(timelineTime, timelineDuration);

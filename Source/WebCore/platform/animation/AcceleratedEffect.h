@@ -109,6 +109,8 @@ public:
     NODELETE bool animatesTransformRelatedProperty() const;
     NODELETE WEBCORE_EXPORT bool hasHighImpact() const;
 
+    std::optional<Seconds> timeUntilNextTransformRelatedStep(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
+
 private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&, const OptionSet<AcceleratedEffectProperty>&);
     explicit AcceleratedEffect(AnimationEffectTiming, TimelineIdentifier&&, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime);
@@ -116,6 +118,7 @@ private:
 
     void validateFilters(const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>&);
     ResolvedEffectTiming resolvedTiming(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
+    std::optional<double> progressUntilNextTransformRelatedStep(double iterationProgress) const;
 
     // KeyframeInterpolation
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
