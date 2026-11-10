@@ -77,6 +77,7 @@ public:
         virtual void notifyCompositionRequired() = 0;
         virtual bool isCompositionRequiredOrOngoing() const = 0;
         virtual void requestComposition(CompositionReason) = 0;
+        virtual void didChangeLayerPendingPosition(CoordinatedPlatformLayer&) = 0;
         virtual RunLoop* compositingRunLoop() const = 0;
         virtual int maxTextureSize() const = 0;
         virtual void willPaintTile() = 0;
@@ -241,6 +242,7 @@ private:
     void removeFromParent();
 
     void notifyCompositionRequired();
+    void notifyPositionChanged() WTF_REQUIRES_LOCK(m_lock);
 
     bool needsBackingStore() const;
     void purgeBackingStores();
@@ -409,6 +411,7 @@ private:
     Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 
+    bool m_didNotifyPositionChange WTF_GUARDED_BY_LOCK(m_lock) { false };
     struct {
         std::optional<FloatPoint> position;
         std::optional<FloatPoint> positionForScrolling;

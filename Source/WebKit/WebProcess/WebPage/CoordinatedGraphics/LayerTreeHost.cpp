@@ -391,6 +391,11 @@ void LayerTreeHost::requestComposition(CompositionReason reason)
     m_compositor->requestComposition(reason);
 }
 
+void LayerTreeHost::didChangeLayerPendingPosition(CoordinatedPlatformLayer& layer)
+{
+    m_sceneState->didChangeLayerPendingPosition(layer);
+}
+
 RunLoop* LayerTreeHost::compositingRunLoop() const
 {
     return m_compositor->runLoop();

@@ -63,36 +63,37 @@ void CoordinatedSceneState::setRootLayerChildren(Vector<Ref<CoordinatedPlatformL
 
 void CoordinatedSceneState::addLayer(CoordinatedPlatformLayer& layer)
 {
-    ASSERT(isMainRunLoop());
-    {
-        Locker locker { m_layersLock };
-        m_layers.add(layer);
-    }
+    assertIsMainThread();
+
+    m_layers.add(layer);
     m_didChangeLayers = true;
 }
 
 void CoordinatedSceneState::removeLayer(CoordinatedPlatformLayer& layer)
 {
-    ASSERT(isMainRunLoop());
-    {
-        Locker locker { m_layersLock };
-        m_layers.remove(layer);
-    }
+    assertIsMainThread();
+
+    m_layers.remove(layer);
     m_layersToRemove.add(layer);
     m_didChangeLayers = true;
 }
 
+void CoordinatedSceneState::didChangeLayerPendingPosition(CoordinatedPlatformLayer& layer)
+{
+    Locker locker { m_layersWithPendingPositionLock };
+    ASSERT(!m_layersWithPendingPosition.contains(Ref { layer }));
+    m_layersWithPendingPosition.append(layer);
+}
+
 bool CoordinatedSceneState::flush()
 {
-    ASSERT(isMainRunLoop());
+    assertIsMainThread();
 
     bool didChangeLayers = m_didChangeLayers.exchange(false);
     if (didChangeLayers) {
         Locker pendingLayersLock { m_pendingLayersLock };
-        {
-            Locker locker { m_layersLock };
-            m_pendingLayers = m_layers;
-        }
+        m_pendingLayers = m_layers;
+
         if (m_pendingLayersToRemove.isEmpty())
             m_pendingLayersToRemove = WTF::move(m_layersToRemove);
         else
@@ -107,8 +108,14 @@ bool CoordinatedSceneState::flush()
 void CoordinatedSceneState::flushPendingState()
 {
     Locker stateLock { m_stateLock };
-    Locker layersLock { m_layersLock };
-    for (Ref layer : m_layers)
+
+    Vector<Ref<CoordinatedPlatformLayer>> layers;
+    {
+        Locker pendingLayersLock { m_layersWithPendingPositionLock };
+        layers = WTF::move(m_layersWithPendingPosition);
+    }
+
+    for (Ref layer : layers)
         layer->flushPendingState();
 }
 
@@ -176,13 +183,10 @@ void CoordinatedSceneState::invalidateCommittedLayers()
 
 void CoordinatedSceneState::invalidate()
 {
-    ASSERT(isMainRunLoop());
+    assertIsMainThread();
+
     // Root layer doesn't have client nor backing stores to invalidate.
-    HashSet<Ref<CoordinatedPlatformLayer>> layers;
-    {
-        Locker locker { m_layersLock };
-        layers = WTF::move(m_layers);
-    }
+    auto layers = WTF::move(m_layers);
     for (Ref layer : layers)
         layer->invalidateClient();
 
@@ -190,6 +194,11 @@ void CoordinatedSceneState::invalidate()
         Locker pendingLayersLock { m_pendingLayersLock };
         m_pendingLayers = { };
         m_pendingLayersToRemove = { };
+    }
+
+    {
+        Locker pendingLayersLock { m_layersWithPendingPositionLock };
+        m_layersWithPendingPosition = { };
     }
 
 #if USE(SKIA)
