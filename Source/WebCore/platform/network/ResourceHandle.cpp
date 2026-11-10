@@ -45,7 +45,9 @@
 
 namespace WebCore {
 
+#if PLATFORM(COCOA)
 static bool shouldForceContentSniffing;
+#endif
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceHandleInternal);
 
@@ -287,7 +289,9 @@ bool ResourceHandle::shouldContentSniffURL(const URL& url)
 
 void ResourceHandle::forceContentSniffing()
 {
+#if PLATFORM(COCOA)
     shouldForceContentSniffing = true;
+#endif
 }
 
 void ResourceHandle::setDefersLoading(bool defers)

@@ -60,11 +60,17 @@ Ref<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, 
 #endif
 }
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
 static bool s_shouldUseFixedPixelsPerLineStepForTesting;
+#endif
 
 void Scrollbar::setShouldUseFixedPixelsPerLineStepForTesting(bool useFixedPixelsPerLineStep)
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
     s_shouldUseFixedPixelsPerLineStepForTesting = useFixedPixelsPerLineStep;
+#else
+    UNUSED_PARAM(useFixedPixelsPerLineStep);
+#endif
 }
 
 int Scrollbar::pixelsPerLineStep(int viewWidthOrHeight)

@@ -58,7 +58,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-static double sNumTotalStackTraces = 0;
 static double sNumTotalWalks = 0;
 static double sNumFailedWalks = 0;
 static const uint32_t sNumWalkReportingFrequency = 50;
@@ -454,8 +453,6 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             // FIXME: It'd be interesting to take data about the program's state when
             // we fail to take a stack trace: https://bugs.webkit.org/show_bug.cgi?id=152758
             if (wasValidWalk && walkSize) {
-                if (sReportStats)
-                    sNumTotalStackTraces++;
                 Vector<UnprocessedStackFrame> stackTrace(ReserveCapacityTag { }, walkSize + !!shouldAppendTopFrameAsCCode);
                 if (shouldAppendTopFrameAsCCode)
                     stackTrace.append(UnprocessedStackFrame { machinePC });

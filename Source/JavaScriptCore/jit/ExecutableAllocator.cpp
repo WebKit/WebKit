@@ -1437,6 +1437,8 @@ void ExecutableMemoryHandle::shrink(size_t newSizeInBytes)
 
 namespace JSC {
 
+IGNORE_WARNINGS_BEGIN("unused-but-set-global")
+
 // Keep this pointer in a mutable global variable to help Leaks find it.
 // But we do not use this pointer.
 static ExecutableAllocator* globalExecutableAllocatorToWorkAroundLeaks = nullptr;
@@ -1453,5 +1455,7 @@ ExecutableAllocator& ExecutableAllocator::singleton()
     ASSERT(g_jscConfig.executableAllocator);
     return *g_jscConfig.executableAllocator;
 }
+
+IGNORE_WARNINGS_END
 
 } // namespace JSC
