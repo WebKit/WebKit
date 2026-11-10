@@ -1,0 +1,3 @@
+This test passes if it does not crash. To test manually, press on the text below and drag down across the lines.
+
+PASS

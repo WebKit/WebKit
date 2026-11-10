@@ -1054,26 +1054,30 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     if (event.event().button() != MouseButton::Left || !targetNode)
         return false;
 
-    CheckedPtr renderer = targetNode->renderer();
-    if (!renderer) {
-        auto* parent = targetNode->parentOrShadowHostElement();
-        if (!parent)
-            return false;
+    // The style updates below can rebuild the render tree and destroy the renderer if style is dirty (e.g. mousemove
+    // handler mutates the DOM). We scope the renderer lifetime so it isn't dangling (and CheckedPtr does not assert).
+    {
+        CheckedPtr renderer = targetNode->renderer();
+        if (!renderer) {
+            auto* parent = targetNode->parentOrShadowHostElement();
+            if (!parent)
+                return false;
 
-        renderer = parent->renderer();
-        if (!renderer || !renderer->isRenderListBox())
-            return false;
-    }
+            renderer = parent->renderer();
+            if (!renderer || !renderer->isRenderListBox())
+                return false;
+        }
 
 #if PLATFORM(COCOA) // FIXME: Why does this assertion fire on other platforms?
-    ASSERT(mouseDownMayStartSelect() || m_mouseDownMayStartAutoscroll);
+        ASSERT(mouseDownMayStartSelect() || m_mouseDownMayStartAutoscroll);
 #endif
 
-    m_mouseDownMayStartDrag = false;
+        m_mouseDownMayStartDrag = false;
 
-    if (m_mouseDownMayStartAutoscroll && !panScrollInProgress()) {
-        if (m_autoscrollController->startAutoscrollForSelection(renderer))
-            m_mouseDownMayStartAutoscroll = false;
+        if (m_mouseDownMayStartAutoscroll && !panScrollInProgress()) {
+            if (m_autoscrollController->startAutoscrollForSelection(renderer))
+                m_mouseDownMayStartAutoscroll = false;
+        }
     }
 
     if (m_selectionInitiationState != ExtendedSelection) {
