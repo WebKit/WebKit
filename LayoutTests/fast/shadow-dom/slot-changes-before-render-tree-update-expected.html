@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.box { display: inline-block; width: 20px; height: 20px; margin: 2px; }
+.a { background: red; } .b { background: orange; } .c { background: green; } .d { background: blue; } .e { background: purple; }
+</style>
+</head>
+<body>
+<p>Each row should show the same boxes as the expected result after several slot changes in a row.</p>
+<div><span class="box a"></span><span class="box b"></span><span class="box c"></span><span class="box d"></span> <span class="box e"></span></div>
+<div><span class="box a"></span><span class="box c"></span><span class="box b"></span></div>
+<div><span class="box a"></span><span class="box c"></span><span class="box d"></span></div>
+<div><span class="box a"></span><span class="box b"></span></div>
+<select><option>one</option> <option selected>two</option></select>
+</body>
+</html>

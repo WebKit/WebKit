@@ -126,6 +126,10 @@ void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 
     TraceScope scope(RenderTreeBuildStart, RenderTreeBuildEnd);
 
+    // This may create descendant renderers for these shadow hosts. Clear them again at the end in case
+    // a slot change during the update recorded a host whose descendants get renderers after it.
+    renderView().clearShadowHostsWithTornDownDescendantRenderers();
+
     m_styleUpdate = WTF::move(styleUpdate);
 
     updateRebuildRoots();
@@ -148,6 +152,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
     m_builder.updateAfterDescendants(renderView());
 
     m_styleUpdate = nullptr;
+
+    renderView().clearShadowHostsWithTornDownDescendantRenderers();
 }
 
 void RenderTreeUpdater::updateRebuildRoots()
@@ -747,6 +753,11 @@ void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
     if (!host.renderer() && !host.hasDisplayContents())
         return;
 
+    // Only a render tree update creates renderers, so if this already ran for the host since the last one
+    // there is nothing to tear down. Walking the composed tree again would make adding N children O(N^2).
+    if (view->hasTornDownDescendantRenderers(host))
+        return;
+
     RenderTreeBuilder builder(*view);
 
     tearDownDescendantRenderers(host, TeardownType::RendererUpdate, builder);
@@ -758,6 +769,15 @@ void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
         while (auto* child = hostRenderer->firstChild())
             builder.destroy(*child);
     }
+
+    view->didTearDownDescendantRenderers(host);
+}
+
+void RenderTreeUpdater::didMoveNode(Document& document)
+{
+    // A moved node can keep its renderers, which can bring renderers into a shadow host whose descendant renderers were torn down.
+    if (CheckedPtr view = document.renderView())
+        view->clearShadowHostsWithTornDownDescendantRenderers();
 }
 
 void RenderTreeUpdater::tearDownRenderer(Text& text)

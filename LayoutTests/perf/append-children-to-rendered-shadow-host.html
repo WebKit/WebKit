@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+.base, .base::picker(select) { appearance: base-select; }
+</style>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+var hosts = [];
+
+function setup(magnitude)
+{
+    for (var host of hosts)
+        host.remove();
+
+    var author = document.createElement("div");
+    author.attachShadow({ mode: "open" }).innerHTML = "<slot></slot>";
+    var base = document.createElement("select");
+    base.className = "base";
+    hosts = [document.createElement("select"), base, author];
+    for (var host of hosts) {
+        for (var i = 0; i < magnitude; ++i)
+            host.appendChild(document.createElement(host instanceof HTMLSelectElement ? "option" : "div"));
+        document.body.appendChild(host);
+    }
+    document.body.offsetHeight;
+}
+
+function test(magnitude)
+{
+    for (var host of hosts) {
+        var text = host.appendChild(document.createTextNode(" "));
+        var child = host.appendChild(document.createElement(host instanceof HTMLSelectElement ? "option" : "div"));
+        child.remove();
+        text.remove();
+    }
+}
+
+Magnitude.description("Tests that adding a child to a rendered shadow host with a slot takes constant time regardless of the number of children.");
+Magnitude.run(setup, test, Magnitude.CONSTANT);
+</script>
+</body>
+</html>

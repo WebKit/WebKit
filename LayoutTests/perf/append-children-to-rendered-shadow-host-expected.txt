@@ -1,0 +1,3 @@
+Tests that adding a child to a rendered shadow host with a slot takes constant time regardless of the number of children.
+PASS
+

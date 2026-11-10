@@ -1631,6 +1631,9 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
 
     auto newParentIsConnected = isConnected();
 
+    // This has to happen before the moving steps, which report the slot change.
+    RenderTreeUpdater::didMoveNode(protect(document()));
+
     runMovingStepsForShadowIncludingInclusiveDescendants(node, node, *oldParent, newParentIsConnected, { .didRemoveFromOldTreeScope = oldParent->isInTreeScope(), .didInsertIntoNewTreeScope = isInTreeScope() });
 
     if (!renderTreeUpdateCanReachMovedNode(node))

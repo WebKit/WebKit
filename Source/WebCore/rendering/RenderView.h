@@ -241,6 +241,10 @@ public:
     void unregisterPositionTryBox(const RenderBox&);
     const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const LIFETIME_BOUND { return m_positionTryBoxes; }
 
+    bool hasTornDownDescendantRenderers(const Element& host) const { return m_shadowHostsWithTornDownDescendantRenderers.contains(host); }
+    void didTearDownDescendantRenderers(Element& host) { m_shadowHostsWithTornDownDescendantRenderers.add(host); }
+    void clearShadowHostsWithTornDownDescendantRenderers() { m_shadowHostsWithTornDownDescendantRenderers.clear(); }
+
     NODELETE SingleThreadWeakPtr<RenderBlockFlow> viewTransitionContainingBlock() const;
     NODELETE void setViewTransitionContainingBlock(RenderBlockFlow& renderer);
 
@@ -325,6 +329,8 @@ private:
     SingleThreadWeakHashSet<const RenderBox> m_scrollStateQueryBoxes;
     SingleThreadWeakHashSet<const RenderBoxModelObject> m_anchors;
     SingleThreadWeakHashSet<const RenderBox> m_positionTryBoxes;
+
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_shadowHostsWithTornDownDescendantRenderers;
 
     SingleThreadWeakPtr<RenderBlockFlow> m_viewTransitionContainingBlock;
     HashMap<AtomString, SingleThreadWeakPtr<RenderBox>> m_viewTransitionGroups;

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.box { display: inline-block; width: 20px; height: 20px; margin: 2px; }
+.a { background: red; } .b { background: orange; } .c { background: green; } .d { background: blue; } .e { background: purple; }
+</style>
+</head>
+<body>
+<p>Each row should show the same boxes as the expected result after several slot changes in a row.</p>
+<div id="host1"><span class="box b"></span></div>
+<div id="host2"><span class="box a" slot="first"></span><span class="box b"></span></div>
+<div id="host3"><span class="box a"></span></div>
+<div id="outside"><span class="box b"></span><span id="moved" class="box c"></span></div>
+<select id="select"><option>one</option></select>
+<script>
+for (const host of [host1, host2, host3])
+    host.attachShadow({ mode: "open" }).innerHTML = '<slot name="first"></slot><slot></slot>';
+
+function box(name)
+{
+    const box = document.createElement("span");
+    box.className = "box " + name;
+    return box;
+}
+
+document.body.offsetHeight;
+
+host1.prepend(box("a"));
+host1.append(box("d"));
+host1.insertBefore(box("c"), host1.lastChild);
+host1.append(" ", box("e"));
+
+host2.append(box("c"));
+host2.lastChild.slot = "first";
+
+// A rendered node moved into a host that already had a slot change.
+host3.append(box("d"));
+host3.moveBefore(moved, host3.lastChild);
+outside.prepend(box("a"));
+
+const option = document.createElement("option");
+option.textContent = "two";
+option.selected = true;
+select.append(" ", option);
+</script>
+</body>
+</html>
