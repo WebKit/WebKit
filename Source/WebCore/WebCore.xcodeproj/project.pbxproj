@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		7A1B2C3D2F0000030012AB01 /* NoVarySearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1B2C3D2F0000010012AB01 /* NoVarySearch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B37D5734449A2CF7D02E4B5A /* RasterDrawingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2346E0FF92D1BDEFA870881B /* RasterDrawingOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0E527AEF888254BE1ED24498 /* InspectorObjectIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = DDB320A5233FB9CC6D07408D /* InspectorObjectIdentifier.h */; };
 		2E86B6A6E3E4C9B02D5AAD6D /* CSSValueKeywords.serialization.in in Headers */ = {isa = PBXBuildFile; fileRef = A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7761,6 +7762,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7A1B2C3D2F0000010012AB01 /* NoVarySearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoVarySearch.h; sourceTree = "<group>"; };
+		7A1B2C3D2F0000020012AB01 /* NoVarySearch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NoVarySearch.cpp; sourceTree = "<group>"; };
 		2346E0FF92D1BDEFA870881B /* RasterDrawingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RasterDrawingOptions.h; sourceTree = "<group>"; };
 		F4545C832C4D153807E9E90E /* RasterDrawingOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RasterDrawingOptions.cpp; sourceTree = "<group>"; };
 		02C7A954E7356C44F0D32986 /* WorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerInternals.h; sourceTree = "<group>"; };
@@ -30943,6 +30946,8 @@
 				8A81BF8411DCFD9000DA2B98 /* NetworkLoadMetrics.h */,
 				1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */,
 				1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */,
+				7A1B2C3D2F0000020012AB01 /* NoVarySearch.cpp */,
+				7A1B2C3D2F0000010012AB01 /* NoVarySearch.h */,
 				D2DA641E2B0E98350003F9B2 /* OrganizationStorageAccessPromptQuirk.h */,
 				CDCD41E51C3DDB0900965D99 /* ParsedContentRange.cpp */,
 				CDCD41E61C3DDB0900965D99 /* ParsedContentRange.h */,
@@ -48020,6 +48025,7 @@
 				7A6D3C8028A4053D00C5C6EC /* NotificationResources.h in Headers */,
 				7A6D3C8428A4056400C5C6EC /* NotificationResourcesLoader.h in Headers */,
 				98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */,
+				7A1B2C3D2F0000030012AB01 /* NoVarySearch.h in Headers */,
 				416FD25F240FA4E5006661D8 /* NowPlayingInfo.h in Headers */,
 				4178EF172412608400193C74 /* NowPlayingManager.h in Headers */,
 				A1C6C20A2BC3AFE7002CDE6F /* NowPlayingMetadataObserver.h in Headers */,

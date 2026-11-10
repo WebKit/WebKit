@@ -2975,6 +2975,7 @@ platform/network/HTTPParsers.cpp
 platform/network/MIMEHeader.cpp
 platform/network/NetworkLoadMetrics.cpp
 platform/network/NetworkStateNotifier.cpp
+platform/network/NoVarySearch.cpp
 platform/network/ParsedContentRange.cpp
 platform/network/ParsedContentType.cpp
 platform/network/PendingStreamState.cpp

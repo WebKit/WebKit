@@ -39,6 +39,7 @@ struct PrefetchRule {
     Vector<String> tags;
     std::optional<ReferrerPolicy> referrerPolicy;
     SpeculationRules::Eagerness eagerness;
+    String noVarySearchHint;
 };
 
 class SpeculationRulesMatcher {

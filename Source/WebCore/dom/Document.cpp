@@ -5046,7 +5046,7 @@ void Document::processSpeculationRules()
         for (RefPtr element = iterator.next(); element; element = iterator.next()) {
             if (RefPtr anchorElement = dynamicDowncast<HTMLAnchorElement>(element.get())) {
                 if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(*this, *anchorElement))
-                    anchorElement->setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy));
+                    anchorElement->setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy), WTF::move(prefetchRule->noVarySearchHint));
             }
         }
     }
@@ -5057,6 +5057,7 @@ void Document::processSpeculationRules()
     struct PrefetchCandidate {
         Vector<Vector<String>> tagSets;
         std::optional<ReferrerPolicy> referrerPolicy;
+        String noVarySearchHint;
     };
 
     HashMap<URL, PrefetchCandidate> urlGroups;
@@ -5073,6 +5074,10 @@ void Document::processSpeculationRules()
                 // Use the first referrer policy encountered for each URL
                 if (!group.referrerPolicy)
                     group.referrerPolicy = rule.referrerPolicy;
+
+                // Likewise for the expected No-Vary-Search value.
+                if (group.noVarySearchHint.isEmpty())
+                    group.noVarySearchHint = rule.noVarySearchHint;
             }
         }
     }
@@ -5101,7 +5106,7 @@ void Document::processSpeculationRules()
         std::sort(tagsToSend.begin(), tagsToSend.end(), codePointCompareLessThan);
 
         // 7.4. Start a referrer-initiated navigational prefetch given document and prefetchRecord.
-        frame->loader().prefetch(url, tagsToSend, group.referrerPolicy, lowPriority);
+        frame->loader().prefetch(url, tagsToSend, group.referrerPolicy, lowPriority, group.noVarySearchHint);
     }
 }
 
@@ -12905,13 +12910,13 @@ double Document::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key) 
     return protect(m_randomCachingKeyMap)->lookupCSSRandomBaseValue(key);
 }
 
-void Document::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
+void Document::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority, const String& noVarySearchHint)
 {
     RefPtr frame = this->frame();
     if (!frame)
         return;
 
-    frame->loader().prefetch(url, tags, referrerPolicy, lowPriority);
+    frame->loader().prefetch(url, tags, referrerPolicy, lowPriority, noVarySearchHint);
 }
 
 // https://html.spec.whatwg.org/C#process-the-speculation-rules-header

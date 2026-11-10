@@ -4599,6 +4599,15 @@ NeedsStorageAccessFromFileURLsQuirk:
   humanReadableName: "Needs storage access from file URLs quirk"
   defaultValue: true
 
+NoVarySearchEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "No-Vary-Search"
+  humanReadableDescription: "Enable No-Vary-Search support for speculation rules prefetch"
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
+
 NotificationEventEnabled:
   type: bool
   status: internal

@@ -357,7 +357,9 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     if (isMainFrameLoad()) {
         ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
         if (CheckedPtr session = protect(NetworkProcess::singleton())->networkSession(sessionID())) {
-            if (auto entry = session->prefetchCache().take(request.url())) {
+            auto sharedPreferences = connectionToWebProcess().sharedPreferencesForWebProcess();
+            auto matchNoVarySearch = sharedPreferences && sharedPreferences->noVarySearchEnabled ? PrefetchCache::MatchNoVarySearch::Yes : PrefetchCache::MatchNoVarySearch::No;
+            if (auto entry = session->prefetchCache().take(request.url(), matchNoVarySearch)) {
                 LOADER_RELEASE_LOG("retrieveCacheEntry: retrieved an entry from the prefetch cache (isRedirect=%d)", !entry->redirectRequest.isNull());
                 if (!entry->redirectRequest.isNull()) {
                     auto cacheEntry = cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
@@ -366,10 +368,15 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
                     cache->storeRedirect(request, entry->response, entry->redirectRequest, maxAgeCap);
                     return;
                 }
+                // The entry may have matched through No-Vary-Search with a different query.
+                bool matchedThroughNoVarySearch = !equalIgnoringFragmentIdentifier(entry->response.url(), request.url());
+                entry->response.setURL(URL { request.url() });
                 auto buffer = entry->releaseBuffer();
                 auto cacheEntry = cache->makeEntry(request, entry->response, entry->privateRelayed, buffer.copyRef());
                 retrieveCacheEntryInternal(WTF::move(cacheEntry), ResourceRequest { request });
-                cache->store(request, entry->response, entry->privateRelayed, WTF::move(buffer));
+                // The server never answered this URL, so don't store the body under it in the disk cache.
+                if (!matchedThroughNoVarySearch)
+                    cache->store(request, entry->response, entry->privateRelayed, WTF::move(buffer));
                 return;
             }
         }
