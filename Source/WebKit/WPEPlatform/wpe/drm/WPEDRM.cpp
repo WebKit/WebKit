@@ -109,9 +109,9 @@ Connector::Connector(drmModeConnector* connector, Properties&& properties)
     , m_encoderID(connector->encoder_id)
     , m_widthMM(connector->mmWidth)
     , m_heightMM(connector->mmHeight)
+    , m_modes(ReserveCapacityTag { }, connector->count_modes)
     , m_properties(WTF::move(properties))
 {
-    m_modes.reserveInitialCapacity(connector->count_modes);
     for (const auto& [i, mode] : indexedRange(unsafeMakeSpan(connector->modes, connector->count_modes))) {
         if (mode.type & DRM_MODE_TYPE_PREFERRED)
             m_preferredModeIndex = static_cast<unsigned>(i);
