@@ -127,6 +127,7 @@ class WebCore::CertificateInfo {
 #endif
 }
 
+header: <WebCore/ResourceRequest.h>
 enum class WebCore::ResourceRequestCachePolicy : uint8_t {
     UseProtocolCachePolicy,
     ReloadIgnoringCacheData,
@@ -155,6 +156,7 @@ enum class WebCore::ResourceRequestCachePolicy : uint8_t {
     EventSource
 };
 
+header: <WebCore/ResourceLoadPriority.h>
 enum class WebCore::ResourceLoadPriority : uint8_t {
     VeryLow,
     Low,
@@ -248,6 +250,8 @@ class WebCore::ResourceLoadTiming {
     MonotonicTime endTime();
 }
 
+header: <WebCore/ResourceTiming.h>
+header: <WebCore/ServerTiming.h>
 [CustomHeader] class WebCore::ResourceTiming {
     URL url();
     String initiatorType();
@@ -258,6 +262,7 @@ class WebCore::ResourceLoadTiming {
     bool isSameOriginRequest();
 }
 
+header: <WebCore/CrossOriginAccessControl.h>
 [OptionSet] enum class WebCore::HTTPHeadersToKeepFromCleaning : uint8_t {
     AcceptEncoding,
     CacheControl,

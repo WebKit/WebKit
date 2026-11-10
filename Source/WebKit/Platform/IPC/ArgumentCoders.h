@@ -47,6 +47,7 @@
 #include "ArgumentCodersAndroid.h"
 #endif
 #if USE(GLIB)
+#include "ArgumentCodersGLib.h"
 #include "RendererBufferFormat.h"
 #endif
 #if USE(UNIX_DOMAIN_SOCKETS)

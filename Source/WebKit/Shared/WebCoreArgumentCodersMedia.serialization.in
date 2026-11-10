@@ -1063,7 +1063,7 @@ class WebCore::SerializedPlatformDataCueValue {
 #endif
 
 #if ENABLE(VIDEO)
-using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t
+using WebCore::MediaPlayerEnums::VideoFullscreenMode = uint32_t
 using WebCore::TrackID = uint64_t
 #endif
 

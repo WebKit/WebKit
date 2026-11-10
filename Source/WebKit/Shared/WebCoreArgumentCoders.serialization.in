@@ -404,6 +404,7 @@ enum class WebCore::IndexedDB::RequestType : uint8_t {
     double initialVelocity()
 };
 
+header: <WebCore/ResourceLoadStatistics.h>
 [OptionSet] enum class WebCore::NavigatorAPIsAccessed : uint64_t {
     AppVersion,
     UserAgent,
@@ -1721,10 +1722,6 @@ header: <WebCore/TextIndicator.h>
 header: <WebCore/FocusControllerTypes.h>
 [CustomHeader] enum class WebCore::ShouldFocusElement : bool;
 
-#if USE(SOUP)
-header: "ArgumentCodersGLib.h"
-#endif
-
 [Nested] struct WebCore::PasteboardCustomData::Entry {
     String type;
     String customData;
@@ -2405,6 +2402,7 @@ enum class WebCore::StyleAppearance : uint8_t {
 };
 
 header: <WebCore/ControlPart.h>
+header: <WebCore/ApplePayButtonPart.h>
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ControlPart subclasses {
     WebCore::ButtonPart,
     WebCore::ColorWellPart,
@@ -5823,7 +5821,7 @@ struct WebCore::NowPlayingInfo {
     bool allowsNowPlayingControlsVisibility;
     bool isVideo;
 #if ENABLE(VIDEO)
-    WebCore::MediaPlayer::VideoFullscreenMode fullscreenMode;
+    WebCore::MediaPlayerEnums::VideoFullscreenMode fullscreenMode;
 #endif
 }
 
@@ -6121,6 +6119,7 @@ enum class WebCore::InspectorBackendClientDeveloperPreference : uint8_t {
     NeedsSiteSpecificQuirks,
 };
 
+header: <WebCore/ApplePayLogoSystemImage.h>
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SystemImage subclasses {
 #if ENABLE(APPLE_PAY)
     WebCore::ApplePayLogoSystemImage
