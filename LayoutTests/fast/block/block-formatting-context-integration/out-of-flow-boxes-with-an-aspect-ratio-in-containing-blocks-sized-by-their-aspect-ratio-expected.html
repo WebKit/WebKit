@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 150px; border: 1px solid; margin: 0 2px 4px 0; }
+.cb { position: relative; aspect-ratio: 16 / 9; background: #eee; }
+.abs { position: absolute; display: block; background: lightblue; }
+</style>
+<div class="root"><div class="cb"><span class="abs" style="aspect-ratio: 1; height: 33%; right: 0; bottom: 0">Video</span></div></div>
+<div class="root"><div class="cb"><a class="abs" style="aspect-ratio: 16 / 9; height: 100%; right: 0; top: 0; max-width: 100px">wide</a></div></div>
+<div class="root"><div class="cb"><div class="abs" style="aspect-ratio: 2; height: 50%; left: 10px">text that is longer than the ratio width</div></div></div>
+<div class="root"><div class="cb" style="padding: 10px"><div class="abs" style="aspect-ratio: 1; height: 50%; min-height: 20px; box-sizing: border-box; border: 3px solid; top: 0">bb</div></div></div>
+<div class="root"><div class="cb"><div class="abs" style="aspect-ratio: 1; height: calc(50% + 5px); left: 0; right: 0">insets</div></div></div>
+<div class="root"><div class="cb"><div class="abs" style="aspect-ratio: 1 / 2; max-height: 50%; height: 80%; top: 0">max</div></div></div>
+<div class="root"><div class="cb"><span><span class="abs" style="aspect-ratio: 1; height: 40%; left: 0">in inline content</span></span></div></div>
+<div class="root"><div class="cb" style="aspect-ratio: 2"><div><div class="abs" style="aspect-ratio: 3 / 2; height: 60%; left: 20px; top: 10px">nested</div></div></div></div>
