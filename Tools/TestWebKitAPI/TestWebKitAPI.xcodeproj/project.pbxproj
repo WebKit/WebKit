@@ -671,6 +671,7 @@
 			};
 			membershipExceptions = (
 				"cocoa/AppKit+Extras.swift",
+				cocoa/AppKitGesturesTestUtilities.swift,
 				"cocoa/Bundle+Extras.swift",
 				cocoa/CocoaTypes.swift,
 				"cocoa/Foundation+Extras.swift",

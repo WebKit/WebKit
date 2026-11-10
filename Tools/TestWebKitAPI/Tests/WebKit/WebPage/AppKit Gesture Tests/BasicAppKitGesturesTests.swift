@@ -25,13 +25,13 @@
 
 import Foundation
 import struct Foundation.URL
-@_spi(WebKitAdditions_Testing) @_spi(Testing) @_spi(CrossImportOverlay) import WebKit
+@_spi(Testing) @_spi(CrossImportOverlay) import WebKit
 private import WebKit_Private.WKPreferencesPrivate
 import SwiftUI
 import struct Swift.String
 private import struct TestWebKitAPILibrary.DOMRect
 import Testing
-private import TestWebKitAPILibrary
+@_spi(WebKitAdditions_Testing) private import TestWebKitAPILibrary
 private import Recap
 private import Synchronization
 private import AppKit_Private.NSMenu_Private

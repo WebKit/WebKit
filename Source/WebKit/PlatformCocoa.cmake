@@ -890,7 +890,6 @@ set_target_properties(WebKitSwift PROPERTIES
 if (USE_APPLE_INTERNAL_SDK)
     set(_additions_swift_sources
         AppKitGesturesExtras
-        TestWebKitAPILibraryAdditions
         UIWindowScene+Extras
         WKWebView+SystemTextExtraction)
 
@@ -919,7 +918,6 @@ if (USE_APPLE_INTERNAL_SDK)
 
     list(APPEND WebKit_SOURCES
         ${WebKit_DERIVED_SOURCES_DIR}/AppKitGesturesExtras.swift
-        ${WebKit_DERIVED_SOURCES_DIR}/TestWebKitAPILibraryAdditions.swift
         ${WebKit_DERIVED_SOURCES_DIR}/UIWindowScene+Extras.swift
         ${WebKit_DERIVED_SOURCES_DIR}/WKWebView+SystemTextExtraction.swift
     )

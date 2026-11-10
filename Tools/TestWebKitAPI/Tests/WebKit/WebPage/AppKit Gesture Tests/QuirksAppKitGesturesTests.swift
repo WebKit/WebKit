@@ -25,11 +25,11 @@
 
 import Foundation
 import struct Foundation.URL
-@_spi(WebKitAdditions_Testing) @_spi(Testing) import WebKit
+@_spi(Testing) import WebKit
 import SwiftUI
 import struct Swift.String
 import Testing
-private import TestWebKitAPILibrary
+@_spi(WebKitAdditions_Testing) private import TestWebKitAPILibrary
 private import Recap
 
 private let manipulationSurfaceDragInset: CGFloat = 60

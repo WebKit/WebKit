@@ -231,7 +231,6 @@
 		079D1D9A26960CD300883577 /* SystemStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D1D9926960CD300883577 /* SystemStatusSPI.h */; };
 		079DD3032FAC583900592E03 /* WKDeferringGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079DD3022FAC583900592E03 /* WKDeferringGestureRecognizer.swift */; };
 		079DD3052FAC583A00592E03 /* AppKitGesturesExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079DD3042FAC583A00592E03 /* AppKitGesturesExtras.swift */; };
-		07A1B2C42F900D010000ABCD /* TestWebKitAPILibraryAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A1B2C32F900D010000ABCD /* TestWebKitAPILibraryAdditions.swift */; };
 		07A33C9A2D67BE2200F30A05 /* WKScrollGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A33C992D67BE2200F30A05 /* WKScrollGeometry.h */; };
 		07A4CEC72D0933E700764F5E /* WebPageNavigationAction+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A4CEC62D0933E700764F5E /* WebPageNavigationAction+SwiftUI.swift */; };
 		07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A5EBBA1C7BA43E00B9CA69 /* WKFrameHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3636,7 +3635,6 @@
 		079D1D9C2698DBD000883577 /* cocoa */ = {isa = PBXFileReference; lastKnownFileType = folder; path = cocoa; sourceTree = "<group>"; };
 		079DD3022FAC583900592E03 /* WKDeferringGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDeferringGestureRecognizer.swift; sourceTree = "<group>"; };
 		079DD3042FAC583A00592E03 /* AppKitGesturesExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppKitGesturesExtras.swift; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AppKitGesturesExtras.swift"; sourceTree = "<group>"; };
-		07A1B2C32F900D010000ABCD /* TestWebKitAPILibraryAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestWebKitAPILibraryAdditions.swift; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TestWebKitAPILibraryAdditions.swift"; sourceTree = "<group>"; };
 		07A33C992D67BE2200F30A05 /* WKScrollGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKScrollGeometry.h; sourceTree = "<group>"; };
 		07A33C9B2D67BF3000F30A05 /* WKScrollGeometry.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollGeometry.mm; sourceTree = "<group>"; };
 		07A33C9E2D67EEF600F30A05 /* ViewModifierContexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifierContexts.swift; sourceTree = "<group>"; };
@@ -16964,7 +16962,6 @@
 		BC111B47112F616900337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				07A1B2C32F900D010000ABCD /* TestWebKitAPILibraryAdditions.swift */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
 				0FFED99023A3203800EEF459 /* WKWebViewMac.h */,
@@ -22507,7 +22504,6 @@
 				5CCD53272ED9D2F40001626D /* StdlibExtras.swift in Sources */,
 				2DD137ABE8853C5C798C1C20 /* SwiftCoding.swift in Sources */,
 				5CAAA85029BFBE99003340AE /* TCCSoftLink.mm in Sources */,
-				07A1B2C42F900D010000ABCD /* TestWebKitAPILibraryAdditions.swift in Sources */,
 				E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */,
 				EEEEBCBD2EE35A8B000FF6AF /* UIWindowScene+Extras.swift in Sources */,
 				93A883182E7DB8260041D118 /* UnifiedSource1-ARC.mm in Sources */,
