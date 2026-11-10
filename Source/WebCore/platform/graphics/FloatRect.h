@@ -238,17 +238,17 @@ public:
 #endif
 
 #if USE(SKIA)
-    FloatRect(const SkRect&);
-    operator SkRect() const;
+    NODELETE FloatRect(const SkRect&);
+    NODELETE operator SkRect() const;
 #endif
 
 #if USE(CAIRO)
-    FloatRect(const cairo_rectangle_t&);
-    operator cairo_rectangle_t() const;
+    NODELETE FloatRect(const cairo_rectangle_t&);
+    NODELETE operator cairo_rectangle_t() const;
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatRect(const RECT&);
+    NODELETE WEBCORE_EXPORT FloatRect(const RECT&);
 #endif
 
     static constexpr FloatRect infiniteRect();
@@ -368,10 +368,10 @@ inline void FloatRect::inflate(float deltaX, float deltaY, float deltaMaxX, floa
 }
 
 NODELETE FloatRect normalizeRect(const FloatRect&);
-WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float deviceScaleFactor);
-WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
-WEBCORE_EXPORT IntRect enclosingIntRectPreservingEmptyRects(const FloatRect&);
-WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
+NODELETE WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float deviceScaleFactor);
+NODELETE WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
+NODELETE WEBCORE_EXPORT IntRect enclosingIntRectPreservingEmptyRects(const FloatRect&);
+NODELETE WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRect&);
 

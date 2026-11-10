@@ -286,7 +286,7 @@ inline IntRect snappedIntRect(LayoutPoint location, LayoutSize size)
 }
 
 NODELETE WEBCORE_EXPORT IntRect enclosingIntRect(const LayoutRect&);
-WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
+NODELETE WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
 
 // Device pixel snapping functions.
 inline FloatRect snapRectToDevicePixels(const LayoutRect& rect, float pixelSnappingFactor)
@@ -310,7 +310,7 @@ inline FloatRect snapRectToDevicePixelsWithWritingDirection(const LayoutRect& re
     return snapRectToDevicePixels(rect, deviceScaleFactor);
 }
 
-FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
+NODELETE FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutRect&);
 

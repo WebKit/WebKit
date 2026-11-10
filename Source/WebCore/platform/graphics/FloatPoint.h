@@ -146,7 +146,7 @@ public:
         return m_x * a.y() - m_y * a.x();
     }
 
-    float slopeAngleRadians() const;
+    NODELETE float slopeAngleRadians() const;
 
     float length() const
     {
@@ -188,7 +188,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatPoint(const POINT&);
+    NODELETE WEBCORE_EXPORT FloatPoint(const POINT&);
 #endif
 
     NODELETE WEBCORE_EXPORT FloatPoint matrixTransform(const TransformationMatrix&) const;

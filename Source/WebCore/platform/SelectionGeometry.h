@@ -50,8 +50,8 @@ public:
     FloatQuad quad() const { return m_quad; }
     NODELETE WEBCORE_EXPORT void setQuad(const FloatQuad&);
 
-    WEBCORE_EXPORT IntRect rect() const;
-    WEBCORE_EXPORT void setRect(const IntRect&);
+    NODELETE WEBCORE_EXPORT IntRect rect() const;
+    NODELETE WEBCORE_EXPORT void setRect(const IntRect&);
 
     int logicalLeft() const { return m_isHorizontal ? rect().x() : rect().y(); }
     int logicalWidth() const { return m_isHorizontal ? rect().width() : rect().height(); }
@@ -75,10 +75,10 @@ public:
     SelectionRenderingBehavior behavior() const { return m_behavior; }
     bool separateFromPreviousLine() const { return m_separateFromPreviousLine; }
 
-    void setLogicalLeft(int);
-    void setLogicalWidth(int);
-    void setLogicalTop(int);
-    void setLogicalHeight(int);
+    NODELETE void setLogicalLeft(int);
+    NODELETE void setLogicalWidth(int);
+    NODELETE void setLogicalTop(int);
+    NODELETE void setLogicalHeight(int);
 
     void setDirection(TextDirection direction) { m_direction = direction; }
     void setMinX(int minX) { m_minX = minX; }

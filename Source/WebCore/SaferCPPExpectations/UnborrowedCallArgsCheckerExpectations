@@ -352,7 +352,6 @@ platform/mediastream/WebRTCProvider.cpp
 platform/mediastream/cocoa/BaseAudioCaptureUnit.cpp
 [ macOS ] platform/mediastream/cocoa/CoreAudioCaptureDevice.cpp
 [ macOS ] platform/mediastream/cocoa/CoreAudioCaptureDeviceManager.cpp
-platform/mediastream/cocoa/MockAudioCaptureUnit.mm
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/mock/mediasource/MockMediaSourcePrivate.cpp
@@ -385,7 +384,6 @@ rendering/RenderFlexibleBox.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerSVGAdditions.cpp
-rendering/RenderMultiColumnSet.cpp
 rendering/RenderObject.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableSection.cpp

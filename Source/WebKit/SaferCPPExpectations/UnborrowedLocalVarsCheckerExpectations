@@ -37,7 +37,6 @@ UIProcess/WebProcessPool.h
 [ iOS ] UIProcess/ios/WKContentViewInteraction.mm
 [ iOS ] UIProcess/ios/WKTouchEventsGestureRecognizer.mm
 [ iOS ] UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
-[ iOS ] UIProcess/ios/WebPageProxyIOS.mm
 [ iOS ] UIProcess/ios/_WKCaptionStyleMenuControllerIOS.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectControl.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectPicker.mm

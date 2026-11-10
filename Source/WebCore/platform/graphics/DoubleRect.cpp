@@ -33,7 +33,8 @@
 namespace WebCore {
 
 #if USE(CG)
-DoubleRect::DoubleRect(const CGRect& rect)
+// FIXME: Remove SUPPRESS_NODELETE once NoDeleteChecker stops requiring an unused defaulted default constructor of DoubleSize to be trivial (rdar://192380708).
+SUPPRESS_NODELETE DoubleRect::DoubleRect(const CGRect& rect)
     : m_location(rect.origin)
     , m_size(rect.size)
 {

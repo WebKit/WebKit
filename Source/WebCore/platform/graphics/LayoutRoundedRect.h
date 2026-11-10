@@ -115,7 +115,7 @@ public:
     NODELETE bool intersectsQuad(const FloatQuad&) const;
     NODELETE WEBCORE_EXPORT bool contains(const LayoutRect&) const;
 
-    FloatRoundedRect pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const;
+    NODELETE FloatRoundedRect pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const;
 
     LayoutRoundedRect transposedRect() const { return LayoutRoundedRect(m_rect.transposedRect(), m_radii.transposedRadii()); }
 

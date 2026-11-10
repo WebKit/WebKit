@@ -51,6 +51,34 @@
 #include <machine/ieee.h>
 #endif
 
+#if defined(__clang_analyzer__)
+// Forward declare standard functions with NODELETE for static analysis
+extern "C" {
+NODELETE double ceil(double);
+NODELETE float ceilf(float);
+NODELETE double floor(double);
+NODELETE float floorf(float);
+NODELETE double round(double);
+NODELETE float roundf(float);
+NODELETE long lround(double);
+NODELETE long lroundf(float);
+NODELETE double trunc(double);
+NODELETE float truncf(float);
+NODELETE double sqrt(double);
+NODELETE float sqrtf(float);
+NODELETE double sin(double);
+NODELETE float sinf(float);
+NODELETE double cos(double);
+NODELETE float cosf(float);
+NODELETE double atan2(double, double);
+NODELETE float atan2f(float, float);
+NODELETE double fmod(double, double);
+NODELETE float fmodf(float, float);
+NODELETE double pow(double, double);
+NODELETE float powf(float, float);
+}
+#endif
+
 constexpr double piOverTwoDouble = std::numbers::pi / 2;
 constexpr float piOverTwoFloat = static_cast<float>(piOverTwoDouble);
 

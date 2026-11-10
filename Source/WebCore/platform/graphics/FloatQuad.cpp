@@ -261,7 +261,8 @@ bool FloatQuad::isCounterclockwise() const
     return determinant(m_p2 - m_p1, m_p3 - m_p2) < 0;
 }
 
-bool FloatQuad::isEmpty() const
+// FIXME: Remove SUPPRESS_NODELETE once NoDeleteChecker stops treating local lambdas as possibly deleting (rdar://178617685).
+SUPPRESS_NODELETE bool FloatQuad::isEmpty() const
 {
     if (areEssentiallyEqual(m_p1, m_p3) || areEssentiallyEqual(m_p2, m_p4)) {
         // If either diagonal is zero length, then the "quad" either consists of 1 or 2 line segments, or it's just a point.

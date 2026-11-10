@@ -44,7 +44,7 @@ public:
     DoubleSize size() const { return m_size; }
 
 #if USE(CG)
-    WEBCORE_EXPORT DoubleRect(const CGRect&);
+    NODELETE WEBCORE_EXPORT DoubleRect(const CGRect&);
     NODELETE WEBCORE_EXPORT operator CGRect() const;
     CGRect toCG() const { return static_cast<CGRect>(*this); }
 #endif

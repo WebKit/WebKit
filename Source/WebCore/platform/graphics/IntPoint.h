@@ -133,10 +133,10 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT IntPoint(const POINT&);
-    WEBCORE_EXPORT operator POINT() const;
-    WEBCORE_EXPORT IntPoint(const POINTS&);
-    operator POINTS() const;
+    NODELETE WEBCORE_EXPORT IntPoint(const POINT&);
+    NODELETE WEBCORE_EXPORT operator POINT() const;
+    NODELETE WEBCORE_EXPORT IntPoint(const POINTS&);
+    NODELETE operator POINTS() const;
 #endif
 
 private:

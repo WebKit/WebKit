@@ -207,13 +207,13 @@ public:
     friend bool operator==(const IntRect&, const IntRect&) = default;
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT IntRect(const RECT&);
-    WEBCORE_EXPORT operator RECT() const;
+    NODELETE WEBCORE_EXPORT IntRect(const RECT&);
+    NODELETE WEBCORE_EXPORT operator RECT() const;
 #endif
 
 #if USE(CAIRO) || PLATFORM(GTK)
-    IntRect(const cairo_rectangle_int_t&);
-    operator cairo_rectangle_int_t() const;
+    NODELETE IntRect(const cairo_rectangle_int_t&);
+    NODELETE operator cairo_rectangle_int_t() const;
 #endif
 
 #if USE(CG)
@@ -221,8 +221,8 @@ public:
 #endif
 
 #if USE(SKIA)
-    IntRect(const SkIRect&);
-    WEBCORE_EXPORT operator SkIRect() const;
+    NODELETE IntRect(const SkIRect&);
+    NODELETE WEBCORE_EXPORT operator SkIRect() const;
 #endif
 
 private:
@@ -257,7 +257,7 @@ inline IntRect operator-(const IntRect& r, const IntPoint& offset)
 }
 
 #if USE(CG)
-WEBCORE_EXPORT IntRect enclosingIntRect(const CGRect&);
+NODELETE WEBCORE_EXPORT IntRect enclosingIntRect(const CGRect&);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const IntRect&);

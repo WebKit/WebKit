@@ -103,7 +103,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT DoublePoint(const POINT&);
+    NODELETE WEBCORE_EXPORT DoublePoint(const POINT&);
 #endif
 
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;

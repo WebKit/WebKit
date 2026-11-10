@@ -550,7 +550,6 @@ platform/graphics/MIMETypeCache.cpp
 platform/graphics/MediaPlayer.cpp
 platform/graphics/MediaSourcePrivate.cpp
 platform/graphics/MeshGradient.cpp
-platform/graphics/PathArcLengthMapper.cpp
 platform/graphics/PathStream.cpp
 platform/graphics/PathUtilities.cpp
 platform/graphics/PlatformTimeRanges.cpp
@@ -634,7 +633,6 @@ platform/sql/SQLiteDatabase.cpp
 platform/text/TextFlags.cpp
 platform/video-codecs/cocoa/GPUVideoEncoderVTBH264.mm
 plugins/PluginData.cpp
-[ macOS ] rendering/AttachmentLayout.mm
 rendering/AutoTableLayout.cpp
 rendering/CSSFilterRenderer.cpp
 [ iOS ] rendering/EventRegion.cpp
@@ -661,7 +659,6 @@ rendering/RenderLayerSVGAdditions.cpp
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
 rendering/RenderListItem.cpp
-rendering/RenderMultiColumnSet.cpp
 rendering/RenderObject.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderTable.cpp
@@ -677,7 +674,6 @@ rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathOperator.cpp
 rendering/shapes/PathLayoutShape.cpp
-rendering/svg/RenderSVGInlineText.cpp
 rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGResourceContainer.cpp
 rendering/svg/RenderSVGText.cpp

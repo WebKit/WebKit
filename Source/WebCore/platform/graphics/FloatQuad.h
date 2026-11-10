@@ -77,10 +77,10 @@ public:
     void setP3(const FloatPoint& p) { m_p3 = p; }
     void setP4(const FloatPoint& p) { m_p4 = p; }
 
-    WEBCORE_EXPORT bool isEmpty() const;
+    NODELETE WEBCORE_EXPORT bool isEmpty() const;
 
     // This method will not identify "slanted" empty quads.
-    bool boundingBoxIsEmpty() const { return boundingBox().isEmpty(); }
+    NODELETE bool boundingBoxIsEmpty() const { return boundingBox().isEmpty(); }
 
     // Tests whether this quad can be losslessly represented by a FloatRect,
     // that is, if two edges are parallel to the x-axis and the other two
@@ -115,7 +115,7 @@ public:
     }
 
     NODELETE WEBCORE_EXPORT FloatRect boundingBox() const;
-    IntRect enclosingBoundingBox() const
+    NODELETE IntRect enclosingBoundingBox() const
     {
         return enclosingIntRect(boundingBox());
     }

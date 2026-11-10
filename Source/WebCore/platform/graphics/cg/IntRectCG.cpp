@@ -37,7 +37,7 @@ IntRect::operator CGRect() const
     return CGRectMake(x(), y(), width(), height());
 }
 
-IntRect enclosingIntRect(const CGRect& rect)
+SUPPRESS_NODELETE IntRect enclosingIntRect(const CGRect& rect)
 {
     int l = static_cast<int>(floorf(rect.origin.x));
     int t = static_cast<int>(floorf(rect.origin.y));

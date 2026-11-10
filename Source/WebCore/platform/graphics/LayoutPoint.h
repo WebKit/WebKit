@@ -220,7 +220,8 @@ inline FloatPoint ceilPointToDevicePixels(const LayoutPoint& point, float pixelS
     return FloatPoint(ceilToDevicePixel(point.x(), pixelSnappingFactor), ceilToDevicePixel(point.y(), pixelSnappingFactor));
 }
 
-inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint& location, float pixelSnappingFactor)
+// FIXME: Remove SUPPRESS_NODELETE once NoDeleteChecker stops treating local lambdas as possibly deleting (rdar://178617685).
+NODELETE SUPPRESS_NODELETE inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint& location, float pixelSnappingFactor)
 {
     auto snap = [&] (LayoutUnit a, LayoutUnit b) {
         LayoutUnit offset = WTF::isIntegral(pixelSnappingFactor) ? b.fraction() : b;
