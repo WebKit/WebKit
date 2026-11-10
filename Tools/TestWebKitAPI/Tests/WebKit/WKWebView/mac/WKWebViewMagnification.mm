@@ -102,4 +102,27 @@ TEST(WKWebViewMagnification, AccurateAtGestureEndPDF)
     runAccurateAtGestureEndTest(webView);
 }
 
+static double magnificationAfterPinch(TestWKWebView *webView)
+{
+    magnify(webView, NSEventPhaseBegan, 0);
+    for (unsigned i = 0; i < 5; ++i)
+        magnify(webView, NSEventPhaseChanged, 0.05);
+    magnify(webView, NSEventPhaseEnded, 0);
+    return lowestMagnificationReportedAfterGesture(webView);
+}
+
+TEST(WKWebViewMagnification, ConsecutivePinchesOverPDFInSubframe)
+{
+    RetainPtr webView = webViewWithMagnificationAllowed();
+    [webView synchronouslyLoadHTMLString:@"<body style='margin:0'><iframe src='multiple-pages.pdf' style='border:0;width:600px;height:400px'></iframe></body>"];
+    [webView waitForNextPresentationUpdate];
+
+    double initialMagnification = [webView magnification];
+    double magnificationAfterFirstPinch = magnificationAfterPinch(webView);
+    EXPECT_GT(magnificationAfterFirstPinch, initialMagnification);
+
+    double magnificationAfterSecondPinch = magnificationAfterPinch(webView);
+    EXPECT_GT(magnificationAfterSecondPinch, magnificationAfterFirstPinch);
+}
+
 } // namespace TestWebKitAPI
