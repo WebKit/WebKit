@@ -1,0 +1,4 @@
+
+PASS The scroll timeline declared on the nearest ancestor is used even when an outer ancestor declares timeline-scope and a descendant declares a view timeline
+PASS A scroll timeline hoisted by an outer ancestor timeline-scope remains referenceable from the declaring element's subtree when that element also declares timeline-scope
+
