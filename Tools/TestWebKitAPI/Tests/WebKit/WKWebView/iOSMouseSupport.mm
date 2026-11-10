@@ -210,7 +210,7 @@ static const auto serverForCrossOriginFrameTests = TestWebKitAPI::HTTPServer({
     { "/iframe"_s, { iframeContentForFractionalCoordinates } }
 }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const TestWebKitAPI::HTTPServer& server)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> mouseSupportSiteIsolatedViewAndDelegate(const TestWebKitAPI::HTTPServer& server)
 {
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
@@ -466,7 +466,7 @@ TEST_F(iOSMouseSupport, FractionalCoordinatesInScaledIFrame)
 
 TEST_F(iOSMouseSupport, FractionalCoordinatesInSimpleIFrameCrossOrigin)
 {
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(serverForCrossOriginFrameTests);
+    auto [webView, navigationDelegate] = mouseSupportSiteIsolatedViewAndDelegate(serverForCrossOriginFrameTests);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
     testFractionalCoordinatesInIFrame(webView.get(), 0.5, 0.5, @"0.5", @"0.5", nil, true);
@@ -474,7 +474,7 @@ TEST_F(iOSMouseSupport, FractionalCoordinatesInSimpleIFrameCrossOrigin)
 
 TEST_F(iOSMouseSupport, FractionalCoordinatesInRotatedIFrameCrossOrigin)
 {
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(serverForCrossOriginFrameTests);
+    auto [webView, navigationDelegate] = mouseSupportSiteIsolatedViewAndDelegate(serverForCrossOriginFrameTests);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
     testFractionalCoordinatesInIFrame(webView.get(), 1.5, 1.5, @"98.5", @"98.5", @"frame.style.rotate = \"180deg\";", true);
@@ -482,7 +482,7 @@ TEST_F(iOSMouseSupport, FractionalCoordinatesInRotatedIFrameCrossOrigin)
 
 TEST_F(iOSMouseSupport, FractionalCoordinatesInScaledIFrameCrossOrigin)
 {
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(serverForCrossOriginFrameTests);
+    auto [webView, navigationDelegate] = mouseSupportSiteIsolatedViewAndDelegate(serverForCrossOriginFrameTests);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
     testFractionalCoordinatesInIFrame(webView.get(), 0.5, 0.5, @"0.25", @"0.25", @"frame.style.transformOrigin = \"top left\"; frame.style.scale = \"2\";", true);

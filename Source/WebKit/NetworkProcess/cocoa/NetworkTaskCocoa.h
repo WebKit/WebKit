@@ -72,6 +72,7 @@ protected:
     void setCookieTransform(const WebCore::ResourceRequest&, IsRedirect);
     void blockCookies();
     void unblockCookies();
+    bool hasBeenSetToUseStatelessCookieStorage() const { return m_hasBeenSetToUseStatelessCookieStorage; }
     static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionTask*, const WebCore::ResourceRequest&);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     void updateTaskWithStoragePartitionIdentifier(const WebCore::ResourceRequest&);
