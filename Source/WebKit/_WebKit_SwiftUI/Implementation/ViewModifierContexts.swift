@@ -33,8 +33,8 @@ struct ContextMenuContext {
 }
 
 struct OnScrollGeometryChangeContext {
-    let transform: (ScrollGeometry) -> AnyHashable
-    let action: (AnyHashable, AnyHashable) -> Void
+    // Runs the modifier's action if the transformed old and new scroll geometries differ.
+    let geometryDidChange: (_ oldGeometry: ScrollGeometry, _ newGeometry: ScrollGeometry) -> Void
 }
 
 struct ScrollPositionContext {

@@ -162,9 +162,12 @@ where Wrapped: PlatformIntelligenceTextEffectViewSource {
 
         if let chunk = chunk as? UIReplacementTextEffectTextChunkAdapter<Wrapped.Chunk> {
             // The chunk source may be `nil` in the case of a replacement whose source range is an empty range.
-            // This force unwrap is safe because UIKit invokes `canGenerateTargetedPreviewForChunk` prior to this call.
-            // swift-format-ignore: NeverForceUnwrap
-            return chunk.source!
+            // UIKit invokes `canGenerateTargetedPreviewForChunk` prior to this call, so that case should never reach here.
+            guard let source = chunk.source else {
+                assertionFailure("Failed to create a targeted preview: replacement chunk source was unexpectedly nil.")
+                return chunk.destination
+            }
+            return source
         }
 
         fatalError("Failed to create a targeted preview: parameter was of unexpected type \(type(of: chunk)).")
@@ -508,9 +511,8 @@ where Chunk: PlatformIntelligenceTextEffectChunk {
         remainderView.layer.contents = remainderPreviewImage
         #else
         remainderView.wantsLayer = true
-        // Safe force unwrap because AppKit creates a layer when `wantsLayer` is `true`.
-        // swift-format-ignore: NeverForceUnwrap
-        remainderView.layer!.contents = remainderPreviewImage
+        // AppKit creates a layer when `wantsLayer` is `true`.
+        remainderView.layer?.contents = remainderPreviewImage
         #endif
 
         // Add the newly created view as a subview to the effect view.
@@ -621,9 +623,9 @@ class PlatformIntelligenceReplacementTextEffect<Chunk>: PlatformIntelligenceText
             // This block is invoked after the source effect has been prepared, but before it actually begins.
             // It's intended for the destination effect to be added here, synchronously.
 
-            // Misannotated WritingToolsUI symbol which never actually returns `nil`.
-            // swift-format-ignore: NeverForceUnwrap
-            let destinationEffectID = view.wrapped.add(wrappedDestinationEffect)!
+            // `add(_:)` assigns a new `identifier` to the effect and returns it.
+            view.wrapped.add(wrappedDestinationEffect)
+            let destinationEffectID = wrappedDestinationEffect.identifier
             view.wrappedEffectIDToPlatformEffects[destinationEffectID] = self
             view.platformEffectIDToWrappedEffectIDs[self.id, default: []].insert(destinationEffectID)
         }
@@ -635,9 +637,9 @@ class PlatformIntelligenceReplacementTextEffect<Chunk>: PlatformIntelligenceText
 
         await view.source.replacementEffectWillBegin(self)
 
-        // Misannotated WritingToolsUI symbol which never actually returns `nil`.
-        // swift-format-ignore: NeverForceUnwrap
-        let sourceEffectID = view.wrapped.add(wrappedSourceEffect)!
+        // `add(_:)` assigns a new `identifier` to the effect and returns it.
+        view.wrapped.add(wrappedSourceEffect)
+        let sourceEffectID = wrappedSourceEffect.identifier
         view.wrappedEffectIDToPlatformEffects[sourceEffectID] = self
         view.platformEffectIDToWrappedEffectIDs[self.id, default: []].insert(sourceEffectID)
         #endif

@@ -164,16 +164,27 @@ extension WKAppKitGestureController {
         self.domDoubleClickGestureRecognizer = recognizer
     }
 
+    // `domDoubleClickGestureRecognizer` is always created as a `WKDOMDoubleClickGestureRecognizer`.
+    @nonobjc
+    private var typedDOMDoubleClickGestureRecognizer: WKDOMDoubleClickGestureRecognizer? {
+        guard let recognizer = domDoubleClickGestureRecognizer else {
+            return nil
+        }
+
+        guard let recognizer = recognizer as? WKDOMDoubleClickGestureRecognizer else {
+            assertionFailure("DOM double click gesture recognizer was unexpectedly of type \(type(of: recognizer)).")
+            return nil
+        }
+
+        return recognizer
+    }
+
     func resetDOMDoubleClickGestureRecognizer() {
-        // Guaranteed to be non-nil because `domDoubleClickGestureRecognizer` is always created as an `WKDOMDoubleClickGestureRecognizer`.
-        // swift-format-ignore: NeverForceUnwrap
-        (domDoubleClickGestureRecognizer as! WKDOMDoubleClickGestureRecognizer).resetClick()
+        typedDOMDoubleClickGestureRecognizer?.resetClick()
     }
 
     func takeCompletedDOMDoubleClick() -> Bool {
-        // Guaranteed to be non-nil because `domDoubleClickGestureRecognizer` is always created as a `WKDOMDoubleClickGestureRecognizer`.
-        // swift-format-ignore: NeverForceUnwrap
-        (domDoubleClickGestureRecognizer as! WKDOMDoubleClickGestureRecognizer).takeCompletedDoubleClick()
+        typedDOMDoubleClickGestureRecognizer?.takeCompletedDoubleClick() ?? false
     }
 
     @objc(makeImageAnalysisDeferringGestureRecognizerWithName:)

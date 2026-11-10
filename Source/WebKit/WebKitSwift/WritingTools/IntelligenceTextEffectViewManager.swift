@@ -110,7 +110,7 @@ where
         if let effect {
             self.setupViewIfNeeded()
             await self.effectView?.addEffect(effect)
-        } else {
+        } else if let oldEffect {
             // This needs to be manually invoked rather than relying on the associated delegate method being called. This is
             // because when removing an effect, the delegate method is invoked after the effect removal function ends. Invoking
             // this method manually ensures that the replacement effect doesn't start until the visibility has actually changed
@@ -118,14 +118,9 @@ where
             //
             // Therefore, the delegate method itself must avoid any work so that it can be synchronous, which is what the platform
             // interfaces expect.
-            //
-            // Safe force-unwrap due to the above logic; effect being nil implies activePonderingEffect was originally non-nil.
-            // swift-format-ignore: NeverForceUnwrap
-            await self.source?.updateTextChunkVisibility(oldEffect!.chunk, visible: true, force: true)
+            await self.source?.updateTextChunkVisibility(oldEffect.chunk, visible: true, force: true)
 
-            // Safe force-unwrap due to the above logic; effect being nil implies activePonderingEffect was originally non-nil.
-            // swift-format-ignore: NeverForceUnwrap
-            await self.effectView?.removeEffect(oldEffect!.id)
+            await self.effectView?.removeEffect(oldEffect.id)
 
             self.destroyViewIfNeeded()
         }
@@ -149,10 +144,8 @@ where
         if let effect {
             self.setupViewIfNeeded()
             await self.effectView?.addEffect(effect)
-        } else {
-            // Safe force-unwrap due to the above logic; effect being nil implies activePonderingEffect was originally non-nil.
-            // swift-format-ignore: NeverForceUnwrap
-            await self.effectView?.removeEffect(oldEffect!.id)
+        } else if let oldEffect {
+            await self.effectView?.removeEffect(oldEffect.id)
             self.destroyViewIfNeeded()
         }
     }

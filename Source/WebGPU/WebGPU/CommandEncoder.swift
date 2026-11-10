@@ -1061,10 +1061,7 @@ extension WebGPU.Metal.CommandEncoder {
         }
 
         if m_device.ptr().enableEncoderTimestamps() || counterSampleBuffer.buffer != nil {
-            if let buffer = counterSampleBuffer.buffer {
-                // FIXME: (rdar://170907276) Prove that `optionalTimestampWrites` can never be nil.
-                // swift-format-ignore: NeverForceUnwrap
-                let timestampWrites = optionalTimestampWrites!
+            if let buffer = counterSampleBuffer.buffer, let timestampWrites = optionalTimestampWrites {
                 mtlDescriptor.sampleBufferAttachments[0].sampleBuffer = buffer
                 mtlDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = timestampWriteIndex(
                     writeIndex: writeIndex(timestampWrites, beginning: true),
@@ -2005,7 +2002,9 @@ extension WebGPU.Metal.CommandEncoder {
         guard !didOverflow else {
             return
         }
-        let mtlDestinationTexture = destinationTexture.texture()
+        guard let mtlDestinationTexture = destinationTexture.texture() else {
+            fatalError("mtlDestinationTexture is nil")
+        }
         let textureDimension = destinationTexture.dimension()
 
         let sliceCount = textureDimension == WebGPU.TextureDimension._3d ? 1 : copySize.depthOrArrayLayers
@@ -2016,10 +2015,6 @@ extension WebGPU.Metal.CommandEncoder {
                 return
             }
             let destinationSlice = destinationTexture.dimension() == WebGPU.TextureDimension._3d ? 0 : originPlusLayer
-
-            guard let mtlDestinationTexture else {
-                fatalError("mtlDestinationTexture is nil")
-            }
 
             precondition(mtlDestinationTexture.parent == nil, "mtlDestinationTexture.parentTexture is not nil")
 
@@ -2158,8 +2153,6 @@ extension WebGPU.Metal.CommandEncoder {
                     continue
                 }
 
-                // FIXME: (rdar://170907276) Prove that `mtlDestinationTexture` can never be nil.
-                // swift-format-ignore: NeverForceUnwrap
                 blitCommandEncoder
                     .copy(
                         from: sourceBuffer,
@@ -2167,7 +2160,7 @@ extension WebGPU.Metal.CommandEncoder {
                         sourceBytesPerRow: Int(sourceBytesPerRow),
                         sourceBytesPerImage: Int(sourceBytesPerImage),
                         sourceSize: sourceSize,
-                        to: mtlDestinationTexture!,
+                        to: mtlDestinationTexture,
                         destinationSlice: Int(destinationSlice),
                         destinationLevel: Int(destination.mipLevel),
                         destinationOrigin: destinationOrigin,
@@ -2202,8 +2195,6 @@ extension WebGPU.Metal.CommandEncoder {
                     return
                 }
 
-                // FIXME: (rdar://170907276) Prove that `mtlDestinationTexture` can never be nil.
-                // swift-format-ignore: NeverForceUnwrap
                 blitCommandEncoder
                     .copy(
                         from: sourceBuffer,
@@ -2211,7 +2202,7 @@ extension WebGPU.Metal.CommandEncoder {
                         sourceBytesPerRow: Int(sourceBytesPerRow),
                         sourceBytesPerImage: Int(sourceBytesPerImage),
                         sourceSize: sourceSize,
-                        to: mtlDestinationTexture!,
+                        to: mtlDestinationTexture,
                         destinationSlice: Int(destinationSlice),
                         destinationLevel: Int(destination.mipLevel),
                         destinationOrigin: destinationOrigin,
@@ -2228,15 +2219,13 @@ extension WebGPU.Metal.CommandEncoder {
             let destinationOrigin = MTLOrigin(x: Int(destination.origin.x), y: Int(destination.origin.y), z: Int(destination.origin.z))
             let sourceOffset = UInt(source.layout.offset)
 
-            // FIXME: (rdar://170907276) Prove that `mtlDestinationTexture` can never be nil.
-            // swift-format-ignore: NeverForceUnwrap
             blitCommandEncoder.copy(
                 from: sourceBuffer,
                 sourceOffset: Int(sourceOffset),
                 sourceBytesPerRow: Int(sourceBytesPerRow),
                 sourceBytesPerImage: Int(sourceBytesPerImage),
                 sourceSize: sourceSize,
-                to: mtlDestinationTexture!,
+                to: mtlDestinationTexture,
                 destinationSlice: 0,
                 destinationLevel: Int(destination.mipLevel),
                 destinationOrigin: destinationOrigin,
@@ -2634,23 +2623,25 @@ extension WebGPU.Metal.CommandEncoder {
         }
 
         if m_device.ptr().enableEncoderTimestamps() || counterSampleBuffer.buffer != nil {
-            // FIXME: (rdar://170907276) Prove that `optionalTimestampWrites` can never be nil.
-            // swift-format-ignore: NeverForceUnwrap
-            let timestampWrites = optionalTimestampWrites!
             computePassDescriptor.sampleBufferAttachments[0].sampleBuffer =
                 counterSampleBuffer.buffer ?? m_device.ptr().timestampsBuffer(m_commandBuffer, 2)
 
-            computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = timestampWriteIndex(
-                writeIndex: writeIndex(timestampWrites, beginning: true),
-                defaultValue: MTLCounterDontSample,
-                offset: counterSampleBuffer.offset
-            )
+            if let timestampWrites = optionalTimestampWrites {
+                computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = timestampWriteIndex(
+                    writeIndex: writeIndex(timestampWrites, beginning: true),
+                    defaultValue: MTLCounterDontSample,
+                    offset: counterSampleBuffer.offset
+                )
 
-            computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = timestampWriteIndex(
-                writeIndex: writeIndex(timestampWrites, beginning: false),
-                defaultValue: MTLCounterDontSample,
-                offset: counterSampleBuffer.offset
-            )
+                computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = timestampWriteIndex(
+                    writeIndex: writeIndex(timestampWrites, beginning: false),
+                    defaultValue: MTLCounterDontSample,
+                    offset: counterSampleBuffer.offset
+                )
+            } else {
+                computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = 0
+                computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = 1
+            }
 
             if let buffer = counterSampleBuffer.buffer {
                 m_device.ptr().trackTimestampsBuffer(m_commandBuffer, buffer)

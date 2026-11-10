@@ -44,6 +44,12 @@ extension WKISO18013Request {
     }
 }
 
+// `@objc @implementation` does not support stored properties whose size can change due to Library Evolution,
+// so the validator is stored inside a class, which has a fixed size.
+private final class RawRequestValidatorBox {
+    let validator = IdentityDocumentWebPresentmentRawRequestValidator()
+}
+
 @objc
 @implementation
 extension WKIdentityDocumentRawRequestValidator {
@@ -51,26 +57,30 @@ extension WKIdentityDocumentRawRequestValidator {
 
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "DigitalCredentials")
 
-    // Used to workaround the fact that `@objc @implementation does not support stored properties whose size can change
-    // due to Library Evolution. Do not use this property directly.
     @nonobjc
-    private let unsafeValidator = IdentityDocumentWebPresentmentRawRequestValidator() as Any
+    private let validatorBox = RawRequestValidatorBox()
 
     @nonobjc
     private final var validator: IdentityDocumentWebPresentmentRawRequestValidator {
-        // This is safe because `unsafeValidator` is always the correct type.
-        // swift-format-ignore: NeverForceUnwrap
-        unsafeValidator as! IdentityDocumentWebPresentmentRawRequestValidator
+        validatorBox.validator
     }
 
     @objc(validateISO18013Request:origin:error:)
     func validate(_ iso18013Request: WKISO18013Request, origin: URL) throws -> WKIdentityDocumentPresentmentMobileDocumentRequest {
+        guard let deviceRequest = iso18013Request.deviceRequest, let encryptionInfo = iso18013Request.encryptionInfo else {
+            let debugDescription = "The request is missing its device request or encryption info."
+
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator received invalid request \(String(describing: iso18013Request)). \(debugDescription)"
+            )
+
+            throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: [NSDebugDescriptionErrorKey: debugDescription])
+        }
+
         do {
-            // FIXME: rdar://168899773
-            // swift-format-ignore: NeverForceUnwrap
             let requestToEncode = [
-                "deviceRequest": iso18013Request.deviceRequest!,
-                "encryptionInfo": iso18013Request.encryptionInfo!,
+                "deviceRequest": deviceRequest,
+                "encryptionInfo": encryptionInfo,
             ]
 
             let encodedRequestData = try JSONSerialization.data(withJSONObject: requestToEncode)

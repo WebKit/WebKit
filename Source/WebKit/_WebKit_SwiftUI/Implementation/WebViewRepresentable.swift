@@ -149,21 +149,24 @@ struct WebViewRepresentable {
         #endif // WTF_PLATFORM_IOS_FAMILY
 
         if let onAttachmentActivityPhase = environment.webViewOnAttachmentActivityPhaseContext?.action {
+            // The listeners are erased to `Any`, but are always passed a `_WKAttachment`.
+            let notify = { (attachment: Any, kind: WebView.AttachmentActivityPhase.Kind) in
+                guard let attachment = attachment as? _WKAttachment else {
+                    assertionFailure("Unexpected attachment type \(type(of: attachment))")
+                    return
+                }
+                onAttachmentActivityPhase(.init(attachment: attachment, kind: kind))
+            }
+
             page.attachmentLifecycleListeners.didInsertAttachment = {
-                // This is safe because it is contractually guaranteed by us to be a _WKAttachment.
-                // swift-format-ignore: NeverForceUnwrap
-                onAttachmentActivityPhase(.init(attachment: $0 as! _WKAttachment, kind: .inserted($1)))
+                notify($0, .inserted($1))
             }
             page.attachmentLifecycleListeners.didRemoveAttachment = {
-                // This is safe because it is contractually guaranteed by us to be a _WKAttachment.
-                // swift-format-ignore: NeverForceUnwrap
-                onAttachmentActivityPhase(.init(attachment: $0 as! _WKAttachment, kind: .removed))
+                notify($0, .removed)
             }
 
             page.attachmentLifecycleListeners.didInvalidateDataForAttachment = {
-                // This is safe because it is contractually guaranteed by us to be a _WKAttachment.
-                // swift-format-ignore: NeverForceUnwrap
-                onAttachmentActivityPhase(.init(attachment: $0 as! _WKAttachment, kind: .dataInvalidated))
+                notify($0, .dataInvalidated)
             }
         } else {
             page.attachmentLifecycleListeners.didInsertAttachment = nil

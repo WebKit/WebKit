@@ -53,24 +53,17 @@ extension WKGroupSessionState {
 @objc
 @implementation
 extension WKURLActivity {
-    // Used to workaround the fact that `@objc @implementation` does not support stored properties whose size can change
-    // due to Library Evolution. Do not use this property directly.
+    // `@objc @implementation` does not support stored properties whose size can change due to Library Evolution,
+    // so this stores the only part of the activity that is used as a fixed-size `NSURL`.
     @nonobjc
-    private var backingURLActivity: Any
+    private var backingFallbackURL: NSURL? = nil
 
-    @nonobjc
-    final private var urlActivity: URLActivity {
-        // Safe force-unwrap because `backingURLActivity` is only set once from the initializer with a known type.
-        // swift-format-ignore: NeverForceUnwrap
-        backingURLActivity as! URLActivity
-    }
-
-    var fallbackURL: URL? { urlActivity.webpageURL }
+    var fallbackURL: URL? { backingFallbackURL as URL? }
 
     @nonobjc
     fileprivate convenience init(activity: URLActivity) {
         self.init()
-        self.backingURLActivity = activity as Any
+        self.backingFallbackURL = activity.webpageURL as NSURL?
     }
 }
 

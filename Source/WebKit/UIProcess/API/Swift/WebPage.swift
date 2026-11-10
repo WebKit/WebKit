@@ -257,8 +257,11 @@ final public class WebPage {
     public var title: Swift.String {
         backingProperty(\.title, backedBy: \.title) { backingValue in
             // The title property is annotated as optional in WKWebView, but is never actually `nil`.
-            // swift-format-ignore: NeverForceUnwrap
-            backingValue!
+            guard let backingValue else {
+                assertionFailure("WKWebView title was unexpectedly nil.")
+                return ""
+            }
+            return backingValue
         }
     }
 

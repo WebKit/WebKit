@@ -35,11 +35,6 @@ final class Renderer {
     var renderer: LowLevelRenderer?
     var pendingStandaloneResources: LowLevelRenderContextStandalone.Resources?
     var pendingRendererResources: LowLevelRenderer.Resources?
-    var renderTargetDescriptor: LowLevelRenderTarget.Descriptor {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        renderer!.renderTargetDescriptor
-    }
 
     private var cameraPosition: SIMD3<Float>
     private var cameraRotation: simd_quatf
@@ -178,14 +173,6 @@ final class Renderer {
         let renderer = try LowLevelRenderer(resources: resources)
         self.renderer = renderer
         renderer.meshInstancesArrayCount = 1
-    }
-
-    private func newCommandBuffer() -> any MTLCommandBuffer {
-        guard let renderCommandBuffer = commandQueue.makeCommandBuffer() else {
-            fatalError("Failed to make command buffer")
-        }
-
-        return renderCommandBuffer
     }
 
     func render(

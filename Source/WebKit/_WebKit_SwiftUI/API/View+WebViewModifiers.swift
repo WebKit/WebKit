@@ -122,13 +122,15 @@ extension View {
         of transform: @escaping (ScrollGeometry) -> T,
         action: @escaping (T, T) -> Void
     ) -> some View where T: Hashable {
-        let change = OnScrollGeometryChangeContext {
-            AnyHashable(transform($0))
-        } action: {
-            // This is a safe force cast because the result of `transform($0)` above is guaranteed to be a `T`,
-            // which is the type of the `base` value of the `AnyHashable` parameters of `action`.
-            // swift-format-ignore: NeverForceUnwrap
-            action($0.base as! T, $1.base as! T)
+        let change = OnScrollGeometryChangeContext { oldGeometry, newGeometry in
+            let transformedNew = transform(newGeometry)
+            let transformedOld = transform(oldGeometry)
+
+            guard transformedOld != transformedNew else {
+                return
+            }
+
+            action(transformedOld, transformedNew)
         }
 
         return environment(\.webViewOnScrollGeometryChange, change)

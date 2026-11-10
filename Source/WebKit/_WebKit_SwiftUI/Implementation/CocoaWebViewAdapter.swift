@@ -334,14 +334,7 @@ extension CocoaWebViewAdapter: WebPageWebView.Delegate {
             return
         }
 
-        let transformedNew = onScrollGeometryChange.transform(newScrollGeometry)
-        let transformedOld = onScrollGeometryChange.transform(oldScrollGeometry)
-
-        guard transformedOld != transformedNew else {
-            return
-        }
-
-        onScrollGeometryChange.action(transformedOld, transformedNew)
+        onScrollGeometryChange.geometryDidChange(oldScrollGeometry, newScrollGeometry)
     }
 }
 

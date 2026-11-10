@@ -72,11 +72,31 @@ extension MTLDevice {
         memoryOwner: task_id_token_t,
         options: MTLResourceOptions = []
     ) -> any MTLBuffer {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let buffer = makeBuffer(length: length, options: options)!
+        guard let buffer = makeBuffer(length: length, options: options) else {
+            fatalError("Failed to allocate a buffer of \(length) bytes")
+        }
         buffer.__setOwnerWithIdentity(memoryOwner)
         return buffer
+    }
+}
+
+// These call fatalError if Metal returns nil, which it does only when it can't allocate, since the GPU process
+// can't recover from that.
+extension MTLCommandQueue {
+    func requiredCommandBuffer() -> any MTLCommandBuffer {
+        guard let commandBuffer = makeCommandBuffer() else {
+            fatalError("Failed to make command buffer")
+        }
+        return commandBuffer
+    }
+}
+
+extension MTLCommandBuffer {
+    func requiredBlitCommandEncoder() -> any MTLBlitCommandEncoder {
+        guard let blitCommandEncoder = makeBlitCommandEncoder() else {
+            fatalError("Failed to make blit command encoder")
+        }
+        return blitCommandEncoder
     }
 }
 
@@ -445,12 +465,8 @@ private func buildDeformationContext(
         let resourceBuffer = meshResource.readVertices(at: bound.bufferIndex, commandBuffer: commandBuffer)
         // Copy the source data into a private buffer so the deformation doesn't
         // mutate the mesh resource's primary storage.
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let copy = device.makeBuffer(length: resourceBuffer.length, options: .storageModeShared)!
-        copy.__setOwnerWithIdentity(memoryOwner)
-        // swift-format-ignore: NeverForceUnwrap
-        let blit = commandBuffer.makeBlitCommandEncoder()!
+        let copy = device.makeBuffer(length: resourceBuffer.length, memoryOwner: memoryOwner, options: .storageModeShared)
+        let blit = commandBuffer.requiredBlitCommandEncoder()
         blit.copy(from: resourceBuffer, sourceOffset: 0, to: copy, destinationOffset: 0, size: resourceBuffer.length)
         blit.endEncoding()
         try deformation.input.setVertices(copy, offset: bound.offset, semantic: bound.v2Attribute.semantic)

@@ -192,23 +192,36 @@ extension WebPage {
 
 extension WebPage.EditorStateSnapshot {
     init(_ dictionary: [AnyHashable: Any]) {
-        // The Objective-C interface this is converting from is not able to express at compile-time that this is guaranteed.
-        // swift-format-ignore: NeverForceUnwrap
-        self.selectionType = SelectionType(rawValue: dictionary["selection-type"] as! SelectionType.RawValue)!
+        if let selectionType = (dictionary["selection-type"] as? SelectionType.RawValue).flatMap(SelectionType.init(rawValue:)) {
+            self.selectionType = selectionType
+        } else {
+            assertionFailure("Editor state has a missing or unrecognized selection type.")
+            self.selectionType = SelectionType.none
+        }
 
         guard let postLayoutData = dictionary["post-layout-data"] as? Bool, postLayoutData else {
             self.postLayoutData = nil
             return
         }
 
-        // The Objective-C interface this is converting from is not able to express at compile-time that these are guaranteed.
-        // swift-format-ignore: NeverForceUnwrap
+        guard
+            let bold = dictionary["bold"] as? Bool,
+            let italic = dictionary["italic"] as? Bool,
+            let underline = dictionary["underline"] as? Bool,
+            let textAlignment = (dictionary["text-alignment"] as? Int).flatMap(NSTextAlignment.init(rawValue:)),
+            let textColor = dictionary["text-color"] as? String
+        else {
+            assertionFailure("Editor state has missing or malformed post layout data.")
+            self.postLayoutData = nil
+            return
+        }
+
         self.postLayoutData = .init(
-            bold: dictionary["bold"] as! Bool,
-            italic: dictionary["italic"] as! Bool,
-            underline: dictionary["underline"] as! Bool,
-            textAlignment: NSTextAlignment(rawValue: dictionary["text-alignment"] as! Int)!,
-            textColor: dictionary["text-color"] as! String
+            bold: bold,
+            italic: italic,
+            underline: underline,
+            textAlignment: textAlignment,
+            textColor: textColor
         )
     }
 }

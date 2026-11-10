@@ -937,7 +937,7 @@ WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
     NSError *error;
     m_receiver = [WebKit::allocWKBridgeReceiverInstance() initWithConfiguration:configuration diffuseAsset:diffuseAsset specularAsset:specularAsset error:&error];
     if (error)
-        WTFLogAlways("Could not initialize USD renderer"); // NOLINT
+        WTFLogAlways("Could not initialize USD renderer: %@", error); // NOLINT
 
     lazyInitialize(m_meshIdentifier, adoptNS([[NSUUID alloc] init]));
 #endif
