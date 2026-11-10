@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 150px; height: 80px; border: 1px solid; margin: 0 2px 4px 0; }
+.abs { position: absolute; background: lightblue; }
+</style>
+<div class="cb"><div class="abs" style="contain: layout"><span id="text">short</span></div></div>
+<div class="cb"><div class="abs" id="hidden" style="width: 60px">becomes content-visibility: hidden</div></div>
+<div class="cb"><div class="abs" id="clamp" style="width: 80px">text that gets clamped to two lines when line-clamp comes</div></div>
+<div class="cb" id="containingBlock"><div class="abs" style="contain: paint; top: 5px; bottom: 5px; left: 5px; right: 5px">resized containing block</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer text in the contained box";
+document.getElementById("hidden").style.contentVisibility = "hidden";
+document.getElementById("clamp").style.lineClamp = "2";
+document.getElementById("containingBlock").style.width = "100px";
+</script>

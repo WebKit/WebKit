@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 240px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left"></div><div class="avoider" style="margin-left: -20px">negative start beside a float</div></div>
+<div class="root"><div class="avoider" style="margin-left: -20px">negative start without floats</div><div class="left"></div></div>
+<div class="root"><div class="right"></div><div class="avoider" style="margin-right: -20px">negative end beside a right float</div></div>
+<div class="root"><div class="left"></div><div class="right"></div><div class="avoider" style="margin: 0 -10px">negative both beside two floats that wraps</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="width: 150px; margin-left: -30px">fixed width negative</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="width: 200px; margin-left: -30px">too wide negative</div></div>
+<div class="root"><div class="right"></div><div class="avoider" style="width: 180px; margin-left: -10px">fits with negative start</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="margin-left: calc(10px - 5%)">calc margin</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="margin-left: calc(70px + 1%)">calc past the float</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="margin-left: 80px">margin past the float</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="margin-right: -50px">negative end beside left float</div></div>
+<div class="root"><div class="left"></div><table style="margin-left: -15px; background: lightgreen"><tr><td>table negative</td></tr></table></div>
+<div class="root" style="direction: rtl"><div class="right"></div><div class="avoider" style="margin-right: -20px">rtl negative start</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="margin-left: -20px; margin-right: auto; width: 100px">negative and auto</div></div>
+<div class="root"><div class="left" style="margin-right: -20px"></div><div class="avoider">float with negative margin</div></div>

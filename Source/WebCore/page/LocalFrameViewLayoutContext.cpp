@@ -1123,6 +1123,16 @@ bool LocalFrameViewLayoutContext::isComputingIntrinsicLogicalWidthFor(const Rend
     return m_intrinsicLogicalWidthComputationList.contains(box);
 }
 
+void LocalFrameViewLayoutContext::addRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow& root)
+{
+    m_rootsWithFloatsPlacedByBlockFormattingContext.add(root);
+}
+
+bool LocalFrameViewLayoutContext::removeRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow& root)
+{
+    return m_rootsWithFloatsPlacedByBlockFormattingContext.remove(root);
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {

@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: inline-block; position: relative; height: 160px; width: 120px; margin: 0 6px 6px 0; vertical-align: top; background: lightgray; border: solid blue; border-width: 1px 2px 3px 4px; padding: 3px 5px 7px 9px; font-family: monospace; font-size: 10px; }
+.lr { writing-mode: vertical-lr; }
+.rl { writing-mode: vertical-rl; }
+.box { background: lightblue; inline-size: 40px; block-size: 10px; margin-block: 5px; }
+.abs { position: absolute; inline-size: 20px; block-size: 8px; background: green; }
+.insets { position: absolute; inset-inline-start: 10px; inset-block-end: 6px; inline-size: 30px; block-size: 12px; background: orange; }
+.stretch { position: absolute; inset-inline: 20px 30px; inset-block-start: 40px; block-size: 6px; background: purple; }
+.centered { position: absolute; inset: 0; margin: auto; inline-size: 24px; block-size: 14px; background: brown; }
+.fit { position: absolute; inset-block-start: 70px; background: pink; }
+.container { position: relative; margin: 6px 4px; background: yellow; block-size: 30px; }
+</style>
+<div class="root lr"><div class="box"></div><div class="abs"></div><div class="insets"></div><div class="stretch"></div><div class="centered"></div><div class="fit">fit content</div><div class="container"><div class="abs" style="inset-inline-end: 4px"></div></div></div>
+<div class="root rl"><div class="box"></div><div class="abs"></div><div class="insets"></div><div class="stretch"></div><div class="centered"></div><div class="fit">fit content</div><div class="container"><div class="abs" style="inset-inline-end: 4px"></div></div></div>
+<div class="root lr" dir="rtl"><div class="box"></div><div class="abs"></div><div class="insets"></div><div class="stretch"></div><div class="centered"></div><div class="fit">fit content</div><div class="container"><div class="abs" style="inset-inline-end: 4px"></div></div></div>
+<div class="root rl" dir="rtl"><div class="box"></div><div class="abs"></div><div class="insets"></div><div class="stretch"></div><div class="centered"></div><div class="fit">fit content</div><div class="container"><div class="abs" style="inset-inline-end: 4px"></div></div></div>
+<div class="root rl"><div style="margin-block-start: 12px; padding-inline-start: 8px; position: relative; inset-block-start: 5px"><span>text <span class="abs"></span></span><div class="box"></div><div class="abs" style="margin-inline-start: 6px"></div></div></div>
+<div class="root lr"><div style="display: flex; block-size: 40px; background: yellow"><div style="writing-mode: sideways-lr; inline-size: 60px"><div class="abs"></div></div></div></div>

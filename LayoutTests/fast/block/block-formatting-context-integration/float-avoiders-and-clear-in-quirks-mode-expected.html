@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 40px; background: tan; }
+.avoider { overflow: hidden; background: lightblue; }
+td { vertical-align: top; border: 1px solid; width: 240px; }
+</style>
+<div style="margin-top: 10px"><div class="left"></div><p class="avoider" style="width: 760px">a paragraph that avoids the float and goes below it</p></div>
+<table><tr>
+<td><div class="left"></div><p class="avoider" style="width: 220px">below the float in a cell</p><p>next</p></td>
+<td><div class="left"></div><p class="avoider">beside the float in a cell</p></td>
+<td><div class="left"></div><p style="clear: left">cleared in a cell</p><p>next</p></td>
+</tr><tr>
+<td><div class="left"></div><div style="clear: left"></div><p>after an empty cleared box</p></td>
+<td><p style="margin: 0"></p><div class="left"></div><p class="avoider" style="width: 220px">after an empty paragraph</p></td>
+<td><div class="left"></div><div style="margin-top: 5px"><p class="avoider" style="width: 220px">nested</p></div></td>
+</tr><tr>
+<td><div style="margin-top: 10px"><div class="left"></div><p class="avoider" style="width: 220px">below the float after a margin</p></div></td>
+<td><div style="margin-top: 10px"><div class="left"></div><p style="clear: left">cleared after a margin</p></div></td>
+<td><div style="margin-top: 6px"><div class="left"></div><div style="margin-top: 12px"><p class="avoider" style="width: 220px">deeper</p></div></div></td>
+</tr></table>
+<p>first</p><div class="left"></div><div class="right"></div><h3 style="clear: right">a heading that clears the right float</h3>
+<div style="height: 5px"></div><div class="left"></div><div style="margin-top: 20px"><div style="margin-top: 15px"><p style="clear: left">deep clear</p></div></div>
