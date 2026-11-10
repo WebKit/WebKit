@@ -1757,6 +1757,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/COEPInheritenceViolationReportBody.h
     loader/CORPViolationReportBody.h
     loader/CanvasActivityRecord.h
+    loader/ConnectionAllowlist.h
     loader/ContentFilter.h
     loader/ContentFilterClient.h
     loader/CookieChangeListener.h

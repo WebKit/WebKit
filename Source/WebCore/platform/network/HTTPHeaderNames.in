@@ -41,6 +41,8 @@ Authorization
 Cache-Control
 Clear-Site-Data
 Connection
+Connection-Allowlist
+Connection-Allowlist-Report-Only
 Content-Disposition
 Content-Encoding
 Content-Language

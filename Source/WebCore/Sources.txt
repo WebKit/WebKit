@@ -2145,6 +2145,7 @@ loader/AttributionTriggerData.cpp
 loader/COEPInheritenceViolationReportBody.cpp
 loader/CORPViolationReportBody.cpp
 loader/CanvasActivityRecord.cpp
+loader/ConnectionAllowlist.cpp
 loader/ContentFilter.cpp
 loader/CookieJar.cpp
 loader/CrossOriginAccessControl.cpp

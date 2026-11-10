@@ -103,6 +103,7 @@ class SubstituteResource;
 class UserContentProvider;
 class UserContentURLPattern;
 
+struct ConnectionAllowlist;
 struct IntegrityPolicy;
 
 enum class ClearSiteDataValue : uint8_t;
@@ -508,6 +509,8 @@ public:
     std::unique_ptr<IntegrityPolicy> integrityPolicy();
     std::unique_ptr<IntegrityPolicy> integrityPolicyReportOnly();
 
+    const Vector<std::unique_ptr<ConnectionAllowlist>>& connectionAllowlists() const LIFETIME_BOUND { return m_connectionAllowlists; }
+
     bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted; }
     bool isContinuingLoadAfterNavigationPolicyDecision() const { return m_isContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision; }
     void setIsContinuingLoad(ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad) { m_isContinuingLoad = shouldTreatAsContinuingLoad; }
@@ -741,6 +744,7 @@ private:
     Vector<CustomHeaderFields> m_customHeaderFields;
 
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
+    Vector<std::unique_ptr<ConnectionAllowlist>> m_connectionAllowlists;
     std::unique_ptr<IntegrityPolicy> m_integrityPolicy;
     std::unique_ptr<IntegrityPolicy> m_integrityPolicyReportOnly;
 

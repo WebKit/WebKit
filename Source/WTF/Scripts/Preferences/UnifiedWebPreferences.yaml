@@ -1618,6 +1618,14 @@ CompressionStreamEnabled:
     default: false
     WebKit: true
 
+ConnectionAllowlistsEnabled:
+  type: bool
+  status: unstable
+  category: networking
+  humanReadableName: "Connection Allowlists"
+  humanReadableDescription: "Enable the Connection-Allowlist HTTP header"
+  defaultValue: false
+
 ConsistentQueryParameterFilteringInternalQuirkEnabled:
   type: bool
   status: internal
