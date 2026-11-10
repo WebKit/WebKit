@@ -223,7 +223,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
     return isCacheable;
 }
 
-static bool canCachePage(Page& page)
+static bool canCachePage(Page& page, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     RELEASE_ASSERT(!page.isRestoringCachedPage());
 
@@ -282,7 +282,7 @@ static bool canCachePage(Page& page)
     if (!localMainFrame)
         return isCacheable;
 
-    FrameLoadType loadType = localMainFrame->loader().loadType();
+    FrameLoadType loadType = loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::Yes ? FrameLoadType::Standard : localMainFrame->loader().loadType();
     switch (loadType) {
     case FrameLoadType::Reload:
         // No point writing to the cache on a reload, since we will just write over it again when we leave that page.
@@ -379,7 +379,7 @@ void BackForwardCache::dump() const
     }
 }
 
-bool BackForwardCache::canCache(Page& page) const
+bool BackForwardCache::canCache(Page& page, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess) const
 {
     if (!m_maxSize) {
         logBackForwardCacheFailureDiagnosticMessage(&page, DiagnosticLoggingKeys::isDisabledKey());
@@ -391,7 +391,7 @@ bool BackForwardCache::canCache(Page& page) const
         return false;
     }
     
-    return canCachePage(page);
+    return canCachePage(page, loadWillContinueInAnotherProcess);
 }
 
 void BackForwardCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
@@ -502,12 +502,12 @@ static void firePageHideEventRecursively(Frame& frame)
         firePageHideEventRecursively(*child);
 }
 
-std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSuspension forceSuspension)
+std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSuspension forceSuspension, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     Ref mainFrame = page.mainFrame();
     mainFrame->stopForBackForwardCache();
 
-    if (forceSuspension == ForceSuspension::No && !canCache(page))
+    if (forceSuspension == ForceSuspension::No && !canCache(page, loadWillContinueInAnotherProcess))
         return nullptr;
 
     ASSERT_WITH_MESSAGE(!page.isUtilityPage(), "Utility pages such as SVGImage pages should never go into BackForwardCache");
@@ -530,7 +530,7 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
 
     // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
     // could have altered the page in a way that could prevent caching.
-    if (forceSuspension == ForceSuspension::No && !canCache(page)) {
+    if (forceSuspension == ForceSuspension::No && !canCache(page, loadWillContinueInAnotherProcess)) {
         setBackForwardCacheState(page, Document::NotInBackForwardCache);
         return nullptr;
     }
@@ -542,7 +542,7 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
     return makeUnique<CachedPage>(page);
 }
 
-bool BackForwardCache::addIfCacheable(BackForwardFrameItemIdentifier identifier, Page& page, std::optional<BackForwardItemIdentifier> itemID)
+bool BackForwardCache::addIfCacheable(BackForwardFrameItemIdentifier identifier, Page& page, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess, std::optional<BackForwardItemIdentifier> itemID)
 {
     if (isInBackForwardCache(identifier))
         return false;
@@ -551,7 +551,7 @@ bool BackForwardCache::addIfCacheable(BackForwardFrameItemIdentifier identifier,
     // loadDifferentDocumentItem; FrameLoader::commitProvisionalLoad gates this out.
     ASSERT(page.hasAnyLocalFrame());
 
-    auto cachedPage = trySuspendPage(page, ForceSuspension::No);
+    auto cachedPage = trySuspendPage(page, ForceSuspension::No, loadWillContinueInAnotherProcess);
     if (!cachedPage)
         return false;
 
@@ -581,7 +581,7 @@ bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
     if (page->settings().siteIsolationEnabled() && !page->settings().multiProcessBackForwardCacheEnabled())
         return false;
 
-    if (!addIfCacheable(item.frameItemID(), *page, item.itemID()))
+    if (!addIfCacheable(item.frameItemID(), *page, LoadWillContinueInAnotherProcess::No, item.itemID()))
         return false;
     item.notifyChanged();
     return true;
@@ -591,7 +591,7 @@ std::unique_ptr<CachedPage> BackForwardCache::suspendPage(Page& page)
 {
     RELEASE_LOG(BackForwardCache, "BackForwardCache::suspendPage()");
 
-    return trySuspendPage(page, ForceSuspension::Yes);
+    return trySuspendPage(page, ForceSuspension::Yes, LoadWillContinueInAnotherProcess::No);
 }
 
 std::unique_ptr<CachedPage> BackForwardCache::take(HistoryItem& item, Page* page)

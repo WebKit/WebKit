@@ -41,6 +41,7 @@ class CachedPage;
 class LocalFrame;
 class Page;
 
+enum class LoadWillContinueInAnotherProcess : bool;
 enum class PruningReason { None, ProcessSuspended, MemoryPressure, ReachedMaxSize };
 
 class BackForwardCache {
@@ -50,7 +51,7 @@ public:
     // Function to obtain the global back/forward cache.
     WEBCORE_EXPORT static BackForwardCache& singleton();
 
-    bool canCache(Page&) const;
+    bool canCache(Page&, LoadWillContinueInAnotherProcess) const;
 
     // Used when memory is low to prune some cached pages.
     WEBCORE_EXPORT void pruneToSizeNow(unsigned maxSize, PruningReason);
@@ -59,7 +60,7 @@ public:
 
     WEBCORE_EXPORT std::unique_ptr<CachedPage> suspendPage(Page&);
     WEBCORE_EXPORT bool addIfCacheable(HistoryItem&, Page*); // Prunes if maxSize() is exceeded.
-    WEBCORE_EXPORT bool addIfCacheable(BackForwardFrameItemIdentifier, Page&, std::optional<BackForwardItemIdentifier> = std::nullopt);
+    WEBCORE_EXPORT bool addIfCacheable(BackForwardFrameItemIdentifier, Page&, LoadWillContinueInAnotherProcess, std::optional<BackForwardItemIdentifier> = std::nullopt);
     enum class ShouldNotifyClient : bool { No, Yes };
     WEBCORE_EXPORT void remove(BackForwardFrameItemIdentifier, ShouldNotifyClient = ShouldNotifyClient::Yes);
     WEBCORE_EXPORT void remove(HistoryItem&);
@@ -90,7 +91,7 @@ private:
     ~BackForwardCache() = delete; // Make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
     enum class ForceSuspension : bool { No, Yes };
-    std::unique_ptr<CachedPage> trySuspendPage(Page&, ForceSuspension);
+    std::unique_ptr<CachedPage> trySuspendPage(Page&, ForceSuspension, LoadWillContinueInAnotherProcess);
     void prune(PruningReason);
     void dump() const;
 

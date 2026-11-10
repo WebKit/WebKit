@@ -443,7 +443,7 @@ DidCacheOutgoingDocument WebFrame::loadDidCommitInAnotherProcess(WebCore::Proces
     bool didCache = false;
     if (!parent) {
         if (cacheIdentifiers)
-            didCache = BackForwardCache::singleton().addIfCacheable(cacheIdentifiers->mainFrameItemID, *corePage, cacheIdentifiers->itemID);
+            didCache = BackForwardCache::singleton().addIfCacheable(cacheIdentifiers->mainFrameItemID, *corePage, LoadWillContinueInAnotherProcess::Yes, cacheIdentifiers->itemID);
         if (!didCache) {
             // Tearing down the uncached document detaches this frame from the page, so pages cached
             // earlier in it can no longer be restored.
