@@ -57,7 +57,6 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 # webkit.org/b/318834 [ iOS DEBUG ] 2x TestWebKitAPI.ContentRuleList.* (api-tests) are flaky timeouts.
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.RequestMethods [ Pass Timeout ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
-webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.EnhancedSecurityTests/securityRestrictionModeFromNavigationDecider(enabled:) [ Pass Failure ]
 webkit.org/b/326128 [ ios release ipad ] TestWebKitAPI.Fullscreen.AllowsInlinePlaybackInDesktopContentMode [ Pass Timeout ]
 webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.InAppBrowserPrivacy.NonAppBoundUserStyleSheetForSpecificWebViewFails [ Pass Timeout ]
 
