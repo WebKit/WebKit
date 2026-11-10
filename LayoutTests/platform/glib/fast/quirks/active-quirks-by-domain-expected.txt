@@ -140,8 +140,7 @@ https://www.forbes.com/
 https://gizmodo.com/
     (none)
 https://play.geforcenow.com/
-    NeedsStyleSheetInjectedQuirk
-        styleSheet: div.cdk-overlay-container, div.unsupported-scenario-container { display: none; }
+    (none)
 https://www.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]

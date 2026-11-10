@@ -39,13 +39,13 @@
 
 namespace TestWebKitAPI {
 
-static constexpr auto overlayDisplayScript = "getComputedStyle(document.querySelector('.cdk-overlay-container')).display"_s;
+static constexpr auto overlayPointerEventsScript = "getComputedStyle(document.querySelector('#overlay')).pointerEvents"_s;
 
-static RetainPtr<NSString> overlayDisplayInSubframe(NSString *topURL, NSString *subframeURL, bool siteIsolationEnabled)
+static RetainPtr<NSString> overlayPointerEventsInSubframe(NSString *topURL, NSString *subframeURL, bool siteIsolationEnabled)
 {
     HTTPServer server({
         { "/main"_s, { makeString("<iframe src='"_s, String(subframeURL), "'></iframe>"_s) } },
-        { "/subframe"_s, { "<div class='cdk-overlay-container'>overlay</div>"_s } }
+        { "/subframe"_s, { "<div id='overlay'><button aria-label='Share'>Share</button><button aria-label='Report'>Report</button></div>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
     RetainPtr configuration = server.httpsProxyConfiguration();
@@ -58,37 +58,37 @@ static RetainPtr<NSString> overlayDisplayInSubframe(NSString *topURL, NSString *
     RetainPtr childFrame = [webView firstChildFrame];
     EXPECT_WK_STREQ(subframeURL, childFrame.get().request.URL.absoluteString);
 
-    return [webView stringByEvaluatingJavaScript:@(overlayDisplayScript.characters()) inFrame:childFrame.get()];
+    return [webView stringByEvaluatingJavaScript:@(overlayPointerEventsScript.characters()) inFrame:childFrame.get()];
 }
 
 TEST(QuirksStyleSheetInjection, AppliesToCrossOriginSubframeWithoutSiteIsolation)
 {
-    EXPECT_WK_STREQ("none", overlayDisplayInSubframe(@"https://play.geforcenow.com/main", @"https://webkit.org/subframe", false).get());
+    EXPECT_WK_STREQ("none", overlayPointerEventsInSubframe(@"https://www.yelp.com/main", @"https://webkit.org/subframe", false).get());
 }
 
 TEST(QuirksStyleSheetInjection, AppliesToCrossOriginSubframeWithSiteIsolation)
 {
-    EXPECT_WK_STREQ("none", overlayDisplayInSubframe(@"https://play.geforcenow.com/main", @"https://webkit.org/subframe", true).get());
+    EXPECT_WK_STREQ("none", overlayPointerEventsInSubframe(@"https://www.yelp.com/main", @"https://webkit.org/subframe", true).get());
 }
 
 TEST(QuirksStyleSheetInjection, AppliesToSameOriginSubframeWithoutSiteIsolation)
 {
-    EXPECT_WK_STREQ("none", overlayDisplayInSubframe(@"https://play.geforcenow.com/main", @"https://play.geforcenow.com/subframe", false).get());
+    EXPECT_WK_STREQ("none", overlayPointerEventsInSubframe(@"https://www.yelp.com/main", @"https://www.yelp.com/subframe", false).get());
 }
 
 TEST(QuirksStyleSheetInjection, AppliesToSameOriginSubframeWithSiteIsolation)
 {
-    EXPECT_WK_STREQ("none", overlayDisplayInSubframe(@"https://play.geforcenow.com/main", @"https://play.geforcenow.com/subframe", true).get());
+    EXPECT_WK_STREQ("none", overlayPointerEventsInSubframe(@"https://www.yelp.com/main", @"https://www.yelp.com/subframe", true).get());
 }
 
 TEST(QuirksStyleSheetInjection, DoesNotApplyToCrossOriginSubframeOfNonMatchingTopDocumentWithoutSiteIsolation)
 {
-    EXPECT_WK_STREQ("block", overlayDisplayInSubframe(@"https://example.com/main", @"https://webkit.org/subframe", false).get());
+    EXPECT_WK_STREQ("auto", overlayPointerEventsInSubframe(@"https://example.com/main", @"https://webkit.org/subframe", false).get());
 }
 
 TEST(QuirksStyleSheetInjection, DoesNotApplyToCrossOriginSubframeOfNonMatchingTopDocumentWithSiteIsolation)
 {
-    EXPECT_WK_STREQ("block", overlayDisplayInSubframe(@"https://example.com/main", @"https://webkit.org/subframe", true).get());
+    EXPECT_WK_STREQ("auto", overlayPointerEventsInSubframe(@"https://example.com/main", @"https://webkit.org/subframe", true).get());
 }
 
 } // namespace TestWebKitAPI
