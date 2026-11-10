@@ -211,8 +211,10 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
 
 void RTCController::stopGatheringLogs()
 {
-    if (!m_gatheringLogsDocument)
+    if (!m_gatheringLogsDocument) {
+        stopLoggingWebRTCLogs();
         return;
+    }
     m_gatheringLogsDocument = { };
     m_callback = { };
 
