@@ -51,6 +51,7 @@
 #include <WebCore/StyleOffsetPosition.h>
 #include <WebCore/StyleOffsetRotate.h>
 #include <WebCore/StyleOverflowClipMargin.h>
+#include <WebCore/StylePageName.h>
 #include <WebCore/StylePageSize.h>
 #include <WebCore/StylePerspective.h>
 #include <WebCore/StylePerspectiveOrigin.h>
@@ -155,6 +156,7 @@ public:
 
     WebkitBoxReflect boxReflect;
 
+    PageName pageName;
     PageSize pageSize;
 
     ShapeOutside shapeOutside;

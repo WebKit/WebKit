@@ -3384,6 +3384,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/overflow/StyleScrollbarGutter.h
     style/values/overflow/StyleTextOverflow.h
 
+    style/values/page/StylePageName.h
     style/values/page/StylePageSize.h
 
     style/values/pointerevents/StyleTouchAction.h

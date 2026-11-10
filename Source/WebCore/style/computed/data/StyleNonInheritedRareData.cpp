@@ -58,6 +58,7 @@ NonInheritedRareData::NonInheritedRareData()
     , usedCounterDirectives { }
     , willChange(ComputedStyle::initialWillChange())
     , boxReflect(ComputedStyle::initialBoxReflect())
+    , pageName(ComputedStyle::initialPageName())
     , pageSize(ComputedStyle::initialPageSize())
     , shapeOutside(ComputedStyle::initialShapeOutside())
     , shapeMargin(ComputedStyle::initialShapeMargin())
@@ -180,6 +181,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , usedCounterDirectives(o.usedCounterDirectives)
     , willChange(o.willChange)
     , boxReflect(o.boxReflect)
+    , pageName(o.pageName)
     , pageSize(o.pageSize)
     , shapeOutside(o.shapeOutside)
     , shapeMargin(o.shapeMargin)
@@ -307,6 +309,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && usedCounterDirectives == o.usedCounterDirectives
         && willChange == o.willChange
         && boxReflect == o.boxReflect
+        && pageName == o.pageName
         && pageSize == o.pageSize
         && shapeOutside == o.shapeOutside
         && shapeMargin == o.shapeMargin
@@ -447,6 +450,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(willChange);
     LOG_IF_DIFFERENT(boxReflect);
 
+    LOG_IF_DIFFERENT(pageName);
     LOG_IF_DIFFERENT(pageSize);
 
     LOG_IF_DIFFERENT(shapeOutside);

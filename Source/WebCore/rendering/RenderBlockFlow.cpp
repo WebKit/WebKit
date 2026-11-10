@@ -49,6 +49,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
@@ -69,6 +70,7 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderTableCellInlines.h"
 #include "RenderText.h"
@@ -2111,6 +2113,58 @@ static bool inNormalFlow(RenderBox& child)
     return true;
 }
 
+// https://drafts.csswg.org/css-page-3/#using-named-pages
+static AtomString usedPageValue(const RenderElement& renderer)
+{
+    for (CheckedRef ancestor : lineageOfType<RenderElement>(renderer)) {
+        if (auto name = ancestor->style().pageName().tryValue())
+            return name->value;
+    }
+    return emptyAtom();
+}
+
+enum class PageValueEdge : bool { Start, End };
+
+static CheckedPtr<RenderBox> firstOrLastInFlowChild(const RenderBox& box, PageValueEdge edge)
+{
+    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(box);
+    if (!blockFlow || blockFlow->childrenInline())
+        return nullptr;
+    // A multicol container's content is in its flow. Column sets and spanners are siblings of the flow.
+    if (CheckedPtr<RenderBox> multiColumnFlow = blockFlow->multiColumnFlow())
+        return multiColumnFlow;
+    CheckedPtr child = edge == PageValueEdge::Start ? blockFlow->firstInFlowChildBox() : blockFlow->lastInFlowChildBox();
+    if (CheckedPtr placeholder = dynamicDowncast<RenderMultiColumnSpannerPlaceholder>(child))
+        return placeholder->spanner();
+    return child;
+}
+
+static AtomString startOrEndPageName(const RenderBox& box, PageValueEdge edge)
+{
+    AtomString name;
+    for (CheckedPtr<const RenderBox> descendant = &box; descendant; descendant = firstOrLastInFlowChild(*descendant, edge)) {
+        if (auto value = descendant->style().pageName().tryValue())
+            name = value->value;
+    }
+    return name;
+}
+
+static bool pageValuesForceBreakBefore(const RenderBlockFlow& parent, const RenderBox& child)
+{
+    // A multicol container's children are its flow, column sets and spanners, not its content. Blocks inside inlines aren't supported.
+    if (!parent.view().hasRenderersWithNamedPage() || parent.multiColumnFlow() || parent.childrenInline())
+        return false;
+    CheckedPtr previous = child.previousInFlowSiblingBox();
+    if (!previous)
+        return false;
+    auto endName = startOrEndPageName(*previous, PageValueEdge::End);
+    auto startName = startOrEndPageName(child, PageValueEdge::Start);
+    if (endName == startName)
+        return false;
+    auto parentUsedValue = usedPageValue(parent);
+    return (endName.isNull() ? parentUsedValue : endName) != (startName.isNull() ? parentUsedValue : startName);
+}
+
 LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logicalOffset)
 {
     // FIXME: Add page break checking here when we support printing.
@@ -2120,7 +2174,7 @@ LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logica
     bool checkPageBreaks = !checkColumnBreaks && view().frameView().layoutContext().layoutState()->pageLogicalHeight(); // FIXME: Once columns can print we have to check this.
     bool checkFragmentBreaks = false;
     bool checkBeforeAlways = (checkColumnBreaks && child.style().breakBefore() == BreakBetween::Column)
-        || (checkPageBreaks && alwaysPageBreak(child.style().breakBefore()));
+        || (checkPageBreaks && (alwaysPageBreak(child.style().breakBefore()) || pageValuesForceBreakBefore(*this, child)));
     if (checkBeforeAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         if (checkColumnBreaks) {
             if (isInsideMulticolFlow)

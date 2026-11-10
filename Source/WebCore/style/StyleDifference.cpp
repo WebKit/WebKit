@@ -276,7 +276,7 @@ public:
             // Don't return; keep looking for another change
         }
 
-        if (a.breakBefore != b.breakBefore || a.breakAfter != b.breakAfter || a.breakInside != b.breakInside)
+        if (a.breakBefore != b.breakBefore || a.breakAfter != b.breakAfter || a.breakInside != b.breakInside || a.pageName != b.pageName)
             return true;
 
         if (a.isolation != b.isolation) {
