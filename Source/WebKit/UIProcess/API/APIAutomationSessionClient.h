@@ -32,6 +32,7 @@
 
 namespace WebKit {
 class WebAutomationSession;
+class WebExtensionContext;
 class WebPageProxy;
 }
 
@@ -93,6 +94,7 @@ public:
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
     virtual void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, const WTF::String& resource, CompletionHandler<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
     virtual void unloadWebExtension(WebKit::WebAutomationSession&, const WTF::String& identifier, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual RefPtr<WebKit::WebExtensionContext> webExtensionContextForIdentifier(WebKit::WebAutomationSession&, const WTF::String& identifier) { return nullptr; }
 #endif
 
     virtual void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const WTF::String& commandName, const WTF::String& arguments, CompletionHandler<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }

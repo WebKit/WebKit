@@ -132,6 +132,7 @@ Tests/WebKit/WKWebView/DataDetection.mm @nonARC
 Tests/WebKit/WKWebView/WebAuthnRelatedOriginsFetch.mm @nonARC
 Tests/WebKit/WKWebView/WebAutomationBidiEvents.mm @nonARC
 Tests/WebKit/WKWebView/WebAutomationPageZoom.mm @nonARC
+Tests/WebKit/WKWebView/WebAutomationWebExtensionPages.mm @nonARC
 Tests/WebKit/WKWebView/WritingTools.mm @nonARC
 Tests/WebKit/WKWebView/DecidePolicyForNavigationAction.mm @nonARC
 Tests/WebKit/WKWebView/DeviceManagementRestrictions.mm @nonARC

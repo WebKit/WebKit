@@ -2841,47 +2841,52 @@ bool WebExtensionContext::isOffscreenPage(WebPageProxyIdentifier pageProxyIdenti
 #endif
 }
 
-bool WebExtensionContext::isExtensionPage(WebPageProxyIdentifier pageProxyIdentifier) const
+std::optional<WebExtensionContext::WebViewPurpose> WebExtensionContext::purposeOfExtensionPage(WebPageProxyIdentifier pageProxyIdentifier) const
 {
     if (isBackgroundPage(pageProxyIdentifier))
-        return true;
+        return WebViewPurpose::Background;
 
     for (auto entry : m_popupPageActionMap) {
         if (entry.key.identifier() == pageProxyIdentifier)
-            return true;
+            return WebViewPurpose::Popup;
     }
 
     for (auto entry : m_extensionPageTabMap) {
         if (entry.key.identifier() == pageProxyIdentifier)
-            return true;
+            return WebViewPurpose::Tab;
     }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     for (auto entry : m_sidebarPageMap) {
         if (entry.key.identifier() == pageProxyIdentifier)
-            return true;
+            return WebViewPurpose::Sidebar;
     }
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
     if (isOffscreenPage(pageProxyIdentifier))
-        return true;
+        return WebViewPurpose::Offscreen;
 #endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     for (auto entry : m_inspectorContextMap) {
         WKWebView *backgroundWebView = entry.value.backgroundWebView.get();
         if (backgroundWebView && backgroundWebView._page->identifier() == pageProxyIdentifier)
-            return true;
+            return WebViewPurpose::Inspector;
     }
 
     for (auto entry : openInspectors()) {
         if (entry.first->inspectorPage()->identifier() == pageProxyIdentifier)
-            return true;
+            return WebViewPurpose::Inspector;
     }
 #endif
 
-    return false;
+    return std::nullopt;
+}
+
+bool WebExtensionContext::isExtensionPage(WebPageProxyIdentifier pageProxyIdentifier) const
+{
+    return !!purposeOfExtensionPage(pageProxyIdentifier);
 }
 
 bool WebExtensionContext::backgroundContentIsLoaded() const
