@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/NSItemProviderAdditions.h"
+#import "Helpers/cocoa/ProcessTerminationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
@@ -592,11 +593,6 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> viewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
 {
     return viewAndDelegate(server.httpsProxyConfiguration(), rect);
-}
-
-static bool processStillRunning(pid_t pid)
-{
-    return !kill(pid, 0);
 }
 
 static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, ExpectedFrameTree&& expectedRoot)
@@ -12565,6 +12561,104 @@ TEST(SiteIsolation, SharedProcessMainFrameNotReusedAfterCrash)
     pid_t reloadedProcess = [openedView mainFrame].info._processIdentifier;
     EXPECT_NE(reloadedProcess, crashedSharedProcess);
     EXPECT_TRUE(processStillRunning(reloadedProcess));
+}
+
+enum class UseSharedProcess : bool { No, Yes };
+static void runReloadInTerminationCallbackDoesNotReuseExitedProcessTest(UseSharedProcess useSharedProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+        { "/opened"_s, { "<!DOCTYPE html>opened"_s } },
+        { "/apple"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = useSharedProcess == UseSharedProcess::Yes ? siteIsolatedViewWithSharedProcess(server) : siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    RetainPtr openerView = webView;
+    RetainPtr openerNavigationDelegate = navigationDelegate;
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<TestWKWebView> openedView;
+    __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedNavigationDelegate allowAnyTLSCertificate];
+        openedView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        openedView.get().navigationDelegate = openedNavigationDelegate.get();
+        return openedView.get();
+    };
+    [openerView setUIDelegate:openerUIDelegate.get()];
+
+    auto openWindow = ^std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>>(NSString *url, WKFrameInfo *frame) {
+        openedView = nil;
+        [openerView evaluateJavaScript:[NSString stringWithFormat:@"window.open('%@')", url] inFrame:frame completionHandler:nil];
+        while (!openedView)
+            Util::spinRunLoop();
+        [openedNavigationDelegate waitForDidFinishNavigation];
+        return { std::exchange(openedView, nil), std::exchange(openedNavigationDelegate, nil) };
+    };
+
+    [openerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    pid_t mainFrameProcess = [openerView _webProcessIdentifier];
+    pid_t iframeProcess = [openerView firstChildFrame]._processIdentifier;
+    EXPECT_NE(iframeProcess, mainFrameProcess);
+
+    // A window opened by the iframe has its main frame in the iframe's process, so that process's exit is
+    // reported as a crash to every page with a remote page in it.
+    auto [webKitView, webKitNavigationDelegate] = openWindow(@"https://webkit.org/opened", [openerView firstChildFrame]);
+    EXPECT_EQ([webKitView _webProcessIdentifier], iframeProcess);
+
+    // Keep iframeProcess's FrameProcess alive in the browsing context group when openerView's frames are torn down.
+    auto [appleView, appleNavigationDelegate] = openWindow(@"https://apple.com/apple", [openerView mainFrame].info);
+    EXPECT_NE([appleView _webProcessIdentifier], iframeProcess);
+    EXPECT_EQ([appleView firstChildFrame]._processIdentifier, iframeProcess);
+
+    kill(iframeProcess, SIGKILL);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(iframeProcess));
+
+    __block unsigned terminationCount = 0;
+    openerNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *webView, _WKProcessTerminationReason) {
+        ++terminationCount;
+        [webView reload];
+    };
+    // Terminate the main frame process synchronously before the run loop handles iframeProcess's exit.
+    [openerView _killWebContentProcessAndResetState];
+    EXPECT_EQ(terminationCount, 1u);
+
+    // Wait until the UI process handles iframeProcess's exit:
+    //
+    // 1. The UI process sends the termination callback to webKitView, whose main frame is in
+    //    iframeProcess.
+    // 2. In the same call, it sends a callback to each page with a remote page in iframeProcess. If
+    //    the reload put openerView's iframe back in iframeProcess, openerView gets a second callback.
+    // 3. The wait ends, and terminationCount must still be 1.
+    //
+    // Set this block only after the kill above, because webKitView can also get a callback for
+    // mainFrameProcess.
+    __block bool webKitViewTerminated = false;
+    webKitNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webKitViewTerminated = true;
+    };
+
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([openerView _webProcessIdentifier], mainFrameProcess);
+    pid_t reloadedIframeProcess = [openerView firstChildFrame]._processIdentifier;
+    EXPECT_NE(reloadedIframeProcess, iframeProcess);
+    EXPECT_TRUE(processStillRunning(reloadedIframeProcess));
+
+    Util::run(&webKitViewTerminated);
+    EXPECT_EQ(terminationCount, 1u);
+}
+
+TEST(SiteIsolation, ReloadInTerminationCallbackDoesNotReuseExitedGroupProcess)
+{
+    runReloadInTerminationCallbackDoesNotReuseExitedProcessTest(UseSharedProcess::No);
+}
+
+TEST(SiteIsolation, ReloadInTerminationCallbackDoesNotReuseExitedSharedProcess)
+{
+    runReloadInTerminationCallbackDoesNotReuseExitedProcessTest(UseSharedProcess::Yes);
 }
 
 TEST(SiteIsolation, ProvisionalSubframeProcessCrashCompletesParentLoad)

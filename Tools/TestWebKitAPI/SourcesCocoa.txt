@@ -64,6 +64,7 @@ Helpers/cocoa/MouseSupportUIDelegate.mm @nonARC
 Helpers/cocoa/PasteboardUtilities.mm @nonARC
 Helpers/cocoa/PDFTestHelpers.mm @nonARC
 Helpers/cocoa/PrivateFindSPITester.mm @nonARC
+Helpers/cocoa/ProcessTerminationTestUtilities.mm @nonARC
 Helpers/cocoa/PublicFindAPITester.mm @nonARC
 Helpers/cocoa/SiteIsolationTestUtilities.mm @nonARC
 Helpers/cocoa/SiteIsolationUtilities.mm @nonARC
