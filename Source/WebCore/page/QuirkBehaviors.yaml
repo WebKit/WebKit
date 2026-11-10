@@ -134,6 +134,10 @@ NeedsCNNCaptionQuirk:
   available: cocoa
   export: true
 
+# crunchyroll.com https://webkit.org/b/330894
+NeedsCrunchyrollCaptionQuirk:
+  available: mac
+
 # chatgpt.com rdar://189766320, grok.com rdar://191470125
 NeedsMarginTrimInlineSupportsQuirk:
 

@@ -864,6 +864,8 @@ void RenderThemeCocoa::purgeCaches()
     m_mediaControlsScript.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
     m_youTubeCaptionQuirkScript.clearImplIfNotShared();
+    m_cnnCaptionQuirkScript.clearImplIfNotShared();
+    m_crunchyrollCaptionQuirkScript.clearImplIfNotShared();
 #endif // ENABLE(VIDEO)
 
     RenderTheme::purgeCaches();
@@ -1349,6 +1351,14 @@ String RenderThemeCocoa::cnnQuirkScript()
         m_cnnCaptionQuirkScript = StringImpl::createWithoutCopying(CNNCaptionQuirkJavaScript);
 
     return m_cnnCaptionQuirkScript;
+}
+
+String RenderThemeCocoa::crunchyrollQuirkScript()
+{
+    if (!m_crunchyrollCaptionQuirkScript)
+        m_crunchyrollCaptionQuirkScript = StringImpl::createWithoutCopying(CrunchyrollCaptionQuirkJavaScript);
+
+    return m_crunchyrollCaptionQuirkScript;
 }
 
 #endif // ENABLE(VIDEO)

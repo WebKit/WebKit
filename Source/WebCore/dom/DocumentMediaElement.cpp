@@ -31,6 +31,7 @@
 #include "CommonVM.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "DocumentQuirks.h"
 #include "FrameDestructionObserverInlines.h"
 #include "PlatformRenderTheme.h"
 #include "RenderTheme.h"
@@ -80,18 +81,9 @@ bool DocumentMediaElement::setupAndCallMediaControlsJS(NOESCAPE const JSSetupFun
     return setupAndCallJS(task, world);
 }
 
-bool DocumentMediaElement::setupAndCallYouTubeQuirkJS(NOESCAPE const JSSetupFunction& task)
+bool DocumentMediaElement::setupAndCallCaptionMirroringQuirkJS(NOESCAPE const JSSetupFunction& task)
 {
-    if (!ensureYouTubeQuirkScript())
-        return false;
-
-    Ref world = mainThreadNormalWorldSingleton();
-    return setupAndCallJS(task, world);
-}
-
-bool DocumentMediaElement::setupAndCallCNNQuirkJS(NOESCAPE const JSSetupFunction& task)
-{
-    if (!ensureCNNQuirkScript())
+    if (!ensureCaptionMirroringQuirkScript())
         return false;
 
     Ref world = mainThreadNormalWorldSingleton();
@@ -134,50 +126,41 @@ bool DocumentMediaElement::ensureMediaControlsScript()
     return m_haveParsedMediaControlsScript;
 }
 
-bool DocumentMediaElement::ensureYouTubeQuirkScript()
+// Each site whose in-page captions are mirrored into a text track has its own script. Every one of
+// them defines window.setupCaptionMirroring().
+static String captionMirroringQuirkScript(const Quirks& quirks)
 {
-    if (m_haveParsedYouTubeQuirkScript)
-        return true;
-
-    Ref document = this->document();
-    auto youTubeQuirkScript = RenderTheme::singleton().youTubeQuirkScript();
-    if (youTubeQuirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
-        return false;
-
-    Ref world = mainThreadNormalWorldSingleton();
-    m_haveParsedYouTubeQuirkScript = setupAndCallJS([youTubeQuirkScript = WTF::move(youTubeQuirkScript)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject&, ScriptController& scriptController, DOMWrapperWorld& world) {
-        auto& vm = globalObject.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(youTubeQuirkScript, JSC::SourceTaintedOrigin::Untainted), world);
-        RETURN_IF_EXCEPTION(scope, false);
-
-        return true;
-    }, world);
-    return m_haveParsedYouTubeQuirkScript;
+    auto& renderTheme = RenderTheme::singleton();
+    if (quirks.needsYouTubeCaptionsQuirk())
+        return renderTheme.youTubeQuirkScript();
+    if (quirks.needsCNNCaptionQuirk())
+        return renderTheme.cnnQuirkScript();
+    if (quirks.needsCrunchyrollCaptionQuirk())
+        return renderTheme.crunchyrollQuirkScript();
+    return { };
 }
 
-bool DocumentMediaElement::ensureCNNQuirkScript()
+bool DocumentMediaElement::ensureCaptionMirroringQuirkScript()
 {
-    if (m_haveParsedCNNQuirkScript)
+    if (m_haveParsedCaptionMirroringQuirkScript)
         return true;
 
     Ref document = this->document();
-    auto cnnQuirkScript = RenderTheme::singleton().cnnQuirkScript();
-    if (cnnQuirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
+    auto quirkScript = captionMirroringQuirkScript(document->quirks());
+    if (quirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
         return false;
 
     Ref world = mainThreadNormalWorldSingleton();
-    m_haveParsedCNNQuirkScript = setupAndCallJS([cnnQuirkScript = WTF::move(cnnQuirkScript)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject&, ScriptController& scriptController, DOMWrapperWorld& world) {
+    m_haveParsedCaptionMirroringQuirkScript = setupAndCallJS([quirkScript = WTF::move(quirkScript)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject&, ScriptController& scriptController, DOMWrapperWorld& world) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(cnnQuirkScript, JSC::SourceTaintedOrigin::Untainted), world);
+        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(quirkScript, JSC::SourceTaintedOrigin::Untainted), world);
         RETURN_IF_EXCEPTION(scope, false);
 
         return true;
     }, world);
-    return m_haveParsedCNNQuirkScript;
+    return m_haveParsedCaptionMirroringQuirkScript;
 }
 
 bool DocumentMediaElement::setupAndCallJS(NOESCAPE const JSSetupFunction& task, DOMWrapperWorld& world)

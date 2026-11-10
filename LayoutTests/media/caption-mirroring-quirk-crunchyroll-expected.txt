@@ -1,0 +1,7 @@
+
+PASS a video in the player gets a hidden mirror track
+PASS the mirror track follows the captions the player renders
+PASS a video outside the player does not get a mirror track
+PASS a re-inserted video keeps mirroring into the same track
+PASS the mirror track shows while the video is in picture-in-picture
+

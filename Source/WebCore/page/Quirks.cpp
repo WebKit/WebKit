@@ -268,7 +268,7 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
 // The sites whose in-page captions WebKit mirrors into a text track rdar://174708144
 bool Quirks::needsCaptionMirroringQuirk() const
 {
-    return needsYouTubeCaptionsQuirk() || needsCNNCaptionQuirk();
+    return needsYouTubeCaptionsQuirk() || needsCNNCaptionQuirk() || needsCrunchyrollCaptionQuirk();
 }
 
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
