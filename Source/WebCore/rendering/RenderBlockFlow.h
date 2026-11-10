@@ -42,6 +42,9 @@ class InlineContentCache;
 }
 
 namespace LayoutIntegration {
+class BlockIntegrationUtils;
+class BlockLayout;
+class PaintInvalidation;
 class LineLayout;
 }
 
@@ -146,8 +149,11 @@ protected:
 
     // RenderBlockFlow always contains either lines or paragraphs. When the children are all blocks (e.g. paragraphs), we call layoutBlockChildren.
     // When the children are all inline (e.g., lines), we call layoutInlineChildren.
-    void layoutInFlowChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
+    // Returns whether the new block formatting context laid out the children, which then also lays out the out-of-flow boxes.
+    enum class ContentLayout : bool { RenderTree, BlockFormattingContext };
+    ContentLayout layoutInFlowChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void layoutBlockChildren(RelayoutChildren, LayoutUnit& maxFloatLogicalBottom);
+    bool layoutUsingBlockFormattingContext(RelayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     void layoutInlineChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     void simplifiedNormalFlowLayout() override;
@@ -304,6 +310,9 @@ public:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     NODELETE LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
+    // Like lowestFloatLogicalBottom, with the floats the block formatting context placed in the content of the block container and of the block
+    // containers in it that take part in its block formatting context, which the float lists do not list.
+    LayoutUnit lowestFloatLogicalBottomIncludingFloatsPlacedByBlockFormattingContext() const;
     NODELETE LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
 
     void removeFloatingObjects();
@@ -457,6 +466,10 @@ protected:
     LayoutIntegration::LineLayout& ensureInlineLayout();
 
 private:
+    friend class LayoutIntegration::BlockIntegrationUtils;
+    friend class LayoutIntegration::BlockLayout;
+    friend class LayoutIntegration::PaintInvalidation;
+
     NODELETE bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const;
 
     bool recomputeLogicalWidthAndColumnWidth();
@@ -468,6 +481,8 @@ private:
 
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
+    // The floats the block formatting context placed in the inline content, which the render tree's float lists do not list.
+    Vector<CheckedRef<RenderBox>> floatsPlacedByBlockFormattingContext() const;
 
     void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
@@ -516,6 +531,7 @@ private:
     };
     InlineContentStatus markInlineContentDirtyForLayout(RelayoutChildren);
     bool layoutSimpleBlockContentInInline(MarginInfo&);
+    void repaintInlineContentAfterLayout(LayoutUnit repaintLogicalTop, LayoutUnit repaintLogicalBottom);
     void updateRepaintTopAndBottomAfterLayout(RelayoutChildren, std::optional<LayoutRect> partialRepaintRect, std::pair<float, float> oldContentTopAndBottomIncludingInkOverflow, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     std::optional<LayoutUnit> updateLineClampStateAndLogicalHeightAfterLayout();
     void setStaticPositionsForSimpleOutOfFlowContent();

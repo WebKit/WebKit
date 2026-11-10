@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.root { display: flow-root; position: relative; width: 250px; min-height: 30px; border: 1px solid; margin-bottom: 4px; }
+marquee { display: block; border: 2px solid green; padding: 3px; }
+.b { background: lightblue; }
+.fit { width: min-content; border: 1px solid blue; }
+</style>
+<div class="root"><marquee behavior="alternate" scrollamount="0" id="text">short</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" id="direction"><div class="b">block child</div></marquee></div>
+<div class="root"><div class="fit"><marquee behavior="alternate" scrollamount="0" id="vertical">in a min-content box</marquee></div></div>
+<div class="root"><div class="fit"><marquee behavior="alternate" scrollamount="0" id="behavior">behavior change</marquee></div></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="width: 100px" id="resized"><div class="b">resized marquee</div></marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="position: absolute" id="out-of-flow-text">out-of-flow</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="position: absolute; width: min-content" id="out-of-flow-direction">out-of-flow direction change</marquee></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "much longer text in the nested marquee that overflows";
+document.getElementById("direction").direction = "up";
+document.getElementById("vertical").direction = "down";
+document.getElementById("behavior").behavior = "none";
+document.getElementById("resized").style.width = "200px";
+document.getElementById("out-of-flow-text").firstChild.data = "out-of-flow marquee with longer text that overflows the box";
+document.getElementById("out-of-flow-direction").direction = "up";
+</script>

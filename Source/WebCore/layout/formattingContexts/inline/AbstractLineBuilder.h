@@ -71,7 +71,6 @@ protected:
     NODELETE const InlineLayoutState& layoutState() const LIFETIME_BOUND;
     NODELETE InlineLayoutState& layoutState() LIFETIME_BOUND;
     const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
-    BlockLayoutState& blockLayoutState() LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     const ElementBox& root() const { return m_rootBox; }
     NODELETE const Style::ComputedStyle& rootStyle() const LIFETIME_BOUND;
 

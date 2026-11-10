@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; }
+.clip { overflow: hidden; height: 50px; margin: 10px 0; }
+.content { height: 200px; width: 500px; background: linear-gradient(to bottom right, green, blue); }
+</style>
+<div class="root">
+  <div class="clip" id="scroller"><div class="content" id="content"></div></div>
+  <div id="log"></div>
+</div>
+<script>
+let scroller = document.getElementById("scroller");
+scroller.scrollTop = 120;
+scroller.scrollLeft = 100;
+document.body.offsetHeight;
+// The scroll position stays within the new scrollable overflow.
+document.getElementById("content").style.height = "100px";
+document.getElementById("content").style.width = "350px";
+document.body.offsetHeight;
+document.getElementById("log").textContent = `scroll size ${scroller.scrollWidth}x${scroller.scrollHeight}, position ${scroller.scrollLeft},${scroller.scrollTop}`;
+</script>
