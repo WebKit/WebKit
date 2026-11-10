@@ -530,6 +530,11 @@ sub enter {
 
 # Insert a new attachment into the database.
 sub insert {
+    my $isPatch = scalar $cgi->param('ispatch');
+    if ($isPatch && $cgi->user_agent() ne 'org.webkit.webkit-patch') {
+        ThrowUserError('invalid_user_agent');
+    }
+
     my $dbh = Bugzilla->dbh;
     my $user = Bugzilla->user;
 
@@ -564,7 +569,7 @@ sub insert {
          data          => $attach_text || $data_fh,
          description   => scalar $cgi->param('description'),
          filename      => $attach_text ? "file_$bugid.txt" : $data_fh,
-         ispatch       => scalar $cgi->param('ispatch'),
+         ispatch       => $isPatch,
          isprivate     => scalar $cgi->param('isprivate'),
          mimetype      => $content_type,
          });
