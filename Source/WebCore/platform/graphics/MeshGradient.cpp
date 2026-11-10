@@ -90,22 +90,13 @@ static ColorComponents<float, 4> toInterpolationComponents(const ColorInterpolat
     return components;
 }
 
-static ColorSpace vertexColorSpace(const ColorSpace& colorSpace)
-{
-#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
-    if (colorSpace == ColorSpace::SRGB())
-        return ColorSpace::ExtendedSRGB();
-#endif
-    return colorSpace.asExtended().value_or(colorSpace);
-}
-
-static ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedInColorSpace(const ExtendedSRGBA<float>& color, const ColorSpace& colorSpace)
+static ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedInColorSpace(const ExtendedSRGBA<float>& color, ColorSpaceName colorSpace)
 {
     auto [red, green, blue, alpha] = convertAndResolveColorComponents(ColorSpaceName::ExtendedSRGB, asColorComponents(color.resolved()), colorSpace);
     return Premultiplied { resolvedColor(ColorComponents<float, 4> { red * alpha, green * alpha, blue * alpha, alpha }) };
 }
 
-static ResolvedPremultiplied<ColorComponents<float, 4>> toPremultipliedVertexColor(const ColorInterpolationMethod& method, ColorComponents<float, 4> components, const ColorSpace& colorSpace)
+static ResolvedPremultiplied<ColorComponents<float, 4>> toPremultipliedColor(const ColorInterpolationMethod& method, ColorComponents<float, 4> components, ColorSpaceName colorSpace)
 {
     components[3] = clampedAlpha(components[3]);
 
@@ -283,11 +274,8 @@ std::optional<Ref<MeshGradient>> MeshGradient::tryCreate(ColorInterpolationMetho
     if (!isValidGrid(rows, columns, points.size()))
         return std::nullopt;
 
-    auto isFinite = [](const FloatPoint& point) {
-        return std::isfinite(point.x()) && std::isfinite(point.y());
-    };
     for (auto& point : points) {
-        if (!isFinite(point.position) || !std::ranges::all_of(allBoxSides, [&](auto side) { return isFinite(point.controlPoints[side]); }))
+        if (!point.position.isFinite() || !std::ranges::all_of(allBoxSides, [&](auto side) { return point.controlPoints[side].isFinite(); }))
             return std::nullopt;
     }
 
@@ -386,9 +374,34 @@ MeshGradient::~MeshGradient()
         observer->willDestroyMeshGradient(*this);
 }
 
-ResolvedPremultiplied<ColorComponents<float, 4>> MeshGradient::premultipliedBackgroundColor(const ColorSpace& colorSpace) const
+std::optional<ColorSpaceName> MeshGradient::renderingColorSpace(const ColorSpace& colorSpace)
 {
-    return premultipliedInColorSpace(m_backgroundColor.toColorTypeLossy<ExtendedSRGBA<float>>(), vertexColorSpace(colorSpace));
+    if (colorSpace == ColorSpace::SRGB())
+        return ColorSpaceName::SRGB;
+    if (colorSpace == ColorSpace::LinearSRGB())
+        return ColorSpaceName::LinearSRGB;
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    if (colorSpace == ColorSpace::ExtendedSRGB())
+        return ColorSpaceName::ExtendedSRGB;
+    if (colorSpace == ColorSpace::ExtendedLinearSRGB())
+        return ColorSpaceName::ExtendedLinearSRGB;
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (colorSpace == ColorSpace::DisplayP3())
+        return ColorSpaceName::DisplayP3;
+    if (colorSpace == ColorSpace::LinearDisplayP3())
+        return ColorSpaceName::LinearDisplayP3;
+    if (colorSpace == ColorSpace::ExtendedDisplayP3())
+        return ColorSpaceName::ExtendedDisplayP3;
+    if (colorSpace == ColorSpace::ExtendedLinearDisplayP3())
+        return ColorSpaceName::ExtendedLinearDisplayP3;
+#endif
+    return std::nullopt;
+}
+
+ResolvedPremultiplied<ColorComponents<float, 4>> MeshGradient::premultipliedBackgroundColor(ColorSpaceName colorSpace) const
+{
+    return premultipliedInColorSpace(m_backgroundColor.toColorTypeLossy<ExtendedSRGBA<float>>(), colorSpace);
 }
 
 RefPtr<NativeImage> MeshGradient::renderedImage(const IntSize& pixelSize, float scale, const ColorSpace& colorSpace) const
@@ -408,28 +421,54 @@ void MeshGradient::setRenderedImage(const IntSize& pixelSize, float scale, Ref<N
     m_renderedImage = WTF::move(image);
 }
 
+// The number of steps along each direction that keeps the triangles within a quarter of a pixel of the surface.
+//
+// With a step of h, triangles stay within h^2 / 8 * (|Puu| + 2 |Puv| + |Pvv|) of a surface P, using its second
+// derivatives. On a bicubic patch, |Puu| and |Pvv| are at most 6 times the largest second difference of the control
+// points, and |Puv| is at most 9 times the largest twist. A twist is how far four neighboring control points are from
+// being a parallelogram.
+//
+// D. Filip, R. Magedson and R. Markot, "Surface Algorithms Using Bounds on Derivatives" (1986)
+// https://doi.org/10.1016/0167-8396(86)90005-1
 unsigned MeshGradient::subdivisions(const Patch& patch, float scale) const
 {
-    static constexpr float targetTriangleSize = 8;
-    static constexpr unsigned maximumSubdivisions = 64;
+    static constexpr unsigned maximumSubdivisions = 256;
 
-    // A Bézier patch lies within the bounds of its control points.
-    auto [leftmost, rightmost] = std::ranges::minmax(patch.position.controlValues, { }, &FloatPoint::x);
-    auto [topmost, bottommost] = std::ranges::minmax(patch.position.controlValues, { }, &FloatPoint::y);
+    auto& position = patch.position;
 
-    float size = std::max(rightmost.x() - leftmost.x(), bottommost.y() - topmost.y()) * scale;
+    float alongU = 0;
+    float alongV = 0;
+    float twist = 0;
+    for (unsigned first = 0; first < 4; ++first) {
+        for (unsigned second = 0; second < 2; ++second) {
+            auto secondDifference = [](FloatPoint a, FloatPoint b, FloatPoint c) {
+                return std::hypot(a.x() - 2 * b.x() + c.x(), a.y() - 2 * b.y() + c.y());
+            };
+            alongU = std::max(alongU, secondDifference(position.controlValue(first, second), position.controlValue(first, second + 1), position.controlValue(first, second + 2)));
+            alongV = std::max(alongV, secondDifference(position.controlValue(second, first), position.controlValue(second + 1, first), position.controlValue(second + 2, first)));
+        }
+    }
+    for (unsigned row = 0; row < 3; ++row) {
+        for (unsigned column = 0; column < 3; ++column) {
+            auto a = position.controlValue(row, column);
+            auto b = position.controlValue(row, column + 1);
+            auto c = position.controlValue(row + 1, column);
+            auto d = position.controlValue(row + 1, column + 1);
+            twist = std::max(twist, std::hypot(d.x() - c.x() - b.x() + a.x(), d.y() - c.y() - b.y() + a.y()));
+        }
+    }
+
+    float count = std::sqrt(3 * scale * (alongU + 3 * twist + alongV));
 
     // A position that isn't finite can't be drawn, so there is nothing to subdivide.
-    if (!std::isfinite(size))
+    if (!std::isfinite(count))
         return 1;
 
-    return static_cast<unsigned>(std::clamp(std::ceil(size / targetTriangleSize), 1.0f, static_cast<float>(maximumSubdivisions)));
+    return static_cast<unsigned>(std::clamp(std::ceil(count), 1.0f, static_cast<float>(maximumSubdivisions)));
 }
 
-auto MeshGradient::triangles(float scale, const ColorSpace& colorSpace) const -> Vector<Triangle>
+auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
 {
-    auto colorSpaceOfVertices = vertexColorSpace(colorSpace);
-
     unsigned patchRows = m_rows - 1;
     unsigned patchColumns = m_columns - 1;
 
@@ -448,9 +487,15 @@ auto MeshGradient::triangles(float scale, const ColorSpace& colorSpace) const ->
 
     Vector<Triangle> triangles;
 
+    auto appendTriangle = [&](const Vertex& a, const Vertex& b, const Vertex& c) {
+        if (a.position.isFinite() && b.position.isFinite() && c.position.isFinite())
+            triangles.append({ a, b, c });
+    };
+
     for (unsigned row = 0; row < patchRows; ++row) {
         for (unsigned column = 0; column < patchColumns; ++column) {
-            auto& patch = m_patches[row * patchColumns + column];
+            uint32_t patchIndex = row * patchColumns + column;
+            auto& patch = m_patches[patchIndex];
 
             // Evaluate the patch on an evenly spaced grid of (u, v), then split each grid cell into two triangles.
             unsigned columnsInGrid = subdivisionsAlongU[column];
@@ -461,13 +506,8 @@ auto MeshGradient::triangles(float scale, const ColorSpace& colorSpace) const ->
                 float v = static_cast<float>(j) / rowsInGrid;
                 for (unsigned i = 0; i <= columnsInGrid; ++i) {
                     float u = static_cast<float>(i) / columnsInGrid;
-
-                    auto basisU = cubicBernsteinPolynomialsAt(u);
-                    auto basisV = cubicBernsteinPolynomialsAt(v);
-                    auto position = patch.position.evaluate(basisU, basisV);
-                    auto color = patch.color.evaluate(basisU, basisV);
-
-                    grid.append({ position.scaled(scale), toPremultipliedVertexColor(m_colorInterpolationMethod, color, colorSpaceOfVertices) });
+                    auto position = patch.position.evaluate(cubicBernsteinPolynomialsAt(u), cubicBernsteinPolynomialsAt(v));
+                    grid.append({ position.scaled(scale), u, v, patchIndex });
                 }
             }
 
@@ -481,14 +521,20 @@ auto MeshGradient::triangles(float scale, const ColorSpace& colorSpace) const ->
             // the top.
             for (unsigned j = 0; j < rowsInGrid; ++j) {
                 for (unsigned i = 0; i < columnsInGrid; ++i) {
-                    triangles.append(Triangle { gridVertex(i, j), gridVertex(i + 1, j), gridVertex(i, j + 1) });
-                    triangles.append(Triangle { gridVertex(i + 1, j), gridVertex(i + 1, j + 1), gridVertex(i, j + 1) });
+                    appendTriangle(gridVertex(i, j), gridVertex(i + 1, j), gridVertex(i, j + 1));
+                    appendTriangle(gridVertex(i + 1, j), gridVertex(i + 1, j + 1), gridVertex(i, j + 1));
                 }
             }
         }
     }
 
     return triangles;
+}
+
+ResolvedPremultiplied<ColorComponents<float, 4>> MeshGradient::premultipliedColor(uint32_t patchIndex, float u, float v, ColorSpaceName colorSpace) const
+{
+    auto color = m_patches[patchIndex].color.evaluate(cubicBernsteinPolynomialsAt(u), cubicBernsteinPolynomialsAt(v));
+    return toPremultipliedColor(m_colorInterpolationMethod, color, colorSpace);
 }
 
 TextStream& operator<<(TextStream& ts, const MeshGradient::Point& point)

@@ -81,7 +81,7 @@ static float edgeFunction(FloatPoint from, FloatPoint to, FloatPoint point)
     return (to - from).cross(point - from);
 }
 
-static void drawTriangle(const PixelBufferConversionView& destination, const IntSize& size, const MeshGradient::Triangle& triangle)
+static void drawTriangle(const MeshGradient& gradient, const PixelBufferConversionView& destination, ColorSpaceName colorSpace, const IntSize& size, const MeshGradient::Triangle& triangle)
 {
     auto& [a, b, c] = triangle;
 
@@ -89,10 +89,6 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
     float area = edgeFunction(a.position, b.position, c.position);
     if (!area || !std::isfinite(area))
         return;
-
-    auto colorA = a.color.resolved();
-    auto colorB = b.color.resolved();
-    auto colorC = c.color.resolved();
 
     // Only visit the pixels within the triangle's bounds, clipped to the destination.
     auto clamped = [](float value, int maximum) {
@@ -118,15 +114,11 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
             if (weightA < 0 || weightB < 0 || weightC < 0)
                 continue;
 
+            float u = a.u * weightA + b.u * weightB + c.u * weightC;
+            float v = a.v * weightA + b.v * weightB + c.v * weightC;
+
             // FIXME: Pixels at the edges of the mesh are not antialiased.
-            auto color = colorA * weightA;
-            color += colorB * weightB;
-            color += colorC * weightC;
-
-            // Rounding can put the sum of the weights a little greater than 1 so we need to clamp alpha to keep it in the 0-1 range.
-            color[3] = clampedAlpha(color[3]);
-
-            writePixel(destination, x, y, Premultiplied { resolvedColor(color) });
+            writePixel(destination, x, y, gradient.premultipliedColor(a.patchIndex, u, v, colorSpace));
         }
     }
 }
@@ -135,7 +127,8 @@ bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBu
 {
     ASSERT(destination.format.alphaFormat == AlphaPremultiplication::Premultiplied);
 
-    if (!isSupportedFormat(destination.format)) {
+    auto colorSpace = MeshGradient::renderingColorSpace(destination.format.colorSpace);
+    if (!isSupportedFormat(destination.format) || !colorSpace) {
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -146,14 +139,14 @@ bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBu
     if (destination.bytesPerRow < size.width() * PixelBuffer::bytesPerPixel(destination.format.pixelFormat) || destination.rows.size() / destination.bytesPerRow < static_cast<size_t>(size.height()))
         return false;
 
-    auto background = gradient.premultipliedBackgroundColor(destination.format.colorSpace);
+    auto background = gradient.premultipliedBackgroundColor(*colorSpace);
     for (int y = 0; y < size.height(); ++y) {
         for (int x = 0; x < size.width(); ++x)
             writePixel(destination, x, y, background);
     }
 
-    for (auto& triangle : gradient.triangles(scale, destination.format.colorSpace))
-        drawTriangle(destination, size, triangle);
+    for (auto& triangle : gradient.triangles(scale))
+        drawTriangle(gradient, destination, *colorSpace, size, triangle);
 
     return true;
 }

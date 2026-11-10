@@ -35,18 +35,21 @@
 
 namespace WebCore {
 
-static PixelBufferFormat renderingFormat([[maybe_unused]] const ColorSpace& destinationColorSpace)
+static PixelBufferFormat renderingFormat(const ColorSpace& destinationColorSpace)
 {
+    if (!MeshGradient::renderingColorSpace(destinationColorSpace)) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+        return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, ColorSpace::ExtendedSRGB() };
+#else
+        return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+#endif
+    }
+
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (destinationColorSpace.usesExtendedRange())
         return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, destinationColorSpace };
 #endif
-#if ENABLE(DESTINATION_COLOR_SPACE_ARBITRARY_CONVERSION)
     return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, destinationColorSpace };
-#else
-    // FIXME: Platforms that don't support arbitrary conversion must use the conservative choice for now.
-    return { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
-#endif
 }
 
 static PixelFormat imageBufferPixelFormat([[maybe_unused]] const ColorSpace& colorSpace)

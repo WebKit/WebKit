@@ -380,6 +380,41 @@ TEST(MeshGradientRenderer, DrawInExtendedRangeDestination)
     EXPECT_EQ(WTF::convertFloat16ToFloat32(components[3]), 1.0f);
 }
 
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
+
+TEST(MeshGradientRenderer, DrawInDestinationTheImageBufferConvertsTo)
+{
+    IntSize size { 8, 8 };
+    Color green { DisplayP3<float> { 0, 1, 0, 1 } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green });
+
+    EXPECT_FALSE(MeshGradient::renderingColorSpace(ColorSpace::ExtendedRec2020()));
+
+    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::ExtendedRec2020(), PixelFormat::RGBA16F);
+    MeshGradientRendererCPU { }.draw(imageBuffer->context(), gradient, FloatRect { { }, size });
+
+    RefPtr pixels = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, ColorSpace::ExtendedSRGB() }, { { }, size });
+    auto components = spanReinterpretCast<const uint16_t>(pixels->bytes());
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[0]), -0.51f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[1]), 1.02f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[2]), -0.31f, 0.01f);
+    EXPECT_EQ(WTF::convertFloat16ToFloat32(components[3]), 1.0f);
+}
+
+#endif // ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
+
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB) && ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+
+TEST(MeshGradient, GeometryOnlySubdividesForCurves)
+{
+    auto rectangle = makeMeshGradient(srgb, { 400, 300 }, 2, 2, { Color::red, Color::blue, Color::green, Color::white });
+    EXPECT_EQ(rectangle->triangles(2).size(), 2u);
+
+    auto points = makePoints(2, 2, { { 0, 0 }, { 400, 0 }, { 0, 300 }, { 400, 300 } }, Color::red);
+    points[0].controlPoints.setRight({ 133, 100 });
+    points[1].controlPoints.setLeft({ 266, 100 });
+    auto curved = MeshGradient::create(srgb, 2, 2, WTF::move(points));
+    EXPECT_GT(curved->triangles(2).size(), 2u);
+}
 
 } // namespace TestWebKitAPI

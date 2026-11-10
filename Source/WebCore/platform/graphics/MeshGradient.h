@@ -58,7 +58,9 @@ public:
 
     struct Vertex {
         FloatPoint position;
-        ResolvedPremultiplied<ColorComponents<float, 4>> color;
+        float u;
+        float v;
+        uint32_t patchIndex;
     };
 
     struct Triangle {
@@ -79,9 +81,12 @@ public:
     const Point& point(unsigned row, unsigned column) const LIFETIME_BOUND { return m_points[index(row, column)]; }
     const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
 
-    WEBCORE_EXPORT ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedBackgroundColor(const ColorSpace&) const;
+    WEBCORE_EXPORT static std::optional<ColorSpaceName> renderingColorSpace(const ColorSpace&);
 
-    WEBCORE_EXPORT Vector<Triangle> triangles(float scale, const ColorSpace&) const;
+    WEBCORE_EXPORT ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedBackgroundColor(ColorSpaceName) const;
+    WEBCORE_EXPORT ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedColor(uint32_t patchIndex, float u, float v, ColorSpaceName) const;
+
+    WEBCORE_EXPORT Vector<Triangle> triangles(float scale) const;
 
     RefPtr<NativeImage> renderedImage(const IntSize& pixelSize, float scale, const ColorSpace&) const;
     void setRenderedImage(const IntSize& pixelSize, float scale, Ref<NativeImage>&&) const;

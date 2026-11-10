@@ -197,6 +197,8 @@ public:
     static constexpr FloatPoint nanPoint();
     constexpr bool isNaN() const;
 
+    bool isFinite() const { return std::isfinite(m_x) && std::isfinite(m_y); }
+
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
