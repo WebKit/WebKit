@@ -612,8 +612,7 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 // (BlockFormattingContext::placeBesideFloats).
 // FIXME: One in inline content, which the inline formatting context places, beside floats with a shape, which it avoids by their margin box,
 // with margin-trim, which discard margins that clearance separates, an orthogonal one, a fieldset or a box with a block step, whose margins
-// collapse once laid out, negative inline margins, which a float does not take (RenderBox::shrinkLogicalWidthToAvoidFloats), and calc() ones,
-// which may be negative, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
+// collapse once laid out, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
 // container, like a checkbox with display: block.
 static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isInInlineContent, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
 {
@@ -628,7 +627,7 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
     CheckedRef containingBlockStyle = box.containingBlock()->style();
     auto containingBlockWritingMode = containingBlockStyle->writingMode();
     auto isSupportedInlineMargin = [](auto& margin) {
-        return margin.isAuto() || ((margin.isFixed() || margin.isPercentage()) && !margin.isKnownNegative());
+        return margin.isAuto() || margin.isFixed() || margin.isPercentOrCalculated();
     };
     if (!isSupportedInlineMargin(style->marginStart(containingBlockWritingMode)) || !isSupportedInlineMargin(style->marginEnd(containingBlockWritingMode)))
         return BlockAvoidanceReason::ContentHasFloat;
