@@ -7272,13 +7272,17 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     RefPtr websitePolicies = navigation.websitePolicies();
     bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
     auto inheritedSite = [&] -> std::optional<Site> {
-        if (backForwardInheritedSite) {
-            RefPtr frameProcess = browsingContextGroup.processForSite(*backForwardInheritedSite);
-            if (frameProcess && &frameProcess->process() == newProcess.ptr())
-                return backForwardInheritedSite;
+        auto isHostedByNewProcess = [&](const Site& site) {
+            RefPtr frameProcess = browsingContextGroup.processForSite(site, newProcess->crossOriginIsolation());
+            return frameProcess && &frameProcess->process() == newProcess.ptr();
+        };
+        if (backForwardInheritedSite && isHostedByNewProcess(*backForwardInheritedSite))
+            return backForwardInheritedSite;
+        if ((currentRequestURL.isAboutBlank() || currentRequestURL.isAboutSrcDoc()) && navigation.originatingFrameInfo()) {
+            Site initiatorSite { navigation.originatingFrameInfo()->securityOrigin };
+            if (initiatorSite.isEmpty() || isHostedByNewProcess(initiatorSite))
+                return initiatorSite;
         }
-        if ((currentRequestURL.isAboutBlank() || currentRequestURL.isAboutSrcDoc()) && navigation.originatingFrameInfo())
-            return Site { navigation.originatingFrameInfo()->securityOrigin };
         return std::nullopt;
     }();
     Site navigationSite { inheritedSite ? *inheritedSite : Site { currentRequestURL } };
