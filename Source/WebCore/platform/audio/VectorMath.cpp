@@ -767,8 +767,11 @@ void multiplyComplex(std::span<const float> realSpan1, std::span<const float> im
     for (; i < numberOfElementsToProcess; ++i) {
         // Read and compute result before storing them, in case the
         // destination is the same as one of the sources.
-        realOutputVector[i] = realVector1[i] * realVector2[i] - imagVector1[i] * imagVector2[i];
-        imagOutputVector[i] = realVector1[i] * imagVector2[i] + imagVector1[i] * realVector2[i];
+        float realResult = realVector1[i] * realVector2[i] - imagVector1[i] * imagVector2[i];
+        float imagResult = realVector1[i] * imagVector2[i] + imagVector1[i] * realVector2[i];
+
+        realOutputVector[i] = realResult;
+        imagOutputVector[i] = imagResult;
     }
 }
 

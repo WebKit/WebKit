@@ -379,6 +379,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/U2fCommandConstructorTest.cpp
         Tests/WebCore/URLParserTextEncoding.cpp
         Tests/WebCore/URLPatternTests.cpp
+        Tests/WebCore/VectorMathTests.cpp
         Tests/WebCore/WebCodecsBufferTransfer.cpp
         Tests/WebCore/WebGPUFramePacer.cpp
         Tests/WebCore/WebTransportHeaderValidation.cpp
