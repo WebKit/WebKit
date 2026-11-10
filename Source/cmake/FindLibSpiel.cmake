@@ -32,7 +32,7 @@ find_package(PkgConfig QUIET)
 pkg_check_modules(PC_SPIEL spiel-1.0)
 
 find_path(LibSpiel_INCLUDE_DIR
-    NAMES spiel.h
+    NAMES spiel/spiel.h
     HINTS ${PC_SPIEL_INCLUDEDIR}
           ${PC_SPIEL_INCLUDE_DIRS}
 )
