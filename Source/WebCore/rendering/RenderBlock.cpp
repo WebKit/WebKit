@@ -1395,9 +1395,9 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
     ASSERT(isSelectionRoot());
 #endif
     LogicalSelectionOffsetCaches cache(*this);
-    LayoutUnit lastTop;
-    LayoutUnit lastLeft = logicalLeftSelectionOffset(*this, lastTop, cache);
-    LayoutUnit lastRight = logicalRightSelectionOffset(*this, lastTop, cache);
+    float lastTop = 0;
+    float lastLeft = logicalLeftSelectionOffset(*this, 0_lu, cache);
+    float lastRight = logicalRightSelectionOffset(*this, 0_lu, cache);
     
     return selectionGaps(*this, offsetFromRepaintContainer, IntSize(), lastTop, lastLeft, lastRight, cache);
 }
@@ -1408,9 +1408,9 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (shouldPaintSelectionGaps() && paintInfo.phase == PaintPhase::Foreground) {
         ASSERT(isSelectionRoot());
         LogicalSelectionOffsetCaches cache(*this);
-        LayoutUnit lastTop;
-        LayoutUnit lastLeft = logicalLeftSelectionOffset(*this, lastTop, cache);
-        LayoutUnit lastRight = logicalRightSelectionOffset(*this, lastTop, cache);
+        float lastTop = 0;
+        float lastLeft = logicalLeftSelectionOffset(*this, 0_lu, cache);
+        float lastRight = logicalRightSelectionOffset(*this, 0_lu, cache);
         GraphicsContextStateSaver stateSaver(paintInfo.context());
 
         LayoutRect gapRectsBounds = selectionGaps(*this, paintOffset, LayoutSize(), lastTop, lastLeft, lastRight, cache, &paintInfo);
@@ -1437,8 +1437,9 @@ static void clipOutOutOfFlowBoxes(const PaintInfo* paintInfo, const LayoutPoint&
     if (!outOfFlowBoxes)
         return;
     
+    // Snap like the selection gaps being clipped, so they meet the box's own selection painting without overlapping it.
     for (auto& renderer : *outOfFlowBoxes)
-        paintInfo->context().clipOut(IntRect(offset.x() + renderer.x(), offset.y() + renderer.y(), renderer.borderBoxWidth(), renderer.borderBoxHeight()));
+        paintInfo->context().clipOut(snapRectToDevicePixels(LayoutRect(offset.x() + renderer.x(), offset.y() + renderer.y(), renderer.borderBoxWidth(), renderer.borderBoxHeight()), renderer.document().deviceScaleFactor()));
 }
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock)
@@ -1451,20 +1452,16 @@ LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offse
     return rootBlock.isHorizontalWritingMode() ? offsetFromRootBlock.width() : offsetFromRootBlock.height();
 }
 
-LayoutRect RenderBlock::logicalRectToPhysicalRect(const LayoutPoint& rootBlockPhysicalPosition, const LayoutRect& logicalRect)
+FloatRect RenderBlock::logicalRectToPhysicalRect(const LayoutPoint& rootBlockPhysicalPosition, const FloatRect& logicalRect)
 {
-    LayoutRect result;
-    if (isHorizontalWritingMode())
-        result = logicalRect;
-    else
-        result = LayoutRect(logicalRect.y(), logicalRect.x(), logicalRect.height(), logicalRect.width());
+    auto result = isHorizontalWritingMode() ? logicalRect : logicalRect.transposedRect();
     blockStartRelativeToPhysical(result);
     result.moveBy(rootBlockPhysicalPosition);
     return result;
 }
 
 GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-    LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
+    float& lastLogicalTop, float& lastLogicalLeft, float& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
     // IMPORTANT: Callers of this method that intend for painting to happen need to do a save/restore.
     // Clip out floating and positioned objects when painting selection gaps.
@@ -1517,14 +1514,14 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
     return result;
 }
 
-NODELETE GapRects RenderBlock::inlineSelectionGaps(RenderBlock&, const LayoutPoint&, const LayoutSize&, LayoutUnit&, LayoutUnit&, LayoutUnit&, const LogicalSelectionOffsetCaches&, const PaintInfo*)
+NODELETE GapRects RenderBlock::inlineSelectionGaps(RenderBlock&, const LayoutPoint&, const LayoutSize&, float&, float&, float&, const LogicalSelectionOffsetCaches&, const PaintInfo*)
 {
     ASSERT_NOT_REACHED();
     return GapRects();
 }
 
 GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-    LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
+    float& lastLogicalTop, float& lastLogicalLeft, float& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
     ASSERT(!isSkippedContent());
 
@@ -1601,56 +1598,57 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
 }
 
 LayoutRect RenderBlock::blockSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-    LayoutUnit lastLogicalTop, LayoutUnit lastLogicalLeft, LayoutUnit lastLogicalRight, LayoutUnit logicalBottom, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
+    float lastLogicalTop, float lastLogicalLeft, float lastLogicalRight, float logicalBottom, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
-    LayoutUnit logicalTop = lastLogicalTop;
-    LayoutUnit logicalHeight = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalBottom - logicalTop;
+    float logicalTop = lastLogicalTop;
+    float logicalHeight = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalBottom - logicalTop;
     if (logicalHeight <= 0)
         return LayoutRect();
 
     // Get the selection offsets for the bottom of the gap
-    LayoutUnit logicalLeft = std::max(lastLogicalLeft, logicalLeftSelectionOffset(rootBlock, logicalBottom, cache));
-    LayoutUnit logicalRight = std::min(lastLogicalRight, logicalRightSelectionOffset(rootBlock, logicalBottom, cache));
-    LayoutUnit logicalWidth = logicalRight - logicalLeft;
-    if (logicalWidth <= 0)
+    float logicalLeft = std::max<float>(lastLogicalLeft, logicalLeftSelectionOffset(rootBlock, LayoutUnit { logicalBottom }, cache));
+    float logicalRight = std::min<float>(lastLogicalRight, logicalRightSelectionOffset(rootBlock, LayoutUnit { logicalBottom }, cache));
+    if (logicalRight <= logicalLeft)
         return LayoutRect();
 
-    LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(logicalLeft, logicalTop, logicalWidth, logicalHeight));
+    auto gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, FloatRect { logicalLeft, logicalTop, logicalRight - logicalLeft, logicalHeight });
     if (paintInfo)
         paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, document().deviceScaleFactor()), selectionBackgroundColor());
-    return gapRect;
+    return enclosingLayoutRect(gapRect);
 }
 
-LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, LayoutUnit logicalLeft, LayoutUnit logicalTop, LayoutUnit logicalHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
+LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, float logicalLeft, float logicalTop, float logicalHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
-    LayoutUnit rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
-    LayoutUnit rootBlockLogicalLeft = std::max(logicalLeftSelectionOffset(rootBlock, logicalTop, cache), logicalLeftSelectionOffset(rootBlock, logicalTop + logicalHeight, cache));
-    LayoutUnit rootBlockLogicalRight = std::min(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalLeft,
-        std::min(logicalRightSelectionOffset(rootBlock, logicalTop, cache), logicalRightSelectionOffset(rootBlock, logicalTop + logicalHeight, cache)));
-    LayoutUnit rootBlockLogicalWidth = rootBlockLogicalRight - rootBlockLogicalLeft;
-    if (rootBlockLogicalWidth <= 0)
+    auto logicalBottom = logicalTop + logicalHeight;
+    float rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
+    float rootBlockLogicalLeft = std::max(logicalLeftSelectionOffset(rootBlock, LayoutUnit { logicalTop }, cache), logicalLeftSelectionOffset(rootBlock, LayoutUnit { logicalBottom }, cache));
+    float rootBlockLogicalRight = std::min<float>(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalLeft,
+        std::min(logicalRightSelectionOffset(rootBlock, LayoutUnit { logicalTop }, cache), logicalRightSelectionOffset(rootBlock, LayoutUnit { logicalBottom }, cache)));
+    if (rootBlockLogicalRight <= rootBlockLogicalLeft)
         return LayoutRect();
 
-    LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
+    auto logicalRect = FloatRect { rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalRight - rootBlockLogicalLeft, logicalHeight };
+    auto gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
     if (paintInfo)
         paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, document().deviceScaleFactor()), selObj->selectionBackgroundColor());
-    return gapRect;
+    return enclosingLayoutRect(gapRect);
 }
 
-LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, LayoutUnit logicalRight, LayoutUnit logicalTop, LayoutUnit logicalHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
+LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, float logicalRight, float logicalTop, float logicalHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
-    LayoutUnit rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
-    LayoutUnit rootBlockLogicalLeft = std::max(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalRight,
-        std::max(logicalLeftSelectionOffset(rootBlock, logicalTop, cache), logicalLeftSelectionOffset(rootBlock, logicalTop + logicalHeight, cache)));
-    LayoutUnit rootBlockLogicalRight = std::min(logicalRightSelectionOffset(rootBlock, logicalTop, cache), logicalRightSelectionOffset(rootBlock, logicalTop + logicalHeight, cache));
-    LayoutUnit rootBlockLogicalWidth = rootBlockLogicalRight - rootBlockLogicalLeft;
-    if (rootBlockLogicalWidth <= 0)
+    auto logicalBottom = logicalTop + logicalHeight;
+    float rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
+    float rootBlockLogicalLeft = std::max<float>(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalRight,
+        std::max(logicalLeftSelectionOffset(rootBlock, LayoutUnit { logicalTop }, cache), logicalLeftSelectionOffset(rootBlock, LayoutUnit { logicalBottom }, cache)));
+    float rootBlockLogicalRight = std::min(logicalRightSelectionOffset(rootBlock, LayoutUnit { logicalTop }, cache), logicalRightSelectionOffset(rootBlock, LayoutUnit { logicalBottom }, cache));
+    if (rootBlockLogicalRight <= rootBlockLogicalLeft)
         return LayoutRect();
 
-    LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
+    auto logicalRect = FloatRect { rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalRight - rootBlockLogicalLeft, logicalHeight };
+    auto gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
     if (paintInfo)
         paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, document().deviceScaleFactor()), selObj->selectionBackgroundColor());
-    return gapRect;
+    return enclosingLayoutRect(gapRect);
 }
 
 void RenderBlock::getSelectionGapInfo(HighlightState state, bool& leftGap, bool& rightGap)

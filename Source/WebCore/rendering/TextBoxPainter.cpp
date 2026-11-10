@@ -193,7 +193,8 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox.selectableRange())
     , m_paintOffset(paintOffset)
-    , m_paintRect(computePaintRect(paintOffset))
+    , m_unsnappedPaintRect(computePaintRect(paintOffset))
+    , m_paintRect(snapPaintRectForGlyphRotation())
     , m_isFirstLine(m_textBox.displayBox().isFirstFormattedLine())
     , m_isCombinedText(m_renderer->layoutBox().isCombined())
     , m_isPrinting(m_document->printing())
@@ -525,11 +526,11 @@ void TextBoxPainter::paintForegroundAndDecorations()
             unsigned endOffset = markedText.endOffset;
             if (startOffset < endOffset) {
                 // Avoid measuring the text when the entire line box is selected as an optimization.
-                auto snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(LayoutRect { m_paintRect }, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
+                auto snappedPaintRect = snapRectToDevicePixels(m_paintRect, m_document->deviceScaleFactor());
                 if (startOffset || endOffset != m_paintTextRun.length()) {
-                    LayoutRect selectionRect = { m_paintRect.x(), m_paintRect.y(), m_paintRect.width(), m_paintRect.height() };
+                    auto selectionRect = m_paintRect;
                     fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, selectionRect, startOffset, endOffset);
-                    snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
+                    snappedPaintRect = snapRectToDevicePixels(selectionRect, m_document->deviceScaleFactor());
                 }
                 auto decorationPaintRect = writingMode().isHorizontal() ? FloatRect { snappedPaintRect.x(), m_paintRect.y(), snappedPaintRect.width(), snappedPaintRect.height() } : snappedPaintRect;
                 auto decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect);
@@ -609,13 +610,12 @@ void TextBoxPainter::paintBackgroundFill()
 #endif
 }
 
-LayoutRect TextBoxPainter::backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const
+FloatRect TextBoxPainter::backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const
 {
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-    auto deltaY = LayoutUnit { writingMode().isLineInverted() ? logicalBottom - m_logicalRect.maxY() : m_logicalRect.y() - logicalTop };
-    auto logicalHeight = LayoutUnit { std::max(0.f, logicalBottom - logicalTop) };
-    auto rect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), logicalHeight };
+    auto deltaY = writingMode().isLineInverted() ? logicalBottom - m_logicalRect.maxY() : m_logicalRect.y() - logicalTop;
+    auto rect = FloatRect { m_paintRect.x(), m_paintRect.y() - deltaY, m_logicalRect.width(), std::max(0.f, logicalBottom - logicalTop) };
 
     if (isInsideShapedContent()) {
         auto shapedContent = ShapedContent { };
@@ -650,11 +650,17 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
 
     auto rect = backgroundRectForRange(startOffset, endOffset, logicalTop, logicalBottom);
 
-    if (m_paintTextRun.length() == endOffset - startOffset) {
-        // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
-        auto unAdjustedRectMaxX = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
-        auto visualRight = std::max(rect.maxX(), unAdjustedRectMaxX);
-        rect.shiftMaxXEdgeTo(visualRight);
+    // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
+    bool rangeReachesVisualRight = m_paintTextRun.ltr() ? endOffset == m_paintTextRun.length() : !startOffset;
+    if (rangeReachesVisualRight)
+        rect.shiftMaxXEdgeTo(std::max(rect.maxX(), m_paintRect.x() + m_logicalRect.width()));
+
+    if (!textBox().isHorizontal() && !m_isCombinedText) {
+        auto direction = writingMode().isLineOverLeft() ? RotationDirection::Counterclockwise : RotationDirection::Clockwise;
+        if (auto inverseRotation = rotation(m_paintRect, direction).inverse()) {
+            rect.move(m_unsnappedPaintRect.x() - m_paintRect.x(), 0);
+            rect = inverseRotation->mapRect(rotation(m_unsnappedPaintRect, direction).mapRect(rect));
+        }
     }
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
@@ -662,7 +668,7 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
     if (!writingMode().isHorizontal()) {
         auto ctm = context.getCTM();
         if (auto inverseCTM = ctm.inverse())
-            backgroundRect = inverseCTM->mapRect(snapRectToDevicePixels(LayoutRect { ctm.mapRect(FloatRect { rect }) }, 1));
+            backgroundRect = inverseCTM->mapRect(snapRectToDevicePixels(ctm.mapRect(rect), 1));
     }
     if (backgroundStyle == BackgroundStyle::Rounded) {
         backgroundRect.expand(-1, -1);
@@ -787,9 +793,9 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     // Backgrounds paint before all text, so clip a stroked partial segment to its forward edge to keep its stroke overflow off a following highlight's background (adjacent inline boxes composite this way); the slack leaves the other edges effectively unclipped.
     GraphicsContextStateSaver clipStateSaver(context, false);
     if (markedText.style.textStyles.strokeWidth > 0 && markedText.endOffset < m_paintTextRun.length()) {
-        LayoutRect segmentRect { m_paintRect };
+        auto segmentRect = m_paintRect;
         fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, segmentRect, markedText.startOffset, markedText.endOffset);
-        auto snapped = snapRectToDevicePixelsWithWritingDirection(segmentRect, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
+        auto snapped = snapRectToDevicePixels(segmentRect, m_document->deviceScaleFactor());
         static constexpr float overflowSlack = 4096;
         bool ltr = m_paintTextRun.ltr();
         FloatRect clipRect;
@@ -1704,11 +1710,17 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
     auto boxOrigin = visualRect.location();
 
     boxOrigin.moveBy(localPaintOffset);
+    return { boxOrigin, FloatSize(m_logicalRect.width(), m_logicalRect.height()) };
+}
+
+FloatRect TextBoxPainter::snapPaintRectForGlyphRotation() const
+{
+    auto paintRect = m_unsnappedPaintRect;
     if (writingMode().isVertical()) {
         // This is required by the CTM rotation we do for vertical content.
-        boxOrigin.setX(roundToDevicePixel(LayoutUnit { boxOrigin.x() }, m_document->deviceScaleFactor()));
+        paintRect.setX(roundToDevicePixel(LayoutUnit { paintRect.x() }, m_document->deviceScaleFactor()));
     }
-    return { boxOrigin, FloatSize(m_logicalRect.width(), m_logicalRect.height()) };
+    return paintRect;
 }
 
 FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& textBox, const MarkedText& markedText)
@@ -1719,7 +1731,7 @@ FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& t
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {
         auto run = textBox->textRun();
-        auto selectionRect = LayoutRect { 0_lu, y, 0_lu, height };
+        auto selectionRect = FloatRect { 0, y, 0, height };
         font.adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), run, selectionRect, markedText.startOffset, markedText.endOffset);
         return selectionRect;
     }

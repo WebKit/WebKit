@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<title>Selection in vertical-lr text has no unselected line between text boxes or before the line-end gap at subpixel positions</title>
+<style>
+#container { position: absolute; top: 20px; left: 20px; height: 300px; writing-mode: vertical-lr; font: 5.3px/8px Ahem; }
+::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+<div id="container"><div style="padding-top: calc(4px / 64)">XXXX<span>XX</span></div><div style="padding-top: calc(29px / 64)">XXXX<span>XX</span></div><div>XX</div></div>
+<script>getSelection().selectAllChildren(container);</script>

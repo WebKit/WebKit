@@ -81,9 +81,10 @@ protected:
     void paintCompositionUnderline(const CompositionUnderline&, const CornerRadii&, bool hasLiveConversion);
     void fillCompositionUnderline(float start, float width, const CompositionUnderline&, const CornerRadii&, bool hasLiveConversion) const;
     void paintPlatformDocumentMarker(const MarkedText&);
-    LayoutRect backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const;
+    FloatRect backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const;
 
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
+    FloatRect snapPaintRectForGlyphRotation() const;
     bool computeHaveSelection() const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
     MarkedText createMarkedTextFromSelectionInBox();
@@ -120,6 +121,7 @@ protected:
     PaintInfo& m_paintInfo;
     const TextBoxSelectableRange m_selectableRange;
     const LayoutPoint m_paintOffset;
+    const FloatRect m_unsnappedPaintRect;
     const FloatRect m_paintRect;
     const bool m_isFirstLine;
     const bool m_isCombinedText;

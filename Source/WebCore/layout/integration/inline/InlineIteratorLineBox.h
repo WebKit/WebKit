@@ -371,7 +371,7 @@ inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSel
         formattingContextRoot().blockStartRelativeToPhysical(visualRect);
         return visualRect;
     }
-    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { selectionLogicalTop() });
+    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(selectionLogicalTop());
     auto selectionBottom = selectionLogicalBottom();
 
     visualRect.setY(selectionTop);

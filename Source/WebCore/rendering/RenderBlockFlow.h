@@ -396,7 +396,7 @@ public:
     
     inline LayoutUnit endPaddingWidthForCaret() const;
 
-    LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
+    float adjustEnclosingTopForPrecedingBlock(float top) const;
 
     NODELETE std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
@@ -504,7 +504,7 @@ private:
     void addOverflowFromInlineChildren();
 
     GapRects inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;
+        float& lastLogicalTop, float& lastLogicalLeft, float& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;
     
     PositionWithAffinity positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource) override;
 

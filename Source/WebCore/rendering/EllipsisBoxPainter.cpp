@@ -143,13 +143,13 @@ void EllipsisBoxPainter::paintSelection()
 
     auto stateSaver = GraphicsContextStateSaver { context };
 
-    auto visualRect = LayoutRect { m_lineBox.ellipsisVisualRect(InlineIterator::LineBox::AdjustedForSelection::Yes) };
-    visualRect.move(m_paintOffset.x(), m_paintOffset.y());
+    auto visualRect = m_lineBox.ellipsisVisualRect(InlineIterator::LineBox::AdjustedForSelection::Yes);
+    visualRect.moveBy(m_paintOffset);
 
     auto ellipsisText = m_lineBox.ellipsisText();
     constexpr bool canUseSimplifiedTextMeasuring = false;
     rootStyle->fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
+    context.fillRect(snapRectToDevicePixels(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor()), backgroundColor);
 }
 
 }

@@ -134,6 +134,7 @@ public:
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForText(bool canUseSimplifiedTextMeasuring, const TextRun&, LayoutRect& selectionRect, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
+    void adjustSelectionRectForText(bool canUseSimplifiedTextMeasuring, const TextRun&, FloatRect& selectionRect, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
 
     Vector<LayoutRect> characterSelectionRectsForText(const TextRun&, const LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const;
 
@@ -217,8 +218,8 @@ private:
     TextShapingResult layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasis = ForTextEmphasis::No) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
-    void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
-    void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
+    void adjustSelectionRectForSimpleText(const TextRun&, FloatRect& selectionRect, unsigned from, unsigned to) const;
+    void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, FloatRect& selectionRect, unsigned from, unsigned to) const;
     float width(CodePath, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, DirectionalOverride, GlyphGeometryCacheEntry*) const;
     NODELETE ALWAYS_INLINE bool canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
@@ -231,7 +232,7 @@ private:
 
     TextShapingResult layoutComplexText(const TextRun&, unsigned from, unsigned to, ForTextEmphasis = ForTextEmphasis::No) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
-    void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
+    void adjustSelectionRectForComplexText(const TextRun&, FloatRect& selectionRect, unsigned from, unsigned to) const;
 
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const Latin1Character>, TextDirection, ExpansionBehavior);
     NODELETE static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);

@@ -57,7 +57,7 @@ public:
         if (auto blockLevelBox = lineBox.blockLevelBox())
             return blockLevelBox->logicalTop();
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
-        return protect(lineBox.formattingContextRoot())->adjustEnclosingTopForPrecedingBlock(LayoutUnit { logicalTop(lineBox) });
+        return protect(lineBox.formattingContextRoot())->adjustEnclosingTopForPrecedingBlock(logicalTop(lineBox));
     }
 
     static RenderObject::HighlightState selectionState(const InlineIterator::LineBox& lineBox)

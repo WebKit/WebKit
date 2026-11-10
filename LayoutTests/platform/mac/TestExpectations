@@ -1790,6 +1790,9 @@ webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.ht
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
+# This test depends on the kerning of Hoefler Text, a macOS system font.
+fast/text/selection-gap-text-edge-rtl-remeasured-run.html [ Pass ]
+
 # Was in LayoutTests/Expectations, now only happening on Mac
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
 

@@ -1450,6 +1450,9 @@ css3/color-filters/punch-out-white-backgrounds.html [ Skip ]
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Skip ]
 
+# This test depends on the kerning of Hoefler Text, a macOS system font.
+fast/text/selection-gap-text-edge-rtl-remeasured-run.html [ Skip ]
+
 # Payment Request is only enabled on Cocoa platforms.
 http/tests/paymentrequest [ Skip ]
 http/tests/inspector/paymentrequest [ Skip ]

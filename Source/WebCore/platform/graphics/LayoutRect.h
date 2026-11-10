@@ -294,6 +294,16 @@ inline FloatRect snapRectToDevicePixels(const LayoutRect& rect, float pixelSnapp
     return FloatRect(FloatPoint(roundToDevicePixel(rect.x(), pixelSnappingFactor), roundToDevicePixel(rect.y(), pixelSnappingFactor)), snapSizeToDevicePixel(rect.size(), rect.location(), pixelSnappingFactor));
 }
 
+inline FloatRect snapRectToDevicePixels(const FloatRect& rect, float pixelSnappingFactor)
+{
+    auto snap = [&](float value) {
+        return std::floor(value * pixelSnappingFactor + 0.5f) / pixelSnappingFactor;
+    };
+    auto snappedX = snap(rect.x());
+    auto snappedY = snap(rect.y());
+    return { snappedX, snappedY, snap(rect.maxX()) - snappedX, snap(rect.maxY()) - snappedY };
+}
+
 inline FloatRect snapRectToDevicePixels(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height, float pixelSnappingFactor)
 {
     return snapRectToDevicePixels(LayoutRect(x, y, width, height), pixelSnappingFactor);

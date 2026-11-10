@@ -111,12 +111,12 @@ public:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     GapRects selectionGapRectsForRepaint(const RenderLayerModelObject* repaintContainer);
-    LayoutRect logicalLeftSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, LayoutUnit logicalLeft, LayoutUnit logicalTop, LayoutUnit logicalHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
-    LayoutRect logicalRightSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, LayoutUnit logicalRight, LayoutUnit logicalTop, LayoutUnit logicalHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
+    LayoutRect logicalLeftSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, float logicalLeft, float logicalTop, float logicalHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
+    LayoutRect logicalRightSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, float logicalRight, float logicalTop, float logicalHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
     NODELETE void getSelectionGapInfo(HighlightState, bool& leftGap, bool& rightGap);
     bool isSelectionRoot() const;
 
-    NODELETE LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
+    NODELETE FloatRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const FloatRect& logicalRect);
 
     bool establishesIndependentFormattingContext() const;
     bool createsNewFormattingContext() const;
@@ -364,14 +364,14 @@ private:
     }
     bool shouldPaintSelectionGaps() const final;
     GapRects selectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo* = 0);
+        float& lastLogicalTop, float& lastLogicalLeft, float& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo* = 0);
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual GapRects inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
+        float& lastLogicalTop, float& lastLogicalLeft, float& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
     GapRects blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
+        float& lastLogicalTop, float& lastLogicalLeft, float& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
     LayoutRect blockSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit lastLogicalTop, LayoutUnit lastLogicalLeft, LayoutUnit lastLogicalRight, LayoutUnit logicalBottom, const LogicalSelectionOffsetCaches&, const PaintInfo*);
+        float lastLogicalTop, float lastLogicalLeft, float lastLogicalRight, float logicalBottom, const LogicalSelectionOffsetCaches&, const PaintInfo*);
 
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) { };

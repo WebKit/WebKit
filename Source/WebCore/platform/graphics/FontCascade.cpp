@@ -615,6 +615,14 @@ Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& ru
 
 void FontCascade::adjustSelectionRectForText(bool canUseSimplifiedTextMeasuring, const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const
 {
+    FloatRect inlineExtent;
+    adjustSelectionRectForText(canUseSimplifiedTextMeasuring, run, inlineExtent, from, to);
+    selectionRect.move(inlineExtent.x(), 0);
+    selectionRect.setWidth(LayoutUnit::fromFloatCeil(inlineExtent.width()));
+}
+
+void FontCascade::adjustSelectionRectForText(bool canUseSimplifiedTextMeasuring, const TextRun& run, FloatRect& selectionRect, unsigned from, std::optional<unsigned> to) const
+{
     unsigned destination = to.value_or(run.length());
 
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
@@ -1668,7 +1676,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
-void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, FloatRect& selectionRect, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(*this, run);
@@ -1686,10 +1694,10 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
         it.finalize(glyphBuffer);
         selectionRect.move(beforeWidth, 0);
     }
-    selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
+    selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
-void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, FloatRect& selectionRect, unsigned from, unsigned to) const
 {
     ComplexTextController controller(*this, run);
     controller.advance(from);
@@ -1701,10 +1709,10 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
         selectionRect.move(controller.totalAdvance().width() - afterWidth, 0);
     else
         selectionRect.move(beforeWidth, 0);
-    selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
+    selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
-void FontCascade::adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+void FontCascade::adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun& run, FloatRect& selectionRect, unsigned from, unsigned to) const
 {
     bool whitespaceIsCollapsed = !run.allowTabs();
     float beforeWidth = widthForSimpleTextWithFixedPitch(run.text().left(from), whitespaceIsCollapsed);
@@ -1714,7 +1722,7 @@ void FontCascade::adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun& 
         selectionRect.move(totalWidth - afterWidth, 0);
     } else
         selectionRect.move(beforeWidth, 0);
-    selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
+    selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
 int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
