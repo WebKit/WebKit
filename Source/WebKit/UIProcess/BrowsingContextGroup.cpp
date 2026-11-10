@@ -39,6 +39,7 @@
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/SecurityOrigin.h>
 
@@ -48,8 +49,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode)
+BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore)
     : m_crossOriginMode(crossOriginMode)
+    , m_websiteDataStore(websiteDataStore)
 {
 }
 
@@ -65,6 +67,8 @@ static bool isLoopbackOrLocalNetworkSite(const Site& site, bool localNetworkAcce
 void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataStore, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const WebCore::Site& site, const WebCore::Site& mainFrameSite,
     WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, API::PageConfiguration& pageConfiguration, IsMainFrame isMainFrame, CompletionHandler<void(FrameProcess*)>&& completionHandler)
 {
+    ASSERT(&websiteDataStore == m_websiteDataStore.get());
+
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
         return completionHandler(nullptr);
 
@@ -138,6 +142,7 @@ bool BrowsingContextGroup::canUseProcessForCrossOriginIsolation(const WebProcess
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
     ASSERT(process.isDummyProcessProxy() || canUseProcessForCrossOriginIsolation(process));
+    ASSERT(process.isDummyProcessProxy() || process.websiteDataStore() == m_websiteDataStore.get());
 
     if (preferences.siteIsolationEnabled()) {
         RefPtr sharedProcess = liveSharedProcess();

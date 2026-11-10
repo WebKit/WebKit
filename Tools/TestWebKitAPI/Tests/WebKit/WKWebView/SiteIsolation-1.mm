@@ -52,6 +52,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKAppHighlight.h>
 #import <WebKit/_WKAppHighlightDelegate.h>
@@ -3727,6 +3728,126 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWhoseResponseHasDocumentIsolationPo
     EXPECT_EQ(provisionalProcessAtResponse.value_or(-1), destinationProcess);
     EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "destination");
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"crossOriginIsolated"] boolValue]);
+}
+
+using MainFramePolicy = void (^)(WKWebpagePreferences *);
+
+static void setMainFramePolicy(TestNavigationDelegate *navigationDelegate, MainFramePolicy policy)
+{
+    navigationDelegate.decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (policy && action.targetFrame.mainFrame)
+            policy(preferences);
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+}
+
+static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViewsWithMainFramePolicies(WKWebViewConfiguration *configuration, MainFramePolicy openerPolicy, MainFramePolicy openedPolicy)
+{
+    __block WebViewAndDelegates opener;
+    __block WebViewAndDelegates opened;
+    opener.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    opener.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [opener.navigationDelegate allowAnyTLSCertificate];
+    setMainFramePolicy(opener.navigationDelegate.get(), openerPolicy);
+    opener.webView.get().navigationDelegate = opener.navigationDelegate.get();
+    opener.uiDelegate = adoptNS([TestUIDelegate new]);
+    opener.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        opened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [opened.navigationDelegate allowAnyTLSCertificate];
+        setMainFramePolicy(opened.navigationDelegate.get(), openedPolicy);
+        opened.uiDelegate = adoptNS([TestUIDelegate new]);
+        opened.webView.get().navigationDelegate = opened.navigationDelegate.get();
+        opened.webView.get().UIDelegate = opened.uiDelegate.get();
+        return opened.webView.get();
+    };
+    opener.webView.get().UIDelegate = opener.uiDelegate.get();
+    opener.webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [opener.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/opener"]]];
+    while (!opened.webView)
+        Util::spinRunLoop();
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    return { WTF::move(opener), WTF::move(opened) };
+}
+
+static RetainPtr<WKWebsiteDataStore> nonPersistentDataStoreWithHTTPSProxy(const HTTPServer& server)
+{
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+}
+
+static bool dataStoreHasCookieNamed(WKWebsiteDataStore *dataStore, NSString *name)
+{
+    bool hasCookie = false;
+    bool done = false;
+    [dataStore.httpCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *cookies) {
+        for (NSHTTPCookie *cookie in cookies) {
+            if ([cookie.name isEqualToString:name])
+                hasCookie = true;
+        }
+        done = true;
+    }];
+    Util::run(&done);
+    return hasCookie;
+}
+
+static HTTPServer popupDataStoreServer()
+{
+    return HTTPServer({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/popup')</script>"_s } },
+        { "/popup"_s, { "popup"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+static void checkPopupUsesWebsiteDataStoreOfOpener(bool siteIsolationEnabled)
+{
+    auto server = popupDataStoreServer();
+    RetainPtr dataStore = nonPersistentDataStoreWithHTTPSProxy(server);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    if (siteIsolationEnabled)
+        enableSiteIsolation(configuration.get());
+
+    // The opener's navigation switches it to another data store, which its popup starts out in.
+    auto [opener, opened] = openerAndOpenedViewsWithMainFramePolicies(configuration.get(), ^(WKWebpagePreferences *preferences) {
+        preferences._websiteDataStore = dataStore.get();
+    }, nil);
+
+    EXPECT_EQ(opened.webView.get().configuration.websiteDataStore, opener.webView.get().configuration.websiteDataStore);
+    EXPECT_EQ([opened.webView _webProcessIdentifier], [opener.webView _webProcessIdentifier]);
+    [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
+
+    [opened.webView objectByEvaluatingJavaScript:@"document.cookie = 'popup=1'"];
+    EXPECT_TRUE(dataStoreHasCookieNamed(dataStore.get(), @"popup"));
+    EXPECT_FALSE(dataStoreHasCookieNamed(opener.webView.get().configuration.websiteDataStore, @"popup"));
+}
+
+TEST(SiteIsolation, PopupUsesWebsiteDataStoreOfOpener)
+{
+    checkPopupUsesWebsiteDataStoreOfOpener(true);
+}
+
+TEST(SiteIsolation, PopupUsesWebsiteDataStoreOfOpenerWithoutSiteIsolation)
+{
+    checkPopupUsesWebsiteDataStoreOfOpener(false);
+}
+
+TEST(SiteIsolation, PopupNavigationWithWebsiteDataStoreOfOpenerKeepsOpener)
+{
+    auto server = popupDataStoreServer();
+    RetainPtr dataStore = nonPersistentDataStoreWithHTTPSProxy(server);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    auto useDataStore = ^(WKWebpagePreferences *preferences) {
+        preferences._websiteDataStore = dataStore.get();
+    };
+    auto [opener, opened] = openerAndOpenedViewsWithMainFramePolicies(configuration.get(), useDataStore, useDataStore);
+
+    EXPECT_EQ([opened.webView _webProcessIdentifier], [opener.webView _webProcessIdentifier]);
+    [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
 }
 
 } // namespace TestWebKitAPI

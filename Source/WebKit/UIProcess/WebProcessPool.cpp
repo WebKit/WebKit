@@ -1618,9 +1618,6 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     else if (relatedPage && !relatedPage->isClosed() && relatedPage->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration) && !siteIsolationEnabled && protect(relatedPage->browsingContextGroup())->crossOriginMode() == crossOriginMode) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = relatedPage->ensureRunningProcess();
-        // We do not support several WebsiteDataStores sharing a single process.
-        ASSERT(process->isDummyProcessProxy() || &pageConfiguration->websiteDataStore() == process->websiteDataStore());
-        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore());
     } else if (pageConfiguration->delaysWebProcessLaunchUntilFirstLoad()) {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: delaying WebProcess launch until first load");
         // In the common case, we delay process launch until something is actually loaded in the page.
@@ -1638,11 +1635,22 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     Ref userContentController = pageConfiguration->userContentController();
     
     ASSERT(process);
+
+    // We do not support several WebsiteDataStores sharing a single process, so a page that starts out in another page's
+    // process, such as a popup in its opener's, uses its data store, which a WKWebpagePreferences or web archive load can
+    // have changed from the configuration's.
+    pageConfiguration->setWebsiteDataStore(process->websiteDataStore());
     
     process->setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
 
     auto page = process->createWebPage(pageClient, WTF::move(pageConfiguration));
     Ref pagePreference = page->preferences();
+
+#if ENABLE(WEB_ARCHIVE)
+    // A popup that starts out in its opener's web archive data store leaves it when its opener would.
+    if (RefPtr replacedDataStore = relatedPage && &relatedPage->websiteDataStore() == &page->websiteDataStore() ? relatedPage->replacedDataStoreForWebArchiveLoad() : nullptr)
+        page->setReplacedDataStoreForWebArchiveLoad(replacedDataStore.releaseNonNull());
+#endif
 
     if (!m_remoteWorkerPreferences) {
         m_remoteWorkerPreferences = page->preferencesStore();

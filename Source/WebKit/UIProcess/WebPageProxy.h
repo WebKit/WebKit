@@ -3220,6 +3220,8 @@ public:
 
 #if ENABLE(WEB_ARCHIVE)
     bool didLoadWebArchive() const { return !!m_replacedDataStoreForWebArchiveLoad; }
+    WebsiteDataStore* replacedDataStoreForWebArchiveLoad() const { return m_replacedDataStoreForWebArchiveLoad.get(); }
+    void setReplacedDataStoreForWebArchiveLoad(Ref<WebsiteDataStore>&&);
 #else
     bool didLoadWebArchive() const { return false; }
 #endif
@@ -4123,6 +4125,7 @@ private:
 #endif
 
     const Ref<VisitedLinkStore> m_visitedLinkStore;
+    // FIXME: This should be the browsing context group's data store, once web archive loads no longer switch stores before their navigation commits.
     Ref<WebsiteDataStore> m_websiteDataStore;
 #if ENABLE(WEB_ARCHIVE)
     RefPtr<WebsiteDataStore> m_replacedDataStoreForWebArchiveLoad;

@@ -1050,13 +1050,6 @@ TEST(SiteIsolation, BasicPostMessageWindowOpen)
     EXPECT_WK_STREQ(alert.get(), "opened page received pong");
 }
 
-struct WebViewAndDelegates {
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<TestMessageHandler> messageHandler;
-    RetainPtr<TestNavigationDelegate> navigationDelegate;
-    RetainPtr<TestUIDelegate> uiDelegate;
-};
-
 static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true, RetainPtr<WKProcessPool> processPool = nil)
 {
     __block WebViewAndDelegates opener;
