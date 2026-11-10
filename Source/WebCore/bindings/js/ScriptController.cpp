@@ -665,13 +665,14 @@ JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperW
 ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (m_frame->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
+    Ref client = m_frame->loader().client();
+    if (client->shouldEnableInAppBrowserPrivacyProtections()) {
         if (RefPtr document = m_frame->document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
         SCRIPTCONTROLLER_RELEASE_LOG_ERROR(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
         return makeUnexpected(ExceptionDetails { "Ignoring user script injection for non-app bound domain"_s });
     }
-    m_frame->loader().client().notifyPageOfAppBoundBehavior();
+    client->notifyPageOfAppBoundBehavior();
 #endif
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<IsProcessingUserGesture>(IsProcessingUserGesture::Yes) : std::nullopt, protect(m_frame->document()), UserGestureType::ActivationTriggering, UserGestureIndicator::ProcessInteractionStyle::Never, parameters.removeTransientActivation);

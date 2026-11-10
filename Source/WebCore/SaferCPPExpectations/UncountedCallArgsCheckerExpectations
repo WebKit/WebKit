@@ -1,5 +1,4 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
-[ iOS ] bindings/js/ScriptController.cpp
 dom/Attr.cpp
 dom/ComposedTreeIterator.h
 dom/Document.cpp
