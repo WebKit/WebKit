@@ -177,6 +177,20 @@
 #define SUPPRESS_TSAN
 #endif
 
+/* LSAN_ENABLED and SUPPRESS_LSAN */
+
+#ifdef __SANITIZE_LEAK__
+#define LSAN_ENABLED 1
+#else
+#define LSAN_ENABLED COMPILER_HAS_CLANG_FEATURE(leak_sanitizer)
+#endif
+
+#if LSAN_ENABLED
+#define SUPPRESS_LSAN __attribute__((no_sanitize("leak")))
+#else
+#define SUPPRESS_LSAN
+#endif
+
 /* COVERAGE_ENABLED and SUPPRESS_COVERAGE */
 
 #define COVERAGE_ENABLED COMPILER_HAS_CLANG_FEATURE(coverage_sanitizer)

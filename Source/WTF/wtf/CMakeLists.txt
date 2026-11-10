@@ -305,6 +305,7 @@ set(WTF_PUBLIC_HEADERS
     SchedulePair.h
     Scope.h
     ScopedLambda.h
+    ScopedLeakSanitizerDisabler.h
     ScopedPrintStream.h
     Seconds.h
     SegmentedVector.h
