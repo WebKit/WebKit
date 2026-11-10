@@ -1,0 +1,15 @@
+Verifies that post-layout mouse target updates dispatch leave events across Shadow DOM ancestors after a hovered child is removed, and clear hover/boundary state inside subframes when moved out from under the stationary cursor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS logEvents.join(', ') is "pointerenter@host, mouseenter@host, pointerenter@fsBtn, mouseenter@fsBtn, pointermove@host, mousemove@host"
+PASS logEvents.join(', ') is "pointerleave@fsBtn, mouseleave@fsBtn, pointerleave@host, mouseleave@host"
+PASS fsBtn.matches(':hover') is false
+PASS host.matches(':hover') is false
+PASS window.innerBtn.matches(':hover') is true
+PASS window.subEvents.join(', ') is "pointerout, mouseout, pointerleave, mouseleave"
+PASS window.innerBtn.matches(':hover') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
