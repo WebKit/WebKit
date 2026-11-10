@@ -5,18 +5,21 @@
 #   [PREPROCESS]                                # run <input> through the C preprocessor first
 #   [PREPROCESSOR_DEFINITIONS <definition>...]  # NAME or NAME=VALUE macros to define while preprocessing
 #   [TARGETED_DEVICE_FAMILY <family>...]        # UIDeviceFamily values, narrowed to the SDK; defaults to the SDK's primary family
+#   [APP_ICON <name>]                           # the asset catalog's app icon set, for the icon keys actool's partial Info.plist has
 # )
 #
 # ${VAR} and @VAR@ references are substituted from the calling scope, as
 # configure_file() does, and so are $(VAR) references, as Xcode spells them.
 # Then it adds common platform keys set by WebKitXcodeSDK, and for Mac Catalyst
-# leaves out the iOS-only keys, as Xcode does.
+# leaves out the iOS-only keys, as Xcode does. actool only writes its partial
+# Info.plist at build time, too late for this, so APP_ICON adds the same icon
+# keys here.
 #
 # <output> is only rewritten when its contents change, so reconfiguring doesn't
 # relink or re-sign the bundle it belongs to.
 
 function(WEBKIT_PROCESS_INFO_PLIST _input _output)
-    cmake_parse_arguments(_arg "PREPROCESS" "" "PREPROCESSOR_DEFINITIONS;TARGETED_DEVICE_FAMILY" ${ARGN})
+    cmake_parse_arguments(_arg "PREPROCESS" "APP_ICON" "PREPROCESSOR_DEFINITIONS;TARGETED_DEVICE_FAMILY" ${ARGN})
     if (_arg_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "WEBKIT_PROCESS_INFO_PLIST: unexpected arguments: ${_arg_UNPARSED_ARGUMENTS}")
     endif ()
@@ -42,6 +45,9 @@ function(WEBKIT_PROCESS_INFO_PLIST _input _output)
     if (WEBKIT_SDK_IS_IOS_FAMILY)
         WEBKIT_GET_DEVICE_FAMILY(_device_family ${_arg_TARGETED_DEVICE_FAMILY})
         list(APPEND _options --device-family ${_device_family})
+    endif ()
+    if (_arg_APP_ICON)
+        list(APPEND _options --app-icon ${_arg_APP_ICON})
     endif ()
     execute_process(
         COMMAND ${Python_EXECUTABLE} ${_script} ${_configured} ${_output}

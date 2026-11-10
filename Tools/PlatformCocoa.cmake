@@ -6,13 +6,6 @@ if (ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
     add_subdirectory(MiniBrowser/mac)
 endif ()
 
-# A WEBKIT_OPTION would reach cmakeconfig.h, so turning SwiftBrowser on or off
-# would rebuild everything that includes it.
-option(ENABLE_SWIFTBROWSER "Build SwiftBrowser" ON)
-if (ENABLE_SWIFTBROWSER AND ENABLE_WEBKIT)
-    add_subdirectory(SwiftBrowser)
-endif ()
-
 if (ENABLE_LAYOUT_TESTS)
     # LayoutTestHelper locks screen color profile during test runs (mac.py:start_helper).
     # FIXME: Stub config.h works around DRT/config.h pulling in JSC headers.
@@ -46,6 +39,14 @@ if (ENABLE_LLDB_WEBKIT_TESTER)
     add_subdirectory(lldb/lldbWebKitTester)
 endif ()
 
+endif ()
+
+# A WEBKIT_OPTION would reach cmakeconfig.h, so turning SwiftBrowser on or off
+# would rebuild everything that includes it. SwiftBrowser/CMakeLists.txt skips
+# the platforms it doesn't support.
+option(ENABLE_SWIFTBROWSER "Build SwiftBrowser" ON)
+if (ENABLE_SWIFTBROWSER AND ENABLE_WEBKIT)
+    add_subdirectory(SwiftBrowser)
 endif ()
 
 # The iOS family includes Mac Catalyst.

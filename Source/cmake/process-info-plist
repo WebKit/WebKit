@@ -47,6 +47,7 @@ def main(argv):
     parser.add_argument('--sdk')
     parser.add_argument('--deployment-target')
     parser.add_argument('--device-family', type=int, nargs='+')
+    parser.add_argument('--app-icon')
     parser.add_argument('--cpp')
     parser.add_argument('-D', dest='definitions', action='append', default=[])
     args = parser.parse_args(argv)
@@ -82,6 +83,18 @@ def main(argv):
         # Xcode leaves the iOS-only keys out of a Mac Catalyst bundle.
         plist.pop('LSRequiresIPhoneOS', None)
         plist.pop('UIRequiredDeviceCapabilities', None)
+    if args.app_icon:
+        # The icon keys actool writes to its partial Info.plist for the app icon set.
+        if args.device_family and args.platform != 'MacOSX':
+            def primary_icon(*sizes):
+                return {'CFBundlePrimaryIcon': {
+                    'CFBundleIconFiles': [f'{args.app_icon}{size}' for size in sizes],
+                    'CFBundleIconName': args.app_icon}}
+            plist.setdefault('CFBundleIcons', primary_icon('60x60'))
+            plist.setdefault('CFBundleIcons~ipad', primary_icon('60x60', '76x76'))
+        else:
+            plist.setdefault('CFBundleIconFile', args.app_icon)
+            plist.setdefault('CFBundleIconName', args.app_icon)
 
     contents = plistlib.dumps(plist)
     try:
