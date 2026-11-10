@@ -293,6 +293,48 @@ placeholder;
         self.verify_conversion_happened(converted)
         self.verify_reference_relative_paths(converted, test_reference_support_info)
 
+    def test_convert_keeps_source_text(self):
+        """ Tests that converting a file changes only what it converts, and keeps the rest of the source as it was """
+
+        test_html = """<!DOCTYPE html>
+<!~quirks>
+<p>self-close.html?navs=n&channel=name will navigate n times</p>
+<p>&nbsp a&#x202E b&#X202E; c&amp;</p>
+<dØdd></dØdd></DIV></ script>
+<?pi data?>
+<img src="../../../../some-image.jpg">
+"""
+        test_reference_support_info = {'reference_relpath': '../', 'files': ['../../../../some-image.jpg'], 'elements': ['img']}
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, test_reference_support_info)
+
+        with OutputCapture():
+            converter.feed(test_html)
+            converter.close()
+            converted = converter.output()
+
+        self.verify_conversion_happened(converted)
+        self.assertEqual(converted[1], test_html.replace('"../../../../some-image.jpg"', '"../../../some-image.jpg"'))
+
+    def test_convert_unclosed_style(self):
+        """ Tests that a style element left open at the end of the file keeps its converted contents """
+
+        test_html = """<!DOCTYPE html>
+<p>text</p>
+<style>
+#block1 { @test0@: placeholder; }
+"""
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
+        test_content = self.generate_test_content(converter.prefixed_properties, 1, 'test', test_html)
+
+        with OutputCapture():
+            converter.feed(test_content[1])
+            converter.close()
+            converted = converter.output()
+
+        self.verify_conversion_happened(converted)
+        self.verify_prefixed_properties(converted, test_content[0])
+        self.assertTrue(converted[1].startswith('<!DOCTYPE html>\n<p>text</p>\n<style>\n#block1 { -webkit-'))
+
     def test_convert_style_multiple_url(self):
         """ Tests convert_attributes_if_needed() using a reference file that has several relative URL paths in the style """
 
