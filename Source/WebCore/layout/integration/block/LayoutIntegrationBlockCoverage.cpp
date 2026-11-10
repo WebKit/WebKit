@@ -425,20 +425,31 @@ static bool isOutOfFlowLeafContainer(const RenderElement& outOfFlowBox)
     }
 }
 
+// The block formatting context sizes and places an out-of-flow leaf container, or a block container whose content it cannot lay out as a
+// nested root, and the render tree lays it out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext).
+static bool isOutOfFlowLeaf(const RenderElement& outOfFlowBox)
+{
+    if (isOutOfFlowLeafContainer(outOfFlowBox))
+        return true;
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(outOfFlowBox);
+    return blockContainer && !canUseForNestedBlockLayout(*blockContainer);
+}
+
 static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const RenderBox& outOfFlowBox)
 {
     // Block containers, which establish a block formatting context for their content, replaced elements, and the containers whose own
     // formatting context lays them out.
     auto isReplaced = outOfFlowBox.isRenderReplaced() || outOfFlowBox.isRenderOrLegacyRenderSVGRoot();
     auto isLeafContainer = isOutOfFlowLeafContainer(outOfFlowBox);
+    auto isLeaf = isLeafContainer || isOutOfFlowLeaf(outOfFlowBox);
     auto isBlockContainer = outOfFlowBox.type() == RenderObject::Type::BlockFlow || (outOfFlowBox.isRenderListItem() && !hasListMarker(outOfFlowBox));
     if (!isBlockContainer && !isReplaced && !isLeafContainer)
         return BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer;
     // FIXME: An orthogonal replaced element, whose own formatting context gives its size in its writing mode, not in its containing block's.
     if (CheckedPtr containingBlock = outOfFlowBox.containingBlock(); isReplaced && containingBlock && outOfFlowBox.writingMode().isOrthogonal(containingBlock->writingMode()))
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
-    // FIXME: An orthogonal leaf container, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
-    if (isLeafContainer && outOfFlowBox.isWritingModeRoot())
+    // FIXME: An orthogonal leaf, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
+    if (isLeaf && outOfFlowBox.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
     // FIXME: A positioned inline box with a direction of its own as its containing block, whose writing mode the containing block takes
     // (css-position-3 §2.1).
@@ -483,8 +494,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     auto inlineAxisAlignment = isOrthogonal ? style->alignSelf().resolve() : style->justifySelf().resolve();
     auto needsContentInlineSizes = hasIntrinsicInlineSize
         || (style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(inlineAxisAlignment.isNormal() || inlineAxisAlignment.isStretch()) || style->aspectRatio().hasRatio()));
-    // The render tree measures a leaf container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
-    if (needsContentInlineSizes && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
+    // The render tree measures a leaf (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
+    if (needsContentInlineSizes && !isLeaf && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     return { };
 }
@@ -510,14 +521,12 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
         if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
             return reason;
         // Its static position comes from its block container, or from a grid container, which puts it at the start of its content box
-        // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box. The block formatting
-        // context lays out its content too.
+        // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box.
         CheckedPtr staticPositionBlock = descendant->parent();
         while (staticPositionBlock->isInlineBox())
             staticPositionBlock = staticPositionBlock->parent();
         auto hasSupportedStaticPosition = is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid() || staticPositionBlock->isRenderFlexibleBox();
-        CheckedPtr outOfFlowBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant);
-        if (!hasSupportedStaticPosition || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
+        if (!hasSupportedStaticPosition)
             return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
             if (!isSupportedBoxInBetween(*box, *containingBlock))
@@ -671,7 +680,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
             return { };
         // Nor does a leaf container, whose content the render tree lays out.
-        if (isOutOfFlowLeafContainer(renderer))
+        if (isOutOfFlowLeaf(renderer))
             return outOfFlowBoxesInLeafAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer, rootContainer);
@@ -783,7 +792,7 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
         // The content of an atomic inline-level box or of an out-of-flow leaf container is not part of it either.
-        auto skipsContent = (isOutOfFlowBox && (!isLaidOutByBlockFormattingContext(*renderer, rootContainer) || isOutOfFlowLeafContainer(*renderer)))
+        auto skipsContent = (isOutOfFlowBox && (!isLaidOutByBlockFormattingContext(*renderer, rootContainer) || isOutOfFlowLeaf(*renderer)))
             || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant) || descendant->isRenderReplaced() || (renderer && renderer->isFloating());
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
     }
