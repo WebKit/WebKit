@@ -104,6 +104,7 @@ public:
         }, this, nullptr));
         atspi_event_listener_register(listener.get(), "object:children-changed:remove", nullptr);
         g_main_loop_run(m_mainLoop);
+        atspi_event_listener_deregister(listener.get(), "object:children-changed:remove", nullptr);
         m_eventSource = nullptr;
     }
 
