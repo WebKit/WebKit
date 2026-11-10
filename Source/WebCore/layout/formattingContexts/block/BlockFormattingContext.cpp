@@ -455,6 +455,15 @@ static PlacedFloats::Item movedFloat(const PlacedFloats::Item& floatItem, Layout
     return { position, absoluteGeometry, BoxGeometry::borderBoxTopLeft(localGeometry), RefPtr { floatItem.shape() } };
 }
 
+static PlacedFloats::Item floatWithoutShape(const PlacedFloats::Item& floatItem)
+{
+    auto localGeometry = floatItem.boxGeometry();
+    auto absoluteGeometry = BoxGeometry { localGeometry };
+    absoluteGeometry.setTopLeft(floatItem.absoluteBorderBoxRect().topLeft());
+    auto position = floatItem.isStartPositioned() ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End;
+    return { position, absoluteGeometry, BoxGeometry::borderBoxTopLeft(localGeometry), nullptr };
+}
+
 // A float from outside the inline content it intrudes into, in the coordinates of the border box of the content's block container, which is
 // offset by this from the root's. The render tree path gives the inline formatting context such floats from its float lists with their edges
 // along the physical vertical axis floored (LineLayout::preparePlacedFloats), and lines go beside them the same way here.
@@ -852,8 +861,12 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto hypotheticalBorderBoxLogicalTop = hypotheticalPosition().borderBoxLogicalTop;
     auto& pendingFloats = m_blockLayoutState.pendingFloats();
     auto floats = floatsAtHypotheticalPosition();
+    // It goes beside the margin boxes of the floats, not their shapes, which only line boxes wrap around (csswg-drafts issue 1970).
+    auto marginBoxFloats = PlacedFloats { root().layoutBox() };
+    for (auto& floatItem : floats.list())
+        marginBoxFloats.add(floatWithoutShape(floatItem));
     auto& rootState = m_blockLayoutState.containingBlockStates().first();
-    auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
+    auto floatingContext = FloatingContext { root().layoutBox(), marginBoxFloats, { }, rootState.geometry.borderBoxWidth() };
 
     // The space the floats leave in the content box of the containing block, in its coordinates.
     auto contentBoxStart = containingBlockState.inlineRange.min();
