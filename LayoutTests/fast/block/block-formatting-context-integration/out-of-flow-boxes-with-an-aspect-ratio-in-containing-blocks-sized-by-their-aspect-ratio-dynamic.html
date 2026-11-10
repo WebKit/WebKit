@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 150px; border: 1px solid; margin: 0 2px 4px 0; }
+.cb { position: relative; aspect-ratio: 16 / 9; background: #eee; }
+.abs { position: absolute; display: block; background: lightblue; }
+</style>
+<div class="root" id="root"><div class="cb"><span class="abs" style="aspect-ratio: 1; height: 33%; right: 0; bottom: 0">Video</span></div></div>
+<div class="root"><div class="cb" id="ratio"><span class="abs" style="aspect-ratio: 1; height: 50%; left: 0">ratio</span></div></div>
+<div class="root"><div class="cb"><span class="abs" id="height" style="aspect-ratio: 2; height: 20%; left: 0"><span id="text">short</span></span></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "200px";
+document.getElementById("ratio").style.aspectRatio = "4 / 3";
+document.getElementById("height").style.height = "60%";
+document.getElementById("text").firstChild.data = "longer text";
+</script>
