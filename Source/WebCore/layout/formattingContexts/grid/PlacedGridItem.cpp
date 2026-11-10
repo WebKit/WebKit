@@ -52,5 +52,10 @@ PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& 
 {
 }
 
+BoxSizing PlacedGridItem::boxSizing() const
+{
+    return m_layoutBox->style().boxSizing();
+}
+
 } // namespace Layout
 } // namespace WebCore

@@ -66,7 +66,7 @@ public:
 
     const WritingMode& writingMode() const LIFETIME_BOUND { return m_writingMode; }
 
-    BoxSizing boxSizing() const { return m_layoutBox->style().boxSizing(); }
+    BoxSizing boxSizing() const;
 
     bool isReplacedElement() const { return m_layoutBox->isReplacedBox(); }
 
