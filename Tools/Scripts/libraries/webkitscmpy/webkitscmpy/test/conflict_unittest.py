@@ -69,14 +69,14 @@ class TestConflict(testing.PathTestCase):
 
             self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found with branch integration/conflict/1234\n')
 
-    def test_conflict_found(self):
+    def _checkout_conflict(self, pr_hash):
         with (
-            OutputCapture(),
+            OutputCapture() as captured,
             mocks.remote.GitHub() as remote,
             mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo,
             mocks.local.Svn(),
             patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response),
-            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda x: [Mock(head='integration/conflict/sha123_sha123/target_branch', _metadata={'full_name': 'tcontributor'})])
+            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda x: [Mock(head='integration/conflict/sha123_sha123/target_branch', hash=pr_hash, _metadata={'full_name': 'tcontributor'})])
         ):
             remote.users = dict(
                 rreviewer=Contributor('Ricky Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
@@ -125,3 +125,10 @@ class TestConflict(testing.PathTestCase):
             ).branch)
 
             self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)
+        return captured.stderr.getvalue()
+
+    def test_conflict_found(self):
+        self.assertEqual('', self._checkout_conflict('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd'))
+
+    def test_conflict_stale_branch(self):
+        self.assertIn('your local branch may be stale', self._checkout_conflict('3cd32e352410565bb543821fbf856a6d3caad1c4'))
