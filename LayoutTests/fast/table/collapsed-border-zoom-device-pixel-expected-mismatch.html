@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=3 ] -->
+<html>
+<head>
+<title>Collapsed table borders that snap to a single device pixel under zoom are painted</title>
+<style>
+.zoomed {
+    zoom: 0.45;
+}
+table {
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid transparent;
+    width: 100px;
+    height: 100px;
+    padding: 0;
+}
+</style>
+</head>
+<body>
+<div class="zoomed">
+    <table>
+        <tr><td></td><td></td></tr>
+        <tr><td></td><td></td></tr>
+    </table>
+</div>
+</body>
+</html>
