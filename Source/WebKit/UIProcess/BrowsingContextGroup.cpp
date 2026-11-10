@@ -281,10 +281,11 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
         // Under site isolation, a same-site page should be hosted in the same process and
         // shouldn't need a remote page. Empty sites are the exception, as they can compare equal
         // for pages that are not actually co-located in the same process, and so are documents
-        // with a Document-Isolation-Policy, which have their own process.
-        bool sameSite = site == Site(URL(page->currentURL()));
+        // with a Document-Isolation-Policy, which have their own process. A pending main frame load
+        // doesn't count, as its document isn't in this process yet.
         RefPtr mainFrame = page->mainFrame();
-        if (sameSite && !site.isEmpty() && mainFrame && mainFrame->process().isDocumentIsolationPolicyProcess() == processProxy->isDocumentIsolationPolicyProcess())
+        bool sameSite = mainFrame && site == Site(mainFrame->url());
+        if (sameSite && !site.isEmpty() && mainFrame->process().isDocumentIsolationPolicyProcess() == processProxy->isDocumentIsolationPolicyProcess())
             continue;
         createRemotePageIfNeeded(page, site);
     }

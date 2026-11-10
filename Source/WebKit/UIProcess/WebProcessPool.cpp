@@ -2525,14 +2525,15 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     }
 
     if (siteIsolationEnabled && !site.isEmpty()) {
-        ASSERT(frame.isMainFrame() ? site == mainFrameSite : Site(URL(protect(page.pageLoadState())->activeURL())) == mainFrameSite);
+        RefPtr mainFrame = page.mainFrame();
+        ASSERT(frame.isMainFrame() ? site == mainFrameSite : !mainFrame || Site(mainFrame->url()) == mainFrameSite);
         // Until the response arrives, a same-site navigation stays in the process for documents with a Document-Isolation-Policy.
         // Substitute data has no response to decide with and never gets a policy.
         auto crossOriginIsolation = processCrossOriginIsolationForBrowsingContextGroup(browsingContextGroup.crossOriginMode());
         if (sourceProcess->isDocumentIsolationPolicyProcess() && sourceProcess->site() == site && !navigation.substituteData())
             crossOriginIsolation = ProcessCrossOriginIsolation::DocumentIsolationPolicy;
-        if (!frame.isMainFrame() && site == mainFrameSite) {
-            Ref mainFrameProcess = Ref { page.mainFrame()->process() };
+        if (!frame.isMainFrame() && mainFrame && site == mainFrameSite) {
+            Ref mainFrameProcess = mainFrame->process();
             if (!mainFrameProcess->isInProcessCache() && mainFrameProcess->crossOriginIsolation() == crossOriginIsolation)
                 return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same site as main frame"_s);
         }

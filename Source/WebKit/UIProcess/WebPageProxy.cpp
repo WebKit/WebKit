@@ -6613,7 +6613,9 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         protect(this->websiteDataStore())->trackEnhancedSecurityForDomain(RegistrableDomain { navigation.currentRequest().url() }, enhancedSecurity);
 
     Site site { navigation.currentRequest().url() };
-    Site mainFrameSite = frame.isMainFrame() ? site : Site { pageLoadState().activeURL() };
+    // A subframe belongs to the committed main frame document, not to a pending main frame load. The decision for a
+    // removed subframe can arrive after the web process exited, when there is no main frame.
+    Site mainFrameSite = frame.isMainFrame() ? site : Site { m_mainFrame ? m_mainFrame->url() : pageLoadState().url() };
     auto backForwardInheritedSite = preferences->siteIsolationEnabled() ? backForwardInheritedSiteForNavigation(navigation, frame) : std::nullopt;
     auto continueWithAllowedProcessForNavigation = [
         this,

@@ -95,4 +95,113 @@ struct SiteIsolationBrowsingContextGroupTests {
             #expect(await openedWebView.frameTreesInProcesses() == expectedOpenedFrameTrees)
         }
     }
+
+    // The committed main frame is still a.com while a navigation to b.com waits for its policy decision, so a b.com
+    // iframe must not join the main frame's process.
+    @Test
+    func iframeNavigationToSiteOfPendingMainFrameLoad() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/main") {
+                "<iframe src='https://c.com/iframe'></iframe>"
+            }
+
+            Route("/iframe") {
+                "hi"
+            }
+
+            Route("/pending") {
+                "pending"
+            }
+
+            Route("/b_iframe") {
+                "hi"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.setFeature("SiteIsolationSharedProcessEnabled", enabled: false)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://a.com/main"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            let pendingURL = try #require(URL(string: "https://b.com/pending"))
+            let decidePendingNavigationPolicy = await navigationDelegate.holdNextNavigationActionPolicyDecision {
+                $0.request.url?.path == "/pending"
+            } triggeredBy: {
+                webView.load(URLRequest(url: pendingURL))
+            }
+
+            let childFrame = try #require(await webView.firstChildFrame)
+            webView.startEvaluatingJavaScript("location.href = 'https://b.com/b_iframe'", in: childFrame)
+            await navigationDelegate.waitForDidFinishLoadInSubframe()
+            let expectedFrameTrees: FrameTreesInProcesses = [
+                .local("https://a.com", children: [.remote]),
+                .remote(children: [.local("https://b.com")]),
+            ]
+            #expect(await webView.frameTreesInProcesses() == expectedFrameTrees)
+
+            decidePendingNavigationPolicy(.cancel)
+            try await waitForCondition("the main frame navigation to stop") {
+                !webView.isLoading
+            }
+            #expect(await webView.frameTreesInProcesses() == expectedFrameTrees)
+        }
+    }
+
+    // Killing the web content process doesn't cancel the policy decision of an iframe that was already removed from
+    // the page, so the decision can arrive when the page has no main frame. The UI process must survive it.
+    @Test
+    func removedIframeNavigationAllowedAfterWebContentProcessIsKilled() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/main") {
+                "<iframe src='https://c.com/iframe'></iframe>"
+            }
+
+            Route("/iframe") {
+                "hi"
+            }
+
+            Route("/b_iframe") {
+                "hi"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.setFeature("SiteIsolationSharedProcessEnabled", enabled: false)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+
+            let mainURL = try #require(URL(string: "https://a.com/main"))
+            webView.load(URLRequest(url: mainURL))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            let childFrame = try #require(await webView.firstChildFrame)
+            let decideIframeNavigationPolicy = await navigationDelegate.holdNextNavigationActionPolicyDecision {
+                $0.request.url?.path == "/b_iframe"
+            } triggeredBy: {
+                webView.startEvaluatingJavaScript("location.href = 'https://b.com/b_iframe'", in: childFrame)
+            }
+
+            try await webView.callJavaScript { "document.querySelector('iframe').remove()" }
+            try await waitForCondition("the iframe to be removed") {
+                await webView.firstChildFrame == nil
+            }
+
+            webView._killWebContentProcessAndResetState()
+            decideIframeNavigationPolicy(.allow)
+            // WebKit handles the decision on a later run loop iteration, with no callback to wait for. Give it time to
+            // arrive before the next load creates a new main frame.
+            try await Task.sleep(for: .milliseconds(100))
+
+            webView.load(URLRequest(url: mainURL))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let expectedFrameTrees: FrameTreesInProcesses = [
+                .local("https://a.com", children: [.remote]),
+                .remote(children: [.local("https://c.com")]),
+            ]
+            #expect(await webView.frameTreesInProcesses() == expectedFrameTrees)
+        }
+    }
 }
