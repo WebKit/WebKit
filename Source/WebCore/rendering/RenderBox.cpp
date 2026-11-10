@@ -3225,7 +3225,7 @@ bool RenderBox::sizesLogicalWidthToFitContent() const
     return false;
 }
 
-void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
+void RenderBox::computeInlineDirectionMargins(const RenderBoxModelObject& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
 {
     auto& containingBlockStyle = containingBlock.style();
     auto marginStartLength = style().marginStart(containingBlockStyle.writingMode());
