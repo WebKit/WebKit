@@ -617,7 +617,7 @@ webkit.org/b/314179 media/media-source/media-managedmse-waiting-at-gap.html [ Fa
 webkit.org/b/307141 media/media-source/media-source-seek-and-play.html [ Failure Pass ]
 webkit.org/b/307141 [ Release ] media/media-source/media-controller-media-source-play-then-pause.html [ Failure Pass ]
 
-webkit.org/b/312871 media/media-source/media-source-seek-to-zero-then-play.html [ Timeout ]
+webkit.org/b/312871 media/media-source/media-source-seek-to-zero-then-play.html [ Timeout Crash Pass ]
 
 webkit.org/b/315030 media/media-source/media-source-webm-seek-singlekeyframe.html [ Timeout Pass ]
 
@@ -1792,7 +1792,7 @@ webkit.org/b/305743 media/media-source/media-managedmse-video-with-poster.html [
 webkit.org/b/305743 media/media-source/media-managedmse-audible-setrate.html [ Crash Failure Timeout Pass ]
 
 webkit.org/b/283624 media/media-source/media-source-rvfc-paused.html [ Timeout ]
-webkit.org/b/283624 media/media-source/media-source-rvfc-paused-offscreen.html [ Timeout ]
+webkit.org/b/283624 media/media-source/media-source-rvfc-paused-offscreen.html [ Timeout Crash Pass ]
 
 # GStreamer (< 1.24) doesn't set the track's id to the container's value.
 webkit.org/b/265919 media/track/media-audio-track.html [ Failure ]
